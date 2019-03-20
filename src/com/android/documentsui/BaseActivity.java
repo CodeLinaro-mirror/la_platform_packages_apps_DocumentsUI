@@ -50,6 +50,7 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.view.Window;
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
 import com.android.documentsui.NavigationViewManager.Breadcrumb;
@@ -127,6 +128,7 @@ public abstract class BaseActivity
     protected abstract void onDirectoryCreated(DocumentInfo doc);
 
     public abstract Injector<?> getInjector();
+    PackageManager mPackageManager;
 
     @CallSuper
     @Override
@@ -140,6 +142,10 @@ public abstract class BaseActivity
         getTheme().applyStyle(R.style.DocumentsDefaultTheme, false);
 
         super.onCreate(savedInstanceState);
+        mPackageManager = getPackageManager();
+        if (mPackageManager.hasSystemFeature(PackageManager.FEATURE_WATCH)){
+            requestWindowFeature(Window.FEATURE_SWIPE_TO_DISMISS);
+        }
 
         final Intent intent = getIntent();
 
