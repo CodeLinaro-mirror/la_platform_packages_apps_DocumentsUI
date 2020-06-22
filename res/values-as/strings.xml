@@ -16,7 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="files_label" msgid="771781190045103748">"ফাইল"</string>
+    <string name="files_label" msgid="771781190045103748">"Files"</string>
     <string name="downloads_label" msgid="5462789470049501103">"ডাউনল\'ডসমূহ"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"ইয়ালৈ আহৰণ কৰক…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"নতুন নাম দিয়ক"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"তথ্য পাওক"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"লুকুৱাই থোৱা ফাইল দেখুৱাওক"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"লুকুৱাই থোৱা ফাইল নেদেখুৱাব"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>ত চাওক"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"নতুন ৱিণ্ড\'"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"কাট কৰক"</string>
@@ -268,14 +270,13 @@
     <string name="open_tree_button" msgid="6402871398424497776">"এই ফ\'ল্ডাৰটো ব্যৱহাৰ কৰক"</string>
     <string name="open_tree_dialog_title" msgid="6339509533852318569">"<xliff:g id="APPNAME">%1$s</xliff:g>ক <xliff:g id="DIRECTORY">%2$s</xliff:g>ত থকা ফাইলসমূহ এক্সেছ কৰিবলৈ অনুমতি দিবনে?"</string>
     <string name="open_tree_dialog_message" msgid="4120695398430659628">"এইটোৱে <xliff:g id="APPNAME">%1$s</xliff:g>ক <xliff:g id="DIRECTORY">%2$s</xliff:g>ত ষ্ট\'ৰ কৰি থোৱা বর্তমান আৰু ভৱিষ্যতৰ সমল এক্সেছ কৰিবলৈ দিয়ে।"</string>
-    <!-- no translation found for directory_blocked_header_title (1164584889578740066) -->
-    <skip />
-    <!-- no translation found for directory_blocked_header_subtitle (2829150911849033408) -->
-    <skip />
+    <string name="directory_blocked_header_title" msgid="1164584889578740066">"এই ফ’ল্ডাৰটো ব্যৱহাৰ কৰিব নোৱাৰি"</string>
+    <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"আপোনাৰ গোপনীয়তা সুৰক্ষিত কৰিবলৈ অন্য এটা ফ’ল্ডাৰ বাছনি কৰক"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"নতুন ফ\'ল্ডাৰ সৃষ্টি কৰক"</string>
     <string name="search_bar_hint" msgid="4517366509897977321">"এই ফ’নটো সন্ধান কৰক"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"সন্ধান ইতিহাস মচক <xliff:g id="TEXT">%1$s</xliff:g>"</string>
     <string name="personal_tab" msgid="3878576287868528503">"ব্যক্তিগত"</string>
     <string name="work_tab" msgid="7265359366883747413">"কৰ্মস্থান"</string>
     <string name="a11y_work" msgid="7504431382825242153">"কৰ্মস্থান"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"আপুনি অন্য এটা এপৰ পৰা ফাইল স্থানান্তৰ কৰিব নোৱাৰে।"</string>
 </resources>

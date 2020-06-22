@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"Atera hona…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Aldatu izena"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Lortu informazioa"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"Erakutsi fitxategi ezkutuak"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ez erakutsi fitxategi ezkutuak"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Ikusi <xliff:g id="SOURCE">%1$s</xliff:g> zerbitzuan"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Leiho berria"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Ebaki"</string>
@@ -107,7 +109,7 @@
     <string name="root_type_device" msgid="1713604128005476585">"Gailuak"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"Aplikazio gehiago"</string>
     <string name="empty" msgid="5300254272613103004">"Ez dago ezer"</string>
-    <string name="no_results" msgid="2371026325236359209">"Ez da aurkitu ezer %1$s atalean"</string>
+    <string name="no_results" msgid="2371026325236359209">"Ez da ezer aurkitu %1$s karpetan"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"Ezin da ireki fitxategia"</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"Ezin dira ireki artxiboetako fitxategiak"</string>
     <string name="toast_failed_delete" msgid="3453846588205817591">"Ezin dira ezabatu dokumentu batzuk"</string>
@@ -241,7 +243,7 @@
     <string name="root_info_header_recent" msgid="8754386597210017725">"Telefonoko azken fitxategiak"</string>
     <string name="root_info_header_global_search" msgid="9099308729787003373">"Telefonoko fitxategiak"</string>
     <string name="root_info_header_media" msgid="2774453755906260852">"Telefonoko <xliff:g id="LABEL">%1$s</xliff:g>"</string>
-    <string name="root_info_header_downloads" msgid="8848161246921154115">"Deskargak ataleko fitxategiak"</string>
+    <string name="root_info_header_downloads" msgid="8848161246921154115">"Deskargak karpetako fitxategiak"</string>
     <string name="root_info_header_storage" msgid="2989014130584927442">"<xliff:g id="DEVICE">%1$s</xliff:g> gailuko fitxategiak"</string>
     <string name="root_info_header_folder" msgid="5851172222368049864">"<xliff:g id="FOLDER">%1$s</xliff:g> karpetako fitxategiak"</string>
     <string name="root_info_header_app" msgid="2125422047558420885">"<xliff:g id="LABEL">%1$s</xliff:g> zerbitzuko fitxategiak"</string>
@@ -276,4 +278,5 @@
     <string name="personal_tab" msgid="3878576287868528503">"Pertsonala"</string>
     <string name="work_tab" msgid="7265359366883747413">"Lanekoa"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Lana"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"Ezin dituzu beste aplikazioetako fitxategiak mugitu."</string>
 </resources>

@@ -57,6 +57,7 @@ import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
+import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
 import com.android.documentsui.services.FileOperationService;
@@ -89,7 +90,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
     @Override
     public void onCreate(Bundle icicle) {
-
+        setTheme(R.style.DocumentsTheme);
         Features features = Features.create(this);
 
         mInjector = new Injector<>(
@@ -387,6 +388,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 mInjector.dialogs.showActionNotAllowed();
                 return;
             }
+            mInjector.pickResult.setHasCrossProfileUri(!UserId.CURRENT_USER.equals(doc.userId));
             mInjector.actions.finishPicking(doc.getDocumentUri());
             mSearchManager.recordHistory();
         } else if (mState.action == ACTION_CREATE) {
@@ -406,9 +408,15 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
             }
             final int size = docs.size();
             final Uri[] uris = new Uri[size];
-            for (int i = 0; i < size; i++) {
-                uris[i] = docs.get(i).getDocumentUri();
+            boolean hasCrossProfileUri = false;
+            for (int i = 0; i < docs.size(); i++) {
+                DocumentInfo doc = docs.get(i);
+                uris[i] = doc.getDocumentUri();
+                if (!UserId.CURRENT_USER.equals(doc.userId)) {
+                    hasCrossProfileUri = true;
+                }
             }
+            mInjector.pickResult.setHasCrossProfileUri(hasCrossProfileUri);
             mInjector.actions.finishPicking(uris);
             mSearchManager.recordHistory();
         }

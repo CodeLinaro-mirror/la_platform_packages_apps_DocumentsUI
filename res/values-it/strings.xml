@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"Estrai in…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Rinomina"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Informazioni"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostra file nascosti"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Non mostrare file nascosti"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Visualizza in <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Nuova finestra"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Taglia"</string>
@@ -69,12 +71,12 @@
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Tipo"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Dimensioni"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Ultima modifica"</string>
-    <string name="sort_dimension_name_ascending" msgid="3715725253270614742">"Nome file (da A a Z)"</string>
-    <string name="sort_dimension_file_type_ascending" msgid="3466973933402894292">"Tipo (da A a Z)"</string>
+    <string name="sort_dimension_name_ascending" msgid="3715725253270614742">"Nome file (A-Z)"</string>
+    <string name="sort_dimension_file_type_ascending" msgid="3466973933402894292">"Tipo (A-Z)"</string>
     <string name="sort_dimension_size_ascending" msgid="2617359017800057762">"Dimensione (crescente)"</string>
     <string name="sort_dimension_date_ascending" msgid="7920068979386920559">"Modifica meno recente"</string>
-    <string name="sort_dimension_name_descending" msgid="1514525521100423342">"Nome file (da Z a A)"</string>
-    <string name="sort_dimension_file_type_descending" msgid="3344796059784511100">"Tipo (da Z a A)"</string>
+    <string name="sort_dimension_name_descending" msgid="1514525521100423342">"Nome file (Z-A)"</string>
+    <string name="sort_dimension_file_type_descending" msgid="3344796059784511100">"Tipo (Z-A)"</string>
     <string name="sort_dimension_size_descending" msgid="2367030017597348938">"Dimensione (decrescente)"</string>
     <string name="sort_dimension_date_descending" msgid="5466839955763127113">"Modifica più recente"</string>
     <string name="sort_dimension_dialog_title" msgid="3048641573962982157">"Ordina per"</string>
@@ -273,7 +275,8 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"Crea nuova cartella"</string>
     <string name="search_bar_hint" msgid="4517366509897977321">"Cerca su questo telefono"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"Elimina la cronologia delle ricerche <xliff:g id="TEXT">%1$s</xliff:g>"</string>
-    <string name="personal_tab" msgid="3878576287868528503">"Personale"</string>
-    <string name="work_tab" msgid="7265359366883747413">"Lavoro"</string>
+    <string name="personal_tab" msgid="3878576287868528503">"Personali"</string>
+    <string name="work_tab" msgid="7265359366883747413">"Di lavoro"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Lavoro"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"Impossibile spostare file da un\'altra app."</string>
 </resources>

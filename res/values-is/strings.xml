@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"Flytja út í…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Endurnefna"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Sækja upplýsingar"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"Sýna faldar skrár"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ekki sýna faldar skrár"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Opna í <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Nýr gluggi"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Klippa"</string>
@@ -107,7 +109,7 @@
     <string name="root_type_device" msgid="1713604128005476585">"Tæki"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"Fleiri forrit"</string>
     <string name="empty" msgid="5300254272613103004">"Engin atriði"</string>
-    <string name="no_results" msgid="2371026325236359209">"Engar samsvarandi niðurstöður í %1$s"</string>
+    <string name="no_results" msgid="2371026325236359209">"Engin samsvörun í „%1$s“"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"Ekki hægt að opna skrá"</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"Ekki er hægt að opna skrár í geymslu"</string>
     <string name="toast_failed_delete" msgid="3453846588205817591">"Ekki hægt að eyða einhverjum skjölum"</string>
@@ -241,10 +243,10 @@
     <string name="root_info_header_recent" msgid="8754386597210017725">"Nýlegar skrár í síma"</string>
     <string name="root_info_header_global_search" msgid="9099308729787003373">"Skrár í síma"</string>
     <string name="root_info_header_media" msgid="2774453755906260852">"<xliff:g id="LABEL">%1$s</xliff:g> í símanum"</string>
-    <string name="root_info_header_downloads" msgid="8848161246921154115">"Skrár í „Niðurhal“"</string>
+    <string name="root_info_header_downloads" msgid="8848161246921154115">"Skrár í Niðurhali"</string>
     <string name="root_info_header_storage" msgid="2989014130584927442">"Skrár í <xliff:g id="DEVICE">%1$s</xliff:g>"</string>
     <string name="root_info_header_folder" msgid="5851172222368049864">"Skrár í <xliff:g id="FOLDER">%1$s</xliff:g>"</string>
-    <string name="root_info_header_app" msgid="2125422047558420885">"Skrár frá <xliff:g id="LABEL">%1$s</xliff:g>"</string>
+    <string name="root_info_header_app" msgid="2125422047558420885">"Skrár frá „<xliff:g id="LABEL">%1$s</xliff:g>“"</string>
     <string name="root_info_header_app_with_summary" msgid="3223302581236069702">"Skrár frá <xliff:g id="LABEL">%1$s</xliff:g>/<xliff:g id="SUMMARY">%2$s</xliff:g>"</string>
     <string name="root_info_header_image_recent" msgid="6252335619444758201">"Nýlegar myndir í síma"</string>
     <string name="root_info_header_image_global_search" msgid="7945533325610533016">"Myndir í síma"</string>
@@ -255,7 +257,7 @@
     <string name="root_info_header_image_app_with_summary" msgid="6404842960923224778">"Myndir frá <xliff:g id="LABEL">%1$s</xliff:g> / <xliff:g id="SUMMARY">%2$s</xliff:g>"</string>
     <string name="chip_title_images" msgid="7838299046109841015">"Myndir"</string>
     <string name="chip_title_audio" msgid="1032801828748235436">"Hljóð"</string>
-    <string name="chip_title_videos" msgid="7011260091979776447">"Vídeó"</string>
+    <string name="chip_title_videos" msgid="7011260091979776447">"Myndskeið"</string>
     <string name="chip_title_documents" msgid="7432457563000753983">"Skjöl"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Stórar skrár"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Þessi vika"</string>
@@ -276,4 +278,5 @@
     <string name="personal_tab" msgid="3878576287868528503">"Persónulegt"</string>
     <string name="work_tab" msgid="7265359366883747413">"Vinna"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Vinna"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"Ekki er hægt að færa skrár úr öðru forriti."</string>
 </resources>

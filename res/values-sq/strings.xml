@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"Nxirre te…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Riemërto"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Merr informacione"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"Shfaq skedarët e fshehur"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Mos shfaq skedarët e fshehur"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Shikoje në <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Dritare e re"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Prit"</string>
@@ -107,7 +109,7 @@
     <string name="root_type_device" msgid="1713604128005476585">"Pajisjet"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"Aplikacione të tjera"</string>
     <string name="empty" msgid="5300254272613103004">"Nuk ka artikuj"</string>
-    <string name="no_results" msgid="2371026325236359209">"Nuk ka asnjë përputhje në %1$s"</string>
+    <string name="no_results" msgid="2371026325236359209">"Nuk ka asnjë përputhje te %1$s"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"Skedari nuk mund të hapet"</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"Skedarët në arkiva nuk mund të hapen"</string>
     <string name="toast_failed_delete" msgid="3453846588205817591">"E pamundur të fshihen disa dokumente"</string>
@@ -241,7 +243,7 @@
     <string name="root_info_header_recent" msgid="8754386597210017725">"Skedarët më të fundit në telefon"</string>
     <string name="root_info_header_global_search" msgid="9099308729787003373">"Skedarët në telefon"</string>
     <string name="root_info_header_media" msgid="2774453755906260852">"<xliff:g id="LABEL">%1$s</xliff:g> në telefon"</string>
-    <string name="root_info_header_downloads" msgid="8848161246921154115">"Skedarët në \"Shkarkimet\""</string>
+    <string name="root_info_header_downloads" msgid="8848161246921154115">"Skedarët te \"Shkarkimet\""</string>
     <string name="root_info_header_storage" msgid="2989014130584927442">"Skedarët në <xliff:g id="DEVICE">%1$s</xliff:g>"</string>
     <string name="root_info_header_folder" msgid="5851172222368049864">"Skedarët në <xliff:g id="FOLDER">%1$s</xliff:g>"</string>
     <string name="root_info_header_app" msgid="2125422047558420885">"Skedarët nga <xliff:g id="LABEL">%1$s</xliff:g>"</string>
@@ -276,4 +278,5 @@
     <string name="personal_tab" msgid="3878576287868528503">"Personale"</string>
     <string name="work_tab" msgid="7265359366883747413">"Puna"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Puna"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"Nuk mund t\'i zhvendosësh skedarët nga një aplikacion tjetër."</string>
 </resources>

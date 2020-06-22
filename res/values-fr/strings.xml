@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"Extraire sur…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Renommer"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Obtenir les informations"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"Afficher fichiers masqués"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ne pas afficher fichiers masqués"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Afficher dans <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Nouvelle fenêtre"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Couper"</string>
@@ -263,7 +265,7 @@
     <string name="input_hint_rename" msgid="8390711744270994452">"Nouveau nom"</string>
     <string name="preview_file" msgid="4056622696305432343">"Prévisualiser le fichier <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Prévisualiser le fichier professionnel <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
-    <string name="apps_row_title" msgid="3340490016663092925">"Parcourir des fichiers dans d\'autres applications"</string>
+    <string name="apps_row_title" msgid="3340490016663092925">"Parcourir les fichiers dans d\'autres applications"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Anonyme"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Utiliser ce dossier"</string>
     <string name="open_tree_dialog_title" msgid="6339509533852318569">"Autoriser <xliff:g id="APPNAME">%1$s</xliff:g> à accéder aux fichiers dans <xliff:g id="DIRECTORY">%2$s</xliff:g> ?"</string>
@@ -276,4 +278,5 @@
     <string name="personal_tab" msgid="3878576287868528503">"Personnel"</string>
     <string name="work_tab" msgid="7265359366883747413">"Professionnel"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Travail"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"Vous ne pouvez pas déplacer de fichiers depuis une autre application."</string>
 </resources>

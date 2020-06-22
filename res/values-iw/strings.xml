@@ -45,6 +45,8 @@
     <string name="menu_extract" msgid="8171946945982532262">"חלץ לתיקייה…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"שנה שם"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"מידע על המסמך"</string>
+    <string name="menu_show_hidden_files" msgid="5140676344684492769">"הצגת קבצים מוסתרים"</string>
+    <string name="menu_hide_hidden_files" msgid="5654495713350153702">"לא להציג קבצים מוסתרים"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"הצג ב-<xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"חלון חדש"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"גזור"</string>
@@ -107,7 +109,7 @@
     <string name="root_type_device" msgid="1713604128005476585">"מכשירים"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"עוד אפליקציות"</string>
     <string name="empty" msgid="5300254272613103004">"אין פריטים"</string>
-    <string name="no_results" msgid="2371026325236359209">"‏אין התאמות ב-%1$s"</string>
+    <string name="no_results" msgid="2371026325236359209">"‏אין התאמות ב%1$s"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"לא ניתן לפתוח את הקובץ"</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"לא ניתן לפתוח קבצים בארכיונים"</string>
     <string name="toast_failed_delete" msgid="3453846588205817591">"לא ניתן למחוק חלק מהמסמכים"</string>
@@ -320,4 +322,5 @@
     <string name="personal_tab" msgid="3878576287868528503">"אישי"</string>
     <string name="work_tab" msgid="7265359366883747413">"עבודה"</string>
     <string name="a11y_work" msgid="7504431382825242153">"עבודה"</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"אי אפשר להעביר קבצים מאפליקציה אחרת."</string>
 </resources>
