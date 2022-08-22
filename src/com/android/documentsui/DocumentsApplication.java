@@ -47,7 +47,7 @@ import java.util.List;
 
 public class DocumentsApplication extends Application {
     private static final String TAG = "DocumentsApplication";
-    private static final long PROVIDER_ANR_TIMEOUT = 20 * DateUtils.SECOND_IN_MILLIS;
+    private static final long PROVIDER_ANR_TIMEOUT = 40 * DateUtils.SECOND_IN_MILLIS;
 
     private static final List<String> PACKAGE_FILTER_ACTIONS = Lists.newArrayList(
             Intent.ACTION_PACKAGE_ADDED,
