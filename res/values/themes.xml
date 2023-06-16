@@ -19,7 +19,7 @@
         <item name="android:windowBackground">@drawable/launcher_screen</item>
     </style>
     <!-- DocumentsTheme is allow customize by run time overlay -->
-    <style name="DocumentsTheme" parent="@android:style/Theme.DeviceDefault.DocumentsUI">
+    <style name="DocumentsTheme" parent="@style/Theme.MaterialComponents.DayNight.NoActionBar">
 
         <item name="android:actionBarSize">@dimen/action_bar_size</item>
         <item name="android:actionModeBackground">?android:attr/colorBackground</item>
