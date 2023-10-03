@@ -236,7 +236,9 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
         if (mScope.lastFocusPosition != RecyclerView.NO_POSITION) {
             DocumentHolder holder = (DocumentHolder) mScope.view
                     .findViewHolderForAdapterPosition(mScope.lastFocusPosition);
-            return holder.getModelId();
+            if (holder != null) {
+                return holder.getModelId();
+            }
         }
         return null;
     }
