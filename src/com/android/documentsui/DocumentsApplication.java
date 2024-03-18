@@ -28,9 +28,11 @@ import android.content.IntentFilter;
 import android.content.om.OverlayManager;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.os.UserHandle;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.documentsui.base.Lookup;
@@ -41,10 +43,13 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.queries.SearchHistoryManager;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.theme.ThemeOverlayManager;
+import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.collect.Lists;
 
 import java.util.List;
+
+import javax.annotation.concurrent.GuardedBy;
 
 public class DocumentsApplication extends Application {
     private static final String TAG = "DocumentsApplication";
@@ -57,12 +62,16 @@ public class DocumentsApplication extends Application {
             Intent.ACTION_PACKAGE_DATA_CLEARED
     );
 
-    private static final List<String> MANAGED_PROFILE_FILTER_ACTIONS = Lists.newArrayList(
+    private static final List<String> PROFILE_FILTER_ACTIONS = Lists.newArrayList(
             Intent.ACTION_MANAGED_PROFILE_ADDED,
             Intent.ACTION_MANAGED_PROFILE_REMOVED,
             Intent.ACTION_MANAGED_PROFILE_UNLOCKED,
             Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE
     );
+
+    @GuardedBy("DocumentsApplication.class")
+    @Nullable
+    private static volatile ConfigStore sConfigStore;
 
     private ProvidersCache mProviders;
     private ThumbnailCache mThumbnailCache;
@@ -70,10 +79,24 @@ public class DocumentsApplication extends Application {
     private DocumentClipper mClipper;
     private DragAndDropManager mDragAndDropManager;
     private UserIdManager mUserIdManager;
+    private UserManagerState mUserManagerState;
     private Lookup<String, String> mFileTypeLookup;
 
     public static ProvidersCache getProvidersCache(Context context) {
-        return ((DocumentsApplication) context.getApplicationContext()).mProviders;
+        ProvidersCache providers =
+                ((DocumentsApplication) context.getApplicationContext()).mProviders;
+        final ConfigStore configStore = getConfigStore(context);
+        // When private space in DocsUI is enabled then ProvidersCache should use UserManagerState
+        // else it should use UserIdManager. The following if-check will ensure the construction of
+        // a new ProvidersCache instance whenever there is a mismatch in this.
+        if (configStore.isPrivateSpaceInDocsUIEnabled()
+                != providers.isProvidersCacheUsingUserManagerState()) {
+            providers = configStore.isPrivateSpaceInDocsUIEnabled()
+                    ? new ProvidersCache(context, getUserManagerState(context), configStore)
+                    : new ProvidersCache(context, getUserIdManager(context), configStore);
+            ((DocumentsApplication) context.getApplicationContext()).mProviders = providers;
+        }
+        return providers;
     }
 
     public static ThumbnailCache getThumbnailCache(Context context) {
@@ -101,7 +124,28 @@ public class DocumentsApplication extends Application {
     }
 
     public static UserIdManager getUserIdManager(Context context) {
-        return ((DocumentsApplication) context.getApplicationContext()).mUserIdManager;
+        UserIdManager userIdManager =
+                ((DocumentsApplication) context.getApplicationContext()).mUserIdManager;
+        if (userIdManager == null) {
+            userIdManager = UserIdManager.create(context);
+            ((DocumentsApplication) context.getApplicationContext()).mUserIdManager = userIdManager;
+        }
+        return userIdManager;
+    }
+
+    /**
+     * UserManagerState class is used to maintain the list of userIds and other details like
+     * cross profile access, label and badge associated with these userIds.
+     */
+    public static UserManagerState getUserManagerState(Context context) {
+        UserManagerState userManagerState =
+                ((DocumentsApplication) context.getApplicationContext()).mUserManagerState;
+        if (userManagerState == null && getConfigStore(context).isPrivateSpaceInDocsUIEnabled()) {
+            userManagerState = UserManagerState.create(context);
+            ((DocumentsApplication) context.getApplicationContext()).mUserManagerState =
+                    userManagerState;
+        }
+        return userManagerState;
     }
 
     public static DragAndDropManager getDragAndDropManager(Context context) {
@@ -112,6 +156,42 @@ public class DocumentsApplication extends Application {
         return ((DocumentsApplication) context.getApplicationContext()).mFileTypeLookup;
     }
 
+    /**
+     * Retrieve {@link ConfigStore} instance to access feature flags in production code.
+     */
+    public static synchronized ConfigStore getConfigStore(Context context) {
+        if (sConfigStore == null) {
+            sConfigStore = new ConfigStore.ConfigStoreImpl();
+        }
+        return sConfigStore;
+    }
+
+    /**
+     * Set {@link #mProviders} as null onDestroy of BaseActivity so that new session uses new
+     * instance of {@link #mProviders}
+     */
+    public static void invalidateProvidersCache(Context context) {
+        ((DocumentsApplication) context.getApplicationContext()).mProviders = null;
+    }
+
+    /**
+     * Set {@link #mUserManagerState} as null onDestroy of BaseActivity so that new session uses new
+     * instance of {@link #mUserManagerState}
+     */
+    public static void invalidateUserManagerState(Context context) {
+        ((DocumentsApplication) context.getApplicationContext()).mUserManagerState = null;
+    }
+
+    /**
+     * Set {@link #sConfigStore} as null onDestroy of BaseActivity so that new session uses new
+     * instance of {@link #sConfigStore}
+     */
+    public static void invalidateConfigStore() {
+        synchronized (DocumentsApplication.class) {
+            sConfigStore = null;
+        }
+    }
+
     private void onApplyOverlayFinish(boolean result) {
         Log.d(TAG, "OverlayManager.setEnabled() result: " + result);
     }
@@ -120,6 +200,11 @@ public class DocumentsApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        synchronized (DocumentsApplication.class) {
+            if (sConfigStore == null) {
+                sConfigStore = new ConfigStore.ConfigStoreImpl();
+            }
+        }
 
         final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final OverlayManager om = getSystemService(OverlayManager.class);
@@ -132,9 +217,20 @@ public class DocumentsApplication extends Application {
             Log.w(TAG, "Can't obtain OverlayManager from System Service!");
         }
 
-        mUserIdManager = UserIdManager.create(this);
+        if (getConfigStore(this).isPrivateSpaceInDocsUIEnabled()) {
+            mUserManagerState = UserManagerState.create(this);
+            mUserIdManager = null;
+            synchronized (DocumentsApplication.class) {
+                mProviders = new ProvidersCache(this, mUserManagerState, getConfigStore(this));
+            }
+        } else {
+            mUserManagerState = null;
+            mUserIdManager = UserIdManager.create(this);
+            synchronized (DocumentsApplication.class) {
+                mProviders = new ProvidersCache(this, mUserIdManager, getConfigStore(this));
+            }
+        }
 
-        mProviders = new ProvidersCache(this, mUserIdManager);
         mProviders.updateAsync(/* forceRefreshAll= */ false, /* callback= */  null);
 
         mThumbnailCache = new ThumbnailCache(memoryClassBytes / 4);
@@ -159,11 +255,19 @@ public class DocumentsApplication extends Application {
         localeFilter.addAction(Intent.ACTION_LOCALE_CHANGED);
         registerReceiver(mCacheReceiver, localeFilter);
 
-        final IntentFilter managedProfileFilter = new IntentFilter();
-        for (String managedProfileAction : MANAGED_PROFILE_FILTER_ACTIONS) {
-            managedProfileFilter.addAction(managedProfileAction);
+        if (SdkLevel.isAtLeastV()) {
+            PROFILE_FILTER_ACTIONS.addAll(Lists.newArrayList(
+                    Intent.ACTION_PROFILE_ADDED,
+                    Intent.ACTION_PROFILE_REMOVED,
+                    Intent.ACTION_PROFILE_AVAILABLE,
+                    Intent.ACTION_PROFILE_UNAVAILABLE
+            ));
         }
-        registerReceiver(mCacheReceiver, managedProfileFilter);
+        final IntentFilter profileFilter = new IntentFilter();
+        for (String profileAction : PROFILE_FILTER_ACTIONS) {
+            profileFilter.addAction(profileAction);
+        }
+        registerReceiver(mCacheReceiver, profileFilter);
 
         SearchHistoryManager.getInstance(getApplicationContext());
     }
@@ -183,9 +287,14 @@ public class DocumentsApplication extends Application {
             if (PACKAGE_FILTER_ACTIONS.contains(action) && data != null) {
                 final String packageName = data.getSchemeSpecificPart();
                 mProviders.updatePackageAsync(UserId.DEFAULT_USER, packageName);
-            } else if (MANAGED_PROFILE_FILTER_ACTIONS.contains(action)) {
+            } else if (PROFILE_FILTER_ACTIONS.contains(action)) {
                 // After we have reloaded roots. Resend the broadcast locally so the other
                 // components can reload properly after roots are updated.
+                if (getConfigStore(context).isPrivateSpaceInDocsUIEnabled()) {
+                    UserHandle userHandle = intent.getParcelableExtra(Intent.EXTRA_USER);
+                    UserId userId = UserId.of(userHandle);
+                    getUserManagerState(context).onProfileActionStatusChange(action, userId);
+                }
                 mProviders.updateAsync(/* forceRefreshAll= */ true,
                         () -> LocalBroadcastManager.getInstance(context).sendBroadcast(intent));
             } else {
