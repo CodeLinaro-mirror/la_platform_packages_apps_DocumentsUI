@@ -51,7 +51,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.R;
-import com.android.documentsui.UserIdManager;
 import com.android.documentsui.UserPackage;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.LookupApplicationName;
@@ -59,6 +58,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
+import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -90,10 +90,10 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     // empty results we don't cache them...unless they're in this magical list
     // of beloved providers.
     private static final List<String> PERMIT_EMPTY_CACHE = List.of(
-        // MTP provider commonly returns no roots (if no devices are attached).
-        Providers.AUTHORITY_MTP,
-        // ArchivesProvider doesn't support any roots.
-        ArchivesProvider.AUTHORITY);
+            // MTP provider commonly returns no roots (if no devices are attached).
+            Providers.AUTHORITY_MTP,
+            // ArchivesProvider doesn't support any roots.
+            ArchivesProvider.AUTHORITY);
     private static final int FIRST_LOAD_TIMEOUT_MS = 5000;
 
     private final Context mContext;
@@ -121,13 +121,13 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     @GuardedBy("mObservedAuthoritiesDetails")
     private final Map<UserAuthority, PackageDetails> mObservedAuthoritiesDetails = new HashMap<>();
 
-    private final UserIdManager mUserIdManager;
-
-    public ProvidersCache(Context context, UserIdManager userIdManager) {
+    public ProvidersCache(Context context) {
         mContext = context;
-        mUserIdManager = userIdManager;
     }
 
+    /**
+     * Generates recent root for the provided user id
+     */
     private RootInfo generateRecentsRoot(UserId rootUserId) {
         return new RootInfo() {{
             // Special root for recents
@@ -199,7 +199,8 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         // For that reason we update our RecentsRoot to reflect
         // the current language.
         final String title = mContext.getString(R.string.root_recent);
-        for (UserId userId : mUserIdManager.getUserIds()) {
+        List<UserId> userIds = new ArrayList<>(getUserIds());
+        for (UserId userId : userIds) {
             RootInfo recentRoot = createOrGetRecentsRoot(userId);
             recentRoot.title = title;
             // Nothing else about the root should ever change.
@@ -509,11 +510,12 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         /**
          * Create task to update roots cache.
          *
-         * @param forceRefreshAll when true, all previously cached values for
-         *            all packages should be ignored.
+         * @param forceRefreshAll         when true, all previously cached values for
+         *                                all packages should be ignored.
          * @param forceRefreshUserPackage when non-null, all previously cached
-         *            values for this specific user package should be ignored.
-         * @param callback when non-null, it will be invoked after the task is executed.
+         *                                values for this specific user package should be ignored.
+         * @param callback                when non-null, it will be invoked after the task is
+         *                                executed.
          */
         MultiProviderUpdateTask(
                 boolean forceRefreshAll,
@@ -536,7 +538,8 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
 
             final long start = SystemClock.elapsedRealtime();
 
-            for (UserId userId : mUserIdManager.getUserIds()) {
+            List<UserId> userIds = new ArrayList<>(getUserIds());
+            for (UserId userId : userIds) {
                 final RootInfo recents = createOrGetRecentsRoot(userId);
                 synchronized (mLock) {
                     mLocalRoots.put(new UserAuthority(recents.userId, recents.authority), recents);
@@ -544,7 +547,7 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
             }
 
             List<SingleProviderUpdateTaskInfo> taskInfos = new ArrayList<>();
-            for (UserId userId : mUserIdManager.getUserIds()) {
+            for (UserId userId : userIds) {
                 final PackageManager pm = userId.getPackageManager(mContext);
                 // Pick up provider with action string
                 final Intent intent = new Intent(DocumentsContract.PROVIDER_INTERFACE);
@@ -561,7 +564,7 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 CountDownLatch updateTaskInternalCountDown = new CountDownLatch(taskInfos.size());
                 ExecutorService executor = MoreExecutors.getExitingExecutorService(
                         (ThreadPoolExecutor) Executors.newCachedThreadPool());
-                for (SingleProviderUpdateTaskInfo taskInfo: taskInfos) {
+                for (SingleProviderUpdateTaskInfo taskInfo : taskInfos) {
                     executor.submit(() ->
                             startSingleProviderUpdateTask(
                                     taskInfo.providerInfo,
@@ -700,5 +703,13 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
             applicationName = appName;
             packageName = pckgName;
         }
+    }
+
+    private List<UserId> getUserIds() {
+        if (DocumentsApplication.getConfigStore().isPrivateSpaceInDocsUIEnabled()
+                && SdkLevel.isAtLeastS()) {
+            return DocumentsApplication.getUserManagerState(mContext).getUserIds();
+        }
+        return DocumentsApplication.getUserIdManager(mContext).getUserIds();
     }
 }

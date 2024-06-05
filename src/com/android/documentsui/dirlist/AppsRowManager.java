@@ -16,7 +16,6 @@
 
 package com.android.documentsui.dirlist;
 
-import android.os.UserManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,10 @@ import android.widget.TextView;
 
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.BaseActivity;
+import com.android.documentsui.ConfigStore;
 import com.android.documentsui.R;
 import com.android.documentsui.UserIdManager;
+import com.android.documentsui.UserManagerState;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AppsRowItemData.AppData;
@@ -35,6 +36,7 @@ import com.android.documentsui.dirlist.AppsRowItemData.RootData;
 import com.android.documentsui.sidebar.AppItem;
 import com.android.documentsui.sidebar.Item;
 import com.android.documentsui.sidebar.RootItem;
+import com.android.modules.utils.build.SdkLevel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,13 +52,27 @@ public class AppsRowManager {
     private final List<AppsRowItemData> mDataList;
     private final boolean mMaybeShowBadge;
     private final UserIdManager mUserIdManager;
+    private final UserManagerState mUserManagerState;
+    private final ConfigStore mConfigStore;
 
     public AppsRowManager(ActionHandler handler, boolean maybeShowBadge,
-            UserIdManager userIdManager) {
+            UserIdManager userIdManager, ConfigStore configStore) {
         mDataList = new ArrayList<>();
         mActionHandler = handler;
         mMaybeShowBadge = maybeShowBadge;
         mUserIdManager = userIdManager;
+        mUserManagerState = null;
+        mConfigStore = configStore;
+    }
+
+    public AppsRowManager(ActionHandler handler, boolean maybeShowBadge,
+            UserManagerState userManagerState, ConfigStore configStore) {
+        mDataList = new ArrayList<>();
+        mActionHandler = handler;
+        mMaybeShowBadge = maybeShowBadge;
+        mUserIdManager = null;
+        mUserManagerState = userManagerState;
+        mConfigStore = configStore;
     }
 
     public List<AppsRowItemData> updateList(List<Item> itemList) {
@@ -89,7 +105,7 @@ public class AppsRowManager {
         boolean isHiddenAction = state.action == State.ACTION_CREATE
                 || state.action == State.ACTION_OPEN_TREE
                 || state.action == State.ACTION_PICK_COPY_DESTINATION;
-        boolean isSearchExpandedAcrossProfile = mUserIdManager.getUserIds().size() > 1
+        boolean isSearchExpandedAcrossProfile = getUserIds().size() > 1
                 && state.supportsCrossProfile()
                 && isSearchExpanded;
 
@@ -133,5 +149,12 @@ public class AppsRowManager {
         summary.setText(data.getSummary());
         summary.setVisibility(data.getSummary() != null ? View.VISIBLE : View.GONE);
         view.setOnClickListener(v -> data.onClicked());
+    }
+
+    private List<UserId> getUserIds() {
+        if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
+            return mUserManagerState.getUserIds();
+        }
+        return mUserIdManager.getUserIds();
     }
 }

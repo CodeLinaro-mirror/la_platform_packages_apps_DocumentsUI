@@ -29,12 +29,14 @@ import android.view.ViewGroup;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.documentsui.ConfigStore;
 import com.android.documentsui.Model;
 import com.android.documentsui.Model.Update;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.State;
 import com.android.documentsui.roots.RootCursorWrapper;
+import com.android.modules.utils.build.SdkLevel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +53,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     private final Environment mEnv;
     private final IconHelper mIconHelper;  // a transitive dependency of the holders.
     private final Lookup<String, String> mFileTypeLookup;
+    private final ConfigStore mConfigStore;
 
     /**
      * An ordered list of model IDs. This is the data structure that determines what shows up in
@@ -60,10 +63,12 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     private EventListener<Model.Update> mModelUpdateListener;
 
     public ModelBackedDocumentsAdapter(
-            Environment env, IconHelper iconHelper, Lookup<String, String> fileTypeLookup) {
+            Environment env, IconHelper iconHelper, Lookup<String, String> fileTypeLookup,
+            ConfigStore configStore) {
         mEnv = env;
         mIconHelper = iconHelper;
         mFileTypeLookup = fileTypeLookup;
+        mConfigStore = configStore;
 
         mModelUpdateListener = new EventListener<Model.Update>() {
             @Override
@@ -90,12 +95,14 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
             case MODE_GRID:
                 switch (viewType) {
                     case ITEM_TYPE_DIRECTORY:
-                        holder = new GridDirectoryHolder(mEnv.getContext(), parent);
+                        holder = new GridDirectoryHolder(mEnv.getContext(), parent, mConfigStore);
                         break;
                     case ITEM_TYPE_DOCUMENT:
                         holder = state.isPhotoPicking()
-                                ? new GridPhotoHolder(mEnv.getContext(), parent, mIconHelper)
-                                : new GridDocumentHolder(mEnv.getContext(), parent, mIconHelper);
+                                ? new GridPhotoHolder(mEnv.getContext(), parent, mIconHelper,
+                                mConfigStore)
+                                : new GridDocumentHolder(mEnv.getContext(), parent, mIconHelper,
+                                        mConfigStore);
                         break;
                     default:
                         throw new IllegalStateException("Unsupported layout type.");
@@ -103,7 +110,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                 break;
             case MODE_LIST:
                 holder = new ListDocumentHolder(
-                        mEnv.getContext(), parent, mIconHelper, mFileTypeLookup);
+                        mEnv.getContext(), parent, mIconHelper, mFileTypeLookup, mConfigStore);
                 break;
             default:
                 throw new IllegalStateException("Unsupported layout mode.");
@@ -136,14 +143,18 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
         boolean enabled = mEnv.isDocumentEnabled(docMimeType, docFlags);
         boolean selected = mEnv.isSelected(modelId);
         if (!enabled) {
-            assert(!selected);
+            assert (!selected);
         }
         holder.setEnabled(enabled);
         holder.setSelected(mEnv.isSelected(modelId), false);
         holder.setAction(mEnv.getDisplayState().action);
         holder.bindPreviewIcon(mEnv.getDisplayState().shouldShowPreview() && enabled,
                 view -> mEnv.getActionHandler().previewItem(holder.getItemDetails()));
-        holder.bindBriefcaseIcon(mIconHelper.shouldShowBadge(userIdIdentifier));
+        if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
+            holder.bindProfileIcon(mIconHelper.shouldShowBadge(userIdIdentifier), userIdIdentifier);
+        } else {
+            holder.bindBriefcaseIcon(mIconHelper.shouldShowBadge(userIdIdentifier));
+        }
 
         mEnv.onBindDocumentHolder(holder, cursor);
     }
