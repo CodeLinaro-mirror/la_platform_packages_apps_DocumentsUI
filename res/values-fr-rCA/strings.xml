@@ -65,9 +65,9 @@
     <string name="button_dismiss" msgid="7235249361023803349">"Fermer"</string>
     <string name="button_retry" msgid="4011461781916631389">"Réessayer"</string>
     <string name="button_clear" msgid="5412304437764369441">"Effacer"</string>
-    <string name="button_show_provider" msgid="6905880493806292753">"Afficher dans l\'application du fournisseur"</string>
+    <string name="button_show_provider" msgid="6905880493806292753">"Afficher dans l\'appli du fournisseur"</string>
     <string name="button_back" msgid="1888621708934742182">"Retour"</string>
-    <string name="not_sorted" msgid="7813496644889115530">"Non trié"</string>
+    <string name="not_sorted" msgid="7813496644889115530">"Non triés"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nom"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Résumé"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Type"</string>
@@ -92,16 +92,16 @@
     <string name="save_error" msgid="8631128801982095782">"Échec de l\'enregistrement du document"</string>
     <string name="create_error" msgid="3092144450044861994">"Échec de la création du dossier"</string>
     <string name="query_error" msgid="6625421453613879336">"Impossible de charger le contenu pour le moment"</string>
-    <string name="quiet_mode_error_title" msgid="554319751414657910">"Les applications professionnelles sont interrompues"</string>
-    <string name="quiet_mode_button" msgid="8051436551926677305">"Activer les applications professionnelles"</string>
-    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"Les applications du profil de type <xliff:g id="PROFILE">%1$s</xliff:g> sont interrompues"</string>
-    <string name="profile_quiet_mode_button" msgid="6791235010992920102">"Activer les applications de type : <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
+    <string name="quiet_mode_error_title" msgid="554319751414657910">"Les applis professionnelles sont interrompues"</string>
+    <string name="quiet_mode_button" msgid="8051436551926677305">"Activer les applis professionnelles"</string>
+    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"Les applis du profil de type <xliff:g id="PROFILE">%1$s</xliff:g> sont interrompues"</string>
+    <string name="profile_quiet_mode_button" msgid="6791235010992920102">"Activer les applis de type : <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="cant_select_work_files_error_title" msgid="6688716319549644354">"Impossible de sélectionner des fichiers professionnels"</string>
-    <string name="cant_select_work_files_error_message" msgid="683480676150690641">"Votre administrateur informatique ne vous autorise pas à accéder à des fichiers professionnels à partir d\'une application personnelle"</string>
+    <string name="cant_select_work_files_error_message" msgid="683480676150690641">"Votre administrateur informatique ne vous autorise pas à accéder à des fichiers professionnels à partir d\'une appli personnelle"</string>
     <string name="cant_select_personal_files_error_title" msgid="3200697170148617742">"Impossible de sélectionner des fichiers personnels"</string>
-    <string name="cant_select_personal_files_error_message" msgid="4105905035459118209">"Votre administrateur informatique ne vous autorise pas à accéder à des fichiers personnels à partir d\'une application professionnelle"</string>
+    <string name="cant_select_personal_files_error_message" msgid="4105905035459118209">"Votre administrateur informatique ne vous autorise pas à accéder à des fichiers personnels à partir d\'une appli professionnelle"</string>
     <string name="cant_select_cross_profile_files_error_title" msgid="17010948874969413">"Impossible de sélectionner les fichiers de type <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
-    <string name="cant_select_cross_profile_files_error_message" msgid="3815829574883844944">"Votre administrateur informatique ne vous autorise pas à accéder aux fichiers de type <xliff:g id="PROFILE_0">%1$s</xliff:g> à partir d\'une application du profil suivant : <xliff:g id="PROFILE_1">%2$s</xliff:g>"</string>
+    <string name="cant_select_cross_profile_files_error_message" msgid="3815829574883844944">"Votre administrateur informatique ne vous autorise pas à accéder aux fichiers de type <xliff:g id="PROFILE_0">%1$s</xliff:g> à partir d\'une appli du profil suivant : <xliff:g id="PROFILE_1">%2$s</xliff:g>"</string>
     <string name="cant_save_to_work_error_title" msgid="1351323070040641358">"Ιmpossible d\'enregistrer dans le profil professionnel"</string>
     <string name="cant_save_to_work_error_message" msgid="4975583233814059890">"Votre administrateur informatique ne vous autorise pas à enregistrer des fichiers personnels dans votre profil professionnel"</string>
     <string name="cant_save_to_personal_error_title" msgid="858327493694069780">"Impossible d\'enregistrer dans le profil personnel"</string>
@@ -115,7 +115,7 @@
     <string name="root_type_service" msgid="6521366147466512289">"Services de stockage"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Raccourcis"</string>
     <string name="root_type_device" msgid="1713604128005476585">"Appareils"</string>
-    <string name="root_type_apps" msgid="8646073235029886342">"Plus d\'applications"</string>
+    <string name="root_type_apps" msgid="8646073235029886342">"Plus d\'applis"</string>
     <string name="empty" msgid="5300254272613103004">"Aucun élément"</string>
     <string name="no_results" msgid="2371026325236359209">"Aucune correspondance dans %1$s"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"Impossible d\'ouvrir le fichier"</string>
@@ -131,9 +131,9 @@
     <string name="delete_notification_title" msgid="2512757431856830792">"Suppression des fichiers"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Temps restant : <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
-      <item quantity="one">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> élément en cours.</item>
-      <item quantity="many">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
-      <item quantity="other">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
+      <item quantity="one">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> élément en cours…</item>
+      <item quantity="many">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> d\'éléments en cours…</item>
+      <item quantity="other">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours…</item>
     </plurals>
     <plurals name="compress_begin" formatted="false" msgid="3534158317098678895">
       <item quantity="one">Compression de <xliff:g id="COUNT_1">%1$d</xliff:g> fichier en cours.</item>
@@ -146,9 +146,9 @@
       <item quantity="other">Extraction de <xliff:g id="COUNT_1">%1$d</xliff:g> fichiers en cours.</item>
     </plurals>
     <plurals name="move_begin" formatted="false" msgid="1464229874265756956">
-      <item quantity="one">Déplacement de <xliff:g id="COUNT_1">%1$d</xliff:g> élément en cours.</item>
-      <item quantity="many">Déplacement de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
-      <item quantity="other">Déplacement de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
+      <item quantity="one">Déplacement de <xliff:g id="COUNT_1">%1$d</xliff:g> élément en cours…</item>
+      <item quantity="many">Déplacement de <xliff:g id="COUNT_1">%1$d</xliff:g> d\'éléments en cours…</item>
+      <item quantity="other">Déplacement de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours…</item>
     </plurals>
     <plurals name="deleting" formatted="false" msgid="1729138001178158901">
       <item quantity="one">Suppression de <xliff:g id="COUNT_1">%1$d</xliff:g> élément en cours.</item>
@@ -216,7 +216,7 @@
     </plurals>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> élément copié dans le presse-papiers.</item>
-      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments copiés dans le presse-papiers.</item>
+      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> d\'éléments copiés dans le presse-papiers.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments copiés dans le presse-papiers.</item>
     </plurals>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Opération relative au fichier non prise en charge"</string>
@@ -242,19 +242,19 @@
     <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Supprimer « <xliff:g id="NAME">%1$s</xliff:g> »?"</string>
     <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Supprimer le dossier « <xliff:g id="NAME">%1$s</xliff:g> » et son contenu?"</string>
     <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> fichier?</item>
-      <item quantity="many">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> fichiers?</item>
-      <item quantity="other">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> fichiers?</item>
+      <item quantity="one">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> fichier?</item>
+      <item quantity="many">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> de fichiers?</item>
+      <item quantity="other">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> fichiers?</item>
     </plurals>
     <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> dossier et son contenu?</item>
-      <item quantity="many">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> dossiers et leur contenu?</item>
-      <item quantity="other">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> dossiers et leur contenu?</item>
+      <item quantity="one">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> dossier et son contenu?</item>
+      <item quantity="many">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> de dossiers et leurs contenus?</item>
+      <item quantity="other">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> dossiers et leurs contenus?</item>
     </plurals>
     <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> élément?</item>
-      <item quantity="many">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> éléments?</item>
-      <item quantity="other">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> éléments?</item>
+      <item quantity="one">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> élément?</item>
+      <item quantity="many">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> d\'éléments?</item>
+      <item quantity="other">Supprimer <xliff:g id="COUNT_1">%1$d</xliff:g> éléments?</item>
     </plurals>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Images"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Impossible d\'ouvrir l\'archive pour la navigation. Le fichier pourrait être corrompu ou être dans un format incompatible."</string>
@@ -299,7 +299,7 @@
     <string name="anonymous_application" msgid="7633027057951625862">"Anonyme"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Utiliser ce dossier"</string>
     <string name="open_tree_dialog_title" msgid="6339509533852318569">"Autoriser <xliff:g id="APPNAME">%1$s</xliff:g> à accéder aux fichiers dans <xliff:g id="DIRECTORY">%2$s</xliff:g>?"</string>
-    <string name="open_tree_dialog_message" msgid="4120695398430659628">"Cela permettra à <xliff:g id="APPNAME">%1$s</xliff:g> d\'accéder au contenu actuel et futur stocké dans <xliff:g id="DIRECTORY">%2$s</xliff:g>."</string>
+    <string name="open_tree_dialog_message" msgid="4120695398430659628">"Cela permettra à <xliff:g id="APPNAME">%1$s</xliff:g> d\'accéder à partir de maintenant au contenu stocké dans <xliff:g id="DIRECTORY">%2$s</xliff:g>."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Impossible d\'utiliser ce dossier"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Pour protéger votre confidentialité, choisissez un autre dossier"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Créer un dossier"</string>
@@ -308,7 +308,7 @@
     <string name="personal_tab" msgid="3878576287868528503">"Personnel"</string>
     <string name="work_tab" msgid="7265359366883747413">"Professionnel"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Travail"</string>
-    <string name="drag_from_another_app" msgid="8310249276199969905">"Vous ne pouvez pas déplacer de fichiers d\'une autre application."</string>
+    <string name="drag_from_another_app" msgid="8310249276199969905">"Vous ne pouvez pas déplacer de fichiers d\'une autre appli."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Affichage en mode grille."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Affichage en mode liste."</string>
 </resources>
