@@ -197,3 +197,6 @@
   int DocumentsDefaultTheme;
   int DocumentsTheme;
 }
+
+# Keep Apache Commons Compress classes
+-keep class org.apache.commons.compress.** { *; }
