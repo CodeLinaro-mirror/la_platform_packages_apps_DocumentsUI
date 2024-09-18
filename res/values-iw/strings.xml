@@ -109,7 +109,7 @@
     <string name="cant_save_to_cross_profile_error_title" msgid="5158984057654779022">"אי אפשר לשמור בפרופיל ה<xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="cant_save_to_cross_profile_error_message" msgid="5845240315510422749">"‏אין אישור מהאדמין ב-IT לשמור קבצים מפרופיל <xliff:g id="PROFILE_0">%1$s</xliff:g> בפרופיל ה<xliff:g id="PROFILE_1">%2$s</xliff:g> שלך"</string>
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"הפעולה הזו אסורה"</string>
-    <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"‏כדי לקבל מידע נוסף יש לפנות אל מנהל ה-IT"</string>
+    <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"‏כדי לקבל מידע נוסף, צריך לפנות אל מנהל ה-IT"</string>
     <string name="root_recent" msgid="1080156975424341623">"בשימוש לאחרונה"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"מקום פנוי: <xliff:g id="SIZE">%1$s</xliff:g>"</string>
     <string name="root_type_service" msgid="6521366147466512289">"שירותי אחסון"</string>
