@@ -94,7 +94,7 @@
     <string name="query_error" msgid="6625421453613879336">"Une honetan ezin da kargatu edukia"</string>
     <string name="quiet_mode_error_title" msgid="554319751414657910">"Pausatuta daude laneko aplikazioak"</string>
     <string name="quiet_mode_button" msgid="8051436551926677305">"Aktibatu laneko aplikazioak"</string>
-    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"Profil honetako (<xliff:g id="PROFILE">%1$s</xliff:g>) aplikazioak pausatuta daude"</string>
+    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"\"<xliff:g id="PROFILE">%1$s</xliff:g>\" profileko aplikazioak pausatuta daude"</string>
     <string name="profile_quiet_mode_button" msgid="6791235010992920102">"Aktibatu profil honetako (<xliff:g id="PROFILE">%1$s</xliff:g>) aplikazioak"</string>
     <string name="cant_select_work_files_error_title" msgid="6688716319549644354">"Ezin dira hautatu laneko fitxategiak"</string>
     <string name="cant_select_work_files_error_message" msgid="683480676150690641">"IKT saileko administratzaileak ez dizu ematen baimenik laneko fitxategiak aplikazio pertsonal batetik atzitzeko"</string>
