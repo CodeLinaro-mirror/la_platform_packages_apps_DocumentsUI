@@ -94,7 +94,7 @@
     <string name="query_error" msgid="6625421453613879336">"Impossibile caricare i contenuti al momento."</string>
     <string name="quiet_mode_error_title" msgid="554319751414657910">"Le app di lavoro sono in pausa"</string>
     <string name="quiet_mode_button" msgid="8051436551926677305">"Attiva app di lavoro"</string>
-    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"Le app <xliff:g id="PROFILE">%1$s</xliff:g> sono in pausa"</string>
+    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"Le app del profilo <xliff:g id="PROFILE">%1$s</xliff:g> sono in pausa"</string>
     <string name="profile_quiet_mode_button" msgid="6791235010992920102">"Attiva le app <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="cant_select_work_files_error_title" msgid="6688716319549644354">"Impossibile selezionare file di lavoro"</string>
     <string name="cant_select_work_files_error_message" msgid="683480676150690641">"L\'amministratore IT non consente l\'accesso ai file di lavoro da un\'app personale"</string>

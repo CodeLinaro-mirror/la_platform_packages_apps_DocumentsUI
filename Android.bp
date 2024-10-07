@@ -27,6 +27,14 @@ license {
     license_text: [],
 }
 
+java_library {
+    name: "docsui-change-ids",
+    srcs: ["src/com/android/documentsui/ChangeIds.java"],
+    libs: ["app-compat-annotations"],
+    min_sdk_version: "29",
+    sdk_version: "system_current",
+}
+
 java_defaults {
     name: "documentsui_defaults",
 
@@ -40,12 +48,9 @@ java_defaults {
         "androidx.transition_transition",
         "apache-commons-compress",
         "com.google.android.material_material",
+        "docsui-change-ids",
         "guava",
         "modules-utils-build_system",
-    ],
-
-    libs: [
-        "app-compat-annotations",
     ],
 
     privileged: true,
@@ -63,7 +68,7 @@ java_defaults {
 
 platform_compat_config {
     name: "documents-ui-compat-config",
-    src: ":DocumentsUI",
+    src: ":docsui-change-ids",
 }
 
 java_library {
@@ -101,8 +106,12 @@ android_library {
         "--auto-add-overlay",
     ],
 
+    // This is included in `documentsui_defaults`.
+    exclude_srcs: ["src/com/android/documentsui/ChangeIds.java"],
+
     srcs: [
         "src/**/*.java",
+        "src/**/*.kt",
         ":statslog-docsui-java-gen",
     ],
 
