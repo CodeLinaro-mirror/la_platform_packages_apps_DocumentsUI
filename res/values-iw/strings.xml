@@ -94,7 +94,7 @@
     <string name="query_error" msgid="6625421453613879336">"לא ניתן כרגע לטעון תוכן"</string>
     <string name="quiet_mode_error_title" msgid="554319751414657910">"האפליקציות לעבודה מושהות"</string>
     <string name="quiet_mode_button" msgid="8051436551926677305">"הפעלה של אפליקציות לעבודה"</string>
-    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"אפליקציות מפרופיל <xliff:g id="PROFILE">%1$s</xliff:g> מושהות"</string>
+    <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"אפליקציות של <xliff:g id="PROFILE">%1$s</xliff:g> מושהות"</string>
     <string name="profile_quiet_mode_button" msgid="6791235010992920102">"הפעלת אפליקציות מפרופיל <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="cant_select_work_files_error_title" msgid="6688716319549644354">"לא ניתן לבחור קובצי עבודה"</string>
     <string name="cant_select_work_files_error_message" msgid="683480676150690641">"‏מנהל ה-IT לא מאפשר לגשת לקובצי עבודה מאפליקציה לשימוש אישי"</string>
