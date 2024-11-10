@@ -41,6 +41,7 @@
     <uses-permission android:name="android.permission.READ_DEVICE_CONFIG"/>
 
     <application
+        android:name=".DocumentsUIApplication"
         android:label="@string/app_label"
         android:supportsRtl="true"
         android:allowBackup="true"
