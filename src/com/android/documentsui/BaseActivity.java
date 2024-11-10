@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +79,7 @@ import com.android.documentsui.sorting.SortModel;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.color.DynamicColors;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -178,8 +180,13 @@ public abstract class BaseActivity
 
         // ToDo Create tool to check resource version before applyStyle for the theme
         // If version code is not match, we should reset overlay package to default,
-        // in case Activity continueusly encounter resource not found exception
-        getTheme().applyStyle(R.style.DocumentsDefaultTheme, false);
+        // in case Activity continuously encounter resource not found exception.
+        if (useMaterial3() && SdkLevel.isAtLeastS()) {
+            getTheme().applyStyle(R.style.DocumentsDefaultM3Theme, false);
+            DynamicColors.applyToActivityIfAvailable(this);
+        } else {
+            getTheme().applyStyle(R.style.DocumentsDefaultTheme, false);
+        }
 
         super.onCreate(savedInstanceState);
 
