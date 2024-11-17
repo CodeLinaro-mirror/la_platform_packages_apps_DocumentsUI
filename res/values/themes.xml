@@ -77,6 +77,36 @@
         <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
     </style>
 
+    <!-- Theme used for Material 3 uplift, hidden behind the use_material3 flag. -->
+    <style name="DocumentsDefaultM3Theme" parent="@style/Theme.Material3.DynamicColors.DayNight.NoActionBar">
+
+        <!-- This only used by support lib, not allow to overlay -->
+        <item name="windowActionBar">false</item>
+        <item name="windowActionModeOverlay">true</item>
+
+        <!-- For material design widget, chips, buttons, not support attr-->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
+
+        <!-- TODO need to solve the error handle in GridItemThumbnail -->
+        <item name="gridItemTint">@color/item_doc_grid_tint</item>
+
+        <item name="actionBarTheme">@style/ActionBarTheme</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+        <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
+        <item name="materialButtonStyle">@style/MaterialButton</item>
+        <item name="materialButtonOutlinedStyle">@style/MaterialOutlinedButton</item>
+        <item name="materialCardViewStyle">@style/CardViewStyle</item>
+        <item name="materialAlertDialogTheme">@style/MaterialAlertDialogTheme</item>
+        <item name="queryBackground">@color/menu_search_background</item>
+        <item name="snackbarButtonStyle">@style/SnackbarButtonStyle</item>
+        <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
+    </style>
+
     <style name="TabTheme" parent="@android:style/Theme.DeviceDefault.DayNight">
         <item name="colorPrimary">@color/edge_effect</item>
     </style>
