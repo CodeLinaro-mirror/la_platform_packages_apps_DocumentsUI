@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<!-- Measurement System Tokens, Version: 20241113-v1 -->
+<!-- Measurement System Tokens, Version: 20241119-dbv3 -->
 <resources>
     <!--  Space tokens  -->
     <dimen name="space_none">0</dimen>
@@ -32,7 +32,9 @@
     <dimen name="space_medium_1">32dp</dimen>
     <dimen name="space_medium_2">36dp</dimen>
     <dimen name="space_medium_3">40dp</dimen>
-    <dimen name="space_medium_4">48dp</dimen>
+    <dimen name="space_medium_4">44dp</dimen>
+    <dimen name="space_medium_5">48dp</dimen>
+    <dimen name="space_medium_6">52dp</dimen>
     <dimen name="space_large_1">60dp</dimen>
     <dimen name="space_large_2">64dp</dimen>
     <dimen name="space_large_3">72dp</dimen>
