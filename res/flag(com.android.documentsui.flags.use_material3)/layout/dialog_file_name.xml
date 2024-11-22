@@ -27,9 +27,7 @@
         android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
         android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
         android:layout_marginTop="@dimen/dialog_content_padding_top"
-        android:layout_marginBottom="@dimen/dialog_content_padding_bottom"
-        android:layout_centerInParent="true"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        android:layout_marginBottom="@dimen/dialog_content_padding_bottom">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@android:id/text1"
