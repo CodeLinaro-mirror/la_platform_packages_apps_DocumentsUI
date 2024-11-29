@@ -23,8 +23,7 @@
     <com.android.documentsui.HorizontalBreadcrumb
         android:id="@+id/horizontal_breadcrumb"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/colorBackground"/>
+        android:layout_height="wrap_content" />
 
     <!-- used for search chip. -->
     <include layout="@layout/search_chip_row"/>
