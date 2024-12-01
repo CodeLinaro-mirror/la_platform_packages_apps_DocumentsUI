@@ -181,11 +181,10 @@ public abstract class BaseActivity
         // ToDo Create tool to check resource version before applyStyle for the theme
         // If version code is not match, we should reset overlay package to default,
         // in case Activity continuously encounter resource not found exception.
+        getTheme().applyStyle(R.style.DocumentsDefaultTheme, false);
+
         if (useMaterial3() && SdkLevel.isAtLeastS()) {
-            getTheme().applyStyle(R.style.DocumentsDefaultM3Theme, false);
             DynamicColors.applyToActivityIfAvailable(this);
-        } else {
-            getTheme().applyStyle(R.style.DocumentsDefaultTheme, false);
         }
 
         super.onCreate(savedInstanceState);
