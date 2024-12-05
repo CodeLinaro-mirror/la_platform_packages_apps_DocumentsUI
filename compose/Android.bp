@@ -37,8 +37,10 @@ android_library {
         "androidx.compose.runtime_runtime",
         "androidx.compose.ui_ui",
         "androidx.core_core-ktx",
+        "androidx.hilt_hilt-navigation-compose",
         "androidx.lifecycle_lifecycle-runtime-compose",
         "androidx.lifecycle_lifecycle-runtime-ktx",
+        "hilt_android",
         "modules-utils-build_system",
     ],
 
