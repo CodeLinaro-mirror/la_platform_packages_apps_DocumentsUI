@@ -20,15 +20,10 @@
     android:layout_height="wrap_content"
     android:scrollbars="none">
 
-    <FrameLayout
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/search_chip_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <LinearLayout
-            android:id="@+id/search_chip_group"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/search_chip_group_margin"
-            android:layout_marginEnd="@dimen/search_chip_group_margin"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/search_chip_group_margin_horizontal"
+        android:paddingVertical="@dimen/search_chip_group_margin_vertical"/>
 </HorizontalScrollView>

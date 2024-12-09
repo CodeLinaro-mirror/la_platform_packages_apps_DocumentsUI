@@ -16,7 +16,12 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true" android:color="?android:attr/colorSecondary"/>
-    <item android:state_enabled="true" android:color="?android:attr/colorBackground"/>
-    <item android:state_enabled="false" android:color="@color/chip_background_disable_color"/>
+    <!-- Disabled -->
+    <item android:color="@android:color/transparent" android:state_enabled="false"/>
+
+    <!-- Selected -->
+    <item android:color="?attr/colorSecondaryContainer" android:state_selected="true"/>
+
+    <!-- Not selected: different from default value -->
+    <item android:color="@android:color/transparent" />
 </selector>
