@@ -124,5 +124,6 @@
         <item name="android:textAppearance">@style/SearchChipText</item>
         <item name="chipBackgroundColor">@color/search_chip_background_color</item>
         <item name="chipStrokeColor">@color/search_chip_stroke_color</item>
+        <item name="chipCornerRadius">@dimen/search_chip_radius</item>
     </style>
 </resources>

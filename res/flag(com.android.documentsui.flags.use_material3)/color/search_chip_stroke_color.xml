@@ -20,7 +20,7 @@
     <item android:alpha="0.12" android:color="?attr/colorOnSurface" android:state_enabled="false"/>
 
     <!-- Focused: different from default value -->
-    <item android:color="?attr/colorPrimary" android:state_focused="true"/>
+    <item android:color="?attr/colorSecondary" android:state_focused="true"/>
 
     <!-- Selected -->
     <item android:color="@android:color/transparent" android:state_selected="true"/>
