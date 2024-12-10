@@ -37,8 +37,7 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="SearchChipText">
-        <item name="android:textSize">14sp</item>
+    <style name="SearchChipText" parent="@style/TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 

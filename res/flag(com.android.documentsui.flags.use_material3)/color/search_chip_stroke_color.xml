@@ -16,8 +16,15 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true" android:color="@android:color/transparent"/>
-    <item android:state_pressed="true" android:color="@android:color/transparent"/>
-    <item android:state_enabled="true" android:color="?android:strokeColor"/>
-    <item android:state_enabled="false" android:color="@android:color/transparent"/>
+    <!-- Disabled -->
+    <item android:alpha="0.12" android:color="?attr/colorOnSurface" android:state_enabled="false"/>
+
+    <!-- Focused: different from default value -->
+    <item android:color="?attr/colorSecondary" android:state_focused="true"/>
+
+    <!-- Selected -->
+    <item android:color="@android:color/transparent" android:state_selected="true"/>
+
+    <!-- Other states -->
+    <item android:color="?attr/colorOutline"/>
 </selector>
