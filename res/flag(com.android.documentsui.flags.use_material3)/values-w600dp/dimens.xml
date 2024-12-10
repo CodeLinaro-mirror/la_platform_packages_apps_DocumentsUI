@@ -16,5 +16,4 @@
 
 <resources>
     <dimen name="search_chip_group_margin_horizontal">@dimen/space_medium_1</dimen>
-    <dimen name="search_chip_group_margin_vertical">@dimen/space_small_1</dimen>
 </resources>
