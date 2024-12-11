@@ -100,7 +100,7 @@
     <!-- block end -->
     <dimen name="search_chip_radius">8dp</dimen>
     <dimen name="search_chip_group_margin_horizontal">@dimen/space_small_4</dimen>
-    <dimen name="search_chip_group_margin_vertical">@dimen/space_small_1</dimen>
+    <dimen name="search_chip_group_margin_vertical">@dimen/space_extra_small_4</dimen>
 
     <dimen name="dialog_content_padding_top">18dp</dimen>
     <dimen name="dialog_content_padding_bottom">24dp</dimen>
