@@ -14,6 +14,17 @@
      limitations under the License.
 -->
 
-<resources>
-    <dimen name="search_chip_group_margin_horizontal">@dimen/space_medium_1</dimen>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/root_menu_eject_root"
+        android:title="@string/menu_eject_root" />
+    <item
+        android:id="@+id/root_menu_open_in_new_window"
+        android:title="@string/menu_open_in_new_window" />
+    <item
+        android:id="@+id/root_menu_paste_into_folder"
+        android:title="@string/menu_paste_into_folder" />
+    <item
+        android:id="@+id/root_menu_settings"
+        android:title="@string/menu_settings" />
+</menu>
