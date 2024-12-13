@@ -13,7 +13,13 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
+<!-- Dimensions/sizes for size Medium (>=600dp && <900dp). -->
 <resources>
-    <dimen name="search_chip_group_margin_horizontal">@dimen/space_medium_1</dimen>
+    <dimen name="main_container_padding_start">@dimen/space_medium_1</dimen>
+    <dimen name="main_container_padding_end">@dimen/space_medium_1</dimen>
+    <!-- Main margin is set by main_container_padding_start for the menu button, here is for
+    the space between the button the text/title, but since on this layout we don't have the button,
+    we zero here, to avoid pushing the title further. -->
+    <dimen name="search_bar_text_margin_start">0dp</dimen>
 </resources>
+

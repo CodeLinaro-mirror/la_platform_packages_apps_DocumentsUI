@@ -24,6 +24,6 @@
         android:id="@+id/search_chip_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/search_chip_group_margin_horizontal"
-        android:paddingVertical="@dimen/search_chip_group_margin_vertical"/>
+        android:paddingHorizontal="@dimen/main_container_padding_start"
+        android:paddingVertical="@dimen/search_chip_group_margin_vertical" />
 </HorizontalScrollView>

@@ -37,17 +37,10 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_margin="@dimen/search_bar_margin"
-            android:background="?android:attr/colorBackground"
-            android:theme="?actionBarTheme"
-            android:popupTheme="?actionBarPopupTheme"
-            android:elevation="@dimen/search_bar_elevation"
-            app:collapseContentDescription="@string/button_back"
-            app:titleTextAppearance="@style/ToolbarTitle"
+            android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin">
 
             <TextView
@@ -58,7 +51,7 @@
                 android:text="@string/search_bar_hint"
                 android:textAppearance="@style/SearchBarTitle" />
 
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
