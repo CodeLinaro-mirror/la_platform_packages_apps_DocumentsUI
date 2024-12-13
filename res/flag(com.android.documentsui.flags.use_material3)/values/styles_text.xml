@@ -82,14 +82,12 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuPrimary" parent="@style/TextAppearance.Material3.BodyMedium">
-        <item name="android:textSize">14sp</item>
+    <style name="DrawerMenuPrimary" parent="@style/TextAppearance.Material3.LabelLarge">
         <item name="android:textColor">@color/item_root_primary_text</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuSecondary" parent="@style/TextAppearance.Material3.BodyMedium">
-        <item name="android:textSize">12sp</item>
+    <style name="DrawerMenuSecondary" parent="@style/TextAppearance.Material3.BodySmall">
         <item name="android:textColor">@color/item_root_secondary_text</item>
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>

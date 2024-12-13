@@ -21,7 +21,6 @@
     <!-- DocumentsTheme is allow customize by run time overlay -->
     <style name="DocumentsTheme" parent="@android:style/Theme.DeviceDefault.DocumentsUI">
 
-        <item name="android:actionBarSize">@dimen/action_bar_size</item>
         <item name="android:actionModeBackground">?android:attr/colorBackground</item>
 
         <!-- Color section -->
@@ -62,6 +61,8 @@
         <item name="gridItemTint">@color/item_doc_grid_tint</item>
 
         <item name="actionBarTheme">@style/ActionBarTheme</item>
+        <item name="toolbarStyle">@style/ToolbarStyles</item>
+        <item name="toolbarNavigationButtonStyle">@style/HamburgerMenuButtonStyle</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
         <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
