@@ -29,9 +29,20 @@
     <!-- This gets overridden for specific platform versions and/or configs -->
     <style name="ActionBarTheme" parent="@style/ActionBarThemeCommon"/>
 
+    <style name="HamburgerMenuButtonStyle" parent="@style/Widget.Material3.Search.Toolbar.Button.Navigation">
+        <item name="android:maxWidth">@dimen/icon_size_headline_large</item>
+        <item name="android:maxHeight">@dimen/icon_size_headline_large</item>
+    </style>
+
+    <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">
+        <item name="android:paddingStart">@dimen/main_container_padding_start</item>
+        <item name="android:layout_marginTop">@dimen/main_container_margin_top</item>
+        <item name="contentInsetStart">@dimen/toolbar_content_inset_start</item>
+        <item name="contentInsetStartWithNavigation">@dimen/toolbar_content_inset_start</item>
+        <item name="titleMarginStart">@dimen/search_bar_text_margin_start</item>
+    </style>
+
     <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
-        <!-- attr "height" was used by support lib should not in overlay scope -->
-        <item name="height">@dimen/action_bar_size</item>
         <item name="titleTextStyle">@style/ActionModeTitle</item>
         <item name="android:layout_margin">@dimen/search_bar_margin</item>
     </style>
@@ -125,5 +136,19 @@
         <item name="chipBackgroundColor">@color/search_chip_background_color</item>
         <item name="chipStrokeColor">@color/search_chip_stroke_color</item>
         <item name="chipCornerRadius">@dimen/search_chip_radius</item>
+    </style>
+
+    <style name="DrawerStyle" parent="">
+        <item name="android:background">?attr/colorSurfaceContainer</item>
+        <item name="android:layout_marginHorizontal">@dimen/drawer_margin_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/drawer_margin_top</item>
+        <item name="android:layout_marginBottom">@dimen/drawer_margin_bottom</item>
+        <item name="android:dividerHeight">@dimen/drawer_item_vertical_margin</item>
+    </style>
+
+    <style name="DrawerItemStyle" parent="">
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:background">@drawable/root_item_background</item>
     </style>
 </resources>

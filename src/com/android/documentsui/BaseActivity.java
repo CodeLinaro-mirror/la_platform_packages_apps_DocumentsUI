@@ -440,9 +440,10 @@ public abstract class BaseActivity
         boolean showSearchBar = getResources().getBoolean(R.bool.show_search_bar);
         mSearchManager.install(menu, fullBarSearch, showSearchBar);
 
+        // Remove the subMenu when material3 is launched b/379776735.
         final ActionMenuView subMenuView = findViewById(R.id.sub_menu);
         // If size is 0, it means the menu has not inflated and it should only do once.
-        if (subMenuView.getMenu().size() == 0) {
+        if (subMenuView != null && subMenuView.getMenu().size() == 0) {
             subMenuView.setOnMenuItemClickListener(this::onOptionsItemSelected);
             getMenuInflater().inflate(R.menu.sub_menu, subMenuView.getMenu());
         }
@@ -455,8 +456,14 @@ public abstract class BaseActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         mSearchManager.showMenu(mState.stack);
-        final ActionMenuView subMenuView = findViewById(R.id.sub_menu);
-        mInjector.menuManager.updateSubMenu(subMenuView.getMenu());
+        // Remove the subMenu when material3 is launched b/379776735.
+        if (useMaterial3()) {
+            mInjector.menuManager.updateSubMenu(null);
+        } else {
+            final ActionMenuView subMenuView = findViewById(R.id.sub_menu);
+            mInjector.menuManager.updateSubMenu(subMenuView.getMenu());
+        }
+
         return true;
     }
 
@@ -759,8 +766,13 @@ public abstract class BaseActivity
         LocalPreferences.setViewMode(this, getCurrentRoot(), mode);
         mState.derivedMode = mode;
 
-        final ActionMenuView subMenuView = findViewById(R.id.sub_menu);
-        mInjector.menuManager.updateSubMenu(subMenuView.getMenu());
+        // Remove the subMenu when material3 is launched b/379776735.
+        if (useMaterial3()) {
+            mInjector.menuManager.updateSubMenu(null);
+        } else {
+            final ActionMenuView subMenuView = findViewById(R.id.sub_menu);
+            mInjector.menuManager.updateSubMenu(subMenuView.getMenu());
+        }
 
         DirectoryFragment dir = getDirectoryFragment();
         if (dir != null) {
@@ -793,6 +805,7 @@ public abstract class BaseActivity
      * @param shouldHideHeader whether to hide header container or not
      */
     public void updateHeader(boolean shouldHideHeader) {
+        // Remove headContainer when material3 is launched. b/379776735.
         View headerContainer = findViewById(R.id.header_container);
         if (headerContainer == null) {
             updateHeaderTitle();
@@ -840,8 +853,11 @@ public abstract class BaseActivity
                 break;
         }
 
+        // Remove the headerTitle when material3 is launched b/379776735.
         TextView headerTitle = findViewById(R.id.header_title);
-        headerTitle.setText(result);
+        if (headerTitle != null) {
+            headerTitle.setText(result);
+        }
     }
 
     private String getHeaderRecentTitle() {
