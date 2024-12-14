@@ -37,49 +37,42 @@
             android:orientation="horizontal"
             android:baselineAligned="false">
 
+            <!-- Navigation: left hand side. -->
             <FrameLayout
                 android:id="@+id/container_roots"
                 android:layout_width="256dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/space_medium_1"
                 />
 
+            <!-- Main container for the right hand side. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:background="@drawable/main_container_background"
-                android:layout_margin="@dimen/space_small_1"
-                android:layout_marginStart="0dp">
+                android:layout_marginBottom="@dimen/space_extra_small_6"
+                android:layout_marginTop="@dimen/main_container_margin_top"
+                android:layout_marginEnd="@dimen/main_container_margin_end">
 
-                <androidx.appcompat.widget.Toolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="?android:attr/actionBarSize"
-                    android:layout_margin="@dimen/search_bar_margin"
-                    android:elevation="3dp"
-                    android:popupTheme="?actionBarPopupTheme"
-                    android:theme="?actionBarTheme"
-                    app:collapseContentDescription="@string/button_back"
-                    app:titleTextAppearance="@style/ToolbarTitle">
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_marginTop="@dimen/action_bar_margin">
 
                     <TextView
                         android:id="@+id/searchbar_title"
                         android:layout_width="match_parent"
                         android:layout_height="?android:attr/actionBarSize"
-                        android:layout_marginEnd="@dimen/search_bar_text_margin_end"
-                        android:layout_marginStart="@dimen/search_bar_text_margin_start"
-                        android:drawablePadding="@dimen/search_bar_icon_padding"
-                        android:drawableStart="@drawable/ic_menu_search"
                         android:gravity="center_vertical"
-                        android:paddingStart="@dimen/search_bar_icon_padding"
                         android:text="@string/search_bar_hint"
                         android:textAppearance="@style/SearchBarTitle" />
 
-                </androidx.appcompat.widget.Toolbar>
+                </com.google.android.material.appbar.MaterialToolbar>
 
                 <include layout="@layout/directory_header" />
 
+                <!-- Main list area (file list/grid or search results). -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -98,6 +91,12 @@
                         android:layout_height="match_parent" />
 
                 </FrameLayout>
+
+                <!-- Footer of right hand side: Breadcrumbs and Picker footer. -->
+                <com.android.documentsui.HorizontalBreadcrumb
+                    android:id="@+id/horizontal_breadcrumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/container_save"
