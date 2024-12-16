@@ -29,9 +29,20 @@
     <!-- This gets overridden for specific platform versions and/or configs -->
     <style name="ActionBarTheme" parent="@style/ActionBarThemeCommon"/>
 
+    <style name="HamburgerMenuButtonStyle" parent="@style/Widget.Material3.Search.Toolbar.Button.Navigation">
+        <item name="android:maxWidth">@dimen/icon_size_headline_large</item>
+        <item name="android:maxHeight">@dimen/icon_size_headline_large</item>
+    </style>
+
+    <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">
+        <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
+        <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>
+        <item name="contentInsetStart">@dimen/toolbar_content_inset_start</item>
+        <item name="contentInsetStartWithNavigation">@dimen/toolbar_content_inset_start</item>
+        <item name="titleMarginStart">@dimen/search_bar_text_margin_start</item>
+    </style>
+
     <style name="ActionModeStyle" parent="Widget.AppCompat.ActionMode">
-        <!-- attr "height" was used by support lib should not in overlay scope -->
-        <item name="height">@dimen/action_bar_size</item>
         <item name="titleTextStyle">@style/ActionModeTitle</item>
         <item name="android:layout_margin">@dimen/search_bar_margin</item>
     </style>
@@ -80,8 +91,6 @@
     </style>
 
     <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textSize">20sp</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
@@ -95,7 +104,6 @@
 
     <style name="DialogTextButton" parent="@style/Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
-        <item name="android:textColor">?android:attr/colorAccent</item>
     </style>
 
     <style name="EmptyStateButton" parent="@style/Widget.Material3.Button.TextButton">
@@ -107,16 +115,41 @@
         <item name="buttonBarNegativeButtonStyle">@style/DialogTextButton</item>
     </style>
 
-    <style name="MaterialAlertDialogStyle" parent="@style/MaterialAlertDialog.Material3">
-        <item name="backgroundInsetTop">12dp</item>
-        <item name="backgroundInsetBottom">12dp</item>
-    </style>
-
     <style name="MaterialAlertDialogTheme" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog.Centered">
-        <item name="android:dialogCornerRadius">@dimen/grid_item_radius</item>
-        <item name="alertDialogStyle">@style/MaterialAlertDialogStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogTextButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/DialogTextButton</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogTitleStyle</item>
+    </style>
+
+    <style name="SearchChipItemStyle" parent="@style/Widget.Material3.Chip.Filter">
+        <item name="android:textAppearance">@style/SearchChipText</item>
+        <item name="chipBackgroundColor">@color/search_chip_background_color</item>
+        <item name="chipStrokeColor">@color/search_chip_stroke_color</item>
+        <item name="chipCornerRadius">@dimen/search_chip_radius</item>
+    </style>
+
+    <style name="DrawerStyle" parent="">
+        <item name="android:background">?attr/colorSurfaceContainer</item>
+        <!-- Use padding together with the "outsideOverlay" scrollbar style to to make sure the
+            scrollbar appears on the edge of the container, and scrollbar trigger area doesn't
+            affect the hover effect of the views (e.g. action icon) on the edge.
+         -->
+        <item name="android:paddingHorizontal">@dimen/drawer_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/drawer_padding_top</item>
+        <item name="android:paddingBottom">@dimen/drawer_padding_bottom</item>
+        <item name="android:dividerHeight">@dimen/drawer_item_vertical_margin</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
+    <style name="DrawerItemStyle" parent="">
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:background">@drawable/root_item_background</item>
+    </style>
+
+    <style name="DrawerItemActionIconStyle" parent="@style/Widget.Material3.Button.IconButton">
+        <item name="android:layout_marginStart">@dimen/drawer_item_action_icon_margin_start</item>
+        <item name="strokeColor">?attr/colorSecondary</item>
     </style>
 </resources>
