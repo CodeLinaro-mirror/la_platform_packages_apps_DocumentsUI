@@ -15,6 +15,7 @@
   limitations under the License.
   -->
 
+<!-- TODO(b/379776735): remove this file after M3 uplift -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Selected. -->
     <item android:state_pressed="true" android:state_selected="true"
