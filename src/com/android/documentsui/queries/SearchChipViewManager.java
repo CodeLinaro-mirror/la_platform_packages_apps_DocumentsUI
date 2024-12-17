@@ -454,13 +454,13 @@ public class SearchChipViewManager {
                                 .getResources()
                                 .getDimensionPixelSize(R.dimen.search_chip_spacing);
         final boolean isRtl = mChipGroup.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-        final float chipMarginStartEnd =
+        final float chipGroupPaddingStart =
                 useMaterial3()
-                        ? 0
+                        ? mChipGroup.getPaddingStart()
                         : mChipGroup
                                 .getResources()
                                 .getDimensionPixelSize(R.dimen.search_chip_half_spacing);
-        float lastX = isRtl ? mChipGroup.getWidth() - chipMarginStartEnd : chipMarginStartEnd;
+        float lastX = isRtl ? mChipGroup.getWidth() - chipGroupPaddingStart : chipGroupPaddingStart;
 
         // remove all chips except current clicked chip to avoid losing
         // accessibility focus.
