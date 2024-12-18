@@ -35,7 +35,10 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:paddingTop="@dimen/layout_padding_top"
+            android:paddingBottom="@dimen/layout_padding_bottom"
+            android:paddingEnd="@dimen/layout_padding_end">
 
             <!-- Navigation: left hand side. -->
             <FrameLayout
@@ -50,9 +53,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:background="@drawable/main_container_background"
-                android:layout_marginBottom="@dimen/space_extra_small_6"
-                android:layout_marginTop="@dimen/main_container_margin_top"
-                android:layout_marginEnd="@dimen/main_container_margin_end">
+                android:paddingTop="@dimen/main_container_padding_top">
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"

@@ -1012,9 +1012,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mActions.showSortDialog();
             return true;
         }
+
         if (DEBUG) {
-            Log.d(TAG, "Unhandled menu item selected: " + item);
+            Log.d(TAG, "Cannot handle unexpected menu item " + id);
         }
+
         return false;
     }
 
