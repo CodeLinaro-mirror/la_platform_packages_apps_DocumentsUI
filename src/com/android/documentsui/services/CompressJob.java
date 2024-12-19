@@ -115,11 +115,11 @@ final class CompressJob extends CopyJob {
                     mArchiveUri, ParcelFileDescriptor.MODE_WRITE_ONLY), UserId.DEFAULT_USER);
             ArchivesProvider.acquireArchive(getClient(mDstInfo), mDstInfo.derivedUri);
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "Failed to create dstInfo.", e);
+            Log.e(TAG, "Cannot create document info", e);
             failureCount = mResourceUris.getItemCount();
             return false;
         } catch (RemoteException e) {
-            Log.e(TAG, "Failed to acquire the archive.", e);
+            Log.e(TAG, "Cannot acquire archive", e);
             failureCount = mResourceUris.getItemCount();
             return false;
         }
@@ -132,7 +132,7 @@ final class CompressJob extends CopyJob {
         try {
             ArchivesProvider.releaseArchive(getClient(mDstInfo), mDstInfo.derivedUri);
         } catch (RemoteException e) {
-            Log.e(TAG, "Failed to release the archive.");
+            Log.e(TAG, "Cannot release archive", e);
         }
 
         // Remove the archive file in case of an error.
@@ -141,7 +141,7 @@ final class CompressJob extends CopyJob {
                 DocumentsContract.deleteDocument(wrap(getClient(mArchiveUri)), mArchiveUri);
             }
         } catch (RemoteException | FileNotFoundException e) {
-            Log.w(TAG, "Failed to cleanup after compress error: " + mDstInfo.toString(), e);
+            Log.w(TAG, "Cannot clean up after compress error: " + mDstInfo.toString(), e);
         }
 
         super.finish();
