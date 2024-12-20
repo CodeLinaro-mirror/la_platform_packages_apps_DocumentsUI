@@ -14,12 +14,9 @@
      limitations under the License.
 -->
 
-<com.android.documentsui.sidebar.RootsList xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/roots_list"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:keyboardNavigationCluster="true"
-    android:divider="@null"
-    android:focusable="false"
-    android:descendantFocusability="afterDescendants"
-    style="@style/DrawerStyle"/>
+<resources>
+    <!-- Indicates if search view is taking the whole toolbar space -->
+    <bool name="full_bar_search_view">false</bool>
+
+    <string name="scrolling_behavior" translatable="false">@string/appbar_scrolling_view_behavior</string>
+</resources>

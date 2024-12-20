@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright 2018 The Android Open Source Project
+  Copyright 2024 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,15 +16,7 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Disabled -->
-    <item android:alpha="0.12" android:color="?attr/colorOnSurface" android:state_enabled="false"/>
-
-    <!-- Focused: different from default value -->
-    <item android:color="?attr/colorSecondary" android:state_focused="true"/>
-
-    <!-- Selected -->
-    <item android:color="@android:color/transparent" android:state_selected="true"/>
-
-    <!-- Other states -->
-    <item android:color="?attr/colorOutline"/>
+    <item android:state_activated="true"
+        android:alpha="@dimen/ripple_overlay_alpha" android:color="?attr/colorOnSecondaryContainer"/>
+    <item android:alpha="@dimen/ripple_overlay_alpha" android:color="?attr/colorOnSurface"/>
 </selector>
