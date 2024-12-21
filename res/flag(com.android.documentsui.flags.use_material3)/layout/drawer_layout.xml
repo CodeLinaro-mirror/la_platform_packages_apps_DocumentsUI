@@ -60,13 +60,20 @@
                     android:layout_height="match_parent"/>
             </FrameLayout>
 
+            <com.android.documentsui.HorizontalBreadcrumb
+                android:id="@+id/horizontal_breadcrumb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                />
+
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/container_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
                 android:background="?android:attr/colorBackgroundFloating"
-                android:elevation="8dp" />
+                />
 
             <include layout="@layout/directory_app_bar"/>
 
@@ -81,7 +88,7 @@
             android:elevation="0dp"
             android:background="?android:attr/colorBackground">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/roots_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
