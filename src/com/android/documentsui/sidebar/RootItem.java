@@ -40,6 +40,8 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.Objects;
 
 /**
@@ -98,27 +100,53 @@ public class RootItem extends Item {
     }
 
     protected final void bindAction(View view, int visibility, int iconId, String description) {
-        final ImageView actionIcon = (ImageView) view.findViewById(R.id.action_icon);
-        final View actionIconArea = view.findViewById(R.id.action_icon_area);
+        if (useMaterial3()) {
+            final MaterialButton actionIcon = view.findViewById(R.id.action_icon);
 
-        // We don't need vertical divider between the label and action icon in M3.
-        if (!useMaterial3()) {
+            actionIcon.setVisibility(visibility);
+            actionIcon.setOnClickListener(visibility == View.VISIBLE ? this::onActionClick : null);
+            actionIcon.setOnFocusChangeListener(
+                    visibility == View.VISIBLE ? this::onActionIconFocusChange : null);
+            if (description != null) {
+                actionIcon.setContentDescription(description);
+            }
+            if (iconId > 0) {
+                actionIcon.setIconResource(iconId);
+            }
+        } else {
+            final ImageView actionIcon = (ImageView) view.findViewById(R.id.action_icon);
             final View verticalDivider = view.findViewById(R.id.vertical_divider);
+            final View actionIconArea = view.findViewById(R.id.action_icon_area);
+
             verticalDivider.setVisibility(visibility);
-        }
-        actionIconArea.setVisibility(visibility);
-        actionIconArea.setOnClickListener(visibility == View.VISIBLE ? this::onActionClick : null);
-        if (description != null) {
-            actionIconArea.setContentDescription(description);
-        }
-        if (iconId > 0) {
-            actionIcon.setImageDrawable(IconUtils.applyTintColor(view.getContext(), iconId,
-                    R.color.item_action_icon));
+            actionIconArea.setVisibility(visibility);
+            actionIconArea.setOnClickListener(
+                    visibility == View.VISIBLE ? this::onActionClick : null);
+            if (description != null) {
+                actionIconArea.setContentDescription(description);
+            }
+            if (iconId > 0) {
+                actionIcon.setImageDrawable(
+                        IconUtils.applyTintColor(
+                                view.getContext(), iconId, R.color.item_action_icon));
+            }
         }
     }
 
     protected void onActionClick(View view) {
         RootsFragment.ejectClicked(view, root, mActionHandler);
+    }
+
+    /** When the action icon is focused, adding a focus ring indicator using Stroke. */
+    protected void onActionIconFocusChange(View view, boolean hasFocus) {
+        MaterialButton actionIcon = (MaterialButton) view;
+        if (hasFocus) {
+            final int focusRingWidth =
+                    actionIcon.getResources().getDimensionPixelSize(R.dimen.focus_ring_width);
+            actionIcon.setStrokeWidth(focusRingWidth);
+        } else {
+            actionIcon.setStrokeWidth(0);
+        }
     }
 
     protected final void bindIconAndTitle(View view) {

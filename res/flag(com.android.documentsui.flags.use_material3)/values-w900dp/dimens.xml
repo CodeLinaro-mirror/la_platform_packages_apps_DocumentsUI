@@ -30,10 +30,7 @@
 
     <dimen name="main_container_padding_start">@dimen/space_medium_5</dimen>
     <dimen name="main_container_padding_end">@dimen/space_medium_5</dimen>
-    <dimen name="main_container_margin_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="main_container_padding_top">@dimen/space_extra_small_6</dimen>
 
-    <!-- Main margin is set by main_container_padding_start for the menu button, here is for
-    the space between the button the text/title, but since on this layout we don't have the button,
-    we zero here, to avoid pushing the title further. -->
-    <dimen name="search_bar_text_margin_start">0dp</dimen>
+    <dimen name="toolbar_padding_end">@dimen/space_small_3</dimen>
 </resources>

@@ -35,8 +35,8 @@
     </style>
 
     <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">
-        <item name="android:paddingStart">@dimen/main_container_padding_start</item>
-        <item name="android:layout_marginTop">@dimen/main_container_margin_top</item>
+        <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
+        <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>
         <item name="contentInsetStart">@dimen/toolbar_content_inset_start</item>
         <item name="contentInsetStartWithNavigation">@dimen/toolbar_content_inset_start</item>
         <item name="titleMarginStart">@dimen/search_bar_text_margin_start</item>
@@ -91,8 +91,6 @@
     </style>
 
     <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
-        <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textSize">20sp</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
@@ -106,7 +104,6 @@
 
     <style name="DialogTextButton" parent="@style/Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
-        <item name="android:textColor">?android:attr/colorAccent</item>
     </style>
 
     <style name="EmptyStateButton" parent="@style/Widget.Material3.Button.TextButton">
@@ -118,14 +115,7 @@
         <item name="buttonBarNegativeButtonStyle">@style/DialogTextButton</item>
     </style>
 
-    <style name="MaterialAlertDialogStyle" parent="@style/MaterialAlertDialog.Material3">
-        <item name="backgroundInsetTop">12dp</item>
-        <item name="backgroundInsetBottom">12dp</item>
-    </style>
-
     <style name="MaterialAlertDialogTheme" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog.Centered">
-        <item name="android:dialogCornerRadius">@dimen/grid_item_radius</item>
-        <item name="alertDialogStyle">@style/MaterialAlertDialogStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/DialogTextButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/DialogTextButton</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogTitleStyle</item>
@@ -140,15 +130,26 @@
 
     <style name="DrawerStyle" parent="">
         <item name="android:background">?attr/colorSurfaceContainer</item>
-        <item name="android:layout_marginHorizontal">@dimen/drawer_margin_horizontal</item>
-        <item name="android:layout_marginTop">@dimen/drawer_margin_top</item>
-        <item name="android:layout_marginBottom">@dimen/drawer_margin_bottom</item>
+        <!-- Use padding together with the "outsideOverlay" scrollbar style to to make sure the
+            scrollbar appears on the edge of the container, and scrollbar trigger area doesn't
+            affect the hover effect of the views (e.g. action icon) on the edge.
+         -->
+        <item name="android:paddingHorizontal">@dimen/drawer_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/drawer_padding_top</item>
+        <item name="android:paddingBottom">@dimen/drawer_padding_bottom</item>
         <item name="android:dividerHeight">@dimen/drawer_item_vertical_margin</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:clipToPadding">false</item>
     </style>
 
     <style name="DrawerItemStyle" parent="">
         <item name="android:paddingStart">16dp</item>
         <item name="android:paddingEnd">4dp</item>
         <item name="android:background">@drawable/root_item_background</item>
+    </style>
+
+    <style name="DrawerItemActionIconStyle" parent="@style/Widget.Material3.Button.IconButton">
+        <item name="android:layout_marginStart">@dimen/drawer_item_action_icon_margin_start</item>
+        <item name="strokeColor">?attr/colorSecondary</item>
     </style>
 </resources>

@@ -69,8 +69,6 @@
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
-        <item name="materialButtonStyle">@style/MaterialButton</item>
-        <item name="materialButtonOutlinedStyle">@style/MaterialOutlinedButton</item>
         <item name="materialCardViewStyle">@style/CardViewStyle</item>
         <item name="materialAlertDialogTheme">@style/MaterialAlertDialogTheme</item>
         <item name="queryBackground">@color/menu_search_background</item>
