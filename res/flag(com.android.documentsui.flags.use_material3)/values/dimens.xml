@@ -64,7 +64,7 @@
 
     <dimen name="drawer_edge_width">12dp</dimen>
     <dimen name="drawer_padding_horizontal">@dimen/space_extra_small_6</dimen>
-    <dimen name="drawer_padding_top">@dimen/space_medium_1</dimen>
+    <dimen name="drawer_padding_top">@dimen/space_small_3</dimen>
     <dimen name="drawer_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="drawer_divider_padding_horizontal">16dp</dimen>
     <dimen name="drawer_divider_padding_vertical">@dimen/space_extra_small_4</dimen>
