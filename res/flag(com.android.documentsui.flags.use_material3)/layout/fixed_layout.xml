@@ -18,7 +18,6 @@
      floating action buttons) to operate correctly. -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinator_layout"
@@ -59,7 +58,8 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:layout_marginTop="@dimen/action_bar_margin">
+                    android:layout_marginTop="@dimen/action_bar_margin"
+                    android:touchscreenBlocksFocus="false">
 
                     <TextView
                         android:id="@+id/searchbar_title"

@@ -377,6 +377,7 @@ public class SearchChipViewManager {
 
     /**
      * When the chip is focused, adding a focus ring indicator using Stroke.
+     * TODO(b/381957932): Remove this once Material Chip supports focus ring.
      */
     private void onChipFocusChange(View v, boolean hasFocus) {
         Chip chip = (Chip) v;

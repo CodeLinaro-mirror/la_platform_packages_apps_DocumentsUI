@@ -137,7 +137,10 @@ public class RootItem extends Item {
         RootsFragment.ejectClicked(view, root, mActionHandler);
     }
 
-    /** When the action icon is focused, adding a focus ring indicator using Stroke. */
+    /**
+     * When the action icon is focused, adding a focus ring indicator using Stroke.
+     * TODO(b/381957932): Remove this once Material Button supports focus ring.
+     */
     protected void onActionIconFocusChange(View view, boolean hasFocus) {
         MaterialButton actionIcon = (MaterialButton) view;
         if (hasFocus) {
