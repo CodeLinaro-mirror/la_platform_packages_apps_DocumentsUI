@@ -16,6 +16,8 @@
 
 package com.android.documentsui.sidebar;
 
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.provider.DocumentsProvider;
@@ -97,10 +99,13 @@ public class RootItem extends Item {
 
     protected final void bindAction(View view, int visibility, int iconId, String description) {
         final ImageView actionIcon = (ImageView) view.findViewById(R.id.action_icon);
-        final View verticalDivider = view.findViewById(R.id.vertical_divider);
         final View actionIconArea = view.findViewById(R.id.action_icon_area);
 
-        verticalDivider.setVisibility(visibility);
+        // We don't need vertical divider between the label and action icon in M3.
+        if (!useMaterial3()) {
+            final View verticalDivider = view.findViewById(R.id.vertical_divider);
+            verticalDivider.setVisibility(visibility);
+        }
         actionIconArea.setVisibility(visibility);
         actionIconArea.setOnClickListener(visibility == View.VISIBLE ? this::onActionClick : null);
         if (description != null) {
