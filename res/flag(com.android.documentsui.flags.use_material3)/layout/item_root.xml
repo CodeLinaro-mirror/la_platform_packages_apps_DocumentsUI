@@ -16,6 +16,7 @@
 
 <com.android.documentsui.sidebar.RootItemView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/drawer_item_height"
@@ -68,22 +69,11 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/action_icon_area"
-        android:layout_width="@dimen/button_touch_size"
-        android:layout_height="@dimen/button_touch_size"
-        android:layout_marginStart="@dimen/drawer_item_action_icon_margin_start"
-        android:duplicateParentState="true"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/action_icon"
-            android:focusable="false"
-            android:layout_width="@dimen/root_action_icon_size"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside"/>
-
-    </FrameLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/action_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/DrawerItemActionIconStyle"
+        android:visibility="gone"/>
 
 </com.android.documentsui.sidebar.RootItemView>

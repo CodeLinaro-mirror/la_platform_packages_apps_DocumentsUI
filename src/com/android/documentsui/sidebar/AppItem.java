@@ -16,12 +16,12 @@
 
 package com.android.documentsui.sidebar;
 
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.UserManager;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,7 +30,6 @@ import com.android.documentsui.ActionHandler;
 import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.dirlist.AppsRowItemData;
 
 /**
  * An {@link Item} for apps that supports some picking actions like
@@ -84,14 +83,19 @@ public class AppItem extends Item {
         final ImageView icon = (ImageView) convertView.findViewById(android.R.id.icon);
         final TextView titleView = (TextView) convertView.findViewById(android.R.id.title);
         final TextView summary = (TextView) convertView.findViewById(android.R.id.summary);
-        final View actionIconArea = convertView.findViewById(R.id.action_icon_area);
-        final ImageView actionIcon = (ImageView) convertView.findViewById(R.id.action_icon);
 
         titleView.setText(title);
         titleView.setContentDescription(userId.getUserBadgedLabel(convertView.getContext(), title));
 
         bindIcon(icon);
-        bindActionIcon(actionIconArea, actionIcon);
+
+        // In M3, we don't show action icon for the app items, do nothing here because the icons
+        // are hidden by default.
+        if (!useMaterial3()) {
+            final View actionIconArea = convertView.findViewById(R.id.action_icon_area);
+            final ImageView actionIcon = (ImageView) convertView.findViewById(R.id.action_icon);
+            bindActionIcon(actionIconArea, actionIcon);
+        }
 
         // TODO: match existing summary behavior from disambig dialog
         summary.setVisibility(View.GONE);
