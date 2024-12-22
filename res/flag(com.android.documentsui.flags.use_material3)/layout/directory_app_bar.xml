@@ -20,7 +20,7 @@
     android:id="@+id/app_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/colorBackground">
+    android:touchscreenBlocksFocus="false">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/collapsing_toolbar"
@@ -41,7 +41,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin">
+            app:layout_collapseMode="pin"
+            android:touchscreenBlocksFocus="false">
 
             <TextView
                 android:id="@+id/searchbar_title"

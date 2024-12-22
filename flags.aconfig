@@ -17,3 +17,9 @@ flag {
     is_fixed_read_only: true
 }
 
+flag {
+    name: "zip_ng"
+    namespace: "documentsui"
+    description: "Enables the next generation ZIP functionality."
+    bug: "382550591"
+}

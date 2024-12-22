@@ -25,5 +25,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="@dimen/main_container_padding_start"
-        android:paddingVertical="@dimen/search_chip_group_margin_vertical" />
+        android:paddingVertical="@dimen/search_chip_group_padding_vertical" />
 </HorizontalScrollView>
