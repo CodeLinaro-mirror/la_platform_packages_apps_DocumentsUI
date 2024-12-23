@@ -70,11 +70,6 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuTitle" parent="@style/TextAppearance.Material3.TitleLarge">
-        <item name="android:textSize">24sp</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
-
     <style name="DrawerMenuHeader" parent="@style/TextAppearance.Material3.BodyLarge">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:textAllCaps">true</item>
