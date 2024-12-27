@@ -68,11 +68,17 @@ public class UserManagerStateTest {
     private static final String WORK = "Work";
     private static final String PRIVATE = "Private";
 
-    private final UserHandle mSystemUser = UserHandle.SYSTEM;
-    private final UserHandle mManagedUser = UserHandle.of(100);
-    private final UserHandle mPrivateUser = UserHandle.of(101);
-    private final UserHandle mOtherUser = UserHandle.of(102);
-    private final UserHandle mNormalUser = UserHandle.of(103);
+    /**
+     * Assume that the current user is SYSTEM_USER.
+     * For HSUM targets, the primary user is set as the system user.
+     */
+    private final int mCurrentUserId = UserHandle.myUserId();
+    private final UserHandle mPrimaryUser = UserHandle.of(mCurrentUserId);
+    private final UserHandle mSystemUser = mPrimaryUser == null ? UserHandle.SYSTEM : mPrimaryUser;
+    private final UserHandle mManagedUser = UserHandle.of(mCurrentUserId + 10);
+    private final UserHandle mPrivateUser = UserHandle.of(mCurrentUserId + 20);
+    private final UserHandle mOtherUser = UserHandle.of(mCurrentUserId + 30);
+    private final UserHandle mNormalUser = UserHandle.of(mCurrentUserId + 40);
 
     private final ResolveInfo mMockInfo1 = mock(ResolveInfo.class);
     private final ResolveInfo mMockInfo2 = mock(ResolveInfo.class);
