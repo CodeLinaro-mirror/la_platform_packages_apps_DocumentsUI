@@ -948,7 +948,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // Need to plum down into handling the way we do with deleteDocuments.
             mActionModeController.finishActionMode();
             return true;
-        } else if (id == R.id.action_menu_compress) {
+        } else if (id == R.id.action_menu_compress || id == R.id.dir_menu_compress) {
             transferDocuments(selection, mState.stack,
                     FileOperationService.OPERATION_COMPRESS);
             // TODO: Only finish selection mode if compress is not canceled.
@@ -1012,9 +1012,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mActions.showSortDialog();
             return true;
         }
+
         if (DEBUG) {
-            Log.d(TAG, "Unhandled menu item selected: " + item);
+            Log.d(TAG, "Cannot handle unexpected menu item " + id);
         }
+
         return false;
     }
 
