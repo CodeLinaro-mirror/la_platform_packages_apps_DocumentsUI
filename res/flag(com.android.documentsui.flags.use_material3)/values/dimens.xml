@@ -21,7 +21,7 @@
     <dimen name="tab_selector_indicator_height">2dp</dimen>
     <dimen name="profile_tab_padding">0dp</dimen>
     <dimen name="grid_container_padding">20dp</dimen>
-    <dimen name="list_container_padding">0dp</dimen>
+    <dimen name="list_container_padding">20dp</dimen>
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
@@ -92,11 +92,15 @@
     <dimen name="root_info_header_height">60dp</dimen>
     <dimen name="root_info_header_horizontal_padding">24dp</dimen>
 
+    <!-- TODO(b/379776735): remove this block after M3 uplift -->
     <dimen name="search_chip_group_margin">20dp</dimen>
     <dimen name="search_chip_spacing">8dp</dimen>
     <dimen name="search_chip_half_spacing">4dp</dimen>
     <dimen name="search_chip_icon_padding">4dp</dimen>
     <dimen name="search_chip_radius">16dp</dimen>
+    <!-- block end -->
+    <dimen name="search_chip_group_margin_horizontal">@dimen/space_small_4</dimen>
+    <dimen name="search_chip_group_margin_vertical">@dimen/space_small_1</dimen>
 
     <dimen name="dialog_content_padding_top">18dp</dimen>
     <dimen name="dialog_content_padding_bottom">24dp</dimen>
@@ -118,7 +122,7 @@
     <dimen name="search_bar_radius">8dp</dimen>
     <dimen name="search_bar_background_margin_start">0dp</dimen>
     <dimen name="search_bar_background_margin_end">0dp</dimen>
-    <dimen name="search_bar_margin">8dp</dimen>
+    <dimen name="search_bar_margin">@dimen/space_extra_small_6</dimen>
     <dimen name="search_bar_text_size">16dp</dimen>
 
     <dimen name="action_bar_elevation">3dp</dimen>
@@ -132,4 +136,6 @@
     <dimen name="cross_profile_button_corner_radius">0dp</dimen>
     <dimen name="cross_profile_button_stroke_width">0dp</dimen>
     <dimen name="cross_profile_button_message_margin_top">4dp</dimen>
+
+    <dimen name="focus_ring_width">3dp</dimen>
 </resources>
