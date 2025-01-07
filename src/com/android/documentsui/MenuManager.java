@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,12 +100,25 @@ public abstract class MenuManager {
         updateLauncher(mOptionMenu.findItem(R.id.option_menu_launcher));
         updateShowHiddenFiles(mOptionMenu.findItem(R.id.option_menu_show_hidden_files));
 
+        if (useMaterial3()) {
+            updateModePicker(mOptionMenu.findItem(R.id.sub_menu_grid),
+                    mOptionMenu.findItem(R.id.sub_menu_list));
+        }
+
         Menus.disableHiddenItems(mOptionMenu);
         mSearchManager.updateMenu();
     }
 
     public void updateSubMenu(Menu menu) {
+        // Remove the subMenu when material3 is launched b/379776735.
+        if (useMaterial3()) {
+            menu = mOptionMenu;
+            if (menu == null) {
+                return;
+            }
+        }
         updateModePicker(menu.findItem(R.id.sub_menu_grid), menu.findItem(R.id.sub_menu_list));
+
     }
 
     public void updateModel(Model model) {}

@@ -17,6 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.app.Activity;
 import android.util.Log;
@@ -134,8 +135,12 @@ public class ActionModeController extends SelectionObserver<String>
         mActivity.getWindow().setTitle(mActivity.getTitle());
 
         // Re-enable TalkBack for the toolbars, as they are no longer covered by action mode.
+        int[] toolbarIds =
+                useMaterial3()
+                        ? new int[] {R.id.toolbar}
+                        : new int[] {R.id.toolbar, R.id.roots_toolbar};
         mScope.accessibilityImportanceSetter.setAccessibilityImportance(
-                View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, R.id.toolbar, R.id.roots_toolbar);
+                View.IMPORTANT_FOR_ACCESSIBILITY_AUTO, toolbarIds);
 
         mNavigator.setActionModeActivated(false);
     }
@@ -151,10 +156,13 @@ public class ActionModeController extends SelectionObserver<String>
 
             // Hide the toolbars if action mode is enabled, so TalkBack doesn't navigate to
             // these controls when using linear navigation.
+            int[] toolbarIds =
+                    useMaterial3()
+                            ? new int[] {R.id.toolbar}
+                            : new int[] {R.id.toolbar, R.id.roots_toolbar};
             mScope.accessibilityImportanceSetter.setAccessibilityImportance(
                     View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS,
-                    R.id.toolbar,
-                    R.id.roots_toolbar);
+                    toolbarIds);
             return true;
         }
 

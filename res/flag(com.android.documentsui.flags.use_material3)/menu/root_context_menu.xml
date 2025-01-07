@@ -14,18 +14,17 @@
      limitations under the License.
 -->
 
-<resources>
-    <dimen name="grid_padding_horiz">16dp</dimen>
-    <dimen name="grid_padding_vert">16dp</dimen>
-
-    <dimen name="list_item_padding">24dp</dimen>
-    <dimen name="list_item_width">80dp</dimen>
-
-    <dimen name="max_drawer_width">320dp</dimen>
-
-    <dimen name="search_bar_background_margin_start">120dp</dimen>
-    <dimen name="search_bar_background_margin_end">120dp</dimen>
-    <dimen name="search_bar_text_margin_start">55dp</dimen>
-    <dimen name="search_bar_text_margin_end">24dp</dimen>
-    <dimen name="search_bar_icon_padding">16dp</dimen>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/root_menu_eject_root"
+        android:title="@string/menu_eject_root" />
+    <item
+        android:id="@+id/root_menu_open_in_new_window"
+        android:title="@string/menu_open_in_new_window" />
+    <item
+        android:id="@+id/root_menu_paste_into_folder"
+        android:title="@string/menu_paste_into_folder" />
+    <item
+        android:id="@+id/root_menu_settings"
+        android:title="@string/menu_settings" />
+</menu>
