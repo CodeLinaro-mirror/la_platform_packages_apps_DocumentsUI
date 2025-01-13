@@ -28,8 +28,6 @@
     <dimen name="search_bar_text_margin_end">24dp</dimen>
     <dimen name="search_bar_icon_padding">16dp</dimen>
 
-    <dimen name="main_container_padding_start">@dimen/space_medium_5</dimen>
-    <dimen name="main_container_padding_end">@dimen/space_medium_5</dimen>
     <dimen name="main_container_padding_top">@dimen/space_extra_small_6</dimen>
 
     <dimen name="toolbar_padding_end">@dimen/space_small_3</dimen>

@@ -17,6 +17,7 @@
 <resources>
     <dimen name="main_container_padding_start">@dimen/space_medium_1</dimen>
     <dimen name="main_container_padding_end">@dimen/space_medium_1</dimen>
+    <dimen name="main_container_padding_top">@dimen/space_extra_small_4</dimen>
     <!-- Main margin is set by main_container_padding_start for the menu button, here is for
     the space between the button the text/title, but since on this layout we don't have the button,
     we zero here, to avoid pushing the title further. -->
