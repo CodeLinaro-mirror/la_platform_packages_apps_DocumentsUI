@@ -116,7 +116,7 @@
     <dimen name="search_chip_group_padding_vertical">@dimen/space_extra_small_4</dimen>
     <dimen name="main_container_padding_start">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_end">@dimen/space_small_4</dimen>
-    <dimen name="main_container_padding_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="main_container_padding_top">0dp</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>
@@ -136,6 +136,8 @@
     <dimen name="apps_row_exit_icon_margin_top">2dp</dimen>
     <dimen name="apps_row_exit_icon_margin_bottom">6dp</dimen>
     <dimen name="apps_row_item_text_margin_horizontal">8dp</dimen>
+
+    <dimen name="profile_tab_radius">12dp</dimen>
 
     <dimen name="search_bar_elevation">0dp</dimen>
     <dimen name="search_bar_radius">8dp</dimen>

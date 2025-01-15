@@ -153,4 +153,14 @@
         <item name="android:layout_marginStart">@dimen/drawer_item_action_icon_margin_start</item>
         <item name="strokeColor">?attr/colorSecondary</item>
     </style>
+
+    <style name="ProfileTabStyle" parent="@style/Widget.Material3.TabLayout">
+        <!-- Use transparent bg color to hide the underline for tab layout. -->
+        <item name="android:background">@android:color/transparent</item>
+        <item name="tabIndicatorColor">?attr/colorPrimary</item>
+        <item name="tabIndicatorHeight">@dimen/tab_selector_indicator_height</item>
+        <item name="tabTextColor">?attr/colorOnSurfaceVariant</item>
+        <item name="tabSelectedTextColor">?attr/colorOnPrimaryContainer</item>
+        <item name="tabTextAppearance">@style/TabTextAppearance</item>
+    </style>
 </resources>
