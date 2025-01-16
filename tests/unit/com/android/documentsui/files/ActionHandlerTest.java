@@ -39,6 +39,9 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
+import android.platform.test.flag.junit.SetFlagsRule;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 import android.util.Pair;
@@ -59,6 +62,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.DocumentStackAsserts;
@@ -78,6 +82,7 @@ import com.google.common.collect.Lists;
 
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -102,6 +107,9 @@ public class ActionHandlerTest {
     private TestFeatures mFeatures;
     private TestConfigStore mTestConfigStore;
     private boolean refreshAnswer = false;
+
+    @Rule
+    public final SetFlagsRule mSetFlagsRule = new SetFlagsRule();
 
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
@@ -154,6 +162,33 @@ public class ActionHandlerTest {
 
         Intent actual = mActivity.startActivity.getLastValue();
         assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    public void testOpenFileFlags() {
+        mHandler.onDocumentOpened(TestEnv.FILE_GIF,
+                com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
+                com.android.documentsui.files.ActionHandler.VIEW_TYPE_REGULAR, false);
+
+        int expectedFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+        Intent actual = mActivity.startActivity.getLastValue();
+        assertEquals(expectedFlags, actual.getFlags());
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    public void testOpenFileFlagsDesktop() {
+        mHandler.onDocumentOpened(TestEnv.FILE_GIF,
+                com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
+                com.android.documentsui.files.ActionHandler.VIEW_TYPE_REGULAR, false);
+
+        int expectedFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                | Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK;
+        Intent actual = mActivity.startActivity.getLastValue();
+        assertEquals(expectedFlags, actual.getFlags());
     }
 
     @Test
