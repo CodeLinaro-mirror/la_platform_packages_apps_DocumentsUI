@@ -460,11 +460,39 @@ public class ActionHandlerTest {
     }
 
     @Test
+    public void testDocumentContextMenuOpen() throws Exception {
+        mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
+        mActivity.currentRoot = TestProvidersAccess.HOME;
+
+        // Test normal picking (i.e. double click) behaviour will quick view
+        mHandler.openDocument(TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW,
+                ActionHandler.VIEW_TYPE_REGULAR);
+        mActivity.assertActivityStarted(Intent.ACTION_QUICK_VIEW);
+
+        // And verify open via context menu will view instead
+        mHandler.openDocumentViewOnly(TestEnv.FILE_GIF);
+        mActivity.assertActivityStarted(Intent.ACTION_VIEW);
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
     public void testShowChooser() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
         mHandler.showChooserForDoc(TestEnv.FILE_PDF);
         mActivity.assertActivityStarted(Intent.ACTION_CHOOSER);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    public void testShowChooserDesktop() throws Exception {
+        mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
+
+        mHandler.showChooserForDoc(TestEnv.FILE_PDF);
+        Intent actual = mActivity.startActivity.getLastValue();
+        assertEquals(Intent.ACTION_VIEW, actual.getAction());
+        assertEquals("ComponentInfo{android/com.android.internal.app.ResolverActivity}",
+                actual.getComponent().toString());
     }
 
     @Test

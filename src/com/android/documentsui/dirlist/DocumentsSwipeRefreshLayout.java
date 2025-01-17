@@ -16,10 +16,13 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 
 import androidx.annotation.ColorRes;
@@ -42,16 +45,33 @@ public class DocumentsSwipeRefreshLayout extends SwipeRefreshLayout {
     public DocumentsSwipeRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final int[] styledAttrs = {android.R.attr.colorAccent};
+        if (useMaterial3()) {
+            TypedValue spinnerColor = new TypedValue();
+            context.getTheme()
+                    .resolveAttribute(
+                            com.google.android.material.R.attr.colorOnPrimaryContainer,
+                            spinnerColor,
+                            true);
+            setColorSchemeResources(spinnerColor.resourceId);
+            TypedValue spinnerBackgroundColor = new TypedValue();
+            context.getTheme()
+                    .resolveAttribute(
+                            com.google.android.material.R.attr.colorPrimaryContainer,
+                            spinnerBackgroundColor,
+                            true);
+            setProgressBackgroundColorSchemeResource(spinnerBackgroundColor.resourceId);
+        } else {
+            final int[] styledAttrs = {android.R.attr.colorAccent};
 
-        TypedArray a = context.obtainStyledAttributes(styledAttrs);
-        @ColorRes int colorId = a.getResourceId(0, -1);
-        if (colorId == -1) {
-            Log.w(TAG, "Retrieve colorAccent colorId from theme fail, assign R.color.primary");
-            colorId = R.color.primary;
+            TypedArray a = context.obtainStyledAttributes(styledAttrs);
+            @ColorRes int colorId = a.getResourceId(0, -1);
+            if (colorId == -1) {
+                Log.w(TAG, "Retrieve colorAccent colorId from theme fail, assign R.color.primary");
+                colorId = R.color.primary;
+            }
+            a.recycle();
+            setColorSchemeResources(colorId);
         }
-        a.recycle();
-        setColorSchemeResources(colorId);
     }
 
     @Override
