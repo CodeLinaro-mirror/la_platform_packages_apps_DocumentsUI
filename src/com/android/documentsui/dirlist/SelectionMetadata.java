@@ -168,7 +168,7 @@ public class SelectionMetadata extends SelectionObserver<String>
     }
 
     @Override
-    public boolean canOpenWith() {
+    public boolean canOpen() {
         return size() == 1 && mDirectoryCount == 0 && mInArchiveCount == 0 && mPartialCount == 0;
     }
 }

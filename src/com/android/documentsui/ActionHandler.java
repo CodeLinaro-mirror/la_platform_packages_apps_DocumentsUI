@@ -129,6 +129,12 @@ public interface ActionHandler {
     boolean openItem(ItemDetails<String> doc, @ViewType int type, @ViewType int fallback);
 
     /**
+     * Similar to openItem but takes DocumentInfo instead of DocumentItemDetails and uses
+     * VIEW_TYPE_VIEW with no fallback.
+     */
+    void openDocumentViewOnly(DocumentInfo doc);
+
+    /**
      * This is called when user hovers over a doc for enough time during a drag n' drop, to open a
      * folder that accepts drop. We should only open a container that's not an archive, since archives
      * do not accept dropping.

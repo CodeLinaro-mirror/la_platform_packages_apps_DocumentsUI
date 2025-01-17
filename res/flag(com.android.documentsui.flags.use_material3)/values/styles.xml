@@ -55,12 +55,6 @@
         <item name="cardElevation">@dimen/grid_item_elevation</item>
     </style>
 
-    <style name="TrimmedHorizontalProgressBar" parent="android:Widget.Material.ProgressBar.Horizontal">
-        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_material_trimmed</item>
-        <item name="android:minHeight">3dp</item>
-        <item name="android:maxHeight">3dp</item>
-    </style>
-
     <style name="SnackbarButtonStyle" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">?android:colorPrimary</item>
     </style>
