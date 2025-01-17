@@ -14,10 +14,8 @@
      limitations under the License.
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:state_selected="true"
-        android:color="@color/profile_tab_selected_color"/>
-    <item
-        android:color="@color/profile_tab_default_color"/>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/profile_tab_radius"/>
+    <!-- The color here doesn't matter, it's just being used as a mask in tab_border_rounded. -->
+    <solid android:color="@android:color/white"/>
+</shape>

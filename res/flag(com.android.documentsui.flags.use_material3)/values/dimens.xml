@@ -137,6 +137,8 @@
     <dimen name="apps_row_exit_icon_margin_bottom">6dp</dimen>
     <dimen name="apps_row_item_text_margin_horizontal">8dp</dimen>
 
+    <dimen name="profile_tab_radius">12dp</dimen>
+
     <dimen name="search_bar_elevation">0dp</dimen>
     <dimen name="search_bar_radius">8dp</dimen>
     <dimen name="search_bar_background_margin_start">0dp</dimen>

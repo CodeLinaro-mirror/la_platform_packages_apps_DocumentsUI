@@ -223,6 +223,7 @@ public class ActionHandlerTest {
 
     @Test
     public void testInitLocation_RestoresLastAccessedStack() throws Exception {
+        if (!SdkLevel.isAtLeastS()) return;
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.HAMMY, TestEnv.FOLDER_0, TestEnv.FOLDER_1);
         mLastAccessed.setLastAccessed(mActivity, stack);
