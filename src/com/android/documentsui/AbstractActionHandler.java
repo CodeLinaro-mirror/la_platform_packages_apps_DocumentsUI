@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.flags.Flags.desktopFileHandling;
 
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -559,6 +560,15 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         int flags = Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_SINGLE_TOP;
         if (doc.isWriteSupported()) {
             flags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+        }
+        // On desktop users expect files to open in a new window.
+        if (desktopFileHandling()) {
+            // The combination of NEW_DOCUMENT and MULTIPLE_TASK allows multiple instances of the
+            // same activity to open in separate windows.
+            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
+            // If the activity has documentLaunchMode="never", NEW_TASK forces the activity to still
+            // open in a new window.
+            flags |= Intent.FLAG_ACTIVITY_NEW_TASK;
         }
         intent.setFlags(flags);
 
