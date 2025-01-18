@@ -22,7 +22,7 @@
   <color name="background_floating">@android:color/white</color>
   <color name="nav_bar_translucent">#99FFFFFF</color>
 
-  <color name="primary">#1E88E5</color> <!-- Blue 600 -->
+  <color name="primary">?attr/colorPrimary</color>
   <color name="secondary">#E3F2FD</color> <!-- Blue 50 -->
   <color name="hairline">#E0E0E0</color> <!-- Gray 300 -->
 
@@ -49,13 +49,8 @@
 
   <color name="edge_effect">@android:color/black</color>
 
-  <color name="doc_list_item_subtitle_enabled">#5F6368</color> <!-- Gray 700 -->
-  <color name="doc_list_item_subtitle_disabled">#613c4043
-  </color> <!-- 38% Grey800 -->
-
   <color name="list_divider_color">#1f000000</color>
-  <color name="list_item_selected_background_color">?android:colorSecondary
-  </color>
+  <color name="list_item_selected_background_color">?attr/colorPrimary</color>
   <!-- This is used when the app bar is in pinned mode inside the CollapsingToolbarLayout.
        The code in NavigationViewManager assume the value should be a plain color value so we can't
        use the theme attribute "?attr/colorSurfaceContainerHigh" (which is a reference) here, hence

@@ -123,7 +123,12 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="ItemCaptionText" parent="@style/TextAppearance.Material3.BodySmall">
+    <style name="FileItemLabelText" parent="@style/TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">@color/doc_list_item_label_color</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="ItemCaptionText" parent="@style/TextAppearance.Material3.LabelSmall">
         <item name="android:textColor">@color/doc_list_item_subtitle_color</item>
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
@@ -136,9 +141,4 @@
     <style name="Subhead" parent="@style/TextAppearance.Material3.BodyLarge">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
-
-    <style name="Body1" parent="@style/TextAppearance.Material3.BodyMedium">
-        <item name="fontFamily">@string/config_fontFamily</item>
-    </style>
-
 </resources>
