@@ -21,6 +21,9 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import android.net.Uri;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
+import android.platform.test.flag.junit.SetFlagsRule;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
@@ -35,6 +38,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.TestData;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
@@ -45,6 +49,7 @@ import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -122,6 +127,9 @@ public final class MenuManagerTest {
     private SelectionTracker<String> selectionManager;
 
     private int mFilesCount;
+
+    @Rule
+    public final SetFlagsRule mSetFlagsRule = new SetFlagsRule();
 
     @Before
     public void setUp() {
@@ -388,7 +396,7 @@ public final class MenuManagerTest {
 
     @Test
     public void testActionMenu_CanOpenWith() {
-        selectionDetails.canOpenWith = true;
+        selectionDetails.canOpen = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeOpenWith.assertEnabledAndVisible();
@@ -396,7 +404,7 @@ public final class MenuManagerTest {
 
     @Test
     public void testActionMenu_NoOpenWith() {
-        selectionDetails.canOpenWith = false;
+        selectionDetails.canOpen = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeOpenWith.assertDisabledAndInvisible();
@@ -590,16 +598,28 @@ public final class MenuManagerTest {
     }
 
     @Test
-    public void testContextMenu_OnFile_CanOpenWith() {
-        selectionDetails.canOpenWith = true;
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    public void testContextMenu_OnFile_CanOpen() {
+        selectionDetails.canOpen = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+        dirOpen.assertDisabledAndInvisible();
         dirOpenWith.assertEnabledAndVisible();
     }
 
     @Test
-    public void testContextMenu_OnFile_NoOpenWith() {
-        selectionDetails.canOpenWith = false;
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    public void testContextMenu_OnFile_CanOpenDesktop() {
+        selectionDetails.canOpen = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+        dirOpen.assertEnabledAndVisible();
+        dirOpenWith.assertEnabledAndVisible();
+    }
+
+    @Test
+    public void testContextMenu_OnFile_NoOpen() {
+        selectionDetails.canOpen = false;
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+        dirOpen.assertDisabledAndInvisible();
         dirOpenWith.assertDisabledAndInvisible();
     }
 

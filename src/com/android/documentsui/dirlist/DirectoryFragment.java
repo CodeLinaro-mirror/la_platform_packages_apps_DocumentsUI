@@ -21,6 +21,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.flags.Flags.desktopFileHandling;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -924,7 +925,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mSelectionMgr.copySelection(selection);
 
         final int id = item.getItemId();
-        if (id == R.id.action_menu_select || id == R.id.dir_menu_open) {
+        if (desktopFileHandling() && id == R.id.dir_menu_open) {
+            // On desktop, "open" is displayed in file management mode (i.e. `files.MenuManager`).
+            // This menu item behaves the same as double click on the menu item which is handled by
+            // onItemActivated but since onItemActivated requires a RecylcerView ItemDetails, we're
+            // using viewDocument that takes a Selection.
+            viewDocument(selection);
+            return true;
+        } else if (id == R.id.action_menu_select || id == R.id.dir_menu_open) {
+            // Note: this code path is never executed for `dir_menu_open`. The menu item is always
+            // hidden unless the desktopFileHandling flag is enabled, in which case the menu item
+            // will be handled by the condition above.
             openDocuments(selection);
             mActionModeController.finishActionMode();
             return true;
@@ -1080,6 +1091,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         DocumentInfo doc =
                 DocumentInfo.fromDirectoryCursor(mModel.getItem(selected.iterator().next()));
         mActions.showChooserForDoc(doc);
+    }
+
+    private void viewDocument(final Selection<String> selected) {
+        Metrics.logUserAction(MetricConsts.USER_ACTION_OPEN);
+
+        if (selected.isEmpty()) {
+            return;
+        }
+
+        assert selected.size() == 1;
+        DocumentInfo doc =
+                DocumentInfo.fromDirectoryCursor(mModel.getItem(selected.iterator().next()));
+
+        mActions.openDocumentViewOnly(doc);
     }
 
     private void transferDocuments(

@@ -25,12 +25,14 @@ java_defaults {
     ],
 
     static_libs: [
-        "androidx.test.rules",
         "androidx.test.espresso.core",
         "androidx.test.ext.truth",
+        "androidx.test.rules",
+        "androidx.test.uiautomator_uiautomator",
+        "docsui-flags-aconfig-java-lib",
+        "flag-junit",
         "guava",
         "mockito-target",
-        "androidx.test.uiautomator_uiautomator",
     ],
 }
 
@@ -50,11 +52,11 @@ android_library {
 
     static_libs: [
         "androidx.legacy_legacy-support-v4",
-        "androidx.test.rules",
         "androidx.test.espresso.core",
+        "androidx.test.rules",
+        "androidx.test.uiautomator_uiautomator",
         "mockito-target",
         "ub-janktesthelper",
-        "androidx.test.uiautomator_uiautomator",
     ],
 }
 
@@ -67,6 +69,7 @@ android_library {
     srcs: [
         "common/**/*.java",
         "unit/**/*.java",
+        "unit/**/*.kt",
     ],
 
     libs: [

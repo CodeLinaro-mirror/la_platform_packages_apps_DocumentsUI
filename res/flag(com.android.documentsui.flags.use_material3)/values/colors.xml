@@ -63,11 +63,7 @@
   -->
   <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant92</color>
 
-  <color name="tab_selected_text_color">@color/primary</color>
   <color name="work_profile_button_stroke_color">@color/primary</color>
-  <color name="profile_tab_selected_color">?android:attr/colorAccent</color>
-  <color name="profile_tab_default_color">#E0E0E0</color>
-  <color name="tab_unselected_text_color">#5F6368</color> <!-- Gray 700 -->
 
   <color name="fragment_pick_inactive_button_color">#E0E0E0</color>
   <color name="fragment_pick_inactive_text_color">#5F6368</color>
