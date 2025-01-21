@@ -81,6 +81,11 @@
     <dimen name="drawer_item_text_margin_start">12dp</dimen>
     <dimen name="drawer_item_action_icon_margin_start">4dp</dimen>
 
+    <dimen name="nav_rail_item_height">64dp</dimen>
+    <dimen name="nav_rail_item_icon_bg_radius">16dp</dimen>
+    <dimen name="nav_rail_item_icon_bg_width">56dp</dimen>
+    <dimen name="nav_rail_item_icon_bg_height">32dp</dimen>
+
     <dimen name="drag_shadow_width">176dp</dimen>
     <dimen name="drag_shadow_height">64dp</dimen>
     <dimen name="drag_shadow_radius">4dp</dimen>

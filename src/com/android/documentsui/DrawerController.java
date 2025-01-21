@@ -127,7 +127,10 @@ public abstract class DrawerController implements DrawerListener {
 
             if (activityConfig.dragAndDropEnabled()) {
                 View edge = layout.findViewById(R.id.drawer_edge);
-                edge.setOnDragListener(new ItemDragListener<>(this, SPRING_TIMEOUT));
+                // nav_rail_layout also uses DrawerLayout, but it doesn't have drawer edge.
+                if (edge != null) {
+                    edge.setOnDragListener(new ItemDragListener<>(this, SPRING_TIMEOUT));
+                }
             }
         }
 
