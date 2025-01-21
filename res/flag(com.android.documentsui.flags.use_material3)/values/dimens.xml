@@ -116,7 +116,7 @@
     <dimen name="search_chip_group_padding_vertical">@dimen/space_extra_small_4</dimen>
     <dimen name="main_container_padding_start">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_end">@dimen/space_small_4</dimen>
-    <dimen name="main_container_padding_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="main_container_padding_top">0dp</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>
