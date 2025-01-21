@@ -19,10 +19,12 @@ package com.android.documentsui.files;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.flags.Flags.desktopFileHandling;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -218,6 +220,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return !doc.isContainer();
         }
         return false;
+    }
+
+    @Override
+    public void openDocumentViewOnly(DocumentInfo doc) {
+        mInjector.searchManager.recordHistory();
+        openDocument(doc, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
     }
 
     @Override
@@ -543,12 +551,23 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        Intent intent = Intent.createChooser(buildViewIntent(doc), null);
-        intent.putExtra(Intent.EXTRA_AUTO_LAUNCH_SINGLE_CHOICE, false);
-        try {
-            doc.userId.startActivityAsUser(mActivity, intent);
-        } catch (ActivityNotFoundException e) {
-            mDialogs.showNoApplicationFound();
+        if (desktopFileHandling()) {
+            Intent intent = buildViewIntent(doc);
+            intent.setComponent(
+                    new ComponentName("android", "com.android.internal.app.ResolverActivity"));
+            try {
+                doc.userId.startActivityAsUser(mActivity, intent);
+            } catch (ActivityNotFoundException e) {
+                mDialogs.showNoApplicationFound();
+            }
+        } else {
+            Intent intent = Intent.createChooser(buildViewIntent(doc), null);
+            intent.putExtra(Intent.EXTRA_AUTO_LAUNCH_SINGLE_CHOICE, false);
+            try {
+                doc.userId.startActivityAsUser(mActivity, intent);
+            } catch (ActivityNotFoundException e) {
+                mDialogs.showNoApplicationFound();
+            }
         }
     }
 
