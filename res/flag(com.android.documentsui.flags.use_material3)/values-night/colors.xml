@@ -34,6 +34,8 @@
     <color name="list_divider_color">#9aa0a6</color>
     <color name="list_item_selected_background_color">?android:colorSecondary</color>
 
+    <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant17</color>
+
     <color name="fragment_pick_active_text_color">#202124</color> <!-- Grey 900 -->
 
     <!-- TODO(b/379776735): remove this after M3 uplift -->

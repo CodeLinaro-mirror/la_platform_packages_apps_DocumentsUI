@@ -56,7 +56,12 @@
   <color name="list_divider_color">#1f000000</color>
   <color name="list_item_selected_background_color">?android:colorSecondary
   </color>
-  <color name="color_surface_header">@color/app_background_color</color>
+  <!-- This is used when the app bar is in pinned mode inside the CollapsingToolbarLayout.
+       The code in NavigationViewManager assume the value should be a plain color value so we can't
+       use the theme attribute "?attr/colorSurfaceContainerHigh" (which is a reference) here, hence
+       using the mapped system color in both here and dark mode.
+  -->
+  <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant92</color>
 
   <color name="tab_selected_text_color">@color/primary</color>
   <color name="work_profile_button_stroke_color">@color/primary</color>
