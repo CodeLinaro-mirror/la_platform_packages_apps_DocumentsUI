@@ -180,6 +180,6 @@
 
     <dimen name="focus_ring_width">3dp</dimen>
     <dimen name="focus_ring_gap">5dp</dimen>
-    <dimen name="hover_overlay_alpha">0.10</dimen>
-    <dimen name="ripple_overlay_alpha">0.08</dimen>
+    <dimen name="hover_overlay_alpha">0.08</dimen>
+    <dimen name="ripple_overlay_alpha">0.10</dimen>
 </resources>

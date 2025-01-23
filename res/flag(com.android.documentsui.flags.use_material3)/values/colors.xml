@@ -69,11 +69,11 @@
   <color name="search_chip_text_selected_color">@android:color/white</color>
 
   <!-- Use this when we need to set alpha channel on top of a theme attribute color in the
-       color selector list, e.g. to set colorOnSecondaryContainer with 10% alpha channel, use:
+       color selector list, e.g. to set colorOnSecondaryContainer with a hover overlay alpha, use:
 
        <shape android:tint="?attr/colorOnSecondaryContainer">
-          <solid android:color="@color/overlay_color_percentage_10"/>
+          <solid android:color="@color/overlay_hover_color_percentage"/>
        </shape>
    -->
-  <color name="overlay_color_percentage_10">#1A000000</color>
+  <color name="overlay_hover_color_percentage">#14000000</color> <!-- 8% -->
 </resources>
