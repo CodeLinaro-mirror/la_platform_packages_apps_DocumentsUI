@@ -42,7 +42,7 @@
                     <item>
                         <shape android:tint="?attr/colorOnSecondaryContainer">
                             <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
-                            <solid android:color="@color/overlay_color_percentage_10" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
@@ -60,7 +60,7 @@
                     <item>
                         <shape android:tint="?attr/colorOnSecondaryContainer">
                             <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
-                            <solid android:color="@color/overlay_color_percentage_10" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
@@ -98,7 +98,7 @@
                     <item>
                         <shape android:tint="?attr/colorOnSecondaryContainer">
                             <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
-                            <solid android:color="@color/overlay_color_percentage_10" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
@@ -114,13 +114,13 @@
             <item app:state_highlighted="true">
                 <shape android:tint="?attr/colorOnSurface">
                     <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
-                    <solid android:color="@color/overlay_color_percentage_10" />
+                    <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
             <item android:state_pressed="true">
                 <shape android:tint="?attr/colorOnSurface">
                     <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
-                    <solid android:color="@color/overlay_color_percentage_10" />
+                    <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
             <item android:state_focused="true">
@@ -134,7 +134,7 @@
             <item android:state_hovered="true">
                 <shape android:tint="?attr/colorOnSurface">
                     <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
-                    <solid android:color="@color/overlay_color_percentage_10" />
+                    <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
 
