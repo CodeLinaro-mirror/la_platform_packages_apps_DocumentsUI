@@ -32,6 +32,7 @@
 
     <dimen name="main_container_padding_top">@dimen/space_extra_small_6</dimen>
 
+    <dimen name="toolbar_padding_start">@dimen/main_container_padding_start</dimen>
     <dimen name="toolbar_padding_end">@dimen/space_small_3</dimen>
 
     <dimen name="drawer_padding_top">@dimen/space_small_1</dimen>

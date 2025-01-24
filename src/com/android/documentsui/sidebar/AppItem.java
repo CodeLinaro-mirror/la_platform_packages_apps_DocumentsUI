@@ -26,6 +26,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
@@ -43,7 +45,16 @@ public class AppItem extends Item {
     private final ActionHandler mActionHandler;
 
     public AppItem(ResolveInfo info, String title, UserId userId, ActionHandler actionHandler) {
-        super(R.layout.item_root, title, getStringId(info), userId);
+        this(R.layout.item_root, info, title, userId, actionHandler);
+    }
+
+    public AppItem(
+            @LayoutRes int layoutId,
+            ResolveInfo info,
+            String title,
+            UserId userId,
+            ActionHandler actionHandler) {
+        super(layoutId, title, getStringId(info), userId);
         this.info = info;
         mActionHandler = actionHandler;
     }

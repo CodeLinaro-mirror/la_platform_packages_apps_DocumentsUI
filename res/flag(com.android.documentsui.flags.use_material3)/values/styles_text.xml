@@ -141,4 +141,9 @@
     <style name="Subhead" parent="@style/TextAppearance.Material3.BodyLarge">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
+
+    <style name="NavRailItemTextAppearance" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
 </resources>

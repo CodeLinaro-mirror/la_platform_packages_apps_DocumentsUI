@@ -166,4 +166,24 @@
         <item name="android:textAlignment">viewStart</item>
         <item name="android:textAppearance">@style/FileItemLabelText</item>
     </style>
+
+    <style name="NavRailStyle" parent="">
+        <item name="android:background">?attr/colorSurfaceContainer</item>
+        <item name="android:paddingHorizontal">@dimen/space_small_3</item>
+        <item name="android:paddingTop">@dimen/space_extra_small_6</item>
+        <item name="android:paddingBottom">@dimen/space_small_1</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
+    <style name="NavRailItemStyle" parent="">
+        <item name="android:background">@drawable/nav_rail_item_background</item>
+        <item name="android:paddingVertical">6dp</item>
+    </style>
+
+    <style name="NavRailItemTextStyle" parent="">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textColor">@color/nav_rail_item_text_color</item>
+        <item name="android:textAppearance">@style/NavRailItemTextAppearance</item>
+    </style>
 </resources>
