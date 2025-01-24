@@ -157,4 +157,13 @@
         <item name="tabSelectedTextColor">?attr/colorOnPrimaryContainer</item>
         <item name="tabTextAppearance">@style/TabTextAppearance</item>
     </style>
+
+    <style name="FileItemLabelStyle" parent="">
+        <item name="android:layout_marginStart">32dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:minWidth">70dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textAppearance">@style/FileItemLabelText</item>
+    </style>
 </resources>

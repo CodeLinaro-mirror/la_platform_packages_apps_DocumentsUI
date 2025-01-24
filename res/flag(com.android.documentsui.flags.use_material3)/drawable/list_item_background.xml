@@ -14,18 +14,80 @@
      limitations under the License.
 -->
 
+<!-- Use @color/list_item_selected_background_color instead of the "?attr/colorPrimary"
+     because the variable is exposed in overlayable.xml. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true" >
-        <color android:color="@color/list_item_selected_background_color"/>
+    <!-- selected -->
+    <item android:state_selected="true" android:state_drag_hovered="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <corners android:radius="@dimen/list_item_height" />
+                    <solid android:color="@color/list_item_selected_background_color" />
+                </shape>
+            </item>
+            <item>
+                <shape android:tint="?attr/colorOnPrimary">
+                    <corners android:radius="@dimen/list_item_height" />
+                    <solid android:color="@color/overlay_color_percentage_10" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_selected="true" android:state_focused="true">
+        <layer-list>
+            <item
+                android:bottom="@dimen/focus_ring_gap"
+                android:left="@dimen/focus_ring_gap"
+                android:right="@dimen/focus_ring_gap"
+                android:top="@dimen/focus_ring_gap">
+                <shape>
+                    <corners android:radius="@dimen/list_item_height" />
+                    <solid android:color="@color/list_item_selected_background_color" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <corners android:radius="@dimen/list_item_height" />
+                    <stroke
+                        android:width="@dimen/focus_ring_width"
+                        android:color="?attr/colorSecondary" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_selected="true" android:state_hovered="true">
+        <shape>
+            <corners android:radius="@dimen/list_item_height" />
+            <solid android:color="@color/list_item_selected_background_color" />
+        </shape>
     </item>
     <item android:state_selected="true">
-        <color android:color="@color/list_item_selected_background_color"/>
+        <shape>
+            <corners android:radius="@dimen/list_item_height" />
+            <solid android:color="@color/list_item_selected_background_color" />
+        </shape>
     </item>
+
+    <!-- unselected -->
     <item android:state_drag_hovered="true">
-        <color android:color="?android:strokeColor"/>
+        <shape android:tint="?attr/colorOnSurface">
+            <corners android:radius="@dimen/list_item_height" />
+            <solid android:color="@color/overlay_color_percentage_10" />
+        </shape>
     </item>
-    <item android:state_selected="false"
-          android:state_focused="false">
-        <color android:color="?android:attr/colorBackground"/>
+    <item android:state_focused="true">
+        <shape>
+            <corners android:radius="@dimen/list_item_height" />
+            <stroke
+                android:width="@dimen/focus_ring_width"
+                android:color="?attr/colorSecondary" />
+        </shape>
+    </item>
+    <item android:state_hovered="true">
+        <color android:color="@android:color/transparent"/>
+    </item>
+    <item>
+        <color android:color="?attr/colorSurfaceBright"/>
     </item>
 </selector>

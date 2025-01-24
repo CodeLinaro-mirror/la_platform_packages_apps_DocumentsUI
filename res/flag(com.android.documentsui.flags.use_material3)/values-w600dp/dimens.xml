@@ -24,5 +24,7 @@
     <dimen name="search_bar_text_margin_start">0dp</dimen>
 
     <dimen name="toolbar_padding_start">@dimen/main_container_padding_start</dimen>
+
+    <dimen name="list_container_padding">@dimen/space_extra_small_6</dimen>
 </resources>
 

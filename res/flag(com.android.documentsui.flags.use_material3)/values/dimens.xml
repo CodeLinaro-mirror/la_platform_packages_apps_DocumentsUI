@@ -22,7 +22,7 @@
     <dimen name="tab_selector_indicator_height">2dp</dimen>
     <dimen name="profile_tab_padding">0dp</dimen>
     <dimen name="grid_container_padding">20dp</dimen>
-    <dimen name="list_container_padding">20dp</dimen>
+    <dimen name="list_container_padding">@dimen/space_extra_small_4</dimen>
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
@@ -33,7 +33,7 @@
     <dimen name="root_action_icon_size">24dp</dimen>
     <!-- TODO(b/379776735): remove this after M3 uplift -->
     <dimen name="root_icon_disabled_alpha">?android:attr/disabledAlpha</dimen>
-    <dimen name="check_icon_size">30dp</dimen>
+    <dimen name="check_icon_size">20dp</dimen>
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
@@ -46,13 +46,20 @@
     <dimen name="grid_item_margin">6dp</dimen>
     <dimen name="grid_padding_horiz">4dp</dimen>
     <dimen name="grid_padding_vert">4dp</dimen>
+    <dimen name="list_item_height">56dp</dimen>
+    <dimen name="list_item_padding_start">16dp</dimen>
+    <dimen name="list_item_padding_end">8dp</dimen>
+    <dimen name="list_item_padding_vertical">4dp</dimen>
+    <dimen name="list_item_icon_margin_end">16dp</dimen>
+    <dimen name="list_item_icon_size">32dp</dimen>
+    <!-- TODO(b/379776735): remove this block after M3 uplift -->
     <dimen name="list_item_width">72dp</dimen>
-    <dimen name="list_item_height">72dp</dimen>
     <dimen name="list_item_padding">16dp</dimen>
     <dimen name="list_item_icon_padding">16dp</dimen>
+    <dimen name="list_divider_inset">72dp</dimen>
+    <!-- block end -->
     <dimen name="breadcrumb_item_padding">8dp</dimen>
     <dimen name="breadcrumb_item_height">36dp</dimen>
-    <dimen name="list_divider_inset">72dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
     <dimen name="grid_item_elevation">2dp</dimen>
@@ -167,6 +174,7 @@
     <dimen name="cross_profile_button_message_margin_top">4dp</dimen>
 
     <dimen name="focus_ring_width">3dp</dimen>
+    <dimen name="focus_ring_gap">5dp</dimen>
     <dimen name="hover_overlay_alpha">0.10</dimen>
     <dimen name="ripple_overlay_alpha">0.08</dimen>
 </resources>
