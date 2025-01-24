@@ -23,3 +23,10 @@ flag {
     description: "Enables the next generation ZIP functionality."
     bug: "382550591"
 }
+
+flag {
+    name: "desktop_file_handling"
+    namespace: "documentsui"
+    description: "Enables desktop file handling."
+    bug: "381778967"
+}

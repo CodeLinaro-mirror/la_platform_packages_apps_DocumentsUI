@@ -52,6 +52,7 @@
         android:allowBackup="true"
         android:backupAgent=".prefs.BackupAgent"
         android:fullBackupOnly="false"
+        android:enableOnBackInvokedCallback="false"
         android:crossProfile="true">
 
         <meta-data
