@@ -78,6 +78,8 @@
     <string name="menu_compress">Compress</string>
     <!-- Menu item title that extracts the selected documents [CHAR LIMIT=28] -->
     <string name="menu_extract">Extract to\u2026</string>
+    <!-- Menu item title that extracts all the documents in the current directory [CHAR LIMIT=28] -->
+    <string name="menu_extract_all">Extract all\u2026</string>
     <!-- Menu item that renames the selected document [CHAR LIMIT=28] -->
     <string name="menu_rename">Rename</string>
     <!-- Menu item that displays properties about the selected document [CHAR LIMIT=28] -->
