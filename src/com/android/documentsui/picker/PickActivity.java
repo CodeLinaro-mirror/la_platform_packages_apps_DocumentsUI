@@ -21,6 +21,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
+import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -249,6 +250,15 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
             RootsFragment.show(getSupportFragmentManager(),
                     /* includeApps= */ mState.action == ACTION_GET_CONTENT,
                     /* intent= */ moreApps);
+            if (useMaterial3()) {
+                View navRailRoots = findViewById(R.id.nav_rail_container_roots);
+                if (navRailRoots != null) {
+                    // Medium layout, populate navigation rail layout.
+                    RootsFragment.showNavRail(getSupportFragmentManager(),
+                            /* includeApps= */ mState.action == ACTION_GET_CONTENT,
+                            /* intent= */ moreApps);
+                }
+            }
         }
     }
 

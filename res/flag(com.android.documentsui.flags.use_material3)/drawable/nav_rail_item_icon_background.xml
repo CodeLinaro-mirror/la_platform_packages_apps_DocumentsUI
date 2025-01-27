@@ -23,107 +23,123 @@
          need to explicitly apply the drawable if the other items also need this mask. -->
     <item
         android:id="@android:id/mask"
-        android:drawable="@drawable/root_list_selector"/>
+        android:drawable="@drawable/nav_rail_item_icon_mask"/>
 
     <item>
         <selector>
             <!-- Selected (activated). -->
             <!-- Highlight: when dragging files over the item. -->
-            <item android:state_activated="true" app:state_highlighted="true">
+            <item
+                android:state_activated="true"
+                app:state_highlighted="true">
                 <layer-list>
                     <item>
                         <shape>
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="?attr/colorSecondaryContainer"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="?attr/colorSecondaryContainer" />
                         </shape>
                     </item>
                     <item>
                         <shape android:tint="?attr/colorOnSecondaryContainer">
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="@color/overlay_hover_color_percentage"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
             </item>
-            <item android:state_activated="true" android:state_pressed="true">
+            <item
+                android:state_activated="true"
+                android:state_pressed="true">
                 <layer-list>
                     <item>
                         <shape>
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="?attr/colorSecondaryContainer"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="?attr/colorSecondaryContainer" />
                         </shape>
                     </item>
                     <item>
                         <shape android:tint="?attr/colorOnSecondaryContainer">
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="@color/overlay_hover_color_percentage"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
             </item>
-            <item android:state_activated="true" android:state_focused="true">
+            <item
+                android:state_activated="true"
+                android:state_focused="true">
                 <layer-list>
                     <item>
                         <shape>
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="?attr/colorSecondaryContainer"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="?attr/colorSecondaryContainer" />
                         </shape>
                     </item>
                     <item>
                         <shape>
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <stroke android:width="@dimen/focus_ring_width" android:color="?attr/colorSecondary"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <stroke
+                                android:width="@dimen/focus_ring_width"
+                                android:color="?attr/colorSecondary" />
                         </shape>
                     </item>
                 </layer-list>
             </item>
-            <item android:state_activated="true" android:state_hovered="true">
+            <item
+                android:state_activated="true"
+                android:state_hovered="true">
                 <layer-list>
                     <item>
                         <shape>
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="?attr/colorSecondaryContainer"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="?attr/colorSecondaryContainer" />
                         </shape>
                     </item>
                     <item>
                         <shape android:tint="?attr/colorOnSecondaryContainer">
-                            <corners android:radius="@dimen/drawer_item_height"/>
-                            <solid android:color="@color/overlay_hover_color_percentage"/>
+                            <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
             </item>
-            <item android:state_activated="true" android:drawable="@drawable/root_list_selector"/>
+            <item android:state_activated="true">
+                <shape>
+                    <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                    <solid android:color="?attr/colorSecondaryContainer" />
+                </shape>
+            </item>
 
             <!-- Unselected. -->
             <item app:state_highlighted="true">
                 <shape android:tint="?attr/colorOnSurface">
-                    <corners android:radius="@dimen/drawer_item_height"/>
-                    <solid android:color="@color/overlay_hover_color_percentage"/>
+                    <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                    <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
             <item android:state_pressed="true">
                 <shape android:tint="?attr/colorOnSurface">
-                    <corners android:radius="@dimen/drawer_item_height"/>
-                    <solid android:color="@color/overlay_hover_color_percentage"/>
+                    <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                    <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
             <item android:state_focused="true">
                 <shape>
-                    <corners android:radius="@dimen/drawer_item_height"/>
-                    <stroke android:width="@dimen/focus_ring_width" android:color="?attr/colorSecondary"/>
+                    <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                    <stroke
+                        android:width="@dimen/focus_ring_width"
+                        android:color="?attr/colorSecondary" />
                 </shape>
             </item>
             <item android:state_hovered="true">
                 <shape android:tint="?attr/colorOnSurface">
-                    <corners android:radius="@dimen/drawer_item_height"/>
-                    <solid android:color="@color/overlay_hover_color_percentage"/>
+                    <corners android:radius="@dimen/nav_rail_item_icon_bg_radius" />
+                    <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
 
             <!-- Default: use the container background. -->
-            <item
-                android:drawable="@android:color/transparent"/>
+            <item android:drawable="@android:color/transparent" />
         </selector>
     </item>
 </ripple>
