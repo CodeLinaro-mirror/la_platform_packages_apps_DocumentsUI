@@ -30,6 +30,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 
 import com.android.documentsui.ActionHandler;
@@ -64,7 +65,16 @@ public class RootItem extends Item {
 
     public RootItem(RootInfo root, ActionHandler actionHandler, String packageName,
             boolean maybeShowBadge) {
-        super(R.layout.item_root, root.title, getStringId(root), root.userId);
+        this(R.layout.item_root, root, actionHandler, packageName, maybeShowBadge);
+    }
+
+    public RootItem(
+            @LayoutRes int layoutId,
+            RootInfo root,
+            ActionHandler actionHandler,
+            String packageName,
+            boolean maybeShowBadge) {
+        super(layoutId, root.title, getStringId(root), root.userId);
         this.root = root;
         mActionHandler = actionHandler;
         mPackageName = packageName;

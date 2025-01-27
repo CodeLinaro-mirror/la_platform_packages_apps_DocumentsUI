@@ -38,7 +38,7 @@
                <item>
                   <shape android:tint="?attr/colorOnPrimaryContainer">
                      <corners android:radius="@dimen/profile_tab_radius" />
-                     <solid android:color="@color/overlay_color_percentage_10" />
+                     <solid android:color="@color/overlay_hover_color_percentage" />
                   </shape>
                </item>
             </layer-list>
@@ -72,7 +72,7 @@
                <item>
                   <shape android:tint="?attr/colorOnPrimaryContainer">
                      <corners android:radius="@dimen/profile_tab_radius" />
-                     <solid android:color="@color/overlay_color_percentage_10" />
+                     <solid android:color="@color/overlay_hover_color_percentage" />
                   </shape>
                </item>
             </layer-list>
@@ -96,7 +96,7 @@
                <item>
                   <shape android:tint="?attr/colorOnSurface">
                      <corners android:radius="@dimen/profile_tab_radius" />
-                     <solid android:color="@color/overlay_color_percentage_10" />
+                     <solid android:color="@color/overlay_hover_color_percentage" />
                   </shape>
                </item>
             </layer-list>
@@ -130,7 +130,7 @@
                <item>
                   <shape android:tint="?attr/colorOnSurface">
                      <corners android:radius="@dimen/profile_tab_radius" />
-                     <solid android:color="@color/overlay_color_percentage_10" />
+                     <solid android:color="@color/overlay_hover_color_percentage" />
                   </shape>
                </item>
             </layer-list>
