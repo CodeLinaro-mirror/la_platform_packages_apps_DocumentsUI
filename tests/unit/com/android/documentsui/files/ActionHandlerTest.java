@@ -39,9 +39,10 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
-import android.platform.test.annotations.DisableFlags;
-import android.platform.test.annotations.EnableFlags;
-import android.platform.test.flag.junit.SetFlagsRule;
+import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 import android.util.Pair;
@@ -109,7 +110,7 @@ public class ActionHandlerTest {
     private boolean refreshAnswer = false;
 
     @Rule
-    public final SetFlagsRule mSetFlagsRule = new SetFlagsRule();
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
@@ -165,7 +166,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
     public void testOpenFileFlags() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -178,7 +179,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
     public void testOpenFileFlagsDesktop() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -475,7 +476,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
     public void testShowChooser() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -484,7 +485,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
     public void testShowChooserDesktop() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 

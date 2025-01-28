@@ -12,10 +12,10 @@
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
+  ~ limitations under the License
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true" android:color="?attr/colorOnPrimary" />
+    <item android:state_activated="true" android:color="?attr/colorSecondary" />
     <item android:color="?attr/colorOnSurfaceVariant" />
 </selector>

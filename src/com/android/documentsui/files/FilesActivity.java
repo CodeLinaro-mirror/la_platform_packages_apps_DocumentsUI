@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
+import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.app.ActivityManager.TaskDescription;
 import android.content.Intent;
@@ -181,6 +182,14 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
         RootsFragment.show(getSupportFragmentManager(), /* includeApps= */ false,
                 /* intent= */ null);
+        if (useMaterial3()) {
+            View navRailRoots = findViewById(R.id.nav_rail_container_roots);
+            if (navRailRoots != null) {
+                // Medium layout, populate navigation rail layout.
+                RootsFragment.showNavRail(getSupportFragmentManager(), /* includeApps= */ false,
+                        /* intent= */ null);
+            }
+        }
 
         final Intent intent = getIntent();
 

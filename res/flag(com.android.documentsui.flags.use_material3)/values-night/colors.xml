@@ -18,7 +18,6 @@
     <color name="background_floating">#3C4043</color>
     <color name="nav_bar_translucent">#52000000</color>
 
-    <color name="primary">#8AB4F8</color>
     <color name="secondary">#3D8AB4F8</color>
     <color name="hairline">#5F6368</color>
 
@@ -27,12 +26,7 @@
 
     <color name="edge_effect">@android:color/white</color>
 
-    <!-- AppCompat.textColorSecondary -->
-    <color name="doc_list_item_subtitle_enabled">#b3ffffff</color>
-    <color name="doc_list_item_subtitle_disabled">#36ffffff</color>
-
     <color name="list_divider_color">#9aa0a6</color>
-    <color name="list_item_selected_background_color">?android:colorSecondary</color>
 
     <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant17</color>
 
