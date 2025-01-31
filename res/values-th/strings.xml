@@ -45,6 +45,7 @@
     <string name="menu_move" msgid="2310760789561129882">"ย้ายไปที่…"</string>
     <string name="menu_compress" msgid="37539111904724188">"บีบอัด"</string>
     <string name="menu_extract" msgid="8171946945982532262">"แตกข้อมูลไปยัง…"</string>
+    <string name="menu_extract_all" msgid="7335680068521252718">"แตกเอกสารทั้งหมด…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"เปลี่ยนชื่อ"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"รับข้อมูล"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"แสดงไฟล์ที่ซ่อนไว้"</string>
