@@ -103,6 +103,7 @@
   int inspector_details_view;
   int option_menu_create_dir;
   int option_menu_debug;
+  int option_menu_extract_all;
   int option_menu_inspect;
   int option_menu_launcher;
   int option_menu_new_window;

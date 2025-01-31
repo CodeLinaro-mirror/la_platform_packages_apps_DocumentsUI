@@ -67,6 +67,12 @@
             android:visible="false"
             app:showAsAction="never"/>
         <item
+            android:id="@+id/option_menu_extract_all"
+            android:title="@string/menu_extract_all"
+            android:icon="@drawable/ic_menu_extract"
+            android:visible="false"
+            app:showAsAction="always"/>
+        <item
             android:id="@+id/option_menu_settings"
             android:title="@string/menu_settings"
             android:visible="false"
