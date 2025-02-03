@@ -88,6 +88,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -1029,9 +1030,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 Collection<RootInfo> rootList = new ArrayList<>();
                 if (root == null || root.isRecents()) {
                     // TODO(b:381346575): Pass roots based on user selection.
-                    rootList.addAll(mProviders.getMatchingRootsBlocking(mState).stream().filter(
-                            r -> r.supportsSearch() && r.authority != null
-                                    && r.rootId != null).toList());
+                    rootList.addAll(mProviders.getMatchingRootsBlocking(mState).stream()
+                            .filter(r -> r.supportsSearch() && r.authority != null
+                                    && r.rootId != null)
+                            .collect(Collectors.toList()));
                 } else {
                     rootList.add(root);
                 }
