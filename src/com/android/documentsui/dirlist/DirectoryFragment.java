@@ -1198,7 +1198,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         intent.putExtra(FileOperationService.EXTRA_OPERATION_TYPE, mode);
 
         // This just identifies the type of request...we'll check it
-        // when we reveive a response.
+        // when we receive a response.
         startActivityForResult(intent, REQUEST_COPY_DESTINATION);
     }
 
