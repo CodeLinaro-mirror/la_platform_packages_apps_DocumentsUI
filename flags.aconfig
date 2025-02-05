@@ -30,3 +30,10 @@ flag {
     description: "Enables desktop file handling."
     bug: "381778967"
 }
+
+flag {
+    name: "visual_signals"
+    namespace: "documentsui"
+    description: "Enables in-app progress display of file operations"
+    bug: "378011512"
+}
