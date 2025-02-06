@@ -45,6 +45,7 @@
     <string name="menu_move" msgid="2310760789561129882">"העברה אל…"</string>
     <string name="menu_compress" msgid="37539111904724188">"דחיסה"</string>
     <string name="menu_extract" msgid="8171946945982532262">"חילוץ לתיקייה…"</string>
+    <string name="menu_extract_all" msgid="7335680068521252718">"חילוץ הכול…"</string>
     <string name="menu_rename" msgid="1883113442688817554">"שינוי שם"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"מידע על המסמך"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"הצגת קבצים מוסתרים"</string>
@@ -182,7 +183,7 @@
       <item quantity="two">לא ניתן היה למחוק <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים</item>
       <item quantity="other">לא ניתן היה למחוק <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים</item>
     </plurals>
-    <string name="notification_touch_for_details" msgid="2385563502445129570">"יש להקיש להצגת הפרטים"</string>
+    <string name="notification_touch_for_details" msgid="2385563502445129570">"יש ללחוץ להצגת הפרטים"</string>
     <string name="close" msgid="905969391788869975">"סגירה"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="one">הקבצים הבאים לא הועתקו: <xliff:g id="LIST_1">%1$s</xliff:g></item>

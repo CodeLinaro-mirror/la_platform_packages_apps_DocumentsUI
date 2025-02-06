@@ -358,6 +358,14 @@ public abstract class BaseActivity
             if (roots != null) {
                 roots.onSelectedUserChanged();
             }
+            if (useMaterial3()) {
+                final RootsFragment navRailRoots =
+                        RootsFragment.getNavRail(getSupportFragmentManager());
+                if (navRailRoots != null) {
+                    navRailRoots.onSelectedUserChanged();
+                }
+            }
+
 
             if (mState.stack.size() <= 1) {
                 // We do not load cross-profile root if the stack contains two documents. The
@@ -689,6 +697,13 @@ public abstract class BaseActivity
         final RootsFragment roots = RootsFragment.get(getSupportFragmentManager());
         if (roots != null) {
             roots.onCurrentRootChanged();
+        }
+        if (useMaterial3()) {
+            final RootsFragment navRailRoots =
+                    RootsFragment.getNavRail(getSupportFragmentManager());
+            if (navRailRoots != null) {
+                navRailRoots.onCurrentRootChanged();
+            }
         }
 
         String appName = getString(R.string.files_label);

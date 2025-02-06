@@ -144,6 +144,7 @@ android_library {
     defaults: ["documentsui_defaults"],
 
     manifest: "AndroidManifest.xml",
+    flags_packages: ["docsui-flags-aconfig"],
 
     resource_dirs: [],
     libs: ["DocumentsUI-lib"],
@@ -162,6 +163,8 @@ android_app {
 
     static_libs: ["DocumentsUI-lib"],
     resource_dirs: [],
+
+    flags_packages: ["docsui-flags-aconfig"],
 
     licenses: [
         "Android-Apache-2.0",

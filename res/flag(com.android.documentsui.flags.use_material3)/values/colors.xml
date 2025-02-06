@@ -22,7 +22,7 @@
   <color name="background_floating">@android:color/white</color>
   <color name="nav_bar_translucent">#99FFFFFF</color>
 
-  <color name="primary">#1E88E5</color> <!-- Blue 600 -->
+  <color name="primary">?attr/colorPrimary</color>
   <color name="secondary">#E3F2FD</color> <!-- Blue 50 -->
   <color name="hairline">#E0E0E0</color> <!-- Gray 300 -->
 
@@ -49,20 +49,16 @@
 
   <color name="edge_effect">@android:color/black</color>
 
-  <color name="doc_list_item_subtitle_enabled">#5F6368</color> <!-- Gray 700 -->
-  <color name="doc_list_item_subtitle_disabled">#613c4043
-  </color> <!-- 38% Grey800 -->
-
   <color name="list_divider_color">#1f000000</color>
-  <color name="list_item_selected_background_color">?android:colorSecondary
-  </color>
-  <color name="color_surface_header">@color/app_background_color</color>
+  <color name="list_item_selected_background_color">?attr/colorPrimary</color>
+  <!-- This is used when the app bar is in pinned mode inside the CollapsingToolbarLayout.
+       The code in NavigationViewManager assume the value should be a plain color value so we can't
+       use the theme attribute "?attr/colorSurfaceContainerHigh" (which is a reference) here, hence
+       using the mapped system color in both here and dark mode.
+  -->
+  <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant92</color>
 
-  <color name="tab_selected_text_color">@color/primary</color>
   <color name="work_profile_button_stroke_color">@color/primary</color>
-  <color name="profile_tab_selected_color">?android:attr/colorAccent</color>
-  <color name="profile_tab_default_color">#E0E0E0</color>
-  <color name="tab_unselected_text_color">#5F6368</color> <!-- Gray 700 -->
 
   <color name="fragment_pick_inactive_button_color">#E0E0E0</color>
   <color name="fragment_pick_inactive_text_color">#5F6368</color>
@@ -73,11 +69,11 @@
   <color name="search_chip_text_selected_color">@android:color/white</color>
 
   <!-- Use this when we need to set alpha channel on top of a theme attribute color in the
-       color selector list, e.g. to set colorOnSecondaryContainer with 10% alpha channel, use:
+       color selector list, e.g. to set colorOnSecondaryContainer with a hover overlay alpha, use:
 
        <shape android:tint="?attr/colorOnSecondaryContainer">
-          <solid android:color="@color/overlay_color_percentage_10"/>
+          <solid android:color="@color/overlay_hover_color_percentage"/>
        </shape>
    -->
-  <color name="overlay_color_percentage_10">#1A000000</color>
+  <color name="overlay_hover_color_percentage">#14000000</color> <!-- 8% -->
 </resources>

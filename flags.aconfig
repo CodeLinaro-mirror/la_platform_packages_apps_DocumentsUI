@@ -23,3 +23,24 @@ flag {
     description: "Enables the next generation ZIP functionality."
     bug: "382550591"
 }
+
+flag {
+    name: "desktop_file_handling"
+    namespace: "documentsui"
+    description: "Enables desktop file handling."
+    bug: "381778967"
+}
+
+flag {
+    name: "visual_signals"
+    namespace: "documentsui"
+    description: "Enables in-app progress display of file operations"
+    bug: "378011512"
+}
+
+flag {
+    name: "redirect_get_content"
+    namespace: "documentsui"
+    description: "Redirects GET_CONTENT requests to Photopicker when appropriate"
+    bug: "377771195"
+}

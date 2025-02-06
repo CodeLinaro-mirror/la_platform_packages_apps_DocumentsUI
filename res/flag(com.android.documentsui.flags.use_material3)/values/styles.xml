@@ -55,12 +55,6 @@
         <item name="cardElevation">@dimen/grid_item_elevation</item>
     </style>
 
-    <style name="TrimmedHorizontalProgressBar" parent="android:Widget.Material.ProgressBar.Horizontal">
-        <item name="android:indeterminateDrawable">@drawable/progress_indeterminate_horizontal_material_trimmed</item>
-        <item name="android:minHeight">3dp</item>
-        <item name="android:maxHeight">3dp</item>
-    </style>
-
     <style name="SnackbarButtonStyle" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">?android:colorPrimary</item>
     </style>
@@ -152,5 +146,43 @@
     <style name="DrawerItemActionIconStyle" parent="@style/Widget.Material3.Button.IconButton">
         <item name="android:layout_marginStart">@dimen/drawer_item_action_icon_margin_start</item>
         <item name="strokeColor">?attr/colorSecondary</item>
+    </style>
+
+    <style name="ProfileTabStyle" parent="@style/Widget.Material3.TabLayout">
+        <!-- Use transparent bg color to hide the underline for tab layout. -->
+        <item name="android:background">@android:color/transparent</item>
+        <item name="tabIndicatorColor">?attr/colorPrimary</item>
+        <item name="tabIndicatorHeight">@dimen/tab_selector_indicator_height</item>
+        <item name="tabTextColor">?attr/colorOnSurfaceVariant</item>
+        <item name="tabSelectedTextColor">?attr/colorOnPrimaryContainer</item>
+        <item name="tabTextAppearance">@style/TabTextAppearance</item>
+    </style>
+
+    <style name="FileItemLabelStyle" parent="">
+        <item name="android:layout_marginStart">32dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:minWidth">70dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAppearance">@style/FileItemLabelText</item>
+    </style>
+
+    <style name="NavRailStyle" parent="">
+        <item name="android:background">?attr/colorSurfaceContainer</item>
+        <item name="android:paddingHorizontal">@dimen/space_small_3</item>
+        <item name="android:paddingTop">@dimen/space_extra_small_6</item>
+        <item name="android:paddingBottom">@dimen/space_small_1</item>
+        <item name="android:scrollbarStyle">outsideOverlay</item>
+        <item name="android:clipToPadding">false</item>
+    </style>
+
+    <style name="NavRailItemStyle" parent="">
+        <item name="android:background">@drawable/nav_rail_item_background</item>
+        <item name="android:paddingVertical">6dp</item>
+    </style>
+
+    <style name="NavRailItemTextStyle" parent="">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textColor">@color/nav_rail_item_text_color</item>
+        <item name="android:textAppearance">@style/NavRailItemTextAppearance</item>
     </style>
 </resources>
