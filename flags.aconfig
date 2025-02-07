@@ -37,3 +37,10 @@ flag {
     description: "Enables in-app progress display of file operations"
     bug: "378011512"
 }
+
+flag {
+    name: "redirect_get_content"
+    namespace: "documentsui"
+    description: "Redirects GET_CONTENT requests to Photopicker when appropriate"
+    bug: "377771195"
+}
