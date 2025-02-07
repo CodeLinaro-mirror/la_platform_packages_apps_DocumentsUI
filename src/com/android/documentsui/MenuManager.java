@@ -427,7 +427,7 @@ public abstract class MenuManager {
 
         boolean canExtract();
 
-        boolean canOpenWith();
+        boolean canOpen();
 
         boolean canViewInOwner();
     }

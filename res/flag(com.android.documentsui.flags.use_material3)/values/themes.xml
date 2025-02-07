@@ -75,8 +75,4 @@
         <item name="snackbarButtonStyle">@style/SnackbarButtonStyle</item>
         <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
     </style>
-
-    <style name="TabTheme" parent="@android:style/Theme.DeviceDefault.DayNight">
-        <item name="colorPrimary">@color/edge_effect</item>
-    </style>
 </resources>

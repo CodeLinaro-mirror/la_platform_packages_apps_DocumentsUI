@@ -16,6 +16,8 @@
 
 package com.android.documentsui.files;
 
+import static com.android.documentsui.flags.Flags.desktopFileHandling;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -161,7 +163,12 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateOpenWith(MenuItem openWith, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(openWith, selectionDetails.canOpenWith());
+        Menus.setEnabledAndVisible(openWith, selectionDetails.canOpen());
+    }
+
+    @Override
+    protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
+        Menus.setEnabledAndVisible(open, desktopFileHandling() && selectionDetails.canOpen());
     }
 
     @Override

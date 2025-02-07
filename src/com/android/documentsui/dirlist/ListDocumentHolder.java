@@ -20,6 +20,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -145,10 +146,14 @@ final class ListDocumentHolder extends DocumentHolder {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
 
-        // Text colors enabled/disabled is handle via a color set.
-        final float imgAlpha = enabled ? 1f : DISABLED_ALPHA;
-        mIconMime.setAlpha(imgAlpha);
-        mIconThumb.setAlpha(imgAlpha);
+        if (useMaterial3()) {
+            itemView.setAlpha(enabled ? 1f : DISABLED_ALPHA);
+        } else {
+            // Text colors enabled/disabled is handle via a color set.
+            final float imgAlpha = enabled ? 1f : DISABLED_ALPHA;
+            mIconMime.setAlpha(imgAlpha);
+            mIconThumb.setAlpha(imgAlpha);
+        }
     }
 
     @Override

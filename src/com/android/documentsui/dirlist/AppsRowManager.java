@@ -16,6 +16,8 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +47,7 @@ import java.util.Map;
 
 /**
  * A manager class stored apps row chip data list. Data will be synced by RootsFragment.
+ * TODO(b/379776735): Remove this after M3 uplift.
  */
 public class AppsRowManager {
 
@@ -102,6 +105,10 @@ public class AppsRowManager {
     }
 
     private boolean shouldShow(State state, boolean isSearchExpanded) {
+        if (useMaterial3()) {
+            return false;
+        }
+
         boolean isHiddenAction = state.action == State.ACTION_CREATE
                 || state.action == State.ACTION_OPEN_TREE
                 || state.action == State.ACTION_PICK_COPY_DESTINATION;
