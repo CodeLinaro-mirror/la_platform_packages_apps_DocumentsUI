@@ -30,8 +30,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:minHeight="@dimen/list_item_height"
-        android:paddingStart="@dimen/list_item_padding"
-        android:paddingEnd="@dimen/list_item_width"
+        android:paddingStart="@dimen/list_item_padding_start"
+        android:paddingEnd="@dimen/list_item_padding_end"
         android:orientation="horizontal">
         <!-- Placeholder for icon -->
         <View
