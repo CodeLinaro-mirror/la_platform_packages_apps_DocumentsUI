@@ -20,6 +20,8 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
@@ -31,6 +33,7 @@ import com.android.documentsui.sorting.SortModel;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -72,6 +75,9 @@ public class SortDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
         return ret;
     }
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
     public void setUp() throws Exception {
