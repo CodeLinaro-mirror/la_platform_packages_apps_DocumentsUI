@@ -19,8 +19,6 @@ package com.android.documentsui.sorting;
 import android.animation.AnimatorInflater;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
-import androidx.annotation.AnimatorRes;
-import androidx.annotation.StringRes;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -29,14 +27,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.AnimatorRes;
+import androidx.annotation.StringRes;
+
 import com.android.documentsui.R;
-import com.android.documentsui.sorting.SortDimension;
 
 /**
- * A clickable, sortable table header cell layout.
- *
- * It updates its display when it binds to {@link SortDimension} and changes the status of sorting
- * when it's clicked.
+ * A clickable, sortable table header cell layout. It updates its display when it binds to {@link
+ * SortDimension} and changes the status of sorting when it's clicked.
  */
 public class HeaderCell extends LinearLayout {
 
@@ -62,7 +60,7 @@ public class HeaderCell extends LinearLayout {
         setVisibility(dimension.getVisibility());
 
         if (dimension.getVisibility() == View.VISIBLE) {
-            TextView label = (TextView) findViewById(R.id.label);
+            TextView label = findViewById(R.id.label);
             label.setText(dimension.getLabelId());
             switch (dimension.getDataType()) {
                 case SortDimension.DATA_TYPE_NUMBER:
@@ -77,17 +75,21 @@ public class HeaderCell extends LinearLayout {
             }
 
             if (mCurDirection != dimension.getSortDirection()) {
-                ImageView arrow = (ImageView) findViewById(R.id.sort_arrow);
+                ImageView arrow = findViewById(R.id.sort_arrow);
                 switch (dimension.getSortDirection()) {
                     case SortDimension.SORT_DIRECTION_NONE:
                         arrow.setVisibility(View.GONE);
                         break;
                     case SortDimension.SORT_DIRECTION_ASCENDING:
-                        showArrow(arrow, R.animator.arrow_rotate_up,
+                        showArrow(
+                                arrow,
+                                R.animator.arrow_rotate_up,
                                 R.string.sort_direction_ascending);
                         break;
                     case SortDimension.SORT_DIRECTION_DESCENDING:
-                        showArrow(arrow, R.animator.arrow_rotate_down,
+                        showArrow(
+                                arrow,
+                                R.animator.arrow_rotate_down,
                                 R.string.sort_direction_descending);
                         break;
                     default:
@@ -98,6 +100,22 @@ public class HeaderCell extends LinearLayout {
                 mCurDirection = dimension.getSortDirection();
             }
         }
+    }
+
+    /**
+     * Sets a listener on the sort arrow image. When Material 3 is enabled, the Sort Arrow has
+     * "android:clickable" set to true (to enable a hover state). This stops the click listener from
+     * falling through to the cell click listener and thus the sort arrow will need to handle clicks
+     * itself.
+     */
+    public void setSortArrowListeners(
+            View.OnClickListener clickListener,
+            View.OnKeyListener keyListener,
+            SortDimension dimension) {
+        ImageView arrow = findViewById(R.id.sort_arrow);
+        arrow.setTag(dimension);
+        arrow.setOnKeyListener(keyListener);
+        arrow.setOnClickListener(clickListener);
     }
 
     private void showArrow(

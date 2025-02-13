@@ -61,6 +61,7 @@ public final class MenuManagerTest {
     private TestMenuItem dirCutToClipboard;
     private TestMenuItem dirCopyToClipboard;
     private TestMenuItem dirPasteFromClipboard;
+    private TestMenuItem mDirCompress;
     private TestMenuItem dirCreateDir;
     private TestMenuItem dirSelectAll;
     private TestMenuItem mDirDeselectAll;
@@ -124,6 +125,7 @@ public final class MenuManagerTest {
         dirOpenWith = testMenu.findItem(R.id.dir_menu_open_with);
         dirCutToClipboard = testMenu.findItem(R.id.dir_menu_cut_to_clipboard);
         dirCopyToClipboard = testMenu.findItem(R.id.dir_menu_copy_to_clipboard);
+        mDirCompress = testMenu.findItem(R.id.dir_menu_compress);
         dirPasteFromClipboard = testMenu.findItem(R.id.dir_menu_paste_from_clipboard);
         dirCreateDir = testMenu.findItem(R.id.dir_menu_create_dir);
         dirSelectAll = testMenu.findItem(R.id.dir_menu_select_all);
@@ -402,6 +404,7 @@ public final class MenuManagerTest {
         dirOpenWith.assertDisabledAndInvisible();
         dirCutToClipboard.assertDisabledAndInvisible();
         dirCopyToClipboard.assertEnabledAndVisible();
+        mDirCompress.assertDisabledAndInvisible();
         dirRename.assertDisabledAndInvisible();
         dirDelete.assertDisabledAndInvisible();
     }
@@ -414,6 +417,7 @@ public final class MenuManagerTest {
         dirOpenInNewWindow.assertDisabledAndInvisible();
         dirCutToClipboard.assertDisabledAndInvisible();
         dirCopyToClipboard.assertEnabledAndVisible();
+        mDirCompress.assertDisabledAndInvisible();
         // Doesn't matter if directory is selected, we don't want pasteInto for PickerActivity
         dirPasteIntoFolder.assertDisabledAndInvisible();
         dirRename.assertDisabledAndInvisible();
@@ -429,6 +433,7 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
         dirCutToClipboard.assertEnabledAndVisible();
         dirCopyToClipboard.assertEnabledAndVisible();
+        mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertEnabledAndVisible();
     }
 
@@ -442,6 +447,7 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
         dirCutToClipboard.assertDisabledAndInvisible();
         dirCopyToClipboard.assertDisabledAndInvisible();
+        mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertEnabledAndVisible();
     }
 
@@ -454,6 +460,7 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
         dirCutToClipboard.assertDisabledAndInvisible();
         dirCopyToClipboard.assertEnabledAndVisible();
+        mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertDisabledAndInvisible();
     }
 

@@ -23,7 +23,10 @@
 }
 
 # To prevent class not found exception in org.brotli.dec.Dictionary
--keep final class org.brotli.dec.DictionaryData
+# TODO(b/373579455): Evaluate if <init> needs to be kept.
+-keep final class org.brotli.dec.DictionaryData {
+  void <init>();
+}
 
 # keep rule generated after running trace references on the test app against DocumentsUIGoogle.jar
 # TODO(b/339312616): Remove after a more permanent fix is available
