@@ -16,7 +16,11 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+
 import android.net.Uri;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
 
@@ -38,26 +42,32 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
     private static final String MIME_2 = "text/html"; // HTML document
     private static final String MIME_3 = "image/jpeg"; // JPG image
 
-    private static final String[] FILES = { FILE_1, FILE_3, FILE_2 };
-    private static final String[] MIMES = { MIME_1, MIME_3, MIME_2 };
-    private static final String[] DIRS = { DIR_1, DIR_2 };
-
-    private static final String[] DIRS_IN_NAME_ASC = { DIR_2, DIR_1 };
-    private static final String[] DIRS_IN_NAME_DESC = reverse(DIRS_IN_NAME_ASC);
-    private static final String[] FILES_IN_NAME_ASC = { FILE_2, FILE_1, FILE_3 };
-    private static final String[] FILES_IN_NAME_DESC = reverse(FILES_IN_NAME_ASC);
-
-    private static final String[] FILES_IN_SIZE_ASC = { FILE_2, FILE_1, FILE_3 };
-    private static final String[] FILES_IN_SIZE_DESC = reverse(FILES_IN_SIZE_ASC);
-
-    private static final String[] DIRS_IN_MODIFIED_DESC = reverse(DIRS);
+    private static final String[] FILES = {FILE_1, FILE_3, FILE_2};
     private static final String[] FILES_IN_MODIFIED_DESC = reverse(FILES);
-
-    private static final String[] FILES_IN_TYPE_ASC = { FILE_2, FILE_3, FILE_1 };
+    private static final String[] MIMES = {MIME_1, MIME_3, MIME_2};
+    private static final String[] DIRS = {DIR_1, DIR_2};
+    private static final String[] DIRS_IN_MODIFIED_DESC = reverse(DIRS);
+    private static final String[] DIRS_IN_NAME_ASC = {DIR_2, DIR_1};
+    private static final String[] DIRS_IN_NAME_DESC = reverse(DIRS_IN_NAME_ASC);
+    private static final String[] FILES_IN_NAME_ASC = {FILE_2, FILE_1, FILE_3};
+    private static final String[] FILES_IN_NAME_DESC = reverse(FILES_IN_NAME_ASC);
+    private static final String[] FILES_IN_SIZE_ASC = {FILE_2, FILE_1, FILE_3};
+    private static final String[] FILES_IN_SIZE_DESC = reverse(FILES_IN_SIZE_ASC);
+    private static final String[] FILES_IN_TYPE_ASC = {FILE_2, FILE_3, FILE_1};
     private static final String[] FILES_IN_TYPE_DESC = reverse(FILES_IN_TYPE_ASC);
 
     public SortDocumentUiTest() {
         super(FilesActivity.class);
+    }
+
+    private static String[] reverse(String[] array) {
+        String[] ret = new String[array.length];
+
+        for (int i = 0; i < array.length; ++i) {
+            ret[ret.length - i - 1] = array[i];
+        }
+
+        return ret;
     }
 
     @Override
@@ -71,8 +81,9 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
     }
 
     /**
-     * Initiate test files. It allows waiting between creations of files, so that we can assure
-     * the modified date of each document is different.
+     * Initiate test files. It allows waiting between creations of files, so that we can assure the
+     * modified date of each document is different.
+     *
      * @param sleep time to sleep in ms
      */
     private void initFiles(long sleep) throws Exception {
@@ -110,8 +121,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToListMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_ASCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_ASCENDING);
         bots.directory.assertOrder(DIRS_IN_NAME_ASC, FILES_IN_SIZE_ASC);
     }
 
@@ -120,8 +130,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToListMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_DESCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_DESCENDING);
         bots.directory.assertOrder(DIRS_IN_NAME_ASC, FILES_IN_SIZE_DESC);
     }
 
@@ -130,8 +139,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToListMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_ASCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_ASCENDING);
         bots.directory.assertOrder(DIRS, FILES);
     }
 
@@ -140,8 +148,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToListMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
         bots.directory.assertOrder(DIRS_IN_MODIFIED_DESC, FILES_IN_MODIFIED_DESC);
     }
 
@@ -180,8 +187,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToGridMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_ASCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_ASCENDING);
         bots.directory.assertOrder(DIRS_IN_NAME_ASC, FILES_IN_SIZE_ASC);
     }
 
@@ -190,8 +196,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToGridMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_DESCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_DESCENDING);
         bots.directory.assertOrder(DIRS_IN_NAME_ASC, FILES_IN_SIZE_DESC);
     }
 
@@ -200,8 +205,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToGridMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_ASCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_ASCENDING);
         bots.directory.assertOrder(DIRS, FILES);
     }
 
@@ -210,8 +214,7 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
 
         bots.main.switchToGridMode();
 
-        bots.sort.sortBy(
-                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
+        bots.sort.sortBy(SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
         bots.directory.assertOrder(DIRS_IN_MODIFIED_DESC, FILES_IN_MODIFIED_DESC);
     }
 
@@ -235,13 +238,30 @@ public class SortDocumentUiTest extends ActivityTest<FilesActivity> {
         bots.directory.assertOrder(DIRS_IN_NAME_ASC, FILES_IN_TYPE_DESC);
     }
 
-    private static String[] reverse(String[] array) {
-        String[] ret = new String[array.length];
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testSortByArrowIcon() throws Exception {
+        initFiles();
 
-        for (int i = 0; i < array.length; ++i) {
-            ret[ret.length - i - 1] = array[i];
+        bots.main.switchToListMode();
+
+        // Set up the sort in descending direction to allow deterministic behaviour of the sort
+        // icon.
+        bots.sort.sortBy(
+                SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_DESCENDING);
+        bots.directory.assertOrder(DIRS_IN_NAME_DESC, FILES_IN_NAME_DESC);
+
+        // Tab in reverse order until the sort icon is the focus (this avoids tabbing through the
+        // roots list which is quite long in tests).
+        while (!bots.sort.isSortIconFocused()) {
+            bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB, KeyEvent.META_SHIFT_LEFT_ON);
         }
 
-        return ret;
+        // Press enter on the sort icon and ensure the sort direction is changed.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_ENTER);
+        bots.directory.assertOrder(DIRS_IN_NAME_ASC, FILES_IN_NAME_ASC);
+
+        // Space should also work in the same way as the ENTER key.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_SPACE);
+        bots.directory.assertOrder(DIRS_IN_NAME_DESC, FILES_IN_NAME_DESC);
     }
 }
