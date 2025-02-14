@@ -77,6 +77,7 @@ public abstract class TestMenu implements Menu {
                 R.id.option_menu_debug,
                 R.id.option_menu_new_window,
                 R.id.option_menu_create_dir,
+                R.id.option_menu_extract_all,
                 R.id.option_menu_select_all,
                 R.id.option_menu_settings,
                 R.id.option_menu_inspect,
@@ -100,6 +101,11 @@ public abstract class TestMenu implements Menu {
             // Used by SearchViewManager
             if (id == R.id.option_menu_search) {
                 item.setActionView(Mockito.mock(SearchView.class));
+            }
+
+            if (id == R.id.option_menu_extract_all) {
+                item.setEnabled(false);
+                item.setVisible(false);
             }
         }
         return menu;
