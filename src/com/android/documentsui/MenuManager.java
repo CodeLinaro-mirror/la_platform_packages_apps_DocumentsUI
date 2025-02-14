@@ -234,10 +234,7 @@ public abstract class MenuManager {
 
         Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
 
-        final MenuItem compress = menu.findItem(R.id.dir_menu_compress);
-        if (compress != null) {
-            updateCompress(compress, selectionDetails);
-        }
+        updateCompress(menu.findItem(R.id.dir_menu_compress), selectionDetails);
     }
 
     /**
