@@ -724,8 +724,17 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW})
+    public void testShowPeek() throws Exception {
+        mHandler.showPreview(TestEnv.FILE_GIF);
+        // The inspector activity is not called.
+        mActivity.startActivity.assertNotCalled();
+    }
+
+    @Test
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
     public void testShowInspector() throws Exception {
-        mHandler.showInspector(TestEnv.FILE_GIF);
+        mHandler.showPreview(TestEnv.FILE_GIF);
 
         mActivity.startActivity.assertCalled();
         Intent intent = mActivity.startActivity.getLastValue();
@@ -737,10 +746,11 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
     public void testShowInspector_DebugDisabled() throws Exception {
         mFeatures.debugSupport = false;
 
-        mHandler.showInspector(TestEnv.FILE_GIF);
+        mHandler.showPreview(TestEnv.FILE_GIF);
         Intent intent = mActivity.startActivity.getLastValue();
 
         assertHasExtra(intent, Shared.EXTRA_SHOW_DEBUG);
@@ -748,11 +758,12 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
     public void testShowInspector_DebugEnabled() throws Exception {
         mFeatures.debugSupport = true;
         DebugFlags.setDocumentDetailsEnabled(true);
 
-        mHandler.showInspector(TestEnv.FILE_GIF);
+        mHandler.showPreview(TestEnv.FILE_GIF);
         Intent intent = mActivity.startActivity.getLastValue();
 
         assertHasExtra(intent, Shared.EXTRA_SHOW_DEBUG);
@@ -761,6 +772,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
     public void testShowInspector_OverridesRootDocumentName() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();
@@ -772,7 +784,7 @@ public class ActionHandlerTest {
         DocumentInfo rootDoc = mEnv.state.stack.peek();
         rootDoc.displayName = "poodles";
 
-        mHandler.showInspector(rootDoc);
+        mHandler.showPreview(rootDoc);
         Intent intent = mActivity.startActivity.getLastValue();
         assertEquals(
                 TestProvidersAccess.PICKLES.title,
@@ -780,6 +792,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
     public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();
@@ -792,7 +805,7 @@ public class ActionHandlerTest {
         DocumentInfo rootDoc = mEnv.state.stack.peek();
         rootDoc.displayName = "poodles";
 
-        mHandler.showInspector(rootDoc);
+        mHandler.showPreview(rootDoc);
         Intent intent = mActivity.startActivity.getLastValue();
         assertFalse(intent.getExtras().containsKey(Intent.EXTRA_TITLE));
     }

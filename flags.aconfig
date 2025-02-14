@@ -51,3 +51,10 @@ flag {
     description: "Redirects GET_CONTENT requests to Photopicker when appropriate"
     bug: "377771195"
 }
+
+flag {
+    name: "use_peek_preview"
+    namespace: "documentsui"
+    description: "Enables the Peek previewing capability as a substitute for the Inspector."
+    bug: "373242058"
+}

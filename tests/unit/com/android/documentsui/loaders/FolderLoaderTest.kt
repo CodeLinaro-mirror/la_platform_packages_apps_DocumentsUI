@@ -20,18 +20,44 @@ import com.android.documentsui.ContentLock
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
+import java.time.Duration
 import junit.framework.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import org.junit.runners.Parameterized.Parameters
 
+private const val TOTAL_FILE_COUNT = 10
+
+@RunWith(Parameterized::class)
 @SmallTest
-class FolderLoaderTest : BaseLoaderTest() {
+class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTest() {
+    companion object {
+        @JvmStatic
+        @Parameters(name = "with parameters {0}")
+        fun data() = listOf(
+            LoaderTestParams("", null, TOTAL_FILE_COUNT),
+            // The first file is at NOW, the second at NOW - 1h, etc.
+            LoaderTestParams("", Duration.ofMinutes(1L), 1),
+            LoaderTestParams("", Duration.ofMinutes(60L + 1), 2),
+            LoaderTestParams("", Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1), TOTAL_FILE_COUNT),
+        )
+    }
+
     @Test
     fun testLoadInBackground() {
         val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
-        val docs = createDocuments(5)
+        val docs = createDocuments(TOTAL_FILE_COUNT)
         mockProvider!!.setNextChildDocumentsReturns(*docs)
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
-        val queryOptions = QueryOptions(10, null, null, true, arrayOf<String>("*/*"))
+        val queryOptions =
+            QueryOptions(
+                TOTAL_FILE_COUNT,
+                testParams.lastModifiedDelta,
+                null,
+                true,
+                arrayOf<String>("*/*")
+            )
         val contentLock = ContentLock()
         // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
         val rootFolderInfo = DocumentInfo()
@@ -50,6 +76,6 @@ class FolderLoaderTest : BaseLoaderTest() {
                 mEnv.state.sortModel
             )
         val directoryResult = loader.loadInBackground()
-        assertEquals(docs.size, getFileCount(directoryResult))
+        assertEquals(testParams.expectedCount, getFileCount(directoryResult))
     }
 }

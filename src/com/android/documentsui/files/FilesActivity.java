@@ -350,7 +350,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         } else if (id == R.id.option_menu_select_all) {
             mInjector.actions.selectAllFiles();
         } else if (id == R.id.option_menu_inspect) {
-            mInjector.actions.showInspector(getCurrentDirectory());
+            mInjector.actions.showPreview(getCurrentDirectory());
         } else {
             final boolean ok = super.onOptionsItemSelected(item);
             if (DEBUG && !ok) {

@@ -52,7 +52,4 @@
     <!-- used for apps row. -->
     <include layout="@layout/apps_row"/>
 
-    <!-- column headers are empty on small screens, in portrait or in grid mode. -->
-    <include layout="@layout/column_headers"/>
-
 </LinearLayout>

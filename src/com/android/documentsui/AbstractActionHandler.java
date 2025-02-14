@@ -266,7 +266,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void showInspector(DocumentInfo doc) {
+    public void showPreview(DocumentInfo doc) {
         throw new UnsupportedOperationException("Can't open properties.");
     }
 
