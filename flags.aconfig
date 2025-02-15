@@ -18,6 +18,13 @@ flag {
 }
 
 flag {
+    name: "use_search_v2_rw"
+    namespace: "documentsui"
+    description: "Read/write flag that enables the next generation search functionality."
+    bug: "383412640"
+}
+
+flag {
     name: "zip_ng"
     namespace: "documentsui"
     description: "Enables the next generation ZIP functionality."
