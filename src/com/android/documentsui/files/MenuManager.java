@@ -225,6 +225,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
+    protected void updateExtractAll(MenuItem it) {
+        Menus.setEnabledAndVisible(it, mDirDetails.isInArchive());
+    }
+
+    @Override
     protected void updateSelectAll(MenuItem selectAll) {
         Menus.setEnabledAndVisible(selectAll, true);
     }

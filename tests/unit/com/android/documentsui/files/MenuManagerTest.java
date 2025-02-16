@@ -111,6 +111,7 @@ public final class MenuManagerTest {
     private TestMenuItem optionSort;
     private TestMenuItem mOptionLauncher;
     private TestMenuItem mOptionShowHiddenFiles;
+    private TestMenuItem mOptionExtractAll;
 
     /* Sub Option Menu items */
     private TestMenuItem subOptionGrid;
@@ -185,6 +186,7 @@ public final class MenuManagerTest {
         optionSort = testMenu.findItem(R.id.option_menu_sort);
         mOptionLauncher = testMenu.findItem(R.id.option_menu_launcher);
         mOptionShowHiddenFiles = testMenu.findItem(R.id.option_menu_show_hidden_files);
+        mOptionExtractAll = testMenu.findItem(R.id.option_menu_extract_all);
 
         // Menu actions on root title row.
         subOptionGrid = testMenu.findItem(R.id.sub_menu_grid);
@@ -253,6 +255,7 @@ public final class MenuManagerTest {
         actionModeSort.assertEnabledAndVisible();
         actionModeSelectAll.assertEnabledAndVisible();
         mActionModeDeselectAll.assertDisabledAndInvisible();
+        mOptionExtractAll.assertDisabledAndInvisible();
     }
 
     @Test
@@ -268,6 +271,7 @@ public final class MenuManagerTest {
         actionModeExtractTo.assertDisabledAndInvisible();
         actionModeMoveTo.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
+        mOptionExtractAll.assertDisabledAndInvisible();
     }
 
     @Test
