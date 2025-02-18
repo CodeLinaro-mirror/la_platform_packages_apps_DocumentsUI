@@ -202,7 +202,8 @@ final class GridDocumentHolder extends DocumentHolder {
         mIconThumb.animate().cancel();
         mIconThumb.setAlpha(0f);
 
-        mIconHelper.load(mDoc, mIconThumb, mIconMimeLg, mIconMimeSm);
+        mIconHelper.load(
+                mDoc, mIconThumb, mIconMimeLg, mIconMimeSm, /* thumbnailLoadedCallback= */ null);
 
         mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
         mTitle.setVisibility(View.VISIBLE);
