@@ -27,11 +27,13 @@ import android.view.View;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
+import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DirectoryFragment;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.sidebar.RootsFragment;
 
@@ -91,6 +93,9 @@ public abstract class MenuManager {
             return;
         }
         updateCreateDir(mOptionMenu.findItem(R.id.option_menu_create_dir));
+        if (Flags.zipNg()) {
+            updateExtractAll(mOptionMenu.findItem(R.id.option_menu_extract_all));
+        }
         updateSettings(mOptionMenu.findItem(R.id.option_menu_settings));
         updateSelectAll(mOptionMenu.findItem(R.id.option_menu_select_all));
         updateNewWindow(mOptionMenu.findItem(R.id.option_menu_new_window));
@@ -229,10 +234,7 @@ public abstract class MenuManager {
 
         Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
 
-        final MenuItem compress = menu.findItem(R.id.dir_menu_compress);
-        if (compress != null) {
-            updateCompress(compress, selectionDetails);
-        }
+        updateCompress(menu.findItem(R.id.dir_menu_compress), selectionDetails);
     }
 
     /**
@@ -397,6 +399,10 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(launcher, false);
     }
 
+    protected void updateExtractAll(MenuItem it) {
+        Menus.setEnabledAndVisible(it, false);
+    }
+
     protected abstract void updateSelectAll(MenuItem selectAll);
     protected abstract void updateSelectAll(MenuItem selectAll, SelectionDetails selectionDetails);
     protected abstract void updateDeselectAll(
@@ -453,6 +459,12 @@ public abstract class MenuManager {
 
         public boolean isInRecents() {
             return mActivity.isInRecents();
+        }
+
+        /** Is the current directory showing the contents of an archive? */
+        public boolean isInArchive() {
+            final DocumentInfo dir = mActivity.getCurrentDirectory();
+            return dir != null && ArchivesProvider.AUTHORITY.equals(dir.authority);
         }
 
         public boolean canCreateDirectory() {

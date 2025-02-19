@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.app.ActivityManager.TaskDescription;
@@ -24,6 +25,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
@@ -58,6 +60,7 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
@@ -338,12 +341,22 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
             mInjector.actions.openInNewWindow(mState.stack);
         } else if (id == R.id.option_menu_settings) {
             mInjector.actions.openSettings(getCurrentRoot());
+        } else if (id == R.id.option_menu_extract_all) {
+            if (!Flags.zipNg()) return false;
+            final DirectoryFragment dir = getDirectoryFragment();
+            if (dir == null) return false;
+            mInjector.actions.selectAllFiles();
+            return dir.onContextItemSelected(item);
         } else if (id == R.id.option_menu_select_all) {
             mInjector.actions.selectAllFiles();
         } else if (id == R.id.option_menu_inspect) {
             mInjector.actions.showInspector(getCurrentDirectory());
         } else {
-            return super.onOptionsItemSelected(item);
+            final boolean ok = super.onOptionsItemSelected(item);
+            if (DEBUG && !ok) {
+                Log.d(TAG, "Unhandled option item " + id);
+            }
+            return ok;
         }
         return true;
     }
