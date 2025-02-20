@@ -80,6 +80,7 @@
             android:id="@+id/option_menu_extract_all"
             android:title="@string/menu_extract_all"
             android:icon="@drawable/ic_menu_extract"
+            android:enabled="false"
             android:visible="false"
             app:showAsAction="always"/>
         <item
