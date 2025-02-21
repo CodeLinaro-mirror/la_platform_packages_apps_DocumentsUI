@@ -137,30 +137,32 @@ class TrampolineActivity : AppCompatActivity() {
 }
 
 fun shouldForwardIntentToPhotopicker(intent: Intent): Boolean {
-    if (intent.action != ACTION_GET_CONTENT || !isMediaMimeType(intent.type)) {
+    // Photopicker can only handle `ACTION_GET_CONTENT` intents.
+    if (intent.action != ACTION_GET_CONTENT) {
         return false
     }
 
-    // Intent has type ACTION_GET_CONTENT and is either image/* or video/* with no
-    // additional mime types.
-    if (!intent.hasExtra(Intent.EXTRA_MIME_TYPES)) {
-        return true
+    // Photopicker only handles media mime types (i.e. image/* or video/*), however, it also handles
+    // requests that have type */* with EXTRA_MIME_TYPES that are media mime types. In that scenario
+    // it provides an escape hatch to the user to go back to DocumentsUI.
+    val intentTypeIsMedia = isMediaMimeType(intent.type)
+    if (!intentTypeIsMedia && intent.type != "*/*") {
+        return false
     }
 
     val extraMimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
-    extraMimeTypes?.let {
-        if (it.size == 0) {
-            return false
-        }
 
-        for (mimeType in it) {
-            if (!isMediaMimeType(mimeType)) {
-                return false
-            }
-        }
-    } ?: return false
+    // In the event there were no `EXTRA_MIME_TYPES` this should exclusively be handled by
+    // DocumentsUI and not Photopicker.
+    if (intent.type == "*/*" && extraMimeTypes == null) {
+        return false
+    }
 
-    return true
+    if (extraMimeTypes == null) {
+        return intentTypeIsMedia
+    }
+
+    return extraMimeTypes.isNotEmpty() && extraMimeTypes.none { !isMediaMimeType(it) }
 }
 
 fun isMediaMimeType(mimeType: String?): Boolean {
