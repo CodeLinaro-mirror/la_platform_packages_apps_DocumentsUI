@@ -49,7 +49,11 @@ import kotlin.time.measureTime
  *  - Query options such as maximum number of results, last modified time delta, etc.
  *  - a lookup from file extension to file type
  *  - The model capable of sorting results
- *  - An acceptable mime types
+ *  - An executor for running searches across multiple roots in parallel
+ *
+ *  SearchLoader requires that either a query is not null and not empty or that QueryOptions
+ *  specify a last modified time restriction. This is to prevent searching for every file
+ *  across every specified root.
  */
 class SearchLoader(
     context: Context,
@@ -62,6 +66,12 @@ class SearchLoader(
     private val mSortModel: SortModel,
     private val mExecutorService: ExecutorService,
 ) : BaseFileLoader(context, userIdList, mimeTypeLookup) {
+
+    init {
+        require((mQuery !== null && !mQuery.isBlank()) || mOptions.maxLastModifiedDelta !== null) {
+            "Either the query or the last modified time must not be null"
+        }
+    }
 
     /**
      * Helper class that runs query on a single user for the given parameter. This class implements

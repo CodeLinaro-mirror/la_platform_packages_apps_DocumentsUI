@@ -25,6 +25,7 @@ import java.time.Duration
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,7 +37,9 @@ private const val TOTAL_FILE_COUNT = 8
 @RunWith(Parameterized::class)
 @SmallTest
 class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTest() {
-    private lateinit var mExecutor: ExecutorService
+    lateinit var mExecutor: ExecutorService
+    val mContentLock = ContentLock()
+    val mContentObserver = LockingContentObserver(mContentLock) {}
 
     companion object {
         @JvmStatic
@@ -71,10 +74,7 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 true,
                 arrayOf("*/*")
             )
-        val contentLock = ContentLock()
         val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
-        val observer = LockingContentObserver(contentLock) {
-        }
 
         // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
         val rootFolderInfo = DocumentInfo()
@@ -86,7 +86,7 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 mActivity,
                 userIds,
                 TestFileTypeLookup(),
-                observer,
+                mContentObserver,
                 rootIds,
                 testParams.query,
                 queryOptions,
@@ -95,5 +95,42 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
             )
         val directoryResult = loader.loadInBackground()
         assertEquals(testParams.expectedCount, getFileCount(directoryResult))
+    }
+
+    @Test
+    fun testBlankQueryAndRecency() {
+        val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
+        val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
+        val noLastModifiedQueryOptions = QueryOptions(10, null, null, true, arrayOf("*/*"))
+
+        // Blank query and no last modified duration is invalid.
+        assertThrows(IllegalArgumentException::class.java) {
+            SearchLoader(
+                mActivity,
+                userIds,
+                TestFileTypeLookup(),
+                mContentObserver,
+                rootIds,
+                "",
+                noLastModifiedQueryOptions,
+                mEnv.state.sortModel,
+                mExecutor,
+            )
+        }
+
+        // Null query and no last modified duration is invalid.
+        assertThrows(IllegalArgumentException::class.java) {
+            SearchLoader(
+                mActivity,
+                userIds,
+                TestFileTypeLookup(),
+                mContentObserver,
+                rootIds,
+                null,
+                noLastModifiedQueryOptions,
+                mEnv.state.sortModel,
+                mExecutor,
+            )
+        }
     }
 }
