@@ -525,11 +525,16 @@ public abstract class BaseActivity
             root.setPadding(insets.getSystemWindowInsetLeft(),
                     insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), 0);
 
-            View saveContainer = findViewById(R.id.container_save);
-            saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+            // in M3, no additional bottom gap in full screen mode.
+            if (!useMaterial3()) {
+                View saveContainer = findViewById(R.id.container_save);
+                saveContainer.setPadding(
+                        0, 0, 0, insets.getSystemWindowInsetBottom());
 
-            View rootsContainer = findViewById(R.id.container_roots);
-            rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+                View rootsContainer = findViewById(R.id.container_roots);
+                rootsContainer.setPadding(
+                        0, 0, 0, insets.getSystemWindowInsetBottom());
+            }
 
             return insets.consumeSystemWindowInsets();
         });
