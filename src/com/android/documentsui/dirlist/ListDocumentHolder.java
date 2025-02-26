@@ -53,6 +53,8 @@ import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.ui.Views;
 import com.android.modules.utils.build.SdkLevel;
 
+import com.google.android.material.card.MaterialCardView;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Function;
@@ -68,6 +70,8 @@ final class ListDocumentHolder extends DocumentHolder {
     private final @Nullable LinearLayout mDetails;
     // TextView for date + size + summary, null only for tablets/sw720dp
     private final @Nullable TextView mMetadataView;
+    // Non-null only when M3 flag is ON.
+    private final @Nullable MaterialCardView mIconWrapper;
     private final ImageView mIconMime;
     private final ImageView mIconThumb;
     private final ImageView mIconCheck;
@@ -85,6 +89,7 @@ final class ListDocumentHolder extends DocumentHolder {
         super(context, parent, R.layout.item_doc_list, configStore);
 
         mIconLayout = itemView.findViewById(R.id.icon);
+        mIconWrapper = useMaterial3() ? itemView.findViewById(R.id.icon_wrapper) : null;
         mIconMime = (ImageView) itemView.findViewById(R.id.icon_mime);
         mIconThumb = (ImageView) itemView.findViewById(R.id.icon_thumb);
         mIconCheck = (ImageView) itemView.findViewById(R.id.icon_check);
@@ -139,6 +144,15 @@ final class ListDocumentHolder extends DocumentHolder {
         } else {
             mIconMime.setAlpha(1f - checkAlpha);
             mIconThumb.setAlpha(1f - checkAlpha);
+        }
+
+        // Do not show stroke when selected, only show stroke when not selected if it has thumbnail.
+        if (useMaterial3() && mIconWrapper != null) {
+            if (selected) {
+                mIconWrapper.setStrokeWidth(0);
+            } else if (mIconThumb.getDrawable() != null) {
+                mIconWrapper.setStrokeWidth(2);
+            }
         }
     }
 
@@ -248,7 +262,17 @@ final class ListDocumentHolder extends DocumentHolder {
         mIconThumb.animate().cancel();
         mIconThumb.setAlpha(0f);
 
-        mIconHelper.load(mDoc, mIconThumb, mIconMime, null);
+        mIconHelper.load(
+                mDoc,
+                mIconThumb,
+                mIconMime,
+                /* subIconMime= */ null,
+                thumbnailLoaded -> {
+                    // Show stroke when thumbnail is loaded.
+                    if (useMaterial3() && mIconWrapper != null) {
+                        mIconWrapper.setStrokeWidth(thumbnailLoaded ? 2 : 0);
+                    }
+                });
 
         mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
         mTitle.setVisibility(View.VISIBLE);
