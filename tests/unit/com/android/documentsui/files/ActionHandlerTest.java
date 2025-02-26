@@ -810,6 +810,23 @@ public class ActionHandlerTest {
         assertFalse(intent.getExtras().containsKey(Intent.EXTRA_TITLE));
     }
 
+    @Test
+    public void testViewInOwner() {
+        mEnv.populateStack();
+
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PNG);
+
+        mHandler.viewInOwner();
+        mActivity.assertActivityStarted(DocumentsContract.ACTION_DOCUMENT_SETTINGS);
+    }
+
+    @Test
+    public void testOpenSettings() {
+        mHandler.openSettings(TestProvidersAccess.HAMMY);
+        mActivity.assertActivityStarted(DocumentsContract.ACTION_DOCUMENT_ROOT_SETTINGS);
+    }
+
     private void assertRootPicked(Uri expectedUri) throws Exception {
         mEnv.beforeAsserts();
 
