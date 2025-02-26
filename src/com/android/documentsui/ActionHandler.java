@@ -118,7 +118,7 @@ public interface ActionHandler {
 
     void showCreateDirectoryDialog();
 
-    void showInspector(DocumentInfo doc);
+    void showPreview(DocumentInfo doc);
 
     @Nullable DocumentInfo renameDocument(String name, DocumentInfo document);
 

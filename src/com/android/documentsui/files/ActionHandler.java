@@ -19,7 +19,7 @@ package com.android.documentsui.files;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.flags.Flags.desktopFileHandling;
+import com.android.documentsui.flags.Flags;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -551,7 +551,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (desktopFileHandling()) {
+        if (Flags.desktopFileHandling()) {
             Intent intent = buildViewIntent(doc);
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
@@ -571,8 +571,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
     }
 
-    @Override
-    public void showInspector(DocumentInfo doc) {
+    private void showInspector(DocumentInfo doc) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_INSPECTOR);
         Intent intent = InspectorActivity.createIntent(mActivity, doc.derivedUri, doc.userId);
 
@@ -595,5 +594,18 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             intent.putExtra(Intent.EXTRA_TITLE, root.title);
         }
         mActivity.startActivity(intent);
+    }
+
+    private void showPeek() {
+        Log.d(TAG, "Peek not implemented");
+    }
+
+    @Override
+    public void showPreview(DocumentInfo doc) {
+        if (Flags.useMaterial3() && Flags.usePeekPreview()) {
+            showPeek();
+        } else {
+            showInspector(doc);
+        }
     }
 }

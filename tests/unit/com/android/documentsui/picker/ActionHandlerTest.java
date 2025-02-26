@@ -645,7 +645,8 @@ public class ActionHandlerTest {
             mActivity.currentRoot = TestProvidersAccess.OtherUser.DOWNLOADS;
             mEnv.model.reset();
             DocumentInfo otherUserDoc = mEnv.model.createDocumentForUser("a.png",
-                    "image/png", /* flags= */ 0, TestProvidersAccess.OtherUser.USER_ID);
+                    "image/png", /* flags= */ 0, System.currentTimeMillis(),
+                    TestProvidersAccess.OtherUser.USER_ID);
             mEnv.model.update();
 
             mHandler.onDocumentOpened(otherUserDoc, ActionHandler.VIEW_TYPE_PREVIEW,
