@@ -990,7 +990,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                     ? mActivity.getCurrentDirectory()
                     : mModel.getDocuments(selection).get(0);
 
-            mActions.showInspector(doc);
+            mActions.showPreview(doc);
             return true;
         } else if (id == R.id.dir_menu_cut_to_clipboard) {
             mActions.cutToClipboard();

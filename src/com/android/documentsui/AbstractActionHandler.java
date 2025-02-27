@@ -20,7 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.flags.Flags.desktopFileHandling;
-import static com.android.documentsui.flags.Flags.useSearchV2;
+import static com.android.documentsui.flags.Flags.useSearchV2Rw;
 
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -266,7 +266,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void showInspector(DocumentInfo doc) {
+    public void showPreview(DocumentInfo doc) {
         throw new UnsupportedOperationException("Can't open properties.");
     }
 
@@ -916,7 +916,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mState.stack.changeRoot(mActivity.getCurrentRoot());
             }
 
-            if (useSearchV2()) {
+            if (useSearchV2Rw()) {
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
