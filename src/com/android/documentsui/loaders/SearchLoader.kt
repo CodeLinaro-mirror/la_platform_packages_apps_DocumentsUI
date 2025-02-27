@@ -68,12 +68,6 @@ class SearchLoader(
     private val mExecutorService: ExecutorService,
 ) : BaseFileLoader(context, userIdList, mimeTypeLookup) {
 
-    init {
-        require((mQuery !== null && !mQuery.isBlank()) || mOptions.maxLastModifiedDelta !== null) {
-            "Either the query or the last modified time must not be null"
-        }
-    }
-
     /**
      * Helper class that runs query on a single user for the given parameter. This class implements
      * an abstract future so that if the task is completed, we can retrieve the cursor via the get

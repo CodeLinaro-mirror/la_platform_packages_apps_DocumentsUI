@@ -79,6 +79,7 @@ import com.android.documentsui.sorting.SortModel;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.DynamicColors;
 
 import java.util.ArrayList;
@@ -203,6 +204,16 @@ public abstract class BaseActivity
         mState = getState(savedInstanceState);
         mDrawer = DrawerController.create(this, mInjector.config);
         Metrics.logActivityLaunch(mState, intent);
+
+        if (useMaterial3()) {
+            View navRailRoots = findViewById(R.id.nav_rail_container_roots);
+            if (navRailRoots != null) {
+                // Bind event listener for the burger menu on nav rail.
+                MaterialButton burgerMenu = findViewById(R.id.nav_rail_burger_menu);
+                burgerMenu.setOnClickListener(v -> mDrawer.setOpen(true));
+                burgerMenu.setOnFocusChangeListener(this::onBurgerMenuFocusChange);
+            }
+        }
 
         mProviders = DocumentsApplication.getProvidersCache(this);
         mDocs = DocumentsAccess.create(this, mState);
@@ -386,6 +397,13 @@ public abstract class BaseActivity
         });
 
         mSortController = SortController.create(this, mState.derivedMode, mState.sortModel);
+        if (useMaterial3()) {
+            View previewIconPlaceholder = findViewById(R.id.preview_icon_placeholder);
+            if (previewIconPlaceholder != null) {
+                previewIconPlaceholder.setVisibility(
+                        mState.shouldShowPreview() ? View.VISIBLE : View.GONE);
+            }
+        }
 
         mPreferencesMonitor = new PreferencesMonitor(
                 getApplicationContext().getPackageName(),
@@ -1116,5 +1134,20 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
+    }
+
+    /**
+     * When the burger menu is focused, adding a focus ring indicator using Stroke.
+     * TODO(b/381957932): Remove this once Material Button supports focus ring.
+     */
+    private void onBurgerMenuFocusChange(View v, boolean hasFocus) {
+        MaterialButton burgerMenu = (MaterialButton) v;
+        if (hasFocus) {
+            final int focusRingWidth = getResources()
+                    .getDimensionPixelSize(R.dimen.focus_ring_width);
+            burgerMenu.setStrokeWidth(focusRingWidth);
+        } else {
+            burgerMenu.setStrokeWidth(0);
+        }
     }
 }

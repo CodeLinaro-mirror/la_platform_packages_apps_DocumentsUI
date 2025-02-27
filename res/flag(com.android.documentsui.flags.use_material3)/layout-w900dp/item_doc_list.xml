@@ -130,7 +130,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
-                android:textAlignment="viewEnd"
+                android:textAlignment="viewStart"
                 style="@style/FileItemLabelStyle"/>
 
             <TextView
@@ -138,7 +138,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
-                android:textAlignment="viewEnd"
+                android:textAlignment="viewStart"
                 style="@style/FileItemLabelStyle"/>
         </LinearLayout>
 

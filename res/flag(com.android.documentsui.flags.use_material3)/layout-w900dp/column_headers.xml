@@ -15,12 +15,19 @@
     limitations under the License.
 -->
 
+<!-- The 2 placeholder views here are for vertical alignment purpose, in the file row it uses
+     ratio-based layout for Name/Type/Size/Date columns but excluding the thumbnail icon and
+     the preview icon. In order to make the header and row are vertically aligned, we need to
+     use placeholder for thumbnail icon and preview icon and then do the ratio-based layout
+     for table headers.
+ -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/table_header"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="@dimen/doc_header_height"
+    android:paddingHorizontal="@dimen/list_container_padding"
     android:visibility="gone">
 
     <LinearLayout
@@ -32,12 +39,12 @@
         android:paddingStart="@dimen/list_item_padding_start"
         android:paddingEnd="@dimen/list_item_padding_end"
         android:orientation="horizontal">
-        <!-- Placeholder for icon -->
+        <!-- Placeholder for MIME/thumbnail icon -->
         <View
-            android:layout_width="@dimen/list_item_thumbnail_size"
-            android:layout_height="@dimen/list_item_thumbnail_size"
+            android:layout_width="@dimen/list_item_icon_size"
+            android:layout_height="@dimen/list_item_icon_size"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/list_item_icon_margin_end"
             android:layout_marginStart="0dp"/>
 
         <!-- Column headers -->
@@ -82,7 +89,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:layout_marginEnd="12dp"
                 android:clickable="true"
                 android:focusable="false"
                 android:gravity="center_vertical"
@@ -97,7 +103,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:layout_marginEnd="12dp"
                 android:clickable="true"
                 android:focusable="false"
                 android:gravity="center_vertical"
@@ -112,7 +117,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:layout_marginEnd="12dp"
                 android:clickable="true"
                 android:focusable="false"
                 android:gravity="center_vertical"
@@ -122,5 +126,12 @@
                 <include layout="@layout/shared_cell_content" />
             </com.android.documentsui.sorting.HeaderCell>
         </LinearLayout>
+
+        <!-- Placeholder for preview icon in picker mode -->
+        <View
+            android:id="@+id/preview_icon_placeholder"
+            android:layout_width="@dimen/list_item_icon_size"
+            android:layout_height="@dimen/list_item_icon_size"
+            android:layout_marginEnd="@dimen/list_item_icon_margin_end" />
     </LinearLayout>
 </LinearLayout>
