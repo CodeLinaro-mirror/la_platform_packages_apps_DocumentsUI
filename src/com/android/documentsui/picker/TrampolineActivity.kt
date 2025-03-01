@@ -24,7 +24,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.ext.SdkExtensions
 import android.provider.MediaStore.ACTION_PICK_IMAGES
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.android.documentsui.base.SharedMinimal.DEBUG
 
 /**
  * DocumentsUI PickActivity currently defers picking of media mime types to the Photopicker. This
@@ -32,6 +34,10 @@ import androidx.appcompat.app.AppCompatActivity
  * there are non-media mime types to handle.
  */
 class TrampolineActivity : AppCompatActivity() {
+    companion object {
+        const val TAG = "TrampolineActivity"
+    }
+
     override fun onCreate(savedInstanceBundle: Bundle?) {
         super.onCreate(savedInstanceBundle)
 
@@ -98,6 +104,9 @@ class TrampolineActivity : AppCompatActivity() {
 
         // Ensure the `ACTION_GET_CONTENT` activity is enabled.
         if (!isComponentEnabled(photopickerGetContentComponent)) {
+            if (DEBUG) {
+                Log.d(TAG, "Photopicker PICK_IMAGES component has no enabled GET_CONTENT handler")
+            }
             return null
         }
 
@@ -137,30 +146,32 @@ class TrampolineActivity : AppCompatActivity() {
 }
 
 fun shouldForwardIntentToPhotopicker(intent: Intent): Boolean {
-    if (intent.action != ACTION_GET_CONTENT || !isMediaMimeType(intent.type)) {
+    // Photopicker can only handle `ACTION_GET_CONTENT` intents.
+    if (intent.action != ACTION_GET_CONTENT) {
         return false
     }
 
-    // Intent has type ACTION_GET_CONTENT and is either image/* or video/* with no
-    // additional mime types.
-    if (!intent.hasExtra(Intent.EXTRA_MIME_TYPES)) {
-        return true
+    // Photopicker only handles media mime types (i.e. image/* or video/*), however, it also handles
+    // requests that have type */* with EXTRA_MIME_TYPES that are media mime types. In that scenario
+    // it provides an escape hatch to the user to go back to DocumentsUI.
+    val intentTypeIsMedia = isMediaMimeType(intent.type)
+    if (!intentTypeIsMedia && intent.type != "*/*") {
+        return false
     }
 
     val extraMimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
-    extraMimeTypes?.let {
-        if (it.size == 0) {
-            return false
-        }
 
-        for (mimeType in it) {
-            if (!isMediaMimeType(mimeType)) {
-                return false
-            }
-        }
-    } ?: return false
+    // In the event there were no `EXTRA_MIME_TYPES` this should exclusively be handled by
+    // DocumentsUI and not Photopicker.
+    if (intent.type == "*/*" && extraMimeTypes == null) {
+        return false
+    }
 
-    return true
+    if (extraMimeTypes == null) {
+        return intentTypeIsMedia
+    }
+
+    return extraMimeTypes.isNotEmpty() && extraMimeTypes.none { !isMediaMimeType(it) }
 }
 
 fun isMediaMimeType(mimeType: String?): Boolean {

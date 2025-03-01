@@ -128,12 +128,15 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 new DirectoryDetails(this),
                 mInjector.getModel()::getItemCount);
 
-        mInjector.actionModeController = new ActionModeController(
-                this,
-                mInjector.selectionMgr,
-                mNavigator,
-                mInjector.menuManager,
-                mInjector.messages);
+        if (!useMaterial3()) {
+            mInjector.actionModeController =
+                    new ActionModeController(
+                            this,
+                            mInjector.selectionMgr,
+                            mNavigator,
+                            mInjector.menuManager,
+                            mInjector.messages);
+        }
 
         mInjector.profileTabsController = new ProfileTabsController(
                 mInjector.selectionMgr,

@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.loaders
 
+import android.os.Bundle
 import java.time.Duration
 
 /**
@@ -30,6 +31,12 @@ const val ALL_RESULTS: Int = -1
  *  - maximum time the query should return, including empty, results; pass null for no limits.
  *  - whether or not to show hidden files.
  *  - A list of MIME types used to filter returned files.
+ *  - "Other" query arguments not covered by the above.
+ *
+ *  The "other" query arguments are added as due to existing code communicating information such
+ *  as acceptable file kind (images, videos, etc.) is done via Bundle arguments. This could be
+ *  and should be changed if this code ever is rewritten.
+ *  TODO(b:397095797): Merge otherQueryArgs with acceptableMimeTypes and maxLastModifiedDelta.
  */
 data class QueryOptions(
     val maxResults: Int,
@@ -37,6 +44,7 @@ data class QueryOptions(
     val maxQueryTime: Duration?,
     val showHidden: Boolean,
     val acceptableMimeTypes: Array<String>,
+    val otherQueryArgs: Bundle,
 ) {
 
     override fun equals(other: Any?): Boolean {
