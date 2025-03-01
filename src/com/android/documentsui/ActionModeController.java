@@ -39,6 +39,8 @@ import com.android.documentsui.ui.MessageBuilder;
 
 /**
  * A controller that listens to selection changes and manages life cycles of action modes.
+ * TODO(b/379776735): This class (and action mode in general) is no longer in use when the
+ * use_material3 flag is enabled. Remove the class once the flag is rolled out.
  */
 public class ActionModeController extends SelectionObserver<String>
         implements ActionMode.Callback, ActionModeAddons {

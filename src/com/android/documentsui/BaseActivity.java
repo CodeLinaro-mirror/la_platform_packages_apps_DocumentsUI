@@ -419,13 +419,27 @@ public abstract class BaseActivity
     private NavigationViewManager getNavigationViewManager(Breadcrumb breadcrumb,
             View profileTabsContainer) {
         if (mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
-            return new NavigationViewManager(this, mDrawer, mState, this, breadcrumb,
-                    profileTabsContainer, DocumentsApplication.getUserManagerState(this),
-                    mConfigStore);
+            return new NavigationViewManager(
+                    this,
+                    mDrawer,
+                    mState,
+                    this,
+                    breadcrumb,
+                    profileTabsContainer,
+                    DocumentsApplication.getUserManagerState(this),
+                    mConfigStore,
+                    mInjector);
         }
-        return new NavigationViewManager(this, mDrawer, mState, this, breadcrumb,
-                profileTabsContainer, DocumentsApplication.getUserIdManager(this),
-                mConfigStore);
+        return new NavigationViewManager(
+                this,
+                mDrawer,
+                mState,
+                this,
+                breadcrumb,
+                profileTabsContainer,
+                DocumentsApplication.getUserIdManager(this),
+                mConfigStore,
+                mInjector);
     }
 
     public void onPreferenceChanged(String pref) {
@@ -439,14 +453,21 @@ public abstract class BaseActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        mRootsMonitor = new RootsMonitor<>(
-                this,
-                mInjector.actions,
-                mProviders,
-                mDocs,
-                mState,
-                mSearchManager,
-                mInjector.actionModeController::finishActionMode);
+        Runnable finishActionMode =
+                (useMaterial3())
+                        ? mNavigator::closeSelectionBar
+                        : mInjector.actionModeController::finishActionMode;
+
+        mRootsMonitor =
+                new RootsMonitor<>(
+                        this,
+                        mInjector.actions,
+                        mProviders,
+                        mDocs,
+                        mState,
+                        mSearchManager,
+                        finishActionMode);
+
         mRootsMonitor.start();
     }
 
@@ -458,6 +479,13 @@ public abstract class BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (useMaterial3()) {
+            // In Material3 the menu is now inflated in the `NavigationViewMenu`. This is currently
+            // to allow for us to inflate between the action_menu and the activity menu. Once the
+            // Material 3 flag is removed, the menus will be merged and we can rely on this single
+            // inflation point.
+            return super.onCreateOptionsMenu(menu);
+        }
         boolean showMenu = super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(R.menu.activity, menu);
@@ -481,11 +509,13 @@ public abstract class BaseActivity
     @CallSuper
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        mSearchManager.showMenu(mState.stack);
         // Remove the subMenu when material3 is launched b/379776735.
         if (useMaterial3()) {
-            mInjector.menuManager.updateSubMenu(null);
+            if (mNavigator != null) {
+                mNavigator.updateActionMenu();
+            }
         } else {
+            mSearchManager.showMenu(mState.stack);
             final ActionMenuView subMenuView = findViewById(R.id.sub_menu);
             mInjector.menuManager.updateSubMenu(subMenuView.getMenu());
         }
@@ -587,7 +617,11 @@ public abstract class BaseActivity
             return;
         }
 
-        mInjector.actionModeController.finishActionMode();
+        if (useMaterial3()) {
+            mNavigator.closeSelectionBar();
+        } else {
+            mInjector.actionModeController.finishActionMode();
+        }
         mSortController.onViewModeChanged(mState.derivedMode);
 
         // Set summary header's visibility. Only recents and downloads root may have summary in
@@ -684,6 +718,10 @@ public abstract class BaseActivity
     @Override
     public final void updateNavigator() {
         mNavigator.update();
+    }
+
+    public final NavigationViewManager getNavigator() {
+        return mNavigator;
     }
 
     @Override
