@@ -15,19 +15,44 @@
  */
 package com.android.documentsui.loaders
 
+import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
+import java.time.Duration
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
+import org.junit.runners.Parameterized.Parameters
 
-class SearchLoaderTest : BaseLoaderTest() {
+private const val TOTAL_FILE_COUNT = 8
+
+@RunWith(Parameterized::class)
+@SmallTest
+class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTest() {
     lateinit var mExecutor: ExecutorService
+    val mContentLock = ContentLock()
+    val mContentObserver = LockingContentObserver(mContentLock) {}
+
+    companion object {
+        @JvmStatic
+        @Parameters(name = "with parameters {0}")
+        fun data() = listOf(
+            LoaderTestParams("sample", null, TOTAL_FILE_COUNT),
+            LoaderTestParams("txt", null, 2),
+            LoaderTestParams("foozig", null, 0),
+            // The first file is at NOW, the second at NOW - 1h; expect 2.
+            LoaderTestParams("sample", Duration.ofMinutes(60 + 1), 2),
+            // TODO(b:378590632): Add test for recents.
+        )
+    }
 
     @Before
     override fun setUp() {
@@ -38,14 +63,18 @@ class SearchLoaderTest : BaseLoaderTest() {
     @Test
     fun testLoadInBackground() {
         val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
-        val docs = createDocuments(8)
+        val docs = createDocuments(TOTAL_FILE_COUNT)
         mockProvider!!.setNextChildDocumentsReturns(*docs)
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
-        val queryOptions = QueryOptions(10, null, null, true, arrayOf("*/*"))
-        val contentLock = ContentLock()
+        val queryOptions =
+            QueryOptions(
+                TOTAL_FILE_COUNT + 1,
+                testParams.lastModifiedDelta,
+                null,
+                true,
+                arrayOf("*/*")
+            )
         val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
-        val observer = LockingContentObserver(contentLock) {
-        }
 
         // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
         val rootFolderInfo = DocumentInfo()
@@ -57,15 +86,51 @@ class SearchLoaderTest : BaseLoaderTest() {
                 mActivity,
                 userIds,
                 TestFileTypeLookup(),
-                observer,
+                mContentObserver,
                 rootIds,
-                "txt",
+                testParams.query,
                 queryOptions,
                 mEnv.state.sortModel,
                 mExecutor,
             )
         val directoryResult = loader.loadInBackground()
-        // Expect only 2 text files to match txt.
-        assertEquals(2, getFileCount(directoryResult))
+        assertEquals(testParams.expectedCount, getFileCount(directoryResult))
+    }
+
+    @Test
+    fun testBlankQueryAndRecency() {
+        val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
+        val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
+        val noLastModifiedQueryOptions = QueryOptions(10, null, null, true, arrayOf("*/*"))
+
+        // Blank query and no last modified duration is invalid.
+        assertThrows(IllegalArgumentException::class.java) {
+            SearchLoader(
+                mActivity,
+                userIds,
+                TestFileTypeLookup(),
+                mContentObserver,
+                rootIds,
+                "",
+                noLastModifiedQueryOptions,
+                mEnv.state.sortModel,
+                mExecutor,
+            )
+        }
+
+        // Null query and no last modified duration is invalid.
+        assertThrows(IllegalArgumentException::class.java) {
+            SearchLoader(
+                mActivity,
+                userIds,
+                TestFileTypeLookup(),
+                mContentObserver,
+                rootIds,
+                null,
+                noLastModifiedQueryOptions,
+                mEnv.state.sortModel,
+                mExecutor,
+            )
+        }
     }
 }

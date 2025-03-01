@@ -14,6 +14,7 @@
      limitations under the License.
 -->
 
+<!-- This is only used in DrawerLayout (compact screen) right now. -->
 <com.google.android.material.appbar.AppBarLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,6 +35,9 @@
             android:layout_height="wrap_content">
 
             <include layout="@layout/directory_header" />
+
+            <!-- column headers are empty on small screens, in portrait or in grid mode. -->
+            <include layout="@layout/column_headers"/>
 
         </androidx.core.widget.NestedScrollView>
 

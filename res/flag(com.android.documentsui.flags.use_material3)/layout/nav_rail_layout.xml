@@ -49,54 +49,81 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="@drawable/main_container_background"
-                android:paddingTop="@dimen/main_container_padding_top">
+                android:orientation="vertical">
 
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
+                <!-- Top section: toolbar, search chips, profile tab -->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:layout_marginTop="@dimen/action_bar_margin"
-                    android:touchscreenBlocksFocus="false">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/main_container_padding_top"
+                    android:background="@drawable/main_container_top_section_background">
 
-                    <TextView
-                        android:id="@+id/searchbar_title"
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="?android:attr/actionBarSize"
-                        android:gravity="center_vertical"
-                        android:text="@string/search_bar_hint"
-                        android:textAppearance="@style/SearchBarTitle" />
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_marginTop="@dimen/action_bar_margin"
+                        android:touchscreenBlocksFocus="false">
 
-                </com.google.android.material.appbar.MaterialToolbar>
+                        <TextView
+                            android:id="@+id/searchbar_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="?android:attr/actionBarSize"
+                            android:gravity="center_vertical"
+                            android:text="@string/search_bar_hint"
+                            android:textAppearance="@style/SearchBarTitle" />
 
-                <include layout="@layout/directory_header" />
+                    </com.google.android.material.appbar.MaterialToolbar>
+
+                    <include layout="@layout/directory_header" />
+
+                </LinearLayout>
 
                 <!-- Main list area (file list/grid or search results). -->
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/main_container_section_gap"
+                    android:background="@drawable/main_container_middle_section_background">
+
+                    <include layout="@layout/column_headers"/>
 
                     <FrameLayout
-                        android:id="@+id/container_directory"
-                        android:clipToPadding="false"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
 
-                    <FrameLayout
-                        android:id="@+id/container_search_fragment"
-                        android:clipToPadding="false"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        <FrameLayout
+                            android:id="@+id/container_directory"
+                            android:clipToPadding="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-                </FrameLayout>
+                        <FrameLayout
+                            android:id="@+id/container_search_fragment"
+                            android:clipToPadding="false"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </FrameLayout>
+
+                </LinearLayout>
 
                 <!-- Footer of right hand side: Breadcrumbs and Picker footer. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/main_container_section_gap"
+                    android:background="@drawable/main_container_bottom_section_background">
+
                 <com.android.documentsui.HorizontalBreadcrumb
                     android:id="@+id/horizontal_breadcrumb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+                </LinearLayout>
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/container_save"

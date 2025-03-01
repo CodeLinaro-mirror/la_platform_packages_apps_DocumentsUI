@@ -130,6 +130,9 @@
     <dimen name="main_container_padding_start">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_end">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_top">0dp</dimen>
+    <dimen name="main_container_section_gap">2dp</dimen>
+    <dimen name="main_container_corner_radius_large">16dp</dimen>
+    <dimen name="main_container_corner_radius_small">4dp</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>
