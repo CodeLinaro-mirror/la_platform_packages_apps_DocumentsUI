@@ -284,7 +284,8 @@ public class UiBot extends Bots.BaseBot {
         // Espresso has flaky results when keyboard shows up, so hiding it for now
         // before trying to click on any dialog button
         Espresso.closeSoftKeyboard();
-        onView(withId(android.R.id.button1)).perform(click());
+        UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
+        okButton.click();
     }
 
     public void clickDialogCancelButton() throws UiObjectNotFoundException {
