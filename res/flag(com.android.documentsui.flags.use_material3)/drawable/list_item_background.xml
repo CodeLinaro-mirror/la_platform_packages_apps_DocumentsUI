@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<!-- Use @color/list_item_selected_background_color instead of the "?attr/colorPrimary"
+<!-- Use @color/list_item_selected_background_color instead of the "?attr/colorPrimaryContainer"
      because the variable is exposed in overlayable.xml. -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- selected -->

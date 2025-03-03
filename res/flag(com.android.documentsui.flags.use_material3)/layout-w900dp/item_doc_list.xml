@@ -42,11 +42,14 @@
             android:layout_height="@dimen/list_item_icon_size"
             android:layout_marginEnd="@dimen/list_item_icon_margin_end">
 
+            <!-- stroke width will be controlled dynamically in the code. -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/icon_wrapper"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
+                app:strokeColor="?attr/colorSecondaryContainer"
                 app:strokeWidth="0dp">
 
                 <ImageView
@@ -127,7 +130,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
-                android:textAlignment="viewEnd"
+                android:textAlignment="viewStart"
                 style="@style/FileItemLabelStyle"/>
 
             <TextView
@@ -135,7 +138,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
-                android:textAlignment="viewEnd"
+                android:textAlignment="viewStart"
                 style="@style/FileItemLabelStyle"/>
         </LinearLayout>
 

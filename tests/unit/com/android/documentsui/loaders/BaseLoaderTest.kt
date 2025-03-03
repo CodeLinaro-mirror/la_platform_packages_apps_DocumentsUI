@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.loaders
 
+import android.os.Bundle
 import android.os.Parcel
 import android.provider.DocumentsContract
 import com.android.documentsui.DirectoryResult
@@ -47,8 +48,10 @@ data class LoaderTestParams(
     val query: String,
     // The delta from now that indicates maximum age of matched files.
     val lastModifiedDelta: Duration?,
+    // The extra arguments typically supplied by search view manager.
+    val otherArgs: Bundle,
     // The number of files that are expected, for the above parameters, to be found by a loader.
-    val expectedCount: Int
+    val expectedCount: Int,
 )
 
 /**
