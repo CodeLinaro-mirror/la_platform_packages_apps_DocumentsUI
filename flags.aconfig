@@ -45,10 +45,11 @@ flag {
 }
 
 flag {
-    name: "redirect_get_content"
+    name: "redirect_get_content_ro"
     namespace: "documentsui"
     description: "Redirects GET_CONTENT requests to Photopicker when appropriate"
     bug: "377771195"
+    is_fixed_read_only: true
 }
 
 flag {

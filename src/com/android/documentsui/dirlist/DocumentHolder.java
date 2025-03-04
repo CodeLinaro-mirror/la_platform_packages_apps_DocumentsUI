@@ -58,6 +58,8 @@ public abstract class DocumentHolder
 
     static final float DISABLED_ALPHA = useMaterial3() ? 0.6f : 0.3f;
 
+    static final int THUMBNAIL_STROKE_WIDTH = useMaterial3() ? 2 : 0;
+
     protected final Context mContext;
 
     protected @Nullable String mModelId;

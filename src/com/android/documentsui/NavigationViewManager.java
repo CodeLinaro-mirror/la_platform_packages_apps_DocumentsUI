@@ -322,6 +322,9 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         if (showBurgerMenuOnToolbar) {
             mToolbar.setNavigationIcon(getActionBarIcon());
             mToolbar.setNavigationContentDescription(R.string.drawer_open);
+        } else {
+            mToolbar.setNavigationIcon(null);
+            mToolbar.setNavigationContentDescription(null);
         }
 
         if (shouldShowSearchBar()) {

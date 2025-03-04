@@ -409,6 +409,23 @@
          during a copy. [CHAR LIMIT=48] -->
     <string name="notification_copy_files_converted_title">Some files were converted</string>
 
+    <string name="copy_in_progress" translatable="false">{count, plural,
+        =1 {Copying <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
+        other {Copying # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
+    }</string>
+    <string name="move_in_progress" translatable="false">{count, plural,
+        =1 {Moving <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
+        other {Moving # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
+    }</string>
+    <string name="delete_in_progress" translatable="false">{count, plural,
+        =1 {Deleting <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        other {Deleting # files}
+    }</string>
+    <string name="compress_in_progress" translatable="false">{count, plural,
+        =1 {Zipping <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        other {Zipping # files}
+    }</string>
+
     <!-- Text in an alert dialog asking user to grant app access to a given directory in an external storage volume -->
     <string name="open_external_dialog_request">Grant <xliff:g id="appName" example="System Settings"><b>^1</b></xliff:g>
         access to <xliff:g id="directory" example="Pictures"><i>^2</i></xliff:g> directory on
@@ -586,5 +603,8 @@
 
     <!-- Accessibility announcement when switching to list mode of files and directories shown. [CHAR_LIMIT=100] -->
     <string name="list_mode_showing">Showing in list mode.</string>
+
+    <!-- Unicode Character “•” (U+2022). -->
+    <string name="bullet">\u2022</string>
 
 </resources>

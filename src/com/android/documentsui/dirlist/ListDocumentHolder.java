@@ -270,7 +270,7 @@ final class ListDocumentHolder extends DocumentHolder {
                 thumbnailLoaded -> {
                     // Show stroke when thumbnail is loaded.
                     if (useMaterial3() && mIconWrapper != null) {
-                        mIconWrapper.setStrokeWidth(thumbnailLoaded ? 2 : 0);
+                        mIconWrapper.setStrokeWidth(thumbnailLoaded ? THUMBNAIL_STROKE_WIDTH : 0);
                     }
                 });
 
