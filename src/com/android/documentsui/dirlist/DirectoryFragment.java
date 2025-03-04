@@ -22,7 +22,6 @@ import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.flags.Flags.desktopFileHandling;
-import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -611,16 +610,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         new RefreshHelper(mRefreshLayout::setEnabled)
                 .attach(mRecView);
 
-        if (useMaterial3()) {
-            mSelectionMgr.addObserver(mActivity.getNavigator());
-            mActivity.getNavigator().updateSelection(mSelectionMetadata, this::handleMenuItemClick);
-        } else {
-            mActionModeController =
-                    mInjector.getActionModeController(
-                            mSelectionMetadata, this::handleMenuItemClick);
-            assert (mActionModeController != null);
-            mSelectionMgr.addObserver(mActionModeController);
-        }
+        mActionModeController = mInjector.getActionModeController(
+                mSelectionMetadata,
+                this::handleMenuItemClick);
+
+        mSelectionMgr.addObserver(mActionModeController);
 
         mProfileTabsController = mInjector.profileTabsController;
         mSelectionMgr.addObserver(mProfileTabsController);
@@ -923,14 +917,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void closeSelectionBar() {
-        if (useMaterial3()) {
-            mActivity.getNavigator().closeSelectionBar();
-        } else {
-            mActionModeController.finishActionMode();
-        }
-    }
-
     private boolean handleMenuItemClick(MenuItem item) {
         if (mInjector.pickResult != null) {
             mInjector.pickResult.increaseActionCount();
@@ -951,7 +937,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // hidden unless the desktopFileHandling flag is enabled, in which case the menu item
             // will be handled by the condition above.
             openDocuments(selection);
-            closeSelectionBar();
+            mActionModeController.finishActionMode();
             return true;
         } else if (id == R.id.action_menu_open_with || id == R.id.dir_menu_open_with) {
             showChooserForDoc(selection);
@@ -971,14 +957,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
-            closeSelectionBar();
+            mActionModeController.finishActionMode();
             return true;
         } else if (id == R.id.action_menu_compress || id == R.id.dir_menu_compress) {
             transferDocuments(selection, mState.stack,
                     FileOperationService.OPERATION_COMPRESS);
             // TODO: Only finish selection mode if compress is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
-            closeSelectionBar();
+            mActionModeController.finishActionMode();
             return true;
 
             // TODO: Implement extract (to the current directory).
@@ -986,7 +972,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             transferDocuments(selection, null, FileOperationService.OPERATION_EXTRACT);
             // TODO: Only finish selection mode if compress-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
-            closeSelectionBar();
+            mActionModeController.finishActionMode();
             return true;
         } else if (id == R.id.action_menu_move_to) {
             if (mModel.hasDocuments(selection, DocumentFilters.NOT_MOVABLE)) {
@@ -994,11 +980,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 return true;
             }
             // Exit selection mode first, so we avoid deselecting deleted documents.
-            closeSelectionBar();
+            mActionModeController.finishActionMode();
             transferDocuments(selection, null, FileOperationService.OPERATION_MOVE);
             return true;
         } else if (id == R.id.action_menu_inspect || id == R.id.dir_menu_inspect) {
-            closeSelectionBar();
+            mActionModeController.finishActionMode();
             assert selection.size() <= 1;
             DocumentInfo doc = selection.isEmpty()
                     ? mActivity.getCurrentDirectory()
@@ -1535,11 +1521,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 // For orientation changed case, sometimes the docs loading comes after the menu
                 // update. We need to update the menu here to ensure the status is correct.
                 mInjector.menuManager.updateModel(mModel);
-                if (useMaterial3()) {
-                    mActivity.getNavigator().updateActionMenu();
-                } else {
-                    mInjector.menuManager.updateOptionMenu();
-                }
+                mInjector.menuManager.updateOptionMenu();
                 if (VersionUtils.isAtLeastS()) {
                     mActivity.updateHeader(update.hasCrossProfileException());
                 } else {

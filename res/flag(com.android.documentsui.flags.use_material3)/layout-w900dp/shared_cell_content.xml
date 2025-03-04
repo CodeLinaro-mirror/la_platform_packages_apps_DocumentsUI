@@ -23,8 +23,8 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textAlignment="viewStart"
-        android:textAppearance="@style/ListTableHeaderText"
-        android:textColor="?attr/colorOnSurface"/>
+        android:textAppearance="@style/Subhead"
+        android:textColor="?android:attr/textColorSecondary"/>
 
     <ImageView
         android:id="@+id/sort_arrow"

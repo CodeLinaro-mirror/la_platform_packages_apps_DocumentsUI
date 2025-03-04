@@ -30,9 +30,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
+import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT
 import com.android.documentsui.picker.TrampolineActivity
-import java.util.Optional
 import java.util.regex.Pattern
 import org.junit.After
 import org.junit.Assert.assertNotNull
@@ -79,7 +78,7 @@ class TrampolineActivityTest() {
     }
 
     @RunWith(Parameterized::class)
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
+    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT)
     class ShouldLaunchCorrectPackageTest {
         enum class AppType {
             PHOTOPICKER,
@@ -89,11 +88,11 @@ class TrampolineActivityTest() {
         data class GetContentIntentData(
             val mimeType: String,
             val expectedApp: AppType,
-            val extraMimeTypes: Optional<Array<String>> = Optional.empty(),
+            val extraMimeTypes: Array<String>? = null,
         ) {
             override fun toString(): String {
-                if (extraMimeTypes.isPresent) {
-                    return "${mimeType}_${extraMimeTypes.get().joinToString("_")}"
+                if (extraMimeTypes != null) {
+                    return "${mimeType}_${extraMimeTypes.joinToString("_")}"
                 }
                 return mimeType
             }
@@ -118,32 +117,32 @@ class TrampolineActivityTest() {
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
-                        extraMimeTypes = Optional.of(arrayOf("video/*")),
+                        extraMimeTypes = arrayOf("video/*"),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = Optional.of(arrayOf("image/*")),
+                        extraMimeTypes = arrayOf("image/*"),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = Optional.of(arrayOf("text/*")),
+                        extraMimeTypes = arrayOf("text/*"),
                         expectedApp = AppType.DOCUMENTSUI,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = Optional.of(arrayOf("image/*", "text/*")),
+                        extraMimeTypes = arrayOf("image/*", "text/*"),
                         expectedApp = AppType.DOCUMENTSUI,
                     ),
                     GetContentIntentData(
                         mimeType = "*/*",
-                        extraMimeTypes = Optional.of(arrayOf("image/*", "video/*")),
+                        extraMimeTypes = arrayOf("image/*", "video/*"),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
-                        extraMimeTypes = Optional.of(arrayOf()),
+                        extraMimeTypes = arrayOf(),
                         expectedApp = AppType.DOCUMENTSUI,
                     )
                 )
@@ -162,10 +161,7 @@ class TrampolineActivityTest() {
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.setType(testData.mimeType)
-            if (testData.extraMimeTypes.isPresent) {
-                testData.extraMimeTypes.get()
-                    .forEach { intent.putExtra(Intent.EXTRA_MIME_TYPES, it) }
-            }
+            testData.extraMimeTypes?.let { intent.putExtra(Intent.EXTRA_MIME_TYPES, it) }
 
             context.startActivity(intent)
         }
@@ -182,28 +178,12 @@ class TrampolineActivityTest() {
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
             }
 
-            val builder = StringBuilder()
-            builder.append("Intent with mimetype ${testData.mimeType}")
-            if (testData.extraMimeTypes.isPresent) {
-                builder.append(
-                    " and EXTRA_MIME_TYPES of ${
-                        testData.extraMimeTypes.get().joinToString(", ")
-                    }"
-                )
-            }
-            builder.append(
-                " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
-            )
-
-            assertNotNull(
-                builder.toString(),
-                device.wait(Until.findObject(bySelector), UI_TIMEOUT)
-            )
+            assertNotNull(device.wait(Until.findObject(bySelector), UI_TIMEOUT))
         }
     }
 
     @RunWith(AndroidJUnit4::class)
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
+    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT)
     class RedirectTest {
         @get:Rule
         val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()

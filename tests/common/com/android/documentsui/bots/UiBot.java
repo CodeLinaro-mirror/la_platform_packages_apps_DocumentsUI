@@ -25,8 +25,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
@@ -70,46 +68,35 @@ import java.util.List;
  */
 public class UiBot extends Bots.BaseBot {
 
+    public static String targetPackageName;
+
     @SuppressWarnings("unchecked")
     private static final Matcher<View> TOOLBAR = allOf(
             isAssignableFrom(Toolbar.class),
             withId(R.id.toolbar));
+
     @SuppressWarnings("unchecked")
     private static final Matcher<View> ACTIONBAR = allOf(
             withClassName(endsWith("ActionBarContextView")));
+
     @SuppressWarnings("unchecked")
     private static final Matcher<View> TEXT_ENTRY = allOf(
             withClassName(endsWith("EditText")));
+
     @SuppressWarnings("unchecked")
     private static final Matcher<View> TOOLBAR_OVERFLOW = allOf(
             withClassName(endsWith("OverflowMenuButton")),
             ViewMatchers.isDescendantOfA(TOOLBAR));
+
     @SuppressWarnings("unchecked")
     private static final Matcher<View> ACTIONBAR_OVERFLOW = allOf(
             withClassName(endsWith("OverflowMenuButton")),
             ViewMatchers.isDescendantOfA(ACTIONBAR));
 
-    public static String targetPackageName;
-
     public UiBot(UiDevice device, Context context, int timeout) {
         super(device, context, timeout);
         targetPackageName =
                 InstrumentationRegistry.getInstrumentation().getTargetContext().getPackageName();
-    }
-
-    private static Matcher<Object> withToolbarTitle(final Matcher<CharSequence> textMatcher) {
-        return new BoundedMatcher<Object, Toolbar>(Toolbar.class) {
-            @Override
-            public boolean matchesSafely(Toolbar toolbar) {
-                return textMatcher.matches(toolbar.getTitle());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("with toolbar title: ");
-                textMatcher.describeTo(description);
-            }
-        };
     }
 
     public void assertWindowTitle(String expected) {
@@ -211,11 +198,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickActionbarOverflowItem(String label) {
-        if (useMaterial3()) {
-            onView(TOOLBAR_OVERFLOW).perform(click());
-        } else {
-            onView(ACTIONBAR_OVERFLOW).perform(click());
-        }
+        onView(ACTIONBAR_OVERFLOW).perform(click());
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
     }
@@ -231,10 +214,9 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public boolean waitForActionModeBarToAppear() {
-        String actionModeId = useMaterial3() ? "toolbar" : "action_mode_bar";
         UiObject2 bar =
-                mDevice.wait(
-                        Until.findObject(By.res(mTargetPackage + ":id/" + actionModeId)), mTimeout);
+                mDevice.wait(Until.findObject(
+                        By.res(mTargetPackage + ":id/action_mode_bar")), mTimeout);
         return (bar != null);
     }
 
@@ -284,16 +266,14 @@ public class UiBot extends Bots.BaseBot {
         // Espresso has flaky results when keyboard shows up, so hiding it for now
         // before trying to click on any dialog button
         Espresso.closeSoftKeyboard();
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
-        okButton.click();
+        onView(withId(android.R.id.button1)).perform(click());
     }
 
     public void clickDialogCancelButton() throws UiObjectNotFoundException {
         // Espresso has flaky results when keyboard shows up, so hiding it for now
         // before trying to click on any dialog button
         Espresso.closeSoftKeyboard();
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button2"));
-        okButton.click();
+        onView(withId(android.R.id.button2)).perform(click());
     }
 
     public UiObject findMenuLabelWithName(String label) {
@@ -326,5 +306,21 @@ public class UiBot extends Bots.BaseBot {
                 .descriptionContains("More options");
         // TODO: use the system string ? android.R.string.action_menu_overflow_description
         return mDevice.findObject(selector);
+    }
+
+    private static Matcher<Object> withToolbarTitle(
+            final Matcher<CharSequence> textMatcher) {
+        return new BoundedMatcher<Object, Toolbar>(Toolbar.class) {
+            @Override
+            public boolean matchesSafely(Toolbar toolbar) {
+                return textMatcher.matches(toolbar.getTitle());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("with toolbar title: ");
+                textMatcher.describeTo(description);
+            }
+        };
     }
 }

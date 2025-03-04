@@ -16,7 +16,6 @@
 
 package com.android.documentsui.files;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasData;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
@@ -32,8 +31,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -92,8 +89,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,7 +108,6 @@ public class ActionHandlerTest {
     private TestFeatures mFeatures;
     private TestConfigStore mTestConfigStore;
     private boolean refreshAnswer = false;
-    @Mock private Runnable mMockCloseSelectionBar;
 
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
@@ -132,7 +126,6 @@ public class ActionHandlerTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         mFeatures = new TestFeatures();
         mEnv = TestEnv.create(mFeatures);
         mActivity = TestActivity.create(mEnv);
@@ -157,14 +150,6 @@ public class ActionHandlerTest {
         mHandler = createHandler();
 
         mEnv.selectDocument(TestEnv.FILE_GIF);
-    }
-
-    private void assertSelectionContainerClosed() {
-        if (useMaterial3()) {
-            verify(mMockCloseSelectionBar, times(1)).run();
-        } else {
-            assertTrue(mActionModeAddons.finishActionModeCalled);
-        }
     }
 
     @Test
@@ -210,7 +195,7 @@ public class ActionHandlerTest {
     @Test
     public void testSpringOpenDirectory() {
         mHandler.springOpenDirectory(TestEnv.FOLDER_0);
-        assertSelectionContainerClosed();
+        assertTrue(mActionModeAddons.finishActionModeCalled);
         assertEquals(TestEnv.FOLDER_0, mEnv.state.stack.peek());
     }
 
@@ -265,7 +250,7 @@ public class ActionHandlerTest {
         mHandler.deleteSelectedDocuments(docs, mEnv.state.stack.peek());
 
         mActivity.startService.assertCalled();
-        assertSelectionContainerClosed();
+        assertTrue(mActionModeAddons.finishActionModeCalled);
     }
 
     @Test
@@ -860,10 +845,10 @@ public class ActionHandlerTest {
                 mEnv.searchViewManager,
                 mEnv::lookupExecutor,
                 mActionModeAddons,
-                mMockCloseSelectionBar,
                 mClipper,
-                null, // clip storage, not utilized unless we venture into *jumbo* clip territory.
+                null,  // clip storage, not utilized unless we venture into *jumbo* clip territory.
                 mDragAndDropManager,
-                mEnv.injector);
+                mEnv.injector
+        );
     }
 }

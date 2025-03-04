@@ -33,7 +33,6 @@ import java.util.concurrent.Executors
 import junit.framework.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -120,7 +119,6 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
 
     @Test
     @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_RW)
-    @Ignore("b/397095797")
     fun testBlankQueryAndRecency() {
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
         val rootIds = listOf(TestProvidersAccess.DOWNLOADS)

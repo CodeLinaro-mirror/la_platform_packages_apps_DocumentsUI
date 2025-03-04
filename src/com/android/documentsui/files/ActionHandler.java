@@ -19,6 +19,7 @@ package com.android.documentsui.files;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import com.android.documentsui.flags.Flags;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -67,7 +68,6 @@ import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView;
-import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -98,7 +98,6 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     private final DocumentClipper mClipper;
     private final ClipStore mClipStore;
     private final DragAndDropManager mDragAndDropManager;
-    private final Runnable mCloseSelectionBar;
 
     ActionHandler(
             T activity,
@@ -107,8 +106,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             DocumentsAccess docs,
             SearchViewManager searchMgr,
             Lookup<String, Executor> executors,
-            @Nullable ActionModeAddons actionModeAddons,
-            Runnable closeSelectionBar,
+            ActionModeAddons actionModeAddons,
             DocumentClipper clipper,
             ClipStore clipStore,
             DragAndDropManager dragAndDropManager,
@@ -117,7 +115,6 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         super(activity, state, providers, docs, searchMgr, executors, injector);
 
         mActionModeAddons = actionModeAddons;
-        mCloseSelectionBar = closeSelectionBar;
         mFeatures = injector.features;
         mConfig = injector.config;
         mClipper = clipper;
@@ -233,12 +230,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void springOpenDirectory(DocumentInfo doc) {
-        assert (doc.isDirectory());
-        if (Flags.useMaterial3()) {
-            mCloseSelectionBar.run();
-        } else {
-            mActionModeAddons.finishActionMode();
-        }
+        assert(doc.isDirectory());
+        mActionModeAddons.finishActionMode();
         openContainerDocument(doc);
     }
 
@@ -330,11 +323,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (Flags.useMaterial3()) {
-            mCloseSelectionBar.run();
-        } else {
-            mActionModeAddons.finishActionMode();
-        }
+        mActionModeAddons.finishActionMode();
 
         List<Uri> uris = new ArrayList<>(docs.size());
         for (DocumentInfo doc : docs) {

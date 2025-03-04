@@ -46,7 +46,6 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.DeadObjectException;
 import android.os.FileUtils;
@@ -67,7 +66,6 @@ import android.system.Int64Ref;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructStat;
-import android.text.BidiFormatter;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -95,8 +93,6 @@ import java.io.InputStream;
 import java.io.SyncFailedException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -197,49 +193,6 @@ class CopyJob extends ResolvedResourcesJob {
                 .setSmallIcon(R.drawable.ic_menu_copy)
                 .setAutoCancel(true);
         return warningBuilder.build();
-    }
-
-    protected String getProgressMessage() {
-        switch (getState()) {
-            case Job.STATE_SET_UP:
-            case Job.STATE_COMPLETED:
-            case Job.STATE_CANCELED:
-                Map<String, Object> formatArgs = new HashMap<>();
-                formatArgs.put("count", mResolvedDocs.size());
-                formatArgs.put("directory",
-                        BidiFormatter.getInstance().unicodeWrap(mDstInfo.displayName));
-                if (mResolvedDocs.size() == 1) {
-                    formatArgs.put("filename",
-                            BidiFormatter.getInstance().unicodeWrap(
-                                    mResolvedDocs.get(0).displayName));
-                }
-                return (new MessageFormat(
-                        service.getString(R.string.copy_in_progress), Locale.getDefault()))
-                        .format(formatArgs);
-
-            default:
-                return "";
-        }
-    }
-
-    @Override
-    JobProgress getJobProgress() {
-        if (mProgressTracker == null) {
-            return new JobProgress(
-                    id,
-                    getState(),
-                    getProgressMessage(),
-                    hasFailures());
-        }
-        mProgressTracker.updateEstimateRemainingTime();
-        return new JobProgress(
-                id,
-                getState(),
-                getProgressMessage(),
-                hasFailures(),
-                mProgressTracker.getCurrentBytes(),
-                mProgressTracker.getRequiredBytes(),
-                mProgressTracker.getRemainingTimeEstimate());
     }
 
     @Override
@@ -1033,10 +986,6 @@ class CopyJob extends ResolvedResourcesJob {
             return -1;
         }
 
-        protected long getCurrentBytes() {
-            return -1;
-        }
-
         protected void start() {
             mStartTime = mElapsedRealTimeSupplier.getAsLong();
         }
@@ -1106,16 +1055,6 @@ class CopyJob extends ResolvedResourcesJob {
         @Override
         protected boolean hasRequiredBytes() {
             return mBytesRequired > 0;
-        }
-
-        @Override
-        protected long getRequiredBytes() {
-            return mBytesRequired;
-        }
-
-        @Override
-        protected long getCurrentBytes() {
-            return mBytesCopied.get();
         }
 
         @Override

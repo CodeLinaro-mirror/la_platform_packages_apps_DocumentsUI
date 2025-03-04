@@ -140,30 +140,25 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 mInjector.getModel()::getItemUri,
                 mInjector.getModel()::getItemCount);
 
-        if (!useMaterial3()) {
-            mInjector.actionModeController =
-                    new ActionModeController(
-                            this,
-                            mInjector.selectionMgr,
-                            mNavigator,
-                            mInjector.menuManager,
-                            mInjector.messages);
-        }
+        mInjector.actionModeController = new ActionModeController(
+                this,
+                mInjector.selectionMgr,
+                mNavigator,
+                mInjector.menuManager,
+                mInjector.messages);
 
-        mInjector.actions =
-                new ActionHandler<>(
-                        this,
-                        mState,
-                        mProviders,
-                        mDocs,
-                        mSearchManager,
-                        ProviderExecutor::forAuthority,
-                        mInjector.actionModeController,
-                        getNavigator()::closeSelectionBar,
-                        clipper,
-                        DocumentsApplication.getClipStore(this),
-                        DocumentsApplication.getDragAndDropManager(this),
-                        mInjector);
+        mInjector.actions = new ActionHandler<>(
+                this,
+                mState,
+                mProviders,
+                mDocs,
+                mSearchManager,
+                ProviderExecutor::forAuthority,
+                mInjector.actionModeController,
+                clipper,
+                DocumentsApplication.getClipStore(this),
+                DocumentsApplication.getDragAndDropManager(this),
+                mInjector);
 
         mInjector.searchManager = mSearchManager;
 
@@ -332,9 +327,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!useMaterial3()) {
-            mInjector.menuManager.updateOptionMenu(menu);
-        }
+        mInjector.menuManager.updateOptionMenu(menu);
         return true;
     }
 
