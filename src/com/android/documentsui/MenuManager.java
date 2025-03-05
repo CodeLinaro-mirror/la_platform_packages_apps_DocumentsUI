@@ -16,7 +16,8 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
@@ -33,7 +34,6 @@ import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DirectoryFragment;
-import com.android.documentsui.flags.Flags;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.sidebar.RootsFragment;
 
@@ -93,7 +93,7 @@ public abstract class MenuManager {
             return;
         }
         updateCreateDir(mOptionMenu.findItem(R.id.option_menu_create_dir));
-        if (Flags.zipNg()) {
+        if (isZipNgFlagEnabled()) {
             updateExtractAll(mOptionMenu.findItem(R.id.option_menu_extract_all));
         }
         updateSettings(mOptionMenu.findItem(R.id.option_menu_settings));
@@ -105,7 +105,7 @@ public abstract class MenuManager {
         updateLauncher(mOptionMenu.findItem(R.id.option_menu_launcher));
         updateShowHiddenFiles(mOptionMenu.findItem(R.id.option_menu_show_hidden_files));
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             updateModePicker(mOptionMenu.findItem(R.id.sub_menu_grid),
                     mOptionMenu.findItem(R.id.sub_menu_list));
         }
@@ -116,7 +116,7 @@ public abstract class MenuManager {
 
     public void updateSubMenu(Menu menu) {
         // Remove the subMenu when material3 is launched b/379776735.
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             menu = mOptionMenu;
             if (menu == null) {
                 return;

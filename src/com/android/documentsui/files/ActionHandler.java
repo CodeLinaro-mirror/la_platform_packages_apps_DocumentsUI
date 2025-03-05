@@ -19,7 +19,9 @@ package com.android.documentsui.files;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import com.android.documentsui.flags.Flags;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -98,6 +100,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     private final DocumentClipper mClipper;
     private final ClipStore mClipStore;
     private final DragAndDropManager mDragAndDropManager;
+    private final Runnable mCloseSelectionBar;
 
     ActionHandler(
             T activity,
@@ -106,7 +109,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             DocumentsAccess docs,
             SearchViewManager searchMgr,
             Lookup<String, Executor> executors,
-            ActionModeAddons actionModeAddons,
+            @Nullable ActionModeAddons actionModeAddons,
+            Runnable closeSelectionBar,
             DocumentClipper clipper,
             ClipStore clipStore,
             DragAndDropManager dragAndDropManager,
@@ -115,6 +119,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         super(activity, state, providers, docs, searchMgr, executors, injector);
 
         mActionModeAddons = actionModeAddons;
+        mCloseSelectionBar = closeSelectionBar;
         mFeatures = injector.features;
         mConfig = injector.config;
         mClipper = clipper;
@@ -230,8 +235,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void springOpenDirectory(DocumentInfo doc) {
-        assert(doc.isDirectory());
-        mActionModeAddons.finishActionMode();
+        assert (doc.isDirectory());
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
         openContainerDocument(doc);
     }
 
@@ -323,7 +332,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        mActionModeAddons.finishActionMode();
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
 
         List<Uri> uris = new ArrayList<>(docs.size());
         for (DocumentInfo doc : docs) {
@@ -551,7 +564,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (Flags.desktopFileHandling()) {
+        if (isDesktopFileHandlingFlagEnabled()) {
             Intent intent = buildViewIntent(doc);
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
@@ -602,7 +615,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void showPreview(DocumentInfo doc) {
-        if (Flags.useMaterial3() && Flags.usePeekPreview()) {
+        if (isUseMaterial3FlagEnabled() && isUsePeekPreviewFlagEnabled()) {
             showPeek();
         } else {
             showInspector(doc);

@@ -16,6 +16,8 @@
 
 package com.android.documentsui.files;
 
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+
 import static junit.framework.Assert.assertEquals;
 
 import static org.junit.Assert.assertTrue;
@@ -489,6 +491,20 @@ public final class MenuManagerTest {
     }
 
     @Test
+    public void testOptionMenu_ExtractAll() {
+        dirDetails.isInArchive = true;
+        mgr.updateOptionMenu(testMenu);
+        if (isZipNgFlagEnabled()) {
+            mOptionExtractAll.assertEnabledAndVisible();
+        } else {
+            mOptionExtractAll.assertDisabledAndInvisible();
+        }
+        dirDetails.isInArchive = false;
+        mgr.updateOptionMenu(testMenu);
+        mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
     public void testInflateContextMenu_Files() {
         TestMenuInflater inflater = new TestMenuInflater();
 
@@ -603,7 +619,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpen() {
         selectionDetails.canOpen = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
@@ -612,7 +628,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpenDesktop() {
         selectionDetails.canOpen = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);

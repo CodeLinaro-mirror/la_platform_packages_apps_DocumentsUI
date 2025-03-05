@@ -20,7 +20,7 @@ import static androidx.core.util.Preconditions.checkNotNull;
 
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.admin.DevicePolicyManager;
 import android.os.Build;
@@ -156,7 +156,7 @@ public class ProfileTabs implements ProfileTabsAddons {
                         (ViewGroup.MarginLayoutParams) tab.getLayoutParams();
                 int tabMarginSide = (int) mTabsContainer.getContext().getResources()
                         .getDimension(R.dimen.profile_tab_margin_side);
-                if (useMaterial3()) {
+                if (isUseMaterial3FlagEnabled()) {
                     // M3 uses the margin value as the right margin, except for the last child.
                     if (i != mTabs.getTabCount() - 1) {
                         marginLayoutParams.setMargins(0, 0, tabMarginSide, 0);

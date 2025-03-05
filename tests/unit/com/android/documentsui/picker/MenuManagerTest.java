@@ -278,6 +278,16 @@ public final class MenuManagerTest {
     }
 
     @Test
+    public void testOptionMenu_ExtractAll() {
+        dirDetails.isInArchive = true;
+        mgr.updateOptionMenu(testMenu);
+        mOptionExtractAll.assertDisabledAndInvisible();
+        dirDetails.isInArchive = false;
+        mgr.updateOptionMenu(testMenu);
+        mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
     public void testOptionMenu_notPicking() {
         state.action = ACTION_OPEN;
         state.derivedMode = State.MODE_LIST;

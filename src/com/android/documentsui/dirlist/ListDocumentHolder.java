@@ -20,7 +20,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -70,7 +70,7 @@ final class ListDocumentHolder extends DocumentHolder {
     private final @Nullable LinearLayout mDetails;
     // TextView for date + size + summary, null only for tablets/sw720dp
     private final @Nullable TextView mMetadataView;
-    // Non-null only when M3 flag is ON.
+    // Non-null only when use_material3 flag is ON.
     private final @Nullable MaterialCardView mIconWrapper;
     private final ImageView mIconMime;
     private final ImageView mIconThumb;
@@ -89,7 +89,8 @@ final class ListDocumentHolder extends DocumentHolder {
         super(context, parent, R.layout.item_doc_list, configStore);
 
         mIconLayout = itemView.findViewById(R.id.icon);
-        mIconWrapper = useMaterial3() ? itemView.findViewById(R.id.icon_wrapper) : null;
+        mIconWrapper =
+                isUseMaterial3FlagEnabled() ? itemView.findViewById(R.id.icon_wrapper) : null;
         mIconMime = (ImageView) itemView.findViewById(R.id.icon_mime);
         mIconThumb = (ImageView) itemView.findViewById(R.id.icon_thumb);
         mIconCheck = (ImageView) itemView.findViewById(R.id.icon_check);
@@ -147,7 +148,7 @@ final class ListDocumentHolder extends DocumentHolder {
         }
 
         // Do not show stroke when selected, only show stroke when not selected if it has thumbnail.
-        if (useMaterial3() && mIconWrapper != null) {
+        if (isUseMaterial3FlagEnabled() && mIconWrapper != null) {
             if (selected) {
                 mIconWrapper.setStrokeWidth(0);
             } else if (mIconThumb.getDrawable() != null) {
@@ -160,7 +161,7 @@ final class ListDocumentHolder extends DocumentHolder {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             itemView.setAlpha(enabled ? 1f : DISABLED_ALPHA);
         } else {
             // Text colors enabled/disabled is handle via a color set.
@@ -269,8 +270,8 @@ final class ListDocumentHolder extends DocumentHolder {
                 /* subIconMime= */ null,
                 thumbnailLoaded -> {
                     // Show stroke when thumbnail is loaded.
-                    if (useMaterial3() && mIconWrapper != null) {
-                        mIconWrapper.setStrokeWidth(thumbnailLoaded ? 2 : 0);
+                    if (isUseMaterial3FlagEnabled() && mIconWrapper != null) {
+                        mIconWrapper.setStrokeWidth(thumbnailLoaded ? THUMBNAIL_STROKE_WIDTH : 0);
                     }
                 });
 

@@ -204,3 +204,8 @@
 
 # Keep Apache Commons Compress classes
 -keep class org.apache.commons.compress.** { *; }
+
+# This is used in the unit test
+-keep class com.google.android.material.chip.Chip {
+  public android.graphics.drawable.Drawable getChipIcon();
+}

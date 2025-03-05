@@ -290,4 +290,6 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"คุณย้ายไฟล์จากแอปอื่นไม่ได้"</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"กำลังแสดงในโหมดตารางกริด"</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"กำลังแสดงในโหมดรายการ"</string>
+    <!-- no translation found for bullet (5606740650312122766) -->
+    <skip />
 </resources>

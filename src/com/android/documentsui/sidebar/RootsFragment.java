@@ -19,8 +19,8 @@ package com.android.documentsui.sidebar;
 import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.flags.Flags.hideRootsOnDesktop;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isHideRootsOnDesktopFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -150,7 +150,7 @@ public class RootsFragment extends Fragment {
     private List<Item> mApplicationItemList;
 
     // Weather the fragment is using nav_rail_container_roots as its container (in nav_rail_layout).
-    // This will always be false if useMaterial3() flag is off.
+    // This will always be false if isUseMaterial3FlagEnabled() flag is off.
     private boolean mUseRailAsContainer = false;
 
     /**
@@ -183,7 +183,7 @@ public class RootsFragment extends Fragment {
         final Bundle args = new Bundle();
         args.putBoolean(EXTRA_INCLUDE_APPS, includeApps);
         args.putParcelable(EXTRA_INCLUDE_APPS_INTENT, intent);
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             args.putInt(EXTRA_CONTAINER_ID, containerId);
         }
 
@@ -215,7 +215,7 @@ public class RootsFragment extends Fragment {
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mUseRailAsContainer =
                     getArguments() != null
                             && getArguments().getInt(EXTRA_CONTAINER_ID)
@@ -481,8 +481,9 @@ public class RootsFragment extends Fragment {
 
             if (root.isExternalStorageHome()) {
                 continue;
-            } else if (hideRootsOnDesktop() && context.getPackageManager().hasSystemFeature(
-                    PackageManager.FEATURE_PC) && (root.isImages() || root.isVideos()
+            } else if (isHideRootsOnDesktopFlagEnabled()
+                    && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC)
+                    && (root.isImages() || root.isVideos()
                     || root.isDocuments()
                     || root.isAudio())) {
                 // Hide Images/Videos/Documents/Audio roots on desktop.
