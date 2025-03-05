@@ -15,7 +15,10 @@
  */
 package com.android.documentsui
 
+import android.app.Instrumentation
 import android.content.Intent
+import android.content.Intent.ACTION_GET_CONTENT
+import android.content.IntentFilter
 import android.os.Build.VERSION_CODES
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
@@ -30,6 +33,7 @@ import androidx.test.uiautomator.Until
 import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT
 import com.android.documentsui.picker.TrampolineActivity
 import java.util.regex.Pattern
+import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.BeforeClass
@@ -49,15 +53,27 @@ import org.junit.runners.Suite.SuiteClasses
 class TrampolineActivityTest() {
     companion object {
         const val UI_TIMEOUT = 5000L
-        val PHOTOPICKER_PACKAGE_REGEX: Pattern = Pattern.compile(".*photopicker.*")
+        val PHOTOPICKER_PACKAGE_REGEX: Pattern = Pattern.compile(".*(photopicker|media\\.module).*")
         val DOCUMENTSUI_PACKAGE_REGEX: Pattern = Pattern.compile(".*documentsui.*")
 
-        private var device: UiDevice? = null
+        private lateinit var device: UiDevice
+
+        private lateinit var monitor: Instrumentation.ActivityMonitor
 
         @BeforeClass
         @JvmStatic
         fun setUp() {
             device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+            // Monitor to wait for the activity that starts with the `ACTION_GET_CONTENT` intent.
+            val intentFilter = IntentFilter().apply { addAction(ACTION_GET_CONTENT) }
+            monitor =
+                Instrumentation.ActivityMonitor(
+                    intentFilter,
+                    null, // Expected result from startActivityForResult.
+                    true, // Whether to block until activity started or not.
+                )
+            InstrumentationRegistry.getInstrumentation().addMonitor(monitor)
         }
     }
 
@@ -122,7 +138,7 @@ class TrampolineActivityTest() {
                     GetContentIntentData(
                         mimeType = "*/*",
                         extraMimeTypes = arrayOf("image/*", "video/*"),
-                        expectedApp = AppType.DOCUMENTSUI,
+                        expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
@@ -141,13 +157,18 @@ class TrampolineActivityTest() {
         @Before
         fun setUp() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.setType(testData.mimeType)
             testData.extraMimeTypes?.let { intent.putExtra(Intent.EXTRA_MIME_TYPES, it) }
 
             context.startActivity(intent)
+        }
+
+        @After
+        fun tearDown() {
+            monitor.waitForActivityWithTimeout(UI_TIMEOUT)?.finish()
         }
 
         @Test
@@ -157,7 +178,7 @@ class TrampolineActivityTest() {
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
             }
 
-            assertNotNull(device?.wait(Until.findObject(bySelector), UI_TIMEOUT))
+            assertNotNull(device.wait(Until.findObject(bySelector), UI_TIMEOUT))
         }
     }
 
@@ -170,21 +191,22 @@ class TrampolineActivityTest() {
         @Test
         fun testReferredGetContentFromPhotopickerShouldNotRedirectBack() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.setType("image/*")
+            intent.setType("*/*")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
 
             context.startActivity(intent)
-            val moreButton = device?.wait(Until.findObject(By.desc("More")), UI_TIMEOUT)
+            val moreButton = device.wait(Until.findObject(By.descContains("More")), UI_TIMEOUT)
             moreButton?.click()
 
-            val browseButton = device?.wait(Until.findObject(By.textContains("Browse")), UI_TIMEOUT)
+            val browseButton = device.wait(Until.findObject(By.textContains("Browse")), UI_TIMEOUT)
             browseButton?.click()
 
             assertNotNull(
                 "DocumentsUI has not launched",
-                device?.wait(Until.findObject(By.pkg(DOCUMENTSUI_PACKAGE_REGEX)), UI_TIMEOUT)
+                device.wait(Until.findObject(By.pkg(DOCUMENTSUI_PACKAGE_REGEX)), UI_TIMEOUT)
             )
         }
 
@@ -192,7 +214,7 @@ class TrampolineActivityTest() {
         @SdkSuppress(minSdkVersion = VERSION_CODES.S, maxSdkVersion = VERSION_CODES.S_V2)
         fun testAndroidSWithTakeoverGetContentDisabledShouldNotReferToDocumentsUI() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.setType("image/*")
@@ -201,15 +223,15 @@ class TrampolineActivityTest() {
                 // Disable Photopicker from taking over `ACTION_GET_CONTENT`. In this situation, it
                 // should ALWAYS defer to DocumentsUI regardless if the mimetype satisfies the
                 // conditions.
-                device?.executeShellCommand(
+                device.executeShellCommand(
                     "device_config put mediaprovider take_over_get_content false"
                 )
                 context.startActivity(intent)
                 assertNotNull(
-                    device?.wait(Until.findObject(By.pkg(DOCUMENTSUI_PACKAGE_REGEX)), UI_TIMEOUT)
+                    device.wait(Until.findObject(By.pkg(DOCUMENTSUI_PACKAGE_REGEX)), UI_TIMEOUT)
                 )
             } finally {
-                device?.executeShellCommand(
+                device.executeShellCommand(
                     "device_config delete mediaprovider take_over_get_content"
                 )
             }
