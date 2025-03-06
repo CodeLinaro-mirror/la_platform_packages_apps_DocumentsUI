@@ -44,6 +44,7 @@ import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.ui.Views;
@@ -59,6 +60,8 @@ final class GridDocumentHolder extends DocumentHolder {
     final TextView mTitle;
     final TextView mDate;
     final TextView mDetails;
+    // Non-null only when useMaterial3 flag is ON.
+    final @Nullable TextView mBullet;
     final ImageView mIconMimeLg;
     // Null when useMaterial3 flag is ON.
     final @Nullable ImageView mIconMimeSm;
@@ -82,11 +85,13 @@ final class GridDocumentHolder extends DocumentHolder {
         super(context, parent, R.layout.item_doc_grid, configStore);
 
         if (isUseMaterial3FlagEnabled()) {
+            mBullet = itemView.findViewById(R.id.bullet);
             mIconWrapper = itemView.findViewById(R.id.icon_wrapper);
             mIconLayout = null;
             mIconMimeSm = null;
             mIconCheck = null;
         } else {
+            mBullet = null;
             mIconWrapper = null;
             mIconLayout = itemView.findViewById(R.id.icon);
             mIconMimeSm = (ImageView) itemView.findViewById(R.id.icon_mime_sm);
@@ -172,13 +177,18 @@ final class GridDocumentHolder extends DocumentHolder {
 
     @Override
     public void bindPreviewIcon(boolean show, Function<View, Boolean> clickCallback) {
+        if (isUseMaterial3FlagEnabled() && mDoc.isDirectory()) {
+            mPreviewIcon.setVisibility(View.GONE);
+            return;
+        }
         mPreviewIcon.setVisibility(show ? View.VISIBLE : View.GONE);
         if (show) {
             mPreviewIcon.setContentDescription(
                     getPreviewIconContentDescription(
                             mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
                             mDoc.displayName, mDoc.userId));
-            mPreviewIcon.setAccessibilityDelegate(new PreviewAccessibilityDelegate(clickCallback));
+            mPreviewIcon.setAccessibilityDelegate(
+                    new PreviewAccessibilityDelegate(clickCallback));
         }
     }
 
@@ -207,7 +217,8 @@ final class GridDocumentHolder extends DocumentHolder {
     @Override
     public boolean inSelectRegion(MotionEvent event) {
         if (isUseMaterial3FlagEnabled()) {
-            return Views.isEventOver(event, itemView.getParent(), mIconWrapper);
+            return (mDoc.isDirectory() && !(mAction == State.ACTION_BROWSE)) ? false
+                    : Views.isEventOver(event, itemView.getParent(), mIconWrapper);
         }
         return Views.isEventOver(event, itemView.getParent(), mIconLayout);
     }
@@ -280,6 +291,12 @@ final class GridDocumentHolder extends DocumentHolder {
                 mDetails.setVisibility(View.VISIBLE);
                 mDetails.setText(Formatter.formatFileSize(mContext, docSize));
             }
+        }
+
+        if (mBullet != null && (mDetails.getVisibility() == View.GONE
+                || mDate.getText().isEmpty())) {
+            // There is no need for the bullet separating the details and date.
+            mBullet.setVisibility(View.GONE);
         }
     }
 }
