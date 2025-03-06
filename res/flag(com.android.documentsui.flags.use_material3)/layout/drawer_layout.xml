@@ -40,6 +40,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="@dimen/file_area_padding_bottom"
                 app:layout_behavior="@string/scrolling_behavior">
 
                 <FrameLayout

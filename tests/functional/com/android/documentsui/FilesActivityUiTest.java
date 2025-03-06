@@ -16,27 +16,44 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP;
+
 import android.app.Instrumentation;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 @LargeTest
-public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
+@RunWith(AndroidJUnit4.class)
+public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
-    public FilesActivityUiTest() {
-        super(FilesActivity.class);
-    }
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         initTestFiles();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Override
@@ -55,6 +72,7 @@ public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
     // Recents is a strange meta root that gathers entries from other providers.
     // It is special cased in a variety of ways, which is why we just want
     // to be able to click on it.
+    @Test
     public void testClickRecent() throws Exception {
         bots.roots.openRoot("Recent");
 
@@ -67,15 +85,19 @@ public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
         }
     }
 
+    @Test
+    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP)
     public void testRootClick_SetsWindowTitle() throws Exception {
         bots.roots.openRoot("Images");
         bots.main.assertWindowTitle("Images");
     }
 
+    @Test
     public void testFilesListed() throws Exception {
         bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv");
     }
 
+    @Test
     public void testFilesList_LiveUpdate() throws Exception {
         mDocsHelper.createDocument(rootDir0, "yummers/sandwich", "Ham & Cheese.sandwich");
 
@@ -84,6 +106,7 @@ public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
                 "file0.log", "file1.png", "file2.csv", "Ham & Cheese.sandwich");
     }
 
+    @Test
     public void testNavigate_byBreadcrumb() throws Exception {
         bots.directory.openDocument(dirName1);
         bots.directory.waitForDocument(childDir1);  // wait for known content
@@ -96,6 +119,7 @@ public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
         bots.directory.waitForDocument(dirName1);
     }
 
+    @Test
     public void testNavigate_inFixedLayout_whileHasSelection() throws Exception {
         if (bots.main.inFixedLayout()) {
             bots.roots.openRoot(rootDir0.title);
@@ -107,6 +131,7 @@ public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
         }
     }
 
+    @Test
     public void testNavigationToInspector() throws Exception {
         if(!features.isInspectorEnabled()) {
             return;
@@ -118,7 +143,9 @@ public class FilesActivityUiTest extends ActivityTest<FilesActivity> {
         monitor.waitForActivityWithTimeout(TIMEOUT);
     }
 
+    @Test
     @HugeLongTest
+    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP)
     public void testRootChange_UpdatesSortHeader() throws Exception {
 
         // switch to separate display modes for two separate roots. Each
