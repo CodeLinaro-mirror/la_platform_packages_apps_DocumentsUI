@@ -19,10 +19,12 @@ package com.android.documentsui;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.junit.Assert.assertFalse;
 
 import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
@@ -302,5 +304,16 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.clickSearchHistory(queryText);
         bots.search.assertInputFocused(false);
         bots.search.assertSearchHistoryVisible(false);
+    }
+
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchDropdowns() throws Exception {
+        bots.roots.openRoot("Downloads");
+        bots.search.clickIcon();
+        bots.search.setInputText("foo");
+        // Verify that menu triggers (chips) are showing.
+        bots.main.assertLocationTriggerShows();
+        bots.main.assertLastModifiedTriggerShows();
+        bots.main.assertFileTypeTriggerShows();
     }
 }

@@ -326,6 +326,10 @@ public abstract class BaseActivity
                         cmdInterceptor);
 
         ViewGroup chipGroup = findViewById(R.id.search_chip_group);
+        View searchOptionsView = null;
+        if (isUseMaterial3FlagEnabled()) {
+            searchOptionsView = findViewById(R.id.search_options_row);
+        }
 
         mUserIdManager = DocumentsApplication.getUserIdManager(this);
         mUserManagerState = DocumentsApplication.getUserManagerState(this);
@@ -336,7 +340,7 @@ public abstract class BaseActivity
             mUserManagerState.setCurrentStateIntent(intent);
         }
         mSearchManager = new SearchViewManager(searchListener, queryInterceptor,
-                chipGroup, savedInstanceState);
+                chipGroup, searchOptionsView, savedInstanceState);
         // initialize the chip sets by accept mime types
         mSearchManager.initChipSets(mState.acceptMimes);
         // update the chip items by the mime types of the root
