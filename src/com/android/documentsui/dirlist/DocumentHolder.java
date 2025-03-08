@@ -18,7 +18,7 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Strings.PREVIEW_WORK_FILE_ACCESSIBILITY;
 import static com.android.documentsui.DevicePolicyResources.Strings.UNDEFINED;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -56,7 +56,9 @@ import javax.annotation.Nullable;
 public abstract class DocumentHolder
         extends RecyclerView.ViewHolder implements View.OnKeyListener {
 
-    static final float DISABLED_ALPHA = useMaterial3() ? 0.6f : 0.3f;
+    static final float DISABLED_ALPHA = isUseMaterial3FlagEnabled() ? 0.6f : 0.3f;
+
+    static final int THUMBNAIL_STROKE_WIDTH = isUseMaterial3FlagEnabled() ? 2 : 0;
 
     protected final Context mContext;
 
