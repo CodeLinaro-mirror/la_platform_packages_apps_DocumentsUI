@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 
@@ -182,6 +183,11 @@ public abstract class MenuManager {
         updateOpenWith(openWith, selectionDetails);
         updateRename(rename, selectionDetails);
         updateViewInOwner(viewInOwner, selectionDetails);
+
+        if (isZipNgFlagEnabled()) {
+            updateExtractHere(menu.findItem(R.id.dir_menu_extract_here), selectionDetails);
+            updateBrowse(menu.findItem(R.id.dir_menu_browse), selectionDetails);
+        }
 
         updateContextMenu(menu, selectionDetails);
     }
@@ -381,6 +387,14 @@ public abstract class MenuManager {
 
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(extractTo, false);
+    }
+
+    protected void updateExtractHere(@NonNull MenuItem it, SelectionDetails selection) {
+        Menus.setEnabledAndVisible(it, false);
+    }
+
+    protected void updateBrowse(@NonNull MenuItem it, SelectionDetails selection) {
+        Menus.setEnabledAndVisible(it, false);
     }
 
     protected void updatePasteInto(MenuItem pasteInto, SelectionDetails selectionDetails) {

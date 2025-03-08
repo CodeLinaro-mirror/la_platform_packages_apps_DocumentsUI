@@ -70,6 +70,8 @@ public final class MenuManagerTest {
     private TestMenuItem dirViewInOwner;
     private TestMenuItem dirOpenInNewWindow;
     private TestMenuItem dirPasteIntoFolder;
+    private TestMenuItem mDirExtractHere;
+    private TestMenuItem mDirBrowse;
 
     /* Root List Context Menu items */
     private TestMenuItem rootEjectRoot;
@@ -136,6 +138,8 @@ public final class MenuManagerTest {
         dirViewInOwner = testMenu.findItem(R.id.dir_menu_view_in_owner);
         dirOpenInNewWindow = testMenu.findItem(R.id.dir_menu_open_in_new_window);
         dirPasteIntoFolder = testMenu.findItem(R.id.dir_menu_paste_into_folder);
+        mDirExtractHere = testMenu.findItem(R.id.dir_menu_extract_here);
+        mDirBrowse = testMenu.findItem(R.id.dir_menu_browse);
 
         rootEjectRoot = testMenu.findItem(R.id.root_menu_eject_root);
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
@@ -351,6 +355,8 @@ public final class MenuManagerTest {
         mDirDeselectAll.assertDisabledAndInvisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -363,6 +369,8 @@ public final class MenuManagerTest {
         dirSelectAll.assertEnabledAndVisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -375,6 +383,8 @@ public final class MenuManagerTest {
         dirSelectAll.assertEnabledAndVisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -387,6 +397,8 @@ public final class MenuManagerTest {
         dirSelectAll.assertEnabledAndVisible();
         dirPasteFromClipboard.assertEnabledAndVisible();
         dirCreateDir.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -398,6 +410,8 @@ public final class MenuManagerTest {
         dirSelectAll.assertEnabledAndVisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertEnabledAndVisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -423,6 +437,8 @@ public final class MenuManagerTest {
         mDirCompress.assertDisabledAndInvisible();
         dirRename.assertDisabledAndInvisible();
         dirDelete.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -438,6 +454,8 @@ public final class MenuManagerTest {
         dirPasteIntoFolder.assertDisabledAndInvisible();
         dirRename.assertDisabledAndInvisible();
         dirDelete.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -451,6 +469,8 @@ public final class MenuManagerTest {
         dirCopyToClipboard.assertEnabledAndVisible();
         mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertEnabledAndVisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -465,6 +485,8 @@ public final class MenuManagerTest {
         dirCopyToClipboard.assertDisabledAndInvisible();
         mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertEnabledAndVisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -478,6 +500,8 @@ public final class MenuManagerTest {
         dirCopyToClipboard.assertEnabledAndVisible();
         mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test

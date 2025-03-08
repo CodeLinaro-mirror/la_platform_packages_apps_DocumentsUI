@@ -87,11 +87,13 @@
   int cross_profile;
   int cross_profile_content;
   int cross_profile_progress;
+  int dir_menu_browse;
   int dir_menu_copy_to_clipboard;
   int dir_menu_create_dir;
   int dir_menu_cut_to_clipboard;
   int dir_menu_delete;
   int dir_menu_deselect_all;
+  int dir_menu_extract_here;
   int dir_menu_inspect;
   int dir_menu_open;
   int dir_menu_open_in_new_window;

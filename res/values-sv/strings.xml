@@ -290,6 +290,5 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"Du kan inte flytta filer från en annan app."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Visas i rutnätsläge."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Visas i listläge."</string>
-    <!-- no translation found for bullet (5606740650312122766) -->
-    <skip />
+    <string name="bullet" msgid="5606740650312122766">"•"</string>
 </resources>

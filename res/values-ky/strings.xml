@@ -110,7 +110,7 @@
     <string name="cant_save_to_cross_profile_error_title" msgid="5158984057654779022">"<xliff:g id="PROFILE">%1$s</xliff:g> профилине сактоого болбойт"</string>
     <string name="cant_save_to_cross_profile_error_message" msgid="5845240315510422749">"IT администратору <xliff:g id="PROFILE_0">%1$s</xliff:g> файлдарын <xliff:g id="PROFILE_1">%2$s</xliff:g> профилине сактоого тыюу салды"</string>
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Бул аракетке уруксат жок"</string>
-    <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Көбүрөөк маалымат үчүн, IT администраторуңузга кайрылыңыз"</string>
+    <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Кененирээк маалымат алгыңыз келсе, IT администраторуңузга кайрылыңыз"</string>
     <string name="root_recent" msgid="1080156975424341623">"Акыркы"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> бош"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Сактагыч кызматтар"</string>
@@ -290,6 +290,5 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"Башка колдонмодогу файлдарды жылдырууга болбойт."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Торчо режиминде көрсөтүлүүдө."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Тизме режиминде көрсөтүлүүдө."</string>
-    <!-- no translation found for bullet (5606740650312122766) -->
-    <skip />
+    <string name="bullet" msgid="5606740650312122766">"•"</string>
 </resources>

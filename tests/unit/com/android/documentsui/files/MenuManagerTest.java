@@ -79,6 +79,8 @@ public final class MenuManagerTest {
     private TestMenuItem dirPasteIntoFolder;
     private TestMenuItem dirInspect;
     private TestMenuItem dirOpenInNewWindow;
+    private TestMenuItem mDirExtractHere;
+    private TestMenuItem mDirBrowse;
 
     /* Root List Context Menu items */
     private TestMenuItem rootEjectRoot;
@@ -156,6 +158,8 @@ public final class MenuManagerTest {
         dirPasteIntoFolder = testMenu.findItem(R.id.dir_menu_paste_into_folder);
         dirInspect = testMenu.findItem(R.id.dir_menu_inspect);
         dirOpenInNewWindow = testMenu.findItem(R.id.dir_menu_open_in_new_window);
+        mDirExtractHere = testMenu.findItem(R.id.dir_menu_extract_here);
+        mDirBrowse = testMenu.findItem(R.id.dir_menu_browse);
 
         rootEjectRoot = testMenu.findItem(R.id.root_menu_eject_root);
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
@@ -545,6 +549,8 @@ public final class MenuManagerTest {
         mDirDeselectAll.assertDisabledAndInvisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -616,6 +622,8 @@ public final class MenuManagerTest {
         dirRename.assertDisabledAndInvisible();
         dirCreateDir.assertEnabledAndVisible();
         dirDelete.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test

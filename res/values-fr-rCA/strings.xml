@@ -312,6 +312,5 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"Vous ne pouvez pas déplacer de fichiers d\'une autre appli."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Affichage en mode grille."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Affichage en mode liste."</string>
-    <!-- no translation found for bullet (5606740650312122766) -->
-    <skip />
+    <string name="bullet" msgid="5606740650312122766">"•"</string>
 </resources>
