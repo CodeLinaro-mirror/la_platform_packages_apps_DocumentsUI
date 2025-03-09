@@ -16,7 +16,7 @@
 
 package com.android.documentsui.files;
 
-import static com.android.documentsui.flags.Flags.desktopFileHandling;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -168,7 +168,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(open, desktopFileHandling() && selectionDetails.canOpen());
+        Menus.setEnabledAndVisible(
+                open, isDesktopFileHandlingFlagEnabled() && selectionDetails.canOpen());
     }
 
     @Override

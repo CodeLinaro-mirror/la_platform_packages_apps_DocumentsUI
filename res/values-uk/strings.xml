@@ -334,4 +334,6 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"Не можна переміщувати файли з іншого додатка."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Перегляд у режимі таблиці."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Перегляд у режимі списку."</string>
+    <!-- no translation found for bullet (5606740650312122766) -->
+    <skip />
 </resources>

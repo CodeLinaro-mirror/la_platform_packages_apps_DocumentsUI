@@ -290,4 +290,6 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"ਤੁਸੀਂ ਕਿਸੇ ਹੋਰ ਐਪ ਤੋਂ ਫ਼ਾਈਲਾਂ ਨਹੀਂ ਲਿਜਾ ਸਕਦੇ।"</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"ਗ੍ਰਿਡ ਮੋਡ ਵਿੱਚ ਦਿਖਾਈਆਂ ਜਾ ਰਹੀਆਂ ਹਨ"</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"ਸੂਚੀ ਮੋਡ ਵਿੱਚ ਦਿਖਾਈਆਂ ਜਾ ਰਹੀਆਂ ਹਨ।"</string>
+    <!-- no translation found for bullet (5606740650312122766) -->
+    <skip />
 </resources>

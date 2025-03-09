@@ -17,6 +17,15 @@
 <!-- Context menu used when user right clicks on a file with a selection that doesn't have folders.
     The selection may be empty. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dir_menu_extract_here"
+        android:title="@string/menu_extract_here"
+        android:visible="false" />
+    <item
+        android:id="@+id/dir_menu_browse"
+        android:title="@string/menu_browse"
+        android:visible="false" />
+
     <group
         android:id="@+id/menu_open_group">
         <item

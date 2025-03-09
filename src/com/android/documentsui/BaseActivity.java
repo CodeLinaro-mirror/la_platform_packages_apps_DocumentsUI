@@ -19,7 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.content.Context;
 import android.content.Intent;
@@ -184,7 +184,7 @@ public abstract class BaseActivity
         // in case Activity continuously encounter resource not found exception.
         getTheme().applyStyle(R.style.DocumentsDefaultTheme, false);
 
-        if (useMaterial3() && SdkLevel.isAtLeastS()) {
+        if (isUseMaterial3FlagEnabled() && SdkLevel.isAtLeastS()) {
             DynamicColors.applyToActivityIfAvailable(this);
         }
 
@@ -205,7 +205,7 @@ public abstract class BaseActivity
         mDrawer = DrawerController.create(this, mInjector.config);
         Metrics.logActivityLaunch(mState, intent);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             View navRailRoots = findViewById(R.id.nav_rail_container_roots);
             if (navRailRoots != null) {
                 // Bind event listener for the burger menu on nav rail.
@@ -369,7 +369,7 @@ public abstract class BaseActivity
             if (roots != null) {
                 roots.onSelectedUserChanged();
             }
-            if (useMaterial3()) {
+            if (isUseMaterial3FlagEnabled()) {
                 final RootsFragment navRailRoots =
                         RootsFragment.getNavRail(getSupportFragmentManager());
                 if (navRailRoots != null) {
@@ -397,7 +397,7 @@ public abstract class BaseActivity
         });
 
         mSortController = SortController.create(this, mState.derivedMode, mState.sortModel);
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             View previewIconPlaceholder = findViewById(R.id.preview_icon_placeholder);
             if (previewIconPlaceholder != null) {
                 previewIconPlaceholder.setVisibility(
@@ -454,7 +454,7 @@ public abstract class BaseActivity
         super.onPostCreate(savedInstanceState);
 
         Runnable finishActionMode =
-                (useMaterial3())
+                (isUseMaterial3FlagEnabled())
                         ? mNavigator::closeSelectionBar
                         : mInjector.actionModeController::finishActionMode;
 
@@ -479,7 +479,7 @@ public abstract class BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             // In Material3 the menu is now inflated in the `NavigationViewMenu`. This is currently
             // to allow for us to inflate between the action_menu and the activity menu. Once the
             // Material 3 flag is removed, the menus will be merged and we can rely on this single
@@ -510,7 +510,7 @@ public abstract class BaseActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         // Remove the subMenu when material3 is launched b/379776735.
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             if (mNavigator != null) {
                 mNavigator.updateActionMenu();
             }
@@ -573,8 +573,8 @@ public abstract class BaseActivity
             root.setPadding(insets.getSystemWindowInsetLeft(),
                     insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), 0);
 
-            // in M3, no additional bottom gap in full screen mode.
-            if (!useMaterial3()) {
+            // When use_material3 flag is ON, no additional bottom gap in full screen mode.
+            if (!isUseMaterial3FlagEnabled()) {
                 View saveContainer = findViewById(R.id.container_save);
                 saveContainer.setPadding(
                         0, 0, 0, insets.getSystemWindowInsetBottom());
@@ -617,7 +617,7 @@ public abstract class BaseActivity
             return;
         }
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mNavigator.closeSelectionBar();
         } else {
             mInjector.actionModeController.finishActionMode();
@@ -759,7 +759,7 @@ public abstract class BaseActivity
         if (roots != null) {
             roots.onCurrentRootChanged();
         }
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             final RootsFragment navRailRoots =
                     RootsFragment.getNavRail(getSupportFragmentManager());
             if (navRailRoots != null) {
@@ -843,7 +843,7 @@ public abstract class BaseActivity
         mState.derivedMode = mode;
 
         // Remove the subMenu when material3 is launched b/379776735.
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mInjector.menuManager.updateSubMenu(null);
         } else {
             final ActionMenuView subMenuView = findViewById(R.id.sub_menu);

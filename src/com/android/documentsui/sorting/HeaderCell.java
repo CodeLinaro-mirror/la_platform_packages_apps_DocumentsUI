@@ -16,7 +16,7 @@
 
 package com.android.documentsui.sorting;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.animation.AnimatorInflater;
 import android.animation.LayoutTransition;
@@ -134,7 +134,7 @@ public class HeaderCell extends LinearLayout {
     }
 
     private void setDataTypeNumber(View label) {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             label.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
         } else {

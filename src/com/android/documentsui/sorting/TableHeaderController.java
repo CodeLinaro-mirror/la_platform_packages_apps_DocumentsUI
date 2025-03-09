@@ -16,7 +16,7 @@
 
 package com.android.documentsui.sorting;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -92,12 +92,12 @@ public final class TableHeaderController implements SortController.WidgetControl
         if (dimension.getVisibility() == View.VISIBLE
                 && dimension.getSortCapability() != SortDimension.SORT_CAPABILITY_NONE) {
             cell.setOnClickListener(mOnCellClickListener);
-            if (useMaterial3()) {
+            if (isUseMaterial3FlagEnabled()) {
                 cell.setSortArrowListeners(mOnCellClickListener, mOnCellKeyListener, dimension);
             }
         } else {
             cell.setOnClickListener(null);
-            if (useMaterial3()) cell.setSortArrowListeners(null, null, null);
+            if (isUseMaterial3FlagEnabled()) cell.setSortArrowListeners(null, null, null);
         }
     }
 
@@ -109,7 +109,7 @@ public final class TableHeaderController implements SortController.WidgetControl
 
     /** Sorts the column if the key pressed was Enter or Space. */
     private boolean onCellKeyEvent(View v, int keyCode, KeyEvent event) {
-        if (!useMaterial3()) {
+        if (!isUseMaterial3FlagEnabled()) {
             return false;
         }
         // Only the enter and space bar should trigger the sort header to engage.

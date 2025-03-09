@@ -16,7 +16,7 @@
 
 package com.android.documentsui.files;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasData;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
@@ -160,7 +160,7 @@ public class ActionHandlerTest {
     }
 
     private void assertSelectionContainerClosed() {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             verify(mMockCloseSelectionBar, times(1)).run();
         } else {
             assertTrue(mActionModeAddons.finishActionModeCalled);
@@ -181,7 +181,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testOpenFileFlags() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -194,7 +194,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testOpenFileFlagsDesktop() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -478,7 +478,7 @@ public class ActionHandlerTest {
     // Require desktop file handling flag because when it's disabled proguard strips the
     // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;
@@ -494,7 +494,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooser() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -503,7 +503,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooserDesktop() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -739,7 +739,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowPeek() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
         // The inspector activity is not called.
@@ -747,7 +747,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
 
@@ -761,7 +761,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_DebugDisabled() throws Exception {
         mFeatures.debugSupport = false;
 
@@ -773,7 +773,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_DebugEnabled() throws Exception {
         mFeatures.debugSupport = true;
         DebugFlags.setDocumentDetailsEnabled(true);
@@ -787,7 +787,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_OverridesRootDocumentName() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();
@@ -807,7 +807,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();

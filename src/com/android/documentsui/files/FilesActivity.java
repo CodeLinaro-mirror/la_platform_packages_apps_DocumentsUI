@@ -18,7 +18,8 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.ActivityManager.TaskDescription;
 import android.content.Intent;
@@ -60,7 +61,6 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
-import com.android.documentsui.flags.Flags;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
@@ -140,7 +140,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 mInjector.getModel()::getItemUri,
                 mInjector.getModel()::getItemCount);
 
-        if (!useMaterial3()) {
+        if (!isUseMaterial3FlagEnabled()) {
             mInjector.actionModeController =
                     new ActionModeController(
                             this,
@@ -190,7 +190,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
         RootsFragment.show(getSupportFragmentManager(), /* includeApps= */ false,
                 /* intent= */ null);
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             View navRailRoots = findViewById(R.id.nav_rail_container_roots);
             if (navRailRoots != null) {
                 // Medium layout, populate navigation rail layout.
@@ -332,7 +332,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!useMaterial3()) {
+        if (!isUseMaterial3FlagEnabled()) {
             mInjector.menuManager.updateOptionMenu(menu);
         }
         return true;
@@ -349,7 +349,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         } else if (id == R.id.option_menu_settings) {
             mInjector.actions.openSettings(getCurrentRoot());
         } else if (id == R.id.option_menu_extract_all) {
-            if (!Flags.zipNg()) return false;
+            if (!isZipNgFlagEnabled()) return false;
             final DirectoryFragment dir = getDirectoryFragment();
             if (dir == null) return false;
             mInjector.actions.selectAllFiles();

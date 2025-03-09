@@ -25,7 +25,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -211,7 +211,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickActionbarOverflowItem(String label) {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             onView(TOOLBAR_OVERFLOW).perform(click());
         } else {
             onView(ACTIONBAR_OVERFLOW).perform(click());
@@ -231,7 +231,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public boolean waitForActionModeBarToAppear() {
-        String actionModeId = useMaterial3() ? "toolbar" : "action_mode_bar";
+        String actionModeId = isUseMaterial3FlagEnabled() ? "toolbar" : "action_mode_bar";
         UiObject2 bar =
                 mDevice.wait(
                         Until.findObject(By.res(mTargetPackage + ":id/" + actionModeId)), mTimeout);

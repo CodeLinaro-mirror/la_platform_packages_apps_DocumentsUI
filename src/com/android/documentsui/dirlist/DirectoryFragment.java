@@ -21,8 +21,8 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
-import static com.android.documentsui.flags.Flags.desktopFileHandling;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -611,7 +611,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         new RefreshHelper(mRefreshLayout::setEnabled)
                 .attach(mRecView);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mSelectionMgr.addObserver(mActivity.getNavigator());
             mActivity.getNavigator().updateSelection(mSelectionMetadata, this::handleMenuItemClick);
         } else {
@@ -924,7 +924,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void closeSelectionBar() {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mActivity.getNavigator().closeSelectionBar();
         } else {
             mActionModeController.finishActionMode();
@@ -939,7 +939,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mSelectionMgr.copySelection(selection);
 
         final int id = item.getItemId();
-        if (desktopFileHandling() && id == R.id.dir_menu_open) {
+        if (isDesktopFileHandlingFlagEnabled() && id == R.id.dir_menu_open) {
             // On desktop, "open" is displayed in file management mode (i.e. `files.MenuManager`).
             // This menu item behaves the same as double click on the menu item which is handled by
             // onItemActivated but since onItemActivated requires a RecylcerView ItemDetails, we're
@@ -1535,7 +1535,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 // For orientation changed case, sometimes the docs loading comes after the menu
                 // update. We need to update the menu here to ensure the status is correct.
                 mInjector.menuManager.updateModel(mModel);
-                if (useMaterial3()) {
+                if (isUseMaterial3FlagEnabled()) {
                     mActivity.getNavigator().updateActionMenu();
                 } else {
                     mInjector.menuManager.updateOptionMenu();

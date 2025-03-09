@@ -32,6 +32,6 @@
 
     <color name="fragment_pick_active_text_color">#202124</color> <!-- Grey 900 -->
 
-    <!-- TODO(b/379776735): remove this after M3 uplift -->
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <color name="search_chip_text_selected_color">@android:color/black</color>
 </resources>

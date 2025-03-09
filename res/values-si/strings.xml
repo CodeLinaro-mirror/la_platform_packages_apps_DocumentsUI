@@ -290,4 +290,6 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"ඔබට වෙනත් යෙදුමකින් ගොනු ගෙන ඒමට නොහැකිය."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"ජාලක ප්‍රකාරය තුළ පෙන්වමින්."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"ලැයිස්තු ප්‍රකාරය තුළ පෙන්වමින්."</string>
+    <!-- no translation found for bullet (5606740650312122766) -->
+    <skip />
 </resources>

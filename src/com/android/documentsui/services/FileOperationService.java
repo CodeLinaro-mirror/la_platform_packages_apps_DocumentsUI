@@ -17,6 +17,7 @@
 package com.android.documentsui.services;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -126,8 +127,14 @@ public class FileOperationService extends Service implements Job.Listener {
     // Use a features to determine if notification channel is enabled.
     @VisibleForTesting Features features;
 
+    // Used so tests can force the state of visual signals.
+    @VisibleForTesting Boolean mVisualSignalsEnabled = isVisualSignalsFlagEnabled();
+
     @GuardedBy("mJobs")
     private final Map<String, JobRecord> mJobs = new LinkedHashMap<>();
+
+    // Used to send periodic broadcasts for job progress.
+    private GlobalJobMonitor mJobMonitor;
 
     // The job whose notification is used to keep the service in foreground mode.
     @GuardedBy("mJobs")
@@ -162,6 +169,10 @@ public class FileOperationService extends Service implements Job.Listener {
             notificationManager = getSystemService(NotificationManager.class);
         }
 
+        if (mVisualSignalsEnabled && mJobMonitor == null) {
+            mJobMonitor = new GlobalJobMonitor();
+        }
+
         UserManager userManager = (UserManager) getSystemService(Context.USER_SERVICE);
         features = new Features.RuntimeFeatures(getResources(), userManager);
         setUpNotificationChannel();
@@ -186,6 +197,10 @@ public class FileOperationService extends Service implements Job.Listener {
     public void onDestroy() {
         if (DEBUG) {
             Log.d(TAG, "Shutting down executor.");
+        }
+
+        if (mJobMonitor != null) {
+            mJobMonitor.stop();
         }
 
         List<Runnable> unfinishedCopies = executor.shutdownNow();
@@ -330,6 +345,10 @@ public class FileOperationService extends Service implements Job.Listener {
         assert(record != null);
         record.job.cleanup();
 
+        if (mVisualSignalsEnabled && mJobs.isEmpty()) {
+            mJobMonitor.stop();
+        }
+
         // Delay the shutdown until we've cleaned up all notifications. shutdown() is now posted in
         // onFinished(Job job) to main thread.
     }
@@ -389,8 +408,12 @@ public class FileOperationService extends Service implements Job.Listener {
         }
 
         // Set up related monitor
-        JobMonitor monitor = new JobMonitor(job);
-        monitor.start();
+        if (mVisualSignalsEnabled) {
+            mJobMonitor.start();
+        } else {
+            JobMonitor monitor = new JobMonitor(job);
+            monitor.start();
+        }
     }
 
     @Override
@@ -398,6 +421,9 @@ public class FileOperationService extends Service implements Job.Listener {
         assert(job.isFinished());
         if (DEBUG) {
             Log.d(TAG, "onFinished: " + job.id);
+        }
+        if (mVisualSignalsEnabled) {
+            mJobMonitor.sendProgress();
         }
 
         synchronized (mJobs) {
@@ -540,6 +566,52 @@ public class FileOperationService extends Service implements Job.Listener {
                             mJob.getProgressNotification());
                 }
 
+                handler.postDelayed(this, PROGRESS_INTERVAL_MILLIS);
+            }
+        }
+    }
+
+    /**
+     * A class used to periodically poll the state of every running job.
+     *
+     * We need to be sending the progress of every job, so rather than having a single monitor per
+     * job, have one for the whole service.
+     */
+    private final class GlobalJobMonitor implements Runnable {
+        private static final long PROGRESS_INTERVAL_MILLIS = 500L;
+        private boolean mRunning = false;
+
+        private void start() {
+            if (!mRunning) {
+                handler.post(this);
+            }
+            mRunning = true;
+        }
+
+        private void stop() {
+            mRunning = false;
+            handler.removeCallbacks(this);
+        }
+
+        private void sendProgress() {
+            var progress = new ArrayList<JobProgress>();
+            synchronized (mJobs) {
+                for (JobRecord rec : mJobs.values()) {
+                    progress.add(rec.job.getJobProgress());
+                }
+            }
+            Intent intent = new Intent();
+            intent.setPackage(getPackageName());
+            intent.setAction("com.android.documentsui.PROGRESS");
+            intent.putExtra("id", 0);
+            intent.putParcelableArrayListExtra("progress", progress);
+            sendBroadcast(intent);
+        }
+
+        @Override
+        public void run() {
+            sendProgress();
+            if (mRunning) {
                 handler.postDelayed(this, PROGRESS_INTERVAL_MILLIS);
             }
         }

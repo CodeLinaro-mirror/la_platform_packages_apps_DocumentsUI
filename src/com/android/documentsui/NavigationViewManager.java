@@ -17,7 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -157,7 +157,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
                         onNavigationIconClicked();
                     }
                 });
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mToolbar.setOnMenuItemClickListener(
                     new Toolbar.OnMenuItemClickListener() {
                         @Override
@@ -261,7 +261,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     private void onNavigationIconClicked() {
-        if (useMaterial3() && inSelectionMode()) {
+        if (isUseMaterial3FlagEnabled() && inSelectionMode()) {
             closeSelectionBar();
         } else if (mDrawer.isPresent()) {
             mDrawer.setOpen(true);
@@ -311,7 +311,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         mDrawer.setTitle(mEnv.getDrawerTitle());
 
         boolean showBurgerMenuOnToolbar = true;
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             View navRailRoots = mActivity.findViewById(R.id.nav_rail_container_roots);
             if (navRailRoots != null) {
                 // If nav rail exists, burger menu will show on the nav rail instead.
@@ -322,6 +322,9 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         if (showBurgerMenuOnToolbar) {
             mToolbar.setNavigationIcon(getActionBarIcon());
             mToolbar.setNavigationContentDescription(R.string.drawer_open);
+        } else {
+            mToolbar.setNavigationIcon(null);
+            mToolbar.setNavigationContentDescription(null);
         }
 
         if (shouldShowSearchBar()) {
@@ -333,7 +336,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
 
         mSearchBarView.setVisibility(View.GONE);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             updateActionMenu();
             if (inSelectionMode()) {
                 final int quantity = mInjector.selectionMgr.getSelection().size();
