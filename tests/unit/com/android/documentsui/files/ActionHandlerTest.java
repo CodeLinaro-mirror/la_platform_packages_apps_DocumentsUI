@@ -460,7 +460,10 @@ public class ActionHandlerTest {
         assertEquals(false, result);
     }
 
+    // Require desktop file handling flag because when it's disabled proguard strips the
+    // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;

@@ -968,7 +968,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return true;
 
             // TODO: Implement extract (to the current directory).
-        } else if (id == R.id.action_menu_extract_to) {
+        } else if (id == R.id.action_menu_extract_to || id == R.id.option_menu_extract_all) {
             transferDocuments(selection, null, FileOperationService.OPERATION_EXTRACT);
             // TODO: Only finish selection mode if compress-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.

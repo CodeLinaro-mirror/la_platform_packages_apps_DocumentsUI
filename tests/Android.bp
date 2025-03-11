@@ -25,9 +25,11 @@ java_defaults {
     ],
 
     static_libs: [
+        "androidx.test.core",
         "androidx.test.espresso.core",
         "androidx.test.ext.truth",
         "androidx.test.rules",
+        "androidx.test.ext.junit",
         "androidx.test.uiautomator_uiautomator",
         "docsui-flags-aconfig-java-lib",
         "flag-junit",
@@ -93,6 +95,7 @@ android_library {
     srcs: [
         "common/**/*.java",
         "functional/**/*.java",
+        "functional/**/*.kt",
         "unit/**/*.java",
     ],
 
