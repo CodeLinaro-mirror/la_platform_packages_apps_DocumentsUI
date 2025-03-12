@@ -27,10 +27,10 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
@@ -144,7 +144,13 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         mState = state;
         mEnv = env;
         mBreadcrumb = breadcrumb;
-        mBreadcrumb.setup(env, state, this::onNavigationItemSelected);
+        mBreadcrumb.setup(
+                env,
+                state,
+                this::onNavigationItemSelected,
+                isUseMaterial3FlagEnabled()
+                        ? activity.findViewById(R.id.breadcrumb_top_divider)
+                        : null);
         mConfigStore = configStore;
         mInjector = injector;
         mProfileTabs =
@@ -297,7 +303,10 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     public void update() {
-        updateScrollFlag();
+        // If use_material3 flag is ON, we don't want any scroll behavior, thus skipping this logic.
+        if (!isUseMaterial3FlagEnabled()) {
+            updateScrollFlag();
+        }
         updateToolbar();
         mProfileTabs.updateView();
 
@@ -467,8 +476,11 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         }
 
         if (!mIsActionModeActivated) {
-            FrameLayout.LayoutParams headerLayoutParams =
-                    (FrameLayout.LayoutParams) mHeader.getLayoutParams();
+            // This could be either FrameLayout.LayoutParams (when use_material3 flag is OFF) or
+            // LinearLayout.LayoutParams (when use_material3 flag is ON), so use the common parent
+            // class instead to make it work for both scenarios.
+            ViewGroup.MarginLayoutParams headerLayoutParams =
+                    (ViewGroup.MarginLayoutParams) mHeader.getLayoutParams();
             headerLayoutParams.setMargins(0, /* top= */ headerTopOffset, 0, 0);
             mHeader.setLayoutParams(headerLayoutParams);
         }
@@ -498,7 +510,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     interface Breadcrumb {
-        void setup(Environment env, State state, IntConsumer listener);
+        void setup(Environment env, State state, IntConsumer listener, @Nullable View topDivider);
 
         void show(boolean visibility);
 

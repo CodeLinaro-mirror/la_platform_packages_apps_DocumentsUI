@@ -389,11 +389,11 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(extractTo, false);
     }
 
-    protected void updateExtractHere(@NonNull MenuItem it, SelectionDetails selection) {
+    protected void updateExtractHere(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
         Menus.setEnabledAndVisible(it, false);
     }
 
-    protected void updateBrowse(@NonNull MenuItem it, SelectionDetails selection) {
+    protected void updateBrowse(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
         Menus.setEnabledAndVisible(it, false);
     }
 
@@ -450,6 +450,10 @@ public abstract class MenuManager {
         boolean canOpen();
 
         boolean canViewInOwner();
+
+        default boolean isArchive() {
+            return false;
+        }
     }
 
     public static class DirectoryDetails {

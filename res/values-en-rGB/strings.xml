@@ -35,7 +35,7 @@
     <string name="menu_open_with" msgid="5507647065467520229">"Open with"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Open in new window"</string>
     <string name="menu_save" msgid="5195367497138965168">"Save"</string>
-    <string name="menu_share" msgid="4307140947108068356">"Shared"</string>
+    <string name="menu_share" msgid="4307140947108068356">"Share"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Delete"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Select all"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Deselect all"</string>

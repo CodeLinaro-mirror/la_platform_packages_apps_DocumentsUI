@@ -29,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.selection.SelectionTracker;
 
@@ -209,6 +210,16 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {
         boolean enabled = selectionDetails.canExtract();
         Menus.setEnabledAndVisible(extractTo, enabled);
+    }
+
+    @Override
+    protected void updateExtractHere(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
+        Menus.setEnabledAndVisible(it, selection.isArchive());
+    }
+
+    @Override
+    protected void updateBrowse(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
+        Menus.setEnabledAndVisible(it, selection.isArchive());
     }
 
     @Override

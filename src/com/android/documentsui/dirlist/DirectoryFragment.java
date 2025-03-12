@@ -827,6 +827,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private int getSaveLayoutHeight() {
+        // When use_material3 flag is on, the bottom section not only includes the container_save,
+        // but also includes the breadcrumb and the divider, so we need to use the total height
+        // for their parent container.
+        if (isUseMaterial3FlagEnabled()) {
+            View bottomSection = getActivity().findViewById(R.id.bottom_container);
+            return bottomSection == null ? 0 : bottomSection.getHeight();
+        }
         View containerSave = getActivity().findViewById(R.id.container_save);
         return containerSave == null ? 0 : containerSave.getHeight();
     }

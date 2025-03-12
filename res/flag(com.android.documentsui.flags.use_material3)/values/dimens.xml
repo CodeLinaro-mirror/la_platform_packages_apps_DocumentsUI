@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<!-- Dimensions/sizes for size Compact (<=600dp). -->
+<!-- Dimensions/sizes for size Compact (<600dp). -->
 <resources>
     <!-- Material design rounded radius -->
     <dimen name="material_round_radius">2dp</dimen>
@@ -23,10 +23,6 @@
     <dimen name="profile_tab_padding">0dp</dimen>
     <dimen name="grid_container_padding">20dp</dimen>
     <dimen name="list_container_padding">@dimen/space_extra_small_4</dimen>
-    <!-- For compact screen, file area occupies the whole screen height, when use_material3 flag is
-         ON we show breadcrumb at the bottom, so we need to add padding (breadcrumb height) at the
-         bottom to make sure breadcrumb won't over-shadow the file area. -->
-    <dimen name="file_area_padding_bottom">48dp</dimen>
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
@@ -91,6 +87,11 @@
     <dimen name="briefcase_icon_size_photo">24dp</dimen>
     <dimen name="button_corner_radius">2dp</dimen>
 
+    <!-- list_container_padding + list_item_padding_start -->
+    <dimen name="table_header_padding_start">24dp</dimen>
+    <!-- list_container_padding + list_item_padding_end -->
+    <dimen name="table_header_padding_end">16dp</dimen>
+
     <dimen name="bottom_sheet_dialog_radius">28dp</dimen>
 
     <dimen name="drawer_edge_width">12dp</dimen>
@@ -116,7 +117,7 @@
     <dimen name="drag_shadow_padding">8dp</dimen>
 
     <dimen name="doc_header_sort_icon_size">32dp</dimen>
-    <dimen name="doc_header_height">60dp</dimen>
+    <dimen name="doc_header_height">48dp</dimen>
 
     <dimen name="dropdown_sort_widget_margin">12dp</dimen>
     <dimen name="dropdown_sort_widget_size">54dp</dimen>
