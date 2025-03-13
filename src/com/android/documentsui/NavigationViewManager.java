@@ -17,6 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.flags.Flags.useMaterial3;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -264,8 +265,19 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         mDrawer.setTitle(mEnv.getDrawerTitle());
 
-        mToolbar.setNavigationIcon(getActionBarIcon());
-        mToolbar.setNavigationContentDescription(R.string.drawer_open);
+        boolean showBurgerMenuOnToolbar = true;
+        if (useMaterial3()) {
+            View navRailRoots = mActivity.findViewById(R.id.nav_rail_container_roots);
+            if (navRailRoots != null) {
+                // If nav rail exists, burger menu will show on the nav rail instead.
+                showBurgerMenuOnToolbar = false;
+            }
+        }
+
+        if (showBurgerMenuOnToolbar) {
+            mToolbar.setNavigationIcon(getActionBarIcon());
+            mToolbar.setNavigationContentDescription(R.string.drawer_open);
+        }
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);

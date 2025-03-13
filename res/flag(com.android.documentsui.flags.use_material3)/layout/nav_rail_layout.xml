@@ -18,6 +18,7 @@
      floating action buttons) to operate correctly. -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinator_layout">
@@ -39,11 +40,35 @@
             android:background="?attr/colorSurfaceContainer">
 
             <!-- Navigation rail: left hand side. -->
-            <FrameLayout
-                android:id="@+id/nav_rail_container_roots"
+            <LinearLayout
+                android:id="@+id/nav_rail_container"
                 android:layout_width="144dp"
                 android:layout_height="match_parent"
-                />
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    style="?attr/materialIconButtonStyle"
+                    android:id="@+id/nav_rail_burger_menu"
+                    android:layout_width="@dimen/nav_rail_burger_icon_size"
+                    android:layout_height="@dimen/nav_rail_burger_icon_size"
+                    android:layout_marginBottom="24dp"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textStart"
+                    app:iconTint="?attr/colorOnSurfaceVariant"
+                    app:backgroundTint="@drawable/nav_rail_burger_icon_background"
+                    app:rippleColor="@color/nav_rail_burger_icon_ripple_color"
+                    app:strokeColor="?attr/colorPrimary"
+                    android:contentDescription="@string/drawer_open"
+                    app:icon="@drawable/ic_hamburger" />
+
+                <FrameLayout
+                    android:id="@+id/nav_rail_container_roots"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
 
             <!-- Main container for the right hand side. -->
             <LinearLayout

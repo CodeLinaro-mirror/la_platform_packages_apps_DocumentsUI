@@ -91,6 +91,7 @@
     <dimen name="nav_rail_item_icon_bg_radius">16dp</dimen>
     <dimen name="nav_rail_item_icon_bg_width">56dp</dimen>
     <dimen name="nav_rail_item_icon_bg_height">32dp</dimen>
+    <dimen name="nav_rail_burger_icon_size">56dp</dimen>
 
     <dimen name="drag_shadow_width">176dp</dimen>
     <dimen name="drag_shadow_height">64dp</dimen>
