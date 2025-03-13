@@ -16,6 +16,8 @@
 
 package com.android.documentsui.sorting;
 
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.animation.AnimatorInflater;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
@@ -132,8 +134,13 @@ public class HeaderCell extends LinearLayout {
     }
 
     private void setDataTypeNumber(View label) {
-        label.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
-        setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
+        if (useMaterial3()) {
+            label.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
+        } else {
+            label.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+            setGravity(Gravity.CENTER_VERTICAL | Gravity.END);
+        }
     }
 
     private void setDataTypeString(View label) {

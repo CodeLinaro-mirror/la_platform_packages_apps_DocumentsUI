@@ -397,6 +397,13 @@ public abstract class BaseActivity
         });
 
         mSortController = SortController.create(this, mState.derivedMode, mState.sortModel);
+        if (useMaterial3()) {
+            View previewIconPlaceholder = findViewById(R.id.preview_icon_placeholder);
+            if (previewIconPlaceholder != null) {
+                previewIconPlaceholder.setVisibility(
+                        mState.shouldShowPreview() ? View.VISIBLE : View.GONE);
+            }
+        }
 
         mPreferencesMonitor = new PreferencesMonitor(
                 getApplicationContext().getPackageName(),
