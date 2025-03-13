@@ -67,12 +67,14 @@
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
     <dimen name="grid_item_elevation">2dp</dimen>
-    <dimen name="grid_item_radius">2dp</dimen>
+    <dimen name="grid_item_radius">12dp</dimen>
     <dimen name="max_drawer_width">280dp</dimen>
     <dimen name="briefcase_icon_margin">8dp</dimen>
     <dimen name="briefcase_icon_size">14dp</dimen>
     <dimen name="briefcase_icon_size_photo">24dp</dimen>
     <dimen name="button_corner_radius">2dp</dimen>
+
+    <dimen name="bottom_sheet_dialog_radius">28dp</dimen>
 
     <dimen name="drawer_edge_width">12dp</dimen>
     <dimen name="drawer_padding_horizontal">@dimen/space_extra_small_6</dimen>

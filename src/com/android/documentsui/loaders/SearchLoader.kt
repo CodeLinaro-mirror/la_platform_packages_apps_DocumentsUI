@@ -21,6 +21,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
+import android.text.TextUtils
 import android.util.Log
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
@@ -173,22 +174,27 @@ class SearchLoader(
         Log.d(TAG, "Search complete with ${cursorList.size} cursors collected")
 
         // Step 5: Assign the cursor, after adding filtering and sorting, to the results.
-        val filteringCursor = FilteringCursorWrapper(toSingleCursor(cursorList))
+        val mergedCursor = toSingleCursor(cursorList)
+        mergedCursor.registerContentObserver(mObserver)
+        val filteringCursor = FilteringCursorWrapper(mergedCursor)
         filteringCursor.filterHiddenFiles(mOptions.showHidden)
+        filteringCursor.filterMimes(
+            mOptions.acceptableMimeTypes,
+            if (TextUtils.isEmpty(mQuery)) arrayOf<String>(Document.MIME_TYPE_DIR) else null
+        )
         if (rejectBeforeTimestamp > 0L) {
             filteringCursor.filterLastModified(rejectBeforeTimestamp)
         }
-        filteringCursor.filterMimes(mOptions.acceptableMimeTypes, arrayOf(Document.MIME_TYPE_DIR))
-        val sortingCursor = mSortModel.sortCursor(filteringCursor, mMimeTypeLookup)
-        sortingCursor.registerContentObserver(mObserver)
-        result.cursor = sortingCursor
+        result.cursor = mSortModel.sortCursor(filteringCursor, mMimeTypeLookup)
 
         // TODO(b:388336095): Record the total time it took to complete search.
         return result
     }
 
     private fun createContentProviderQuery(root: RootInfo) =
-        if (mQuery == null || mQuery.isBlank()) {
+        if (TextUtils.isEmpty(mQuery) && mOptions.otherQueryArgs.isEmpty) {
+            // NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus
+            // we only create the recents URI if both the query and other args are empty.
             DocumentsContract.buildRecentDocumentsUri(
                 root.authority,
                 root.rootId
@@ -211,9 +217,10 @@ class SearchLoader(
                 rejectBeforeTimestamp
             )
         }
-        if (mQuery != null && !mQuery.isBlank()) {
+        if (!TextUtils.isEmpty(mQuery)) {
             queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, mQuery)
         }
+        queryArgs.putAll(mOptions.otherQueryArgs)
         return queryArgs
     }
 

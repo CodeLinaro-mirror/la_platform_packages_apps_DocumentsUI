@@ -15,10 +15,16 @@
  */
 package com.android.documentsui.loaders
 
+import android.os.Bundle
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.CheckFlagsRule
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import android.provider.DocumentsContract
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_RW
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
@@ -27,12 +33,19 @@ import java.util.concurrent.Executors
 import junit.framework.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
 private const val TOTAL_FILE_COUNT = 8
+
+fun createQueryArgs(vararg mimeTypes: String): Bundle {
+    val args = Bundle()
+    args.putStringArray(DocumentsContract.QUERY_ARG_MIME_TYPES, arrayOf<String>(*mimeTypes))
+    return args
+}
 
 @RunWith(Parameterized::class)
 @SmallTest
@@ -45,14 +58,19 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
         @JvmStatic
         @Parameters(name = "with parameters {0}")
         fun data() = listOf(
-            LoaderTestParams("sample", null, TOTAL_FILE_COUNT),
-            LoaderTestParams("txt", null, 2),
-            LoaderTestParams("foozig", null, 0),
+            LoaderTestParams("sample", null, Bundle(), TOTAL_FILE_COUNT),
+            LoaderTestParams("txt", null, Bundle(), 2),
+            LoaderTestParams("foozig", null, Bundle(), 0),
             // The first file is at NOW, the second at NOW - 1h; expect 2.
-            LoaderTestParams("sample", Duration.ofMinutes(60 + 1), 2),
-            // TODO(b:378590632): Add test for recents.
+            LoaderTestParams("sample", Duration.ofMinutes(60 + 1), Bundle(), 2),
+            LoaderTestParams("sample", null, createQueryArgs("image/*"), 2),
+            LoaderTestParams("sample", null, createQueryArgs("image/*", "video/*"), 6),
+            LoaderTestParams("sample", null, createQueryArgs("application/pdf"), 0),
         )
     }
+
+    @get:Rule
+    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     @Before
     override fun setUp() {
@@ -61,6 +79,7 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     }
 
     @Test
+    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_RW)
     fun testLoadInBackground() {
         val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
         val docs = createDocuments(TOTAL_FILE_COUNT)
@@ -72,7 +91,8 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 testParams.lastModifiedDelta,
                 null,
                 true,
-                arrayOf("*/*")
+                arrayOf("*/*"),
+                testParams.otherArgs,
             )
         val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
 
@@ -98,10 +118,12 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     }
 
     @Test
+    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_RW)
     fun testBlankQueryAndRecency() {
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
         val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
-        val noLastModifiedQueryOptions = QueryOptions(10, null, null, true, arrayOf("*/*"))
+        val noLastModifiedQueryOptions =
+            QueryOptions(10, null, null, true, arrayOf("*/*"), Bundle())
 
         // Blank query and no last modified duration is invalid.
         assertThrows(IllegalArgumentException::class.java) {

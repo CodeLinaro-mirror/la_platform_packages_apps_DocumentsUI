@@ -1018,7 +1018,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
             QueryOptions options = new QueryOptions(
                     maxResults, lastModifiedDelta, Duration.ofMillis(MAX_SEARCH_TIME_MS),
-                    mState.showHiddenFiles, mState.acceptMimes);
+                    mState.showHiddenFiles, mState.acceptMimes, mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 Log.d(TAG, "Creating search loader V2");
@@ -1027,7 +1027,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 final LockingContentObserver observer = new LockingContentObserver(
                         mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
                 Collection<RootInfo> rootList = new ArrayList<>();
-                if (root == null || root.isRecents()) {
+                if (stack.isRecents()) {
                     // TODO(b:381346575): Pass roots based on user selection.
                     rootList.addAll(mProviders.getMatchingRootsBlocking(mState).stream().filter(
                             r -> r.supportsSearch() && r.authority != null
