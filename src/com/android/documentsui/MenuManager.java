@@ -159,10 +159,10 @@ public abstract class MenuManager {
     }
 
     /**
-     * @see DirectoryFragment#onCreateContextMenu
-     *
      * Called when user tries to generate a context menu anchored to a file when the selection
      * doesn't contain any folder.
+     *
+     * @see DirectoryFragment#onCreateContextMenu
      *
      * @param selectionDetails
      *      containsFiles may return false because this may be called when user right clicks on an
@@ -193,10 +193,10 @@ public abstract class MenuManager {
     }
 
     /**
-     * @see DirectoryFragment#onCreateContextMenu
-     *
      * Called when user tries to generate a context menu anchored to a folder when the selection
      * doesn't contain any file.
+     *
+     * @see DirectoryFragment#onCreateContextMenu
      *
      * @param selectionDetails
      *      containDirectories may return false because this may be called when user right clicks on
@@ -418,24 +418,41 @@ public abstract class MenuManager {
     }
 
     protected abstract void updateSelectAll(MenuItem selectAll);
+
     protected abstract void updateSelectAll(MenuItem selectAll, SelectionDetails selectionDetails);
+
     protected abstract void updateDeselectAll(
             MenuItem deselectAll, SelectionDetails selectionDetails);
+
     protected abstract void updateCreateDir(MenuItem createDir);
 
     /**
      * Access to meta data about the selection.
      */
     public interface SelectionDetails {
-        boolean containsDirectories();
-
-        boolean containsFiles();
-
+        /** Gets the total number of items (files and directories) in the selection. */
         int size();
 
+        /** Returns whether the selection contains at least a directory. */
+        boolean containsDirectories();
+
+        /** Returns whether the selection contains at least a file. */
+        boolean containsFiles();
+
+        /**
+         * Returns whether the selection contains at least a file that has not been fully downloaded
+         * yet.
+         */
         boolean containsPartialFiles();
 
+        /** Returns whether the selection contains at least a file located in a mounted archive. */
         boolean containsFilesInArchive();
+
+        /**
+         * Returns whether the selection contains exactly one file which is also a supported archive
+         * type.
+         */
+        boolean isArchive();
 
         // TODO: Update these to express characteristics instead of answering concrete questions,
         // since the answer to those questions is (or can be) activity specific.
@@ -450,10 +467,6 @@ public abstract class MenuManager {
         boolean canOpen();
 
         boolean canViewInOwner();
-
-        default boolean isArchive() {
-            return false;
-        }
     }
 
     public static class DirectoryDetails {
