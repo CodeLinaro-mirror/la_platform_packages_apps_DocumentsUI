@@ -48,7 +48,7 @@
                 app:cardElevation="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cardBackgroundColor="@android:color/white"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
                 app:strokeColor="?attr/colorSecondaryContainer"
                 app:strokeWidth="0dp">
 
