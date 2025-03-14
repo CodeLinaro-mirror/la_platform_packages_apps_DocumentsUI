@@ -46,6 +46,10 @@
     <string name="menu_compress" msgid="37539111904724188">"壓縮"</string>
     <string name="menu_extract" msgid="8171946945982532262">"壓縮至…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"擷取全部…"</string>
+    <!-- no translation found for menu_extract_here (8725302045721604762) -->
+    <skip />
+    <!-- no translation found for menu_browse (6007716414766674967) -->
+    <skip />
     <string name="menu_rename" msgid="1883113442688817554">"重新命名"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"顯示資訊"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"顯示已隱藏的檔案"</string>
@@ -290,6 +294,5 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"你無法移動其他應用程式的檔案。"</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"用格狀模式顯示緊。"</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"用清單模式顯示緊。"</string>
-    <!-- no translation found for bullet (5606740650312122766) -->
-    <skip />
+    <string name="bullet" msgid="5606740650312122766">"•"</string>
 </resources>

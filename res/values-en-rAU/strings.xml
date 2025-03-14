@@ -35,7 +35,7 @@
     <string name="menu_open_with" msgid="5507647065467520229">"Open with"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Open in new window"</string>
     <string name="menu_save" msgid="5195367497138965168">"Save"</string>
-    <string name="menu_share" msgid="4307140947108068356">"Share"</string>
+    <string name="menu_share" msgid="4307140947108068356">"Shared"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Delete"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Select all"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Deselect all"</string>
@@ -46,6 +46,10 @@
     <string name="menu_compress" msgid="37539111904724188">"Compress"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Extract to…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Extract all…"</string>
+    <!-- no translation found for menu_extract_here (8725302045721604762) -->
+    <skip />
+    <!-- no translation found for menu_browse (6007716414766674967) -->
+    <skip />
     <string name="menu_rename" msgid="1883113442688817554">"Rename"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Get info"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Show hidden files"</string>

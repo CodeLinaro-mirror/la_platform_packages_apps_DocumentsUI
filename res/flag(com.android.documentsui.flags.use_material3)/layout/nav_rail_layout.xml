@@ -35,8 +35,8 @@
             android:orientation="horizontal"
             android:baselineAligned="false"
             android:paddingTop="@dimen/layout_padding_top"
-            android:paddingBottom="@dimen/layout_padding_bottom"
             android:paddingEnd="@dimen/layout_padding_end"
+            android:paddingBottom="@dimen/layout_padding_bottom"
             android:background="?attr/colorSurfaceContainer">
 
             <!-- Navigation rail: left hand side. -->
@@ -144,17 +144,17 @@
                     android:layout_marginTop="@dimen/main_container_section_gap"
                     android:background="@drawable/main_container_bottom_section_background">
 
-                <com.android.documentsui.HorizontalBreadcrumb
-                    android:id="@+id/horizontal_breadcrumb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <com.android.documentsui.HorizontalBreadcrumb
+                        android:id="@+id/horizontal_breadcrumb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/container_save"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/colorBackgroundFloating"
+                    android:background="?attr/colorSurfaceContainer"
                     android:elevation="8dp" />
 
             </LinearLayout>

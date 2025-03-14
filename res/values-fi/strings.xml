@@ -46,6 +46,10 @@
     <string name="menu_compress" msgid="37539111904724188">"Pakkaa"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Pura kohteeseen…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Pura kaikki…"</string>
+    <!-- no translation found for menu_extract_here (8725302045721604762) -->
+    <skip />
+    <!-- no translation found for menu_browse (6007716414766674967) -->
+    <skip />
     <string name="menu_rename" msgid="1883113442688817554">"Nimeä uudelleen"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Näytä tiedot"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Näytä piilotetut tiedostot"</string>
@@ -290,6 +294,5 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"Et voi siirtää tiedostoja toisesta sovelluksesta."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Näytetään ruudukkotilassa."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Näytetään luettelotilassa."</string>
-    <!-- no translation found for bullet (5606740650312122766) -->
-    <skip />
+    <string name="bullet" msgid="5606740650312122766">"•"</string>
 </resources>

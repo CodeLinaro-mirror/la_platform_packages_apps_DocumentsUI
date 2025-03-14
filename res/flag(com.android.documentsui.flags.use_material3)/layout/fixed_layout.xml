@@ -32,7 +32,6 @@
         android:paddingTop="@dimen/layout_padding_top"
         android:paddingBottom="@dimen/layout_padding_bottom"
         android:paddingEnd="@dimen/layout_padding_end">
-
         <!-- Navigation: left hand side. -->
         <FrameLayout
             android:id="@+id/container_roots"
@@ -124,7 +123,7 @@
                 android:id="@+id/container_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?android:attr/colorBackgroundFloating"
+                android:background="?attr/colorSurfaceContainer"
                 android:elevation="8dp" />
 
         </LinearLayout>

@@ -22,7 +22,9 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_DE
 import static com.android.documentsui.services.FileOperationService.OPERATION_EXTRACT;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -179,13 +181,19 @@ public class PickFragment extends Fragment {
         switch (mAction) {
             case State.ACTION_OPEN_TREE:
                 mPick.setText(getString(R.string.open_tree_button));
-                mPick.setWidth(Integer.MAX_VALUE);
-                mCancel.setVisibility(View.GONE);
+                // On laptops we want the "Use this folder" button to appear with the "Cancel"
+                // button as a back gesture with a mouse is not easy.
+                if (!isUseMaterial3FlagEnabled()
+                        || !getActivity().getPackageManager()
+                                .hasSystemFeature(PackageManager.FEATURE_PC)) {
+                    mPick.setWidth(Integer.MAX_VALUE);
+                    mCancel.setVisibility(View.GONE);
+                    mPickOverlay.setVisibility(
+                            mPickTarget.isBlockedFromTree() && mRestrictScopeStorage
+                                    ? View.VISIBLE
+                                    : View.GONE);
+                }
                 mPick.setEnabled(!(mPickTarget.isBlockedFromTree() && mRestrictScopeStorage));
-                mPickOverlay.setVisibility(
-                        mPickTarget.isBlockedFromTree() && mRestrictScopeStorage
-                                ? View.VISIBLE
-                                : View.GONE);
                 break;
             case State.ACTION_PICK_COPY_DESTINATION:
                 int titleId;

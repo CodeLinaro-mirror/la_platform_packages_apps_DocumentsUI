@@ -150,4 +150,14 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <style name="DragBadgeText" parent="@style/TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">@color/drag_content_text_color</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="DragCounterText" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/drag_file_counter_text_color</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
 </resources>

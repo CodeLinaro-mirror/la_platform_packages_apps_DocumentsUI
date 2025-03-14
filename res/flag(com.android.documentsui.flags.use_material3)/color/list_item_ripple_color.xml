@@ -17,6 +17,10 @@
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false" android:color="@android:color/transparent" />
+    <!-- By default <ripple> introduces a gray-ish layer for the focused state which we don't
+         want, hence explicitly setting focused ripple color to transparent to get rid of that.
+    -->
+    <item android:state_focused="true" android:color="@android:color/transparent" />
     <item android:state_selected="true" android:alpha="@dimen/ripple_overlay_alpha"
         android:color="?attr/colorOnPrimaryContainer" />
     <item android:alpha="@dimen/ripple_overlay_alpha"

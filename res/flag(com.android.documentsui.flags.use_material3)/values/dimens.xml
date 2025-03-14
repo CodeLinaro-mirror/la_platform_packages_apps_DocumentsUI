@@ -111,10 +111,36 @@
     <dimen name="nav_rail_item_icon_bg_height">32dp</dimen>
     <dimen name="nav_rail_burger_icon_size">56dp</dimen>
 
-    <dimen name="drag_shadow_width">176dp</dimen>
-    <dimen name="drag_shadow_height">64dp</dimen>
-    <dimen name="drag_shadow_radius">4dp</dimen>
+    <dimen name="drag_content_width">160dp</dimen>
+    <dimen name="drag_content_height">40dp</dimen>
+    <!-- drag_additional_layer_offset + drag_shadow_radius -->
+    <dimen name="drag_content_margin_start">7dp</dimen>
+    <dimen name="drag_content_radius">12dp</dimen>
+    <dimen name="drag_additional_layer_offset">4dp</dimen>
+    <!-- drag_additional_layer_offset + drag_file_counter_offset -->
+    <dimen name="drag_additional_layer_margin_top">12dp</dimen>
+    <dimen name="drag_file_counter_offset">8dp</dimen>
+    <dimen name="drag_file_counter_height">20dp</dimen>
+    <!-- drag shadow width/height need to cater all the elements drawing inside it, including
+         drag content, offset, shadow and drag file counter, so:
+         * width = drag_content_width + drag_file_counter_offset + drag_additional_layer_offset + drag_shadow_radius
+         * width = drag_content_height + drag_file_counter_offset + drag_additional_layer_offset + drag_shadow_radius
+     -->
+    <dimen name="drag_shadow_width">175dp</dimen>
+    <dimen name="drag_shadow_height">55dp</dimen>
+    <dimen name="drag_shadow_radius">3dp</dimen>
+    <dimen name="drag_shadow_2_radius">2dp</dimen>
+    <dimen name="drag_shadow_y_offset">1dp</dimen>
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="drag_shadow_padding">8dp</dimen>
+
+    <dimen name="drop_mime_icon_wrapper_size">24dp</dimen>
+    <dimen name="drop_mime_icon_wrapper_radius">4dp</dimen>
+    <dimen name="drop_icon_height">14dp</dimen>
+    <dimen name="drop_icon_width">14dp</dimen>
+    <dimen name="drop_icon_offset">3dp</dimen>
+    <!-- drag_mime_icon_wrapper_size + drop_icon_offset -->
+    <dimen name="drop_badge_container_size">27dp</dimen>
 
     <dimen name="doc_header_sort_icon_size">32dp</dimen>
     <dimen name="doc_header_height">48dp</dimen>
@@ -122,9 +148,6 @@
     <dimen name="dropdown_sort_widget_margin">12dp</dimen>
     <dimen name="dropdown_sort_widget_size">54dp</dimen>
     <dimen name="dropdown_sort_text_size">18sp</dimen>
-
-    <dimen name="drop_icon_height">14dp</dimen>
-    <dimen name="drop_icon_width">14dp</dimen>
 
     <dimen name="header_message_horizontal_padding">8dp</dimen>
 
@@ -158,6 +181,11 @@
     <dimen name="main_container_section_gap">2dp</dimen>
     <dimen name="main_container_corner_radius_large">16dp</dimen>
     <dimen name="main_container_corner_radius_small">4dp</dimen>
+    <dimen name="picker_saver_padding_top">@dimen/space_extra_small_1</dimen>
+    <dimen name="picker_saver_padding_bottom">@dimen/space_extra_small_1</dimen>
+    <dimen name="picker_saver_button_gap">@dimen/space_extra_small_4</dimen>
+    <dimen name="picker_saver_container_padding_top">@dimen/space_small_1</dimen>
+    <dimen name="picker_saver_container_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>

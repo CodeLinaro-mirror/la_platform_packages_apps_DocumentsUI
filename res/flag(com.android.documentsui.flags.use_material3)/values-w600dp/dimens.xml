@@ -31,5 +31,7 @@
     <dimen name="table_header_padding_start">28dp</dimen>
     <!-- list_container_padding + list_item_padding_end -->
     <dimen name="table_header_padding_end">20dp</dimen>
+
+    <dimen name="picker_saver_container_padding_bottom">0dp</dimen>
 </resources>
 
