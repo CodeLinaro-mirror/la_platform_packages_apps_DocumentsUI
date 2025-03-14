@@ -146,4 +146,8 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <style name="ListTableHeaderText" parent="@style/TextAppearance.Material3.TitleSmall.Emphasized">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
 </resources>

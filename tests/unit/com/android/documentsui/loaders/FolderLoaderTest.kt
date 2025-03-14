@@ -15,13 +15,19 @@
  */
 package com.android.documentsui.loaders
 
+import android.os.Bundle
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.CheckFlagsRule
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_RW
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
 import junit.framework.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -36,15 +42,24 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
         @JvmStatic
         @Parameters(name = "with parameters {0}")
         fun data() = listOf(
-            LoaderTestParams("", null, TOTAL_FILE_COUNT),
+            LoaderTestParams("", null, Bundle(), TOTAL_FILE_COUNT),
             // The first file is at NOW, the second at NOW - 1h, etc.
-            LoaderTestParams("", Duration.ofMinutes(1L), 1),
-            LoaderTestParams("", Duration.ofMinutes(60L + 1), 2),
-            LoaderTestParams("", Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1), TOTAL_FILE_COUNT),
+            LoaderTestParams("", Duration.ofMinutes(1L), Bundle(), 1),
+            LoaderTestParams("", Duration.ofMinutes(60L + 1), Bundle(), 2),
+            LoaderTestParams(
+                "",
+                Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
+                Bundle(),
+                TOTAL_FILE_COUNT
+            ),
         )
     }
 
+    @get:Rule
+    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+
     @Test
+    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_RW)
     fun testLoadInBackground() {
         val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
         val docs = createDocuments(TOTAL_FILE_COUNT)
@@ -56,7 +71,8 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 testParams.lastModifiedDelta,
                 null,
                 true,
-                arrayOf<String>("*/*")
+                arrayOf<String>("*/*"),
+                testParams.otherArgs,
             )
         val contentLock = ContentLock()
         // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?

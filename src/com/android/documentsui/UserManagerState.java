@@ -42,6 +42,7 @@ import android.util.Log;
 
 import androidx.annotation.GuardedBy;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresPermission;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.documentsui.base.Features;
@@ -91,8 +92,9 @@ public interface UserManagerState {
      *
      * @param userId {@link UserId} for the profile for which the availability status changed
      * @param action {@link Intent}.ACTION_PROFILE_UNAVAILABLE and {@link
-     *     Intent}.ACTION_PROFILE_AVAILABLE, {@link Intent}.ACTION_PROFILE_ADDED} and {@link
-     *     Intent}.ACTION_PROFILE_REMOVED}
+     *               Intent}.ACTION_PROFILE_AVAILABLE, {@link Intent}.ACTION_PROFILE_ADDED} and
+     *               {@link
+     *               Intent}.ACTION_PROFILE_REMOVED}
      */
     void onProfileActionStatusChange(String action, UserId userId);
 
@@ -296,8 +298,8 @@ public interface UserManagerState {
 
             for (UserId userId : getUserIds()) {
                 if (mUserManager
-                                .getUserProperties(UserHandle.of(userId.getIdentifier()))
-                                .getShowInQuietMode()
+                        .getUserProperties(UserHandle.of(userId.getIdentifier()))
+                        .getShowInQuietMode()
                         == UserProperties.SHOW_IN_QUIET_MODE_HIDDEN) {
                     return true;
                 }
@@ -354,16 +356,69 @@ public interface UserManagerState {
             }
         }
 
+        /**
+         * Checks if a package is installed for a given user.
+         *
+         * @param userHandle The ID of the user.
+         * @return {@code true} if the package is installed for the user, {@code false} otherwise.
+         */
+        @RequiresPermission(anyOf = {
+                "android.permission.MANAGE_USERS",
+                "android.permission.INTERACT_ACROSS_USERS"
+        })
+        private boolean isPackageInstalledForUser(UserHandle userHandle) {
+            String packageName = mContext.getPackageName();
+            try {
+                Context userPackageContext = mContext.createPackageContextAsUser(
+                        mContext.getPackageName(), 0 /* flags */, userHandle);
+                return userPackageContext != null;
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.w(TAG, "Package " + packageName + " not found for user " + userHandle);
+                return false;
+            }
+        }
+
+        /**
+         * Checks if quiet mode is enabled for a given user.
+         *
+         * @param userHandle The UserHandle of the profile to check.
+         * @return {@code true} if quiet mode is enabled, {@code false} otherwise.
+         */
+        private boolean isQuietModeEnabledForUser(UserHandle userHandle) {
+            return UserId.of(userHandle.getIdentifier()).isQuietModeEnabled(mContext);
+        }
+
+        /**
+         * Checks if a profile should be allowed, taking into account quiet mode and package
+         * installation.
+         *
+         * @param userHandle The UserHandle of the profile to check.
+         * @return {@code true} if the profile should be allowed, {@code false} otherwise.
+         */
         @SuppressLint("NewApi")
+        @RequiresPermission(anyOf = {
+                "android.permission.MANAGE_USERS",
+                "android.permission.INTERACT_ACROSS_USERS"
+        })
         private boolean isProfileAllowed(UserHandle userHandle) {
-            final UserProperties userProperties =
-                    mUserManager.getUserProperties(userHandle);
+            final UserProperties userProperties = mUserManager.getUserProperties(userHandle);
+
+            // 1. Check if the package is installed for the user
+            if (!isPackageInstalledForUser(userHandle)) {
+                Log.w(TAG, "Package " + mContext.getPackageName()
+                        + " is not installed for user " + userHandle);
+                return false;
+            }
+
+            // 2. Check user properties and quiet mode
             if (userProperties.getShowInSharingSurfaces()
                     == UserProperties.SHOW_IN_SHARING_SURFACES_SEPARATE) {
-                return !UserId.of(userHandle).isQuietModeEnabled(mContext)
-                        || userProperties.getShowInQuietMode()
+                // Return true if profile is not in quiet mode or if it is in quiet mode
+                // then its user properties do not require it to be hidden
+                return !isQuietModeEnabledForUser(userHandle) || userProperties.getShowInQuietMode()
                         != UserProperties.SHOW_IN_QUIET_MODE_HIDDEN;
             }
+
             return false;
         }
 

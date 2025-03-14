@@ -24,7 +24,9 @@ import android.os.Build
 import android.os.Bundle
 import android.os.ext.SdkExtensions
 import android.provider.MediaStore.ACTION_PICK_IMAGES
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.android.documentsui.base.SharedMinimal.DEBUG
 
 /**
  * DocumentsUI PickActivity currently defers picking of media mime types to the Photopicker. This
@@ -32,6 +34,10 @@ import androidx.appcompat.app.AppCompatActivity
  * there are non-media mime types to handle.
  */
 class TrampolineActivity : AppCompatActivity() {
+    companion object {
+        const val TAG = "TrampolineActivity"
+    }
+
     override fun onCreate(savedInstanceBundle: Bundle?) {
         super.onCreate(savedInstanceBundle)
 
@@ -98,6 +104,9 @@ class TrampolineActivity : AppCompatActivity() {
 
         // Ensure the `ACTION_GET_CONTENT` activity is enabled.
         if (!isComponentEnabled(photopickerGetContentComponent)) {
+            if (DEBUG) {
+                Log.d(TAG, "Photopicker PICK_IMAGES component has no enabled GET_CONTENT handler")
+            }
             return null
         }
 

@@ -32,6 +32,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT
 import com.android.documentsui.picker.TrampolineActivity
+import java.util.Optional
 import java.util.regex.Pattern
 import org.junit.After
 import org.junit.Assert.assertNotNull
@@ -88,11 +89,11 @@ class TrampolineActivityTest() {
         data class GetContentIntentData(
             val mimeType: String,
             val expectedApp: AppType,
-            val extraMimeTypes: Array<String>? = null,
+            val extraMimeTypes: Optional<Array<String>> = Optional.empty(),
         ) {
             override fun toString(): String {
-                if (extraMimeTypes != null) {
-                    return "${mimeType}_${extraMimeTypes.joinToString("_")}"
+                if (extraMimeTypes.isPresent) {
+                    return "${mimeType}_${extraMimeTypes.get().joinToString("_")}"
                 }
                 return mimeType
             }
@@ -117,32 +118,32 @@ class TrampolineActivityTest() {
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
-                        extraMimeTypes = arrayOf("video/*"),
+                        extraMimeTypes = Optional.of(arrayOf("video/*")),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = arrayOf("image/*"),
+                        extraMimeTypes = Optional.of(arrayOf("image/*")),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = arrayOf("text/*"),
+                        extraMimeTypes = Optional.of(arrayOf("text/*")),
                         expectedApp = AppType.DOCUMENTSUI,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = arrayOf("image/*", "text/*"),
+                        extraMimeTypes = Optional.of(arrayOf("image/*", "text/*")),
                         expectedApp = AppType.DOCUMENTSUI,
                     ),
                     GetContentIntentData(
                         mimeType = "*/*",
-                        extraMimeTypes = arrayOf("image/*", "video/*"),
+                        extraMimeTypes = Optional.of(arrayOf("image/*", "video/*")),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
-                        extraMimeTypes = arrayOf(),
+                        extraMimeTypes = Optional.of(arrayOf()),
                         expectedApp = AppType.DOCUMENTSUI,
                     )
                 )
@@ -161,7 +162,10 @@ class TrampolineActivityTest() {
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.setType(testData.mimeType)
-            testData.extraMimeTypes?.let { intent.putExtra(Intent.EXTRA_MIME_TYPES, it) }
+            if (testData.extraMimeTypes.isPresent) {
+                testData.extraMimeTypes.get()
+                    .forEach { intent.putExtra(Intent.EXTRA_MIME_TYPES, it) }
+            }
 
             context.startActivity(intent)
         }
@@ -178,7 +182,23 @@ class TrampolineActivityTest() {
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
             }
 
-            assertNotNull(device.wait(Until.findObject(bySelector), UI_TIMEOUT))
+            val builder = StringBuilder()
+            builder.append("Intent with mimetype ${testData.mimeType}")
+            if (testData.extraMimeTypes.isPresent) {
+                builder.append(
+                    " and EXTRA_MIME_TYPES of ${
+                        testData.extraMimeTypes.get().joinToString(", ")
+                    }"
+                )
+            }
+            builder.append(
+                " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
+            )
+
+            assertNotNull(
+                builder.toString(),
+                device.wait(Until.findObject(bySelector), UI_TIMEOUT)
+            )
         }
     }
 

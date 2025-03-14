@@ -67,6 +67,7 @@ public class UserManagerStateTest {
     private static final String PERSONAL = "Personal";
     private static final String WORK = "Work";
     private static final String PRIVATE = "Private";
+    private static final String PACKAGE_NAME = "com.android.documentsui";
 
     /**
      * Assume that the current user is SYSTEM_USER.
@@ -158,6 +159,20 @@ public class UserManagerStateTest {
                 .thenReturn(mDevicePolicyManager);
         when(mMockContext.getResources()).thenReturn(
                 InstrumentationRegistry.getInstrumentation().getTargetContext().getResources());
+
+        when(mMockContext.getPackageName()).thenReturn(PACKAGE_NAME);
+        when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mSystemUser)).thenReturn(
+                mMockContext);
+        when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mManagedUser)).thenReturn(
+                mMockContext);
+        when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mPrivateUser)).thenReturn(
+                mMockContext);
+        when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mOtherUser)).thenReturn(
+                mMockContext);
+        when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mNormalUser)).thenReturn(
+                mMockContext);
+        when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mPrimaryUser)).thenReturn(
+                mMockContext);
     }
 
     @Test
