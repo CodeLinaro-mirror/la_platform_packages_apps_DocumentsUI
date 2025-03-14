@@ -395,17 +395,7 @@ public class SearchChipViewManager {
         final Context context = mChipGroup.getContext();
         chip.setTag(chipData);
         chip.setText(context.getString(chipData.getTitleRes()));
-        Drawable chipIcon;
-        if (chipData.getChipType() == TYPE_LARGE_FILES) {
-            chipIcon = context.getDrawable(R.drawable.ic_chip_large_files);
-        } else if (chipData.getChipType() == TYPE_FROM_THIS_WEEK) {
-            chipIcon = context.getDrawable(R.drawable.ic_chip_from_this_week);
-        } else if (chipData.getChipType() == TYPE_DOCUMENTS) {
-            chipIcon = IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE);
-        } else {
-            // get the icon drawable with the first mimeType in chipData
-            chipIcon = IconUtils.loadMimeIcon(context, chipData.getMimeTypes()[0]);
-        }
+        Drawable chipIcon = getChipIcon(chipData);
         chip.setChipIcon(chipIcon);
         chip.setOnClickListener(this::onChipClick);
 
@@ -416,6 +406,35 @@ public class SearchChipViewManager {
         if (mCheckedChipItems.contains(chipData)) {
             setChipChecked(chip, true);
         }
+    }
+
+    private Drawable getChipIcon(SearchChipData chipData) {
+        final Context context = mChipGroup.getContext();
+        int chipType = chipData.getChipType();
+        if (chipType == TYPE_LARGE_FILES) {
+            return context.getDrawable(R.drawable.ic_chip_large_files);
+        }
+        if (chipType == TYPE_FROM_THIS_WEEK) {
+            return context.getDrawable(R.drawable.ic_chip_from_this_week);
+        }
+
+        // For M3, we don't want to use MIME type icons for image/audio/video/document from the
+        // system.
+        if (useMaterial3()) {
+            return switch (chipType) {
+                case TYPE_IMAGES -> context.getDrawable(R.drawable.ic_chip_image);
+                case TYPE_AUDIO -> context.getDrawable(R.drawable.ic_chip_audio);
+                case TYPE_VIDEOS -> context.getDrawable(R.drawable.ic_chip_video);
+                case TYPE_DOCUMENTS -> context.getDrawable(R.drawable.ic_chip_document);
+                default -> null;
+            };
+        }
+
+        if (chipType == TYPE_DOCUMENTS) {
+            return IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE);
+        }
+        // get the icon drawable with the first mimeType in chipData
+        return IconUtils.loadMimeIcon(context, chipData.getMimeTypes()[0]);
     }
 
     /**
