@@ -21,6 +21,6 @@
     app:cornerRadius="@dimen/button_corner_radius"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginStart="4dp"
-    android:layout_marginEnd="4dp"
+    android:layout_marginStart="@dimen/picker_saver_button_gap"
+    android:layout_marginEnd="@dimen/picker_saver_button_gap"
     android:text="@android:string/cancel"/>

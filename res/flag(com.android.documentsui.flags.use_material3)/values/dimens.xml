@@ -183,7 +183,7 @@
     <dimen name="main_container_corner_radius_small">4dp</dimen>
     <dimen name="picker_saver_padding_top">@dimen/space_extra_small_1</dimen>
     <dimen name="picker_saver_padding_bottom">@dimen/space_extra_small_1</dimen>
-    <dimen name="picker_saver_button_gap">@dimen/space_extra_small_4</dimen>
+    <dimen name="picker_saver_button_gap">@dimen/space_extra_small_2</dimen>
     <dimen name="picker_saver_container_padding_top">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_container_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
