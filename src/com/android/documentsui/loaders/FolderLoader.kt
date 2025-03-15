@@ -61,15 +61,18 @@ class FolderLoader(
             mListedDir.documentId
         )
         var cursor =
-            queryLocation(mRoot.rootId, folderChildrenUri, null, ALL_RESULTS) ?: emptyCursor()
+            queryLocation(mRoot.rootId, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
+                ?: emptyCursor()
+        cursor.registerContentObserver(mObserver)
+
         val filteredCursor = FilteringCursorWrapper(cursor)
         filteredCursor.filterHiddenFiles(mOptions.showHidden)
+        filteredCursor.filterMimes(mOptions.acceptableMimeTypes, null)
         if (rejectBeforeTimestamp > 0L) {
             filteredCursor.filterLastModified(rejectBeforeTimestamp)
         }
         // TODO(b:380945065): Add filtering by category, such as images, audio, video.
         val sortedCursor = mSortModel.sortCursor(filteredCursor, mMimeTypeLookup)
-        sortedCursor.registerContentObserver(mObserver)
 
         val result = DirectoryResult()
         result.doc = mListedDir
