@@ -22,7 +22,7 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.base.DocumentInfo
-import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_RW
+import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
@@ -59,7 +59,7 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_RW)
+    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
     fun testLoadInBackground() {
         val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
         val docs = createDocuments(TOTAL_FILE_COUNT)

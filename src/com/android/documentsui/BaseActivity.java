@@ -569,23 +569,32 @@ public abstract class BaseActivity
         View root = findViewById(R.id.coordinator_layout);
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        root.setOnApplyWindowInsetsListener((v, insets) -> {
-            root.setPadding(insets.getSystemWindowInsetLeft(),
-                    insets.getSystemWindowInsetTop(), insets.getSystemWindowInsetRight(), 0);
+        root.setOnApplyWindowInsetsListener(
+                (v, insets) -> {
+                    root.setPadding(
+                            insets.getSystemWindowInsetLeft(),
+                            insets.getSystemWindowInsetTop(),
+                            insets.getSystemWindowInsetRight(),
+                            0);
 
-            // When use_material3 flag is ON, no additional bottom gap in full screen mode.
-            if (!isUseMaterial3FlagEnabled()) {
-                View saveContainer = findViewById(R.id.container_save);
-                saveContainer.setPadding(
-                        0, 0, 0, insets.getSystemWindowInsetBottom());
+                    // When use_material3 flag is ON and FEATURE_FREEFORM_WINDOW_MANAGEMENT is
+                    // enabled, then there should not be any additional bottom gap in full screen
+                    // mode. Otherwise need to take into account the system window insets such as
+                    // the bottom swipe up navigation gesture.
+                    if (!isUseMaterial3FlagEnabled()
+                            || !getApplicationContext()
+                            .getPackageManager()
+                            .hasSystemFeature(
+                                    PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT)) {
+                        View saveContainer = findViewById(R.id.container_save);
+                        saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
 
-                View rootsContainer = findViewById(R.id.container_roots);
-                rootsContainer.setPadding(
-                        0, 0, 0, insets.getSystemWindowInsetBottom());
-            }
+                        View rootsContainer = findViewById(R.id.container_roots);
+                        rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+                    }
 
-            return insets.consumeSystemWindowInsets();
-        });
+                    return insets.consumeSystemWindowInsets();
+                });
 
         getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
         if (Build.VERSION.SDK_INT >= 29) {

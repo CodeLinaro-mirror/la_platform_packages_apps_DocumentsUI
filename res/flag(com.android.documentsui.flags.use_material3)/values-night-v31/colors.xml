@@ -37,4 +37,24 @@
   </color>
   <!-- neutral variant 100 -->
   <color name="fragment_pick_active_text_color">@android:color/black</color>
+
+  <!-- All drag drop badge colors, we can only use system color tokens because there's no theme
+       context inside the view.
+  -->
+  <!-- ?attr/colorTertiary -->
+  <color name="drag_file_counter_background">@android:color/system_accent3_200</color>
+  <!-- ?attr/colorOnTertiary -->
+  <color name="drag_file_counter_text_color">@android:color/system_accent3_800</color>
+  <!-- ?attr/colorSurfaceDim -->
+  <color name="item_drag_shadow_background">@color/m3_ref_palette_dynamic_neutral_variant6</color>
+  <!-- ?attr/colorSurfaceContainerLowest -->
+  <color name="drag_mime_icon_wrapper_background">
+    @color/m3_ref_palette_dynamic_neutral_variant4
+  </color>
+  <!-- ?attr/colorOnSurface -->
+  <color name="drag_content_text_color">@android:color/system_neutral1_100</color>
+  <!-- ?attr/colorOnError -->
+  <color name="drop_icon_symbol_color">@color/m3_ref_palette_error20</color>
+  <!-- ?attr/colorError -->
+  <color name="drop_icon_reject_container_background">@color/m3_ref_palette_error80</color>
 </resources>
