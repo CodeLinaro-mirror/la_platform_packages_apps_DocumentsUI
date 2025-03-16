@@ -611,4 +611,6 @@
     <!-- Unicode Character “•” (U+2022). -->
     <string name="bullet">\u2022</string>
 
+    <!-- Text used at the top of the text field when saving a document. [CHAR_LIMIT=100] -->
+    <string name="file_name_hint">File name</string>
 </resources>

@@ -22,7 +22,6 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
-import static com.android.documentsui.base.SharedMinimal.DEBUG;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -263,35 +262,13 @@ public interface UserManagerState {
                 }
                 synchronized (mCanForwardToProfileIdMap) {
                     if (!mCanForwardToProfileIdMap.containsKey(userId)) {
-
-                        UserHandle handle = UserHandle.of(userId.getIdentifier());
-
-                        // Decide if to use the parent's access, or this handle's access.
-                        if (isCrossProfileContentSharingStrategyDelegatedFromParent(handle)) {
-                            UserHandle parentHandle = mUserManager.getProfileParent(handle);
-                            // Couldn't resolve parent to check access, so fail closed.
-                            if (parentHandle == null) {
-                                mCanForwardToProfileIdMap.put(userId, false);
-                            } else if (mCurrentUser.getIdentifier()
-                                    == parentHandle.getIdentifier()) {
-                                // Check if the parent is the current user, if so this profile
-                                // is also accessible.
-                                mCanForwardToProfileIdMap.put(userId, true);
-
-                            } else {
-                                UserId parent = UserId.of(parentHandle);
-                                mCanForwardToProfileIdMap.put(
-                                        userId,
-                                        doesCrossProfileForwardingActivityExistForUser(
-                                                mCurrentStateIntent, parent));
-                            }
-                        } else {
-                            // Update the profile map for this profile.
-                            mCanForwardToProfileIdMap.put(
-                                    userId,
-                                    doesCrossProfileForwardingActivityExistForUser(
-                                            mCurrentStateIntent, userId));
-                        }
+                        mCanForwardToProfileIdMap.put(
+                                userId,
+                                isCrossProfileAllowedToUser(
+                                        mContext,
+                                        mCurrentStateIntent,
+                                        UserId.CURRENT_USER,
+                                        userId));
                     }
                 }
             } else {
@@ -331,43 +308,37 @@ public interface UserManagerState {
 
             if (mUserManager == null) {
                 Log.e(TAG, "cannot obtain user manager");
-                result.add(mCurrentUser);
                 return result;
             }
 
             final List<UserHandle> userProfiles = mUserManager.getUserProfiles();
-            if (userProfiles.size() < 2) {
-                result.add(mCurrentUser);
-                return result;
-            }
 
-            if (SdkLevel.isAtLeastV()) {
-                getUserIdsInternalPostV(userProfiles, result);
-            } else {
-                getUserIdsInternalPreV(userProfiles, result);
-            }
-            return result;
-        }
+            result.add(mCurrentUser);
+            boolean currentUserIsManaged =
+                    mUserManager.isManagedProfile(mCurrentUser.getIdentifier());
 
-        @SuppressLint("NewApi")
-        private void getUserIdsInternalPostV(List<UserHandle> userProfiles, List<UserId> result) {
-            for (UserHandle userHandle : userProfiles) {
-                if (userHandle.getIdentifier() == ActivityManager.getCurrentUser()) {
-                    result.add(UserId.of(userHandle));
+            for (UserHandle handle : userProfiles) {
+                if (SdkLevel.isAtLeastV()) {
+                    if (!isProfileAllowed(handle)) {
+                        continue;
+                    }
                 } else {
-                    // Out of all the profiles returned by user manager the profiles that are
-                    // returned should satisfy both the following conditions:
-                    // 1. It has user property SHOW_IN_SHARING_SURFACES_SEPARATE
-                    // 2. Quite mode is not enabled, if it is enabled then the profile's user
-                    // property is not SHOW_IN_QUIET_MODE_HIDDEN
-                    if (isProfileAllowed(userHandle)) {
-                        result.add(UserId.of(userHandle));
+                    // Only allow managed profiles + the parent user on lower than V.
+                    if (currentUserIsManaged
+                            && mUserManager.getProfileParent(mCurrentUser.getUserHandle())
+                                    == handle) {
+                        // Intentionally empty so that this profile gets added.
+                    } else if (!mUserManager.isManagedProfile(handle.getIdentifier())) {
+                        continue;
                     }
                 }
+
+                // Ensure the system user doesn't get added twice.
+                if (result.contains(UserId.of(handle))) continue;
+                result.add(UserId.of(handle));
             }
-            if (result.isEmpty()) {
-                result.add(mCurrentUser);
-            }
+
+            return result;
         }
 
         /**
@@ -442,33 +413,6 @@ public interface UserManagerState {
             }
 
             return false;
-        }
-
-        private void getUserIdsInternalPreV(List<UserHandle> userProfiles, List<UserId> result) {
-            result.add(mCurrentUser);
-            UserId systemUser = null;
-            UserId managedUser = null;
-            for (UserHandle userHandle : userProfiles) {
-                if (userHandle.isSystem()) {
-                    systemUser = UserId.of(userHandle);
-                } else if (mUserManager.isManagedProfile(userHandle.getIdentifier())) {
-                    managedUser = UserId.of(userHandle);
-                }
-            }
-            if (mCurrentUser.isSystem() && managedUser != null) {
-                result.add(managedUser);
-            } else if (mCurrentUser.isManagedProfile(mUserManager) && systemUser != null) {
-                result.add(0, systemUser);
-            } else {
-                if (DEBUG) {
-                    Log.w(
-                            TAG,
-                            "The current user "
-                                    + UserId.CURRENT_USER
-                                    + " is neither system nor managed user. has system user: "
-                                    + (systemUser != null));
-                }
-            }
         }
 
         private void getUserIdToLabelMapInternal() {
@@ -651,50 +595,124 @@ public interface UserManagerState {
          */
         private void getCanForwardToProfileIdMapInternal(Intent intent) {
 
-            Map<UserId, Boolean> profileIsAccessibleToProcessOwner = new HashMap<>();
-
-            List<UserId> delegatedFromParent = new ArrayList<>();
-
-            for (UserId userId : getUserIds()) {
-
-                // Early exit, self is always accessible.
-                if (userId.getIdentifier() == mCurrentUser.getIdentifier()) {
-                    profileIsAccessibleToProcessOwner.put(userId, true);
-                    continue;
-                }
-
-                // CrossProfileContentSharingStrategyDelegatedFromParent is only V+ sdks.
-                if (SdkLevel.isAtLeastV()
-                        && isCrossProfileContentSharingStrategyDelegatedFromParent(
-                                UserHandle.of(userId.getIdentifier()))) {
-                    delegatedFromParent.add(userId);
-                    continue;
-                }
-
-                // Check for cross profile & add to the map.
-                profileIsAccessibleToProcessOwner.put(
-                        userId, doesCrossProfileForwardingActivityExistForUser(intent, userId));
-            }
-
-            // For profiles that delegate their access to the parent, set the access for
-            // those profiles
-            // equal to the same as their parent.
-            for (UserId userId : delegatedFromParent) {
-                UserHandle parent =
-                        mUserManager.getProfileParent(UserHandle.of(userId.getIdentifier()));
-                profileIsAccessibleToProcessOwner.put(
-                        userId,
-                        profileIsAccessibleToProcessOwner.getOrDefault(
-                                UserId.of(parent), /* default= */ false));
-            }
-
             synchronized (mCanForwardToProfileIdMap) {
                 mCanForwardToProfileIdMap.clear();
-                for (Map.Entry<UserId, Boolean> entry :
-                        profileIsAccessibleToProcessOwner.entrySet()) {
-                    mCanForwardToProfileIdMap.put(entry.getKey(), entry.getValue());
+                for (UserId userId : getUserIds()) {
+                    mCanForwardToProfileIdMap.put(
+                            userId,
+                            isCrossProfileAllowedToUser(
+                                    mContext, intent, mCurrentUser, userId));
                 }
             }
+        }
+
+        /**
+         * Determines if the provided UserIds support CrossProfile content sharing.
+         *
+         * <p>This method accepts a pair of user handles (from/to) and determines if CrossProfile
+         * access is permitted between those two profiles.
+         *
+         * <p>There are differences is on how the access is determined based on the platform SDK:
+         *
+         * <p>For Platform SDK < V:
+         *
+         * <p>A check for CrossProfileIntentForwarders in the origin (from) profile that target the
+         * destination (to) profile. If such a forwarder exists, then access is allowed, and denied
+         * otherwise.
+         *
+         * <p>For Platform SDK >= V:
+         *
+         * <p>The method now takes into account access delegation, which was first added in Android
+         * V.
+         *
+         * <p>For profiles that set the [CROSS_PROFILE_CONTENT_SHARING_DELEGATE_FROM_PARENT]
+         * property in its [UserProperties], its parent profile will be substituted in for its side
+         * of the check.
+         *
+         * <p>ex. For access checks between a Managed (from) and Private (to) profile, where: -
+         * Managed does not delegate to its parent - Private delegates to its parent
+         *
+         * <p>The following logic is performed: Managed -> parent(Private)
+         *
+         * <p>The same check in the other direction would yield: parent(Private) -> Managed
+         *
+         * <p>Note how the private profile is never actually used for either side of the check,
+         * since it is delegating its access check to the parent. And thus, if Managed can access
+         * the parent, it can also access the private.
+         *
+         * @param context Current context object, for switching user contexts.
+         * @param intent The current intent the Photopicker is running under.
+         * @param fromUser The Origin profile, where the user is coming from
+         * @param toUser The destination profile, where the user is attempting to go to.
+         * @return Whether CrossProfile content sharing is supported in this handle.
+         */
+        private boolean isCrossProfileAllowedToUser(
+                Context context, Intent intent, UserId fromUser, UserId toUser) {
+
+            // Early exit conditions, accessing self.
+            // NOTE: It is also possible to reach this state if this method is recursively checking
+            // from: parent(A) to:parent(B) where A and B are both children of the same parent.
+            if (fromUser.getIdentifier() == toUser.getIdentifier()) {
+                return true;
+            }
+
+            // Decide if we should use actual from or parent(from)
+            UserHandle currentFromUser =
+                    getProfileToCheckCrossProfileAccess(fromUser.getUserHandle());
+
+            // Decide if we should use actual to or parent(to)
+            UserHandle currentToUser = getProfileToCheckCrossProfileAccess(toUser.getUserHandle());
+
+            // When the from/to has changed from the original parameters, recursively restart the
+            // checks with the new from/to handles.
+            if (fromUser.getIdentifier() != currentFromUser.getIdentifier()
+                    || toUser.getIdentifier() != currentToUser.getIdentifier()) {
+                return isCrossProfileAllowedToUser(
+                        context, intent, UserId.of(currentFromUser), UserId.of(currentToUser));
+            }
+
+            PackageManager pm = context.getPackageManager();
+            return doesCrossProfileIntentForwarderExist(intent, pm, fromUser, toUser);
+        }
+
+        /**
+         * Determines if the target UserHandle delegates its content sharing to its parent.
+         *
+         * @param userHandle The target handle to check delegation for.
+         * @return TRUE if V+ and the handle delegates to parent. False otherwise.
+         */
+        private boolean isCrossProfileStrategyDelegatedToParent(UserHandle userHandle) {
+            if (SdkLevel.isAtLeastV()) {
+                if (mUserManager == null) {
+                    Log.e(TAG, "Cannot obtain user manager");
+                    return false;
+                }
+                UserProperties userProperties = mUserManager.getUserProperties(userHandle);
+                if (userProperties.getCrossProfileContentSharingStrategy()
+                        == userProperties.CROSS_PROFILE_CONTENT_SHARING_DELEGATE_FROM_PARENT) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Acquires the correct {@link UserHandle} which should be used for CrossProfile access
+         * checks.
+         *
+         * @param userHandle the origin handle.
+         * @return The UserHandle that should be used for cross profile access checks. In the event
+         *     the origin handle delegates its access, this may not be the same handle as the origin
+         *     handle.
+         */
+        private UserHandle getProfileToCheckCrossProfileAccess(UserHandle userHandle) {
+            if (mUserManager == null) {
+                Log.e(TAG, "Cannot obtain user manager");
+                return null;
+            }
+            return isCrossProfileStrategyDelegatedToParent(userHandle)
+                    ? mUserManager.getProfileParent(userHandle)
+                    : userHandle;
         }
 
         /**
@@ -706,16 +724,18 @@ public interface UserManagerState {
          * @return whether a CrossProfileIntentForwardingActivity could be found for the given
          *     intent, and user.
          */
-        private boolean doesCrossProfileForwardingActivityExistForUser(
-                Intent intent, UserId targetUserId) {
+        private boolean doesCrossProfileIntentForwarderExist(
+                Intent intent, PackageManager pm, UserId fromUser, UserId targetUserId) {
 
-            final PackageManager pm = mContext.getPackageManager();
             final Intent intentToCheck = (Intent) intent.clone();
             intentToCheck.setComponent(null);
             intentToCheck.setPackage(null);
 
             for (ResolveInfo resolveInfo :
-                    pm.queryIntentActivities(intentToCheck, PackageManager.MATCH_DEFAULT_ONLY)) {
+                    pm.queryIntentActivitiesAsUser(
+                            intentToCheck,
+                            PackageManager.MATCH_DEFAULT_ONLY,
+                            fromUser.getUserHandle())) {
 
                 if (resolveInfo.isCrossProfileIntentForwarderActivity()) {
                     /*

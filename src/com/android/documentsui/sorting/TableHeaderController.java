@@ -28,10 +28,11 @@ import javax.annotation.Nullable;
 /** View controller for table header that associates header cells in table header and columns. */
 public final class TableHeaderController implements SortController.WidgetController {
     private final HeaderCell mTitleCell;
-    private final HeaderCell mSummaryCell;
-    private final HeaderCell mSizeCell;
-    private final HeaderCell mFileTypeCell;
-    private final HeaderCell mDateCell;
+    // The 4 cells below will be null in compact/medium screen sizes when use_material3 flag is ON.
+    private final @Nullable HeaderCell mSummaryCell;
+    private final @Nullable HeaderCell mSizeCell;
+    private final @Nullable HeaderCell mFileTypeCell;
+    private final @Nullable HeaderCell mDateCell;
     private final SortModel mModel;
     // We assign this here porque each method reference creates a new object
     // instance (which is wasteful).
@@ -66,10 +67,18 @@ public final class TableHeaderController implements SortController.WidgetControl
 
     private void onModelUpdate(SortModel model, int updateTypeUnspecified) {
         bindCell(mTitleCell, SortModel.SORT_DIMENSION_ID_TITLE);
-        bindCell(mSummaryCell, SortModel.SORT_DIMENSION_ID_SUMMARY);
-        bindCell(mSizeCell, SortModel.SORT_DIMENSION_ID_SIZE);
-        bindCell(mFileTypeCell, SortModel.SORT_DIMENSION_ID_FILE_TYPE);
-        bindCell(mDateCell, SortModel.SORT_DIMENSION_ID_DATE);
+        if (mSummaryCell != null) {
+            bindCell(mSummaryCell, SortModel.SORT_DIMENSION_ID_SUMMARY);
+        }
+        if (mSizeCell != null) {
+            bindCell(mSizeCell, SortModel.SORT_DIMENSION_ID_SIZE);
+        }
+        if (mFileTypeCell != null) {
+            bindCell(mFileTypeCell, SortModel.SORT_DIMENSION_ID_FILE_TYPE);
+        }
+        if (mDateCell != null) {
+            bindCell(mDateCell, SortModel.SORT_DIMENSION_ID_DATE);
+        }
     }
 
     @Override

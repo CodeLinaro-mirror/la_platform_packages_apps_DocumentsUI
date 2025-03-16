@@ -35,8 +35,8 @@ class FlagUtils {
         }
 
         @JvmStatic
-        fun isUseSearchV2RwFlagEnabled(): Boolean {
-            return Flags.useSearchV2Rw()
+        fun isUseSearchV2FlagEnabled(): Boolean {
+            return Flags.useSearchV2ReadOnly()
         }
 
         @JvmStatic

@@ -30,6 +30,7 @@ public class TestSelectionDetails implements SelectionDetails {
     public boolean containsFilesInArchive;
     public boolean containDirectories;
     public boolean containFiles;
+    public boolean isArchive;
     public boolean canPasteInto;
     public boolean canExtract;
     public boolean canOpen;
@@ -53,6 +54,11 @@ public class TestSelectionDetails implements SelectionDetails {
     @Override
     public boolean containsFilesInArchive() {
         return containsFilesInArchive;
+    }
+
+    @Override
+    public boolean isArchive() {
+        return isArchive;
     }
 
     @Override
@@ -89,4 +95,4 @@ public class TestSelectionDetails implements SelectionDetails {
     public int size() {
         return size;
     }
- }
+}

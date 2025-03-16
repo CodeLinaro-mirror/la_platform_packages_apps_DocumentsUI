@@ -90,6 +90,10 @@
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
     </style>
 
+    <style name="MaterialTonalButton" parent="@style/Widget.Material3.Button.TonalButton">
+        <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
+    </style>
+
     <style name="MaterialOutlinedButton" parent="@style/Widget.Material3.Button.OutlinedButton">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
     </style>
