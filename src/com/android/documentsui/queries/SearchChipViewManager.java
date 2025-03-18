@@ -387,7 +387,10 @@ public class SearchChipViewManager {
                     .getDimensionPixelSize(R.dimen.focus_ring_width);
             chip.setChipStrokeWidth(focusRingWidth);
         } else {
-            chip.setChipStrokeWidth(1f);
+            final int strokeWidth = mChipGroup
+                    .getResources()
+                    .getDimensionPixelSize(R.dimen.search_chip_inactive_stroke_width);
+            chip.setChipStrokeWidth(strokeWidth);
         }
     }
 

@@ -36,6 +36,7 @@
     <dimen name="check_icon_size">20dp</dimen>
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
+    <dimen name="list_item_thumbnail_border_width">2dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="progress_bar_height">4dp</dimen>
@@ -70,6 +71,7 @@
     <dimen name="grid_item_thumbnail_width">80dp</dimen>
     <dimen name="grid_item_thumbnail_height">80dp</dimen>
     <dimen name="grid_item_thumbnail_radius">12dp</dimen>
+    <dimen name="grid_item_thumbnail_border_width">2dp</dimen>
     <dimen name="grid_item_icon_width">64dp</dimen>
     <dimen name="grid_item_icon_height">64dp</dimen>
     <dimen name="grid_item_layout_margin">@dimen/space_small_1</dimen>
@@ -175,6 +177,7 @@
 
     <dimen name="search_chip_radius">8dp</dimen>
     <dimen name="search_chip_group_padding_vertical">@dimen/space_extra_small_4</dimen>
+    <dimen name="search_chip_inactive_stroke_width">1dp</dimen>
     <dimen name="main_container_padding_start">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_end">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_top">0dp</dimen>
