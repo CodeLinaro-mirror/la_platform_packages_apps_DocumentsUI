@@ -47,11 +47,16 @@ import java.util.Objects
 abstract class ActivityTestJunit4<T : Activity?> {
     @JvmField
     var bots: Bots? = null
+
+    @JvmField
     var device: UiDevice? = null
+
+    @JvmField
     var context: Context? = null
     var userId: UserId? = null
     var automation: UiAutomation? = null
 
+    @JvmField
     var features: Features? = null
 
     /**
@@ -60,7 +65,12 @@ abstract class ActivityTestJunit4<T : Activity?> {
      * Override the method if you want to open different root on start.
      * @return Root that will be opened. Return null if you want to open activity's default root.
      */
-    protected var initialRoot: RootInfo? = null
+    protected open var initialRoot: RootInfo? = null
+
+    @JvmField
+    var rootDir0: RootInfo? = null
+
+    @JvmField
     var rootDir1: RootInfo? = null
     protected var mResolver: ContentResolver? = null
 
@@ -83,8 +93,9 @@ abstract class ActivityTestJunit4<T : Activity?> {
      */
     @Throws(RemoteException::class)
     protected fun setupTestingRoots() {
-        this.initialRoot = mDocsHelper!!.getRoot(StubProvider.ROOT_0_ID)
+        rootDir0 = mDocsHelper!!.getRoot(StubProvider.ROOT_0_ID)
         rootDir1 = mDocsHelper!!.getRoot(StubProvider.ROOT_1_ID)
+        this.initialRoot = rootDir0
     }
 
     @Throws(Exception::class)
@@ -154,7 +165,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     @Throws(RemoteException::class)
-    protected fun initTestFiles() {
+    protected open fun initTestFiles() {
         mDocsHelper!!.createFolder(this.initialRoot, dirName1)
         mDocsHelper!!.createDocument(this.initialRoot, "text/plain", fileName1)
         mDocsHelper!!.createDocument(this.initialRoot, "image/png", fileName2)
@@ -201,6 +212,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     companion object {
         // Testing files. For custom ones, override initTestFiles().
         const val dirName1 = "Dir1"
+        const val childDir1 = "ChildDir1"
         const val fileName1 = "file1.log"
         const val fileName2 = "file12.png"
         const val fileName3 = "anotherFile0.log"

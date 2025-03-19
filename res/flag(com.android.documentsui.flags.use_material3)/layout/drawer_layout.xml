@@ -28,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Main container -->
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -35,9 +36,11 @@
             android:paddingTop="@dimen/main_container_padding_top"
             android:background="?attr/colorSurfaceBright">
 
+            <!-- Main list area (file list/grid or search results), full height -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="@dimen/file_area_padding_bottom"
                 app:layout_behavior="@string/scrolling_behavior">
 
                 <FrameLayout
@@ -62,11 +65,13 @@
                     android:layout_height="match_parent"/>
             </FrameLayout>
 
+            <!-- Footer of right hand side: Breadcrumbs and Picker footer. -->
             <com.android.documentsui.HorizontalBreadcrumb
                 android:id="@+id/horizontal_breadcrumb"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
+                android:background="?attr/colorSurfaceBright"
                 />
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -77,10 +82,12 @@
                 android:background="?android:attr/colorBackgroundFloating"
                 />
 
+            <!-- Top section: toolbar, search chips, profile tab -->
             <include layout="@layout/directory_app_bar"/>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+        <!-- Drawer section -->
         <LinearLayout
             android:id="@+id/drawer_roots"
             android:layout_width="256dp"
