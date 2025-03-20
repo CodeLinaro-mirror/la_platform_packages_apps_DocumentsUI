@@ -829,14 +829,44 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     private void updateLayout(@ViewMode int mode) {
         mMode = mode;
-        mColumnCount = calculateColumnCount(mode);
-        if (mLayout != null) {
-            mLayout.setSpanCount(mColumnCount);
-        }
-        int pad = getDirectoryPadding(mode);
         mAppBarHeight = getAppBarLayoutHeight();
         mSaveLayoutHeight = getSaveLayoutHeight();
-        mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
+
+        if (isUseMaterial3FlagEnabled()) {
+            if (mode == MODE_GRID) {
+                int itemMarg = getResources().getDimensionPixelSize(R.dimen.grid_item_margin);
+                // Subtract the item's margin since we don't want to double count the margin in the
+                // distance between the outer grid items and the grid boundary.
+                int leftPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_left)
+                        - itemMarg;
+                int topPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_top)
+                        - itemMarg;
+                int rightPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_right) - itemMarg;
+                int botPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_bottom)
+                        - itemMarg;
+                mRecView.setPadding(leftPad, topPad + mAppBarHeight, rightPad,
+                        botPad + mSaveLayoutHeight);
+            } else {
+                int pad = getDirectoryPadding(mode);
+                mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
+            }
+            mColumnCount = calculateColumnCount(mode);
+            if (mLayout != null) {
+                mLayout.setSpanCount(mColumnCount);
+            }
+        } else {
+            mColumnCount = calculateColumnCount(mode);
+            if (mLayout != null) {
+                mLayout.setSpanCount(mColumnCount);
+            }
+            int pad = getDirectoryPadding(mode);
+            mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
+        }
+
         mRecView.requestLayout();
         mIconHelper.setViewMode(mode);
 
