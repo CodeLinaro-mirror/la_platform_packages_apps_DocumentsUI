@@ -34,6 +34,11 @@
         <item name="android:maxHeight">@dimen/icon_size_headline_large</item>
     </style>
 
+    <style name="JobProgressToolbarIndicatorStyle" parent="@style/Widget.Material3.CircularProgressIndicator.ExtraSmall">
+        <item name="indicatorSize">@dimen/job_progress_toolbar_indicator_size</item>
+        <item name="indicatorInset">@dimen/space_extra_small_6</item>
+    </style>
+
     <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">
         <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
         <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>

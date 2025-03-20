@@ -282,6 +282,15 @@ public abstract class MenuManager {
     public abstract void updateKeyboardShortcutsMenu(
             List<KeyboardShortcutGroup> data, IntFunction<String> stringSupplier);
 
+    /**
+     * Called on option menu creation to instantiate the job progress item if applicable.
+     *
+     * @param menu The option menu created.
+     */
+    public void instantiateJobProgress(Menu menu) {
+        // This icon is not shown in the picker.
+    }
+
     protected void updateModePicker(MenuItem grid, MenuItem list) {
         // The order of enabling disabling menu item in wrong order removed accessibility focus.
         if (mState.derivedMode != State.MODE_LIST) {

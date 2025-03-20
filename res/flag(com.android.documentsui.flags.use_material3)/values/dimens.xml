@@ -26,6 +26,8 @@
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
+    <dimen name="thumbnail_clip_corner_radius">6dp</dimen>
+    <dimen name="thumbnail_border_width">1dp</dimen>
     <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="root_icon_margin">0dp</dimen>
     <dimen name="root_spacer_padding">0dp</dimen>
@@ -36,7 +38,6 @@
     <dimen name="check_icon_size">20dp</dimen>
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
-    <dimen name="list_item_thumbnail_border_width">2dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="progress_bar_height">4dp</dimen>
@@ -59,7 +60,12 @@
     <dimen name="list_item_icon_padding">16dp</dimen>
     <dimen name="list_divider_inset">72dp</dimen>
     <!-- block end -->
+    <dimen name="breadcrumb_padding_horizontal">@dimen/space_small_3</dimen>
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="breadcrumb_item_padding">8dp</dimen>
+    <dimen name="breadcrumb_item_padding_horizontal">12dp</dimen>
+    <dimen name="breadcrumb_item_padding_vertical">6dp</dimen>
+    <dimen name="breadcrumb_item_arrow_padding">@dimen/space_extra_small_2</dimen>
     <dimen name="breadcrumb_item_height">36dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
@@ -71,7 +77,6 @@
     <dimen name="grid_item_thumbnail_width">80dp</dimen>
     <dimen name="grid_item_thumbnail_height">80dp</dimen>
     <dimen name="grid_item_thumbnail_radius">12dp</dimen>
-    <dimen name="grid_item_thumbnail_border_width">2dp</dimen>
     <dimen name="grid_item_icon_width">64dp</dimen>
     <dimen name="grid_item_icon_height">64dp</dimen>
     <dimen name="grid_item_layout_margin">@dimen/space_small_1</dimen>
@@ -221,6 +226,7 @@
     <!-- Main margin is set by main_container_padding_start for the menu button, here is for
     the space between the button the text/title. -->
     <dimen name="search_bar_text_margin_start">@dimen/space_extra_small_6</dimen>
+    <dimen name="job_progress_toolbar_indicator_size">24dp</dimen>
     <!-- The main margin is controlled above on paddingStart, zeroing toolbar_content_insets to
          avoid pushing the title or button further. -->
     <dimen name="toolbar_content_inset_start">0dp</dimen>

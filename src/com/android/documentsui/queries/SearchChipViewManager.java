@@ -521,7 +521,7 @@ public class SearchChipViewManager {
             }
 
             // Let the first checked chip can be shown.
-            View parent = (View) mChipGroup.getParent();
+            View parent = (View) mChipGroup.getParent().getParent();
             if (parent instanceof HorizontalScrollView) {
                 final int scrollToX = isRtl ? parent.getWidth() : 0;
                 ((HorizontalScrollView) parent).smoothScrollTo(scrollToX, 0);

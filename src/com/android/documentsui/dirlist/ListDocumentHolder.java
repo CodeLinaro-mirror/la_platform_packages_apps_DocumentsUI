@@ -43,6 +43,7 @@ import androidx.annotation.RequiresApi;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
+import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Lookup;
@@ -108,7 +109,11 @@ final class ListDocumentHolder extends DocumentHolder {
         if (isUseMaterial3FlagEnabled()) {
             mThumbnailStrokeWidth =
                     context.getResources()
-                            .getDimensionPixelSize(R.dimen.list_item_thumbnail_border_width);
+                            .getDimensionPixelSize(R.dimen.thumbnail_border_width);
+            int clipCornerRadius = context.getResources()
+                    .getDimensionPixelSize(R.dimen.thumbnail_clip_corner_radius);
+            IconUtils.applyThumbnailClipOutline(
+                    mIconThumb, mThumbnailStrokeWidth, clipCornerRadius);
         } else {
             mThumbnailStrokeWidth = 0;
         }
