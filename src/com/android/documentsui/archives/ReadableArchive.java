@@ -20,6 +20,8 @@ import static android.os.ParcelFileDescriptor.MODE_READ_ONLY;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 
+import static java.util.Collections.unmodifiableList;
+
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
@@ -64,6 +66,8 @@ import java.util.Stack;
 public class ReadableArchive extends Archive {
     private static final String TAG = "ReadableArchive";
 
+    // All the archive entries, in the order they are listed in the archive.
+    private final List<ArchiveEntry> mAllEntries = new ArrayList<>();
     private final StorageManager mStorageManager;
     private final ArchiveHandle mArchiveHandle;
     private final ParcelFileDescriptor mParcelFileDescriptor;
@@ -98,6 +102,8 @@ public class ReadableArchive extends Archive {
         final Stack<ArchiveEntry> stack = new Stack<>();
         while (it.hasMoreElements()) {
             entry = it.nextElement();
+            mAllEntries.add(entry);
+
             if (entry.isDirectory() != entry.getName().endsWith("/")) {
                 if (DEBUG) {
                     Log.d(TAG, "directory entry doesn't end with /");
@@ -340,6 +346,20 @@ public class ReadableArchive extends Archive {
 
         return new AssetFileDescriptor(
                 openDocument(documentId, "r", signal), 0, entry.getSize(), null);
+    }
+
+    /**
+     * Gets the unmodifiable list of all the entries of this archive, in the original order they are
+     * stored in the archive.
+     */
+    public List<ArchiveEntry> getEntries() {
+        return unmodifiableList(mAllEntries);
+    }
+
+    /** Gets an InputStream for reading the contents of the given entry. */
+    public @NonNull InputStream getInputStream(@NonNull ArchiveEntry entry)
+            throws IOException, CompressorException, ArchiveException {
+        return mArchiveHandle.getInputStream(entry);
     }
 
     /**
