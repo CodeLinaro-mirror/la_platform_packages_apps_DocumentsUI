@@ -99,7 +99,13 @@
     <!-- list_container_padding + list_item_padding_end -->
     <dimen name="table_header_padding_end">16dp</dimen>
 
+    <dimen name="bottom_sheet_dialog_width">640dp</dimen>
     <dimen name="bottom_sheet_dialog_radius">28dp</dimen>
+    <dimen name="bottom_sheet_dialog_padding_top">37dp</dimen>
+    <dimen name="bottom_sheet_dialog_padding_bottom">24dp</dimen>
+    <dimen name="bottom_sheet_sort_item_height">56dp</dimen>
+    <dimen name="bottom_sheet_sort_item_padding_horizontal">16dp</dimen>
+    <dimen name="bottom_sheet_sort_item_padding_vertical">8dp</dimen>
 
     <dimen name="drawer_edge_width">12dp</dimen>
     <dimen name="drawer_padding_horizontal">@dimen/space_extra_small_6</dimen>
