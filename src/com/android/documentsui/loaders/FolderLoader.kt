@@ -60,7 +60,7 @@ class FolderLoader(
             mListedDir.authority,
             mListedDir.documentId
         )
-        var cursor =
+        val cursor =
             queryLocation(mRoot.rootId, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
                 ?: emptyCursor()
         cursor.registerContentObserver(mObserver)

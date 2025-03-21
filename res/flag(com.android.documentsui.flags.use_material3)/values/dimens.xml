@@ -66,7 +66,9 @@
     <dimen name="breadcrumb_item_padding_horizontal">12dp</dimen>
     <dimen name="breadcrumb_item_padding_vertical">6dp</dimen>
     <dimen name="breadcrumb_item_arrow_padding">@dimen/space_extra_small_2</dimen>
-    <dimen name="breadcrumb_item_height">36dp</dimen>
+    <dimen name="breadcrumb_item_height">32dp</dimen>
+    <dimen name="breadcrumb_height">48dp</dimen>
+    <dimen name="breadcrumb_item_arrow_size">16dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
     <dimen name="grid_item_width">150dp</dimen>

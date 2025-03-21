@@ -16,19 +16,56 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.content.res.Resources;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.ImageView;
 
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.util.ColorUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class IconUtils {
+    // key: drawable resource id, value: color attribute id
+    private static final Map<Integer, Integer> sCustomIconColorMap = new HashMap<>();
+
+    static {
+        if (isUseMaterial3FlagEnabled()) {
+            // Use Resources.getSystem().getIdentifier() here instead of R.drawable.ic_doc_folder
+            // because com.android.internal.R is not public.
+            sCustomIconColorMap.put(
+                    Resources.getSystem().getIdentifier("ic_doc_folder", "drawable", "android"),
+                    com.google.android.material.R.attr.colorPrimaryFixedDim);
+            sCustomIconColorMap.put(
+                    Resources.getSystem().getIdentifier("ic_doc_generic", "drawable", "android"),
+                    com.google.android.material.R.attr.colorOutline);
+            sCustomIconColorMap.put(
+                    Resources.getSystem()
+                            .getIdentifier("ic_doc_certificate", "drawable", "android"),
+                    com.google.android.material.R.attr.colorOutline);
+            sCustomIconColorMap.put(
+                    Resources.getSystem().getIdentifier("ic_doc_codes", "drawable", "android"),
+                    com.google.android.material.R.attr.colorOutline);
+            sCustomIconColorMap.put(
+                    Resources.getSystem().getIdentifier("ic_doc_contact", "drawable", "android"),
+                    com.google.android.material.R.attr.colorOutline);
+            sCustomIconColorMap.put(
+                    Resources.getSystem().getIdentifier("ic_doc_font", "drawable", "android"),
+                    com.google.android.material.R.attr.colorOutline);
+        }
+    }
+
     public static Drawable loadPackageIcon(Context context, UserId userId, String authority,
             int icon, boolean maybeShowBadge) {
         if (icon != 0) {
@@ -65,7 +102,17 @@ public class IconUtils {
      */
     public static Drawable loadMimeIcon(Context context, String mimeType) {
         if (mimeType == null) return null;
-        return context.getContentResolver().getTypeInfo(mimeType).getIcon().loadDrawable(context);
+        Icon icon = context.getContentResolver().getTypeInfo(mimeType).getIcon();
+        Drawable drawable = icon.loadDrawable(context);
+        // TODO(b/400263417): Remove this once RRO mime icons support dynamic colors.
+        if (isUseMaterial3FlagEnabled()
+                && drawable != null
+                && sCustomIconColorMap.containsKey(icon.getResId())) {
+            drawable.setTint(
+                    ColorUtils.resolveMaterialColorAttribute(
+                            context, sCustomIconColorMap.get(icon.getResId())));
+        }
+        return drawable;
     }
 
     public static Drawable applyTintColor(Context context, int drawableId, int tintColorId) {

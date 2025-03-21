@@ -29,6 +29,7 @@
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="chip_background_disable_color">#fff1f3f4</color>
   <color name="menu_search_background">@android:color/transparent</color>
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="item_breadcrumb_background_hovered">#1affffff</color>
 
   <!-- All the colors used inside the drag drop badge don't support Material color attributes

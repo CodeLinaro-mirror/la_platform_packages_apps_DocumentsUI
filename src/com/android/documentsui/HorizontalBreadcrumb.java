@@ -192,7 +192,12 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
 
             holder.mTitle.setText(
                     isFirst ? mEnv.getCurrentRoot().title : mState.stack.get(position).displayName);
-            holder.mTitle.setEnabled(isLast);
+            if (isUseMaterial3FlagEnabled()) {
+                // The last path part in the breadcrumb is not clickable.
+                holder.mTitle.setEnabled(!isLast);
+            } else {
+                holder.mTitle.setEnabled(isLast);
+            }
             if (isUseMaterial3FlagEnabled()) {
                 final int paddingHorizontal =
                         (int)
