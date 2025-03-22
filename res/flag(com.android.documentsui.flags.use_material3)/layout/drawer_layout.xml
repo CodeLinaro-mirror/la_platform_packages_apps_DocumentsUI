@@ -83,7 +83,8 @@
                     android:id="@+id/horizontal_breadcrumb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/colorSurfaceBright" />
+                    android:background="?attr/colorSurfaceBright"
+                    android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/container_save"
@@ -115,4 +116,12 @@
         </LinearLayout>
 
     </androidx.drawerlayout.widget.DrawerLayout>
+
+    <!-- Peek overlay -->
+    <FrameLayout
+        android:id="@+id/peek_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

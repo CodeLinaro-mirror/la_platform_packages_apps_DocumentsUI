@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -30,9 +31,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.selection.SelectionTracker;
 
+import com.android.documentsui.JobPanelController;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
@@ -56,6 +59,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     private final SelectionTracker<String> mSelectionManager;
     private final Lookup<String, Uri> mUriLookup;
     private final LookupApplicationName mAppNameLookup;
+    @Nullable private final JobPanelController mJobPanelController;
 
     public MenuManager(
             Features features,
@@ -75,6 +79,12 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;
         mUriLookup = uriLookup;
+
+        if (isVisualSignalsFlagEnabled()) {
+            mJobPanelController = new JobPanelController(context);
+        } else {
+            mJobPanelController = null;
+        }
     }
 
     @Override
@@ -139,6 +149,14 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
         inflater.inflate(R.menu.mixed_context_menu, menu);
         updateContextMenu(menu, selectionDetails);
+    }
+
+    @Override
+    public void instantiateJobProgress(Menu menu) {
+        if (mJobPanelController == null) {
+            return;
+        }
+        mJobPanelController.setMenuItem(menu.findItem(R.id.option_menu_job_progress));
     }
 
     @Override

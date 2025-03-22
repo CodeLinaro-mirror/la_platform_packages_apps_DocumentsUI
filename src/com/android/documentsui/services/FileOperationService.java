@@ -68,6 +68,9 @@ public class FileOperationService extends Service implements Job.Listener {
     public static final String EXTRA_OPERATION = "com.android.documentsui.OPERATION";
     public static final String EXTRA_CANCEL = "com.android.documentsui.CANCEL";
 
+    public static final String ACTION_PROGRESS = "com.android.documentsui.action.PROGRESS";
+    public static final String EXTRA_PROGRESS = "com.android.documentsui.PROGRESS";
+
     @IntDef({
             OPERATION_UNKNOWN,
             OPERATION_COPY,
@@ -580,6 +583,7 @@ public class FileOperationService extends Service implements Job.Listener {
     private final class GlobalJobMonitor implements Runnable {
         private static final long PROGRESS_INTERVAL_MILLIS = 500L;
         private boolean mRunning = false;
+        private long mLastId = 0;
 
         private void start() {
             if (!mRunning) {
@@ -602,9 +606,9 @@ public class FileOperationService extends Service implements Job.Listener {
             }
             Intent intent = new Intent();
             intent.setPackage(getPackageName());
-            intent.setAction("com.android.documentsui.PROGRESS");
-            intent.putExtra("id", 0);
-            intent.putParcelableArrayListExtra("progress", progress);
+            intent.setAction(ACTION_PROGRESS);
+            intent.putExtra("id", mLastId++);
+            intent.putParcelableArrayListExtra(EXTRA_PROGRESS, progress);
             sendBroadcast(intent);
         }
 

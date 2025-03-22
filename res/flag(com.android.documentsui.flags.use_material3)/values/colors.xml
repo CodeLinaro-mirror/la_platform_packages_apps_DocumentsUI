@@ -29,6 +29,7 @@
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="chip_background_disable_color">#fff1f3f4</color>
   <color name="menu_search_background">@android:color/transparent</color>
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="item_breadcrumb_background_hovered">#1affffff</color>
 
   <!-- All the colors used inside the drag drop badge don't support Material color attributes
@@ -90,4 +91,8 @@
        </shape>
    -->
   <color name="overlay_hover_color_percentage">#14000000</color> <!-- 8% -->
+
+  <!-- Peek overlay static color. Makes the background dimmer with an 80% opacity. This color is not
+  intended to be dynamic, and is defined specifically for Peek. -->
+  <color name="peek_overlay_background">#CC000000</color> <!-- 80% -->
 </resources>

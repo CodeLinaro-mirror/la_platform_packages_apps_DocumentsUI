@@ -115,7 +115,8 @@
                 <com.android.documentsui.HorizontalBreadcrumb
                     android:id="@+id/horizontal_breadcrumb"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
 
             </LinearLayout>
 
@@ -129,5 +130,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <!-- Peek overlay -->
+    <FrameLayout
+        android:id="@+id/peek_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

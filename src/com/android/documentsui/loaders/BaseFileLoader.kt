@@ -77,7 +77,7 @@ abstract class BaseFileLoader(
     private var mResult: DirectoryResult? = null
 
     override fun cancelLoadInBackground() {
-        Log.d(TAG, "BasedFileLoader.cancelLoadInBackground")
+        Log.d(TAG, "${this::class.simpleName}.cancelLoadInBackground")
         super.cancelLoadInBackground()
 
         synchronized(this) {
@@ -86,7 +86,7 @@ abstract class BaseFileLoader(
     }
 
     override fun deliverResult(result: DirectoryResult?) {
-        Log.d(TAG, "BasedFileLoader.deliverResult")
+        Log.d(TAG, "${this::class.simpleName}.deliverResult")
         if (isReset) {
             closeResult(result)
             return
@@ -104,7 +104,7 @@ abstract class BaseFileLoader(
     }
 
     override fun onStartLoading() {
-        Log.d(TAG, "BasedFileLoader.onStartLoading")
+        Log.d(TAG, "${this::class.simpleName}.onStartLoading")
         val isCursorStale: Boolean = checkIfCursorStale(mResult)
         if (mResult != null && !isCursorStale) {
             deliverResult(mResult)
@@ -115,17 +115,17 @@ abstract class BaseFileLoader(
     }
 
     override fun onStopLoading() {
-        Log.d(TAG, "BasedFileLoader.onStopLoading")
+        Log.d(TAG, "${this::class.simpleName}.onStopLoading")
         cancelLoad()
     }
 
     override fun onCanceled(result: DirectoryResult?) {
-        Log.d(TAG, "BasedFileLoader.onCanceled")
+        Log.d(TAG, "${this::class.simpleName}.onCanceled")
         closeResult(result)
     }
 
     override fun onReset() {
-        Log.d(TAG, "BasedFileLoader.onReset")
+        Log.d(TAG, "${this::class.simpleName}.onReset")
         super.onReset()
 
         // Ensure the loader is stopped

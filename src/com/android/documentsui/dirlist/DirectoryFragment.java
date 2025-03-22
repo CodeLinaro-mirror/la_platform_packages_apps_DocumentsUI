@@ -108,6 +108,7 @@ import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
+import com.android.documentsui.dirlist.AnimationView.OnSizeChangedListener;
 import com.android.documentsui.picker.PickActivity;
 import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
@@ -188,7 +189,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private SelectionMetadata mSelectionMetadata;
     private KeyInputHandler mKeyListener;
     private @Nullable DragHoverListener mDragHoverListener;
-    private View mRootView;
+    private AnimationView mRootView;
     private IconHelper mIconHelper;
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecView;
@@ -416,13 +417,27 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 || Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE.equals(action);
     }
 
+    private OnSizeChangedListener mOnSizeChangedListener =
+            new AnimationView.OnSizeChangedListener() {
+                @Override
+                public void onSizeChanged() {
+                    if (isUseMaterial3FlagEnabled() && mState.derivedMode != MODE_LIST) {
+                        // Update the grid layout when the window size changes.
+                        updateLayout(mState.derivedMode);
+                    }
+                }
+            };
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mHandler = new Handler(Looper.getMainLooper());
         mActivity = (BaseActivity) getActivity();
-        mRootView = inflater.inflate(R.layout.fragment_directory, container, false);
+        mRootView = (AnimationView) inflater.inflate(R.layout.fragment_directory, container, false);
+        if (isUseMaterial3FlagEnabled()) {
+            mRootView.addOnSizeChangedListener(mOnSizeChangedListener);
+        }
 
         mProgressBar = mRootView.findViewById(R.id.progressbar);
         assert mProgressBar != null;
@@ -496,6 +511,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mModel.removeUpdateListener(mModelUpdateListener);
         mModel.removeUpdateListener(mAdapter.getModelUpdateListener());
         setPreDrawListenerEnabled(false);
+
+        if (isUseMaterial3FlagEnabled()) {
+            mRootView.removeOnSizeChangedListener(mOnSizeChangedListener);
+        }
 
         super.onDestroyView();
     }
@@ -809,7 +828,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (mLayout != null) {
             mLayout.setSpanCount(mColumnCount);
         }
-
         int pad = getDirectoryPadding(mode);
         mAppBarHeight = getAppBarLayoutHeight();
         mSaveLayoutHeight = getSaveLayoutHeight();
