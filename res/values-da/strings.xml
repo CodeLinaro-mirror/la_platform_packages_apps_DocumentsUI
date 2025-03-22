@@ -293,6 +293,5 @@
     <string name="grid_mode_showing" msgid="2803166871485028508">"Vises i gittervisning."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Vises i listevisning."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
-    <!-- no translation found for file_name_hint (7843637320487415838) -->
-    <skip />
+    <string name="file_name_hint" msgid="7843637320487415838">"Filnavn"</string>
 </resources>

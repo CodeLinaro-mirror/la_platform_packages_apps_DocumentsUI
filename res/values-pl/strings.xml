@@ -46,10 +46,8 @@
     <string name="menu_compress" msgid="37539111904724188">"Skompresuj"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Rozpakuj do…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Wyodrębnij wszystko…"</string>
-    <!-- no translation found for menu_extract_here (8725302045721604762) -->
-    <skip />
-    <!-- no translation found for menu_browse (6007716414766674967) -->
-    <skip />
+    <string name="menu_extract_here" msgid="8725302045721604762">"Rozpakuj tutaj"</string>
+    <string name="menu_browse" msgid="6007716414766674967">"Przeglądaj"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Zmień nazwę"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Zobacz informacje"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Pokaż ukryte pliki"</string>
@@ -339,6 +337,5 @@
     <string name="grid_mode_showing" msgid="2803166871485028508">"Wyświetlanie w trybie siatki."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Wyświetlanie w trybie listy."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
-    <!-- no translation found for file_name_hint (7843637320487415838) -->
-    <skip />
+    <string name="file_name_hint" msgid="7843637320487415838">"Nazwa pliku"</string>
 </resources>

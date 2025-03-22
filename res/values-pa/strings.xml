@@ -293,6 +293,5 @@
     <string name="grid_mode_showing" msgid="2803166871485028508">"ਗ੍ਰਿਡ ਮੋਡ ਵਿੱਚ ਦਿਖਾਈਆਂ ਜਾ ਰਹੀਆਂ ਹਨ"</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"ਸੂਚੀ ਮੋਡ ਵਿੱਚ ਦਿਖਾਈਆਂ ਜਾ ਰਹੀਆਂ ਹਨ।"</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
-    <!-- no translation found for file_name_hint (7843637320487415838) -->
-    <skip />
+    <string name="file_name_hint" msgid="7843637320487415838">"ਫ਼ਾਈਲ ਦਾ ਨਾਮ"</string>
 </resources>
