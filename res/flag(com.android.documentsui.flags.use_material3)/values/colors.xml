@@ -91,4 +91,8 @@
        </shape>
    -->
   <color name="overlay_hover_color_percentage">#14000000</color> <!-- 8% -->
+
+  <!-- Peek overlay static color. Makes the background dimmer with an 80% opacity. This color is not
+  intended to be dynamic, and is defined specifically for Peek. -->
+  <color name="peek_overlay_background">#CC000000</color> <!-- 80% -->
 </resources>

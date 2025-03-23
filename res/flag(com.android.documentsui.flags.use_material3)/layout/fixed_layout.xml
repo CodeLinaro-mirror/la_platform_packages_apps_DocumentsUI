@@ -131,4 +131,11 @@
 
     </LinearLayout>
 
+    <!-- Peek overlay -->
+    <FrameLayout
+        android:id="@+id/peek_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

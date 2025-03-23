@@ -43,9 +43,10 @@
     <dimen name="progress_bar_height">4dp</dimen>
     <fraction name="grid_scale_min">85%</fraction>
     <fraction name="grid_scale_max">200%</fraction>
-    <dimen name="grid_width">152dp</dimen>
+    <dimen name="grid_width">150dp</dimen>
+    <dimen name="grid_height">132dp</dimen>
     <dimen name="grid_section_separator_height">0dp</dimen>
-    <dimen name="grid_item_margin">6dp</dimen>
+    <dimen name="grid_item_margin">@dimen/space_small_1</dimen>
     <dimen name="grid_padding_horiz">4dp</dimen>
     <dimen name="grid_padding_vert">4dp</dimen>
     <dimen name="list_item_height">56dp</dimen>
@@ -71,8 +72,6 @@
     <dimen name="breadcrumb_item_arrow_size">16dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
-    <dimen name="grid_item_width">150dp</dimen>
-    <dimen name="grid_item_height">132dp</dimen>
     <dimen name="grid_item_padding_start">@dimen/space_extra_small_2</dimen>
     <dimen name="grid_item_padding_end">@dimen/space_extra_small_2</dimen>
     <dimen name="grid_item_padding_top">@dimen/space_extra_small_2</dimen>
@@ -81,7 +80,6 @@
     <dimen name="grid_item_thumbnail_radius">12dp</dimen>
     <dimen name="grid_item_icon_width">64dp</dimen>
     <dimen name="grid_item_icon_height">64dp</dimen>
-    <dimen name="grid_item_layout_margin">@dimen/space_small_1</dimen>
     <dimen name="grid_item_nameplate_width">142dp</dimen>
     <dimen name="grid_item_nameplate_height">44dp</dimen>
     <dimen name="grid_item_nameplate_padding">4dp</dimen>
@@ -250,4 +248,8 @@
     <dimen name="focus_ring_gap">5dp</dimen>
     <dimen name="hover_overlay_alpha">0.08</dimen>
     <dimen name="ripple_overlay_alpha">0.10</dimen>
+
+    <dimen name="job_progress_panel_width">360dp</dimen>
+    <dimen name="job_progress_panel_margin">@dimen/space_small_1</dimen>
+    <dimen name="job_progress_panel_header_margin">@dimen/space_small_1</dimen>
 </resources>

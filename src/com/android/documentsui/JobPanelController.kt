@@ -20,7 +20,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.PopupWindow
 import android.widget.ProgressBar
 import com.android.documentsui.base.Menus
 import com.android.documentsui.services.FileOperationService
@@ -77,8 +80,29 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     /**
      * Sets the menu item controlled by this class. The item's actionView must be a [ProgressBar].
      */
+    @Suppress("ktlint:standard:comment-wrapping")
     fun setMenuItem(menuItem: MenuItem) {
-        (menuItem.actionView as ProgressBar).max = MAX_PROGRESS
+        val progressIcon = menuItem.actionView as ProgressBar
+        progressIcon.max = MAX_PROGRESS
+        progressIcon.setOnClickListener { view ->
+            val panel = LayoutInflater.from(mContext).inflate(
+                R.layout.job_progress_panel,
+                /* root= */ null
+            )
+            val popupWidth = mContext.resources.getDimension(R.dimen.job_progress_panel_width) +
+                    mContext.resources.getDimension(R.dimen.job_progress_panel_margin)
+            val popup = PopupWindow(
+                /* contentView= */ panel,
+                /* width= */ popupWidth.toInt(),
+                /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
+                /* focusable= */ true
+            )
+            popup.showAsDropDown(
+                /* anchor= */ view,
+                /* xoff= */ view.width - popupWidth.toInt(),
+                /* yoff= */ 0
+            )
+        }
         mMenuItem = menuItem
         updateMenuItem(animate = false)
     }

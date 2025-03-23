@@ -159,4 +159,8 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <style name="JobProgressPanelHeaderText" parent="@style/TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
 </resources>

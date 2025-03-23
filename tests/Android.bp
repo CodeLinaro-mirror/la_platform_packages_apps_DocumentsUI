@@ -42,6 +42,7 @@ android_library {
     name: "DocumentsUIPerfTests-lib",
     srcs: [
         "common/com/android/documentsui/**/*.java",
+        "common/com/android/documentsui/**/*.kt",
         "functional/com/android/documentsui/ActivityTest.java",
     ],
     resource_dirs: [],
@@ -70,6 +71,7 @@ android_library {
 
     srcs: [
         "common/**/*.java",
+        "common/**/*.kt",
         "unit/**/*.java",
         "unit/**/*.kt",
     ],
@@ -94,6 +96,7 @@ android_library {
 
     srcs: [
         "common/**/*.java",
+        "common/**/*.kt",
         "functional/**/*.java",
         "functional/**/*.kt",
         "unit/**/*.java",

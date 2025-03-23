@@ -19,6 +19,7 @@ package com.android.documentsui.files;
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.ActivityManager.TaskDescription;
@@ -134,7 +135,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         return clipper.hasItemsToPaste();
                     }
                 },
-                getApplicationContext(),
+                isVisualSignalsFlagEnabled() ? this : getApplicationContext(),
                 mInjector.selectionMgr,
                 mProviders::getApplicationName,
                 mInjector.getModel()::getItemUri,
@@ -163,6 +164,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         clipper,
                         DocumentsApplication.getClipStore(this),
                         DocumentsApplication.getDragAndDropManager(this),
+                        mPeekViewManager,
                         mInjector);
 
         mInjector.searchManager = mSearchManager;

@@ -30,6 +30,7 @@ import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
+import com.android.documentsui.testing.MutableJobProgress
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
@@ -37,19 +38,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-
-private data class MutableJobProgress(
-    var id: String,
-    @Job.State var state: Int,
-    var msg: String?,
-    var hasFailures: Boolean,
-    var currentBytes: Long = -1,
-    var requiredBytes: Long = -1,
-    var msRemaining: Long = -1,
-) {
-    fun toJobProgress() =
-        JobProgress(id, state, msg, hasFailures, currentBytes, requiredBytes, msRemaining)
-}
 
 @SmallTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)

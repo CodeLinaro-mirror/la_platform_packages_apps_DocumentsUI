@@ -56,7 +56,7 @@ class FlagUtils {
 
         @JvmStatic
         fun isUsePeekPreviewFlagEnabled(): Boolean {
-            return Flags.usePeekPreviewRo()
+            return Flags.usePeekPreviewRo() && isUseMaterial3FlagEnabled()
         }
     }
 }
