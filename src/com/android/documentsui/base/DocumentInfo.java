@@ -17,6 +17,7 @@
 package com.android.documentsui.base;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.content.ContentProviderClient;
@@ -446,10 +447,8 @@ public class DocumentInfo implements Durable, Parcelable {
             final String type = resolver.getType(uri);
             if (type != null) {
                 mimeTypes.add(type);
-            } else {
-                if (DEBUG) {
-                    Log.d(TAG, "resolver.getType(uri) return null, url:" + uri.toSafeString());
-                }
+            } else if (DEBUG) {
+                Log.d(TAG, "resolver.getType(" + redact(uri) + ") returned null");
             }
             final String[] streamTypes = resolver.getStreamTypes(uri, "*/*");
             if (streamTypes != null) {
