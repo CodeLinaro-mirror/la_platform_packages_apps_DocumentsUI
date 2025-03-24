@@ -192,4 +192,38 @@
         <item name="cardElevation">1dp</item>
         <item name="cardBackgroundColor">?attr/colorSurfaceDim</item>
     </style>
+
+    <style name="JobProgressItemCardStyle" parent="@style/Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.ExtraSmall</item>
+    </style>
+
+    <style name="JobProgressItemTitleStyle" parent="">
+        <item name="android:textAppearance">@style/JobProgressItemTitleText</item>
+    </style>
+
+    <style name="JobProgressItemTitleStyle.Collapsed">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="JobProgressItemExpandButtonStyle" parent="@style/Widget.Material3.Button.IconButton.Filled">
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingHorizontal">6dp</item>
+        <item name="android:paddingVertical">1dp</item>
+        <item name="backgroundTint">?attr/colorSurfaceBright</item>
+        <item name="iconSize">16dp</item>
+        <item name="iconTint">?attr/colorOnSurface</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
+    </style>
+
+    <style name="JobProgressItemActionButtonStyle" parent="@style/Widget.Material3.Button.TextButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:textAppearance">@style/JobProgressItemActionButtonText</item>
+    </style>
+
 </resources>

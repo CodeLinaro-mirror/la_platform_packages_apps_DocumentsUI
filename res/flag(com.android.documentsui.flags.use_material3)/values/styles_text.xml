@@ -163,6 +163,18 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <style name="JobProgressItemTitleText" parent="@style/TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="JobProgressItemStatusText" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
     <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
