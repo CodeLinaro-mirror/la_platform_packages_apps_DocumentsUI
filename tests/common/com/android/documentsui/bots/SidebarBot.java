@@ -21,8 +21,12 @@ import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.app.UiAutomation;
 import android.content.Context;
+import android.graphics.Rect;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.test.uiautomator.UiDevice;
@@ -47,9 +51,11 @@ public class SidebarBot extends Bots.BaseBot {
     private static final String TAG = "RootsListBot";
 
     private final String mRootListId;
+    private final UiAutomation mAutomation;
 
-    public SidebarBot(UiDevice device, Context context, int timeout) {
+    public SidebarBot(UiDevice device, UiAutomation automation, Context context, int timeout) {
         super(device, context, timeout);
+        mAutomation = automation;
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
@@ -134,5 +140,36 @@ public class SidebarBot extends Bots.BaseBot {
 
     public void assertHasFocus() {
         assertHasFocus(mRootListId);
+    }
+
+    /** Right clicks a root with `label`. */
+    public void rightClickRoot(String label) throws UiObjectNotFoundException {
+        Rect point = findRoot(label).getVisibleBounds();
+
+        // The RootsFragment listens to right clicks in the GenericMotionListener. This is to allow
+        // for a left and right click to be used interchangeably. This means to mock this behaviour,
+        // 4 input events needs to be synthesized. A down, button press, button release and an up.
+        MotionEvent motionDown =
+                getTestRightClickMotionEvent(
+                        MotionEvent.ACTION_DOWN, point.centerX(), point.centerY());
+        mAutomation.injectInputEvent(motionDown, true);
+        SystemClock.sleep(25);
+
+        MotionEvent motionButtonPress =
+                getTestRightClickMotionEvent(
+                        MotionEvent.ACTION_BUTTON_PRESS, point.centerX(), point.centerY());
+        mAutomation.injectInputEvent(motionButtonPress, true);
+        SystemClock.sleep(25);
+
+        MotionEvent motionButtonRelease =
+                getTestRightClickMotionEvent(
+                        MotionEvent.ACTION_BUTTON_RELEASE, point.centerX(), point.centerY());
+        mAutomation.injectInputEvent(motionButtonRelease, true);
+        SystemClock.sleep(25);
+
+        MotionEvent motionUp =
+                getTestRightClickMotionEvent(
+                        MotionEvent.ACTION_UP, point.centerX(), point.centerY());
+        mAutomation.injectInputEvent(motionUp, true);
     }
 }
