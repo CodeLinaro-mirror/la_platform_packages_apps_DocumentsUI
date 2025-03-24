@@ -18,6 +18,7 @@ package com.android.documentsui.queries;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 
@@ -35,6 +36,9 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -233,6 +237,37 @@ public final class SearchChipViewManagerTest {
         mSearchChipViewManager.bindMirrorGroup(mirror);
 
         assertThat(View.VISIBLE).isEqualTo(mirror.getVisibility());
+    }
+
+    @Test
+    public void testChipChecked_resetScroll() {
+        // Mock chip group's parent chain according to search_chip_row.xml.
+        FrameLayout parent = spy(new FrameLayout(mContext));
+        HorizontalScrollView grandparent = spy(new HorizontalScrollView(mContext));
+        parent.addView(mChipGroup);
+        grandparent.addView(parent);
+        // Verify that getParent().getParent() returns the HorizontalScrollView mock.
+        ViewParent result = mChipGroup.getParent().getParent();
+        assertEquals(grandparent, result);
+
+        mSearchChipViewManager.initChipSets(
+                new String[] {"image/*", "audio/*", "video/*", "text/*"});
+        mSearchChipViewManager.updateChips(new String[] {"*/*"});
+
+        // Manually set HorizontalScrollView's scrollX to something larger than 0.
+        grandparent.scrollTo(100, 0);
+        assertTrue(grandparent.getScaleX() > 0);
+
+        assertEquals(6, mChipGroup.getChildCount());
+        Chip lastChip = (Chip) mChipGroup.getChildAt(5);
+
+        // chip.setChecked will trigger reorder animation, which needs to be run inside
+        // the looper thread.
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            // Check last chip will move it to the first child and reset scroll view.
+            lastChip.setChecked(true);
+            assertEquals(0, grandparent.getScrollX());
+        });
     }
 
     private static Set<SearchChipData> getFakeSearchChipDataList() {

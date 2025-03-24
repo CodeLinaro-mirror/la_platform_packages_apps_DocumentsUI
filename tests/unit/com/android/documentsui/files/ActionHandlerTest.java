@@ -76,6 +76,7 @@ import com.android.documentsui.testing.TestDocumentClipper;
 import com.android.documentsui.testing.TestDragAndDropManager;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
+import com.android.documentsui.testing.TestPeekViewManager;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.UserManagers;
 import com.android.documentsui.ui.TestDialogController;
@@ -110,6 +111,7 @@ public class ActionHandlerTest {
     private ActionHandler<TestActivity> mHandler;
     private TestDocumentClipper mClipper;
     private TestDragAndDropManager mDragAndDropManager;
+    private TestPeekViewManager mPeekViewManager;
     private TestFeatures mFeatures;
     private TestConfigStore mTestConfigStore;
     private boolean refreshAnswer = false;
@@ -141,6 +143,7 @@ public class ActionHandlerTest {
         mDialogs = new TestDialogController();
         mClipper = new TestDocumentClipper();
         mDragAndDropManager = new TestDragAndDropManager();
+        mPeekViewManager = new TestPeekViewManager(mActivity);
         mTestConfigStore = new TestConfigStore();
         mEnv.state.configStore = mTestConfigStore;
 
@@ -744,6 +747,8 @@ public class ActionHandlerTest {
         mHandler.showPreview(TestEnv.FILE_GIF);
         // The inspector activity is not called.
         mActivity.startActivity.assertNotCalled();
+        mPeekViewManager.getPeekDocument().assertCalled();
+        mPeekViewManager.getPeekDocument().assertLastArgument(TestEnv.FILE_GIF);
     }
 
     @Test
@@ -751,6 +756,7 @@ public class ActionHandlerTest {
     public void testShowInspector() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
 
+        mPeekViewManager.getPeekDocument().assertNotCalled();
         mActivity.startActivity.assertCalled();
         Intent intent = mActivity.startActivity.getLastValue();
         assertTargetsComponent(intent, InspectorActivity.class);
@@ -864,6 +870,7 @@ public class ActionHandlerTest {
                 mClipper,
                 null, // clip storage, not utilized unless we venture into *jumbo* clip territory.
                 mDragAndDropManager,
+                mPeekViewManager,
                 mEnv.injector);
     }
 }

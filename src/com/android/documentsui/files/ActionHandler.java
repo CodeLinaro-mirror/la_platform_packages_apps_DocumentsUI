@@ -71,6 +71,7 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.peek.PeekViewManager;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperation;
@@ -101,6 +102,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     private final ClipStore mClipStore;
     private final DragAndDropManager mDragAndDropManager;
     private final Runnable mCloseSelectionBar;
+    private final @Nullable PeekViewManager mPeekViewManager;
 
     ActionHandler(
             T activity,
@@ -114,6 +116,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             DocumentClipper clipper,
             ClipStore clipStore,
             DragAndDropManager dragAndDropManager,
+            @Nullable PeekViewManager peekViewManager,
             Injector injector) {
 
         super(activity, state, providers, docs, searchMgr, executors, injector);
@@ -125,6 +128,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         mClipper = clipper;
         mClipStore = clipStore;
         mDragAndDropManager = dragAndDropManager;
+        mPeekViewManager = peekViewManager;
     }
 
     @Override
@@ -609,14 +613,16 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         mActivity.startActivity(intent);
     }
 
-    private void showPeek() {
-        Log.d(TAG, "Peek not implemented");
+    private void showPeek(DocumentInfo doc) {
+        if (mPeekViewManager != null) {
+            mPeekViewManager.peekDocument(doc);
+        }
     }
 
     @Override
     public void showPreview(DocumentInfo doc) {
-        if (isUseMaterial3FlagEnabled() && isUsePeekPreviewFlagEnabled()) {
-            showPeek();
+        if (isUsePeekPreviewFlagEnabled()) {
+            showPeek(doc);
         } else {
             showInspector(doc);
         }

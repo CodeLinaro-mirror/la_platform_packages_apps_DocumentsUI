@@ -181,12 +181,21 @@ public class PickFragment extends Fragment {
         switch (mAction) {
             case State.ACTION_OPEN_TREE:
                 mPick.setText(getString(R.string.open_tree_button));
-                // On laptops we want the "Use this folder" button to appear with the "Cancel"
-                // button as a back gesture with a mouse is not easy.
-                if (!isUseMaterial3FlagEnabled()
-                        || !getActivity().getPackageManager()
-                                .hasSystemFeature(PackageManager.FEATURE_PC)) {
+                // When use_material3 flag is enabled, all form factors should have the pick button
+                // wrap the text content instead of taking up the full width.
+                if (!isUseMaterial3FlagEnabled()) {
+                    mCancel.setVisibility(View.GONE);
                     mPick.setWidth(Integer.MAX_VALUE);
+                    mPickOverlay.setVisibility(
+                            mPickTarget.isBlockedFromTree() && mRestrictScopeStorage
+                                    ? View.VISIBLE
+                                    : View.GONE);
+                } else if (!getActivity()
+                        .getPackageManager()
+                        .hasSystemFeature(PackageManager.FEATURE_PC)) {
+                    // On non-desktop devices the back gesture is used to cancel the picker, so
+                    // don't show the "Cancel" button on these devices and instead enable the pick
+                    // overlay which enables showing a toast when the disabled button is pressed.
                     mCancel.setVisibility(View.GONE);
                     mPickOverlay.setVisibility(
                             mPickTarget.isBlockedFromTree() && mRestrictScopeStorage

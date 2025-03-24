@@ -26,6 +26,8 @@
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
+    <dimen name="thumbnail_clip_corner_radius">6dp</dimen>
+    <dimen name="thumbnail_border_width">1dp</dimen>
     <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="root_icon_margin">0dp</dimen>
     <dimen name="root_spacer_padding">0dp</dimen>
@@ -41,9 +43,10 @@
     <dimen name="progress_bar_height">4dp</dimen>
     <fraction name="grid_scale_min">85%</fraction>
     <fraction name="grid_scale_max">200%</fraction>
-    <dimen name="grid_width">152dp</dimen>
+    <dimen name="grid_width">150dp</dimen>
+    <dimen name="grid_height">132dp</dimen>
     <dimen name="grid_section_separator_height">0dp</dimen>
-    <dimen name="grid_item_margin">6dp</dimen>
+    <dimen name="grid_item_margin">@dimen/space_small_1</dimen>
     <dimen name="grid_padding_horiz">4dp</dimen>
     <dimen name="grid_padding_vert">4dp</dimen>
     <dimen name="list_item_height">56dp</dimen>
@@ -58,12 +61,17 @@
     <dimen name="list_item_icon_padding">16dp</dimen>
     <dimen name="list_divider_inset">72dp</dimen>
     <!-- block end -->
+    <dimen name="breadcrumb_padding_horizontal">@dimen/space_small_3</dimen>
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="breadcrumb_item_padding">8dp</dimen>
-    <dimen name="breadcrumb_item_height">36dp</dimen>
+    <dimen name="breadcrumb_item_padding_horizontal">12dp</dimen>
+    <dimen name="breadcrumb_item_padding_vertical">6dp</dimen>
+    <dimen name="breadcrumb_item_arrow_padding">@dimen/space_extra_small_2</dimen>
+    <dimen name="breadcrumb_item_height">32dp</dimen>
+    <dimen name="breadcrumb_height">48dp</dimen>
+    <dimen name="breadcrumb_item_arrow_size">16dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
-    <dimen name="grid_item_width">150dp</dimen>
-    <dimen name="grid_item_height">132dp</dimen>
     <dimen name="grid_item_padding_start">@dimen/space_extra_small_2</dimen>
     <dimen name="grid_item_padding_end">@dimen/space_extra_small_2</dimen>
     <dimen name="grid_item_padding_top">@dimen/space_extra_small_2</dimen>
@@ -72,7 +80,6 @@
     <dimen name="grid_item_thumbnail_radius">12dp</dimen>
     <dimen name="grid_item_icon_width">64dp</dimen>
     <dimen name="grid_item_icon_height">64dp</dimen>
-    <dimen name="grid_item_layout_margin">@dimen/space_small_1</dimen>
     <dimen name="grid_item_nameplate_width">142dp</dimen>
     <dimen name="grid_item_nameplate_height">44dp</dimen>
     <dimen name="grid_item_nameplate_padding">4dp</dimen>
@@ -175,6 +182,7 @@
 
     <dimen name="search_chip_radius">8dp</dimen>
     <dimen name="search_chip_group_padding_vertical">@dimen/space_extra_small_4</dimen>
+    <dimen name="search_chip_inactive_stroke_width">1dp</dimen>
     <dimen name="main_container_padding_start">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_end">@dimen/space_small_4</dimen>
     <dimen name="main_container_padding_top">0dp</dimen>
@@ -218,6 +226,7 @@
     <!-- Main margin is set by main_container_padding_start for the menu button, here is for
     the space between the button the text/title. -->
     <dimen name="search_bar_text_margin_start">@dimen/space_extra_small_6</dimen>
+    <dimen name="job_progress_toolbar_indicator_size">24dp</dimen>
     <!-- The main margin is controlled above on paddingStart, zeroing toolbar_content_insets to
          avoid pushing the title or button further. -->
     <dimen name="toolbar_content_inset_start">0dp</dimen>
@@ -239,4 +248,8 @@
     <dimen name="focus_ring_gap">5dp</dimen>
     <dimen name="hover_overlay_alpha">0.08</dimen>
     <dimen name="ripple_overlay_alpha">0.10</dimen>
+
+    <dimen name="job_progress_panel_width">360dp</dimen>
+    <dimen name="job_progress_panel_margin">@dimen/space_small_1</dimen>
+    <dimen name="job_progress_panel_header_margin">@dimen/space_small_1</dimen>
 </resources>

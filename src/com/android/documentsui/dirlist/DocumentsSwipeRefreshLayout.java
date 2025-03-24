@@ -22,13 +22,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 
 import androidx.annotation.ColorRes;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.documentsui.R;
+import com.android.documentsui.util.ColorUtils;
 
 /**
  * A {@link SwipeRefreshLayout} that does not intercept any touch events. This relies on its nested
@@ -46,20 +46,12 @@ public class DocumentsSwipeRefreshLayout extends SwipeRefreshLayout {
         super(context, attrs);
 
         if (isUseMaterial3FlagEnabled()) {
-            TypedValue spinnerColor = new TypedValue();
-            context.getTheme()
-                    .resolveAttribute(
-                            com.google.android.material.R.attr.colorOnPrimaryContainer,
-                            spinnerColor,
-                            true);
-            setColorSchemeResources(spinnerColor.resourceId);
-            TypedValue spinnerBackgroundColor = new TypedValue();
-            context.getTheme()
-                    .resolveAttribute(
-                            com.google.android.material.R.attr.colorPrimaryContainer,
-                            spinnerBackgroundColor,
-                            true);
-            setProgressBackgroundColorSchemeResource(spinnerBackgroundColor.resourceId);
+            setColorSchemeColors(
+                    ColorUtils.resolveMaterialColorAttribute(
+                            context, com.google.android.material.R.attr.colorOnPrimaryContainer));
+            setProgressBackgroundColorSchemeColor(
+                    ColorUtils.resolveMaterialColorAttribute(
+                            context, com.google.android.material.R.attr.colorPrimaryContainer));
         } else {
             final int[] styledAttrs = {android.R.attr.colorAccent};
 

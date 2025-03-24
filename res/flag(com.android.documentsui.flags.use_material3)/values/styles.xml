@@ -34,6 +34,11 @@
         <item name="android:maxHeight">@dimen/icon_size_headline_large</item>
     </style>
 
+    <style name="JobProgressToolbarIndicatorStyle" parent="@style/Widget.Material3.CircularProgressIndicator.ExtraSmall">
+        <item name="indicatorSize">@dimen/job_progress_toolbar_indicator_size</item>
+        <item name="indicatorInset">@dimen/space_extra_small_6</item>
+    </style>
+
     <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">
         <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
         <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>
@@ -184,5 +189,12 @@
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:textColor">@color/nav_rail_item_text_color</item>
         <item name="android:textAppearance">@style/NavRailItemTextAppearance</item>
+    </style>
+
+    <style name="JobProgressPanelStyle" parent="@style/Widget.Material3.CardView.Elevated">
+        <item name="android:layout_marginStart">@dimen/job_progress_panel_margin</item>
+        <item name="android:layout_marginBottom">@dimen/job_progress_panel_margin</item>
+        <item name="cardElevation">1dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceDim</item>
     </style>
 </resources>
