@@ -87,10 +87,6 @@
         <item name="android:overlapAnchor">false</item>
     </style>
 
-    <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
-
     <style name="MaterialButton" parent="@style/Widget.Material3.Button.UnelevatedButton">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
     </style>
@@ -103,6 +99,10 @@
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
     </style>
 
+    <style name="DialogFilledButton" parent="@style/MaterialButton">
+        <item name="android:layout_marginStart">8dp</item>
+    </style>
+
     <style name="DialogTextButton" parent="@style/Widget.Material3.Button.TextButton.Dialog">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
     </style>
@@ -111,15 +111,12 @@
         <item name="android:textAppearance">@style/EmptyStateButtonTextAppearance</item>
     </style>
 
-    <style name="AlertDialogTheme" parent="@style/ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="buttonBarPositiveButtonStyle">@style/DialogTextButton</item>
-        <item name="buttonBarNegativeButtonStyle">@style/DialogTextButton</item>
-    </style>
-
     <style name="MaterialAlertDialogTheme" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog.Centered">
-        <item name="buttonBarPositiveButtonStyle">@style/DialogTextButton</item>
-        <item name="buttonBarNegativeButtonStyle">@style/DialogTextButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogFilledButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/MaterialOutlinedButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/DialogTextButton</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogTitleStyle</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialogBodyStyle</item>
     </style>
 
     <style name="SearchChipItemStyle" parent="@style/Widget.Material3.Chip.Filter">
