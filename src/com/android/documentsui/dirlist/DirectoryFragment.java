@@ -751,7 +751,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        return handleMenuItemClick(item);
+        try {
+            return handleMenuItemClick(item);
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot handle menu item " + item.getItemId(), e);
+            return false;
+        }
     }
 
     private void onCopyDestinationPicked(int resultCode, Intent data) {
