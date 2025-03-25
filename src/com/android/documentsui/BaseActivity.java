@@ -284,6 +284,11 @@ public abstract class BaseActivity
                 // We also need to update AppsRowManager because we may want to show/hide the
                 // appsRow in cross-profile search according to the searching conditions.
                 mAppsRowManager.updateView(BaseActivity.this);
+
+                if (isUseMaterial3FlagEnabled()) {
+                    // Whenever a search chip is clicked, close the navigation bar.
+                    mNavigator.closeSelectionBar();
+                }
             }
 
             @Override

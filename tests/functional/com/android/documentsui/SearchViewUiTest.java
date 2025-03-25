@@ -16,22 +16,34 @@
 
 package com.android.documentsui;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.junit.Assert.assertFalse;
 
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
+import android.provider.Settings;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.Until;
 
+import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 
@@ -306,6 +318,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.assertSearchHistoryVisible(false);
     }
 
+    @Test
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchDropdowns() throws Exception {
         bots.roots.openRoot("Downloads");
@@ -315,5 +328,31 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertLocationTriggerShows();
         bots.main.assertLastModifiedTriggerShows();
         bots.main.assertFileTypeTriggerShows();
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testSearchView_TogglingASearchChipClearsSelection() throws Exception {
+        // Get the label of the device (this will be used to navigate to the ExternalStorageProvider
+        // as the custom roots added for test do not show the search chips).
+        String deviceLabel =
+                Settings.Global.getString(
+                        context.getContentResolver(), Settings.Global.DEVICE_NAME);
+
+        // Open the root and select the DCIM folder for selection.
+        bots.roots.openRoot(deviceLabel);
+        bots.directory.selectDocument("DCIM", 1);
+
+        // Click on the Images search chips.
+        onView(
+                allOf(
+                        withText("Images"),
+                        isDescendantOfA(withId(R.id.search_chip_group)),
+                        isDisplayed()))
+                .perform(new RelaxedClickAction());
+
+        // Ensure the selection has cleared and the "1 file selected" text is not displayed.
+        device.wait(Until.findObject(By.text(fileName2).selected(false)), 5000);
+        onView(withText("1 selected")).check(doesNotExist());
     }
 }
