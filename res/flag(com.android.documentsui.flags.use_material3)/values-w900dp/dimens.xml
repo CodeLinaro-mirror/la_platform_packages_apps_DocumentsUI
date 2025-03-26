@@ -36,4 +36,9 @@
     <dimen name="toolbar_padding_end">@dimen/space_small_3</dimen>
 
     <dimen name="drawer_padding_top">@dimen/space_small_1</dimen>
+
+    <!-- list_container_padding + list_item_padding_start -->
+    <dimen name="table_header_padding_start">32dp</dimen>
+    <!-- list_container_padding + list_item_padding_end -->
+    <dimen name="table_header_padding_end">12dp</dimen>
 </resources>

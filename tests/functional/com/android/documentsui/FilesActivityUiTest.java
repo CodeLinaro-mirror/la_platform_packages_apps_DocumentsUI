@@ -16,7 +16,7 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP;
+import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
 
 import android.app.Instrumentation;
 import android.net.Uri;
@@ -86,7 +86,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP)
+    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
     public void testRootClick_SetsWindowTitle() throws Exception {
         bots.roots.openRoot("Images");
         bots.main.assertWindowTitle("Images");
@@ -145,7 +145,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP)
+    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
     public void testRootChange_UpdatesSortHeader() throws Exception {
 
         // switch to separate display modes for two separate roots. Each

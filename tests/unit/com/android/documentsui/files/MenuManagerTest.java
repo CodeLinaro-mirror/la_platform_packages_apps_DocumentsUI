@@ -16,6 +16,8 @@
 
 package com.android.documentsui.files;
 
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+
 import static junit.framework.Assert.assertEquals;
 
 import static org.junit.Assert.assertTrue;
@@ -77,6 +79,8 @@ public final class MenuManagerTest {
     private TestMenuItem dirPasteIntoFolder;
     private TestMenuItem dirInspect;
     private TestMenuItem dirOpenInNewWindow;
+    private TestMenuItem mDirExtractHere;
+    private TestMenuItem mDirBrowse;
 
     /* Root List Context Menu items */
     private TestMenuItem rootEjectRoot;
@@ -154,6 +158,8 @@ public final class MenuManagerTest {
         dirPasteIntoFolder = testMenu.findItem(R.id.dir_menu_paste_into_folder);
         dirInspect = testMenu.findItem(R.id.dir_menu_inspect);
         dirOpenInNewWindow = testMenu.findItem(R.id.dir_menu_open_in_new_window);
+        mDirExtractHere = testMenu.findItem(R.id.dir_menu_extract_here);
+        mDirBrowse = testMenu.findItem(R.id.dir_menu_browse);
 
         rootEjectRoot = testMenu.findItem(R.id.root_menu_eject_root);
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
@@ -489,6 +495,20 @@ public final class MenuManagerTest {
     }
 
     @Test
+    public void testOptionMenu_ExtractAll() {
+        dirDetails.isInArchive = true;
+        mgr.updateOptionMenu(testMenu);
+        if (isZipNgFlagEnabled()) {
+            mOptionExtractAll.assertEnabledAndVisible();
+        } else {
+            mOptionExtractAll.assertDisabledAndInvisible();
+        }
+        dirDetails.isInArchive = false;
+        mgr.updateOptionMenu(testMenu);
+        mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
     public void testInflateContextMenu_Files() {
         TestMenuInflater inflater = new TestMenuInflater();
 
@@ -529,6 +549,8 @@ public final class MenuManagerTest {
         mDirDeselectAll.assertDisabledAndInvisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -600,10 +622,12 @@ public final class MenuManagerTest {
         dirRename.assertDisabledAndInvisible();
         dirCreateDir.assertEnabledAndVisible();
         dirDelete.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpen() {
         selectionDetails.canOpen = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
@@ -612,7 +636,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpenDesktop() {
         selectionDetails.canOpen = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);

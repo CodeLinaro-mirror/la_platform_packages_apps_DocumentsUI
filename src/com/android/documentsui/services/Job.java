@@ -190,6 +190,8 @@ abstract public class Job implements Runnable {
 
     abstract Notification getWarningNotification();
 
+    abstract JobProgress getJobProgress();
+
     Uri getDataUriForIntent(String tag) {
         return Uri.parse(String.format("data,%s-%s", tag, id));
     }

@@ -65,7 +65,6 @@
         <item name="toolbarNavigationButtonStyle">@style/HamburgerMenuButtonStyle</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
-        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
@@ -73,6 +72,12 @@
         <item name="materialAlertDialogTheme">@style/MaterialAlertDialogTheme</item>
         <item name="queryBackground">@color/menu_search_background</item>
         <item name="snackbarButtonStyle">@style/SnackbarButtonStyle</item>
+
+        <!-- Menus -->
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
+        <item name="android:itemBackground">@drawable/menu_item_background</item>
+
+        <!-- Menu text appearance -->
         <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
     </style>
 </resources>

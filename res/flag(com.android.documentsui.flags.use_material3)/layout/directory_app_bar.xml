@@ -23,29 +23,40 @@
     android:layout_height="wrap_content"
     android:touchscreenBlocksFocus="false">
 
+    <!-- Technically we don't need this CollapsingToolbarLayout wrapper when use_material3 flag
+         is ON, because we don't want to hide anything in the app header area when scrolling, but
+         some files (e.g. NavigationViewManager and others) uses the existence of this element to
+         do some specific logic, hence leaving it here with "noScroll" behavior.
+     -->
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/collapsing_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleEnabled="false"
-        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
+        app:layout_scrollFlags="noScroll">
 
-        <androidx.core.widget.NestedScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="?attr/colorSurfaceBright">
 
             <include layout="@layout/directory_header" />
 
-            <!-- column headers are empty on small screens, in portrait or in grid mode. -->
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:dividerColor="?attr/colorSurfaceContainer"
+                app:dividerThickness="@dimen/main_container_section_gap" />
+
             <include layout="@layout/column_headers"/>
 
-        </androidx.core.widget.NestedScrollView>
+        </LinearLayout>
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin"
             android:touchscreenBlocksFocus="false">
 
             <TextView

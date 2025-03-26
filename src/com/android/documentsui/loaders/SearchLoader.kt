@@ -101,7 +101,7 @@ class SearchLoader(
     }
 
     @Volatile
-    private lateinit var mSearchTaskList: List<SearchTask>
+    private var mSearchTaskList: List<SearchTask> = listOf()
 
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
