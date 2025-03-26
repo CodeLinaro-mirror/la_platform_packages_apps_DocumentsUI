@@ -126,7 +126,7 @@
                     android:src="@drawable/ic_briefcase"
                     android:tint="?android:attr/colorAccent" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@android:id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/details"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
                     android:textAlignment="viewStart"
                     android:textAppearance="@style/ItemCaptionText" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/bullet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -164,7 +164,7 @@
                     android:textAlignment="viewStart"
                     android:textAppearance="@style/ItemCaptionText" />
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -22,7 +22,7 @@
     android:paddingBottom="8dp"
     android:gravity="center_vertical">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@android:id/title"
         android:paddingStart="64dp"
         android:layout_width="wrap_content"
