@@ -176,4 +176,19 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <style name="BannerTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="BannerSubtitleText" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="BannerMessageText" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
 </resources>

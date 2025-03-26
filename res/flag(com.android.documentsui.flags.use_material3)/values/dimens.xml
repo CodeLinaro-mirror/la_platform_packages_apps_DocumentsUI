@@ -250,6 +250,10 @@
     <dimen name="cross_profile_button_message_margin_top">@dimen/space_extra_small_2</dimen>
     <dimen name="cross_profile_button_margin_top">@dimen/space_small_1</dimen>
 
+    <dimen name="banner_content_padding_vertical">16dp</dimen>
+    <dimen name="banner_content_padding_start">@dimen/space_medium_1</dimen>
+    <dimen name="banner_content_padding_end">8dp</dimen>
+
     <dimen name="focus_ring_width">3dp</dimen>
     <!-- 3dp focus ring width + 2dp gap between the ring and the content -->
     <dimen name="focus_ring_gap">5dp</dimen>
