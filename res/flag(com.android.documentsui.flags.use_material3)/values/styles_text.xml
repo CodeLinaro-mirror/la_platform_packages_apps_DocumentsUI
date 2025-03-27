@@ -101,21 +101,14 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="EmptyStateTitleText">
-        <item name="android:textColor">@color/empty_state_text_color</item>
-        <item name="android:textSize">14sp</item>
+    <style name="EmptyStateTitleText" parent="@style/TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="EmptyStateMessageText">
-        <item name="android:textColor">@color/empty_state_text_color</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
-    <style name="EmptyStateButtonTextAppearance">
-        <item name="android:textColor">?android:attr/colorAccent</item>
-        <item name="android:textSize">14sp</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    <style name="EmptyStateMessageText" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
     <style name="TabTextAppearance" parent="@style/TextAppearance.Material3.TitleSmall">
@@ -160,6 +153,18 @@
     </style>
 
     <style name="JobProgressPanelHeaderText" parent="@style/TextAppearance.Material3.TitleMedium">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="JobProgressItemTitleText" parent="@style/TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="JobProgressItemStatusText" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 

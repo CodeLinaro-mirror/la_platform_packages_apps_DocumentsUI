@@ -22,14 +22,22 @@ import android.content.IntentFilter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.android.documentsui.base.Menus
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
+import com.google.android.material.progressindicator.LinearProgressIndicator
 
 /**
  * JobPanelController is responsible for receiving broadcast updates from the [FileOperationService]
@@ -39,6 +47,51 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     companion object {
         private const val TAG = "JobPanelController"
         private const val MAX_PROGRESS = 100
+    }
+
+    class ProgressItemHolder(val mController: JobPanelController, view: View) :
+        RecyclerView.ViewHolder(view) {
+
+        val mContext = view.context
+
+        val mTitleView = view.findViewById<TextView>(R.id.job_progress_item_title)
+        val mProgressView =
+            view.findViewById<LinearProgressIndicator>(R.id.job_progress_item_progress)
+
+        val mDismissButton = view.findViewById<Button>(R.id.job_progress_item_dismiss)
+
+        fun setJobProgress(jobProgress: JobProgress) {
+            mTitleView.text = jobProgress.msg
+            mProgressView.isIndeterminate = jobProgress.isIndeterminate
+            if (!mProgressView.isIndeterminate) {
+                mProgressView.setProgress(jobProgress.toPercent().toInt())
+            }
+            mDismissButton.setOnClickListener { mController.dismissProgress(jobProgress.id) }
+        }
+    }
+
+    class ProgressListAdapter(val mController: JobPanelController) :
+        ListAdapter<JobProgress, ProgressItemHolder>(JobDiffCallback) {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressItemHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.job_progress_item, parent, false)
+            return ProgressItemHolder(mController, view)
+        }
+
+        override fun onBindViewHolder(holder: ProgressItemHolder, position: Int) {
+            holder.setJobProgress(getItem(position))
+        }
+
+        object JobDiffCallback : DiffUtil.ItemCallback<JobProgress>() {
+            override fun areItemsTheSame(oldJobProgress: JobProgress, newJobProgress: JobProgress) =
+                oldJobProgress.id == newJobProgress.id
+
+            override fun areContentsTheSame(
+                oldJobProgress: JobProgress,
+                newJobProgress: JobProgress
+            ) = oldJobProgress == newJobProgress
+        }
     }
 
     private enum class State {
@@ -56,6 +109,9 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
 
     /** Current menu item being controlled by this class. */
     private var mMenuItem: MenuItem? = null
+
+    /** Adapter used to display JobProgresses in the recycler list. */
+    private var mProgressListAdapter: ProgressListAdapter? = null
 
     init {
         val filter = IntentFilter(FileOperationService.ACTION_PROGRESS)
@@ -89,6 +145,14 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
                 R.layout.job_progress_panel,
                 /* root= */ null
             )
+            val listAdapter = ProgressListAdapter(this)
+            listAdapter.submitList(ArrayList(mCurrentJobs.values))
+            panel.findViewById<RecyclerView>(R.id.job_progress_list).apply {
+                layoutManager = LinearLayoutManager(mContext)
+                itemAnimator = null
+                adapter = listAdapter
+            }
+            mProgressListAdapter = listAdapter
             val popupWidth = mContext.resources.getDimension(R.dimen.job_progress_panel_width) +
                     mContext.resources.getDimension(R.dimen.job_progress_panel_margin)
             val popup = PopupWindow(
@@ -97,6 +161,7 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
                 /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
                 /* focusable= */ true
             )
+            popup.setOnDismissListener { mProgressListAdapter = null }
             popup.showAsDropDown(
                 /* anchor= */ view,
                 /* xoff= */ view.width - popupWidth.toInt(),
@@ -146,5 +211,11 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
             mState = State.INDETERMINATE
         }
         updateMenuItem(animate = true)
+        mProgressListAdapter?.submitList(ArrayList(mCurrentJobs.values))
+    }
+
+    private fun dismissProgress(id: String) {
+        mCurrentJobs.remove(id)
+        updateProgress(emptyList())
     }
 }

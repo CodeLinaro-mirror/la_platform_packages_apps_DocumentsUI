@@ -19,12 +19,16 @@ import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import android.view.View
+import android.widget.ProgressBar
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.files.FilesActivity
@@ -35,11 +39,25 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.MutableJobProgress
+import org.hamcrest.Description
+import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
+private fun withProgress(expectedProgress: Int): Matcher<View> {
+    return object : BoundedMatcher<View, ProgressBar>(ProgressBar::class.java) {
+        override fun matchesSafely(view: ProgressBar): Boolean {
+            return view.progress == expectedProgress
+        }
+
+        override fun describeTo(description: Description) {
+            description.appendText("with progress: " + expectedProgress)
+        }
+    }
+}
 
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
@@ -89,5 +107,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(matches(isDisplayed()))
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.job_progress_item_title)).check(matches(withText("Job started")))
+        onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
     }
 }

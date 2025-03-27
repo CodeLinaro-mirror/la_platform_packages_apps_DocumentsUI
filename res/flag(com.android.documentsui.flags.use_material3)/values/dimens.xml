@@ -244,10 +244,10 @@
 
     <dimen name="refresh_icon_range">64dp</dimen>
 
-    <dimen name="item_doc_inflated_message_padding_top">0dp</dimen>
-    <dimen name="cross_profile_button_corner_radius">0dp</dimen>
-    <dimen name="cross_profile_button_stroke_width">0dp</dimen>
-    <dimen name="cross_profile_button_message_margin_top">4dp</dimen>
+    <dimen name="item_doc_inflated_message_padding_vertical">@dimen/space_medium_5</dimen>
+    <dimen name="cross_profile_progress_margin_bottom">@dimen/space_small_1</dimen>
+    <dimen name="cross_profile_button_message_margin_top">@dimen/space_extra_small_2</dimen>
+    <dimen name="cross_profile_button_margin_top">@dimen/space_small_1</dimen>
 
     <dimen name="focus_ring_width">3dp</dimen>
     <!-- 3dp focus ring width + 2dp gap between the ring and the content -->
@@ -262,4 +262,11 @@
     <!-- 360dp - 2 * header margin (16dp) - header line height (24dp) -->
     <dimen name="job_progress_list_max_height">304dp</dimen>
     <dimen name="job_progress_list_margin">@dimen/space_extra_small_6</dimen>
+
+    <dimen name="job_progress_item_padding">@dimen/space_small_1</dimen>
+    <dimen name="job_progress_item_expand_margin_start">@dimen/space_small_4</dimen>
+    <dimen name="job_progress_item_progress_margin_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="job_progress_item_status_separator_margin">@dimen/space_extra_small_2</dimen>
+    <dimen name="job_progress_item_buttons_margin_start">@dimen/space_extra_small_2</dimen>
+    <dimen name="job_progress_item_buttons_margin_top">@dimen/space_extra_small_1</dimen>
 </resources>
