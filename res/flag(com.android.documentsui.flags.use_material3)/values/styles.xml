@@ -72,10 +72,11 @@
     <style name="BottomSheetDialogStyle" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/BottomSheet</item>
-        <item name="colorControlHighlight">@color/ripple_material_light</item>
+        <!-- This controls the focus background which we don't want.  -->
+        <item name="colorControlHighlight">@android:color/transparent</item>
     </style>
 
-    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+    <style name="BottomSheet" parent="@style/Widget.Material3.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_dialog_background</item>
     </style>
 
@@ -189,8 +190,6 @@
     </style>
 
     <style name="JobProgressPanelStyle" parent="@style/Widget.Material3.CardView.Elevated">
-        <item name="android:layout_marginStart">@dimen/job_progress_panel_margin</item>
-        <item name="android:layout_marginBottom">@dimen/job_progress_panel_margin</item>
         <item name="cardElevation">1dp</item>
         <item name="cardBackgroundColor">?attr/colorSurfaceDim</item>
     </style>

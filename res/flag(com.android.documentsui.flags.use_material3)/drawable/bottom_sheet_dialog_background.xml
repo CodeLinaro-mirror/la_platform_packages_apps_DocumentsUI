@@ -15,7 +15,7 @@
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="?android:attr/colorBackground" />
+    <solid android:color="?attr/colorSurfaceContainerLow" />
 
     <corners
         android:topLeftRadius="@dimen/bottom_sheet_dialog_radius"

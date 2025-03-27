@@ -89,8 +89,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         onView(withText("Copy")).perform(click());
 
         // Right click a root and try to paste the copied file into it.
-        bots.roots.rightClickRoot(ROOT_1_ID);
-        onView(withText("Paste into folder")).perform(click());
+        bots.roots.rightClickRootAndClickMenuOption(ROOT_1_ID, "Paste into folder");
 
         // Navigate to the root and ensure the file has been copied successfully.
         bots.roots.openRoot(ROOT_1_ID);

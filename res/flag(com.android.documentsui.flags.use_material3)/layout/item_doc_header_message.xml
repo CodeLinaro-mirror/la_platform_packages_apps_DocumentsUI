@@ -63,21 +63,21 @@
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/message_title"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:textSize="16sp"
                         android:textAppearance="@style/DrawerMenuPrimary"/>
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/message_subtitle"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:selectAllOnFocus="true"
                         android:textSize="12sp"/>
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/message_textview"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
