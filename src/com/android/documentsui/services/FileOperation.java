@@ -22,6 +22,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_CO
 import static com.android.documentsui.services.FileOperationService.OPERATION_COPY;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_EXTRACT;
+import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
 
@@ -245,6 +246,47 @@ public abstract class FileOperation implements Parcelable {
                 };
     }
 
+    public static class UnpackOperation extends FileOperation {
+        private UnpackOperation(UrisSupplier srcs, DocumentStack destination) {
+            super(OPERATION_UNPACK, srcs, destination);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+
+            builder.append("UnpackOperation{");
+            super.appendInfoTo(builder);
+            builder.append("}");
+
+            return builder.toString();
+        }
+
+        // TODO: Implement
+        @Override
+        Job createJob(Context service, Job.Listener listener, String id, Features features) {
+            throw new UnsupportedOperationException();
+        }
+
+        private UnpackOperation(Parcel in) {
+            super(in);
+        }
+
+        public static final Parcelable.Creator<UnpackOperation> CREATOR =
+                new Parcelable.Creator<UnpackOperation>() {
+
+                    @Override
+                    public UnpackOperation createFromParcel(Parcel source) {
+                        return new UnpackOperation(source);
+                    }
+
+                    @Override
+                    public UnpackOperation[] newArray(int size) {
+                        return new UnpackOperation[size];
+                    }
+                };
+    }
+
     public static class MoveDeleteOperation extends FileOperation {
         private final @Nullable Uri mSrcParent;
 
@@ -346,6 +388,8 @@ public abstract class FileOperation implements Parcelable {
                 case OPERATION_MOVE:
                 case OPERATION_DELETE:
                     return new MoveDeleteOperation(mOpType, mSrcs, mDestination, mSrcParent);
+                case OPERATION_UNPACK:
+                    return new UnpackOperation(mSrcs, mDestination);
                 default:
                     throw new UnsupportedOperationException("Unsupported op type: " + mOpType);
             }
