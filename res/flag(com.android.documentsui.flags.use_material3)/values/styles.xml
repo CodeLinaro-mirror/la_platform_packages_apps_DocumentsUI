@@ -108,7 +108,7 @@
         <item name="android:textAppearance">@style/MaterialButtonTextAppearance</item>
     </style>
 
-    <style name="MaterialAlertDialogTheme" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+    <style name="MaterialAlertDialogTheme" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/DialogFilledButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/MaterialOutlinedButton</item>
         <item name="buttonBarNeutralButtonStyle">@style/DialogTextButton</item>

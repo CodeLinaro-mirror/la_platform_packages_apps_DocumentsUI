@@ -168,8 +168,8 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text">
+        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
     <style name="MaterialAlertDialogBodyStyle" parent="@style/MaterialAlertDialog.Material3.Body.Text">
