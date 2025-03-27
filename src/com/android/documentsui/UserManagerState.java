@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.UserProperties;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -47,12 +48,12 @@ import androidx.annotation.VisibleForTesting;
 
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.base.Objects;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,26 +64,23 @@ public interface UserManagerState {
 
     /**
      * Returns the {@link UserId} of each profile which should be queried for documents. This will
-     * always
-     * include {@link UserId#CURRENT_USER}.
+     * always include {@link UserId#CURRENT_USER}.
      */
     List<UserId> getUserIds();
 
-    /**
-     * Returns mapping between the {@link UserId} and the label for the profile
-     */
+    /** Returns mapping between the {@link UserId} and the label for the profile */
     Map<UserId, String> getUserIdToLabelMap();
 
     /**
      * Returns mapping between the {@link UserId} and the drawable badge for the profile
      *
-     * returns {@code null} for non-profile userId
+     * <p>returns {@code null} for non-profile userId
      */
     Map<UserId, Drawable> getUserIdToBadgeMap();
 
     /**
-     * Returns a map of {@link UserId} to boolean value indicating whether
-     * the {@link UserId}.CURRENT_USER can forward {@link Intent} to that {@link UserId}
+     * Returns a map of {@link UserId} to boolean value indicating whether the {@link
+     * UserId}.CURRENT_USER can forward {@link Intent} to that {@link UserId}
      */
     Map<UserId, Boolean> getCanForwardToProfileIdMap(Intent intent);
 
@@ -92,31 +90,24 @@ public interface UserManagerState {
      *
      * @param userId {@link UserId} for the profile for which the availability status changed
      * @param action {@link Intent}.ACTION_PROFILE_UNAVAILABLE and {@link
-     *               Intent}.ACTION_PROFILE_AVAILABLE, {@link Intent}.ACTION_PROFILE_ADDED} and
-     *               {@link
-     *               Intent}.ACTION_PROFILE_REMOVED}
+     *     Intent}.ACTION_PROFILE_AVAILABLE, {@link Intent}.ACTION_PROFILE_ADDED} and {@link
+     *     Intent}.ACTION_PROFILE_REMOVED}
      */
     void onProfileActionStatusChange(String action, UserId userId);
 
-    /**
-     * Sets the intent that triggered the launch of the DocsUI
-     */
+    /** Sets the intent that triggered the launch of the DocsUI */
     void setCurrentStateIntent(Intent intent);
 
     /** Returns true if there are hidden profiles */
     boolean areHiddenInQuietModeProfilesPresent();
 
-    /**
-     * Creates an implementation of {@link UserManagerState}.
-     */
+    /** Creates an implementation of {@link UserManagerState}. */
     // TODO: b/314746383 Make this class a singleton
     static UserManagerState create(Context context) {
         return new RuntimeUserManagerState(context);
     }
 
-    /**
-     * Implementation of {@link UserManagerState}
-     */
+    /** Implementation of {@link UserManagerState} */
     final class RuntimeUserManagerState implements UserManagerState {
 
         private static final String TAG = "UserManagerState";
@@ -125,58 +116,63 @@ public interface UserManagerState {
         private final boolean mIsDeviceSupported;
         private final UserManager mUserManager;
         private final ConfigStore mConfigStore;
+
         /**
          * List of all the {@link UserId} that have the {@link UserProperties.ShowInSharingSurfaces}
          * set as `SHOW_IN_SHARING_SURFACES_SEPARATE` OR it is a system/personal user
          */
         @GuardedBy("mUserIds")
         private final List<UserId> mUserIds = new ArrayList<>();
-        /**
-         * Mapping between the {@link UserId} to the corresponding profile label
-         */
+
+        /** Mapping between the {@link UserId} to the corresponding profile label */
         @GuardedBy("mUserIdToLabelMap")
         private final Map<UserId, String> mUserIdToLabelMap = new HashMap<>();
-        /**
-         * Mapping between the {@link UserId} to the corresponding profile badge
-         */
+
+        /** Mapping between the {@link UserId} to the corresponding profile badge */
         @GuardedBy("mUserIdToBadgeMap")
         private final Map<UserId, Drawable> mUserIdToBadgeMap = new HashMap<>();
+
         /**
          * Map containing {@link UserId}, other than that of the current user, as key and boolean
          * denoting whether it is accessible by the current user or not as value
          */
-        @GuardedBy("mCanFrowardToProfileIdMap")
-        private final Map<UserId, Boolean> mCanFrowardToProfileIdMap = new HashMap<>();
+        @GuardedBy("mCanForwardToProfileIdMap")
+        private final Map<UserId, Boolean> mCanForwardToProfileIdMap = new HashMap<>();
 
         private Intent mCurrentStateIntent;
 
-        private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                synchronized (mUserIds) {
-                    mUserIds.clear();
-                }
-                synchronized (mUserIdToLabelMap) {
-                    mUserIdToLabelMap.clear();
-                }
-                synchronized (mUserIdToBadgeMap) {
-                    mUserIdToBadgeMap.clear();
-                }
-                synchronized (mCanFrowardToProfileIdMap) {
-                    mCanFrowardToProfileIdMap.clear();
-                }
-            }
-        };
-
+        private final BroadcastReceiver mIntentReceiver =
+                new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        synchronized (mUserIds) {
+                            mUserIds.clear();
+                        }
+                        synchronized (mUserIdToLabelMap) {
+                            mUserIdToLabelMap.clear();
+                        }
+                        synchronized (mUserIdToBadgeMap) {
+                            mUserIdToBadgeMap.clear();
+                        }
+                        synchronized (mCanForwardToProfileIdMap) {
+                            mCanForwardToProfileIdMap.clear();
+                        }
+                    }
+                };
 
         private RuntimeUserManagerState(Context context) {
-            this(context, UserId.CURRENT_USER,
+            this(
+                    context,
+                    UserId.CURRENT_USER,
                     Features.CROSS_PROFILE_TABS && isDeviceSupported(context),
                     DocumentsApplication.getConfigStore());
         }
 
         @VisibleForTesting
-        RuntimeUserManagerState(Context context, UserId currentUser, boolean isDeviceSupported,
+        RuntimeUserManagerState(
+                Context context,
+                UserId currentUser,
+                boolean isDeviceSupported,
                 ConfigStore configStore) {
             mContext = context.getApplicationContext();
             mCurrentUser = checkNotNull(currentUser);
@@ -226,11 +222,11 @@ public interface UserManagerState {
 
         @Override
         public Map<UserId, Boolean> getCanForwardToProfileIdMap(Intent intent) {
-            synchronized (mCanFrowardToProfileIdMap) {
-                if (mCanFrowardToProfileIdMap.isEmpty()) {
+            synchronized (mCanForwardToProfileIdMap) {
+                if (mCanForwardToProfileIdMap.isEmpty()) {
                     getCanForwardToProfileIdMapInternal(intent);
                 }
-                return mCanFrowardToProfileIdMap;
+                return mCanForwardToProfileIdMap;
             }
         }
 
@@ -238,8 +234,8 @@ public interface UserManagerState {
         @SuppressLint("NewApi")
         public void onProfileActionStatusChange(String action, UserId userId) {
             if (!SdkLevel.isAtLeastV()) return;
-            UserProperties userProperties = mUserManager.getUserProperties(
-                    UserHandle.of(userId.getIdentifier()));
+            UserProperties userProperties =
+                    mUserManager.getUserProperties(UserHandle.of(userId.getIdentifier()));
             if (userProperties.getShowInQuietMode() != UserProperties.SHOW_IN_QUIET_MODE_HIDDEN) {
                 return;
             }
@@ -265,19 +261,37 @@ public interface UserManagerState {
                         mUserIdToBadgeMap.put(userId, getProfileBadge(userId));
                     }
                 }
-                synchronized (mCanFrowardToProfileIdMap) {
-                    if (!mCanFrowardToProfileIdMap.containsKey(userId)) {
-                        if (userId.getIdentifier() == ActivityManager.getCurrentUser()
-                                || isCrossProfileContentSharingStrategyDelegatedFromParent(
-                                UserHandle.of(userId.getIdentifier()))
-                                || CrossProfileUtils.getCrossProfileResolveInfo(mCurrentUser,
-                                mContext.getPackageManager(), mCurrentStateIntent, mContext,
-                                mConfigStore.isPrivateSpaceInDocsUIEnabled()) != null) {
-                            mCanFrowardToProfileIdMap.put(userId, true);
-                        } else {
-                            mCanFrowardToProfileIdMap.put(userId, false);
-                        }
+                synchronized (mCanForwardToProfileIdMap) {
+                    if (!mCanForwardToProfileIdMap.containsKey(userId)) {
 
+                        UserHandle handle = UserHandle.of(userId.getIdentifier());
+
+                        // Decide if to use the parent's access, or this handle's access.
+                        if (isCrossProfileContentSharingStrategyDelegatedFromParent(handle)) {
+                            UserHandle parentHandle = mUserManager.getProfileParent(handle);
+                            // Couldn't resolve parent to check access, so fail closed.
+                            if (parentHandle == null) {
+                                mCanForwardToProfileIdMap.put(userId, false);
+                            } else if (mCurrentUser.getIdentifier()
+                                    == parentHandle.getIdentifier()) {
+                                // Check if the parent is the current user, if so this profile
+                                // is also accessible.
+                                mCanForwardToProfileIdMap.put(userId, true);
+
+                            } else {
+                                UserId parent = UserId.of(parentHandle);
+                                mCanForwardToProfileIdMap.put(
+                                        userId,
+                                        doesCrossProfileForwardingActivityExistForUser(
+                                                mCurrentStateIntent, parent));
+                            }
+                        } else {
+                            // Update the profile map for this profile.
+                            mCanForwardToProfileIdMap.put(
+                                    userId,
+                                    doesCrossProfileForwardingActivityExistForUser(
+                                            mCurrentStateIntent, userId));
+                        }
                     }
                 }
             } else {
@@ -298,8 +312,8 @@ public interface UserManagerState {
 
             for (UserId userId : getUserIds()) {
                 if (mUserManager
-                        .getUserProperties(UserHandle.of(userId.getIdentifier()))
-                        .getShowInQuietMode()
+                                .getUserProperties(UserHandle.of(userId.getIdentifier()))
+                                .getShowInQuietMode()
                         == UserProperties.SHOW_IN_QUIET_MODE_HIDDEN) {
                     return true;
                 }
@@ -345,7 +359,7 @@ public interface UserManagerState {
                     // returned should satisfy both the following conditions:
                     // 1. It has user property SHOW_IN_SHARING_SURFACES_SEPARATE
                     // 2. Quite mode is not enabled, if it is enabled then the profile's user
-                    //    property is not SHOW_IN_QUIET_MODE_HIDDEN
+                    // property is not SHOW_IN_QUIET_MODE_HIDDEN
                     if (isProfileAllowed(userHandle)) {
                         result.add(UserId.of(userHandle));
                     }
@@ -362,15 +376,17 @@ public interface UserManagerState {
          * @param userHandle The ID of the user.
          * @return {@code true} if the package is installed for the user, {@code false} otherwise.
          */
-        @RequiresPermission(anyOf = {
-                "android.permission.MANAGE_USERS",
-                "android.permission.INTERACT_ACROSS_USERS"
-        })
+        @RequiresPermission(
+                anyOf = {
+                    "android.permission.MANAGE_USERS",
+                    "android.permission.INTERACT_ACROSS_USERS"
+                })
         private boolean isPackageInstalledForUser(UserHandle userHandle) {
             String packageName = mContext.getPackageName();
             try {
-                Context userPackageContext = mContext.createPackageContextAsUser(
-                        mContext.getPackageName(), 0 /* flags */, userHandle);
+                Context userPackageContext =
+                        mContext.createPackageContextAsUser(
+                                mContext.getPackageName(), 0 /* flags */, userHandle);
                 return userPackageContext != null;
             } catch (PackageManager.NameNotFoundException e) {
                 Log.w(TAG, "Package " + packageName + " not found for user " + userHandle);
@@ -396,17 +412,22 @@ public interface UserManagerState {
          * @return {@code true} if the profile should be allowed, {@code false} otherwise.
          */
         @SuppressLint("NewApi")
-        @RequiresPermission(anyOf = {
-                "android.permission.MANAGE_USERS",
-                "android.permission.INTERACT_ACROSS_USERS"
-        })
+        @RequiresPermission(
+                anyOf = {
+                    "android.permission.MANAGE_USERS",
+                    "android.permission.INTERACT_ACROSS_USERS"
+                })
         private boolean isProfileAllowed(UserHandle userHandle) {
             final UserProperties userProperties = mUserManager.getUserProperties(userHandle);
 
             // 1. Check if the package is installed for the user
             if (!isPackageInstalledForUser(userHandle)) {
-                Log.w(TAG, "Package " + mContext.getPackageName()
-                        + " is not installed for user " + userHandle);
+                Log.w(
+                        TAG,
+                        "Package "
+                                + mContext.getPackageName()
+                                + " is not installed for user "
+                                + userHandle);
                 return false;
             }
 
@@ -415,8 +436,9 @@ public interface UserManagerState {
                     == UserProperties.SHOW_IN_SHARING_SURFACES_SEPARATE) {
                 // Return true if profile is not in quiet mode or if it is in quiet mode
                 // then its user properties do not require it to be hidden
-                return !isQuietModeEnabledForUser(userHandle) || userProperties.getShowInQuietMode()
-                        != UserProperties.SHOW_IN_QUIET_MODE_HIDDEN;
+                return !isQuietModeEnabledForUser(userHandle)
+                        || userProperties.getShowInQuietMode()
+                                != UserProperties.SHOW_IN_QUIET_MODE_HIDDEN;
             }
 
             return false;
@@ -439,9 +461,12 @@ public interface UserManagerState {
                 result.add(0, systemUser);
             } else {
                 if (DEBUG) {
-                    Log.w(TAG, "The current user " + UserId.CURRENT_USER
-                            + " is neither system nor managed user. has system user: "
-                            + (systemUser != null));
+                    Log.w(
+                            TAG,
+                            "The current user "
+                                    + UserId.CURRENT_USER
+                                    + " is neither system nor managed user. has system user: "
+                                    + (systemUser != null));
                 }
             }
         }
@@ -477,13 +502,13 @@ public interface UserManagerState {
             for (UserId userId : userIds) {
                 if (mUserManager.isManagedProfile(userId.getIdentifier())) {
                     synchronized (mUserIdToLabelMap) {
-                        mUserIdToLabelMap.put(userId,
-                                getEnterpriseString(WORK_TAB, R.string.work_tab));
+                        mUserIdToLabelMap.put(
+                                userId, getEnterpriseString(WORK_TAB, R.string.work_tab));
                     }
                 } else {
                     synchronized (mUserIdToLabelMap) {
-                        mUserIdToLabelMap.put(userId,
-                                getEnterpriseString(PERSONAL_TAB, R.string.personal_tab));
+                        mUserIdToLabelMap.put(
+                                userId, getEnterpriseString(PERSONAL_TAB, R.string.personal_tab));
                     }
                 }
             }
@@ -495,8 +520,9 @@ public interface UserManagerState {
                 return getEnterpriseString(PERSONAL_TAB, R.string.personal_tab);
             }
             try {
-                Context userContext = mContext.createContextAsUser(
-                        UserHandle.of(userId.getIdentifier()), 0 /* flags */);
+                Context userContext =
+                        mContext.createContextAsUser(
+                                UserHandle.of(userId.getIdentifier()), 0 /* flags */);
                 UserManager userManagerAsUser = userContext.getSystemService(UserManager.class);
                 if (userManagerAsUser == null) {
                     Log.e(TAG, "cannot obtain user manager");
@@ -524,9 +550,8 @@ public interface UserManagerState {
                 Log.e(TAG, "can not get device policy manager");
                 return mContext.getString(defaultStringId);
             }
-            return dpm.getResources().getString(
-                    updatableStringId,
-                    () -> mContext.getString(defaultStringId));
+            return dpm.getResources()
+                    .getString(updatableStringId, () -> mContext.getString(defaultStringId));
         }
 
         private void getUserIdToBadgeMapInternal() {
@@ -561,8 +586,10 @@ public interface UserManagerState {
             for (UserId userId : userIds) {
                 if (mUserManager.isManagedProfile(userId.getIdentifier())) {
                     synchronized (mUserIdToBadgeMap) {
-                        mUserIdToBadgeMap.put(userId,
-                                SdkLevel.isAtLeastT() ? getWorkProfileBadge()
+                        mUserIdToBadgeMap.put(
+                                userId,
+                                SdkLevel.isAtLeastT()
+                                        ? getWorkProfileBadge()
                                         : mContext.getDrawable(R.drawable.ic_briefcase));
                     }
                 }
@@ -575,8 +602,9 @@ public interface UserManagerState {
                 return null;
             }
             try {
-                Context userContext = mContext.createContextAsUser(
-                        UserHandle.of(userId.getIdentifier()), 0 /* flags */);
+                Context userContext =
+                        mContext.createContextAsUser(
+                                UserHandle.of(userId.getIdentifier()), 0 /* flags */);
                 UserManager userManagerAsUser = userContext.getSystemService(UserManager.class);
                 if (userManagerAsUser == null) {
                     Log.e(TAG, "cannot obtain user manager");
@@ -592,86 +620,142 @@ public interface UserManagerState {
         @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         private Drawable getWorkProfileBadge() {
             DevicePolicyManager dpm = mContext.getSystemService(DevicePolicyManager.class);
-            Drawable drawable = dpm.getResources().getDrawable(WORK_PROFILE_ICON, SOLID_COLORED,
-                    () ->
-                            mContext.getDrawable(R.drawable.ic_briefcase));
+            Drawable drawable =
+                    dpm.getResources()
+                            .getDrawable(
+                                    WORK_PROFILE_ICON,
+                                    SOLID_COLORED,
+                                    () -> mContext.getDrawable(R.drawable.ic_briefcase));
             return drawable;
         }
 
+        /**
+         * Updates Cross Profile access for all UserProfiles in {@code getUserIds()}
+         *
+         * <p>This method looks at a variety of situations for each Profile and decides if the
+         * profile's content is accessible by the current process owner user id.
+         *
+         * <ol>
+         *   <li>UserProperties attributes for CrossProfileDelegation are checked first. When the
+         *       profile delegates to the parent profile, the parent's access is used.
+         *   <li>{@link CrossProfileIntentForwardingActivity}s are resolved via the process owner's
+         *       PackageManager, and are considered when evaluating cross profile to the target
+         *       profile.
+         * </ol>
+         *
+         * <p>In the event none of the above checks succeeds, the profile is considered to be
+         * inaccessible to the current process user.
+         *
+         * @param intent The intent Photopicker is currently running under, for
+         *     CrossProfileForwardActivity checking.
+         */
         private void getCanForwardToProfileIdMapInternal(Intent intent) {
-            // Versions less than V will not have the user properties required to determine whether
-            // cross profile check is delegated from parent or not
-            if (!SdkLevel.isAtLeastV()) {
-                getCanForwardToProfileIdMapPreV(intent);
-                return;
-            }
-            if (mUserManager == null) {
-                Log.e(TAG, "can not get user manager");
-                return;
+
+            Map<UserId, Boolean> profileIsAccessibleToProcessOwner = new HashMap<>();
+
+            List<UserId> delegatedFromParent = new ArrayList<>();
+
+            for (UserId userId : getUserIds()) {
+
+                // Early exit, self is always accessible.
+                if (userId.getIdentifier() == mCurrentUser.getIdentifier()) {
+                    profileIsAccessibleToProcessOwner.put(userId, true);
+                    continue;
+                }
+
+                // CrossProfileContentSharingStrategyDelegatedFromParent is only V+ sdks.
+                if (SdkLevel.isAtLeastV()
+                        && isCrossProfileContentSharingStrategyDelegatedFromParent(
+                                UserHandle.of(userId.getIdentifier()))) {
+                    delegatedFromParent.add(userId);
+                    continue;
+                }
+
+                // Check for cross profile & add to the map.
+                profileIsAccessibleToProcessOwner.put(
+                        userId, doesCrossProfileForwardingActivityExistForUser(intent, userId));
             }
 
-            List<UserId> parentOrDelegatedFromParent = new ArrayList<>();
-            List<UserId> canForwardToProfileIds = new ArrayList<>();
-            List<UserId> noDelegation = new ArrayList<>();
+            // For profiles that delegate their access to the parent, set the access for
+            // those profiles
+            // equal to the same as their parent.
+            for (UserId userId : delegatedFromParent) {
+                UserHandle parent =
+                        mUserManager.getProfileParent(UserHandle.of(userId.getIdentifier()));
+                profileIsAccessibleToProcessOwner.put(
+                        userId,
+                        profileIsAccessibleToProcessOwner.getOrDefault(
+                                UserId.of(parent), /* default= */ false));
+            }
 
-            List<UserId> userIds = getUserIds();
-            for (UserId userId : userIds) {
-                final UserHandle userHandle = UserHandle.of(userId.getIdentifier());
-                // Parent (personal) profile and all the child profiles that delegate cross profile
-                // content sharing check to parent can share among each other
-                if (userId.getIdentifier() == ActivityManager.getCurrentUser()
-                        || isCrossProfileContentSharingStrategyDelegatedFromParent(userHandle)) {
-                    parentOrDelegatedFromParent.add(userId);
-                } else {
-                    noDelegation.add(userId);
+            synchronized (mCanForwardToProfileIdMap) {
+                mCanForwardToProfileIdMap.clear();
+                for (Map.Entry<UserId, Boolean> entry :
+                        profileIsAccessibleToProcessOwner.entrySet()) {
+                    mCanForwardToProfileIdMap.put(entry.getKey(), entry.getValue());
                 }
             }
+        }
 
-            if (noDelegation.size() > 1) {
-                Log.e(TAG, "There cannot be more than one profile delegating cross profile "
-                        + "content sharing check from self.");
-            }
+        /**
+         * Looks for a matching CrossProfileIntentForwardingActivity in the targetUserId for the
+         * given intent.
+         *
+         * @param intent The intent the forwarding activity needs to match.
+         * @param targetUserId The target user to check for.
+         * @return whether a CrossProfileIntentForwardingActivity could be found for the given
+         *     intent, and user.
+         */
+        private boolean doesCrossProfileForwardingActivityExistForUser(
+                Intent intent, UserId targetUserId) {
 
-            /*
-             * Cross profile resolve info need to be checked in the following 2 cases:
-             * 1. current user is either parent or delegates check to parent and the target user
-             *    does not delegate to parent
-             * 2. current user does not delegate check to the parent and the target user is the
-             *    parent profile
-             */
-            UserId needToCheck = null;
-            if (parentOrDelegatedFromParent.contains(mCurrentUser)
-                    && !noDelegation.isEmpty()) {
-                needToCheck = noDelegation.get(0);
-            } else if (mCurrentUser.getIdentifier() != ActivityManager.getCurrentUser()) {
-                final UserHandle parentProfile = mUserManager.getProfileParent(
-                        UserHandle.of(mCurrentUser.getIdentifier()));
-                needToCheck = UserId.of(parentProfile);
-            }
+            final PackageManager pm = mContext.getPackageManager();
+            final Intent intentToCheck = (Intent) intent.clone();
+            intentToCheck.setComponent(null);
+            intentToCheck.setPackage(null);
 
-            if (needToCheck != null && CrossProfileUtils.getCrossProfileResolveInfo(mCurrentUser,
-                    mContext.getPackageManager(), intent, mContext,
-                    mConfigStore.isPrivateSpaceInDocsUIEnabled()) != null) {
-                if (parentOrDelegatedFromParent.contains(needToCheck)) {
-                    canForwardToProfileIds.addAll(parentOrDelegatedFromParent);
-                } else {
-                    canForwardToProfileIds.add(needToCheck);
-                }
-            }
+            for (ResolveInfo resolveInfo :
+                    pm.queryIntentActivities(intentToCheck, PackageManager.MATCH_DEFAULT_ONLY)) {
 
-            if (parentOrDelegatedFromParent.contains(mCurrentUser)) {
-                canForwardToProfileIds.addAll(parentOrDelegatedFromParent);
-            }
+                if (resolveInfo.isCrossProfileIntentForwarderActivity()) {
+                    /*
+                     * IMPORTANT: This is a reflection based hack to ensure the profile is
+                     * actually the installer of the CrossProfileIntentForwardingActivity.
+                     *
+                     * ResolveInfo.targetUserId exists, but is a hidden API not available to
+                     * mainline modules, and no such API exists, so it is accessed via
+                     * reflection below. All exceptions are caught to protect against
+                     * reflection related issues such as:
+                     * NoSuchFieldException / IllegalAccessException / SecurityException.
+                     *
+                     * In the event of an exception, the code fails "closed" for the current
+                     * profile to avoid showing content that should not be visible.
+                     */
+                    try {
+                        Field targetUserIdField =
+                                resolveInfo.getClass().getDeclaredField("targetUserId");
+                        targetUserIdField.setAccessible(true);
+                        int activityTargetUserId = (int) targetUserIdField.get(resolveInfo);
 
-            for (UserId userId : userIds) {
-                synchronized (mCanFrowardToProfileIdMap) {
-                    if (userId.equals(mCurrentUser)) {
-                        mCanFrowardToProfileIdMap.put(userId, true);
-                        continue;
+                        if (activityTargetUserId == targetUserId.getIdentifier()) {
+
+                            // Found a match for this profile
+                            return true;
+                        }
+
+                    } catch (NoSuchFieldException | IllegalAccessException | SecurityException ex) {
+                        // Couldn't check the targetUserId via reflection, so fail without
+                        // further iterations.
+                        Log.e(TAG, "Could not access targetUserId via reflection.", ex);
+                        return false;
+                    } catch (Exception ex) {
+                        Log.e(TAG, "Exception occurred during cross profile checks", ex);
                     }
-                    mCanFrowardToProfileIdMap.put(userId, canForwardToProfileIds.contains(userId));
                 }
             }
+
+            // No match found, so return false.
+            return false;
         }
 
         @SuppressLint("NewApi")
@@ -691,30 +775,12 @@ public interface UserManagerState {
                     == UserProperties.CROSS_PROFILE_CONTENT_SHARING_DELEGATE_FROM_PARENT;
         }
 
-        private void getCanForwardToProfileIdMapPreV(Intent intent) {
-            // There only two profiles pre V
-            List<UserId> userIds = getUserIds();
-            for (UserId userId : userIds) {
-                synchronized (mCanFrowardToProfileIdMap) {
-                    if (mCurrentUser.equals(userId)) {
-                        mCanFrowardToProfileIdMap.put(userId, true);
-                    } else {
-                        mCanFrowardToProfileIdMap.put(userId,
-                                CrossProfileUtils.getCrossProfileResolveInfo(
-                                        mCurrentUser, mContext.getPackageManager(), intent,
-                                        mContext, mConfigStore.isPrivateSpaceInDocsUIEnabled())
-                                        != null);
-                    }
-                }
-            }
-        }
-
         private static boolean isDeviceSupported(Context context) {
-            // The feature requires Android R DocumentsContract APIs and INTERACT_ACROSS_USERS_FULL
-            // permission.
+            // The feature requires Android R DocumentsContract APIs and
+            // INTERACT_ACROSS_USERS_FULL permission.
             return VersionUtils.isAtLeastR()
                     && context.checkSelfPermission(Manifest.permission.INTERACT_ACROSS_USERS)
-                    == PackageManager.PERMISSION_GRANTED;
+                            == PackageManager.PERMISSION_GRANTED;
         }
     }
 }

@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<!-- Dimensions/sizes for size Compact (<=600dp). -->
+<!-- Dimensions/sizes for size Compact (<600dp). -->
 <resources>
     <!-- Material design rounded radius -->
     <dimen name="material_round_radius">2dp</dimen>
@@ -23,25 +23,21 @@
     <dimen name="profile_tab_padding">0dp</dimen>
     <dimen name="grid_container_padding">20dp</dimen>
     <dimen name="list_container_padding">@dimen/space_extra_small_4</dimen>
-    <!-- For compact screen, file area occupies the whole screen height, in M3 we show breadcrumb
-         at the bottom, so we need to add padding (breadcrumb height) at the bottom to make sure
-         breadcrumb won't over-shadow the file area. -->
-    <dimen name="file_area_padding_bottom">48dp</dimen>
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
-    <!-- TODO(b/379776735): remove this block after M3 uplift -->
+    <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="root_icon_margin">0dp</dimen>
     <dimen name="root_spacer_padding">0dp</dimen>
     <!-- block end -->
     <dimen name="root_action_icon_size">24dp</dimen>
-    <!-- TODO(b/379776735): remove this after M3 uplift -->
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="root_icon_disabled_alpha">?android:attr/disabledAlpha</dimen>
     <dimen name="check_icon_size">20dp</dimen>
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
-    <!-- TODO(b/379776735): remove this after M3 uplift -->
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="progress_bar_height">4dp</dimen>
     <fraction name="grid_scale_min">85%</fraction>
     <fraction name="grid_scale_max">200%</fraction>
@@ -56,7 +52,7 @@
     <dimen name="list_item_padding_vertical">4dp</dimen>
     <dimen name="list_item_icon_margin_end">16dp</dimen>
     <dimen name="list_item_icon_size">32dp</dimen>
-    <!-- TODO(b/379776735): remove this block after M3 uplift -->
+    <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="list_item_width">72dp</dimen>
     <dimen name="list_item_padding">16dp</dimen>
     <dimen name="list_item_icon_padding">16dp</dimen>
@@ -66,6 +62,23 @@
     <dimen name="breadcrumb_item_height">36dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
+    <dimen name="grid_item_width">150dp</dimen>
+    <dimen name="grid_item_height">132dp</dimen>
+    <dimen name="grid_item_padding_start">@dimen/space_extra_small_2</dimen>
+    <dimen name="grid_item_padding_end">@dimen/space_extra_small_2</dimen>
+    <dimen name="grid_item_padding_top">@dimen/space_extra_small_2</dimen>
+    <dimen name="grid_item_thumbnail_width">80dp</dimen>
+    <dimen name="grid_item_thumbnail_height">80dp</dimen>
+    <dimen name="grid_item_thumbnail_radius">12dp</dimen>
+    <dimen name="grid_item_icon_width">64dp</dimen>
+    <dimen name="grid_item_icon_height">64dp</dimen>
+    <dimen name="grid_item_layout_margin">@dimen/space_small_1</dimen>
+    <dimen name="grid_item_nameplate_width">142dp</dimen>
+    <dimen name="grid_item_nameplate_height">44dp</dimen>
+    <dimen name="grid_item_nameplate_padding">4dp</dimen>
+    <dimen name="grid_item_nameplate_marginTop">@dimen/space_extra_small_2</dimen>
+    <dimen name="grid_item_nameplate_radius">8dp</dimen>
+    <dimen name="grid_item_nameplate_inner_radius">4dp</dimen>
     <dimen name="grid_item_elevation">2dp</dimen>
     <dimen name="grid_item_radius">12dp</dimen>
     <dimen name="max_drawer_width">280dp</dimen>
@@ -73,6 +86,11 @@
     <dimen name="briefcase_icon_size">14dp</dimen>
     <dimen name="briefcase_icon_size_photo">24dp</dimen>
     <dimen name="button_corner_radius">2dp</dimen>
+
+    <!-- list_container_padding + list_item_padding_start -->
+    <dimen name="table_header_padding_start">24dp</dimen>
+    <!-- list_container_padding + list_item_padding_end -->
+    <dimen name="table_header_padding_end">16dp</dimen>
 
     <dimen name="bottom_sheet_dialog_radius">28dp</dimen>
 
@@ -99,7 +117,7 @@
     <dimen name="drag_shadow_padding">8dp</dimen>
 
     <dimen name="doc_header_sort_icon_size">32dp</dimen>
-    <dimen name="doc_header_height">60dp</dimen>
+    <dimen name="doc_header_height">48dp</dimen>
 
     <dimen name="dropdown_sort_widget_margin">12dp</dimen>
     <dimen name="dropdown_sort_widget_size">54dp</dimen>
@@ -125,7 +143,7 @@
     <dimen name="root_info_header_height">60dp</dimen>
     <dimen name="root_info_header_horizontal_padding">24dp</dimen>
 
-    <!-- TODO(b/379776735): remove this block after M3 uplift -->
+    <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="search_chip_group_margin">20dp</dimen>
     <dimen name="search_chip_spacing">8dp</dimen>
     <dimen name="search_chip_half_spacing">4dp</dimen>
@@ -189,6 +207,7 @@
     <dimen name="cross_profile_button_message_margin_top">4dp</dimen>
 
     <dimen name="focus_ring_width">3dp</dimen>
+    <!-- 3dp focus ring width + 2dp gap between the ring and the content -->
     <dimen name="focus_ring_gap">5dp</dimen>
     <dimen name="hover_overlay_alpha">0.08</dimen>
     <dimen name="ripple_overlay_alpha">0.10</dimen>

@@ -16,7 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -45,7 +45,7 @@ public class DocumentsSwipeRefreshLayout extends SwipeRefreshLayout {
     public DocumentsSwipeRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             TypedValue spinnerColor = new TypedValue();
             context.getTheme()
                     .resolveAttribute(

@@ -26,5 +26,10 @@
     <dimen name="toolbar_padding_start">@dimen/main_container_padding_start</dimen>
 
     <dimen name="list_container_padding">@dimen/space_extra_small_6</dimen>
+
+    <!-- list_container_padding + list_item_padding_start -->
+    <dimen name="table_header_padding_start">28dp</dimen>
+    <!-- list_container_padding + list_item_padding_end -->
+    <dimen name="table_header_padding_end">20dp</dimen>
 </resources>
 

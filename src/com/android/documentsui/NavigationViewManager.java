@@ -17,7 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -27,10 +27,10 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
@@ -144,7 +144,13 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         mState = state;
         mEnv = env;
         mBreadcrumb = breadcrumb;
-        mBreadcrumb.setup(env, state, this::onNavigationItemSelected);
+        mBreadcrumb.setup(
+                env,
+                state,
+                this::onNavigationItemSelected,
+                isUseMaterial3FlagEnabled()
+                        ? activity.findViewById(R.id.breadcrumb_top_divider)
+                        : null);
         mConfigStore = configStore;
         mInjector = injector;
         mProfileTabs =
@@ -157,7 +163,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
                         onNavigationIconClicked();
                     }
                 });
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mToolbar.setOnMenuItemClickListener(
                     new Toolbar.OnMenuItemClickListener() {
                         @Override
@@ -261,7 +267,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     private void onNavigationIconClicked() {
-        if (useMaterial3() && inSelectionMode()) {
+        if (isUseMaterial3FlagEnabled() && inSelectionMode()) {
             closeSelectionBar();
         } else if (mDrawer.isPresent()) {
             mDrawer.setOpen(true);
@@ -297,7 +303,10 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     public void update() {
-        updateScrollFlag();
+        // If use_material3 flag is ON, we don't want any scroll behavior, thus skipping this logic.
+        if (!isUseMaterial3FlagEnabled()) {
+            updateScrollFlag();
+        }
         updateToolbar();
         mProfileTabs.updateView();
 
@@ -311,7 +320,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         mDrawer.setTitle(mEnv.getDrawerTitle());
 
         boolean showBurgerMenuOnToolbar = true;
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             View navRailRoots = mActivity.findViewById(R.id.nav_rail_container_roots);
             if (navRailRoots != null) {
                 // If nav rail exists, burger menu will show on the nav rail instead.
@@ -322,6 +331,9 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         if (showBurgerMenuOnToolbar) {
             mToolbar.setNavigationIcon(getActionBarIcon());
             mToolbar.setNavigationContentDescription(R.string.drawer_open);
+        } else {
+            mToolbar.setNavigationIcon(null);
+            mToolbar.setNavigationContentDescription(null);
         }
 
         if (shouldShowSearchBar()) {
@@ -333,7 +345,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
 
         mSearchBarView.setVisibility(View.GONE);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             updateActionMenu();
             if (inSelectionMode()) {
                 final int quantity = mInjector.selectionMgr.getSelection().size();
@@ -464,8 +476,11 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         }
 
         if (!mIsActionModeActivated) {
-            FrameLayout.LayoutParams headerLayoutParams =
-                    (FrameLayout.LayoutParams) mHeader.getLayoutParams();
+            // This could be either FrameLayout.LayoutParams (when use_material3 flag is OFF) or
+            // LinearLayout.LayoutParams (when use_material3 flag is ON), so use the common parent
+            // class instead to make it work for both scenarios.
+            ViewGroup.MarginLayoutParams headerLayoutParams =
+                    (ViewGroup.MarginLayoutParams) mHeader.getLayoutParams();
             headerLayoutParams.setMargins(0, /* top= */ headerTopOffset, 0, 0);
             mHeader.setLayoutParams(headerLayoutParams);
         }
@@ -495,7 +510,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     interface Breadcrumb {
-        void setup(Environment env, State state, IntConsumer listener);
+        void setup(Environment env, State state, IntConsumer listener, @Nullable View topDivider);
 
         void show(boolean visibility);
 

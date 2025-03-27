@@ -74,14 +74,11 @@
         <item name="android:background">@drawable/bottom_sheet_dialog_background</item>
     </style>
 
-    <style name="OverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:tint">?android:colorControlNormal</item>
+    <style name="OverflowButtonStyle" parent="@style/Widget.Material3.Search.ActionButton.Overflow">
         <item name="android:minWidth">@dimen/button_touch_size</item>
     </style>
 
-    <style name="OverflowMenuStyle" parent="@style/Widget.AppCompat.PopupMenu.Overflow">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel</item>
-        <item name="android:dropDownWidth">wrap_content</item>
+    <style name="OverflowMenuStyle" parent="@style/Widget.Material3.PopupMenu.Overflow">
         <item name="android:overlapAnchor">false</item>
     </style>
 
