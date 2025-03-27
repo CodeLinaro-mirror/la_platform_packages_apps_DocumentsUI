@@ -24,6 +24,7 @@ import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
@@ -175,11 +176,22 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     }
 
     private AppsRowManager getAppsRowManager() {
+        boolean shouldShowByDefault =
+                !isUseMaterial3FlagEnabled()
+                        || !getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC);
         return mConfigStore.isPrivateSpaceInDocsUIEnabled()
-                ? new AppsRowManager(mInjector.actions, mState.supportsCrossProfile(),
-                mUserManagerState, mConfigStore)
-                : new AppsRowManager(mInjector.actions, mState.supportsCrossProfile(),
-                        mUserIdManager, mConfigStore);
+                ? new AppsRowManager(
+                mInjector.actions,
+                mState.supportsCrossProfile(),
+                mUserManagerState,
+                mConfigStore,
+                shouldShowByDefault)
+                : new AppsRowManager(
+                        mInjector.actions,
+                        mState.supportsCrossProfile(),
+                        mUserIdManager,
+                        mConfigStore,
+                        shouldShowByDefault);
     }
 
     @Override
