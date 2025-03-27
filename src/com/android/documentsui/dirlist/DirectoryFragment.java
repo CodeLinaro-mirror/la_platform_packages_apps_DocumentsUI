@@ -193,6 +193,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private IconHelper mIconHelper;
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecView;
+    private GridEvenSpacingDecoration mGridEvenSpacingDecoration;
     private DocumentsAdapter mAdapter;
     private DocumentClipper mClipper;
     private GridLayoutManager mLayout;
@@ -525,6 +526,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mState = mActivity.getDisplayState();
 
+        if (isUseMaterial3FlagEnabled()) {
+            mGridEvenSpacingDecoration = new GridEvenSpacingDecoration();
+            if (mState.derivedMode == MODE_GRID) {
+                // Ensure items are spaced evenly in the grid layout.
+                mRecView.addItemDecoration(mGridEvenSpacingDecoration);
+            }
+        }
+
         // Read arguments when object created for the first time.
         // Restore state if fragment recreated.
         Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState;
@@ -810,6 +819,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     public void onViewModeChanged() {
+        if (isUseMaterial3FlagEnabled()) {
+            // Only enable the decoration for grid mode.
+            if (mState.derivedMode != MODE_GRID) {
+                mRecView.removeItemDecoration(mGridEvenSpacingDecoration);
+            } else {
+                mRecView.addItemDecoration(mGridEvenSpacingDecoration);
+
+            }
+        }
         // Mode change is just visual change; no need to kick loader.
         mRootView.announceForAccessibility(getString(
                 mState.derivedMode == State.MODE_GRID ? R.string.grid_mode_showing
@@ -867,7 +885,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
         }
 
-        mRecView.requestLayout();
+        if (isUseMaterial3FlagEnabled() && mRecView.getItemDecorationCount() > 0) {
+            // Invalidate item decorations so they are recalculated before layout. This also
+            // calls requestLayout().
+            mRecView.invalidateItemDecorations();
+        } else {
+            mRecView.requestLayout();
+        }
         mIconHelper.setViewMode(mode);
 
         int range = getResources().getDimensionPixelOffset(R.dimen.refresh_icon_range);
