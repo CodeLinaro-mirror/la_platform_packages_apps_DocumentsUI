@@ -30,7 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT
+import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
 import java.util.Optional
 import java.util.regex.Pattern
@@ -79,7 +79,7 @@ class TrampolineActivityTest() {
     }
 
     @RunWith(Parameterized::class)
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT)
+    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class ShouldLaunchCorrectPackageTest {
         enum class AppType {
             PHOTOPICKER,
@@ -203,7 +203,7 @@ class TrampolineActivityTest() {
     }
 
     @RunWith(AndroidJUnit4::class)
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT)
+    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class RedirectTest {
         @get:Rule
         val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()

@@ -19,6 +19,9 @@ package com.android.documentsui.files;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -67,7 +70,6 @@ import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView;
-import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -234,7 +236,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     @Override
     public void springOpenDirectory(DocumentInfo doc) {
         assert (doc.isDirectory());
-        if (Flags.useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mCloseSelectionBar.run();
         } else {
             mActionModeAddons.finishActionMode();
@@ -330,7 +332,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (Flags.useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             mCloseSelectionBar.run();
         } else {
             mActionModeAddons.finishActionMode();
@@ -562,7 +564,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (Flags.desktopFileHandling()) {
+        if (isDesktopFileHandlingFlagEnabled()) {
             Intent intent = buildViewIntent(doc);
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
@@ -613,7 +615,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void showPreview(DocumentInfo doc) {
-        if (Flags.useMaterial3() && Flags.usePeekPreview()) {
+        if (isUseMaterial3FlagEnabled() && isUsePeekPreviewFlagEnabled()) {
             showPeek();
         } else {
             showInspector(doc);

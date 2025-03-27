@@ -17,7 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.Activity;
 import android.util.Log;
@@ -138,7 +138,7 @@ public class ActionModeController extends SelectionObserver<String>
 
         // Re-enable TalkBack for the toolbars, as they are no longer covered by action mode.
         int[] toolbarIds =
-                useMaterial3()
+                isUseMaterial3FlagEnabled()
                         ? new int[] {R.id.toolbar}
                         : new int[] {R.id.toolbar, R.id.roots_toolbar};
         mScope.accessibilityImportanceSetter.setAccessibilityImportance(
@@ -159,7 +159,7 @@ public class ActionModeController extends SelectionObserver<String>
             // Hide the toolbars if action mode is enabled, so TalkBack doesn't navigate to
             // these controls when using linear navigation.
             int[] toolbarIds =
-                    useMaterial3()
+                    isUseMaterial3FlagEnabled()
                             ? new int[] {R.id.toolbar}
                             : new int[] {R.id.toolbar, R.id.roots_toolbar};
             mScope.accessibilityImportanceSetter.setAccessibilityImportance(

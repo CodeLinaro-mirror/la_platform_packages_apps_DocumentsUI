@@ -378,4 +378,6 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"لا يمكنك نقل الملفات من تطبيق آخر."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"يتم العرض في وضع الشبكة."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"يتم العرض في وضع القائمة."</string>
+    <!-- no translation found for bullet (5606740650312122766) -->
+    <skip />
 </resources>
