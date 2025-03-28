@@ -21,6 +21,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -30,7 +31,6 @@ import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -117,10 +117,32 @@ public class UiBot extends Bots.BaseBot {
                 .check(matches(withToolbarTitle(is(expected))));
     }
 
+    /**
+     * Checks that the search bar is visible.
+     */
     public void assertSearchBarShow() {
-        UiSelector selector = new UiSelector().text(mContext.getString(R.string.search_bar_hint));
-        UiObject searchHint = mDevice.findObject(selector);
-        assertTrue(searchHint.exists());
+        onView(withId(R.id.searchbar_title)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Checks that the UI chip that toggles location search menu is visible.
+     */
+    public void assertLocationTriggerShows() {
+        onView(withText(R.string.search_location_this_folder)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Checks that the UI chip that toggles last modified menu is visible.
+     */
+    public void assertLastModifiedTriggerShows() {
+        onView(withText(R.string.search_last_modified_any_time)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Checks that the UI chip that toggles file type menu is visible.
+     */
+    public void assertFileTypeTriggerShows() {
+        onView(withText(R.string.search_file_type_all)).check(matches(isDisplayed()));
     }
 
     public void assertMenuEnabled(int id, boolean enabled) {

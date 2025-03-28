@@ -594,6 +594,36 @@
     <!-- Search hint on search view. [CHAR LIMIT=48] -->
     <string name="search_bar_hint">Search this device</string>
 
+    <!-- Search location selector placeholder for this folder -->
+    <string name="search_location_this_folder">This folder</string>
+
+    <!-- Search location selector placeholder for root folder -->
+    <string name="search_location_root_folder">Root folder</string>
+
+    <!-- Search location selector placeholder for everywhere -->
+    <string name="search_location_everywhere">Everywhere</string>
+
+    <!-- Search last modified time selector any time-->
+    <string name="search_last_modified_any_time">Any time</string>
+
+    <!-- Search last modified time selector for today -->
+    <string name="search_last_modified_1_day">Today</string>
+
+    <!-- Search last modified time selector last two days -->
+    <string name="search_last_modified_2_days">Yesterday</string>
+
+    <!-- Search last modified time selector for last 7 day -->
+    <string name="search_last_modified_7_days">Last week</string>
+
+    <!-- Search last modified time selector for last 30 days -->
+    <string name="search_last_modified_30_days">Last month</string>
+
+    <!-- Search last modified time selector for last 365 days -->
+    <string name="search_last_modified_365_days">Last year</string>
+
+    <!-- Search file type selector for all types -->
+    <string name="search_file_type_all">All types</string>
+
     <!-- Content description for deleting search history. [CHAR_LIMIT=60] -->
     <string name="delete_search_history">Delete search history <xliff:g id="text" example="image">%1$s</xliff:g></string>
 
