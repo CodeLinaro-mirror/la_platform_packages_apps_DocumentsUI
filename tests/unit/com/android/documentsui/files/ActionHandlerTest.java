@@ -16,7 +16,6 @@
 
 package com.android.documentsui.files;
 
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasData;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
@@ -24,6 +23,8 @@ import static com.android.documentsui.testing.IntentAsserts.assertHasExtraIntent
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraList;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraUri;
 import static com.android.documentsui.testing.IntentAsserts.assertTargetsComponent;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -400,12 +401,16 @@ public class ActionHandlerTest {
     }
 
     @Test
-    public void testDocumentPicked_InArchive_Unopenable() throws Exception {
+    public void testDocumentPicked_InArchive_OpenableOrNot() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.HOME;
 
         mHandler.openDocument(TestEnv.FILE_IN_ARCHIVE, ActionHandler.VIEW_TYPE_PREVIEW,
                 ActionHandler.VIEW_TYPE_REGULAR);
-        mDialogs.assertViewInArchivesShownUnsupported();
+        if (isZipNgFlagEnabled()) {
+            mActivity.assertActivityStarted(Intent.ACTION_VIEW);
+        } else {
+            mDialogs.assertViewInArchivesShownUnsupported();
+        }
     }
 
     @Test
