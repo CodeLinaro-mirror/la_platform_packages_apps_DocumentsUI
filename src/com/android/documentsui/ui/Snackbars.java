@@ -16,7 +16,7 @@
 
 package com.android.documentsui.ui;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.Activity;
 import android.view.Gravity;
@@ -112,7 +112,7 @@ public final class Snackbars {
 
     public static final Snackbar makeSnackbar(
             Activity activity, CharSequence message, int duration) {
-        final View view = activity.findViewById(useMaterial3()
+        final View view = activity.findViewById(isUseMaterial3FlagEnabled()
                 ? R.id.coordinator_layout
                 : R.id.container_save
         );

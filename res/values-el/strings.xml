@@ -290,4 +290,6 @@
     <string name="drag_from_another_app" msgid="8310249276199969905">"Δεν είναι δυνατή η μεταφορά αρχείων από άλλη εφαρμογή."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Εμφάνιση σε λειτουργία πλέγματος."</string>
     <string name="list_mode_showing" msgid="1225413902295895166">"Εμφάνιση σε λειτουργία λίστας."</string>
+    <!-- no translation found for bullet (5606740650312122766) -->
+    <skip />
 </resources>

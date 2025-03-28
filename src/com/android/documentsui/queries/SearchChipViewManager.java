@@ -16,7 +16,7 @@
 
 package com.android.documentsui.queries;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -399,7 +399,7 @@ public class SearchChipViewManager {
         chip.setChipIcon(chipIcon);
         chip.setOnClickListener(this::onChipClick);
 
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             chip.setOnFocusChangeListener(this::onChipFocusChange);
         }
 
@@ -418,9 +418,9 @@ public class SearchChipViewManager {
             return context.getDrawable(R.drawable.ic_chip_from_this_week);
         }
 
-        // For M3, we don't want to use MIME type icons for image/audio/video/document from the
-        // system.
-        if (useMaterial3()) {
+        // When use_material3 flag is ON, we don't want to use MIME type icons for
+        // image/audio/video/document from the system.
+        if (isUseMaterial3FlagEnabled()) {
             return switch (chipType) {
                 case TYPE_IMAGES -> context.getDrawable(R.drawable.ic_chip_image);
                 case TYPE_AUDIO -> context.getDrawable(R.drawable.ic_chip_audio);
@@ -468,14 +468,14 @@ public class SearchChipViewManager {
         }
 
         final int chipSpacing =
-                useMaterial3()
+                isUseMaterial3FlagEnabled()
                         ? ((ChipGroup) mChipGroup).getChipSpacingHorizontal()
                         : mChipGroup
                                 .getResources()
                                 .getDimensionPixelSize(R.dimen.search_chip_spacing);
         final boolean isRtl = mChipGroup.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
         final float chipGroupPaddingStart =
-                useMaterial3()
+                isUseMaterial3FlagEnabled()
                         ? mChipGroup.getPaddingStart()
                         : mChipGroup
                                 .getResources()

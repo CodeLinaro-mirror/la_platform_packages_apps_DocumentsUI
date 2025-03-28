@@ -40,7 +40,6 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="@dimen/file_area_padding_bottom"
                 app:layout_behavior="@string/scrolling_behavior">
 
                 <FrameLayout
@@ -66,21 +65,33 @@
             </FrameLayout>
 
             <!-- Footer of right hand side: Breadcrumbs and Picker footer. -->
-            <com.android.documentsui.HorizontalBreadcrumb
-                android:id="@+id/horizontal_breadcrumb"
+            <LinearLayout
+                android:id="@+id/bottom_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="?attr/colorSurfaceBright"
-                />
+                android:orientation="vertical"
+                android:layout_gravity="bottom">
 
-            <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/container_save"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:background="?android:attr/colorBackgroundFloating"
-                />
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/breadcrumb_top_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:dividerColor="?attr/colorSurfaceContainer"
+                    app:dividerThickness="@dimen/main_container_section_gap" />
+
+                <com.android.documentsui.HorizontalBreadcrumb
+                    android:id="@+id/horizontal_breadcrumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorSurfaceBright" />
+
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
+                    android:id="@+id/container_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/colorBackgroundFloating" />
+
+            </LinearLayout>
 
             <!-- Top section: toolbar, search chips, profile tab -->
             <include layout="@layout/directory_app_bar"/>
