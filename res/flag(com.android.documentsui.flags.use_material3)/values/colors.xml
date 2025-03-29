@@ -22,18 +22,34 @@
   <color name="background_floating">@android:color/white</color>
   <color name="nav_bar_translucent">#99FFFFFF</color>
 
-  <color name="primary">?attr/colorPrimary</color>
+  <!-- ?attr/colorPrimary -->
+  <color name="primary">#6750A4</color>
   <color name="secondary">#E3F2FD</color> <!-- Blue 50 -->
   <color name="hairline">#E0E0E0</color> <!-- Gray 300 -->
 
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="chip_background_disable_color">#fff1f3f4</color>
   <color name="menu_search_background">@android:color/transparent</color>
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="item_breadcrumb_background_hovered">#1affffff</color>
-  <color name="item_drag_shadow_background">@android:color/white</color>
+
+  <!-- All the colors used inside the drag drop badge don't support Material color attributes
+       because the drag view and shadow are isolated views rendered without theme context, so
+       we need to use static colors for SDK <= 30, and use system color tokens for SDK >= 31.
+       Check the variables with the same name defined in the v31 version of colors.xml.
+  -->
+  <color name="item_drag_shadow_background">#E3D7DD</color>
   <color name="item_drag_shadow_container_background">
     @android:color/transparent
   </color>
+  <color name="drag_file_counter_background">#825344</color>
+  <color name="drag_file_counter_text_color">@android:color/white</color>
+  <color name="drag_mime_icon_wrapper_background">@android:color/white</color>
+  <color name="drag_content_text_color">#201A1E</color>
+  <color name="drop_icon_symbol_color">@android:color/white</color>
+  <color name="drop_icon_copy_container_background">#1EA446</color>
+  <color name="drop_icon_reject_container_background">#BA1A1A</color>
+
   <color name="tool_bar_gradient_max">#7f000000</color>
 
   <color name="band_select_background">?attr/colorPrimaryInverse</color>
@@ -76,4 +92,8 @@
        </shape>
    -->
   <color name="overlay_hover_color_percentage">#14000000</color> <!-- 8% -->
+
+  <!-- Peek overlay static color. Makes the background dimmer with an 80% opacity. This color is not
+  intended to be dynamic, and is defined specifically for Peek. -->
+  <color name="peek_overlay_background">#CC000000</color> <!-- 80% -->
 </resources>

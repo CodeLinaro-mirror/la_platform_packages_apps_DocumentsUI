@@ -224,9 +224,11 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         } else if (mState.action == ACTION_OPEN_TREE ||
                 mState.action == ACTION_PICK_COPY_DESTINATION) {
             PickFragment.show(getSupportFragmentManager());
-        } else {
+        } else if (!isUseMaterial3FlagEnabled()) {
             // If PickFragment or SaveFragment does not show,
             // Set save container background to transparent for edge to edge nav bar.
+            // However when the use_material3 flag is on, the file path bar is at the bottom of the
+            // layout and hence the edge to edge nav bar is no longer required.
             View saveContainer = findViewById(R.id.container_save);
             saveContainer.setBackgroundColor(Color.TRANSPARENT);
         }

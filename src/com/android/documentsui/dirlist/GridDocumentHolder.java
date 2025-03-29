@@ -41,6 +41,7 @@ import androidx.annotation.RequiresApi;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
+import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
@@ -79,6 +80,8 @@ final class GridDocumentHolder extends DocumentHolder {
 
     // Non-null only when useMaterial3 flag is ON.
     private final @Nullable MaterialCardView mIconWrapper;
+    // It will be 0 when use_material flag is OFF.
+    private final int mThumbnailStrokeWidth;
 
     GridDocumentHolder(Context context, ViewGroup parent, IconHelper iconHelper,
             ConfigStore configStore) {
@@ -90,12 +93,16 @@ final class GridDocumentHolder extends DocumentHolder {
             mIconLayout = null;
             mIconMimeSm = null;
             mIconCheck = null;
+            mThumbnailStrokeWidth =
+                    context.getResources()
+                            .getDimensionPixelSize(R.dimen.thumbnail_border_width);
         } else {
             mBullet = null;
             mIconWrapper = null;
             mIconLayout = itemView.findViewById(R.id.icon);
             mIconMimeSm = (ImageView) itemView.findViewById(R.id.icon_mime_sm);
             mIconCheck = (ImageView) itemView.findViewById(R.id.icon_check);
+            mThumbnailStrokeWidth = 0;
         }
 
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
@@ -105,6 +112,13 @@ final class GridDocumentHolder extends DocumentHolder {
         mIconThumb = (ImageView) itemView.findViewById(R.id.icon_thumb);
         mIconBadge = (ImageView) itemView.findViewById(R.id.icon_profile_badge);
         mPreviewIcon = itemView.findViewById(R.id.preview_icon);
+
+        if (isUseMaterial3FlagEnabled()) {
+            int clipCornerRadius = context.getResources()
+                    .getDimensionPixelSize(R.dimen.thumbnail_clip_corner_radius);
+            IconUtils.applyThumbnailClipOutline(
+                    mIconThumb, mThumbnailStrokeWidth, clipCornerRadius);
+        }
 
         mIconHelper = iconHelper;
 
@@ -157,7 +171,7 @@ final class GridDocumentHolder extends DocumentHolder {
             if (selected) {
                 mIconWrapper.setStrokeWidth(0);
             } else if (mIconThumb.getDrawable() != null) {
-                mIconWrapper.setStrokeWidth(THUMBNAIL_STROKE_WIDTH);
+                mIconWrapper.setStrokeWidth(mThumbnailStrokeWidth);
             }
         }
     }
@@ -258,7 +272,7 @@ final class GridDocumentHolder extends DocumentHolder {
                         // Show stroke when thumbnail is loaded.
                         if (mIconWrapper != null) {
                             mIconWrapper.setStrokeWidth(
-                                    thumbnailLoaded ? THUMBNAIL_STROKE_WIDTH : 0);
+                                    thumbnailLoaded ? mThumbnailStrokeWidth : 0);
                         }
                     });
         } else {
@@ -293,8 +307,8 @@ final class GridDocumentHolder extends DocumentHolder {
             }
         }
 
-        if (mBullet != null && (mDetails.getVisibility() == View.GONE
-                || mDate.getText().isEmpty())) {
+        if (mBullet != null && (mDetails.getText() == null || mDetails.getText().length() == 0
+                || mDate.getText() == null || mDate.getText().length() == 0)) {
             // There is no need for the bullet separating the details and date.
             mBullet.setVisibility(View.GONE);
         }
