@@ -16,7 +16,6 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -57,25 +56,36 @@ public class AppsRowManager {
     private final UserIdManager mUserIdManager;
     private final UserManagerState mUserManagerState;
     private final ConfigStore mConfigStore;
+    private final boolean mShouldShowByDefault;
 
-    public AppsRowManager(ActionHandler handler, boolean maybeShowBadge,
-            UserIdManager userIdManager, ConfigStore configStore) {
+    public AppsRowManager(
+            ActionHandler handler,
+            boolean maybeShowBadge,
+            UserIdManager userIdManager,
+            ConfigStore configStore,
+            boolean shouldShowByDefault) {
         mDataList = new ArrayList<>();
         mActionHandler = handler;
         mMaybeShowBadge = maybeShowBadge;
         mUserIdManager = userIdManager;
         mUserManagerState = null;
         mConfigStore = configStore;
+        mShouldShowByDefault = shouldShowByDefault;
     }
 
-    public AppsRowManager(ActionHandler handler, boolean maybeShowBadge,
-            UserManagerState userManagerState, ConfigStore configStore) {
+    public AppsRowManager(
+            ActionHandler handler,
+            boolean maybeShowBadge,
+            UserManagerState userManagerState,
+            ConfigStore configStore,
+            boolean shouldShowByDefault) {
         mDataList = new ArrayList<>();
         mActionHandler = handler;
         mMaybeShowBadge = maybeShowBadge;
         mUserIdManager = null;
         mUserManagerState = userManagerState;
         mConfigStore = configStore;
+        mShouldShowByDefault = shouldShowByDefault;
     }
 
     public List<AppsRowItemData> updateList(List<Item> itemList) {
@@ -105,7 +115,7 @@ public class AppsRowManager {
     }
 
     private boolean shouldShow(State state, boolean isSearchExpanded) {
-        if (isUseMaterial3FlagEnabled()) {
+        if (!mShouldShowByDefault) {
             return false;
         }
 

@@ -65,7 +65,7 @@ public class TestSearchViewManager extends SearchViewManager {
                     public void onSearchViewClearClicked() {
                     }
                 },
-                new CommandInterceptor(new TestFeatures()), mock(ViewGroup.class),
+                new CommandInterceptor(new TestFeatures()), mock(ViewGroup.class), mock(View.class),
                 null /* savedState */);
     }
 

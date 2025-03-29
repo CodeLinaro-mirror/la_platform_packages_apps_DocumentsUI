@@ -123,6 +123,12 @@
         <item name="chipCornerRadius">@dimen/search_chip_radius</item>
     </style>
 
+    <style name="SearchOptionsTriggerStyle" parent="@style/SearchChipItemStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/space_extra_small_4</item>
+    </style>
+
     <style name="DrawerStyle" parent="">
         <item name="android:background">?attr/colorSurfaceContainer</item>
         <!-- Use padding together with the "outsideOverlay" scrollbar style to to make sure the

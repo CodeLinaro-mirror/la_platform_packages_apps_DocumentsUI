@@ -70,6 +70,8 @@
     <string name="button_clear" msgid="5412304437764369441">"ਕਲੀਅਰ ਕਰੋ"</string>
     <string name="button_show_provider" msgid="6905880493806292753">"ਪ੍ਰਦਾਨਕ ਸੇਵਾ ਵਿੱਚ ਦਿਖਾਓ"</string>
     <string name="button_back" msgid="1888621708934742182">"ਪਿੱਛੇ"</string>
+    <!-- no translation found for button_show_in_folder (6674673478637689386) -->
+    <skip />
     <string name="not_sorted" msgid="7813496644889115530">"ਛਾਂਟੀ ਨਹੀਂ ਕੀਤੀ ਗਈ"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"ਨਾਮ"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"ਸਾਰਾਂਸ਼"</string>
