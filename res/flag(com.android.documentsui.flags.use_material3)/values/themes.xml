@@ -65,7 +65,6 @@
         <item name="toolbarNavigationButtonStyle">@style/HamburgerMenuButtonStyle</item>
         <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
-        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
         <item name="materialCardViewStyle">@style/CardViewStyle</item>

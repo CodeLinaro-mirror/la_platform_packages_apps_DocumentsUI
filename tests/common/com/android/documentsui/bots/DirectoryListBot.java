@@ -29,7 +29,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -327,59 +326,16 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void rightClickDocument(Point point) throws UiObjectNotFoundException {
-        //TODO: Use Espresso instead of doing the events mock ourselves
-        MotionEvent motionDown = getTestMotionEvent(
-                MotionEvent.ACTION_DOWN,
-                MotionEvent.BUTTON_SECONDARY,
-                MotionEvent.TOOL_TYPE_MOUSE,
-                InputDevice.SOURCE_MOUSE,
-                point.x,
-                point.y);
+        // TODO: Use Espresso instead of doing the events mock ourselves
+        MotionEvent motionDown =
+                getTestRightClickMotionEvent(MotionEvent.ACTION_DOWN, point.x, point.y);
         mAutomation.injectInputEvent(motionDown, true);
         SystemClock.sleep(100);
 
-        MotionEvent motionUp = getTestMotionEvent(
-                MotionEvent.ACTION_UP,
-                MotionEvent.BUTTON_SECONDARY,
-                MotionEvent.TOOL_TYPE_MOUSE,
-                InputDevice.SOURCE_MOUSE,
-                point.x,
-                point.y);
+        MotionEvent motionUp =
+                getTestRightClickMotionEvent(MotionEvent.ACTION_UP, point.x, point.y);
 
         mAutomation.injectInputEvent(motionUp, true);
-    }
-
-    private MotionEvent getTestMotionEvent(
-            int action, int buttonState, int toolType, int source, int x, int y) {
-        long eventTime = SystemClock.uptimeMillis();
-
-        MotionEvent.PointerProperties[] pp = {new MotionEvent.PointerProperties()};
-        pp[0].clear();
-        pp[0].id = 0;
-        pp[0].toolType = toolType;
-
-        MotionEvent.PointerCoords[] pointerCoords = {new MotionEvent.PointerCoords()};
-        pointerCoords[0].clear();
-        pointerCoords[0].x = x;
-        pointerCoords[0].y = y;
-        pointerCoords[0].pressure = 0;
-        pointerCoords[0].size = 1;
-
-        return MotionEvent.obtain(
-                eventTime,
-                eventTime,
-                action,
-                1,
-                pp,
-                pointerCoords,
-                0,
-                buttonState,
-                1f,
-                1f,
-                0,
-                0,
-                source,
-                0);
     }
 
     private void assertOrder(String first, String second) throws UiObjectNotFoundException {

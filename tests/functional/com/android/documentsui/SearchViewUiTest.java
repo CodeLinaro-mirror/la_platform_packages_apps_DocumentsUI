@@ -16,23 +16,49 @@
 
 package com.android.documentsui;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.junit.Assert.assertFalse;
+
+import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
+import android.provider.Settings;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.Until;
 
+import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
 @LargeTest
-public class SearchViewUiTest extends ActivityTest<FilesActivity> {
+public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
-    public SearchViewUiTest() {
-        super(FilesActivity.class);
-    }
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-    @Override
+    @Before
     public void setUp() throws Exception {
       super.setUp();
       initTestFiles();
@@ -43,7 +69,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
       bots.directory.waitForDocument(fileName1);
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         // manually close activity to avoid SearchFragment show when Activity close. ref b/142840883
         device.waitForIdle();
@@ -53,12 +79,28 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         super.tearDown();
     }
 
+    private void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
+        bots.directory.waitForDocument(fileName1);
+        bots.directory.waitForDocument(fileName2);
+        bots.directory.waitForDocument(dirName1);
+        bots.directory.waitForDocument(fileNameNoRename);
+        bots.directory.assertDocumentsCount(4);
+    }
+
+    private void assertDefaultContentOfTestDir1() throws UiObjectNotFoundException {
+        bots.directory.waitForDocument(fileName3);
+        bots.directory.waitForDocument(fileName4);
+        bots.directory.assertDocumentsCount(2);
+    }
+
+    @Test
     public void testSearchIconVisible() throws Exception {
         // The default root (root 0) supports search
         bots.search.assertInputExists(false);
         bots.search.assertIconVisible(true);
     }
 
+    @Test
     @HugeLongTest
     public void testSearchIconHidden() throws Exception {
         bots.roots.openRoot(ROOT_1_ID);  // root 1 doesn't support search
@@ -67,6 +109,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertInputExists(false);
     }
 
+    @Test
     public void testSearchView_ExpandsOnClick() throws Exception {
         bots.search.clickIcon();
         device.waitForIdle();
@@ -78,6 +121,8 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         // bots.search.assertIconVisible(false);
     }
 
+    @Test
+    @RequiresFlagsDisabled({FLAG_USE_MATERIAL3}) // Enable when b/397315793 is fixed.
     public void testSearchView_ShouldHideOptionMenuOnExpanding() throws Exception {
         bots.search.clickIcon();
         device.waitForIdle();
@@ -91,6 +136,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         assertFalse(bots.menu.hasMenuItemByDesc("More options"));
     }
 
+    @Test
     public void testSearchView_CollapsesOnBack() throws Exception {
         bots.search.clickIcon();
         device.pressBack();
@@ -99,6 +145,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertInputExists(false);
     }
 
+    @Test
     public void testSearchFragment_DismissedOnCloseAfterCancel() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("query text");
@@ -116,6 +163,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertSearchHistoryVisible(false);
     }
 
+    @Test
     public void testSearchView_ClearsTextOnBack() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("file2");
@@ -130,6 +178,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertInputExists(false);
     }
 
+    @Test
     public void testSearchView_ClearsSearchOnBack() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("file1");
@@ -142,6 +191,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertInputExists(false);
     }
 
+    @Test
     public void testSearchView_ClearsAutoSearchOnBack() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("chocolate");
@@ -155,6 +205,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertInputExists(false);
     }
 
+    @Test
     public void testSearchView_StateAfterSearch() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("file1");
@@ -164,6 +215,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertInputEquals("file1");
     }
 
+    @Test
     public void testSearch_ResultsFound() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("file1");
@@ -173,6 +225,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.directory.assertDocumentsPresent(fileName1, fileName2);
     }
 
+    @Test
     public void testSearch_NoResults() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("chocolate");
@@ -231,6 +284,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         assertDefaultContentOfTestDir0();
     }
 
+    @Test
     public void testSearchHistory_showAfterSearchViewClear() throws Exception {
         bots.search.clickIcon();
         bots.search.setInputText("chocolate");
@@ -246,6 +300,7 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.assertSearchHistoryVisible(true);
     }
 
+    @Test
     public void testSearchView_focusClearedAfterSelectingSearchHistory() throws Exception {
         String queryText = "history";
         bots.search.clickIcon();
@@ -261,5 +316,43 @@ public class SearchViewUiTest extends ActivityTest<FilesActivity> {
         bots.search.clickSearchHistory(queryText);
         bots.search.assertInputFocused(false);
         bots.search.assertSearchHistoryVisible(false);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchDropdowns() throws Exception {
+        bots.roots.openRoot("Downloads");
+        bots.search.clickIcon();
+        bots.search.setInputText("foo");
+        // Verify that menu triggers (chips) are showing.
+        bots.main.assertLocationTriggerShows();
+        bots.main.assertLastModifiedTriggerShows();
+        bots.main.assertFileTypeTriggerShows();
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testSearchView_TogglingASearchChipClearsSelection() throws Exception {
+        // Get the label of the device (this will be used to navigate to the ExternalStorageProvider
+        // as the custom roots added for test do not show the search chips).
+        String deviceLabel =
+                Settings.Global.getString(
+                        context.getContentResolver(), Settings.Global.DEVICE_NAME);
+
+        // Open the root and select the DCIM folder for selection.
+        bots.roots.openRoot(deviceLabel);
+        bots.directory.selectDocument("DCIM", 1);
+
+        // Click on the Images search chips.
+        onView(
+                allOf(
+                        withText("Images"),
+                        isDescendantOfA(withId(R.id.search_chip_group)),
+                        isDisplayed()))
+                .perform(new RelaxedClickAction());
+
+        // Ensure the selection has cleared and the "1 file selected" text is not displayed.
+        device.wait(Until.findObject(By.text(fileName2).selected(false)), 5000);
+        onView(withText("1 selected")).check(doesNotExist());
     }
 }

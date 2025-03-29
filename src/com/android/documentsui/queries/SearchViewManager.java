@@ -21,6 +21,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -73,6 +74,7 @@ public class SearchViewManager implements
     private final SearchManagerListener mListener;
     private final EventHandler<String> mCommandProcessor;
     private final SearchChipViewManager mChipViewManager;
+    private final SearchOptionsController mSearchOptionsController;
     private final Timer mTimer;
     private final Handler mUiHandler;
 
@@ -98,8 +100,10 @@ public class SearchViewManager implements
             SearchManagerListener listener,
             EventHandler<String> commandProcessor,
             ViewGroup chipGroup,
+            @Nullable View optionsContainer,
             @Nullable Bundle savedState) {
-        this(listener, commandProcessor, new SearchChipViewManager(chipGroup), savedState,
+        this(listener, commandProcessor, new SearchChipViewManager(chipGroup),
+                new SearchOptionsController(optionsContainer), savedState,
                 new Timer(), new Handler(Looper.getMainLooper()));
     }
 
@@ -108,6 +112,7 @@ public class SearchViewManager implements
             SearchManagerListener listener,
             EventHandler<String> commandProcessor,
             SearchChipViewManager chipViewManager,
+            @Nullable SearchOptionsController searchOptionsController,
             @Nullable Bundle savedState,
             Timer timer,
             Handler handler) {
@@ -121,6 +126,7 @@ public class SearchViewManager implements
         mUiHandler = handler;
         mChipViewManager = chipViewManager;
         mChipViewManager.setSearchChipViewManagerListener(this::onChipCheckedStateChanged);
+        mSearchOptionsController = searchOptionsController;
 
         if (savedState != null) {
             mCurrentSearch = savedState.getString(Shared.EXTRA_QUERY);
@@ -342,7 +348,9 @@ public class SearchViewManager implements
             mMenuItem.setEnabled(enabled);
         }
 
-        mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
+        if (!isSearchV2Enabled()) {
+            mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
+        }
     }
 
     /**
@@ -355,7 +363,7 @@ public class SearchViewManager implements
             cancelQueuedSearch();
 
             if (mFullBar) {
-                onClose();
+                this.onStopSearch();
             } else {
                 // Causes calling onClose(). onClose() is triggering directory content update.
                 mSearchView.setIconified(true);
@@ -430,6 +438,16 @@ public class SearchViewManager implements
      */
     @Override
     public boolean onClose() {
+        if (isSearchV2Enabled()) {
+            if (mSearchOptionsController != null) {
+                mSearchOptionsController.setVisible(false);
+            }
+            mChipViewManager.setChipsRowVisible(true);
+        }
+        return this.onStopSearch();
+    }
+
+    private boolean onStopSearch() {
         mSearchExpanded = false;
         if (mIgnoreNextClose) {
             mIgnoreNextClose = false;
@@ -484,7 +502,6 @@ public class SearchViewManager implements
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-
         if (mCommandProcessor.accept(query)) {
             mSearchView.setQuery("", false);
         } else {
@@ -539,6 +556,12 @@ public class SearchViewManager implements
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        if (isSearchV2Enabled()) {
+            if (!newText.isEmpty()) {
+                mChipViewManager.setChipsRowVisible(false);
+                mSearchOptionsController.setVisible(true);
+            }
+        }
         //Skip first search when search expanded
         if (mCurrentSearch == null && newText.isEmpty()) {
             return true;
