@@ -193,6 +193,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private IconHelper mIconHelper;
     private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mRecView;
+    private GridEvenSpacingDecoration mGridEvenSpacingDecoration;
     private DocumentsAdapter mAdapter;
     private DocumentClipper mClipper;
     private GridLayoutManager mLayout;
@@ -525,6 +526,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mState = mActivity.getDisplayState();
 
+        if (isUseMaterial3FlagEnabled()) {
+            mGridEvenSpacingDecoration = new GridEvenSpacingDecoration();
+            if (mState.derivedMode == MODE_GRID) {
+                // Ensure items are spaced evenly in the grid layout.
+                mRecView.addItemDecoration(mGridEvenSpacingDecoration);
+            }
+        }
+
         // Read arguments when object created for the first time.
         // Restore state if fragment recreated.
         Bundle args = savedInstanceState == null ? getArguments() : savedInstanceState;
@@ -810,6 +819,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     public void onViewModeChanged() {
+        if (isUseMaterial3FlagEnabled()) {
+            // Only enable the decoration for grid mode.
+            if (mState.derivedMode != MODE_GRID) {
+                mRecView.removeItemDecoration(mGridEvenSpacingDecoration);
+            } else {
+                mRecView.addItemDecoration(mGridEvenSpacingDecoration);
+
+            }
+        }
         // Mode change is just visual change; no need to kick loader.
         mRootView.announceForAccessibility(getString(
                 mState.derivedMode == State.MODE_GRID ? R.string.grid_mode_showing
@@ -829,15 +847,51 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     private void updateLayout(@ViewMode int mode) {
         mMode = mode;
-        mColumnCount = calculateColumnCount(mode);
-        if (mLayout != null) {
-            mLayout.setSpanCount(mColumnCount);
-        }
-        int pad = getDirectoryPadding(mode);
         mAppBarHeight = getAppBarLayoutHeight();
         mSaveLayoutHeight = getSaveLayoutHeight();
-        mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
-        mRecView.requestLayout();
+
+        if (isUseMaterial3FlagEnabled()) {
+            if (mode == MODE_GRID) {
+                int itemMarg = getResources().getDimensionPixelSize(R.dimen.grid_item_margin);
+                // Subtract the item's margin since we don't want to double count the margin in the
+                // distance between the outer grid items and the grid boundary.
+                int leftPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_left)
+                        - itemMarg;
+                int topPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_top)
+                        - itemMarg;
+                int rightPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_right) - itemMarg;
+                int botPad = getResources().getDimensionPixelSize(
+                        R.dimen.grid_container_padding_bottom)
+                        - itemMarg;
+                mRecView.setPadding(leftPad, topPad + mAppBarHeight, rightPad,
+                        botPad + mSaveLayoutHeight);
+            } else {
+                int pad = getDirectoryPadding(mode);
+                mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
+            }
+            mColumnCount = calculateColumnCount(mode);
+            if (mLayout != null) {
+                mLayout.setSpanCount(mColumnCount);
+            }
+        } else {
+            mColumnCount = calculateColumnCount(mode);
+            if (mLayout != null) {
+                mLayout.setSpanCount(mColumnCount);
+            }
+            int pad = getDirectoryPadding(mode);
+            mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
+        }
+
+        if (isUseMaterial3FlagEnabled() && mRecView.getItemDecorationCount() > 0) {
+            // Invalidate item decorations so they are recalculated before layout. This also
+            // calls requestLayout().
+            mRecView.invalidateItemDecorations();
+        } else {
+            mRecView.requestLayout();
+        }
         mIconHelper.setViewMode(mode);
 
         int range = getResources().getDimensionPixelOffset(R.dimen.refresh_icon_range);

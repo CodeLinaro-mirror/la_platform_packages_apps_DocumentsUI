@@ -22,10 +22,7 @@
     android:layout_margin="@dimen/grid_item_margin"
     android:clickable="true"
     android:defaultFocusHighlightEnabled="false"
-    android:focusable="true"
-    android:paddingEnd="@dimen/grid_item_padding_end"
-    android:paddingStart="@dimen/grid_item_padding_start"
-    android:paddingTop="@dimen/grid_item_padding_top">
+    android:focusable="true">
 
 <!-- Main item thumbnail.  Comprised of two overlapping images, the
          visibility of which is controlled by code in
