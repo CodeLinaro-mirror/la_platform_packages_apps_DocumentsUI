@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -409,6 +410,9 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
                     mActivity.getResources().getBoolean(R.bool.full_bar_search_view);
             boolean showSearchBar = mActivity.getResources().getBoolean(R.bool.show_search_bar);
             mInjector.searchManager.install(mToolbar.getMenu(), fullBarSearch, showSearchBar);
+            if (isVisualSignalsFlagEnabled()) {
+                mInjector.menuManager.instantiateJobProgress(mToolbar.getMenu());
+            }
         }
         mInjector.menuManager.updateOptionMenu(mToolbar.getMenu());
         mInjector.searchManager.showMenu(mState.stack);

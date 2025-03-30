@@ -429,6 +429,7 @@
         =1 {Zipping <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
         other {Zipping # files}
     }</string>
+    <string name="job_progress_panel_title" translatable="false">File Progress</string>
 
     <!-- Text in an alert dialog asking user to grant app access to a given directory in an external storage volume -->
     <string name="open_external_dialog_request">Grant <xliff:g id="appName" example="System Settings"><b>^1</b></xliff:g>
@@ -611,4 +612,6 @@
     <!-- Unicode Character “•” (U+2022). -->
     <string name="bullet">\u2022</string>
 
+    <!-- Text used at the top of the text field when saving a document. [CHAR_LIMIT=100] -->
+    <string name="file_name_hint">File name</string>
 </resources>

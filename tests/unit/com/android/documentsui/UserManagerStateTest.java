@@ -23,6 +23,7 @@ import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
 
 import static com.google.common.truth.Truth.assertWithMessage;
 
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -225,7 +226,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIds_allProfilesCurrentUserSystem_allShowInSharingSurfacesSeparate() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(
                 currentUser,
@@ -240,7 +241,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIds_allProfilesCurrentUserManaged_allShowInSharingSurfacesSeparate() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mManagedUser);
         initializeUserManagerState(
                 currentUser,
@@ -255,7 +256,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIds_allProfilesCurrentUserPrivate_allShowInSharingSurfacesSeparate() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mPrivateUser);
         initializeUserManagerState(
                 currentUser,
@@ -289,7 +290,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIds_systemAndPrivateUserCurrentUserSystem_returnsBoth() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mPrivateUser));
 
@@ -300,123 +301,13 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIds_systemAndPrivateUserCurrentUserPrivate_returnsBoth() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mPrivateUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mPrivateUser));
 
         assertWithMessage("getUserIds returns unexpected list of user ids")
                 .that(mUserManagerState.getUserIds())
                 .containsExactly(UserId.of(mSystemUser), UserId.of(mPrivateUser));
-    }
-
-    @Test
-    public void testGetUserIds_systemAndOtherUserCurrentUserOtherPreV_returnsCurrentUser() {
-        if (SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mOtherUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mOtherUser));
-
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(currentUser);
-    }
-
-    @Test
-    public void testGetUserIds_systemAndOtherUserCurrentUserOtherPostV_returnsSystemUser() {
-        if (!SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mOtherUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mOtherUser));
-
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(UserId.of(mSystemUser));
-    }
-
-    @Test
-    public void testGetUserIds_normalAndOtherUserCurrentUserNormal_returnsCurrentUser() {
-        // since both users do not have show in sharing surfaces separate, returns
-        // current user
-        UserId currentUser = UserId.of(mNormalUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mOtherUser, mNormalUser));
-
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(UserId.of(mNormalUser));
-    }
-
-    @Test
-    public void testGetUserIds_systemAndManagedUserCurrentUserSystem_returnsBothInOrder() {
-        // Returns the both if there are system and managed users.
-        if (SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mSystemUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(UserId.of(mSystemUser), UserId.of(mManagedUser))
-                .inOrder();
-    }
-
-    @Test
-    public void testGetUserIds_systemAndManagedUserCurrentUserManaged_returnsBothInOrder() {
-        // Returns the both if there are system and managed users.
-        if (SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mManagedUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(UserId.of(mSystemUser), UserId.of(mManagedUser))
-                .inOrder();
-    }
-
-    @Test
-    public void testGetUserIds_managedAndSystemUserCurrentUserSystem_returnsBothInOrder() {
-        // Returns the both if there are system and managed users, regardless of input
-        // list order.
-        if (SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mSystemUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mManagedUser, mSystemUser));
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(UserId.of(mSystemUser), UserId.of(mManagedUser))
-                .inOrder();
-    }
-
-    @Test
-    public void testGetUserIds_otherAndManagedUserCurrentUserOtherPreV_returnsCurrentUser() {
-        // When there is no system user, returns the current user.
-        // This is a case theoretically can happen but we don't expect. So we return the
-        // current
-        // user only.
-        if (SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mOtherUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mOtherUser, mManagedUser));
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(currentUser);
-    }
-
-    @Test
-    public void testGetUserIds_otherAndManagedUserCurrentUserOtherPostV_returnsManagedUser() {
-        // Only the users with show in sharing surfaces separate are eligible to be
-        // returned
-        if (!SdkLevel.isAtLeastV()) return;
-        UserId currentUser = UserId.of(mOtherUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mOtherUser, mManagedUser));
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(UserId.of(mManagedUser));
-    }
-
-    @Test
-    public void testGetUserIds_otherAndManagedUserCurrentUserManaged_returnsCurrentUser() {
-        // When there is no system user, returns the current user.
-        // This is a case theoretically can happen, but we don't expect. So we return
-        // the current
-        // user only.
-        UserId currentUser = UserId.of(mManagedUser);
-        initializeUserManagerState(currentUser, Lists.newArrayList(mOtherUser, mManagedUser));
-        assertWithMessage("getUserIds returns unexpected list of user ids")
-                .that(mUserManagerState.getUserIds())
-                .containsExactly(currentUser);
     }
 
     @Test
@@ -457,7 +348,8 @@ public class UserManagerStateTest {
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
         final List<ResolveInfo> mMockResolveInfoList = Lists.newArrayList(mMockInfoManagedUser);
 
-        when(mMockPackageManager.queryIntentActivities(any(Intent.class), anyInt()))
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                        any(Intent.class), anyInt(), eq(mSystemUser)))
                 .thenReturn(mMockResolveInfoList);
 
         Map<UserId, Boolean> expectedCanForwardToProfileIdMap = new HashMap<>();
@@ -471,7 +363,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetCanForwardToProfileIdMap_systemUserCanAlwaysForwardToPrivate() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mPrivateUser));
 
@@ -497,8 +389,8 @@ public class UserManagerStateTest {
                     .thenReturn(mMockResolveInfoList);
         } else {
             initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
-            when(mMockPackageManager.queryIntentActivities(
-                            mMockIntent, PackageManager.MATCH_DEFAULT_ONLY))
+            when(mMockPackageManager.queryIntentActivitiesAsUser(
+                            mMockIntent, PackageManager.MATCH_DEFAULT_ONLY, mSystemUser))
                     .thenReturn(mMockResolveInfoList);
         }
 
@@ -515,10 +407,13 @@ public class UserManagerStateTest {
     }
 
     @Test
-    public void testGetCanForwardToProfileIdMap_managedCanForwardToAll() {
+    public void testGetCanForwardToProfileIdMap_managedCanForwardToAllVPlus() {
+        assumeTrue(SdkLevel.isAtLeastV());
+
         UserId currentUser = UserId.of(mManagedUser);
         final List<ResolveInfo> mMockResolveInfoList = Lists.newArrayList(mMockInfoPrimaryUser);
-        when(mMockPackageManager.queryIntentActivities(any(Intent.class), anyInt()))
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                        any(Intent.class), anyInt(), eq(mManagedUser)))
                 .thenReturn(mMockResolveInfoList);
 
         initializeUserManagerState(
@@ -535,10 +430,31 @@ public class UserManagerStateTest {
     }
 
     @Test
+    public void testGetCanForwardToProfileIdMap_managedCanForwardToAllUMinus() {
+        assumeFalse(SdkLevel.isAtLeastV());
+
+        UserId currentUser = UserId.of(mManagedUser);
+        final List<ResolveInfo> mMockResolveInfoList = Lists.newArrayList(mMockInfoPrimaryUser);
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                        any(Intent.class), anyInt(), eq(mManagedUser)))
+                .thenReturn(mMockResolveInfoList);
+
+        initializeUserManagerState(
+                currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
+
+        Map<UserId, Boolean> expectedCanForwardToProfileIdMap = new HashMap<>();
+        expectedCanForwardToProfileIdMap.put(UserId.of(mSystemUser), true);
+        expectedCanForwardToProfileIdMap.put(UserId.of(mManagedUser), true);
+
+        assertWithMessage("getCanForwardToProfileIdMap returns incorrect mappings")
+                .that(mUserManagerState.getCanForwardToProfileIdMap(mMockIntent))
+                .isEqualTo(expectedCanForwardToProfileIdMap);
+    }
+
+    @Test
     public void testGetCanForwardToProfileIdMap_managedCanNotForwardToAll() {
         UserId currentUser = UserId.of(mManagedUser);
-        final List<ResolveInfo> mMockResolveInfoList =
-                Lists.newArrayList(mMockInfoPrivateUser, mMockInfoPrimaryUser);
+        final List<ResolveInfo> mMockResolveInfoList = Lists.newArrayList(mMockInfoPrimaryUser);
 
         if (SdkLevel.isAtLeastV()) {
             initializeUserManagerState(
@@ -567,12 +483,14 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetCanForwardToProfileIdMap_privateCanForwardToAll() {
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mPrivateUser);
         initializeUserManagerState(
                 currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
         final List<ResolveInfo> mMockResolveInfoList =
                 Lists.newArrayList(mMockInfoPrimaryUser, mMockInfoManagedUser);
-        when(mMockPackageManager.queryIntentActivities(any(Intent.class), anyInt()))
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                        any(Intent.class), anyInt(), eq(mSystemUser)))
                 .thenReturn(mMockResolveInfoList);
 
         Map<UserId, Boolean> expectedCanForwardToProfileIdMap = new HashMap<>();
@@ -587,6 +505,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetCanForwardToProfileIdMap_privateCanNotForwardToManagedUser() {
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mPrivateUser);
         initializeUserManagerState(
                 currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
@@ -607,7 +526,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetCanForwardToProfileIdMap_privateCanAlwaysForwardToSystemUser() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mPrivateUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mPrivateUser));
 
@@ -626,7 +545,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testOnProfileStatusChange_anyIntentActionForManagedProfile() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(
                 currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
@@ -653,7 +572,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testOnProfileStatusChange_actionProfileUnavailableForPrivateProfile() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         UserId managedUser = UserId.of(mManagedUser);
         UserId privateUser = UserId.of(mPrivateUser);
@@ -666,8 +585,7 @@ public class UserManagerStateTest {
                 currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
 
         // UserManagerState#mUserId and UserManagerState#mCanForwardToProfileIdMap will
-        // empty
-        // by default if the getters of these member variables have not been called
+        // empty by default if the getters of these member variables have not been called
         List<UserId> userIdsBeforeIntent = new ArrayList<>(mUserManagerState.getUserIds());
         Map<UserId, Boolean> canForwardToProfileIdMapBeforeIntent =
                 new HashMap<>(mUserManagerState.getCanForwardToProfileIdMap(mMockIntent));
@@ -694,12 +612,12 @@ public class UserManagerStateTest {
 
     @Test
     public void testOnProfileStatusChange_actionProfileAvailable_profileInitialised() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         UserId managedUser = UserId.of(mManagedUser);
         UserId privateUser = UserId.of(mPrivateUser);
         final List<ResolveInfo> mMockResolveInfoList =
-                Lists.newArrayList(mMockInfoManagedUser, mMockInfoPrivateUser);
+                Lists.newArrayList(mMockInfoManagedUser);
         when(mMockPackageManager.queryIntentActivitiesAsUser(
                         mMockIntent, PackageManager.MATCH_DEFAULT_ONLY, mSystemUser))
                 .thenReturn(mMockResolveInfoList);
@@ -748,7 +666,8 @@ public class UserManagerStateTest {
 
         final List<ResolveInfo> mMockResolveInfoList = Lists.newArrayList(mMockInfoManagedUser);
 
-        when(mMockPackageManager.queryIntentActivities(any(Intent.class), anyInt()))
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                        any(Intent.class), anyInt(), eq(mSystemUser)))
                 .thenReturn(mMockResolveInfoList);
 
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
@@ -780,13 +699,14 @@ public class UserManagerStateTest {
 
     @Test
     public void testOnProfileStatusChange_actionProfileAvailable_profileNotInitialised() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         UserId managedUser = UserId.of(mManagedUser);
         UserId privateUser = UserId.of(mPrivateUser);
         final List<ResolveInfo> mMockResolveInfoList =
                 Lists.newArrayList(mMockInfoManagedUser, mMockInfoPrivateUser);
-        when(mMockPackageManager.queryIntentActivities(any(Intent.class), anyInt()))
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                        any(Intent.class), anyInt(), eq(mSystemUser)))
                 .thenReturn(mMockResolveInfoList);
 
         when(mMockUserManager.getProfileParent(UserHandle.of(privateUser.getIdentifier())))
@@ -836,7 +756,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIdToLabelMap_systemUserAndManagedUser_PreV() {
-        if (SdkLevel.isAtLeastV()) return;
+        assumeFalse(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
         if (SdkLevel.isAtLeastT()) {
@@ -860,7 +780,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIdToLabelMap_systemUserManagedUserPrivateUser_PostV() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(
                 currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
@@ -891,7 +811,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIdToBadgeMap_systemUserManagedUser_PreV() {
-        if (SdkLevel.isAtLeastV()) return;
+        assumeFalse(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));
         Drawable workBadge = mock(Drawable.class);
@@ -919,7 +839,7 @@ public class UserManagerStateTest {
 
     @Test
     public void testGetUserIdToBadgeMap_systemUserManagedUserPrivateUser_PostV() {
-        if (!SdkLevel.isAtLeastV()) return;
+        assumeTrue(SdkLevel.isAtLeastV());
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(
                 currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));

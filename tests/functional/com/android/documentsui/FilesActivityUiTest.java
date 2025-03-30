@@ -17,11 +17,14 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import android.app.Instrumentation;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
@@ -92,18 +95,40 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertWindowTitle("Images");
     }
 
-    @Test
-    public void testFilesListed() throws Exception {
+    private void filesListed() throws Exception {
         bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv");
     }
 
     @Test
-    public void testFilesList_LiveUpdate() throws Exception {
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    public void testFilesListed() throws Exception {
+        filesListed();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testFilesListed_searchV2() throws Exception {
+        filesListed();
+    }
+
+    private void filesListed_LiveUpdates() throws Exception {
         mDocsHelper.createDocument(rootDir0, "yummers/sandwich", "Ham & Cheese.sandwich");
 
         bots.directory.waitForDocument("Ham & Cheese.sandwich");
         bots.directory.assertDocumentsPresent(
                 "file0.log", "file1.png", "file2.csv", "Ham & Cheese.sandwich");
+    }
+
+    @Test
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    public void testFilesList_LiveUpdate() throws Exception {
+        filesListed_LiveUpdates();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testFilesList_LiveUpdate_searchV2() throws Exception {
+        filesListed_LiveUpdates();
     }
 
     @Test
