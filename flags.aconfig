@@ -10,10 +10,11 @@ flag {
 }
 
 flag {
-    name: "use_search_v2_rw"
+    name: "use_search_v2_read_only"
     namespace: "documentsui"
-    description: "Read/write flag that enables the next generation search functionality."
+    description: "Enables the next generation search functionality."
     bug: "383412640"
+    is_fixed_read_only: true
 }
 
 flag {

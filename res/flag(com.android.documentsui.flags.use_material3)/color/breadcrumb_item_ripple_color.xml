@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2018 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2025 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,6 +16,5 @@
   -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:color="@color/fragment_pick_active_button_color" android:state_enabled="true" />
-  <item android:color="@color/fragment_pick_inactive_button_color" android:state_enabled="false" />
+    <item android:alpha="@dimen/ripple_overlay_alpha" android:color="?attr/colorOnSurfaceVariant"/>
 </selector>

@@ -26,6 +26,41 @@
     <item>
         <selector>
             <!-- Selected -->
+            <item
+                android:state_selected="true"
+                android:state_focused="true"
+                android:state_hovered="true">
+                <layer-list>
+                    <item
+                        android:bottom="@dimen/focus_ring_gap"
+                        android:left="@dimen/focus_ring_gap"
+                        android:right="@dimen/focus_ring_gap"
+                        android:top="@dimen/focus_ring_gap">
+                        <shape>
+                            <corners android:radius="@dimen/list_item_height" />
+                            <solid android:color="@color/list_item_selected_background_color" />
+                        </shape>
+                    </item>
+                    <item
+                        android:bottom="@dimen/focus_ring_gap"
+                        android:left="@dimen/focus_ring_gap"
+                        android:right="@dimen/focus_ring_gap"
+                        android:top="@dimen/focus_ring_gap">
+                        <shape android:tint="?attr/colorOnPrimaryContainer">
+                            <corners android:radius="@dimen/list_item_height" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape>
+                            <corners android:radius="@dimen/list_item_height" />
+                            <stroke
+                                android:width="@dimen/focus_ring_width"
+                                android:color="?attr/colorSecondary" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
             <item android:state_selected="true" android:state_drag_hovered="true">
                 <layer-list>
                     <item>
@@ -104,6 +139,28 @@
             </item>
 
             <!-- Unselected -->
+            <item android:state_focused="true" android:state_hovered="true">
+                <layer-list>
+                    <item
+                        android:bottom="@dimen/focus_ring_gap"
+                        android:left="@dimen/focus_ring_gap"
+                        android:right="@dimen/focus_ring_gap"
+                        android:top="@dimen/focus_ring_gap">
+                        <shape android:tint="?attr/colorOnSurface">
+                            <corners android:radius="@dimen/list_item_height" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape>
+                            <corners android:radius="@dimen/list_item_height" />
+                            <stroke
+                                android:width="@dimen/focus_ring_width"
+                                android:color="?attr/colorSecondary" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
             <item android:state_drag_hovered="true">
                 <shape android:tint="?attr/colorOnSurface">
                     <corners android:radius="@dimen/list_item_height" />

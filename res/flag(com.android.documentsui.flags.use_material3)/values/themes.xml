@@ -79,5 +79,9 @@
 
         <!-- Menu text appearance -->
         <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
+
+        <!-- System bar colors. -->
+        <item name="android:statusBarColor">?attr/colorSurfaceContainer</item>
+        <item name="android:navigationBarColor">?attr/colorSurfaceContainer</item>
     </style>
 </resources>

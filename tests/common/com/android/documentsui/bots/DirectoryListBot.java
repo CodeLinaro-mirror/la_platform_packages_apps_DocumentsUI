@@ -16,6 +16,8 @@
 
 package com.android.documentsui.bots;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -71,7 +73,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         mDirListId = mTargetPackage + ":id/dir_list";
         mItemRootId = mTargetPackage + ":id/item_root";
         mPreviewId = mTargetPackage + ":id/preview_icon";
-        mIconId = mTargetPackage + ":id/icon";
+        mIconId = mTargetPackage + (isUseMaterial3FlagEnabled() ? ":id/icon_wrapper" : ":id/icon");
     }
 
     public void assertDocumentsCount(int count) throws UiObjectNotFoundException {

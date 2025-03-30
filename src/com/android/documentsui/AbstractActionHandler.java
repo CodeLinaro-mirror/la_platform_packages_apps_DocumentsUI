@@ -20,7 +20,8 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseSearchV2RwFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseSearchV2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -458,17 +459,17 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     private boolean viewDocument(DocumentInfo doc) {
         if (doc.isPartial()) {
-            Log.w(TAG, "Can't view partial file.");
+            Log.w(TAG, "Cannot view partial file");
             return false;
         }
 
-        if (doc.isInArchive()) {
-            Log.w(TAG, "Can't view files in archives.");
+        if (!isZipNgFlagEnabled() && doc.isInArchive()) {
+            Log.w(TAG, "Cannot view file in archive");
             return false;
         }
 
         if (doc.isDirectory()) {
-            Log.w(TAG, "Can't view directories.");
+            Log.w(TAG, "Cannot view directory");
             return true;
         }
 
@@ -916,7 +917,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mState.stack.changeRoot(mActivity.getCurrentRoot());
             }
 
-            if (isUseSearchV2RwFlagEnabled()) {
+            if (isUseSearchV2FlagEnabled()) {
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
