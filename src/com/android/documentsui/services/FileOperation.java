@@ -103,8 +103,8 @@ public abstract class FileOperation implements Parcelable {
 
     private void appendInfoTo(StringBuilder builder) {
         builder.append("opType=").append(mOpType);
-        builder.append(", srcs=").append(mSrcs.toString());
-        builder.append(", destination=").append(mDestination.toString());
+        builder.append(", srcs=").append(mSrcs);
+        builder.append(", destination=").append(mDestination);
     }
 
     @Override
@@ -318,7 +318,7 @@ public abstract class FileOperation implements Parcelable {
 
             builder.append("MoveDeleteOperation{");
             super.appendInfoTo(builder);
-            builder.append(", srcParent=").append(mSrcParent.toString());
+            builder.append(", srcParent=").append(mSrcParent);
             builder.append("}");
 
             return builder.toString();
