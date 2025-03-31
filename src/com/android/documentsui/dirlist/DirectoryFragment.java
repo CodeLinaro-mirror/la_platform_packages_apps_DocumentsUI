@@ -1439,9 +1439,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     public static void showDirectory(
             FragmentManager fm, RootInfo root, DocumentInfo doc, int anim) {
-        if (DEBUG) {
-            Log.d(TAG, "Showing directory: " + DocumentInfo.debugString(doc));
-        }
+        if (DEBUG) Log.d(TAG, "Showing dir " + doc);
         create(fm, root, doc, anim);
     }
 
@@ -1454,14 +1452,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             RootInfo root,
             @Nullable DocumentInfo doc,
             @AnimationType int anim) {
-
-        if (DEBUG) {
-            if (doc == null) {
-                Log.d(TAG, "Creating new fragment null directory");
-            } else {
-                Log.d(TAG, "Creating new fragment for directory: " + DocumentInfo.debugString(doc));
-            }
-        }
+        if (DEBUG) Log.d(TAG, "Creating new fragment for dir " + doc);
 
         final Bundle args = new Bundle();
         args.putParcelable(Shared.EXTRA_ROOT, root);
