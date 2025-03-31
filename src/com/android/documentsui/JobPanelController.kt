@@ -19,6 +19,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Canvas
+import android.graphics.Path
+import android.graphics.Rect
+import android.graphics.RectF
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -28,6 +32,7 @@ import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -38,6 +43,47 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.google.android.material.progressindicator.LinearProgressIndicator
+
+/**
+ * Adds a gap between items in a vertical Recycler View.
+ */
+private class VerticalMarginItemDecoration(
+    private val mMarginSize: Int
+) : RecyclerView.ItemDecoration() {
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State
+    ) {
+        if (parent.getChildAdapterPosition(view) > 0) {
+            outRect.top = mMarginSize
+        }
+    }
+}
+
+/**
+ * Adds rounded corners to the extremes (i.e. the first and last items in a list) of the Recycler
+ * View. It does this by getting the bounding box of all items and clipping the canvas to a rounded
+ * rectangle of the same size.
+ */
+private class RoundedCornerExtremitiesItemDecoration(
+    private val mCornerRadius: Float
+) : RecyclerView.ItemDecoration() {
+    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        if (parent.isEmpty()) return
+
+        val firstRect = Rect()
+        val lastRect = Rect()
+        parent.getDecoratedBoundsWithMargins(parent.getChildAt(0), firstRect)
+        parent.getDecoratedBoundsWithMargins(parent.getChildAt(parent.childCount - 1), lastRect)
+        firstRect.union(lastRect)
+
+        val path = Path()
+        path.addRoundRect(RectF(firstRect), mCornerRadius, mCornerRadius, Path.Direction.CW)
+        c.clipPath(path)
+    }
+}
 
 /**
  * JobPanelController is responsible for receiving broadcast updates from the [FileOperationService]
@@ -149,6 +195,12 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
             listAdapter.submitList(ArrayList(mCurrentJobs.values))
             panel.findViewById<RecyclerView>(R.id.job_progress_list).apply {
                 layoutManager = LinearLayoutManager(mContext)
+                addItemDecoration(VerticalMarginItemDecoration(
+                    mContext.resources.getDimensionPixelSize(R.dimen.job_progress_list_gap)
+                ))
+                addItemDecoration(RoundedCornerExtremitiesItemDecoration(
+                    mContext.resources.getDimension(R.dimen.job_progress_list_corner_radius)
+                ))
                 itemAnimator = null
                 adapter = listAdapter
             }
