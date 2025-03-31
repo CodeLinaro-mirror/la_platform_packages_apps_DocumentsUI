@@ -337,7 +337,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
             mToolbar.setNavigationContentDescription(null);
         }
 
-        if (shouldShowSearchBar()) {
+        if ((!isUseMaterial3FlagEnabled() || !inSelectionMode()) && shouldShowSearchBar()) {
             mBreadcrumb.show(false);
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(View.VISIBLE);
