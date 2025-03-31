@@ -18,7 +18,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="24dp"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:textAppearance="@style/Subhead" />
+    android:paddingTop="@dimen/dialog_content_padding_top"
+    android:paddingBottom="@dimen/dialog_content_padding_bottom"
+    android:paddingHorizontal="@dimen/dialog_content_padding_horizontal" />
