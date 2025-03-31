@@ -106,6 +106,7 @@
   int dir_menu_view_in_owner;
   int drawer_layout;
   int inspector_details_view;
+  int job_progress_panel_title;
   int option_menu_create_dir;
   int option_menu_debug;
   int option_menu_extract_all;

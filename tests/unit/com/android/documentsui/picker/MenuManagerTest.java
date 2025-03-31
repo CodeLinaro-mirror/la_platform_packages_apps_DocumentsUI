@@ -23,6 +23,7 @@ import static com.android.documentsui.base.State.ACTION_OPEN;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.annotation.SuppressLint;
 import android.database.MatrixCursor;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
@@ -343,6 +344,7 @@ public final class MenuManagerTest {
         optionSelectAll.assertEnabledAndVisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_EmptyArea() {
         dirDetails.hasItemsToPaste = false;
@@ -359,6 +361,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_EmptyArea_NoItemToPaste() {
         dirDetails.hasItemsToPaste = false;
@@ -373,6 +376,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_EmptyArea_CantCreateDoc() {
         dirDetails.hasItemsToPaste = true;
@@ -387,6 +391,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_EmptyArea_canPaste() {
         dirDetails.hasItemsToPaste = true;
@@ -401,6 +406,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_EmptyArea_CanCreateDirectory() {
         dirDetails.canCreateDirectory = true;
@@ -414,6 +420,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_EmptyArea_CanDeselectAll() {
         selectionDetails.size = 1;
@@ -425,6 +432,7 @@ public final class MenuManagerTest {
         mDirDeselectAll.assertEnabledAndVisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnFile() {
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
@@ -441,6 +449,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnDirectory() {
         selectionDetails.canPasteInto = true;
@@ -458,6 +467,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnMixedDocs() {
         selectionDetails.containDirectories = true;
@@ -473,6 +483,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnMixedDocs_hasPartialFile() {
         selectionDetails.containDirectories = true;
@@ -489,6 +500,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnMixedDocs_hasUndeletableFile() {
         selectionDetails.containDirectories = true;
@@ -500,6 +512,17 @@ public final class MenuManagerTest {
         dirCopyToClipboard.assertEnabledAndVisible();
         mDirCompress.assertDisabledAndInvisible();
         dirDelete.assertDisabledAndInvisible();
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    public void testContextMenu_OnArchive() {
+        selectionDetails.size = 1;
+        selectionDetails.containFiles = true;
+        selectionDetails.isArchive = true;
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
         mDirExtractHere.assertDisabledAndInvisible();
         mDirBrowse.assertDisabledAndInvisible();
     }
@@ -547,6 +570,7 @@ public final class MenuManagerTest {
         rootEjectRoot.assertDisabledAndInvisible();
     }
 
+    @SuppressLint("VisibleForTests")
     private Model getTestModel(boolean onlyDirectory) {
         String[] COLUMNS = new String[]{
                 RootCursorWrapper.COLUMN_AUTHORITY,

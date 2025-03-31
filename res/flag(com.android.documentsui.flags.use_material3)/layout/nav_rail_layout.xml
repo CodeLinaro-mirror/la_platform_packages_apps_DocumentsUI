@@ -35,8 +35,8 @@
             android:orientation="horizontal"
             android:baselineAligned="false"
             android:paddingTop="@dimen/layout_padding_top"
-            android:paddingBottom="@dimen/layout_padding_bottom"
             android:paddingEnd="@dimen/layout_padding_end"
+            android:paddingBottom="@dimen/layout_padding_bottom"
             android:background="?attr/colorSurfaceContainer">
 
             <!-- Navigation rail: left hand side. -->
@@ -144,17 +144,18 @@
                     android:layout_marginTop="@dimen/main_container_section_gap"
                     android:background="@drawable/main_container_bottom_section_background">
 
-                <com.android.documentsui.HorizontalBreadcrumb
-                    android:id="@+id/horizontal_breadcrumb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    <com.android.documentsui.HorizontalBreadcrumb
+                        android:id="@+id/horizontal_breadcrumb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
                 </LinearLayout>
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/container_save"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?android:attr/colorBackgroundFloating"
+                    android:background="?attr/colorSurfaceContainer"
                     android:elevation="8dp" />
 
             </LinearLayout>
@@ -178,4 +179,12 @@
         </LinearLayout>
 
     </androidx.drawerlayout.widget.DrawerLayout>
+
+    <!-- Peek overlay -->
+    <FrameLayout
+        android:id="@+id/peek_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

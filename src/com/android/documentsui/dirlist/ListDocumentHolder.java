@@ -43,6 +43,7 @@ import androidx.annotation.RequiresApi;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
+import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Lookup;
@@ -78,6 +79,8 @@ final class ListDocumentHolder extends DocumentHolder {
     private final ImageView mIconBadge;
     private final View mIconLayout;
     final View mPreviewIcon;
+    // It will be 0 when use_material flag is OFF.
+    private final int mThumbnailStrokeWidth;
 
     private final IconHelper mIconHelper;
     private final Lookup<String, String> mFileTypeLookup;
@@ -103,6 +106,17 @@ final class ListDocumentHolder extends DocumentHolder {
         // Warning: mDetails view doesn't exists in layout-sw720dp-land layout
         mDetails = (LinearLayout) itemView.findViewById(R.id.line2);
         mPreviewIcon = itemView.findViewById(R.id.preview_icon);
+        if (isUseMaterial3FlagEnabled()) {
+            mThumbnailStrokeWidth =
+                    context.getResources()
+                            .getDimensionPixelSize(R.dimen.thumbnail_border_width);
+            int clipCornerRadius = context.getResources()
+                    .getDimensionPixelSize(R.dimen.thumbnail_clip_corner_radius);
+            IconUtils.applyThumbnailClipOutline(
+                    mIconThumb, mThumbnailStrokeWidth, clipCornerRadius);
+        } else {
+            mThumbnailStrokeWidth = 0;
+        }
 
         mIconHelper = iconHelper;
         mFileTypeLookup = fileTypeLookup;
@@ -152,7 +166,7 @@ final class ListDocumentHolder extends DocumentHolder {
             if (selected) {
                 mIconWrapper.setStrokeWidth(0);
             } else if (mIconThumb.getDrawable() != null) {
-                mIconWrapper.setStrokeWidth(2);
+                mIconWrapper.setStrokeWidth(mThumbnailStrokeWidth);
             }
         }
     }
@@ -271,7 +285,8 @@ final class ListDocumentHolder extends DocumentHolder {
                 thumbnailLoaded -> {
                     // Show stroke when thumbnail is loaded.
                     if (isUseMaterial3FlagEnabled() && mIconWrapper != null) {
-                        mIconWrapper.setStrokeWidth(thumbnailLoaded ? THUMBNAIL_STROKE_WIDTH : 0);
+                        mIconWrapper.setStrokeWidth(
+                                thumbnailLoaded ? mThumbnailStrokeWidth : 0);
                     }
                 });
 
