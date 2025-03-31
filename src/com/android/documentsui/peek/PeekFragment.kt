@@ -51,7 +51,8 @@ class PeekFragment : Fragment() {
     private var toolbar: MaterialToolbar? = null
 
     // Rendering view.
-    private var previewFrame: RenderView? = null
+    private var previewFrame: FrameLayout? = null
+    private var previewHandler: PreviewHandler? = null
 
     // Metadata view.
     private var metadataContainer: FrameLayout? = null
@@ -80,7 +81,7 @@ class PeekFragment : Fragment() {
             inflater.inflate(getRes(R.layout.peek_layout), container, /* attachToRoot= */ false)
         toolbar = view.findViewById(getRes(R.id.peek_toolbar))
         toolbar!!.setNavigationOnClickListener { clearAndHide() }
-        previewFrame = view.findViewById(getRes(R.id.peek_preview))
+        previewFrame = view.findViewById(getRes(R.id.peek_preview_frame))
 
         metadataContainer = view.findViewById(R.id.peek_metadata_container)
         metadataView = MetadataView(requireContext())
@@ -136,13 +137,20 @@ class PeekFragment : Fragment() {
             metadataContainer!!.post { metadataSheetBehavior!!.expand() }
         }
         toolbar!!.title = docInfo.displayName
-        previewFrame!!.accept(docInfo)
+        previewHandler?.clear()
+        previewHandler =
+            when {
+                docInfo.mimeType.startsWith("image/") ->
+                    ImagePreviewHandler(previewFrame!!, docInfo)
+                else -> DefaultPreviewHandler(previewFrame!!)
+            }
         metadataView!!.accept(docInfo)
     }
 
     private fun clearAndHide() {
         viewModel.clear()
         toolbar?.title = ""
-        previewFrame?.clear()
+        previewHandler?.clear()
+        previewHandler = null
     }
 }

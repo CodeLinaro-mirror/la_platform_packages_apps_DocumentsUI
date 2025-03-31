@@ -29,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.android.documentsui.peek.RenderView
-            android:id="@+id/peek_preview"
+        <FrameLayout
+            android:id="@+id/peek_preview_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <!-- Text and icons using android:white because the underlying black scrim doesn't

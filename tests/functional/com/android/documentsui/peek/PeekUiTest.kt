@@ -15,23 +15,26 @@
  */
 package com.android.documentsui.peek
 
+import android.os.RemoteException
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
-import com.android.documentsui.StubProvider
 import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.rules.TestFilesRule
+import java.io.IOException
 import junit.framework.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -44,17 +47,31 @@ import org.junit.runner.RunWith
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @get:Rule val checkFlags = CheckAndForceMaterial3Flag()
 
+    @Suppress("ktlint:standard:comment-wrapping")
     @get:Rule
-    val testFilesRule: TestFilesRule =
-        TestFilesRule()
-            .createFileInRoot(StubProvider.ROOT_0_ID, "image.jpg", "image/jpeg")
-            .createFileInRoot(StubProvider.ROOT_0_ID, "file0.log", "text/plain")
+    val testFilesRule: TestFilesRule = TestFilesRule(/* skipCreation= */ true)
 
     private lateinit var peekBot: PeekBot
 
     @Before
     fun setUpTest() {
         peekBot = PeekBot(device!!, context!!, TIMEOUT)
+        initFiles()
+    }
+
+    @Throws(RemoteException::class, IOException::class)
+    fun initFiles() {
+        createFile("images/sample.jpg", "image/jpeg", "image.jpg")
+        createFile("images/sample.svg", "image/svg+xml", "image.svg")
+        createFile("documents/sample.log", "text/plain", "file0.log")
+    }
+
+    private fun createFile(sourcePath: String, mimeType: String, fileName: String) {
+        val file = testFilesRule.docsHelper.createDocument(rootDir0, mimeType, fileName)
+        val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
+        assetManager.open(sourcePath).use { inputStream ->
+            testFilesRule.docsHelper.writeDocument(file, inputStream.readAllBytes())
+        }
     }
 
     private fun showAndCheckPreview(fileName: String) {
@@ -135,5 +152,21 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         peekBot.validateMetadataSheetState(true)
         mActivityScenario!!.recreate()
         peekBot.validateMetadataSheetState(true)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testImagePreview() {
+        // Check that the preview screen shows for "image.jpg"
+        showAndCheckPreview("image.jpg")
+        onView(withContentDescription("No preview available")).check(doesNotExist())
+        onView(withContentDescription("Image preview of image.jpg")).check(matches(isDisplayed()))
+        peekBot.hide()
+
+        // SVG files are not handled by ImageViews, check that the "no preview" fallback screen
+        // shows instead.
+        showAndCheckPreview("image.svg")
+        onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
+        onView(withContentDescription("Image preview of image.svg")).check(doesNotExist())
     }
 }

@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
@@ -170,16 +171,21 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             mInjector.messages);
         }
 
-        if (isUsePeekPreviewFlagEnabled()) {
-            ViewModelProvider viewModelProvider = new ViewModelProvider(this);
-            PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
-            mPeekViewManager = new PeekViewManager(
-                    viewModel,
-                    findViewById(getRes(R.id.peek_overlay)),
-                    getSupportFragmentManager());
-            viewModel.getOverlayActive().observe(
-                    this,
-                    mPeekViewManager);
+        // Directly use the generated method `usePeekPreviewRo` to optimize out Peek when the flag
+        // isn't enabled. The optimization is not happening with the FlagUtils's
+        // `isUsePeekPreviewFlagEnabled`.
+        if (usePeekPreviewRo()) {
+            if (isUsePeekPreviewFlagEnabled()) {
+                ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+                PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
+                mPeekViewManager = new PeekViewManager(
+                        viewModel,
+                        findViewById(getRes(R.id.peek_overlay)),
+                        getSupportFragmentManager());
+                viewModel.getOverlayActive().observe(
+                        this,
+                        mPeekViewManager);
+            }
         }
 
         Runnable closeSelectionBarRunnable =
