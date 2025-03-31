@@ -976,7 +976,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // Clamp so that we always lay out the grid with at least 2 columns by default.
         // If on photo picking state, the UI should show 3 images a row or 2 folders a row,
         // so use 6 columns by default and set folder size to 3 and document size is to 2.
-        mColumnUnit = mState.isPhotoPicking() ? 3 : 1;
+        mColumnUnit = (!isUseMaterial3FlagEnabled() && mState.isPhotoPicking()) ? 3 : 1;
         int columnCount = mColumnUnit * Math.max(2,
                 (mRecView.getWidth() - viewPadding) / (cellWidth + cellMargin));
 
