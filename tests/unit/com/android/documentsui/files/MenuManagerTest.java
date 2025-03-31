@@ -794,6 +794,9 @@ public final class MenuManagerTest {
         selectionDetails.size = 1;
         selectionDetails.containFiles = true;
         selectionDetails.isArchive = true;
+        selectionDetails.containsFilesInArchive = false;
+        dirDetails.isInArchive = false;
+        dirDetails.canCreateDirectory = true;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
         if (isZipNgFlagEnabled()) {
             mDirExtractHere.assertEnabledAndVisible();
@@ -802,6 +805,26 @@ public final class MenuManagerTest {
             mDirExtractHere.assertDisabledAndInvisible();
             mDirBrowse.assertDisabledAndInvisible();
         }
+
+        // On archive in read-only directory (but not a nested archive)
+        selectionDetails.containsFilesInArchive = false;
+        dirDetails.isInArchive = false;
+        dirDetails.canCreateDirectory = false;
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+        mDirExtractHere.assertDisabledAndInvisible();
+        if (isZipNgFlagEnabled()) {
+            mDirBrowse.assertEnabledAndVisible();
+        } else {
+            mDirBrowse.assertDisabledAndInvisible();
+        }
+
+        // On nested archive
+        selectionDetails.containsFilesInArchive = true;
+        dirDetails.isInArchive = true;
+        dirDetails.canCreateDirectory = false;
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+        mDirExtractHere.assertDisabledAndInvisible();
+        mDirBrowse.assertDisabledAndInvisible();
     }
 
     @Test
