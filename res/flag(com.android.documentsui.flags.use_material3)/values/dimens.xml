@@ -44,7 +44,7 @@
     <fraction name="grid_scale_min">85%</fraction>
     <fraction name="grid_scale_max">200%</fraction>
     <dimen name="grid_width">144dp</dimen>
-    <dimen name="grid_height">116dp</dimen>
+    <dimen name="grid_height">128dp</dimen>
     <dimen name="grid_section_separator_height">0dp</dimen>
     <dimen name="grid_item_margin">@dimen/space_extra_small_4</dimen>
     <dimen name="grid_container_padding_left">@dimen/space_small_1</dimen>
