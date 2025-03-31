@@ -654,4 +654,7 @@
 
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
+
+    <!-- Text used in Peek to indicate that no preview is available. -->
+    <string name="peek_no_preview">No preview available</string>
 </resources>

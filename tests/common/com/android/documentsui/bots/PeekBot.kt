@@ -16,55 +16,51 @@
 package com.android.documentsui.bots
 
 import android.content.Context
-import androidx.test.uiautomator.By
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiObject
-import androidx.test.uiautomator.Until
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertNotNull
+import com.android.documentsui.R
+import com.google.android.material.appbar.MaterialToolbar
+import org.hamcrest.CoreMatchers.allOf
 
 /**
- * A test helper class that provides support for controlling the peek overlay
- * and making assertions against the state of it.
+ * A test helper class that provides support for controlling the peek overlay and making assertions
+ * against the state of it.
  */
-class PeekBot(
-    device: UiDevice,
-    context: Context,
-    timeout: Int
-) : Bots.BaseBot(device, context, timeout) {
-
-    private val mOverlayId: String = "$mTargetPackage:id/peek_overlay"
-    private val mContainerId: String = "$mTargetPackage:id/peek_container"
+class PeekBot(device: UiDevice, context: Context, timeout: Int) :
+    Bots.BaseBot(device, context, timeout) {
+    private val peekOverlayMatcher = withId(R.id.peek_overlay)
+    private val peekContainerMatcher =
+        allOf(withId(R.id.peek_container), isDescendantOfA(peekOverlayMatcher))
+    private val toolbarMatcher =
+        allOf(isAssignableFrom(MaterialToolbar::class.java), withId(R.id.peek_toolbar))
 
     fun assertPeekHidden() {
-        val peekContainer = findPeekContainer()
-        assertFalse(peekContainer.exists())
+        onView(peekOverlayMatcher)
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
     }
 
-    fun waitForPeekActive() {
-        mDevice.wait(Until.findObject(By.res(mContainerId)), mTimeout.toLong())
-    }
-
-    fun waitForPeekGone() {
-        mDevice.wait(Until.gone(By.res(mContainerId)), mTimeout.toLong())
-    }
-
-    fun findPeekContainer(): UiObject {
-        return findObject(mOverlayId, mContainerId)
+    fun assertPeekActive() {
+        onView(peekContainerMatcher).check(matches(isDisplayed()))
     }
 
     fun assertHasTitle(title: String) {
-        val peekContainer = find(By.res(mContainerId))
-        assertNotNull(peekContainer)
-        val titleTextView = peekContainer.findObject(By.text(title))
-        assertNotNull(titleTextView)
+        onView(allOf(withText(title), isDescendantOfA(peekContainerMatcher)))
+            .check(matches(isDisplayed()))
     }
 
     fun hide() {
-        val peekContainer = find(By.res(mContainerId))
-        val navigationIcon = peekContainer.findObject(By.desc("Hide file preview"))
-        assertNotNull(navigationIcon)
-        navigationIcon.click()
-        waitForPeekGone()
+        onView(allOf(withContentDescription("Hide file preview"), isDescendantOfA(toolbarMatcher)))
+            .perform(ViewActions.click())
+        assertPeekHidden()
     }
 }
