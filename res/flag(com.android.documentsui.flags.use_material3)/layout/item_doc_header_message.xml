@@ -16,7 +16,6 @@
 
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -24,17 +23,15 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:elevation="0dp"
-        android:duplicateParentState="true"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="?android:strokeColor">
+        style="@style/BannerStyle"
+        android:duplicateParentState="true">
 
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:background="?android:attr/colorBackground"
+            android:paddingVertical="@dimen/banner_content_padding_vertical"
+            android:paddingStart="@dimen/banner_content_padding_start"
+            android:paddingEnd="@dimen/banner_content_padding_end"
             android:orientation="vertical">
 
             <LinearLayout
@@ -43,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:minHeight="60dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -58,8 +56,6 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:minHeight="48dp"
-                    android:paddingTop="12dp"
-                    android:paddingEnd="12dp"
                     android:gravity="center_vertical"
                     android:orientation="vertical">
 
@@ -67,23 +63,23 @@
                         android:id="@+id/message_title"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:textSize="16sp"
-                        android:textAppearance="@style/DrawerMenuPrimary"/>
+                        android:textAppearance="@style/BannerTitleText"/>
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/message_subtitle"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
                         android:selectAllOnFocus="true"
-                        android:textSize="12sp"/>
+                        android:textAppearance="@style/BannerSubtitleText"/>
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/message_textview"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:selectAllOnFocus="true"/>
+                        android:selectAllOnFocus="true"
+                        android:textAppearance="@style/BannerMessageText"/>
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/dismiss_button"
                         android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
@@ -100,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:orientation="vertical">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/action_button"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"

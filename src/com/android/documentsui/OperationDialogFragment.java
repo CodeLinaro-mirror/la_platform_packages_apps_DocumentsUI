@@ -16,13 +16,17 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
+import android.widget.TextView;
 
 import androidx.annotation.IntDef;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -108,6 +112,34 @@ public class OperationDialogFragment extends DialogFragment {
                     }
                 });
 
-        return builder.create();
+        Dialog dialog = builder.create();
+        // message content returned by `Html.fromHtml()` above doesn't inherit the theme level
+        // dialog body text style, we need to manually apply it. In addition, set the same padding
+        // as other dialogs.
+        if (isUseMaterial3FlagEnabled()) {
+            dialog.setOnShowListener(
+                    dialogInterface -> {
+                        TextView body =
+                                ((AlertDialog) dialogInterface).findViewById(android.R.id.message);
+                        if (body != null) {
+                            body.setTextAppearance(R.style.MaterialAlertDialogBodyStyle);
+                            body.setPadding(
+                                    getResources()
+                                            .getDimensionPixelSize(
+                                                    R.dimen.dialog_content_padding_horizontal),
+                                    getResources()
+                                            .getDimensionPixelSize(
+                                                    R.dimen.dialog_content_padding_top),
+                                    getResources()
+                                            .getDimensionPixelSize(
+                                                    R.dimen.dialog_content_padding_horizontal),
+                                    getResources()
+                                            .getDimensionPixelSize(
+                                                    R.dimen.dialog_content_padding_bottom));
+                        }
+                    });
+        }
+
+        return dialog;
     }
 }

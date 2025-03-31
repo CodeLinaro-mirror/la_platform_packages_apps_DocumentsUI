@@ -15,11 +15,15 @@
  */
 package com.android.documentsui.ui;
 
-import androidx.annotation.PluralsRes;
+import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_CONVERTED;
+import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_FAILURE;
+
 import android.content.Context;
-import android.text.BidiFormatter;
 import android.net.Uri;
+import android.text.BidiFormatter;
 import android.text.Html;
+
+import androidx.annotation.PluralsRes;
 
 import com.android.documentsui.OperationDialogFragment.DialogType;
 import com.android.documentsui.R;
@@ -27,10 +31,6 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
-import com.android.documentsui.OperationDialogFragment.DialogType;
-
-import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_FAILURE;
-import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_CONVERTED;
 
 import java.util.List;
 
@@ -98,6 +98,7 @@ public class MessageBuilder {
                         resourceId = R.plurals.compress_failure_alert_content;
                         break;
                     case FileOperationService.OPERATION_EXTRACT:
+                    case FileOperationService.OPERATION_UNPACK:
                         resourceId = R.plurals.extract_failure_alert_content;
                         break;
                     case FileOperationService.OPERATION_DELETE:

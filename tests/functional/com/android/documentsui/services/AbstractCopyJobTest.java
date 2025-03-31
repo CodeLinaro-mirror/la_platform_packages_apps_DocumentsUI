@@ -45,7 +45,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
     }
 
     private String getVerb() {
-        switch(mOpType) {
+        switch (mOpType) {
             case FileOperationService.OPERATION_COPY:
             case FileOperationService.OPERATION_EXTRACT:
                 return "Copying";
@@ -53,8 +53,10 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
                 return "Zipping";
             case FileOperationService.OPERATION_MOVE:
                 return "Moving";
+
+            // DeleteJob does not inherit from CopyJob
             case FileOperationService.OPERATION_DELETE:
-                // DeleteJob does not inherit from CopyJob
+            case FileOperationService.OPERATION_UNPACK:
             case FileOperationService.OPERATION_UNKNOWN:
             default:
                 return "";

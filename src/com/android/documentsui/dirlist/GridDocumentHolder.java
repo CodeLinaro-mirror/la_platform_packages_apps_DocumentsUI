@@ -165,15 +165,6 @@ final class GridDocumentHolder extends DocumentHolder {
                 mIconMimeSm.setAlpha(1f - checkAlpha);
             }
         }
-
-        // Do not show stroke when selected, only show stroke when not selected if it has thumbnail.
-        if (mIconWrapper != null) {
-            if (selected) {
-                mIconWrapper.setStrokeWidth(0);
-            } else if (mIconThumb.getDrawable() != null) {
-                mIconWrapper.setStrokeWidth(mThumbnailStrokeWidth);
-            }
-        }
     }
 
     @Override
