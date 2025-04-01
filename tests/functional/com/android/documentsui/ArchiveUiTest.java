@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
+import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
@@ -37,10 +38,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUpTest() throws RemoteException {
         initTestFiles();
     }
 

@@ -37,6 +37,8 @@ import com.android.documentsui.bots.Bots
 import com.android.documentsui.files.FilesActivity
 import java.io.IOException
 import java.util.Objects
+import org.junit.After
+import org.junit.Before
 
 /**
  * Provides basic test environment for UI tests:
@@ -98,8 +100,8 @@ abstract class ActivityTestJunit4<T : Activity?> {
         this.initialRoot = rootDir0
     }
 
-    @Throws(Exception::class)
-    open fun setUp() {
+    @Before
+    fun setUp() {
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // NOTE: Must be the "target" context, else security checks in content provider will fail.
         context = InstrumentationRegistry.getInstrumentation().getTargetContext()
@@ -137,8 +139,8 @@ abstract class ActivityTestJunit4<T : Activity?> {
         mDocsHelper!!.configure(null, Bundle.EMPTY)
     }
 
-    @Throws(Exception::class)
-    open fun tearDown() {
+    @After
+    fun tearDown() {
         device!!.unfreezeRotation()
         mDocsHelper!!.cleanUp()
         restoreScreenOffAndSleepTimeouts()

@@ -28,7 +28,6 @@ import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import junit.framework.Assert
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,16 +41,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     @Before
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
+    fun setUpTest() {
         initTestFiles()
-    }
-
-    @After
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
     }
 
     @Throws(RemoteException::class)
@@ -91,7 +82,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
         val selectionText: UiObject2? = device!!.wait(
-            Until.findObject(By.text(assertSelectionText)), timeout
+            Until.findObject(By.text(assertSelectionText)),
+            timeout
         )
         Assert.assertNull(selectionText)
     }

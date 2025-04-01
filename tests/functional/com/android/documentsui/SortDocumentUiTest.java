@@ -31,7 +31,6 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -80,14 +79,8 @@ public class SortDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUpTest() {
         bots.roots.closeDrawer();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     private void initFiles() throws Exception {

@@ -46,7 +46,6 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -60,14 +59,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUpTest() throws RemoteException {
         initTestFiles();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Override
