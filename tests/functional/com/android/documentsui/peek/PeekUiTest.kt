@@ -53,16 +53,25 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Throws(RemoteException::class)
     override fun initTestFiles() {
         mDocsHelper!!.createDocument(rootDir0, "image/png", "image.png")
+        mDocsHelper!!.createDocument(rootDir0, "text/plain", "file0.log")
     }
 
     @Test
     @Throws(
         Exception::class
     )
-    fun testShowPeek() {
+    fun testSequentialFilePreview() {
         bots!!.peek.assertPeekHidden()
         bots!!.directory.selectDocument("image.png")
         bots!!.main.clickActionItem("Get info")
-        bots!!.peek.assertPeekActive()
+        bots!!.peek.waitForPeekActive()
+        bots!!.peek.assertHasTitle("image.png")
+        bots!!.peek.hide()
+
+        bots!!.directory.selectDocument("file0.log")
+        bots!!.main.clickActionItem("Get info")
+        bots!!.peek.waitForPeekActive()
+        bots!!.peek.assertHasTitle("file0.log")
+        bots!!.peek.hide()
     }
 }

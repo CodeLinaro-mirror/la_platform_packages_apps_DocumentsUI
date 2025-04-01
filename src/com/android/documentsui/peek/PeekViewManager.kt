@@ -16,11 +16,9 @@
 package com.android.documentsui.peek
 
 import android.app.Activity
-import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import androidx.annotation.IdRes
 import androidx.fragment.app.FragmentManager
 import com.android.documentsui.R
 import androidx.fragment.app.FragmentTransaction
@@ -37,7 +35,8 @@ open class PeekViewManager(
         const val TAG = "PeekViewManager"
     }
 
-    private var mPeekFragment: PeekFragment? = null
+    private lateinit var peekFragment: PeekFragment
+    private lateinit var container: FrameLayout
 
     open fun initFragment(
         fm: FragmentManager
@@ -47,37 +46,34 @@ open class PeekViewManager(
             return
         }
 
-        if (getOverlayContainer() == null) {
+        val container: FrameLayout? = mActivity.findViewById(R.id.peek_overlay)
+        if (container == null) {
             Log.e(TAG, "Unable to find Peek container")
             return
         }
+        this.container = container
 
-        // Load the Peek fragment into its container.
-        val peekFragment = PeekFragment()
-        mPeekFragment = peekFragment
+        peekFragment = PeekFragment()
+        peekFragment.setViewManager(this)
         val ft: FragmentTransaction = fm.beginTransaction()
-        ft.replace(getOverlayId(), peekFragment)
+        ft.replace(R.id.peek_overlay, peekFragment)
         ft.commitAllowingStateLoss()
     }
 
     open fun peekDocument(doc: DocumentInfo) {
-        if (mPeekFragment == null) {
-            Log.e(TAG, "Peek fragment not initialized")
+        if (!::peekFragment.isInitialized) {
+            Log.e(TAG, "PeekFragment has not been initialized")
             return
         }
-        show()
+        peekFragment.updateView(doc)
+        setContainerVisibility(true)
     }
 
-    @IdRes
-    private fun getOverlayId(): Int {
-        return R.id.peek_overlay
-    }
-
-    private fun getOverlayContainer(): FrameLayout? {
-        return mActivity.findViewById(getOverlayId())
-    }
-
-    private fun show() {
-        getOverlayContainer()?.visibility = View.VISIBLE
+    fun setContainerVisibility(visible: Boolean) {
+        if (!::container.isInitialized) {
+            Log.e(TAG, "Container has not been initialized")
+            return
+        }
+        container.visibility = if (visible) View.VISIBLE else View.GONE
     }
 }

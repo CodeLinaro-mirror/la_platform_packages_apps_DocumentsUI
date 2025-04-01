@@ -16,10 +16,12 @@
 package com.android.documentsui.bots
 
 import android.content.Context
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.Until
 import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import junit.framework.Assert.assertNotNull
 
 /**
  * A test helper class that provides support for controlling the peek overlay
@@ -34,17 +36,35 @@ class PeekBot(
     private val mOverlayId: String = "$mTargetPackage:id/peek_overlay"
     private val mContainerId: String = "$mTargetPackage:id/peek_container"
 
-    fun assertPeekActive() {
-        val peekContainer = findPeekContainer()
-        assertTrue(peekContainer.exists())
-    }
-
     fun assertPeekHidden() {
         val peekContainer = findPeekContainer()
         assertFalse(peekContainer.exists())
     }
 
+    fun waitForPeekActive() {
+        mDevice.wait(Until.findObject(By.res(mContainerId)), mTimeout.toLong())
+    }
+
+    fun waitForPeekGone() {
+        mDevice.wait(Until.gone(By.res(mContainerId)), mTimeout.toLong())
+    }
+
     fun findPeekContainer(): UiObject {
         return findObject(mOverlayId, mContainerId)
+    }
+
+    fun assertHasTitle(title: String) {
+        val peekContainer = find(By.res(mContainerId))
+        assertNotNull(peekContainer)
+        val titleTextView = peekContainer.findObject(By.text(title))
+        assertNotNull(titleTextView)
+    }
+
+    fun hide() {
+        val peekContainer = find(By.res(mContainerId))
+        val navigationIcon = peekContainer.findObject(By.desc("Hide file preview"))
+        assertNotNull(navigationIcon)
+        navigationIcon.click()
+        waitForPeekGone()
     }
 }
