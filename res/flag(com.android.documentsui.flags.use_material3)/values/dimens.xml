@@ -78,7 +78,7 @@
     <dimen name="drag_shadow_size">120dp</dimen>
     <dimen name="grid_item_thumbnail_width">80dp</dimen>
     <dimen name="grid_item_thumbnail_height">80dp</dimen>
-    <dimen name="grid_item_thumbnail_radius">12dp</dimen>
+    <dimen name="grid_item_thumbnail_radius">20dp</dimen>
     <dimen name="grid_item_icon_width">64dp</dimen>
     <dimen name="grid_item_icon_height">64dp</dimen>
     <dimen name="grid_item_nameplate_width">142dp</dimen>
