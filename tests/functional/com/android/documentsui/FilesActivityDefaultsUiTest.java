@@ -45,11 +45,6 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Override
-    protected void initTestFiles() {
-        // Overriding to init with no items in test roots
-    }
-
-    @Override
     protected RootInfo getInitialRoot() {
         return null;  // test the default, unaffected state of the app.
     }

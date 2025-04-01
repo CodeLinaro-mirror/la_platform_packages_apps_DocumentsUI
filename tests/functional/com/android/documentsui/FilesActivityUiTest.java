@@ -63,8 +63,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         initTestFiles();
     }
 
-    @Override
-    public void initTestFiles() throws RemoteException {
+    private void initTestFiles() throws RemoteException {
         Uri uri = mDocsHelper.createFolder(rootDir0, dirName1);
         mDocsHelper.createFolder(uri, childDir1);
 
