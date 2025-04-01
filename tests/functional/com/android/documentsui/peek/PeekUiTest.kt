@@ -21,9 +21,13 @@ import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
+import junit.framework.Assert
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -57,9 +61,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     }
 
     @Test
-    @Throws(
-        Exception::class
-    )
+    @Throws(Exception::class)
     fun testSequentialFilePreview() {
         bots!!.peek.assertPeekHidden()
         bots!!.directory.selectDocument("image.png")
@@ -73,5 +75,24 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         bots!!.peek.waitForPeekActive()
         bots!!.peek.assertHasTitle("file0.log")
         bots!!.peek.hide()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFileCantBeSelectedDuringFilePreview() {
+        bots!!.peek.assertPeekHidden()
+        // Selecting a document should show the "1 selected" label.
+        bots!!.directory.selectDocument("image.png", 1)
+        bots!!.main.clickActionItem("Get info")
+        bots!!.peek.waitForPeekActive()
+        bots!!.peek.assertHasTitle("image.png")
+        // The selection should not be possible, the "1 selected" label shouldn't show.
+        bots!!.directory.selectDocument("image.png")
+        val assertSelectionText = "1 selected"
+        val timeout: Long = 1000
+        val selectionText: UiObject2? = device!!.wait(
+            Until.findObject(By.text(assertSelectionText)), timeout
+        )
+        Assert.assertNull(selectionText)
     }
 }
