@@ -16,17 +16,48 @@
 package com.android.documentsui.peek
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 import com.android.documentsui.R
+import com.android.documentsui.base.DocumentInfo
+import com.google.android.material.appbar.MaterialToolbar
 
 class PeekFragment : Fragment() {
+    companion object {
+        const val TAG = "PeekFragment"
+    }
+
+    private lateinit var viewManager: PeekViewManager
+    private lateinit var toolbar: MaterialToolbar
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.peek_layout, container, /* attachToRoot= */ false)
+        val view = inflater.inflate(R.layout.peek_layout, container, /* attachToRoot= */ false)
+        toolbar = view.findViewById(R.id.peek_toolbar)
+        toolbar.setNavigationOnClickListener {
+            if (!::viewManager.isInitialized) {
+                Log.e(TAG, "PeekViewManager has not been initialized")
+            } else {
+                viewManager.setContainerVisibility(false)
+            }
+        }
+        return view
+    }
+
+    fun setViewManager(viewManager: PeekViewManager) {
+        this.viewManager = viewManager
+    }
+
+    fun updateView(doc: DocumentInfo) {
+        if (!::toolbar.isInitialized) {
+            Log.e(TAG, "Toolbar has not been initialized")
+            return
+        }
+        toolbar.title = doc.displayName
     }
 }
