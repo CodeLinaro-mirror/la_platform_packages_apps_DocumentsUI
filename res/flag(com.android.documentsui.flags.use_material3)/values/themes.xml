@@ -67,7 +67,6 @@
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
-        <item name="materialCardViewStyle">@style/CardViewStyle</item>
         <item name="materialAlertDialogTheme">@style/MaterialAlertDialogTheme</item>
         <item name="queryBackground">@color/menu_search_background</item>
         <item name="snackbarButtonStyle">@style/SnackbarButtonStyle</item>

@@ -36,25 +36,20 @@
         android:duplicateParentState="true"
         android:background="@drawable/grid_thumbnail_background">
 
-        <!-- stroke width will be controlled dynamically in the code. -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/icon_wrapper"
             android:layout_width="@dimen/grid_item_icon_width"
             android:layout_height="@dimen/grid_item_icon_height"
             android:layout_gravity="center"
-            app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
-            app:cardElevation="0dp"
-            app:strokeColor="?attr/colorSecondaryContainer"
-            app:strokeWidth="0dp">
+            style="@style/GridThumbnailCardViewStyle">
 
-            <com.android.documentsui.GridItemThumbnail
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/icon_thumb"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"
-                android:tint="?attr/gridItemTint"
-                android:tintMode="src_over" />
+                style="@style/GridThumbnailImageViewStyle" />
 
             <com.android.documentsui.GridItemThumbnail
                 android:id="@+id/icon_mime_lg"
