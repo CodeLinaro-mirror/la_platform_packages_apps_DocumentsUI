@@ -313,7 +313,6 @@ public interface UserManagerState {
 
             final List<UserHandle> userProfiles = mUserManager.getUserProfiles();
 
-            result.add(mCurrentUser);
             boolean currentUserIsManaged =
                     mUserManager.isManagedProfile(mCurrentUser.getIdentifier());
 
