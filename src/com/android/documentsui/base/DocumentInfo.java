@@ -18,7 +18,6 @@ package com.android.documentsui.base;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
-import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -321,8 +320,7 @@ public class DocumentInfo implements Durable, Parcelable {
 
     // Containers are documents which can be opened in DocumentsUI as folders.
     public boolean isContainer() {
-        return isDirectory() || (isArchive() && !isPartial() && (isZipNgFlagEnabled()
-                || !isInArchive()));
+        return isDirectory() || (isArchive() && !isPartial() && !isInArchive());
     }
 
     public boolean isVirtual() {
