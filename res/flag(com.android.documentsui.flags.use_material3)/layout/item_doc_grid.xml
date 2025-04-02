@@ -33,6 +33,7 @@
         android:layout_width="@dimen/grid_item_thumbnail_width"
         android:layout_height="@dimen/grid_item_thumbnail_height"
         android:layout_centerHorizontal="true"
+        android:duplicateParentState="true"
         android:background="@drawable/grid_thumbnail_background">
 
         <!-- stroke width will be controlled dynamically in the code. -->
