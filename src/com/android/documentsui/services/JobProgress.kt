@@ -25,6 +25,7 @@ import android.os.Parcelable
  */
 data class JobProgress @JvmOverloads constructor(
     @JvmField val id: String,
+    @JvmField @FileOperationService.OpType val operationType: Int,
     @JvmField @Job.State val state: Int,
     @JvmField val msg: String?,
     @JvmField val hasFailures: Boolean,
@@ -50,6 +51,7 @@ data class JobProgress @JvmOverloads constructor(
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.apply {
             writeString(id)
+            writeInt(operationType)
             writeInt(state)
             writeString(msg)
             writeBoolean(hasFailures)
@@ -63,6 +65,7 @@ data class JobProgress @JvmOverloads constructor(
         override fun createFromParcel(parcel: Parcel): JobProgress? {
             return JobProgress(
                 parcel.readString()!!,
+                parcel.readInt(),
                 parcel.readInt(),
                 parcel.readString(),
                 parcel.readBoolean(),
