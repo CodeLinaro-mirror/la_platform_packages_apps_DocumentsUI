@@ -156,6 +156,9 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     /** Current menu item being controlled by this class. */
     private var mMenuItem: MenuItem? = null
 
+    /** Current panel popup shown if any. */
+    private var mPopup: PopupWindow? = null
+
     /** Adapter used to display JobProgresses in the recycler list. */
     private var mProgressListAdapter: ProgressListAdapter? = null
 
@@ -165,6 +168,10 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     }
 
     private fun updateMenuItem(animate: Boolean) {
+        if (mState == State.INVISIBLE) {
+            mPopup?.dismiss()
+        }
+
         mMenuItem?.let {
             Menus.setEnabledAndVisible(it, mState != State.INVISIBLE)
             val icon = it.actionView as ProgressBar
@@ -207,18 +214,19 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
             mProgressListAdapter = listAdapter
             val popupWidth = mContext.resources.getDimension(R.dimen.job_progress_panel_width) +
                     mContext.resources.getDimension(R.dimen.job_progress_panel_margin)
-            val popup = PopupWindow(
+            mPopup = PopupWindow(
                 /* contentView= */ panel,
                 /* width= */ popupWidth.toInt(),
                 /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
                 /* focusable= */ true
-            )
-            popup.setOnDismissListener { mProgressListAdapter = null }
-            popup.showAsDropDown(
-                /* anchor= */ view,
-                /* xoff= */ view.width - popupWidth.toInt(),
-                /* yoff= */ 0
-            )
+            ).apply {
+                setOnDismissListener { mProgressListAdapter = null }
+                showAsDropDown(
+                    /* anchor= */ view,
+                    /* xoff= */ view.width - popupWidth.toInt(),
+                    /* yoff= */ 0
+                )
+            }
         }
         mMenuItem = menuItem
         updateMenuItem(animate = false)

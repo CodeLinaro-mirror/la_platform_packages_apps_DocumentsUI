@@ -15,11 +15,16 @@
  */
 package com.android.documentsui.loaders
 
+import android.content.ContentProviderClient
 import android.content.Context
+import android.net.Uri
+import android.os.RemoteException
 import android.provider.DocumentsContract
+import android.util.Log
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
+import com.android.documentsui.archives.ArchivesProvider
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
@@ -60,9 +65,18 @@ class FolderLoader(
             mListedDir.authority,
             mListedDir.documentId
         )
-        val cursor =
+        val result = DirectoryResult()
+        // If we are listing an archive, in the current approach, we cache the client as part of
+        // DirectoryResult. This way, when the loader is closed, we can close the archive client.
+        if (mListedDir.isInArchive) {
+            result.setClient(openArchive(folderChildrenUri))
+        }
+        var cursor =
             queryLocation(mRoot.rootId, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
-                ?: emptyCursor()
+        if (cursor == null) {
+            cursor = emptyCursor()
+            result.setClient(null)
+        }
         cursor.registerContentObserver(mObserver)
 
         val filteredCursor = FilteringCursorWrapper(cursor)
@@ -74,9 +88,29 @@ class FolderLoader(
         // TODO(b:380945065): Add filtering by category, such as images, audio, video.
         val sortedCursor = mSortModel.sortCursor(filteredCursor, mMimeTypeLookup)
 
-        val result = DirectoryResult()
         result.doc = mListedDir
         result.cursor = sortedCursor
         return result
+    }
+
+    /**
+     * Helper function that attempts to open an archive and return a long lasting content provider
+     * client to the soon to be scanned archive. This must be done before attempting to acquire the
+     * cursor, as we depend on archive content to be read (see acquireArchive method).
+     */
+    private fun openArchive(folderChildrenUri: Uri): ContentProviderClient? {
+        // If we are opening an archive, we need, in the current approach, to have a long lived
+        // ContentProviderClient for it. This is so that the archive can be closed, once the
+        // loader results are closed.
+        var client: ContentProviderClient? = null
+        try {
+            val resolver = mRoot.userId.getContentResolver(context)
+            client = resolver.acquireUnstableContentProviderClient(folderChildrenUri.authority!!)
+            ArchivesProvider.acquireArchive(client, folderChildrenUri)
+        } catch (e: RemoteException) {
+            Log.e(TAG, "Failed to acquire archive client", e)
+            client?.close()
+        }
+        return client
     }
 }

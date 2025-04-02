@@ -134,7 +134,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         final boolean hasDir = selectionDetails.containsDirectories();
         final boolean hasFile = selectionDetails.containsFiles();
 
-        assert(hasDir || hasFile);
+        assert hasDir || hasFile;
         if (!hasDir) {
             inflater.inflate(R.menu.file_context_menu, menu);
             updateContextMenuForFiles(menu, selectionDetails);
@@ -195,12 +195,12 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateOpenInNewWindow(
             MenuItem openInNewWindow, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(openInNewWindow, selectionDetails.size() == 1
-            && !selectionDetails.containsPartialFiles());
+                && !selectionDetails.containsPartialFiles());
     }
 
     @Override
     protected void updateOpenInNewWindow(MenuItem openInNewWindow, RootInfo root) {
-        assert(openInNewWindow.isVisible() && openInNewWindow.isEnabled());
+        assert openInNewWindow.isVisible() && openInNewWindow.isEnabled();
     }
 
     @Override
@@ -232,12 +232,12 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateExtractHere(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        Menus.setEnabledAndVisible(it, selection.isArchive());
+        Menus.setEnabledAndVisible(it, selection.isArchive() && mDirDetails.canCreateDirectory());
     }
 
     @Override
     protected void updateBrowse(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        Menus.setEnabledAndVisible(it, selection.isArchive());
+        Menus.setEnabledAndVisible(it, selection.isArchive() && !mDirDetails.isInArchive());
     }
 
     @Override
@@ -325,8 +325,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                     selectedUri.getAuthority());
             String title = res.getString(R.string.menu_view_in_owner, appName);
             view.setTitle(title);
-        }
-        else {
+        } else {
             Menus.setEnabledAndVisible(view, false);
         }
     }
