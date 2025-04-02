@@ -123,8 +123,8 @@ public abstract class FileOperation implements Parcelable {
     }
 
     public static class CopyOperation extends FileOperation {
-        private CopyOperation(UrisSupplier srcs, DocumentStack destination) {
-            super(OPERATION_COPY, srcs, destination);
+        private CopyOperation(@OpType int opType, UrisSupplier srcs, DocumentStack destination) {
+            super(opType, srcs, destination);
         }
 
         @Override
@@ -200,48 +200,6 @@ public abstract class FileOperation implements Parcelable {
                     @Override
                     public CompressOperation[] newArray(int size) {
                         return new CompressOperation[size];
-                    }
-                };
-    }
-
-    public static class ExtractOperation extends FileOperation {
-        private ExtractOperation(UrisSupplier srcs, DocumentStack destination) {
-            super(OPERATION_EXTRACT, srcs, destination);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-
-            builder.append("ExtractOperation{");
-            super.appendInfoTo(builder);
-            builder.append("}");
-
-            return builder.toString();
-        }
-
-        // TODO: Replace CopyJob with ExtractJob.
-        @Override
-        CopyJob createJob(Context service, Job.Listener listener, String id, Features features) {
-            return new CopyJob(
-                    service, listener, id, getDestination(), getSrc(), getMessenger(), features);
-        }
-
-        private ExtractOperation(Parcel in) {
-            super(in);
-        }
-
-        public static final Parcelable.Creator<ExtractOperation> CREATOR =
-                new Parcelable.Creator<ExtractOperation>() {
-
-                    @Override
-                    public ExtractOperation createFromParcel(Parcel source) {
-                        return new ExtractOperation(source);
-                    }
-
-                    @Override
-                    public ExtractOperation[] newArray(int size) {
-                        return new ExtractOperation[size];
                     }
                 };
     }
@@ -380,11 +338,10 @@ public abstract class FileOperation implements Parcelable {
         public FileOperation build() {
             switch (mOpType) {
                 case OPERATION_COPY:
-                    return new CopyOperation(mSrcs, mDestination);
+                case OPERATION_EXTRACT:
+                    return new CopyOperation(mOpType, mSrcs, mDestination);
                 case OPERATION_COMPRESS:
                     return new CompressOperation(mSrcs, mDestination);
-                case OPERATION_EXTRACT:
-                    return new ExtractOperation(mSrcs, mDestination);
                 case OPERATION_MOVE:
                 case OPERATION_DELETE:
                     return new MoveDeleteOperation(mOpType, mSrcs, mDestination, mSrcParent);
