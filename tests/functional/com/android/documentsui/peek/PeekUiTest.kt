@@ -60,6 +60,11 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         mDocsHelper!!.createDocument(rootDir0, "text/plain", "file0.log")
     }
 
+    fun validatePeekContents(fileName: String) {
+        bots!!.peek.waitForPeekActive()
+        bots!!.peek.assertHasTitle(fileName)
+    }
+
     @Test
     @Throws(Exception::class)
     fun testSequentialFilePreview() {
@@ -94,5 +99,28 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
             Until.findObject(By.text(assertSelectionText)), timeout
         )
         Assert.assertNull(selectionText)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testRestorePeekActiveState() {
+        bots!!.directory.selectDocument("image.png")
+        bots!!.main.clickActionItem("Get info")
+        validatePeekContents("image.png")
+
+        // Recreate the activity (happens on window resize, for example), and ensure that the
+        // preview overlay is still showing.
+        mActivityScenario!!.recreate()
+        validatePeekContents("image.png")
+
+        bots!!.peek.hide()
+        mActivityScenario!!.recreate()
+        bots!!.peek.assertPeekHidden()
+
+        bots!!.directory.selectDocument("file0.log")
+        bots!!.main.clickActionItem("Get info")
+        validatePeekContents("file0.log")
+        mActivityScenario!!.recreate()
+        validatePeekContents("file0.log")
     }
 }

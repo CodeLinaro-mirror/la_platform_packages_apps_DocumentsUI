@@ -16,6 +16,7 @@
 package com.android.documentsui.testing
 
 import android.app.Activity
+import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.peek.PeekViewManager
@@ -24,7 +25,10 @@ class TestPeekViewManager(mActivity: Activity) : PeekViewManager(mActivity) {
 
     val peekDocument = TestEventListener<DocumentInfo>()
 
-    override fun initFragment(fm: FragmentManager) {
+    override fun initFragment(
+        fm: FragmentManager,
+        savedInstanceState: Bundle?
+    ) {
         throw UnsupportedOperationException()
     }
 

@@ -76,6 +76,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @JvmField
     protected var mDocsHelper: DocumentsProviderHelper? = null
+    @JvmField
     protected var mActivityScenario: ActivityScenario<T?>? = null
     private var initialScreenOffTimeoutValue: String? = null
     private var initialSleepTimeoutValue: String? = null
