@@ -36,7 +36,6 @@ import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.Bots
 import com.android.documentsui.files.FilesActivity
 import java.io.IOException
-import java.util.Objects
 import org.junit.After
 import org.junit.Before
 
@@ -78,6 +77,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @JvmField
     protected var mDocsHelper: DocumentsProviderHelper? = null
+
     @JvmField
     protected var mActivityScenario: ActivityScenario<T?>? = null
     private var initialScreenOffTimeoutValue: String? = null
@@ -105,14 +105,14 @@ abstract class ActivityTestJunit4<T : Activity?> {
     fun setUp() {
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // NOTE: Must be the "target" context, else security checks in content provider will fail.
-        context = InstrumentationRegistry.getInstrumentation().getTargetContext()
+        context = InstrumentationRegistry.getInstrumentation().targetContext
         userId = UserId.DEFAULT_USER
-        automation = InstrumentationRegistry.getInstrumentation().getUiAutomation()
+        automation = InstrumentationRegistry.getInstrumentation().uiAutomation
         features = RuntimeFeatures(context!!.getResources(), null)
 
         bots = Bots(device, automation, context, TIMEOUT)
 
-        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_MOUSE)
+        Configurator.getInstance().toolType = MotionEvent.TOOL_TYPE_MOUSE
 
         mResolver = context!!.getContentResolver()
         mDocsHelper = DocumentsProviderHelper(
@@ -181,8 +181,12 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @Throws(IOException::class)
     private fun restoreScreenOffAndSleepTimeouts() {
-        Objects.requireNonNull<String?>(initialScreenOffTimeoutValue)
-        Objects.requireNonNull<String?>(initialSleepTimeoutValue)
+        requireNotNull(
+            initialScreenOffTimeoutValue
+        ) { "Require the initial screen off timeout value to be non-null" }
+        requireNotNull(
+            initialSleepTimeoutValue
+        ) { "Require the sleep timeout value to be non-null" }
         try {
             device!!.executeShellCommand(
                 "settings put system screen_off_timeout $initialScreenOffTimeoutValue"
