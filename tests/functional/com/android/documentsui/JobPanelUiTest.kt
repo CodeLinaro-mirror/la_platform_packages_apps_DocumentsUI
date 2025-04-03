@@ -43,8 +43,6 @@ import com.android.documentsui.testing.MutableJobProgress
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -77,16 +75,6 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             putParcelableArrayListExtra(EXTRA_PROGRESS, progresses)
         }
         context.sendBroadcast(intent)
-    }
-
-    @Before
-    override fun setUp() {
-        super.setUp()
-    }
-
-    @After
-    override fun tearDown() {
-        super.tearDown()
     }
 
     @Test

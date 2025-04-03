@@ -28,7 +28,6 @@ import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import junit.framework.Assert
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,22 +41,19 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     @Before
-    @Throws(Exception::class)
-    override fun setUp() {
-        super.setUp()
+    fun setUpTest() {
         initTestFiles()
     }
 
-    @After
-    @Throws(Exception::class)
-    override fun tearDown() {
-        super.tearDown()
-    }
-
     @Throws(RemoteException::class)
-    override fun initTestFiles() {
+    private fun initTestFiles() {
         mDocsHelper!!.createDocument(rootDir0, "image/png", "image.png")
         mDocsHelper!!.createDocument(rootDir0, "text/plain", "file0.log")
+    }
+
+    fun validatePeekContents(fileName: String) {
+        bots!!.peek.waitForPeekActive()
+        bots!!.peek.assertHasTitle(fileName)
     }
 
     @Test
@@ -91,8 +87,32 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
         val selectionText: UiObject2? = device!!.wait(
-            Until.findObject(By.text(assertSelectionText)), timeout
+            Until.findObject(By.text(assertSelectionText)),
+            timeout
         )
         Assert.assertNull(selectionText)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testRestorePeekActiveState() {
+        bots!!.directory.selectDocument("image.png")
+        bots!!.main.clickActionItem("Get info")
+        validatePeekContents("image.png")
+
+        // Recreate the activity (happens on window resize, for example), and ensure that the
+        // preview overlay is still showing.
+        mActivityScenario!!.recreate()
+        validatePeekContents("image.png")
+
+        bots!!.peek.hide()
+        mActivityScenario!!.recreate()
+        bots!!.peek.assertPeekHidden()
+
+        bots!!.directory.selectDocument("file0.log")
+        bots!!.main.clickActionItem("Get info")
+        validatePeekContents("file0.log")
+        mActivityScenario!!.recreate()
+        validatePeekContents("file0.log")
     }
 }

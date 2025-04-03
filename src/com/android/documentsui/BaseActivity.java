@@ -429,7 +429,7 @@ public abstract class BaseActivity
 
         if (isUsePeekPreviewFlagEnabled()) {
             mPeekViewManager = new PeekViewManager(this);
-            mPeekViewManager.initFragment(getSupportFragmentManager());
+            mPeekViewManager.initFragment(getSupportFragmentManager(), savedInstanceState);
         }
     }
 
@@ -1031,6 +1031,9 @@ public abstract class BaseActivity
         super.onSaveInstanceState(state);
         state.putParcelable(Shared.EXTRA_STATE, mState);
         mSearchManager.onSaveInstanceState(state);
+        if (isUsePeekPreviewFlagEnabled()) {
+            mPeekViewManager.onSaveInstanceState(state);
+        }
     }
 
     @Override

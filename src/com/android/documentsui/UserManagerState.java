@@ -322,8 +322,13 @@ public interface UserManagerState {
                         continue;
                     }
                 } else {
-                    // Only allow managed profiles + the parent user on lower than V.
-                    if (currentUserIsManaged
+                    // On Android U and below, ensure the following profiles are included:
+                    //  - The currently active profile
+                    //  - The currently active profile's parent
+                    //  - All managed profiles
+                    if (mCurrentUser.getIdentifier() == handle.getIdentifier()) {
+                        // Intentionally empty so that this profile gets added.
+                    } else if (currentUserIsManaged
                             && mUserManager.getProfileParent(mCurrentUser.getUserHandle())
                                     == handle) {
                         // Intentionally empty so that this profile gets added.

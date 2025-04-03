@@ -16,11 +16,13 @@
 package com.android.documentsui.peek
 
 import android.app.Activity
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.fragment.app.FragmentManager
 import com.android.documentsui.R
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentTransaction
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
@@ -32,14 +34,16 @@ open class PeekViewManager(
     private val mActivity: Activity
 ) {
     companion object {
-        const val TAG = "PeekViewManager"
+        private const val TAG = "PeekViewManager"
+        private const val PEEK_OVERLAY_ACTIVE = "PEEK_OVERLAY_ACTIVE"
     }
 
     private lateinit var peekFragment: PeekFragment
     private lateinit var container: FrameLayout
 
     open fun initFragment(
-        fm: FragmentManager
+        fm: FragmentManager,
+        savedInstanceState: Bundle?
     ) {
         if (!isUsePeekPreviewFlagEnabled()) {
             Log.e(TAG, "Attempting to create PeekViewManager while Peek disabled")
@@ -53,11 +57,27 @@ open class PeekViewManager(
         }
         this.container = container
 
-        peekFragment = PeekFragment()
+        // Initialize Peek fragment. The fragment manager automatically handles state restoration:
+        // the fragment might already exist.
+        val existingFragment = fm.findFragmentById(R.id.peek_overlay)
+        if (existingFragment == null) {
+            peekFragment = PeekFragment()
+            val ft: FragmentTransaction = fm.beginTransaction()
+            ft.replace(R.id.peek_overlay, peekFragment)
+            ft.commitAllowingStateLoss()
+        } else {
+            peekFragment = existingFragment as PeekFragment
+        }
         peekFragment.setViewManager(this)
-        val ft: FragmentTransaction = fm.beginTransaction()
-        ft.replace(R.id.peek_overlay, peekFragment)
-        ft.commitAllowingStateLoss()
+
+        // Restore Peek overlay if necessary.
+        if (savedInstanceState != null && savedInstanceState.getBoolean(
+                PEEK_OVERLAY_ACTIVE,
+                false
+            )
+        ) {
+            setContainerVisibility(true)
+        }
     }
 
     open fun peekDocument(doc: DocumentInfo) {
@@ -67,6 +87,14 @@ open class PeekViewManager(
         }
         peekFragment.updateView(doc)
         setContainerVisibility(true)
+    }
+
+    fun onSaveInstanceState(state: Bundle) {
+        if (!::container.isInitialized) {
+            Log.e(TAG, "lateinit container not initialized")
+            return
+        }
+        state.putBoolean(PEEK_OVERLAY_ACTIVE, container.isVisible)
     }
 
     fun setContainerVisibility(visible: Boolean) {
