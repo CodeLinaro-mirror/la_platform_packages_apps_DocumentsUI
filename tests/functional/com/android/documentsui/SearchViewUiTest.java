@@ -47,6 +47,7 @@ import androidx.test.uiautomator.Until;
 import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -59,9 +60,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule();
+
     @Before
     public void setUpTest() throws UiObjectNotFoundException, RemoteException {
-      initTestFiles();
       // Drawer interferes with a lot of search action; going to try to close any opened ones
       bots.roots.closeDrawer();
 

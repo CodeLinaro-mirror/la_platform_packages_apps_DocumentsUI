@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.documentsui;
 
 import android.graphics.Point;
@@ -22,25 +21,28 @@ import android.graphics.Rect;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
+import com.android.documentsui.rules.TestFilesRule;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 @LargeTest
-public class BandSelectionUiTest extends ActivityTest<FilesActivity> {
+public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
 
-    public BandSelectionUiTest() {
-        super(FilesActivity.class);
-    }
+    @Rule
+    public TestFilesRule mTestFiles = new TestFilesRule();
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        initTestFiles();
+    @Before
+    public void setUpTest() {
         bots.roots.closeDrawer();
     }
 
+    @Test
     public void testBandSelection_allFiles() throws Exception {
         bots.main.switchToGridMode();
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
-        Rect startDir = bots.directory.findDocument(dirName1).getBounds();
+        Rect startDir = bots.directory.findDocument(TestFilesRule.DIR_NAME_1).getBounds();
         Point start = new Point(dirListBounds.right - 1, startDir.centerY());
         Point end = new Point(dirListBounds.left + 1, dirListBounds.bottom - 1);
         bots.gesture.bandSelection(start, end);
@@ -48,11 +50,12 @@ public class BandSelectionUiTest extends ActivityTest<FilesActivity> {
         bots.directory.assertSelection(4);
     }
 
+    @Test
     public void testBandSelection_someFiles() throws Exception {
         bots.main.switchToGridMode();
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
-        Rect startDoc = bots.directory.findDocument(fileNameNoRename).getBounds();
-        Rect endDoc = bots.directory.findDocument(fileName1).getBounds();
+        Rect startDoc = bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).getBounds();
+        Rect endDoc = bots.directory.findDocument(TestFilesRule.FILE_NAME_1).getBounds();
         // Start from right side of file NoRename.
         Point start = new Point(dirListBounds.right - 1, startDoc.bottom - 1);
         // End is center of file1

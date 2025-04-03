@@ -46,7 +46,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     }
 
     @Throws(RemoteException::class)
-    override fun initTestFiles() {
+    private fun initTestFiles() {
         mDocsHelper!!.createDocument(rootDir0, "image/png", "image.png")
         mDocsHelper!!.createDocument(rootDir0, "text/plain", "file0.log")
     }

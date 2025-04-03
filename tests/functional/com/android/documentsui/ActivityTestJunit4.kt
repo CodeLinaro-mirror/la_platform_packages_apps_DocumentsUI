@@ -167,22 +167,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
         device!!.waitForIdle()
     }
 
-    @Throws(RemoteException::class)
-    protected open fun initTestFiles() {
-        mDocsHelper!!.createFolder(this.initialRoot, dirName1)
-        mDocsHelper!!.createDocument(this.initialRoot, "text/plain", fileName1)
-        mDocsHelper!!.createDocument(this.initialRoot, "image/png", fileName2)
-        mDocsHelper!!.createDocumentWithFlags(
-            initialRoot!!.documentId,
-            "text/plain",
-            fileNameNoRename,
-            DocumentsContract.Document.FLAG_SUPPORTS_WRITE
-        )
-
-        mDocsHelper!!.createDocument(rootDir1, "text/plain", fileName3)
-        mDocsHelper!!.createDocument(rootDir1, "text/plain", fileName4)
-    }
-
     @Throws(IOException::class)
     private fun disableScreenOffAndSleepTimeouts() {
         initialScreenOffTimeoutValue = device!!.executeShellCommand(

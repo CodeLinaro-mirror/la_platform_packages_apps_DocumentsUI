@@ -18,7 +18,6 @@ package com.android.documentsui;
 
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
-import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
@@ -27,8 +26,8 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
+import com.android.documentsui.rules.TestFilesRule;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -38,10 +37,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-    @Before
-    public void setUpTest() throws RemoteException {
-        initTestFiles();
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     private void archiveValid() throws Exception {
         bots.roots.openRoot("ResourcesProvider");

@@ -25,7 +25,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 
-import android.os.RemoteException;
 import android.view.MotionEvent;
 
 import androidx.test.filters.LargeTest;
@@ -34,8 +33,9 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 @LargeTest
@@ -43,10 +43,8 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
 
-    @Before
-    public void setUpTest() throws RemoteException {
-        initTestFiles();
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
         bots.directory.waitForDocument(fileName1);
