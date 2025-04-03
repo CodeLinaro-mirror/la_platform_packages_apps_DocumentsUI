@@ -40,7 +40,9 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.util.FormatUtils
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.shape.ShapeAppearanceModel
 
 /**
  * Adds a gap between items in a vertical Recycler View.
@@ -133,9 +135,42 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     class ProgressListAdapter(val mController: JobPanelController) :
         ListAdapter<JobProgress, ProgressItemHolder>(JobDiffCallback) {
 
+        companion object {
+            // Constants for the different view types created by this adapter. The type depends on
+            // the position of the item in the list.
+            private const val VIEW_MIDDLE = 0
+            private const val VIEW_TOP = 1
+            private const val VIEW_BOTTOM = 2
+            private const val VIEW_TOP_BOTTOM = 3
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            if (itemCount == 1) return VIEW_TOP_BOTTOM
+            if (position == 0) return VIEW_TOP
+            if (position == itemCount - 1) return VIEW_BOTTOM
+            return VIEW_MIDDLE
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressItemHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.job_progress_item, parent, false)
+            val context = parent.context
+            val view = LayoutInflater.from(context)
+                .inflate(R.layout.job_progress_item, parent, false) as MaterialCardView
+            if (viewType != 0) {
+                val outerRadius =
+                    context.resources.getDimension(R.dimen.job_progress_list_corner_radius)
+                view.shapeAppearanceModel = ShapeAppearanceModel
+                    .builder(context, R.style.JobProgressItemCardBaseShape, 0)
+                    .apply {
+                        if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_TOP) {
+                            setTopLeftCornerSize(outerRadius)
+                            setTopRightCornerSize(outerRadius)
+                        }
+                        if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_BOTTOM) {
+                            setBottomLeftCornerSize(outerRadius)
+                            setBottomRightCornerSize(outerRadius)
+                        }
+                    }.build()
+            }
             return ProgressItemHolder(mController, view)
         }
 
