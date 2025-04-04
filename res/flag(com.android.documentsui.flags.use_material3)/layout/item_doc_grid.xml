@@ -61,6 +61,29 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <ImageView
+            android:id="@+id/selection_circle"
+            android:layout_width="@dimen/button_container_size"
+            android:layout_height="@dimen/button_container_size"
+            android:layout_marginStart="@dimen/selection_circle_margin"
+            android:layout_marginTop="@dimen/selection_circle_margin"
+            android:layout_gravity="top|start"
+            android:background="@drawable/selection_circle"
+            android:contentDescription="@null"
+            android:elevation="0dp"
+            android:scaleType="center" />
+
+        <ImageView
+            android:id="@+id/icon_check"
+            android:layout_width="@dimen/button_container_size"
+            android:layout_height="@dimen/button_container_size"
+            android:layout_gravity="top|start"
+            android:alpha="0"
+            android:background="@drawable/icon_check_background"
+            android:contentDescription="@null"
+            android:duplicateParentState="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_check_circle" />
     </FrameLayout>
 
     <FrameLayout

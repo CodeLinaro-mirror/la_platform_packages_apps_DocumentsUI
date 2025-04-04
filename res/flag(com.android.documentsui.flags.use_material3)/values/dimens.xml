@@ -34,8 +34,16 @@
     <dimen name="root_action_icon_size">24dp</dimen>
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="root_icon_disabled_alpha">?android:attr/disabledAlpha</dimen>
+    <dimen name="button_container_size">34dp</dimen>
+    <dimen name="icon_check_stroke_size">8dp</dimen>
+    <dimen name="icon_check_circle_size">24dp</dimen>
     <dimen name="check_icon_size">20dp</dimen>
     <dimen name="zoom_icon_size">24dp</dimen>
+    <dimen name="selection_circle_margin">1dp</dimen>
+    <dimen name="selection_outer_circle_padding">5dp</dimen>
+    <dimen name="selection_outer_stroke_size">1dp</dimen>
+    <dimen name="selection_inner_circle_padding">6dp</dimen>
+    <dimen name="selection_inner_stroke_size">2dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
     <dimen name="list_item_thumbnail_corner_radius">8dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>

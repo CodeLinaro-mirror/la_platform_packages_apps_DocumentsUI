@@ -103,6 +103,9 @@
    -->
   <color name="overlay_hover_color_percentage">#14000000</color> <!-- 8% -->
 
+  <!-- 20% black -->
+  <color name="selection_circle_black">#33000000</color>
+
   <!-- Peek -->
   <!-- Scrim for the overlay. Static color, 80% opacity in black, defined specifically for Peek. -->
   <color name="peek_overlay_scrim">#CC000000</color>
