@@ -53,7 +53,9 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @JvmField
     var context: Context? = null
-    var userId: UserId? = null
+
+    @JvmField
+    protected var userId: UserId? = null
     var automation: UiAutomation? = null
 
     @JvmField
