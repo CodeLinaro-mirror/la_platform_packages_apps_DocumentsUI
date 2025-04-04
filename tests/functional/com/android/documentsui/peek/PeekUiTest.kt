@@ -15,7 +15,6 @@
  */
 package com.android.documentsui.peek
 
-import android.os.RemoteException
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
@@ -25,10 +24,11 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
+import com.android.documentsui.StubProvider
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.rules.TestFilesRule
 import junit.framework.Assert
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,16 +40,11 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @get:Rule
     val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
-    @Before
-    fun setUpTest() {
-        initTestFiles()
-    }
-
-    @Throws(RemoteException::class)
-    private fun initTestFiles() {
-        mDocsHelper!!.createDocument(rootDir0, "image/png", "image.png")
-        mDocsHelper!!.createDocument(rootDir0, "text/plain", "file0.log")
-    }
+    @get:Rule
+    val testFilesRule: TestFilesRule =
+        TestFilesRule()
+            .createFileInRoot(StubProvider.ROOT_0_ID, "image.png", "image/png")
+            .createFileInRoot(StubProvider.ROOT_0_ID, "file0.log", "text/plain")
 
     fun validatePeekContents(fileName: String) {
         bots!!.peek.waitForPeekActive()

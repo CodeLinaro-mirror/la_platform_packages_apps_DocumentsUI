@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
@@ -30,7 +32,6 @@ import static junit.framework.Assert.assertTrue;
 import android.app.Instrumentation;
 import android.content.ContentResolver;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
@@ -45,8 +46,8 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.rules.TestFilesRule;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,22 +59,16 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-    @Before
-    public void setUpTest() throws RemoteException {
-        initTestFiles();
-    }
-
-    private void initTestFiles() throws RemoteException {
-        Uri uri = mDocsHelper.createFolder(rootDir0, dirName1);
-        mDocsHelper.createFolder(uri, childDir1);
-
-        mDocsHelper.createDocument(rootDir0, "text/plain", "file0.log");
-        mDocsHelper.createDocument(rootDir0, "image/png", "file1.png");
-        mDocsHelper.createDocument(rootDir0, "text/csv", "file2.csv");
-
-        mDocsHelper.createDocument(rootDir1, "text/plain", "anotherFile0.log");
-        mDocsHelper.createDocument(rootDir1, "text/plain", "poodles.text");
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, "ChildDir1")
+                    .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
+                    .createFileInRoot(ROOT_0_ID, "file1.png", "image/png")
+                    .createFileInRoot(ROOT_0_ID, "file2.csv", "text/csv")
+                    .createFileInRoot(ROOT_0_ID, "anotherFile0.log", "text/plain")
+                    .createFileInRoot(ROOT_0_ID, "poodles.text", "text/plain");
 
     // Recents is a strange meta root that gathers entries from other providers.
     // It is special cased in a variety of ways, which is why we just want
@@ -163,7 +158,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void filesListed_LiveUpdates() throws Exception {
-        mDocsHelper.createDocument(rootDir0, "yummers/sandwich", "Ham & Cheese.sandwich");
+        mTestFilesRule.createFileInRoot(ROOT_0_ID, "yummers/sandwich", "Ham & Cheese.sandwich");
 
         bots.directory.waitForDocument("Ham & Cheese.sandwich");
         bots.directory.assertDocumentsPresent(
@@ -198,12 +193,12 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testNavigate_inFixedLayout_whileHasSelection() throws Exception {
         if (bots.main.inFixedLayout()) {
-            bots.roots.openRoot(rootDir0.title);
+            bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
             device.waitForIdle();
             bots.directory.selectDocument("file0.log", 1);
 
             // ensure no exception is thrown while navigating to a different root
-            bots.roots.openRoot(rootDir1.title);
+            bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_1_ID).title);
         }
     }
 
