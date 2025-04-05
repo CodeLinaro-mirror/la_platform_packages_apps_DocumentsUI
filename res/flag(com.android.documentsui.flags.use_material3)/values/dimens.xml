@@ -209,18 +209,16 @@
     <dimen name="dialog_content_padding_top">@dimen/space_small_1</dimen>
     <dimen name="dialog_content_padding_bottom">@dimen/space_small_4</dimen>
 
-    <dimen name="apps_row_title_height">48dp</dimen>
-    <dimen name="apps_row_title_padding_start">24dp</dimen>
-    <dimen name="apps_row_item_width">92dp</dimen>
-    <dimen name="apps_row_item_height">82dp</dimen>
-    <dimen name="apps_row_app_icon_size">32dp</dimen>
-    <dimen name="apps_row_app_icon_margin_horizontal">30dp</dimen>
-    <dimen name="apps_row_app_icon_margin_top">6dp</dimen>
-    <dimen name="apps_row_app_icon_margin_bottom">10dp</dimen>
-    <dimen name="apps_row_exit_icon_size">12dp</dimen>
+    <dimen name="apps_row_item_width">96dp</dimen>
+    <dimen name="apps_row_app_icon_size">24dp</dimen>
     <dimen name="apps_row_exit_icon_margin_top">2dp</dimen>
     <dimen name="apps_row_exit_icon_margin_bottom">6dp</dimen>
-    <dimen name="apps_row_item_text_margin_horizontal">8dp</dimen>
+    <dimen name="apps_row_item_padding_horizontal">8dp</dimen>
+    <dimen name="apps_row_margin_vertical">@dimen/space_extra_small_4</dimen>
+    <dimen name="apps_row_margin_horizontal">@dimen/space_small_1</dimen>
+    <dimen name="apps_row_padding">@dimen/space_extra_small_4</dimen>
+    <dimen name="apps_row_app_icon_margin_vertical">@dimen/space_extra_small_4</dimen>
+    <dimen name="apps_row_title_padding">@dimen/space_extra_small_4</dimen>
 
     <dimen name="profile_tab_radius">12dp</dimen>
 

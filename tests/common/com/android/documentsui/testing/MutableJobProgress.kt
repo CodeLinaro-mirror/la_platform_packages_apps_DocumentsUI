@@ -15,11 +15,13 @@
  */
 package com.android.documentsui.testing
 
+import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 
 data class MutableJobProgress(
     var id: String,
+    @FileOperationService.OpType val operationType: Int,
     @Job.State var state: Int,
     var msg: String?,
     var hasFailures: Boolean,
@@ -28,5 +30,14 @@ data class MutableJobProgress(
     var msRemaining: Long = -1,
 ) {
     fun toJobProgress() =
-        JobProgress(id, state, msg, hasFailures, currentBytes, requiredBytes, msRemaining)
+        JobProgress(
+            id,
+            operationType,
+            state,
+            msg,
+            hasFailures,
+            currentBytes,
+            requiredBytes,
+            msRemaining
+        )
 }

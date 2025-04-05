@@ -61,6 +61,7 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
 
         JobProgress progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(OPERATION_COPY, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals("Copying tokyo.sth to " + mDestRoot.title, progress.msg);
         assertEquals(-1, progress.currentBytes);

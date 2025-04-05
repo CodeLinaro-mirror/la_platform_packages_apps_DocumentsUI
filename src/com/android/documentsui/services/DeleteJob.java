@@ -125,6 +125,7 @@ final class DeleteJob extends ResolvedResourcesJob {
     JobProgress getJobProgress() {
         return new JobProgress(
                 id,
+                operationType,
                 getState(),
                 getProgressMessage(),
                 hasFailures());

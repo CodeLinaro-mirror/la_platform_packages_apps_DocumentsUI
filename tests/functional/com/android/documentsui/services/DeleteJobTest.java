@@ -46,6 +46,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
 
         var progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(OPERATION_DELETE, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals("Deleting 2 files", progress.msg);
     }
@@ -64,6 +65,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         mDocs.assertChildCount(mSrcRoot, 0);
         var progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(OPERATION_DELETE, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals("Deleting 2 files", progress.msg);
     }

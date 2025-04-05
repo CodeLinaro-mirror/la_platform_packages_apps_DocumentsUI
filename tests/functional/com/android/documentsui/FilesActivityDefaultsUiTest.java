@@ -32,6 +32,7 @@ import androidx.test.filters.LargeTest;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,6 +45,9 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule(/* skipCreation */ true);
+
     @Override
     protected RootInfo getInitialRoot() {
         return null;  // test the default, unaffected state of the app.
@@ -54,7 +58,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     public void testNavigate_FromEmptyDirectory() throws Exception {
         device.waitForIdle();
 
-        bots.roots.openRoot(rootDir0.title);
+        bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
 
         String msg = String.valueOf(context.getString(R.string.empty));
         bots.directory.assertPlaceholderMessageText(msg);
