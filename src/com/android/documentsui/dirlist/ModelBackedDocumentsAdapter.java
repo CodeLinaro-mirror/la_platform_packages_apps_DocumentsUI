@@ -105,11 +105,18 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                                         mEnv.getContext(), parent, mIconHelper, mConfigStore);
                         break;
                     case ITEM_TYPE_DOCUMENT:
-                        holder = state.isPhotoPicking()
-                                ? new GridPhotoHolder(mEnv.getContext(), parent, mIconHelper,
-                                mConfigStore)
-                                : new GridDocumentHolder(mEnv.getContext(), parent, mIconHelper,
-                                        mConfigStore);
+                        holder =
+                                (!isUseMaterial3FlagEnabled() && state.isPhotoPicking())
+                                        ? new GridPhotoHolder(
+                                                mEnv.getContext(),
+                                                parent,
+                                                mIconHelper,
+                                                mConfigStore)
+                                        : new GridDocumentHolder(
+                                                mEnv.getContext(),
+                                                parent,
+                                                mIconHelper,
+                                                mConfigStore);
                         break;
                     default:
                         throw new IllegalStateException("Unsupported layout type.");

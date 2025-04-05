@@ -16,13 +16,22 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.StubProvider.ROOT_1_ID;
+import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
+import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+
+import static com.google.common.truth.TruthJUnit.assume;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 import android.app.Instrumentation;
+import android.content.ContentResolver;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
@@ -31,12 +40,14 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.rules.TestFilesRule;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,29 +59,16 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        initTestFiles();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    @Override
-    public void initTestFiles() throws RemoteException {
-        Uri uri = mDocsHelper.createFolder(rootDir0, dirName1);
-        mDocsHelper.createFolder(uri, childDir1);
-
-        mDocsHelper.createDocument(rootDir0, "text/plain", "file0.log");
-        mDocsHelper.createDocument(rootDir0, "image/png", "file1.png");
-        mDocsHelper.createDocument(rootDir0, "text/csv", "file2.csv");
-
-        mDocsHelper.createDocument(rootDir1, "text/plain", "anotherFile0.log");
-        mDocsHelper.createDocument(rootDir1, "text/plain", "poodles.text");
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, "ChildDir1")
+                    .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
+                    .createFileInRoot(ROOT_0_ID, "file1.png", "image/png")
+                    .createFileInRoot(ROOT_0_ID, "file2.csv", "text/csv")
+                    .createFileInRoot(ROOT_0_ID, "anotherFile0.log", "text/plain")
+                    .createFileInRoot(ROOT_0_ID, "poodles.text", "text/plain");
 
     // Recents is a strange meta root that gathers entries from other providers.
     // It is special cased in a variety of ways, which is why we just want
@@ -85,6 +83,54 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.main.assertSearchBarShow();
         } else {
             bots.main.assertWindowTitle("Recent");
+        }
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testRecentsSelectionClearsSearchBar() throws Exception {
+        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
+
+        // Create DocumentsProviderHelper to create files in Internal storage.
+        DocumentsProviderHelper storageDocsHelper =
+                new DocumentsProviderHelper(
+                        UserId.DEFAULT_USER, AUTHORITY_STORAGE, context, AUTHORITY_STORAGE);
+
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+
+        // Create Download folder if it doesn't exist.
+        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
+
+        if (info == null) {
+            ContentResolver cr = context.getContentResolver();
+            Uri uri = storageDocsHelper.createFolder(primaryRoot.documentId, "Download");
+            info = DocumentInfo.fromUri(cr, uri, UserId.DEFAULT_USER);
+        }
+
+        assertTrue(info != null && info.isDirectory());
+
+        // Open up Recents and create a file that should appear.
+        bots.roots.openRoot("Recent");
+        final String fileName = "Recent.txt";
+        storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
+        try {
+            bots.directory.waitForDocument(fileName);
+            bots.directory.selectDocument(fileName, 1);
+        } finally {
+            // Unselect the file and remove it.
+            bots.directory.selectDocument(fileName);
+            bots.roots.openRoot(primaryRoot.title);
+            bots.directory.openDocument("Download");
+
+            bots.directory.waitForDocument(fileName);
+            bots.directory.selectDocument(fileName, 1);
+
+            bots.main.clickToolbarItem(R.id.action_menu_delete);
+            bots.main.clickNonTextDialogOkButton();
+            device.waitForIdle();
+
+            bots.directory.findDocument(fileName).waitUntilGone(5000);
+            assertFalse(bots.directory.hasDocuments(fileName));
         }
     }
 
@@ -112,7 +158,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void filesListed_LiveUpdates() throws Exception {
-        mDocsHelper.createDocument(rootDir0, "yummers/sandwich", "Ham & Cheese.sandwich");
+        mTestFilesRule.createFileInRoot(ROOT_0_ID, "yummers/sandwich", "Ham & Cheese.sandwich");
 
         bots.directory.waitForDocument("Ham & Cheese.sandwich");
         bots.directory.assertDocumentsPresent(
@@ -147,12 +193,12 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testNavigate_inFixedLayout_whileHasSelection() throws Exception {
         if (bots.main.inFixedLayout()) {
-            bots.roots.openRoot(rootDir0.title);
+            bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
             device.waitForIdle();
             bots.directory.selectDocument("file0.log", 1);
 
             // ensure no exception is thrown while navigating to a different root
-            bots.roots.openRoot(rootDir1.title);
+            bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_1_ID).title);
         }
     }
 

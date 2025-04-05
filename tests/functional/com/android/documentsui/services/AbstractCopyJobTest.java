@@ -45,7 +45,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
     }
 
     private String getVerb() {
-        switch(mOpType) {
+        switch (mOpType) {
             case FileOperationService.OPERATION_COPY:
             case FileOperationService.OPERATION_EXTRACT:
                 return "Copying";
@@ -53,8 +53,10 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
                 return "Zipping";
             case FileOperationService.OPERATION_MOVE:
                 return "Moving";
+
+            // DeleteJob does not inherit from CopyJob
             case FileOperationService.OPERATION_DELETE:
-                // DeleteJob does not inherit from CopyJob
+            case FileOperationService.OPERATION_UNPACK:
             case FileOperationService.OPERATION_UNKNOWN:
             default:
                 return "";
@@ -83,6 +85,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
 
         progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals(getVerb() + " 2 files to " + mDestRoot.title, progress.msg);
         assertEquals(HAM_BYTES.length + FRUITY_BYTES.length, progress.currentBytes);
@@ -104,6 +107,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
 
         JobProgress progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals("Copying virtual.sth to " + mDestRoot.title, progress.msg);
         assertEquals(FRUITY_BYTES.length, progress.currentBytes);
@@ -126,6 +130,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
 
         JobProgress progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(mOpType, progress.operationType);
         assertTrue(progress.hasFailures);
         assertEquals(getVerb() + " virtual.sth to " + mDestRoot.title, progress.msg);
         assertEquals(0, progress.currentBytes);
@@ -151,6 +156,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
 
         JobProgress progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals(getVerb() + " emptyDir to " + mDestRoot.title, progress.msg);
         assertEquals(-1, progress.currentBytes);

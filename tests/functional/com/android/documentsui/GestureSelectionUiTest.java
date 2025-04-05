@@ -19,21 +19,24 @@ package com.android.documentsui;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
+import com.android.documentsui.rules.TestFilesRule;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 @LargeTest
-public class GestureSelectionUiTest extends ActivityTest<FilesActivity> {
+public class GestureSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
 
-    public GestureSelectionUiTest() {
-        super(FilesActivity.class);
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        initTestFiles();
+    @Before
+    public void setUpTest() {
         bots.roots.closeDrawer();
     }
 
+    @Test
     public void testGridGestureSelect_twoFiles() throws Exception {
         bots.main.switchToGridMode();
         bots.gesture.gestureSelectFiles(fileName1, fileName2);
@@ -41,6 +44,7 @@ public class GestureSelectionUiTest extends ActivityTest<FilesActivity> {
         bots.directory.assertSelection(2);
     }
 
+    @Test
     public void testGridGestureSelect_multipleFiles() throws Exception {
         bots.main.switchToGridMode();
         bots.gesture.gestureSelectFiles(fileName2, dirName1);
@@ -49,6 +53,7 @@ public class GestureSelectionUiTest extends ActivityTest<FilesActivity> {
 
     }
 
+    @Test
     public void testListGestureSelect_twoFiles() throws Exception {
         bots.main.switchToListMode();
         bots.gesture.gestureSelectFiles(fileName1, fileName2);
@@ -57,6 +62,7 @@ public class GestureSelectionUiTest extends ActivityTest<FilesActivity> {
 
     }
 
+    @Test
     public void testListGestureSelect_multipleFiles() throws Exception {
         bots.main.switchToListMode();
         bots.gesture.gestureSelectFiles(fileName2, dirName1);

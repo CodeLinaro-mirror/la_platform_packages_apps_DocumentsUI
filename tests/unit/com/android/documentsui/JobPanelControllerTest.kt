@@ -26,6 +26,7 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
+import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
@@ -83,6 +84,7 @@ class JobPanelControllerTest {
 
         val progress = MutableJobProgress(
             id = "jobId1",
+            operationType = FileOperationService.OPERATION_COPY,
             state = Job.STATE_STARTED,
             msg = "Job started",
             hasFailures = false,
@@ -126,6 +128,7 @@ class JobPanelControllerTest {
 
         val progress1 = MutableJobProgress(
             id = "jobId1",
+            operationType = FileOperationService.OPERATION_MOVE,
             state = Job.STATE_STARTED,
             msg = "Job started",
             hasFailures = false,
@@ -135,6 +138,7 @@ class JobPanelControllerTest {
         )
         val progress2 = MutableJobProgress(
             id = "jobId2",
+            operationType = FileOperationService.OPERATION_DELETE,
             state = Job.STATE_STARTED,
             msg = "Job started",
             hasFailures = false,

@@ -14,25 +14,27 @@
      limitations under the License.
 -->
 
-<!-- TODO(b/379776735): Remove this after use_material3 flag is launched.
-    Currently it's being referenced in AppsRowManager.
--->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/apps_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/apps_row_background"
+    android:layout_marginTop="@dimen/apps_row_margin_vertical"
+    android:layout_marginBottom="@dimen/apps_row_margin_vertical"
+    android:layout_marginStart="@dimen/apps_row_margin_horizontal"
+    android:layout_marginEnd="@dimen/apps_row_margin_horizontal"
+    android:padding="@dimen/apps_row_padding"
     android:orientation="vertical">
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/apps_row_title_height"
-        android:paddingStart="@dimen/apps_row_title_padding_start"
-        android:textAppearance="@style/SortTitle"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/apps_row_title_padding"
+        android:textAppearance="@style/AppsRowTitle"
         android:text="@string/apps_row_title"
-        android:textAllCaps="true"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -43,7 +45,7 @@
             android:id="@+id/apps_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
     </HorizontalScrollView>
 
 </LinearLayout>

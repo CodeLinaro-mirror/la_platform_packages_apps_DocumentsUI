@@ -32,9 +32,8 @@ import androidx.test.filters.LargeTest;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,20 +45,8 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    @Override
-    protected void initTestFiles() {
-        // Overriding to init with no items in test roots
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule(/* skipCreation */ true);
 
     @Override
     protected RootInfo getInitialRoot() {
@@ -71,7 +58,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     public void testNavigate_FromEmptyDirectory() throws Exception {
         device.waitForIdle();
 
-        bots.roots.openRoot(rootDir0.title);
+        bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
 
         String msg = String.valueOf(context.getString(R.string.empty));
         bots.directory.assertPlaceholderMessageText(msg);

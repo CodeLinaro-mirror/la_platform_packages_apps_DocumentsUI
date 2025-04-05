@@ -26,6 +26,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -34,6 +35,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
+import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
@@ -41,8 +43,7 @@ import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.MutableJobProgress
 import org.hamcrest.Description
 import org.hamcrest.Matcher
-import org.junit.After
-import org.junit.Before
+import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -77,16 +78,6 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         context.sendBroadcast(intent)
     }
 
-    @Before
-    override fun setUp() {
-        super.setUp()
-    }
-
-    @After
-    override fun tearDown() {
-        super.tearDown()
-    }
-
     @Test
     fun testJobPanelAppearsOnClick() {
         onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
@@ -94,6 +85,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val progress = MutableJobProgress(
             id = "jobId1",
+            operationType = FileOperationService.OPERATION_COPY,
             state = Job.STATE_SET_UP,
             msg = "Job started",
             hasFailures = false,
@@ -110,5 +102,40 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         onView(withId(R.id.job_progress_item_title)).check(matches(withText("Job started")))
         onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
+    }
+
+    @Test
+    fun testJobPanelItemDismiss() {
+        val progress1 = MutableJobProgress(
+            id = "jobId1",
+            operationType = FileOperationService.OPERATION_EXTRACT,
+            state = Job.STATE_COMPLETED,
+            msg = "Job1 completed",
+            hasFailures = false,
+        )
+        val progress2 = MutableJobProgress(
+            id = "jobId2",
+            operationType = FileOperationService.OPERATION_MOVE,
+            state = Job.STATE_COMPLETED,
+            msg = "Job2 completed",
+            hasFailures = false,
+        )
+        sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
+
+        onView(withId(R.id.option_menu_job_progress))
+            .check(matches(isDisplayed()))
+            .perform(click())
+        onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+
+        // Dismiss the first item.
+        onView(allOf(withId(R.id.job_progress_item_dismiss), hasSibling(withText(progress1.msg))))
+            .perform(click())
+        onView(withText(progress1.msg)).check(doesNotExist())
+
+        // Dismiss the second item. The panel should disappear.
+        onView(allOf(withId(R.id.job_progress_item_dismiss), hasSibling(withText(progress2.msg))))
+            .perform(click())
+        onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
+        onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }
 }

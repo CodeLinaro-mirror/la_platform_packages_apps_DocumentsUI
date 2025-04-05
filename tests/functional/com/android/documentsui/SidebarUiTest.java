@@ -33,9 +33,9 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 @LargeTest
@@ -43,16 +43,8 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        initTestFiles();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
         bots.directory.waitForDocument(fileName1);

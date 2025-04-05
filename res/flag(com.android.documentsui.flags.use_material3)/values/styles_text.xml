@@ -14,11 +14,6 @@
      limitations under the License.
 -->
 <resources>
-    <style name="SortTitle" parent="@style/TextAppearance.Material3.TitleLarge">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textSize">11sp</item>
-    </style>
-
     <style name="SectionHeader" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textAllCaps">true</item>
@@ -41,15 +36,14 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="AppsItemText">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textSize">12sp</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+    <style name="AppsRowTitle" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="AppsItemSubText">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-        <item name="android:textSize">11sp</item>
+    <style name="AppsItemSubText" parent="@style/TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="AutoCompleteText" parent="@style/TextAppearance.AppCompat.Medium">
@@ -168,11 +162,26 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text">
+        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
     <style name="MaterialAlertDialogBodyStyle" parent="@style/MaterialAlertDialog.Material3.Body.Text">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="BannerTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="BannerSubtitleText" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="BannerMessageText" parent="@style/TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 

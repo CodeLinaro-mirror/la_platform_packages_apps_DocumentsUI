@@ -98,7 +98,7 @@ public class TestJob extends Job {
     }
 
     JobProgress getJobProgress() {
-        return new JobProgress(id, getState(), "test job", false);
+        return new JobProgress(id, operationType, getState(), "test job", false);
     }
 
     @Override
