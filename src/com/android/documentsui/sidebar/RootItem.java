@@ -16,7 +16,7 @@
 
 package com.android.documentsui.sidebar;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -110,7 +110,7 @@ public class RootItem extends Item {
     }
 
     protected final void bindAction(View view, int visibility, int iconId, String description) {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             final MaterialButton actionIcon = view.findViewById(R.id.action_icon);
 
             actionIcon.setVisibility(visibility);

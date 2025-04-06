@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<!-- TODO(b/379776735): Remove this after M3 uplift.
+<!-- TODO(b/379776735): Remove this after use_material3 flag is launched.
     Currently it's being referenced in AppsRowManager.
 -->
 <LinearLayout

@@ -138,7 +138,7 @@ public class RootsFragmentTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_HIDE_ROOTS_ON_DESKTOP})
+    @RequiresFlagsDisabled({Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO})
     public void testSortLoadResult_WithCorrectOrder_hideRootsOnDesktopFlagDisable() {
         List<Item> items = mRootsFragment.sortLoadResult(
                 mContext,
@@ -152,7 +152,7 @@ public class RootsFragmentTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_HIDE_ROOTS_ON_DESKTOP})
+    @RequiresFlagsEnabled({Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO})
     public void testSortLoadResult_WithCorrectOrder_onNonDesktop() {
         when(mPackageManager.hasSystemFeature(PackageManager.FEATURE_PC)).thenReturn(false);
         List<Item> items = mRootsFragment.sortLoadResult(
@@ -167,7 +167,7 @@ public class RootsFragmentTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_HIDE_ROOTS_ON_DESKTOP})
+    @RequiresFlagsEnabled({Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO})
     public void testSortLoadResult_WithCorrectOrder_onDesktop() {
         when(mPackageManager.hasSystemFeature(PackageManager.FEATURE_PC)).thenReturn(true);
         List<Item> items = mRootsFragment.sortLoadResult(

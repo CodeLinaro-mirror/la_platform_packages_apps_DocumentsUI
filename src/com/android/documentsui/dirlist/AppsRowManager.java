@@ -16,7 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -47,7 +47,7 @@ import java.util.Map;
 
 /**
  * A manager class stored apps row chip data list. Data will be synced by RootsFragment.
- * TODO(b/379776735): Remove this after M3 uplift.
+ * TODO(b/379776735): Remove this after use_material3 flag is launched.
  */
 public class AppsRowManager {
 
@@ -105,7 +105,7 @@ public class AppsRowManager {
     }
 
     private boolean shouldShow(State state, boolean isSearchExpanded) {
-        if (useMaterial3()) {
+        if (isUseMaterial3FlagEnabled()) {
             return false;
         }
 

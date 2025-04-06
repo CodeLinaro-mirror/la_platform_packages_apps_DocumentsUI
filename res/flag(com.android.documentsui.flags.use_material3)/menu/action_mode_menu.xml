@@ -14,72 +14,88 @@
      limitations under the License.
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_menu_open_with"
         android:title="@string/menu_open_with"
-        android:showAsAction="never" />
+        android:showAsAction="never"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_share"
         android:icon="@drawable/ic_menu_share"
         android:title="@string/menu_share"
-        android:showAsAction="always" />
+        android:showAsAction="always"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_menu_delete"
         android:icon="@drawable/ic_menu_delete"
         android:title="@string/menu_delete"
-        android:showAsAction="always" />
+        android:showAsAction="always"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_menu_sort"
         android:icon="@drawable/ic_sort"
         android:title="@string/menu_sort"
-        android:showAsAction="never" />
+        android:showAsAction="never"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_select"
         android:title="@string/menu_select"
-        android:showAsAction="always" />
+        android:showAsAction="always"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_menu_select_all"
         android:title="@string/menu_select_all"
-        android:showAsAction="never" />
+        android:showAsAction="never"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_deselect_all"
         android:title="@string/menu_deselect_all"
-        android:showAsAction="never" />
+        android:showAsAction="never"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_copy_to"
         android:title="@string/menu_copy"
         android:showAsAction="never"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_extract_to"
         android:title="@string/menu_extract"
         android:icon="@drawable/ic_menu_extract"
         android:showAsAction="always"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_menu_move_to"
         android:title="@string/menu_move"
         android:showAsAction="never"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_compress"
         android:title="@string/menu_compress"
         android:showAsAction="never"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_rename"
         android:title="@string/menu_rename"
         android:showAsAction="never"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_inspect"
         android:title="@string/menu_inspect"
         android:showAsAction="never"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_view_in_owner"
         android:title="@string/menu_view_in_owner"
         android:showAsAction="never"
-        android:visible="false" />
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>

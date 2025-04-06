@@ -17,7 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.flags.Flags.useMaterial3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.Activity;
 import android.util.Log;
@@ -60,7 +60,7 @@ public abstract class DrawerController implements DrawerListener {
         }
 
         View drawer = activity.findViewById(R.id.drawer_roots);
-        // This will be null in M3, we will check the flag when it's used in
+        // This will be null when use_material3 flag is ON, we will check the flag when it's used in
         // RuntimeDrawerController.
         Toolbar toolbar = (Toolbar) activity.findViewById(R.id.roots_toolbar);
         drawer.getLayoutParams().width = calculateDrawerWidth(activity);
@@ -208,7 +208,7 @@ public abstract class DrawerController implements DrawerListener {
 
         @Override
         void setTitle(String title) {
-            if (!useMaterial3()) {
+            if (!isUseMaterial3FlagEnabled()) {
                 mToolbar.setTitle(title);
             }
         }

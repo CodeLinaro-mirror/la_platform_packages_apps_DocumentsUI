@@ -16,6 +16,7 @@
 
 package com.android.documentsui.files;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasData;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
@@ -31,6 +32,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -73,6 +76,7 @@ import com.android.documentsui.testing.TestDocumentClipper;
 import com.android.documentsui.testing.TestDragAndDropManager;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
+import com.android.documentsui.testing.TestPeekViewManager;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.UserManagers;
 import com.android.documentsui.ui.TestDialogController;
@@ -89,6 +93,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,9 +111,11 @@ public class ActionHandlerTest {
     private ActionHandler<TestActivity> mHandler;
     private TestDocumentClipper mClipper;
     private TestDragAndDropManager mDragAndDropManager;
+    private TestPeekViewManager mPeekViewManager;
     private TestFeatures mFeatures;
     private TestConfigStore mTestConfigStore;
     private boolean refreshAnswer = false;
+    @Mock private Runnable mMockCloseSelectionBar;
 
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
@@ -126,6 +134,7 @@ public class ActionHandlerTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         mFeatures = new TestFeatures();
         mEnv = TestEnv.create(mFeatures);
         mActivity = TestActivity.create(mEnv);
@@ -134,6 +143,7 @@ public class ActionHandlerTest {
         mDialogs = new TestDialogController();
         mClipper = new TestDocumentClipper();
         mDragAndDropManager = new TestDragAndDropManager();
+        mPeekViewManager = new TestPeekViewManager(mActivity);
         mTestConfigStore = new TestConfigStore();
         mEnv.state.configStore = mTestConfigStore;
 
@@ -152,6 +162,14 @@ public class ActionHandlerTest {
         mEnv.selectDocument(TestEnv.FILE_GIF);
     }
 
+    private void assertSelectionContainerClosed() {
+        if (isUseMaterial3FlagEnabled()) {
+            verify(mMockCloseSelectionBar, times(1)).run();
+        } else {
+            assertTrue(mActionModeAddons.finishActionModeCalled);
+        }
+    }
+
     @Test
     public void testOpenSelectedInNewWindow() {
         mHandler.openSelectedInNewWindow();
@@ -166,7 +184,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testOpenFileFlags() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -179,7 +197,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testOpenFileFlagsDesktop() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -195,7 +213,7 @@ public class ActionHandlerTest {
     @Test
     public void testSpringOpenDirectory() {
         mHandler.springOpenDirectory(TestEnv.FOLDER_0);
-        assertTrue(mActionModeAddons.finishActionModeCalled);
+        assertSelectionContainerClosed();
         assertEquals(TestEnv.FOLDER_0, mEnv.state.stack.peek());
     }
 
@@ -250,7 +268,7 @@ public class ActionHandlerTest {
         mHandler.deleteSelectedDocuments(docs, mEnv.state.stack.peek());
 
         mActivity.startService.assertCalled();
-        assertTrue(mActionModeAddons.finishActionModeCalled);
+        assertSelectionContainerClosed();
     }
 
     @Test
@@ -463,7 +481,7 @@ public class ActionHandlerTest {
     // Require desktop file handling flag because when it's disabled proguard strips the
     // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;
@@ -479,7 +497,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooser() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -488,7 +506,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING})
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooserDesktop() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -724,18 +742,21 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowPeek() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
         // The inspector activity is not called.
         mActivity.startActivity.assertNotCalled();
+        mPeekViewManager.getPeekDocument().assertCalled();
+        mPeekViewManager.getPeekDocument().assertLastArgument(TestEnv.FILE_GIF);
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
 
+        mPeekViewManager.getPeekDocument().assertNotCalled();
         mActivity.startActivity.assertCalled();
         Intent intent = mActivity.startActivity.getLastValue();
         assertTargetsComponent(intent, InspectorActivity.class);
@@ -746,7 +767,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_DebugDisabled() throws Exception {
         mFeatures.debugSupport = false;
 
@@ -758,7 +779,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_DebugEnabled() throws Exception {
         mFeatures.debugSupport = true;
         DebugFlags.setDocumentDetailsEnabled(true);
@@ -772,7 +793,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_OverridesRootDocumentName() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();
@@ -792,7 +813,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();
@@ -845,10 +866,11 @@ public class ActionHandlerTest {
                 mEnv.searchViewManager,
                 mEnv::lookupExecutor,
                 mActionModeAddons,
+                mMockCloseSelectionBar,
                 mClipper,
-                null,  // clip storage, not utilized unless we venture into *jumbo* clip territory.
+                null, // clip storage, not utilized unless we venture into *jumbo* clip territory.
                 mDragAndDropManager,
-                mEnv.injector
-        );
+                mPeekViewManager,
+                mEnv.injector);
     }
 }

@@ -34,6 +34,12 @@
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"/>
     <item
+        android:id="@+id/option_menu_job_progress"
+        android:enabled="false"
+        android:visible="false"
+        app:actionLayout="@layout/job_progress_toolbar_item"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/sub_menu_grid"
         android:title="@string/menu_grid"
         android:icon="@drawable/ic_menu_view_grid"

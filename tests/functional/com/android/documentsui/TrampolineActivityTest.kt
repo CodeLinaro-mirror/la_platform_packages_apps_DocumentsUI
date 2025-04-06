@@ -15,10 +15,8 @@
  */
 package com.android.documentsui
 
-import android.app.Instrumentation
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
-import android.content.IntentFilter
 import android.os.Build.VERSION_CODES
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
@@ -30,10 +28,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT
+import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
+import java.util.Optional
 import java.util.regex.Pattern
-import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.BeforeClass
@@ -55,30 +53,33 @@ class TrampolineActivityTest() {
         const val UI_TIMEOUT = 5000L
         val PHOTOPICKER_PACKAGE_REGEX: Pattern = Pattern.compile(".*(photopicker|media\\.module).*")
         val DOCUMENTSUI_PACKAGE_REGEX: Pattern = Pattern.compile(".*documentsui.*")
+        val STACK_LIST_REGEX: Pattern = Pattern.compile(
+            "taskId=(?<taskId>[0-9]+):(.+?)(photopicker|media\\.module|documentsui)",
+            Pattern.MULTILINE
+        )
 
         private lateinit var device: UiDevice
 
-        private lateinit var monitor: Instrumentation.ActivityMonitor
+        fun removePhotopickerAndDocumentsUITasks() {
+            // Get the current list of tasks that are visible.
+            val result = device.executeShellCommand("am stack list")
+
+            // Identify any that are from DocumentsUI or Photopicker and close them.
+            val matcher = STACK_LIST_REGEX.matcher(result)
+            while (matcher.find()) {
+                device.executeShellCommand("am stack remove ${matcher.group("taskId")}")
+            }
+        }
 
         @BeforeClass
         @JvmStatic
         fun setUp() {
             device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-            // Monitor to wait for the activity that starts with the `ACTION_GET_CONTENT` intent.
-            val intentFilter = IntentFilter().apply { addAction(ACTION_GET_CONTENT) }
-            monitor =
-                Instrumentation.ActivityMonitor(
-                    intentFilter,
-                    null, // Expected result from startActivityForResult.
-                    true, // Whether to block until activity started or not.
-                )
-            InstrumentationRegistry.getInstrumentation().addMonitor(monitor)
         }
     }
 
     @RunWith(Parameterized::class)
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT)
+    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class ShouldLaunchCorrectPackageTest {
         enum class AppType {
             PHOTOPICKER,
@@ -88,11 +89,11 @@ class TrampolineActivityTest() {
         data class GetContentIntentData(
             val mimeType: String,
             val expectedApp: AppType,
-            val extraMimeTypes: Array<String>? = null,
+            val extraMimeTypes: Optional<Array<String>> = Optional.empty(),
         ) {
             override fun toString(): String {
-                if (extraMimeTypes != null) {
-                    return "${mimeType}_${extraMimeTypes.joinToString("_")}"
+                if (extraMimeTypes.isPresent) {
+                    return "${mimeType}_${extraMimeTypes.get().joinToString("_")}"
                 }
                 return mimeType
             }
@@ -117,32 +118,32 @@ class TrampolineActivityTest() {
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
-                        extraMimeTypes = arrayOf("video/*"),
+                        extraMimeTypes = Optional.of(arrayOf("video/*")),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = arrayOf("image/*"),
+                        extraMimeTypes = Optional.of(arrayOf("image/*")),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = arrayOf("text/*"),
+                        extraMimeTypes = Optional.of(arrayOf("text/*")),
                         expectedApp = AppType.DOCUMENTSUI,
                     ),
                     GetContentIntentData(
                         mimeType = "video/*",
-                        extraMimeTypes = arrayOf("image/*", "text/*"),
+                        extraMimeTypes = Optional.of(arrayOf("image/*", "text/*")),
                         expectedApp = AppType.DOCUMENTSUI,
                     ),
                     GetContentIntentData(
                         mimeType = "*/*",
-                        extraMimeTypes = arrayOf("image/*", "video/*"),
+                        extraMimeTypes = Optional.of(arrayOf("image/*", "video/*")),
                         expectedApp = AppType.PHOTOPICKER,
                     ),
                     GetContentIntentData(
                         mimeType = "image/*",
-                        extraMimeTypes = arrayOf(),
+                        extraMimeTypes = Optional.of(arrayOf()),
                         expectedApp = AppType.DOCUMENTSUI,
                     )
                 )
@@ -156,19 +157,18 @@ class TrampolineActivityTest() {
 
         @Before
         fun setUp() {
+            removePhotopickerAndDocumentsUITasks()
+
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.setType(testData.mimeType)
-            testData.extraMimeTypes?.let { intent.putExtra(Intent.EXTRA_MIME_TYPES, it) }
+            if (testData.extraMimeTypes.isPresent) {
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, testData.extraMimeTypes.get())
+            }
 
             context.startActivity(intent)
-        }
-
-        @After
-        fun tearDown() {
-            monitor.waitForActivityWithTimeout(UI_TIMEOUT)?.finish()
         }
 
         @Test
@@ -178,15 +178,36 @@ class TrampolineActivityTest() {
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
             }
 
-            assertNotNull(device.wait(Until.findObject(bySelector), UI_TIMEOUT))
+            val builder = StringBuilder()
+            builder.append("Intent with mimetype ${testData.mimeType}")
+            if (testData.extraMimeTypes.isPresent) {
+                builder.append(
+                    " and EXTRA_MIME_TYPES of ${
+                        testData.extraMimeTypes.get().joinToString(", ")
+                    }"
+                )
+            }
+            builder.append(
+                " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
+            )
+
+            assertNotNull(
+                builder.toString(),
+                device.wait(Until.findObject(bySelector), UI_TIMEOUT)
+            )
         }
     }
 
     @RunWith(AndroidJUnit4::class)
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT)
+    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class RedirectTest {
         @get:Rule
         val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+
+        @Before
+        fun setUp() {
+            removePhotopickerAndDocumentsUITasks()
+        }
 
         @Test
         fun testReferredGetContentFromPhotopickerShouldNotRedirectBack() {

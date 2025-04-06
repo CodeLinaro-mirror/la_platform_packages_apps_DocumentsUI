@@ -18,7 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
-import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP;
+import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
 
 import android.content.pm.PackageManager;
 import android.platform.test.annotations.RequiresFlagsDisabled;
@@ -82,7 +82,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP)
+    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
     public void testDefaultRoots_hideRootsOnDesktopFlagDisabled() throws Exception {
         device.waitForIdle();
 
@@ -99,7 +99,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
 
     @Test
     @HugeLongTest
-    @RequiresFlagsEnabled(FLAG_HIDE_ROOTS_ON_DESKTOP)
+    @RequiresFlagsEnabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
     public void testDefaultRoots_hideRootsOnDesktopFlagEnabled() throws Exception {
         device.waitForIdle();
 

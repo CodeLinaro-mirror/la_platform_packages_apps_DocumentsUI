@@ -19,7 +19,9 @@ package com.android.documentsui.files;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import com.android.documentsui.flags.Flags;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -69,6 +71,7 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.peek.PeekViewManager;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperation;
@@ -98,6 +101,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     private final DocumentClipper mClipper;
     private final ClipStore mClipStore;
     private final DragAndDropManager mDragAndDropManager;
+    private final Runnable mCloseSelectionBar;
+    private final @Nullable PeekViewManager mPeekViewManager;
 
     ActionHandler(
             T activity,
@@ -106,20 +111,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             DocumentsAccess docs,
             SearchViewManager searchMgr,
             Lookup<String, Executor> executors,
-            ActionModeAddons actionModeAddons,
+            @Nullable ActionModeAddons actionModeAddons,
+            Runnable closeSelectionBar,
             DocumentClipper clipper,
             ClipStore clipStore,
             DragAndDropManager dragAndDropManager,
+            @Nullable PeekViewManager peekViewManager,
             Injector injector) {
 
         super(activity, state, providers, docs, searchMgr, executors, injector);
 
         mActionModeAddons = actionModeAddons;
+        mCloseSelectionBar = closeSelectionBar;
         mFeatures = injector.features;
         mConfig = injector.config;
         mClipper = clipper;
         mClipStore = clipStore;
         mDragAndDropManager = dragAndDropManager;
+        mPeekViewManager = peekViewManager;
     }
 
     @Override
@@ -230,8 +239,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void springOpenDirectory(DocumentInfo doc) {
-        assert(doc.isDirectory());
-        mActionModeAddons.finishActionMode();
+        assert (doc.isDirectory());
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
         openContainerDocument(doc);
     }
 
@@ -323,7 +336,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        mActionModeAddons.finishActionMode();
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
 
         List<Uri> uris = new ArrayList<>(docs.size());
         for (DocumentInfo doc : docs) {
@@ -551,7 +568,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (Flags.desktopFileHandling()) {
+        if (isDesktopFileHandlingFlagEnabled()) {
             Intent intent = buildViewIntent(doc);
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
@@ -596,14 +613,16 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         mActivity.startActivity(intent);
     }
 
-    private void showPeek() {
-        Log.d(TAG, "Peek not implemented");
+    private void showPeek(DocumentInfo doc) {
+        if (mPeekViewManager != null) {
+            mPeekViewManager.peekDocument(doc);
+        }
     }
 
     @Override
     public void showPreview(DocumentInfo doc) {
-        if (Flags.useMaterial3() && Flags.usePeekPreview()) {
-            showPeek();
+        if (isUsePeekPreviewFlagEnabled()) {
+            showPeek(doc);
         } else {
             showInspector(doc);
         }

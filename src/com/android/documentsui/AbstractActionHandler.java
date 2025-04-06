@@ -19,8 +19,9 @@ package com.android.documentsui;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.flags.Flags.desktopFileHandling;
-import static com.android.documentsui.flags.Flags.useSearchV2Rw;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseSearchV2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
@@ -458,17 +459,17 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     private boolean viewDocument(DocumentInfo doc) {
         if (doc.isPartial()) {
-            Log.w(TAG, "Can't view partial file.");
+            Log.w(TAG, "Cannot view partial file");
             return false;
         }
 
-        if (doc.isInArchive()) {
-            Log.w(TAG, "Can't view files in archives.");
+        if (!isZipNgFlagEnabled() && doc.isInArchive()) {
+            Log.w(TAG, "Cannot view file in archive");
             return false;
         }
 
         if (doc.isDirectory()) {
-            Log.w(TAG, "Can't view directories.");
+            Log.w(TAG, "Cannot view directory");
             return true;
         }
 
@@ -576,7 +577,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             flags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
         }
         // On desktop users expect files to open in a new window.
-        if (desktopFileHandling()) {
+        if (isDesktopFileHandlingFlagEnabled()) {
             // The combination of NEW_DOCUMENT and MULTIPLE_TASK allows multiple instances of the
             // same activity to open in separate windows.
             flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
@@ -916,7 +917,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mState.stack.changeRoot(mActivity.getCurrentRoot());
             }
 
-            if (useSearchV2Rw()) {
+            if (isUseSearchV2FlagEnabled()) {
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
@@ -1018,7 +1019,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
             QueryOptions options = new QueryOptions(
                     maxResults, lastModifiedDelta, Duration.ofMillis(MAX_SEARCH_TIME_MS),
-                    mState.showHiddenFiles, mState.acceptMimes);
+                    mState.showHiddenFiles, mState.acceptMimes, mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 Log.d(TAG, "Creating search loader V2");
@@ -1027,7 +1028,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 final LockingContentObserver observer = new LockingContentObserver(
                         mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
                 Collection<RootInfo> rootList = new ArrayList<>();
-                if (root == null || root.isRecents()) {
+                if (stack.isRecents()) {
                     // TODO(b:381346575): Pass roots based on user selection.
                     rootList.addAll(mProviders.getMatchingRootsBlocking(mState).stream().filter(
                             r -> r.supportsSearch() && r.authority != null
