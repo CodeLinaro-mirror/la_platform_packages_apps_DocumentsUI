@@ -14,18 +14,12 @@
      limitations under the License.
 -->
 <resources>
-    <style name="SectionHeader" parent="@style/TextAppearance.Material3.TitleMedium">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-        <item name="android:textSize">12sp</item>
-    </style>
-
     <style name="SortList" parent="@style/TextAppearance.Material3.BodyLarge">
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <!-- TODO(b/377770698): search -->
     <style name="SearchBarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:textSize">@dimen/search_bar_text_size</item>
@@ -46,21 +40,21 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <!-- TODO(b/377770698): search -->
     <style name="AutoCompleteText" parent="@style/TextAppearance.AppCompat.Medium">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched.
+        This is currently only used in item_dir_grid, which will be removed after use_material3.
+    -->
     <style name="CardPrimaryText" parent="@style/TextAppearance.AppCompat.Subhead">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="ActionModeTitle" parent="@style/ToolbarTitle">
-        <item name="android:textSize">@dimen/action_mode_text_size</item>
-    </style>
-
-    <style name="ToolbarTitle" parent="@style/TextAppearance.Material3.TitleLarge">
+    <style name="ToolbarTitle" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
@@ -79,6 +73,7 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- TODO(b/377770698): peek -->
     <style name="InspectorKeySubTitle" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
@@ -109,17 +104,17 @@
 
     <style name="FileItemLabelText" parent="@style/TextAppearance.Material3.TitleSmall">
         <item name="android:textColor">@color/doc_list_item_label_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="ItemCaptionText" parent="@style/TextAppearance.Material3.LabelSmall">
         <item name="android:textColor">@color/doc_list_item_subtitle_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="MenuItemTextAppearance" parent="@style/TextAppearance.Material3.LabelLarge">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="Subhead" parent="@style/TextAppearance.Material3.BodyLarge">
@@ -131,17 +126,17 @@
     </style>
 
     <style name="ListTableHeaderText" parent="@style/TextAppearance.Material3.TitleSmall.Emphasized">
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="DragBadgeText" parent="@style/TextAppearance.Material3.TitleSmall">
         <item name="android:textColor">@color/drag_content_text_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="DragCounterText" parent="@style/TextAppearance.Material3.LabelMedium">
         <item name="android:textColor">@color/drag_file_counter_text_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="JobProgressPanelHeaderText" parent="@style/TextAppearance.Material3.TitleMedium">
@@ -149,7 +144,7 @@
     </style>
 
     <style name="JobProgressItemTitleText" parent="@style/TextAppearance.Material3.TitleSmall">
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="JobProgressItemStatusText" parent="@style/TextAppearance.Material3.LabelMedium">
@@ -168,10 +163,12 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <!-- Headline Small -->
     <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- Body Medium -->
     <style name="MaterialAlertDialogBodyStyle" parent="@style/MaterialAlertDialog.Material3.Body.Text">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
