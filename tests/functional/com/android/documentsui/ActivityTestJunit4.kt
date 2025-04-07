@@ -45,8 +45,7 @@ import org.junit.Before
  * - Cleans up the test environment
  */
 abstract class ActivityTestJunit4<T : Activity?> {
-    @JvmField
-    var bots: Bots? = null
+    lateinit var bots: Bots
 
     @JvmField
     var device: UiDevice? = null
@@ -133,7 +132,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         // automatically open for phone devices. Espresso register click() as (x, y) MotionEvents,
         // so if a drawer is on top of a file we want to select, it will actually click the drawer.
         // Thus to start a clean state, we always try to close first.
-        bots!!.roots!!.closeDrawer()
+        bots.roots!!.closeDrawer()
     }
 
     @After
