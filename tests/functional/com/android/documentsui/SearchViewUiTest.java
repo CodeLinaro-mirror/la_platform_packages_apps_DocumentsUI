@@ -65,11 +65,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException, RemoteException {
-        // Drawer interferes with a lot of search action; going to try to close any opened ones
-        bots.roots.closeDrawer();
+      // Drawer interferes with a lot of search action; going to try to close any opened ones
+      bots.roots.closeDrawer();
 
-        // wait for a file to be present in default dir.
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+      // wait for a file to be present in default dir.
+      bots.directory.waitForDocument(fileName1);
     }
 
     @After
@@ -82,16 +82,16 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
-        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.waitForDocument(fileName1);
+        bots.directory.waitForDocument(fileName2);
+        bots.directory.waitForDocument(dirName1);
+        bots.directory.waitForDocument(fileNameNoRename);
         bots.directory.assertDocumentsCount(4);
     }
 
     private void assertDefaultContentOfTestDir1() throws UiObjectNotFoundException {
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_3);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_4);
+        bots.directory.waitForDocument(fileName3);
+        bots.directory.waitForDocument(fileName4);
         bots.directory.assertDocumentsCount(2);
     }
 
@@ -174,7 +174,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         device.pressBack();
 
         // Wait for a file in the default directory to be listed.
-        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+        bots.directory.waitForDocument(dirName1);
 
         bots.search.assertIconVisible(true);
         bots.search.assertInputExists(false);
@@ -224,7 +224,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressEnter();
 
         bots.directory.assertDocumentsCountOnList(true, 2);
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1, TestFilesRule.FILE_NAME_2);
+        bots.directory.assertDocumentsPresent(fileName1, fileName2);
     }
 
     @Test
@@ -241,7 +241,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Suppress
     public void testSearchResultsFound_ClearsOnBack() throws Exception {
         bots.search.clickIcon();
-        bots.search.setInputText(TestFilesRule.FILE_NAME_1);
+        bots.search.setInputText(fileName1);
 
         bots.keyboard.pressEnter();
         device.pressBack();
@@ -272,7 +272,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.search.clickIcon();
 
-        bots.search.setInputText(TestFilesRule.FILE_NAME_1);
+        bots.search.setInputText(fileName1);
 
         bots.keyboard.pressEnter();
 
@@ -354,7 +354,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 .perform(new RelaxedClickAction());
 
         // Ensure the selection has cleared and the "1 file selected" text is not displayed.
-        device.wait(Until.findObject(By.text(TestFilesRule.FILE_NAME_2).selected(false)), 5000);
+        device.wait(Until.findObject(By.text(fileName2).selected(false)), 5000);
         onView(withText("1 selected")).check(doesNotExist());
     }
 }

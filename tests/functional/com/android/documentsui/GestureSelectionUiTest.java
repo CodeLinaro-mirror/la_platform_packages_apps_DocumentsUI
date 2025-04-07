@@ -39,7 +39,7 @@ public class GestureSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testGridGestureSelect_twoFiles() throws Exception {
         bots.main.switchToGridMode();
-        bots.gesture.gestureSelectFiles(TestFilesRule.FILE_NAME_1, TestFilesRule.FILE_NAME_2);
+        bots.gesture.gestureSelectFiles(fileName1, fileName2);
 
         bots.directory.assertSelection(2);
     }
@@ -47,7 +47,7 @@ public class GestureSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testGridGestureSelect_multipleFiles() throws Exception {
         bots.main.switchToGridMode();
-        bots.gesture.gestureSelectFiles(TestFilesRule.FILE_NAME_2, TestFilesRule.DIR_NAME_1);
+        bots.gesture.gestureSelectFiles(fileName2, dirName1);
 
         bots.directory.assertSelection(3);
 
@@ -56,7 +56,7 @@ public class GestureSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testListGestureSelect_twoFiles() throws Exception {
         bots.main.switchToListMode();
-        bots.gesture.gestureSelectFiles(TestFilesRule.FILE_NAME_1, TestFilesRule.FILE_NAME_2);
+        bots.gesture.gestureSelectFiles(fileName1, fileName2);
 
         bots.directory.assertSelection(2);
 
@@ -65,7 +65,7 @@ public class GestureSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testListGestureSelect_multipleFiles() throws Exception {
         bots.main.switchToListMode();
-        bots.gesture.gestureSelectFiles(TestFilesRule.FILE_NAME_2, TestFilesRule.DIR_NAME_1);
+        bots.gesture.gestureSelectFiles(fileName2, dirName1);
 
         bots.directory.assertSelection(3);
 

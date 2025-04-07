@@ -43,7 +43,7 @@ public class FingerSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testFingerSelection_outOfRange() throws Exception {
         bots.main.switchToGridMode();
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
-        Rect firstDoc = bots.directory.findDocument(TestFilesRule.FILE_NAME_1).getBounds();
+        Rect firstDoc = bots.directory.findDocument(fileName1).getBounds();
         // Start from list right bottom.
         Point start = new Point(firstDoc.centerX(), firstDoc.centerY());
         // End is center of file1
