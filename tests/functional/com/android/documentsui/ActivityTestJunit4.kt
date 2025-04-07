@@ -195,14 +195,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     companion object {
-        // Testing files. For custom ones, override initTestFiles().
-        const val dirName1 = "Dir1"
-        const val childDir1 = "ChildDir1"
-        const val fileName1 = "file1.log"
-        const val fileName2 = "file12.png"
-        const val fileName3 = "anotherFile0.log"
-        const val fileName4 = "poodles.text"
-        const val fileNameNoRename = "NO_RENAMEfile.txt"
         const val TIMEOUT = 5000
     }
 }
