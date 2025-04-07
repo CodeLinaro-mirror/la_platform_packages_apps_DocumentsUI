@@ -131,9 +131,6 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
         val DIR_NAME_1: String = "Dir1"
 
         @JvmField
-        val CHILD_DIR_1: String = "ChildDir1"
-
-        @JvmField
         val FILE_NAME_1: String = "file1.log"
 
         @JvmField

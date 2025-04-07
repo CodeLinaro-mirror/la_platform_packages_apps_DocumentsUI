@@ -45,7 +45,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testRenameEnabled_SingleSelection() throws Exception {
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(fileName1, 1);
         bots.main.openOverflowMenu();
         bots.main.assertMenuEnabled(R.string.menu_rename, true);
 
@@ -56,7 +56,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testNoRenameSupport_SingleSelection() throws Exception {
         if (VersionUtils.isAtLeastR()) {
-            bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 1);
+            bots.directory.selectDocument(fileNameNoRename, 1);
             bots.main.openOverflowMenu();
             bots.main.assertMenuEnabled(R.string.menu_rename, false);
 
@@ -68,8 +68,8 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testOneHasRenameSupport_MultipleSelection() throws Exception {
         if (VersionUtils.isAtLeastR()) {
-            bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-            bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 2);
+            bots.directory.selectDocument(fileName1, 1);
+            bots.directory.selectDocument(fileNameNoRename, 2);
             bots.main.openOverflowMenu();
             bots.main.assertMenuEnabled(R.string.menu_rename, false);
 
@@ -81,8 +81,8 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testRenameDisabled_MultipleSelection() throws Exception {
         if (VersionUtils.isAtLeastR()) {
-            bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-            bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 2);
+            bots.directory.selectDocument(fileName1, 1);
+            bots.directory.selectDocument(fileName2, 2);
             bots.main.openOverflowMenu();
             bots.main.assertMenuEnabled(R.string.menu_rename, false);
 
@@ -93,7 +93,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testRenameFile_OkButton() throws Exception {
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(fileName1, 1);
 
         clickRename();
 
@@ -104,13 +104,13 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.clickDialogOkButton();
 
         bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsAbsent(fileName1);
         bots.directory.assertDocumentsCount(4);
     }
 
     @Test
     public void testRenameFile_Enter() throws Exception {
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(fileName1, 1);
 
         clickRename();
 
@@ -121,26 +121,26 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressEnter();
 
         bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsAbsent(fileName1);
         bots.directory.assertDocumentsCount(4);
     }
 
     @Test
     public void testRenameWithoutChangeIsNoOp() throws Exception {
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(fileName1, 1);
 
         clickRename();
 
         device.waitForIdle();
         bots.keyboard.pressEnter();
 
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(fileName1);
         bots.directory.assertDocumentsCount(4);
     }
 
     @Test
     public void testRenameFile_Cancel() throws Exception {
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(fileName1, 1);
 
         clickRename();
 
@@ -148,7 +148,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.main.clickDialogCancelButton();
 
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsPresent(fileName1);
         bots.directory.assertDocumentsAbsent(newName);
         bots.directory.assertDocumentsCount(4);
 
@@ -178,8 +178,8 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.main.clickDialogCancelButton();
 
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+        bots.directory.assertDocumentsPresent(fileName1);
+        bots.directory.assertDocumentsPresent(fileName2);
         bots.directory.assertDocumentsCount(4);
     }
 
@@ -194,20 +194,20 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.clickDialogOkButton();
 
         bots.directory.waitForDocument(newName);
-        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsAbsent(fileName1);
         bots.directory.assertDocumentsCount(4);
     }
 
     private void renameWithConflict() throws Exception {
         // Check that document with the new name exists
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.assertDocumentsPresent(fileName2);
+        bots.directory.selectDocument(fileName1, 1);
 
         clickRename();
 
-        bots.main.assertDialogText(TestFilesRule.FILE_NAME_1);
+        bots.main.assertDialogText(fileName1);
         assertFalse(bots.main.findRenameErrorMessage().exists());
-        bots.main.setDialogText(TestFilesRule.FILE_NAME_2);
+        bots.main.setDialogText(fileName2);
         bots.keyboard.pressEnter();
         assertTrue(bots.main.findRenameErrorMessage().exists());
     }
