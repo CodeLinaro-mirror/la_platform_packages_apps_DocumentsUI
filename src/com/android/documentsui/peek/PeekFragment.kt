@@ -21,31 +21,47 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.FileNotFoundException
 
+/** Manages the Peek UI. */
 class PeekFragment : Fragment() {
     companion object {
         private const val TAG = "PeekFragment"
         private const val PEEK_DOC_INFO = "PEEK_DOC_INFO"
     }
 
+    // Interface for custom view components that are rendered based on a DocumentInfo.
+    interface Display {
+        fun accept(doc: DocumentInfo)
+
+        fun clear()
+    }
+
+    // The view manager is used to handle behaviors that are not managed by the fragment itself.
     private lateinit var viewManager: PeekViewManager
+
+    // Top bar view.
     private lateinit var toolbar: MaterialToolbar
+
+    // Rendering view.
+    private lateinit var previewFrame: RenderView
 
     private var docInfo: DocumentInfo? = null
 
+    @Suppress("ktlint:standard:comment-wrapping")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.peek_layout, container, /* attachToRoot= */ false)
         toolbar = view.findViewById(R.id.peek_toolbar)
-        toolbar.setNavigationOnClickListener {
-            clearAndHide()
-        }
+        previewFrame = view.findViewById(R.id.peek_preview)
+
+        toolbar.setNavigationOnClickListener { clearAndHide() }
         return view
     }
 
@@ -81,20 +97,28 @@ class PeekFragment : Fragment() {
     }
 
     fun updateView(doc: DocumentInfo) {
-        if (!::toolbar.isInitialized) {
-            Log.e(TAG, "Toolbar has not been initialized")
+        if (!lateinitInitialized()) {
+            Log.e(TAG, "Members have not been initialized")
             return
         }
         docInfo = doc
         toolbar.title = doc.displayName
+        previewFrame.accept(doc)
     }
 
-    fun clearAndHide() {
-        if (!::viewManager.isInitialized || !::toolbar.isInitialized) {
-            Log.e(TAG, "Toolbar or PeekViewManager have not been initialized")
+    private fun lateinitInitialized(): Boolean {
+        return ::viewManager.isInitialized &&
+            ::toolbar.isInitialized &&
+            ::previewFrame.isInitialized
+    }
+
+    private fun clearAndHide() {
+        if (!lateinitInitialized()) {
+            Log.e(TAG, "Some members have not been initialized")
             return
         }
-        toolbar.title = ""
         viewManager.setContainerVisibility(false)
+        toolbar.title = ""
+        previewFrame.clear()
     }
 }

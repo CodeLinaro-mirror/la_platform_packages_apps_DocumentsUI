@@ -185,4 +185,14 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <style name="PeekTopBarTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="PeekNoPreviewLabelText" parent="@style/TextAppearance.Material3.LabelLarge.Emphasized">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
 </resources>
