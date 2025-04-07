@@ -290,7 +290,23 @@ final class ListDocumentHolder extends DocumentHolder {
                     }
                 });
 
-        mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
+        if (isUseMaterial3FlagEnabled()) {
+            // Only Normal type work with ellipsize=middle.
+            mTitle.setText(mDoc.displayName, TextView.BufferType.NORMAL);
+            // Doing this hacky way instead of just "mTitle.setTooltipText()" because calling
+            // "mTitle.setTooltipText()" directly will break the ripple effects on the title area.
+            itemView.setOnHoverListener(
+                    (v, event) -> {
+                        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                            mTitle.setTooltipText(mDoc.displayName);
+                        } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                            mTitle.setTooltipText(null);
+                        }
+                        return false;
+                    });
+        } else {
+            mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
+        }
         mTitle.setVisibility(View.VISIBLE);
 
         if (mDoc.isDirectory()) {
