@@ -17,7 +17,6 @@ package com.android.documentsui
 
 import android.app.Activity
 import android.app.UiAutomation
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
@@ -74,7 +73,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @JvmField
     var rootDir1: RootInfo? = null
-    protected var mResolver: ContentResolver? = null
 
     @JvmField
     protected var mDocsHelper: DocumentsProviderHelper? = null
@@ -115,7 +113,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
         Configurator.getInstance().toolType = MotionEvent.TOOL_TYPE_MOUSE
 
-        mResolver = context!!.getContentResolver()
         mDocsHelper = DocumentsProviderHelper(
             userId, this.testingProviderAuthority, context,
             this.testingProviderAuthority
