@@ -181,12 +181,16 @@
     </style>
 
     <style name="NavRailItemStyle" parent="">
-        <item name="android:background">@drawable/nav_rail_item_background</item>
-        <item name="android:paddingVertical">6dp</item>
+        <!-- By default the nav rail item has a grey background when it's focused, but we need the
+        background to be put on the icon inside, thus the defaultFocusHighlightEnabled=false here.
+        -->
+        <item name="android:defaultFocusHighlightEnabled">false</item>
+        <item name="android:paddingHorizontal">@dimen/space_extra_small_4</item>
+        <item name="android:paddingVertical">@dimen/space_extra_small_3</item>
     </style>
 
     <style name="NavRailItemTextStyle" parent="">
-        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginTop">@dimen/space_extra_small_2</item>
         <item name="android:textColor">@color/nav_rail_item_text_color</item>
         <item name="android:textAppearance">@style/NavRailItemTextAppearance</item>
     </style>
