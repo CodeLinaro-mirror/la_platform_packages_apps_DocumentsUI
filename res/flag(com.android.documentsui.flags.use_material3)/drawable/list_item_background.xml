@@ -14,8 +14,6 @@
      limitations under the License.
 -->
 
-<!-- Use @color/list_item_selected_background_color instead of the "?attr/colorPrimaryContainer"
-     because the variable is exposed in overlayable.xml. -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/list_item_ripple_color">
 
@@ -38,7 +36,7 @@
                         android:top="@dimen/focus_ring_gap">
                         <shape>
                             <corners android:radius="@dimen/list_item_height" />
-                            <solid android:color="@color/list_item_selected_background_color" />
+                            <solid android:color="?attr/colorPrimaryContainer" />
                         </shape>
                     </item>
                     <item
@@ -66,7 +64,7 @@
                     <item>
                         <shape>
                             <corners android:radius="@dimen/list_item_height" />
-                            <solid android:color="@color/list_item_selected_background_color" />
+                            <solid android:color="?attr/colorPrimaryContainer" />
                         </shape>
                     </item>
                     <item>
@@ -82,7 +80,7 @@
                     <item>
                         <shape>
                             <corners android:radius="@dimen/list_item_height" />
-                            <solid android:color="@color/list_item_selected_background_color" />
+                            <solid android:color="?attr/colorPrimaryContainer" />
                         </shape>
                     </item>
                     <item>
@@ -102,7 +100,7 @@
                         android:top="@dimen/focus_ring_gap">
                         <shape>
                             <corners android:radius="@dimen/list_item_height" />
-                            <solid android:color="@color/list_item_selected_background_color" />
+                            <solid android:color="?attr/colorPrimaryContainer" />
                         </shape>
                     </item>
                     <item>
@@ -120,7 +118,7 @@
                     <item>
                         <shape>
                             <corners android:radius="@dimen/list_item_height" />
-                            <solid android:color="@color/list_item_selected_background_color" />
+                            <solid android:color="?attr/colorPrimaryContainer" />
                         </shape>
                     </item>
                     <item>
@@ -134,7 +132,7 @@
             <item android:state_selected="true">
                 <shape>
                     <corners android:radius="@dimen/list_item_height" />
-                    <solid android:color="@color/list_item_selected_background_color" />
+                    <solid android:color="?attr/colorPrimaryContainer" />
                 </shape>
             </item>
 

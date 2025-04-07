@@ -65,7 +65,10 @@
   <color name="edge_effect">@android:color/black</color>
 
   <color name="list_divider_color">#1f000000</color>
+
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="list_item_selected_background_color">?attr/colorPrimaryContainer</color>
+
   <!-- This is used when the app bar is in pinned mode inside the CollapsingToolbarLayout.
        The code in NavigationViewManager assume the value should be a plain color value so we can't
        use the theme attribute "?attr/colorSurfaceContainerHigh" (which is a reference) here, hence
