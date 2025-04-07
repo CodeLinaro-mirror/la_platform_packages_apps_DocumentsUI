@@ -70,8 +70,7 @@
     <string name="button_clear" msgid="5412304437764369441">"સાફ કરો"</string>
     <string name="button_show_provider" msgid="6905880493806292753">"પ્રદાતા સેવામાં બતાવો"</string>
     <string name="button_back" msgid="1888621708934742182">"પાછળ"</string>
-    <!-- no translation found for button_show_in_folder (6674673478637689386) -->
-    <skip />
+    <string name="button_show_in_folder" msgid="6674673478637689386">"ફોલ્ડરમાં બતાવો"</string>
     <string name="not_sorted" msgid="7813496644889115530">"સૉર્ટ કરેલ નથી"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"નામ"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"સારાંશ"</string>
@@ -287,6 +286,16 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"તમારી પ્રાઇવસી સુરક્ષિત રાખવા માટે, અન્ય ફોલ્ડર પસંદ કરો"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"નવું ફોલ્ડર બનાવો"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"આ ડિવાઇસ શોધો"</string>
+    <string name="search_location_this_folder" msgid="6458835123175563013">"આ ફોલ્ડર"</string>
+    <string name="search_location_root_folder" msgid="4280523560213522303">"રૂટ ફોલ્ડર"</string>
+    <string name="search_location_everywhere" msgid="747799487494833887">"સર્વત્ર"</string>
+    <string name="search_last_modified_any_time" msgid="6027501367865939696">"ગમે ત્યારે"</string>
+    <string name="search_last_modified_1_day" msgid="7775353928859139915">"આજે"</string>
+    <string name="search_last_modified_2_days" msgid="7885735119033678756">"ગઈ કાલે"</string>
+    <string name="search_last_modified_7_days" msgid="7634290601544418836">"ગયા અઠવાડિયે"</string>
+    <string name="search_last_modified_30_days" msgid="4936787546211708940">"ગયા મહિને"</string>
+    <string name="search_last_modified_365_days" msgid="7147134152974373466">"ગયું વર્ષ"</string>
+    <string name="search_file_type_all" msgid="6613664493134355781">"તમામ પ્રકાર"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"શોધ ઇતિહાસ <xliff:g id="TEXT">%1$s</xliff:g> ડિલીટ કરો"</string>
     <string name="personal_tab" msgid="3878576287868528503">"વ્યક્તિગત"</string>
     <string name="work_tab" msgid="7265359366883747413">"ઑફિસ"</string>
@@ -296,4 +305,8 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"સૂચિ મોડમાં બતાવી રહ્યાં છીએ."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ફાઇલનું નામ"</string>
+    <!-- no translation found for a11y_peek_navigation_icon (6692873662104342476) -->
+    <skip />
+    <!-- no translation found for peek_no_preview (8717084152736749464) -->
+    <skip />
 </resources>

@@ -70,8 +70,7 @@
     <string name="button_clear" msgid="5412304437764369441">"ရှင်းထုတ်ရန်"</string>
     <string name="button_show_provider" msgid="6905880493806292753">"ပံ့ပိုးပေးသူတွင် ပြရန်"</string>
     <string name="button_back" msgid="1888621708934742182">"နောက်သို့"</string>
-    <!-- no translation found for button_show_in_folder (6674673478637689386) -->
-    <skip />
+    <string name="button_show_in_folder" msgid="6674673478637689386">"ဖိုင်တွဲတွင် ပြပါ"</string>
     <string name="not_sorted" msgid="7813496644889115530">"စီမထားပါ"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"အမည်"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"အနှစ်ချုပ်"</string>
@@ -287,6 +286,16 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"သင်၏ကိုယ်ရေးလုံခြုံမှုကို ကာကွယ်ရန် ဖိုင်တွဲနောက်တစ်ခု ရွေးပါ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ဖိုင်တွဲအသစ် ပြုလုပ်ရန်"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ဤစက်တွင် ရှာရန်"</string>
+    <string name="search_location_this_folder" msgid="6458835123175563013">"ဤဖိုင်တွဲ"</string>
+    <string name="search_location_root_folder" msgid="4280523560213522303">"မူလဖိုင်တွဲ"</string>
+    <string name="search_location_everywhere" msgid="747799487494833887">"နေရာအနှံ့"</string>
+    <string name="search_last_modified_any_time" msgid="6027501367865939696">"အချိန်မရွေး"</string>
+    <string name="search_last_modified_1_day" msgid="7775353928859139915">"ယနေ့"</string>
+    <string name="search_last_modified_2_days" msgid="7885735119033678756">"မနေ့က"</string>
+    <string name="search_last_modified_7_days" msgid="7634290601544418836">"ပြီးခဲ့သော သီတင်းပတ်"</string>
+    <string name="search_last_modified_30_days" msgid="4936787546211708940">"ပြီးခဲ့သောလ"</string>
+    <string name="search_last_modified_365_days" msgid="7147134152974373466">"မနှစ်က"</string>
+    <string name="search_file_type_all" msgid="6613664493134355781">"အမျိုးအစားအားလုံး"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"ရှာဖွေမှတ်တမ်း <xliff:g id="TEXT">%1$s</xliff:g> ကိုဖျက်သည်"</string>
     <string name="personal_tab" msgid="3878576287868528503">"ကိုယ်ပိုင်"</string>
     <string name="work_tab" msgid="7265359366883747413">"အလုပ်"</string>
@@ -296,4 +305,7 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"စာရင်းမုဒ်ဖြင့် ပြသရန်။"</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ဖိုင်အမည်"</string>
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ဖိုင်အစမ်းကြည့်ရှုခြင်း ဖျောက်ရန်"</string>
+    <!-- no translation found for peek_no_preview (8717084152736749464) -->
+    <skip />
 </resources>
