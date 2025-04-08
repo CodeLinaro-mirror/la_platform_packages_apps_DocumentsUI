@@ -157,7 +157,7 @@
     </style>
 
     <style name="JobProgressItemStatusText.Success">
-        <item name="android:textColor">@color/job_progress_success</item>
+        <item name="android:textColor">@color/success</item>
     </style>
 
     <style name="JobProgressItemStatusText.Failure">
