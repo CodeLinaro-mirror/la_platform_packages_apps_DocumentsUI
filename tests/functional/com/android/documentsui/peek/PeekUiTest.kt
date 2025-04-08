@@ -67,13 +67,13 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Throws(Exception::class)
     fun testSequentialFilePreview() {
         peekBot.assertPeekHidden()
-        bots!!.directory.selectDocument("image.png")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("image.png")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
         peekBot.hide()
 
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
         peekBot.hide()
     }
@@ -83,11 +83,11 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     fun testFileCantBeSelectedDuringFilePreview() {
         peekBot.assertPeekHidden()
         // Selecting a document should show the "1 selected" label.
-        bots!!.directory.selectDocument("image.png", 1)
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("image.png", 1)
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
         // The selection should not be possible, the "1 selected" label shouldn't show.
-        bots!!.directory.selectDocument("image.png")
+        bots.directory.selectDocument("image.png")
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
         val selectionText: UiObject2? =
@@ -98,8 +98,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testRestorePeekActiveState() {
-        bots!!.directory.selectDocument("image.png")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("image.png")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
 
         // Recreate the activity (happens on window resize, for example), and ensure that the
@@ -111,8 +111,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         mActivityScenario!!.recreate()
         peekBot.assertPeekHidden()
 
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
         mActivityScenario!!.recreate()
         validatePeekContents("file0.log")
@@ -121,8 +121,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testNoPreview() {
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
 
         // Use the "No preview available" content description to ensure that the "No preview" shape
