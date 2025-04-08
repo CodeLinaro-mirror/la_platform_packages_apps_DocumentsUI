@@ -19,10 +19,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Canvas
-import android.graphics.Path
 import android.graphics.Rect
-import android.graphics.RectF
+import android.text.format.Formatter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -32,7 +30,6 @@ import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.core.view.isEmpty
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -42,7 +39,10 @@ import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
+import com.android.documentsui.util.FormatUtils
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.shape.ShapeAppearanceModel
 
 /**
  * Adds a gap between items in a vertical Recycler View.
@@ -59,29 +59,6 @@ private class VerticalMarginItemDecoration(
         if (parent.getChildAdapterPosition(view) > 0) {
             outRect.top = mMarginSize
         }
-    }
-}
-
-/**
- * Adds rounded corners to the extremes (i.e. the first and last items in a list) of the Recycler
- * View. It does this by getting the bounding box of all items and clipping the canvas to a rounded
- * rectangle of the same size.
- */
-private class RoundedCornerExtremitiesItemDecoration(
-    private val mCornerRadius: Float
-) : RecyclerView.ItemDecoration() {
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        if (parent.isEmpty()) return
-
-        val firstRect = Rect()
-        val lastRect = Rect()
-        parent.getDecoratedBoundsWithMargins(parent.getChildAt(0), firstRect)
-        parent.getDecoratedBoundsWithMargins(parent.getChildAt(parent.childCount - 1), lastRect)
-        firstRect.union(lastRect)
-
-        val path = Path()
-        path.addRoundRect(RectF(firstRect), mCornerRadius, mCornerRadius, Path.Direction.CW)
-        c.clipPath(path)
     }
 }
 
@@ -103,6 +80,9 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
         val mTitleView = view.findViewById<TextView>(R.id.job_progress_item_title)
         val mProgressView =
             view.findViewById<LinearProgressIndicator>(R.id.job_progress_item_progress)
+        val mPrimaryStatusView = view.findViewById<TextView>(R.id.job_progress_item_primary_status)
+        val mSecondaryStatusView =
+            view.findViewById<TextView>(R.id.job_progress_item_secondary_status)
 
         val mDismissButton = view.findViewById<Button>(R.id.job_progress_item_dismiss)
 
@@ -112,16 +92,85 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
             if (!mProgressView.isIndeterminate) {
                 mProgressView.setProgress(jobProgress.toPercent().toInt())
             }
+            if (jobProgress.state == Job.STATE_COMPLETED) {
+                if (jobProgress.hasFailures) {
+                    mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Failure)
+                    mPrimaryStatusView.text = mContext.getString(R.string.job_progress_item_failed)
+                    mSecondaryStatusView.text =
+                        mContext.getString(R.string.job_progress_item_see_details)
+                } else {
+                    mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Success)
+                    mPrimaryStatusView.text =
+                        mContext.getString(R.string.job_progress_item_completed)
+                    mSecondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
+                }
+            } else {
+                mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText)
+                mPrimaryStatusView.text = mContext.getString(
+                    R.string.job_progress_item_byte_progress,
+                    Formatter.formatFileSize(mContext, jobProgress.currentBytes),
+                    Formatter.formatFileSize(mContext, jobProgress.requiredBytes),
+                )
+                mSecondaryStatusView.text = mContext.getString(R.string.copy_remaining,
+                    FormatUtils.formatDuration(jobProgress.msRemaining))
+            }
             mDismissButton.setOnClickListener { mController.dismissProgress(jobProgress.id) }
+        }
+
+        private fun getCompletionStatusString(@FileOperationService.OpType opType: Int): String {
+            return when (opType) {
+                FileOperationService.OPERATION_COPY -> mContext.getString(R.string.copy_completed)
+                FileOperationService.OPERATION_MOVE -> mContext.getString(R.string.move_completed)
+                FileOperationService.OPERATION_DELETE ->
+                    mContext.getString(R.string.delete_completed)
+                FileOperationService.OPERATION_COMPRESS ->
+                    mContext.getString(R.string.compress_completed)
+                FileOperationService.OPERATION_EXTRACT ->
+                    mContext.getString(R.string.extract_completed)
+                else -> ""
+            }
         }
     }
 
     class ProgressListAdapter(val mController: JobPanelController) :
         ListAdapter<JobProgress, ProgressItemHolder>(JobDiffCallback) {
 
+        companion object {
+            // Constants for the different view types created by this adapter. The type depends on
+            // the position of the item in the list.
+            private const val VIEW_MIDDLE = 0
+            private const val VIEW_TOP = 1
+            private const val VIEW_BOTTOM = 2
+            private const val VIEW_TOP_BOTTOM = 3
+        }
+
+        override fun getItemViewType(position: Int): Int {
+            if (itemCount == 1) return VIEW_TOP_BOTTOM
+            if (position == 0) return VIEW_TOP
+            if (position == itemCount - 1) return VIEW_BOTTOM
+            return VIEW_MIDDLE
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressItemHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.job_progress_item, parent, false)
+            val context = parent.context
+            val view = LayoutInflater.from(context)
+                .inflate(R.layout.job_progress_item, parent, false) as MaterialCardView
+            if (viewType != 0) {
+                val outerRadius =
+                    context.resources.getDimension(R.dimen.job_progress_list_corner_radius)
+                view.shapeAppearanceModel = ShapeAppearanceModel
+                    .builder(context, R.style.JobProgressItemCardBaseShape, 0)
+                    .apply {
+                        if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_TOP) {
+                            setTopLeftCornerSize(outerRadius)
+                            setTopRightCornerSize(outerRadius)
+                        }
+                        if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_BOTTOM) {
+                            setBottomLeftCornerSize(outerRadius)
+                            setBottomRightCornerSize(outerRadius)
+                        }
+                    }.build()
+            }
             return ProgressItemHolder(mController, view)
         }
 
@@ -204,9 +253,6 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
                 layoutManager = LinearLayoutManager(mContext)
                 addItemDecoration(VerticalMarginItemDecoration(
                     mContext.resources.getDimensionPixelSize(R.dimen.job_progress_list_gap)
-                ))
-                addItemDecoration(RoundedCornerExtremitiesItemDecoration(
-                    mContext.resources.getDimension(R.dimen.job_progress_list_corner_radius)
                 ))
                 itemAnimator = null
                 adapter = listAdapter

@@ -65,7 +65,10 @@
   <color name="edge_effect">@android:color/black</color>
 
   <color name="list_divider_color">#1f000000</color>
+
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="list_item_selected_background_color">?attr/colorPrimaryContainer</color>
+
   <!-- This is used when the app bar is in pinned mode inside the CollapsingToolbarLayout.
        The code in NavigationViewManager assume the value should be a plain color value so we can't
        use the theme attribute "?attr/colorSurfaceContainerHigh" (which is a reference) here, hence
@@ -98,4 +101,7 @@
   <!-- Scrim for the Top bar. Static color, 32% opacity in black. The same scrim is used in some
   parts of Android SysUI, it can't be used directly here. -->
   <color name="peek_topbar_scrim">#52000000</color>
+
+  <!-- Custom green color indicating success not available in the base theme palette. -->
+  <color name="job_progress_success">#187231</color>
 </resources>

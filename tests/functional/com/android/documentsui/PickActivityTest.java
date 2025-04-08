@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -31,9 +32,13 @@ import android.provider.DocumentsContract;
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.bots.Bots;
 import com.android.documentsui.picker.PickActivity;
+import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.ui.TestDialogController;
 import com.android.documentsui.util.VersionUtils;
@@ -74,8 +79,15 @@ public class PickActivityTest {
     }
 
     @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createFileInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1, "text/plain");
+
+    @Rule
     public final ActivityTestRule<PickActivity> mRule =
             new ActivityTestRule<>(PickActivity.class, false, false);
+
+    private Bots mBots = null;
 
     @Before
     public void setUp() throws Exception {
@@ -91,6 +103,14 @@ public class PickActivityTest {
         mTestConfigStore = new TestConfigStore();
 
         isPrivateSpaceEnabled = SdkLevel.isAtLeastS() && isPrivateSpaceEnabled;
+
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        mBots =
+                new Bots(
+                        UiDevice.getInstance(instrumentation),
+                        instrumentation.getUiAutomation(),
+                        mTargetContext,
+                        5000);
     }
 
     @Test
@@ -165,5 +185,20 @@ public class PickActivityTest {
 
         assertThat(pickActivity.isFinishing()).isFalse();
         mTestDialogs.assertActionNotAllowedShown();
+    }
+
+    @Test
+    public void testOptionMenuWorksWhileOptionSelected() throws UiObjectNotFoundException {
+        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
+        mRule.launchActivity(mIntentGetContent);
+        mBots.roots.openRoot(ROOT_0_ID);
+
+        // Switch to list mode and select the test document.
+        mBots.main.switchToListMode();
+        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+
+        // Open the overflow menu and assert that the Sort by menu option is there.
+        mBots.main.openOverflowMenu();
+        mBots.menu.hasMenuItem("Sort by...");
     }
 }

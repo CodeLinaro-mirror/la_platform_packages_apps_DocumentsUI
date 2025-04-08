@@ -70,8 +70,7 @@
     <string name="button_clear" msgid="5412304437764369441">"ล้าง"</string>
     <string name="button_show_provider" msgid="6905880493806292753">"แสดงในแอปผู้ให้บริการ"</string>
     <string name="button_back" msgid="1888621708934742182">"กลับ"</string>
-    <!-- no translation found for button_show_in_folder (6674673478637689386) -->
-    <skip />
+    <string name="button_show_in_folder" msgid="6674673478637689386">"แสดงในโฟลเดอร์"</string>
     <string name="not_sorted" msgid="7813496644889115530">"ไม่ได้จัดเรียง"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"ชื่อ"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"สรุป"</string>
@@ -287,6 +286,16 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"เลือกโฟลเดอร์อื่นเพื่อปกป้องความเป็นส่วนตัว"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"สร้างโฟลเดอร์ใหม่"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ค้นหาอุปกรณ์นี้"</string>
+    <string name="search_location_this_folder" msgid="6458835123175563013">"โฟลเดอร์นี้"</string>
+    <string name="search_location_root_folder" msgid="4280523560213522303">"โฟลเดอร์รูท"</string>
+    <string name="search_location_everywhere" msgid="747799487494833887">"ทุกที่"</string>
+    <string name="search_last_modified_any_time" msgid="6027501367865939696">"ตลอดเวลา"</string>
+    <string name="search_last_modified_1_day" msgid="7775353928859139915">"วันนี้"</string>
+    <string name="search_last_modified_2_days" msgid="7885735119033678756">"เมื่อวาน"</string>
+    <string name="search_last_modified_7_days" msgid="7634290601544418836">"สัปดาห์ที่แล้ว"</string>
+    <string name="search_last_modified_30_days" msgid="4936787546211708940">"เดือนที่แล้ว"</string>
+    <string name="search_last_modified_365_days" msgid="7147134152974373466">"ปีที่แล้ว"</string>
+    <string name="search_file_type_all" msgid="6613664493134355781">"ทุกประเภท"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"ลบประวัติการค้นหา <xliff:g id="TEXT">%1$s</xliff:g>"</string>
     <string name="personal_tab" msgid="3878576287868528503">"ส่วนบุคคล"</string>
     <string name="work_tab" msgid="7265359366883747413">"งาน"</string>
@@ -296,4 +305,7 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"กำลังแสดงในโหมดรายการ"</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ชื่อไฟล์"</string>
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ซ่อนตัวอย่างไฟล์"</string>
+    <!-- no translation found for peek_no_preview (8717084152736749464) -->
+    <skip />
 </resources>

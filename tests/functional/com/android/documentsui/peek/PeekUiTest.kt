@@ -29,10 +29,12 @@ import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.StubProvider
+import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.TestFilesRule
 import junit.framework.Assert
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,36 +51,43 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
             .createFileInRoot(StubProvider.ROOT_0_ID, "image.png", "image/png")
             .createFileInRoot(StubProvider.ROOT_0_ID, "file0.log", "text/plain")
 
+    private lateinit var peekBot: PeekBot
+
+    @Before
+    fun setUpTest() {
+        peekBot = PeekBot(device!!, context!!, TIMEOUT)
+    }
+
     fun validatePeekContents(fileName: String) {
-        bots!!.peek.assertPeekActive()
-        bots!!.peek.assertHasTitle(fileName)
+        peekBot.assertPeekActive()
+        peekBot.assertHasTitle(fileName)
     }
 
     @Test
     @Throws(Exception::class)
     fun testSequentialFilePreview() {
-        bots!!.peek.assertPeekHidden()
-        bots!!.directory.selectDocument("image.png")
-        bots!!.main.clickActionItem("Get info")
+        peekBot.assertPeekHidden()
+        bots.directory.selectDocument("image.png")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
-        bots!!.peek.hide()
+        peekBot.hide()
 
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
-        bots!!.peek.hide()
+        peekBot.hide()
     }
 
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {
-        bots!!.peek.assertPeekHidden()
+        peekBot.assertPeekHidden()
         // Selecting a document should show the "1 selected" label.
-        bots!!.directory.selectDocument("image.png", 1)
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("image.png", 1)
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
         // The selection should not be possible, the "1 selected" label shouldn't show.
-        bots!!.directory.selectDocument("image.png")
+        bots.directory.selectDocument("image.png")
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
         val selectionText: UiObject2? =
@@ -89,8 +98,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testRestorePeekActiveState() {
-        bots!!.directory.selectDocument("image.png")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("image.png")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
 
         // Recreate the activity (happens on window resize, for example), and ensure that the
@@ -98,12 +107,12 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         mActivityScenario!!.recreate()
         validatePeekContents("image.png")
 
-        bots!!.peek.hide()
+        peekBot.hide()
         mActivityScenario!!.recreate()
-        bots!!.peek.assertPeekHidden()
+        peekBot.assertPeekHidden()
 
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
         mActivityScenario!!.recreate()
         validatePeekContents("file0.log")
@@ -112,8 +121,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testNoPreview() {
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
 
         // Use the "No preview available" content description to ensure that the "No preview" shape

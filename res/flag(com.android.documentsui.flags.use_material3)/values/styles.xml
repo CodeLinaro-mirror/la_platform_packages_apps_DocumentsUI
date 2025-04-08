@@ -202,8 +202,10 @@
 
     <style name="JobProgressItemCardStyle" parent="@style/Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.ExtraSmall</item>
+        <item name="shapeAppearance">@style/JobProgressItemCardBaseShape</item>
     </style>
+
+    <style name="JobProgressItemCardBaseShape" parent="@style/ShapeAppearance.Material3.Corner.ExtraSmall" />
 
     <style name="JobProgressItemTitleStyle" parent="">
         <item name="android:textAppearance">@style/JobProgressItemTitleText</item>

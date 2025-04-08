@@ -23,7 +23,7 @@
          need to explicitly apply the drawable if the other items also need this mask. -->
     <item
         android:id="@android:id/mask"
-        android:drawable="@drawable/root_list_selector"/>
+        android:drawable="@drawable/root_item_selector"/>
 
     <item>
         <selector>
@@ -93,7 +93,7 @@
                     </item>
                 </layer-list>
             </item>
-            <item android:state_activated="true" android:drawable="@drawable/root_list_selector"/>
+            <item android:state_activated="true" android:drawable="@drawable/root_item_selector"/>
 
             <!-- Unselected. -->
             <item app:state_highlighted="true">
