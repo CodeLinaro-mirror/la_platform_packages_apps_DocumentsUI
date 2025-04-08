@@ -47,17 +47,17 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
-        bots.directory.waitForDocument(fileName1);
-        bots.directory.waitForDocument(fileName2);
-        bots.directory.waitForDocument(dirName1);
-        bots.directory.waitForDocument(fileNameNoRename);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_2);
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
         bots.directory.assertDocumentsCount(4);
     }
 
     @HugeLongTest
     public void testRootTapped_GoToRootFromChildDir() throws Exception {
-        bots.directory.openDocument(dirName1);
-        bots.main.assertWindowTitle(dirName1);
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
+        bots.main.assertWindowTitle(TestFilesRule.DIR_NAME_1);
         bots.roots.openRoot(ROOT_0_ID);
         bots.main.assertWindowTitle(ROOT_0_ID);
         assertDefaultContentOfTestDir0();
@@ -65,7 +65,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Suppress
     public void testRootChanged_ClearSelection() throws Exception {
-        bots.directory.selectDocument(fileName1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         bots.main.assertInActionMode(true);
 
         bots.roots.openRoot(ROOT_1_ID);
