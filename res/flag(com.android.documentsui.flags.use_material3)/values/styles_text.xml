@@ -158,6 +158,14 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <style name="JobProgressItemStatusText.Success">
+        <item name="android:textColor">@color/job_progress_success</item>
+    </style>
+
+    <style name="JobProgressItemStatusText.Failure">
+        <item name="android:textColor">?attr/colorError</item>
+    </style>
+
     <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>

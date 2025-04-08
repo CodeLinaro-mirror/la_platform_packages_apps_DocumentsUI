@@ -23,6 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.graphics.Rect
 import android.graphics.RectF
+import android.text.format.Formatter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -42,6 +43,7 @@ import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
+import com.android.documentsui.util.FormatUtils
 import com.google.android.material.progressindicator.LinearProgressIndicator
 
 /**
@@ -103,6 +105,9 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
         val mTitleView = view.findViewById<TextView>(R.id.job_progress_item_title)
         val mProgressView =
             view.findViewById<LinearProgressIndicator>(R.id.job_progress_item_progress)
+        val mPrimaryStatusView = view.findViewById<TextView>(R.id.job_progress_item_primary_status)
+        val mSecondaryStatusView =
+            view.findViewById<TextView>(R.id.job_progress_item_secondary_status)
 
         val mDismissButton = view.findViewById<Button>(R.id.job_progress_item_dismiss)
 
@@ -112,7 +117,43 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
             if (!mProgressView.isIndeterminate) {
                 mProgressView.setProgress(jobProgress.toPercent().toInt())
             }
+            if (jobProgress.state == Job.STATE_COMPLETED) {
+                if (jobProgress.hasFailures) {
+                    mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Failure)
+                    mPrimaryStatusView.text = mContext.getString(R.string.job_progress_item_failed)
+                    mSecondaryStatusView.text =
+                        mContext.getString(R.string.job_progress_item_see_details)
+                } else {
+                    mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Success)
+                    mPrimaryStatusView.text =
+                        mContext.getString(R.string.job_progress_item_completed)
+                    mSecondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
+                }
+            } else {
+                mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText)
+                mPrimaryStatusView.text = mContext.getString(
+                    R.string.job_progress_item_byte_progress,
+                    Formatter.formatFileSize(mContext, jobProgress.currentBytes),
+                    Formatter.formatFileSize(mContext, jobProgress.requiredBytes),
+                )
+                mSecondaryStatusView.text = mContext.getString(R.string.copy_remaining,
+                    FormatUtils.formatDuration(jobProgress.msRemaining))
+            }
             mDismissButton.setOnClickListener { mController.dismissProgress(jobProgress.id) }
+        }
+
+        private fun getCompletionStatusString(@FileOperationService.OpType opType: Int): String {
+            return when (opType) {
+                FileOperationService.OPERATION_COPY -> mContext.getString(R.string.copy_completed)
+                FileOperationService.OPERATION_MOVE -> mContext.getString(R.string.move_completed)
+                FileOperationService.OPERATION_DELETE ->
+                    mContext.getString(R.string.delete_completed)
+                FileOperationService.OPERATION_COMPRESS ->
+                    mContext.getString(R.string.compress_completed)
+                FileOperationService.OPERATION_EXTRACT ->
+                    mContext.getString(R.string.extract_completed)
+                else -> ""
+            }
         }
     }
 
