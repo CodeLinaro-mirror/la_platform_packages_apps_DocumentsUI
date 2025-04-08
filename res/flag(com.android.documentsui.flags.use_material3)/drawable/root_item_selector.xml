@@ -13,7 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- TODO(b/379776735): Remove this after use_material3 flag is launched. -->
+
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="@dimen/drawer_item_height"/>
     <!-- The color here is used as activated color in root_item_background.xml. -->
