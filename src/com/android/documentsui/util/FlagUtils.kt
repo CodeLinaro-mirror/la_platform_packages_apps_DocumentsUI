@@ -53,11 +53,6 @@ class FlagUtils {
         }
 
         @JvmStatic
-        fun isHideRootsOnDesktopFlagEnabled(): Boolean {
-            return Flags.hideRootsOnDesktopRo()
-        }
-
-        @JvmStatic
         fun isUsePeekPreviewFlagEnabled(): Boolean {
             return Flags.usePeekPreviewRo() && isUseMaterial3FlagEnabled()
         }
