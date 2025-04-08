@@ -317,15 +317,18 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
             final int opType = intent.getIntExtra(
                     FileOperationService.EXTRA_OPERATION_TYPE,
                     FileOperationService.OPERATION_COPY);
-            final ArrayList<DocumentInfo> docList =
-                    intent.getParcelableArrayListExtra(FileOperationService.EXTRA_FAILED_DOCS);
-            final ArrayList<Uri> uriList =
-                    intent.getParcelableArrayListExtra(FileOperationService.EXTRA_FAILED_URIS);
+            final ArrayList<DocumentInfo> failedDocs = intent.getParcelableArrayListExtra(
+                    FileOperationService.EXTRA_FAILED_DOCS, DocumentInfo.class);
+            final ArrayList<Uri> failedUris = intent.getParcelableArrayListExtra(
+                    FileOperationService.EXTRA_FAILED_URIS, Uri.class);
+            final ArrayList<String> failedPaths = intent.getStringArrayListExtra(
+                    FileOperationService.EXTRA_FAILED_PATHS);
             OperationDialogFragment.show(
                     getSupportFragmentManager(),
                     dialogType,
-                    docList,
-                    uriList,
+                    failedDocs,
+                    failedUris,
+                    failedPaths,
                     mState.stack,
                     opType);
         }

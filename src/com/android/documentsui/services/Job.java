@@ -22,6 +22,7 @@ import static com.android.documentsui.DocumentsApplication.acquireUnstableProvid
 import static com.android.documentsui.services.FileOperationService.EXTRA_CANCEL;
 import static com.android.documentsui.services.FileOperationService.EXTRA_DIALOG_TYPE;
 import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_DOCS;
+import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_PATHS;
 import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_URIS;
 import static com.android.documentsui.services.FileOperationService.EXTRA_JOB_ID;
 import static com.android.documentsui.services.FileOperationService.EXTRA_OPERATION_TYPE;
@@ -46,6 +47,7 @@ import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.PluralsRes;
 
 import com.android.documentsui.Metrics;
@@ -110,6 +112,7 @@ abstract public class Job implements Runnable {
     volatile int failureCount = 0;
     final ArrayList<DocumentInfo> failedDocs = new ArrayList<>();
     final ArrayList<Uri> failedUris = new ArrayList<>();
+    final ArrayList<String> failedPaths = new ArrayList<>();
 
     final Notification.Builder mProgressBuilder;
 
@@ -274,6 +277,11 @@ abstract public class Job implements Runnable {
         failedUris.add(uri);
     }
 
+    void onPathFailed(@NonNull String path) {
+        failureCount++;
+        failedPaths.add(path);
+    }
+
     final boolean hasFailures() {
         return failureCount > 0;
     }
@@ -313,8 +321,18 @@ abstract public class Job implements Runnable {
         final Intent navigateIntent = buildNavigateIntent(INTENT_TAG_FAILURE);
         navigateIntent.putExtra(EXTRA_DIALOG_TYPE, OperationDialogFragment.DIALOG_TYPE_FAILURE);
         navigateIntent.putExtra(EXTRA_OPERATION_TYPE, operationType);
-        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_DOCS, failedDocs);
-        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_URIS, failedUris);
+
+        // Limit the size of the lists getting passed with the failure notification.
+        final int maxListSize = 100;
+        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_DOCS,
+                failedDocs.size() <= maxListSize ? failedDocs
+                        : new ArrayList<>(failedDocs.subList(0, maxListSize)));
+        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_URIS,
+                failedUris.size() <= maxListSize ? failedUris
+                        : new ArrayList<>(failedUris.subList(0, maxListSize)));
+        navigateIntent.putStringArrayListExtra(EXTRA_FAILED_PATHS,
+                failedPaths.size() <= maxListSize ? failedPaths
+                        : new ArrayList<>(failedPaths.subList(0, maxListSize)));
 
         final Notification.Builder errorBuilder =
                 createNotificationBuilder()

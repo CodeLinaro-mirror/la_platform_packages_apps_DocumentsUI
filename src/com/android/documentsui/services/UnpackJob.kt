@@ -322,7 +322,7 @@ class UnpackJob(
             synchronized(this) {
                 tracker.filesRequired--
             }
-            onResolveFailed(Uri.withAppendedPath(dirUri, fileName))
+            onPathFailed(path.toString())
         }
 
         // Adjust progress expectations after extracting a file.
