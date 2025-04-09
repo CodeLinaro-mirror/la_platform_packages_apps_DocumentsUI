@@ -971,6 +971,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         int cellMargin = 2 * getScaledSize(R.dimen.grid_item_margin);
         int viewPadding =
                 (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * mLiveScale);
+        int viewWidth =
+                isUseMaterial3FlagEnabled() ? (int) (mRecView.getMeasuredWidth() * mLiveScale)
+                        : mRecView.getWidth();
 
         // RecyclerView sometimes gets a width of 0 (see b/27150284).
         // Clamp so that we always lay out the grid with at least 2 columns by default.
@@ -978,10 +981,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // so use 6 columns by default and set folder size to 3 and document size is to 2.
         mColumnUnit = (!isUseMaterial3FlagEnabled() && mState.isPhotoPicking()) ? 3 : 1;
         int columnCount = mColumnUnit * Math.max(2,
-                (mRecView.getWidth() - viewPadding) / (cellWidth + cellMargin));
+                (viewWidth - viewPadding) / (cellWidth + cellMargin));
 
         // Finally with our grid count logic firmly in place, we apply any live scaling
         // captured by the scale gesture detector.
+        if (isUseMaterial3FlagEnabled()) {
+            return Math.max(1, (int) Math.floor(columnCount / mLiveScale));
+        }
         return Math.max(1, Math.round(columnCount / mLiveScale));
     }
 

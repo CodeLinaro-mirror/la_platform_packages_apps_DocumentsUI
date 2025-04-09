@@ -53,7 +53,7 @@ public class GridEvenSpacingDecoration extends RecyclerView.ItemDecoration {
         int spanCount = ((GridLayoutManager) layoutManager).getSpanCount();
         int itemWidth = lp.getMarginStart() + lp.width + lp.getMarginEnd();
         int allocatedGridSpace =
-                (parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight())
+                (parent.getMeasuredWidth() - parent.getPaddingLeft() - parent.getPaddingRight())
                         / spanCount;
         int extraSpace = allocatedGridSpace - itemWidth;
         int offset = extraSpace / 2;
