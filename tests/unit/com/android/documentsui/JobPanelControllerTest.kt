@@ -73,7 +73,7 @@ class JobPanelControllerTest {
 
     @Before
     fun setUp() {
-        controller = JobPanelController(context)
+        controller = JobPanelController(context, JobPanelViewModel())
         controller.setMenuItem(menuItem)
     }
 
