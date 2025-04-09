@@ -966,13 +966,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // List mode is a "grid" with 1 column.
             return 1;
         }
+        float scaling = isUseMaterial3FlagEnabled() ? 1.0f : mLiveScale;
 
-        int cellWidth = getScaledSize(R.dimen.grid_width);
-        int cellMargin = 2 * getScaledSize(R.dimen.grid_item_margin);
+        int cellWidth = (int) (getResources().getDimensionPixelSize(R.dimen.grid_width) * scaling);
+        int cellMargin = 2 * (int) (getResources().getDimensionPixelSize(R.dimen.grid_item_margin)
+                * scaling);
         int viewPadding =
-                (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * mLiveScale);
+                (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * scaling);
         int viewWidth =
-                isUseMaterial3FlagEnabled() ? (int) (mRecView.getMeasuredWidth() * mLiveScale)
+                isUseMaterial3FlagEnabled() ? (int) (mRecView.getMeasuredWidth() * scaling)
                         : mRecView.getWidth();
 
         // RecyclerView sometimes gets a width of 0 (see b/27150284).
@@ -986,9 +988,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // Finally with our grid count logic firmly in place, we apply any live scaling
         // captured by the scale gesture detector.
         if (isUseMaterial3FlagEnabled()) {
-            return Math.max(1, (int) Math.floor(columnCount / mLiveScale));
+            return Math.max(1, (int) Math.floor(columnCount / scaling));
         }
-        return Math.max(1, Math.round(columnCount / mLiveScale));
+        return Math.max(1, Math.round(columnCount / scaling));
     }
 
 
