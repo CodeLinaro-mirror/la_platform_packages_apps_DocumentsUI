@@ -129,7 +129,7 @@ public abstract class ResolvedResourcesJob extends Job {
     /**
      * @return number of docs successfully loaded.
      */
-    protected int buildDocumentList() {
+    private int buildDocumentList() {
         final ContentResolver resolver = appContext.getContentResolver();
         Iterable<Uri> uris;
         try {

@@ -188,7 +188,10 @@ abstract public class Job implements Runnable {
     abstract Notification getProgressNotification();
     abstract Notification getFailureNotification();
 
-    abstract Notification getWarningNotification();
+    /** Must be implemented if hasWarnings() can return true. */
+    Notification getWarningNotification() {
+        throw new UnsupportedOperationException();
+    }
 
     abstract JobProgress getJobProgress();
 
