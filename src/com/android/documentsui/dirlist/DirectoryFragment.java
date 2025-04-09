@@ -1495,10 +1495,5 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         public ActionHandler getActionHandler() {
             return mActions;
         }
-
-        @Override
-        public String getCallingAppName() {
-            return Shared.getCallingAppName(mActivity);
-        }
     }
 }
