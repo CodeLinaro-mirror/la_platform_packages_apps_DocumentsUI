@@ -966,11 +966,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // List mode is a "grid" with 1 column.
             return 1;
         }
+        float scaling = isUseMaterial3FlagEnabled() ? 1.0f : mLiveScale;
 
-        int cellWidth = getScaledSize(R.dimen.grid_width);
-        int cellMargin = 2 * getScaledSize(R.dimen.grid_item_margin);
+        int cellWidth = (int) (getResources().getDimensionPixelSize(R.dimen.grid_width) * scaling);
+        int cellMargin = 2 * (int) (getResources().getDimensionPixelSize(R.dimen.grid_item_margin)
+                * scaling);
         int viewPadding =
-                (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * mLiveScale);
+                (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * scaling);
+        int viewWidth =
+                isUseMaterial3FlagEnabled() ? (int) (mRecView.getMeasuredWidth() * scaling)
+                        : mRecView.getWidth();
 
         // RecyclerView sometimes gets a width of 0 (see b/27150284).
         // Clamp so that we always lay out the grid with at least 2 columns by default.
@@ -978,11 +983,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // so use 6 columns by default and set folder size to 3 and document size is to 2.
         mColumnUnit = (!isUseMaterial3FlagEnabled() && mState.isPhotoPicking()) ? 3 : 1;
         int columnCount = mColumnUnit * Math.max(2,
-                (mRecView.getWidth() - viewPadding) / (cellWidth + cellMargin));
+                (viewWidth - viewPadding) / (cellWidth + cellMargin));
 
         // Finally with our grid count logic firmly in place, we apply any live scaling
         // captured by the scale gesture detector.
-        return Math.max(1, Math.round(columnCount / mLiveScale));
+        if (isUseMaterial3FlagEnabled()) {
+            return Math.max(1, (int) Math.floor(columnCount / scaling));
+        }
+        return Math.max(1, Math.round(columnCount / scaling));
     }
 
 
@@ -1683,11 +1691,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public ActionHandler getActionHandler() {
             return mActions;
-        }
-
-        @Override
-        public String getCallingAppName() {
-            return Shared.getCallingAppName(mActivity);
         }
     }
 }
