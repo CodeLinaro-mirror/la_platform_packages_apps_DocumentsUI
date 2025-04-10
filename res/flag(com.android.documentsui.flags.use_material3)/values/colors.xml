@@ -27,6 +27,9 @@
   <color name="secondary">#E3F2FD</color> <!-- Blue 50 -->
   <color name="hairline">#E0E0E0</color> <!-- Gray 300 -->
 
+  <color name="success">#187231</color>
+  <color name="on_success">@android:color/white</color>
+
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="chip_background_disable_color">#fff1f3f4</color>
   <color name="menu_search_background">@android:color/transparent</color>
@@ -101,7 +104,4 @@
   <!-- Scrim for the Top bar. Static color, 32% opacity in black. The same scrim is used in some
   parts of Android SysUI, it can't be used directly here. -->
   <color name="peek_topbar_scrim">#52000000</color>
-
-  <!-- Custom green color indicating success not available in the base theme palette. -->
-  <color name="job_progress_success">#187231</color>
 </resources>
