@@ -244,7 +244,12 @@ final class GridDocumentHolder extends DocumentHolder {
 
         mIconHelper.load(mDoc, mIconThumb, mIconMimeLg, mIconMimeSm);
 
-        mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
+        if (isUseMaterial3FlagEnabled()) {
+            // Only Normal type works with ellipsize=middle.
+            mTitle.setText(mDoc.displayName, TextView.BufferType.NORMAL);
+        } else {
+            mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
+        }
         mTitle.setVisibility(View.VISIBLE);
         // Show the full name in a tooltip.
         itemView.setTooltipText(mDoc.displayName);
