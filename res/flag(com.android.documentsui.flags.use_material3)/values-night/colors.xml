@@ -38,6 +38,4 @@
 
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <color name="search_chip_text_selected_color">@android:color/black</color>
-
-    <color name="job_progress_success">#3CBA5A</color>
 </resources>
