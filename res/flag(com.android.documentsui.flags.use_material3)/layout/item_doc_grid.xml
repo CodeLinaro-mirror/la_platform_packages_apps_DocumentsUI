@@ -84,26 +84,33 @@
             android:duplicateParentState="true"
             android:scaleType="center"
             android:src="@drawable/ic_check_circle" />
-    </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/preview_icon"
-        android:layout_width="@dimen/button_touch_size"
-        android:layout_height="@dimen/button_touch_size"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:clickable="true"
-        android:focusable="true"
-        android:pointerIcon="hand">
+        <FrameLayout
+            android:id="@+id/preview_icon"
+            android:layout_width="@dimen/button_container_size"
+            android:layout_height="@dimen/button_container_size"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="@dimen/preview_icon_margin"
+            android:layout_marginTop="@dimen/preview_icon_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:pointerIcon="hand">
 
-        <ImageView
-            android:layout_width="@dimen/zoom_icon_size"
-            android:layout_height="@dimen/zoom_icon_size"
-            android:layout_gravity="center"
-            android:background="@drawable/circle_button_background"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_zoom_out" />
+                <!-- Black circle background -->
+                <ImageView
+                    android:layout_width="@dimen/preview_icon_circle_size"
+                    android:layout_height="@dimen/preview_icon_circle_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_button_background" />
+
+                <!-- White eye icon -->
+                <ImageView
+                    android:layout_width="@dimen/preview_icon_eye_size"
+                    android:layout_height="@dimen/preview_icon_eye_size"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_zoom_out" />
+
+        </FrameLayout>
 
     </FrameLayout>
 
