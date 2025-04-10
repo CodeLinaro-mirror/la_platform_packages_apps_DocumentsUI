@@ -93,7 +93,7 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="EmptyStateTitleText" parent="@style/TextAppearance.Material3.TitleSmall">
+    <style name="EmptyStateTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
