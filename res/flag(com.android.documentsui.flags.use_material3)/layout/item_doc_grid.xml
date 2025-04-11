@@ -18,7 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="@dimen/grid_width"
-    android:layout_height="@dimen/grid_height"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/grid_item_margin"
     android:clickable="true"
     android:defaultFocusHighlightEnabled="false"
@@ -119,7 +119,7 @@
     <LinearLayout
         android:id="@+id/nameplate"
         android:layout_width="@dimen/grid_item_nameplate_width"
-        android:layout_height="@dimen/grid_item_nameplate_height"
+        android:layout_height="wrap_content"
         android:layout_below="@id/thumbnail"
         android:layout_marginTop="@dimen/grid_item_nameplate_marginTop"
         android:background="@drawable/grid_nameplate_background"
