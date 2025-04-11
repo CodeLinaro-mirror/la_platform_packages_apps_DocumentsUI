@@ -25,8 +25,8 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.assertion.ViewAssertions.selectedDescendantsMatch
 import androidx.test.espresso.matcher.BoundedMatcher
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
@@ -46,6 +46,7 @@ import com.android.documentsui.testing.MutableJobProgress
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,6 +62,9 @@ private fun withProgress(expectedProgress: Int): Matcher<View> {
         }
     }
 }
+
+// Helper function to match views inside a certain progress item view.
+private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progress.msg))
 
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
@@ -81,7 +85,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     @Test
-    fun testJobPanelAppearsOnClick() {
+    fun testInProgressItems() {
         onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
 
@@ -102,16 +106,28 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
 
+        val expectedPrimaryStatus = "4 B of 10 B"
+        val expectedSecondaryStatus = "10 seconds left"
+
         onView(withId(R.id.job_progress_item_title)).check(matches(withText("Job started")))
         onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
-        onView(withId(R.id.job_progress_item_primary_status))
-            .check(matches(withText("4 B of 10 B")))
-        onView(withId(R.id.job_progress_item_secondary_status))
-            .check(matches(withText("10 seconds left")))
+        onView(allOf(withText(expectedPrimaryStatus), isDisplayed())).check(doesNotExist())
+        onView(allOf(withText(expectedSecondaryStatus), isDisplayed())).check(doesNotExist())
+        onView(withId(R.id.job_progress_item_cancel)).check(matches(not(isDisplayed())))
+
+        onView(withId(R.id.job_progress_item_expand)).perform(click())
+        onView(withText(expectedPrimaryStatus)).check(matches(isDisplayed()))
+        onView(withText(expectedSecondaryStatus)).check(matches(isDisplayed()))
+        onView(withId(R.id.job_progress_item_cancel)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.job_progress_item_expand)).perform(click())
+        onView(allOf(withText(expectedPrimaryStatus), isDisplayed())).check(doesNotExist())
+        onView(allOf(withText(expectedSecondaryStatus), isDisplayed())).check(doesNotExist())
+        onView(withId(R.id.job_progress_item_cancel)).check(matches(not(isDisplayed())))
     }
 
     @Test
-    fun testJobPanelItemDismiss() {
+    fun testCompletedItems() {
         val progress1 = MutableJobProgress(
             id = "jobId1",
             operationType = FileOperationService.OPERATION_EXTRACT,
@@ -133,22 +149,38 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
 
-        onView(withChild(withText(progress1.msg))).check(matches(allOf(
-            hasDescendant(withText(R.string.job_progress_item_completed)),
-            hasDescendant(withText(R.string.extract_completed)),
-        )))
-        onView(withChild(withText(progress2.msg))).check(matches(allOf(
-            hasDescendant(withText(R.string.job_progress_item_failed)),
-            hasDescendant(withText(R.string.job_progress_item_see_details)),
-        )))
+        onView(withChild(withText(progress1.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_completed),
+                isDisplayed()
+            ))
+            .check(selectedDescendantsMatch(
+                withText(R.string.extract_completed),
+                isDisplayed()
+            ))
+        onView(withChild(withText(progress2.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_failed),
+                isDisplayed()
+            ))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_see_details),
+                isDisplayed()
+            ))
 
         // Dismiss the first item.
-        onView(allOf(withId(R.id.job_progress_item_dismiss), hasSibling(withText(progress1.msg))))
+        onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress1)))
+            .perform(click())
+        onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress1)))
             .perform(click())
         onView(withText(progress1.msg)).check(doesNotExist())
 
         // Dismiss the second item. The panel should disappear.
-        onView(allOf(withId(R.id.job_progress_item_dismiss), hasSibling(withText(progress2.msg))))
+        onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress2)))
+            .perform(click())
+        onView(allOf(withText(R.string.job_progress_item_see_details), isDisplayed()))
+            .check(doesNotExist())
+        onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress2)))
             .perform(click())
         onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())

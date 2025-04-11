@@ -246,6 +246,7 @@
         <item name="android:paddingHorizontal">6dp</item>
         <item name="android:paddingVertical">1dp</item>
         <item name="backgroundTint">?attr/colorSurfaceBright</item>
+        <item name="icon">@drawable/ic_job_progress_expand</item>
         <item name="iconSize">16dp</item>
         <item name="iconTint">?attr/colorOnSurface</item>
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
@@ -256,6 +257,10 @@
         <item name="android:textAppearance">@style/JobProgressItemActionButtonText</item>
     </style>
 
+    <style name="JobProgressItemProgressStyle" parent="@style/Widget.Material3.LinearProgressIndicator">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
 
     <style name="BannerStyle" parent="@style/Widget.Material3.CardView.Filled">
         <item name="android:layout_marginTop">16dp</item>

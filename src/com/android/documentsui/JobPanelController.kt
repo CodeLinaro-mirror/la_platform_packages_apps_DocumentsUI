@@ -30,6 +30,8 @@ import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -40,6 +42,7 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.util.FormatUtils
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -72,68 +75,115 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
         private const val MAX_PROGRESS = 100
     }
 
-    class ProgressItemHolder(val mController: JobPanelController, view: View) :
-        RecyclerView.ViewHolder(view) {
+    data class ProgressViewModel(val jobProgress: JobProgress, val expanded: Boolean = false)
 
-        val mContext = view.context
+    private class ProgressItemHolder(
+        private val controller: JobPanelController,
+        private val cardView: View,
+        ) : RecyclerView.ViewHolder(cardView) {
 
-        val mTitleView = view.findViewById<TextView>(R.id.job_progress_item_title)
-        val mProgressView =
-            view.findViewById<LinearProgressIndicator>(R.id.job_progress_item_progress)
-        val mPrimaryStatusView = view.findViewById<TextView>(R.id.job_progress_item_primary_status)
-        val mSecondaryStatusView =
-            view.findViewById<TextView>(R.id.job_progress_item_secondary_status)
+        private val context = cardView.context
 
-        val mDismissButton = view.findViewById<Button>(R.id.job_progress_item_dismiss)
+        // Header elements.
+        private val titleView = cardView.findViewById<TextView>(R.id.job_progress_item_title)
+        private val toggleExpandButton =
+            cardView.findViewById<MaterialButton>(R.id.job_progress_item_expand)
 
-        fun setJobProgress(jobProgress: JobProgress) {
-            mTitleView.text = jobProgress.msg
-            mProgressView.isIndeterminate = jobProgress.isIndeterminate
-            if (!mProgressView.isIndeterminate) {
-                mProgressView.setProgress(jobProgress.toPercent().toInt())
+        // Body elements.
+        private val progressView =
+            cardView.findViewById<LinearProgressIndicator>(R.id.job_progress_item_progress)
+        private val primaryStatusView =
+            cardView.findViewById<TextView>(R.id.job_progress_item_primary_status)
+        private val statusSeparator =
+            cardView.findViewById<TextView>(R.id.job_progress_item_status_separator)
+        private val secondaryStatusView =
+            cardView.findViewById<TextView>(R.id.job_progress_item_secondary_status)
+
+        // Buttons
+        private val cancelButton = cardView.findViewById<Button>(R.id.job_progress_item_cancel)
+        private val showInFolderButton =
+            cardView.findViewById<Button>(R.id.job_progress_item_show_in_folder)
+        private val dismissButton = cardView.findViewById<Button>(R.id.job_progress_item_dismiss)
+
+        fun setJobProgress(jobProgress: JobProgress, expanded: Boolean) {
+            titleView.text = jobProgress.msg
+            toggleExpandButton.icon = context.getDrawable(when (expanded) {
+                true -> R.drawable.ic_job_progress_collapse
+                false -> R.drawable.ic_job_progress_expand
+            })
+
+            updateProgressBar(jobProgress)
+            setStatusText(jobProgress, expanded)
+
+            cardView.setOnClickListener { controller.toggleExpanded(jobProgress.id) }
+            toggleExpandButton.setOnClickListener { controller.toggleExpanded(jobProgress.id) }
+
+            cancelButton.isVisible = expanded && !jobProgress.isFinal
+            showInFolderButton.isVisible = expanded && jobProgress.isFinal
+            dismissButton.isVisible = expanded && jobProgress.isFinal
+            dismissButton.setOnClickListener { controller.dismissProgress(jobProgress.id) }
+        }
+
+        private fun updateProgressBar(jobProgress: JobProgress) {
+            progressView.let {
+                it.isGone = jobProgress.isFinal
+                it.isIndeterminate = jobProgress.isIndeterminate
+                if (!it.isIndeterminate) {
+                    it.progress = jobProgress.toPercent().toInt()
+                }
             }
+        }
+
+        private fun setStatusText(jobProgress: JobProgress, expanded: Boolean) {
+            primaryStatusView.isGone = false
+            secondaryStatusView.isGone = false
             if (jobProgress.state == Job.STATE_COMPLETED) {
                 if (jobProgress.hasFailures) {
-                    mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Failure)
-                    mPrimaryStatusView.text = mContext.getString(R.string.job_progress_item_failed)
-                    mSecondaryStatusView.text =
-                        mContext.getString(R.string.job_progress_item_see_details)
+                    primaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Failure)
+                    primaryStatusView.text = context.getString(R.string.job_progress_item_failed)
+                    secondaryStatusView.isGone = expanded
+                    secondaryStatusView.text =
+                        context.getString(R.string.job_progress_item_see_details)
                 } else {
-                    mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Success)
-                    mPrimaryStatusView.text =
-                        mContext.getString(R.string.job_progress_item_completed)
-                    mSecondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
+                    primaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Success)
+                    primaryStatusView.text =
+                        context.getString(R.string.job_progress_item_completed)
+                    secondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
                 }
-            } else {
-                mPrimaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText)
-                mPrimaryStatusView.text = mContext.getString(
+            } else if (expanded && jobProgress.state == Job.STATE_SET_UP &&
+                !jobProgress.isIndeterminate) {
+                primaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText)
+                primaryStatusView.text = context.getString(
                     R.string.job_progress_item_byte_progress,
-                    Formatter.formatFileSize(mContext, jobProgress.currentBytes),
-                    Formatter.formatFileSize(mContext, jobProgress.requiredBytes),
+                    Formatter.formatFileSize(context, jobProgress.currentBytes),
+                    Formatter.formatFileSize(context, jobProgress.requiredBytes),
                 )
-                mSecondaryStatusView.text = mContext.getString(R.string.copy_remaining,
+                secondaryStatusView.text = context.getString(R.string.copy_remaining,
                     FormatUtils.formatDuration(jobProgress.msRemaining))
+            } else {
+                primaryStatusView.isGone = true
+                secondaryStatusView.isGone = true
             }
-            mDismissButton.setOnClickListener { mController.dismissProgress(jobProgress.id) }
+            statusSeparator.isGone = primaryStatusView.isGone || secondaryStatusView.isGone
         }
 
         private fun getCompletionStatusString(@FileOperationService.OpType opType: Int): String {
             return when (opType) {
-                FileOperationService.OPERATION_COPY -> mContext.getString(R.string.copy_completed)
-                FileOperationService.OPERATION_MOVE -> mContext.getString(R.string.move_completed)
+                FileOperationService.OPERATION_COPY -> context.getString(R.string.copy_completed)
+                FileOperationService.OPERATION_MOVE -> context.getString(R.string.move_completed)
                 FileOperationService.OPERATION_DELETE ->
-                    mContext.getString(R.string.delete_completed)
+                    context.getString(R.string.delete_completed)
                 FileOperationService.OPERATION_COMPRESS ->
-                    mContext.getString(R.string.compress_completed)
+                    context.getString(R.string.compress_completed)
                 FileOperationService.OPERATION_EXTRACT ->
-                    mContext.getString(R.string.extract_completed)
+                    context.getString(R.string.extract_completed)
                 else -> ""
             }
         }
     }
 
-    class ProgressListAdapter(val mController: JobPanelController) :
-        ListAdapter<JobProgress, ProgressItemHolder>(JobDiffCallback) {
+    private class ProgressListAdapter(private val controller: JobPanelController) :
+        ListAdapter<ProgressViewModel, ProgressItemHolder>(JobDiffCallback) {
 
         companion object {
             // Constants for the different view types created by this adapter. The type depends on
@@ -171,21 +221,22 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
                         }
                     }.build()
             }
-            return ProgressItemHolder(mController, view)
+            return ProgressItemHolder(controller, view)
         }
 
         override fun onBindViewHolder(holder: ProgressItemHolder, position: Int) {
-            holder.setJobProgress(getItem(position))
+            val (jobProgress, expanded) = getItem(position)
+            holder.setJobProgress(jobProgress, expanded)
         }
 
-        object JobDiffCallback : DiffUtil.ItemCallback<JobProgress>() {
-            override fun areItemsTheSame(oldJobProgress: JobProgress, newJobProgress: JobProgress) =
-                oldJobProgress.id == newJobProgress.id
+        object JobDiffCallback : DiffUtil.ItemCallback<ProgressViewModel>() {
+            override fun areItemsTheSame(oldModel: ProgressViewModel, newModel: ProgressViewModel) =
+                oldModel.jobProgress.id == newModel.jobProgress.id
 
             override fun areContentsTheSame(
-                oldJobProgress: JobProgress,
-                newJobProgress: JobProgress
-            ) = oldJobProgress == newJobProgress
+                oldModel: ProgressViewModel,
+                newModel: ProgressViewModel
+            ) = oldModel == newModel
         }
     }
 
@@ -200,7 +251,7 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     private var mTotalProgress = 0
 
     /** List of jobs currently tracked by this class. */
-    private val mCurrentJobs = LinkedHashMap<String, JobProgress>()
+    private val mCurrentJobs = LinkedHashMap<String, ProgressViewModel>()
 
     /** Current menu item being controlled by this class. */
     private var mMenuItem: MenuItem? = null
@@ -293,9 +344,11 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
 
         for (jobProgress in progresses) {
             Log.d(TAG, "Received $jobProgress")
-            mCurrentJobs.put(jobProgress.id, jobProgress)
+            mCurrentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) {
+                old, new -> ProgressViewModel(new.jobProgress, old.expanded)
+            }
         }
-        for (jobProgress in mCurrentJobs.values) {
+        for ((jobProgress, _) in mCurrentJobs.values) {
             if (jobProgress.state != Job.STATE_COMPLETED) {
                 allFinished = false
             }
@@ -323,5 +376,12 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     private fun dismissProgress(id: String) {
         mCurrentJobs.remove(id)
         updateProgress(emptyList())
+    }
+
+    private fun toggleExpanded(id: String) {
+        mCurrentJobs.computeIfPresent(id) { _, (jobProgress, expanded) ->
+            ProgressViewModel(jobProgress, !expanded)
+        }
+        mProgressListAdapter?.submitList(ArrayList(mCurrentJobs.values))
     }
 }
