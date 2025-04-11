@@ -169,11 +169,13 @@ final class GridDocumentHolder extends DocumentHolder {
 
         float imgAlpha = enabled ? 1f : DISABLED_ALPHA;
 
-        mIconMimeLg.setAlpha(imgAlpha);
-        if (!isUseMaterial3FlagEnabled()) {
+        if (isUseMaterial3FlagEnabled()) {
+            itemView.setAlpha(imgAlpha);
+        } else {
+            mIconMimeLg.setAlpha(imgAlpha);
             mIconMimeSm.setAlpha(imgAlpha);
+            mIconThumb.setAlpha(imgAlpha);
         }
-        mIconThumb.setAlpha(imgAlpha);
     }
 
     @Override
