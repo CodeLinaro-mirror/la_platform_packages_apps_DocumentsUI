@@ -282,11 +282,19 @@ final class GridDocumentHolder extends DocumentHolder {
         if (mDoc.isPartial()) {
             final String docSummary = getCursorString(cursor, Document.COLUMN_SUMMARY);
             mDetails.setVisibility(View.VISIBLE);
-            mDate.setText(null);
+            if (isUseMaterial3FlagEnabled()) {
+                mDate.setVisibility(View.GONE);
+            } else {
+                mDate.setText(null);
+            }
             mDetails.setText(docSummary);
         } else {
             if (mDoc.lastModified == -1) {
-                mDate.setText(null);
+                if (isUseMaterial3FlagEnabled()) {
+                    mDate.setVisibility(View.GONE);
+                } else {
+                    mDate.setText(null);
+                }
             } else {
                 mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
             }
