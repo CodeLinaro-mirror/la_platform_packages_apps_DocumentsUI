@@ -133,6 +133,8 @@
     <string name="button_show_provider">Show in provider</string>
     <!-- Button label that do back action [CHAR LIMIT=24] -->
     <string name="button_back">Back</string>
+    <!-- Button label that navigates to the destination folder of a copy/move. -->
+    <string name="button_show_in_folder">Show in folder</string>
 
     <!-- A string used to show user that currently documents are not sorted in any given order. [CHAR_LIMIT=30] -->
     <string name="not_sorted">Not sorted</string>
@@ -430,6 +432,11 @@
         other {Zipping # files}
     }</string>
     <string name="job_progress_panel_title" translatable="false">File Progress</string>
+    <string name="job_progress_item_completed" translatable="false">Completed</string>
+    <string name="job_progress_item_failed" translatable="false">Failed</string>
+    <string name="job_progress_item_byte_progress" translatable="false">
+        <xliff:g id="currentBytes" example="2.4 MB">%1$s</xliff:g> of <xliff:g id="totalBytes" example="50 MB">%2$s</xliff:g>
+    </string>
 
     <!-- Text in an alert dialog asking user to grant app access to a given directory in an external storage volume -->
     <string name="open_external_dialog_request">Grant <xliff:g id="appName" example="System Settings"><b>^1</b></xliff:g>

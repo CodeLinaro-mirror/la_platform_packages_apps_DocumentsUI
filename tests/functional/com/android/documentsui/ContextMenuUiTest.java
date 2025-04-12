@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -71,7 +73,7 @@ public class ContextMenuUiTest extends ActivityTest<FilesActivity> {
 
     public void testContextMenu_onFile() throws Exception {
         menuItems.put("Share", true);
-        menuItems.put("Open", false);
+        menuItems.put("Open", isDesktopFileHandlingFlagEnabled());
         menuItems.put("Open with", true);
         menuItems.put("Cut", true);
         menuItems.put("Copy", true);

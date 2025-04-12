@@ -22,7 +22,4 @@
     <dimen name="tab_container_height">48dp</dimen>
     <dimen name="profile_tab_margin_top">0dp</dimen>
     <dimen name="profile_tab_margin_side">@dimen/space_extra_small_4</dimen>
-    <dimen name="cross_profile_button_corner_radius">30dp</dimen>
-    <dimen name="cross_profile_button_stroke_width">1dp</dimen>
-    <dimen name="cross_profile_button_message_margin_top">16dp</dimen>
 </resources>
