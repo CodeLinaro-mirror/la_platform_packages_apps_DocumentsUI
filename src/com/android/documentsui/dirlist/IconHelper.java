@@ -207,6 +207,10 @@ public class IconHelper {
         }
 
         if (loadedThumbnail) {
+            if (isUseMaterial3FlagEnabled()) {
+                // Show the thumbnail.
+                iconThumb.setAlpha(1f);
+            }
             hideImageView(iconMime);
         } else {
             // Add a mime icon if the thumbnail is not shown.

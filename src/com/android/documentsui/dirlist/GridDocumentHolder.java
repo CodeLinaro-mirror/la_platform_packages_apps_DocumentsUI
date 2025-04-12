@@ -66,13 +66,15 @@ final class GridDocumentHolder extends DocumentHolder {
     // Null when useMaterial3 flag is ON.
     final @Nullable ImageView mIconMimeSm;
     final ImageView mIconThumb;
-    // Null when useMaterial3 flag is ON.
-    final @Nullable ImageView mIconCheck;
+    // Non-null only when useMaterial3 flag is ON.
+    final @Nullable ImageView mSelectionCircle;
+    final ImageView mIconCheck;
     final ImageView mIconBadge;
     final IconHelper mIconHelper;
     // Null when useMaterial3 flag is ON.
     final @Nullable View mIconLayout;
     final View mPreviewIcon;
+    boolean mHasSelectionRegion;
 
     // This is used in as a convenience in our bind method.
     private final DocumentInfo mDoc = new DocumentInfo();
@@ -87,25 +89,25 @@ final class GridDocumentHolder extends DocumentHolder {
         if (isUseMaterial3FlagEnabled()) {
             mBullet = itemView.findViewById(R.id.bullet);
             mIconWrapper = itemView.findViewById(R.id.icon_wrapper);
+            mSelectionCircle = (ImageView) itemView.findViewById(R.id.selection_circle);
             mIconLayout = null;
             mIconMimeSm = null;
-            mIconCheck = null;
         } else {
             mBullet = null;
             mIconWrapper = null;
+            mSelectionCircle = null;
             mIconLayout = itemView.findViewById(R.id.icon);
             mIconMimeSm = (ImageView) itemView.findViewById(R.id.icon_mime_sm);
-            mIconCheck = (ImageView) itemView.findViewById(R.id.icon_check);
         }
 
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
         mDate = (TextView) itemView.findViewById(R.id.date);
         mDetails = (TextView) itemView.findViewById(R.id.details);
+        mIconCheck = (ImageView) itemView.findViewById(R.id.icon_check);
         mIconMimeLg = (ImageView) itemView.findViewById(R.id.icon_mime_lg);
         mIconThumb = (ImageView) itemView.findViewById(R.id.icon_thumb);
         mIconBadge = (ImageView) itemView.findViewById(R.id.icon_profile_badge);
         mPreviewIcon = itemView.findViewById(R.id.preview_icon);
-
         mIconHelper = iconHelper;
 
         if (SdkLevel.isAtLeastT() && !mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
@@ -124,16 +126,24 @@ final class GridDocumentHolder extends DocumentHolder {
     @Override
     public void setSelected(boolean selected, boolean animate) {
         float checkAlpha = selected ? 1f : 0f;
-        if (!isUseMaterial3FlagEnabled()) {
-            // We always want to make sure our check box disappears if we're not selected,
-            // even if the item is disabled. This is because this object can be reused
-            // and this method will be called to setup initial state.
-            if (animate) {
+        float circleAlpha = (selected || !isUseMaterial3FlagEnabled()) ? 0f : 1f;
+        // We always want to make sure our check box disappears if we're not selected,
+        // even if the item is disabled. This is because this object can be reused
+        // and this method will be called to setup initial state.
+        if (animate) {
+            if (!isUseMaterial3FlagEnabled()) {
                 fade(mIconMimeSm, checkAlpha).start();
-                fade(mIconCheck, checkAlpha).start();
-            } else {
-                mIconCheck.setAlpha(checkAlpha);
             }
+            if (mHasSelectionRegion) {
+                fade(mSelectionCircle, circleAlpha).start();
+            }
+            fade(mIconCheck, checkAlpha).start();
+        } else {
+            if (mHasSelectionRegion) {
+                mSelectionCircle.setAlpha(circleAlpha);
+            }
+            mIconCheck.setAlpha(checkAlpha);
+
         }
 
 
@@ -159,11 +169,13 @@ final class GridDocumentHolder extends DocumentHolder {
 
         float imgAlpha = enabled ? 1f : DISABLED_ALPHA;
 
-        mIconMimeLg.setAlpha(imgAlpha);
-        if (!isUseMaterial3FlagEnabled()) {
+        if (isUseMaterial3FlagEnabled()) {
+            itemView.setAlpha(imgAlpha);
+        } else {
+            mIconMimeLg.setAlpha(imgAlpha);
             mIconMimeSm.setAlpha(imgAlpha);
+            mIconThumb.setAlpha(imgAlpha);
         }
-        mIconThumb.setAlpha(imgAlpha);
     }
 
     @Override
@@ -208,8 +220,11 @@ final class GridDocumentHolder extends DocumentHolder {
     @Override
     public boolean inSelectRegion(MotionEvent event) {
         if (isUseMaterial3FlagEnabled()) {
-            return (mDoc.isDirectory() && !(mAction == State.ACTION_BROWSE)) ? false
-                    : Views.isEventOver(event, itemView.getParent(), mIconWrapper);
+            if (!mHasSelectionRegion) {
+                // There is no selection region.
+                return false;
+            }
+            return Views.isEventOver(event, itemView.getParent(), mSelectionCircle);
         }
         return Views.isEventOver(event, itemView.getParent(), mIconLayout);
     }
@@ -235,6 +250,16 @@ final class GridDocumentHolder extends DocumentHolder {
                 UserId.of(getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID)),
                 getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY));
 
+        // Only have a selection region when the Material3 flag is on and if this is in non-browsing
+        // mode, the item must not be a folder.
+        mHasSelectionRegion =
+                isUseMaterial3FlagEnabled() && (!mDoc.isDirectory()
+                        || mAction == State.ACTION_BROWSE);
+
+        if (isUseMaterial3FlagEnabled() && !mHasSelectionRegion) {
+            mSelectionCircle.setVisibility(View.GONE);
+        }
+
         mIconHelper.stopLoading(mIconThumb);
 
         mIconMimeLg.animate().cancel();
@@ -259,11 +284,19 @@ final class GridDocumentHolder extends DocumentHolder {
         if (mDoc.isPartial()) {
             final String docSummary = getCursorString(cursor, Document.COLUMN_SUMMARY);
             mDetails.setVisibility(View.VISIBLE);
-            mDate.setText(null);
+            if (isUseMaterial3FlagEnabled()) {
+                mDate.setVisibility(View.GONE);
+            } else {
+                mDate.setText(null);
+            }
             mDetails.setText(docSummary);
         } else {
             if (mDoc.lastModified == -1) {
-                mDate.setText(null);
+                if (isUseMaterial3FlagEnabled()) {
+                    mDate.setVisibility(View.GONE);
+                } else {
+                    mDate.setText(null);
+                }
             } else {
                 mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
             }
