@@ -46,14 +46,14 @@
             android:id="@+id/artwork"
             android:layout_width="24dp"
             android:layout_height="24dp"/>
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/title"
             android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textAppearance="@style/EmptyStateTitleText"/>
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/message"
             android:layout_marginTop="@dimen/cross_profile_button_message_margin_top"
             android:layout_width="wrap_content"

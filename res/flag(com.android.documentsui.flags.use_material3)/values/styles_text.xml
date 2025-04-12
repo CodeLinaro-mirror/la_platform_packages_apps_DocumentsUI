@@ -26,8 +26,8 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="SortList" parent="@style/TextAppearance.AppCompat.Subhead">
-        <item name="android:textColor">@color/sort_list_text</item>
+    <style name="SortList" parent="@style/TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
@@ -161,6 +161,14 @@
 
     <style name="JobProgressPanelHeaderText" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text.CenterStacked">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="MaterialAlertDialogBodyStyle" parent="@style/MaterialAlertDialog.Material3.Body.Text">
+        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
 </resources>
