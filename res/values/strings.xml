@@ -434,9 +434,21 @@
     <string name="job_progress_panel_title" translatable="false">File Progress</string>
     <string name="job_progress_item_completed" translatable="false">Completed</string>
     <string name="job_progress_item_failed" translatable="false">Failed</string>
+    <!-- Label prompting the user to interact to view more details about errors/warnings encountered during a file operation. -->
+    <string name="job_progress_item_see_details">See details</string>
     <string name="job_progress_item_byte_progress" translatable="false">
         <xliff:g id="currentBytes" example="2.4 MB">%1$s</xliff:g> of <xliff:g id="totalBytes" example="50 MB">%2$s</xliff:g>
     </string>
+    <!-- Status message shown when a copy is completed. -->
+    <string name="copy_completed">Copied</string>
+    <!-- Status message shown when a move is completed. -->
+    <string name="move_completed">Moved</string>
+    <!-- Status message shown when a delete is completed. -->
+    <string name="delete_completed">Deleted</string>
+    <!-- Status message shown when a compress file operation is completed. -->
+    <string name="compress_completed">Compressed</string>
+    <!-- Status message shown when an extract file operation is completed. -->
+    <string name="extract_completed">Extracted</string>
 
     <!-- Text in an alert dialog asking user to grant app access to a given directory in an external storage volume -->
     <string name="open_external_dialog_request">Grant <xliff:g id="appName" example="System Settings"><b>^1</b></xliff:g>
@@ -582,7 +594,7 @@
     <!-- Confrim dialog title show on open document tree flow. [CHAR_LIMIT=80] -->
     <string name="open_tree_dialog_title">Allow <xliff:g id="appName" example="Drive">%1$s</xliff:g> to access files in <xliff:g id="directory" example="DCIM">%2$s</xliff:g>?</string>
     <!-- Confrim dialog message show on open document tree flow.-->
-    <string name="open_tree_dialog_message">This will let <xliff:g id="appName" example="Drive">%1$s</xliff:g> access current and future content stored in <xliff:g id="directory" example="DCIM">%2$s</xliff:g>.</string>
+    <string name="open_tree_dialog_message">This will let "<xliff:g id="appName" example="Drive">%1$s</xliff:g>" access current and future content stored in <xliff:g id="directory" example="DCIM">%2$s</xliff:g>.</string>
     <!-- Header message title show on open document tree flow when directory is blocked. [CHAR_LIMIT=48] -->
     <string name="directory_blocked_header_title">Can\u2019t use this folder</string>
     <!-- Header message subtitle show on open document tree flow when directory is blocked. [CHAR_LIMIT=90]-->
@@ -654,4 +666,7 @@
 
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
+
+    <!-- Text used in Peek to indicate that no preview is available. -->
+    <string name="peek_no_preview">No preview available</string>
 </resources>

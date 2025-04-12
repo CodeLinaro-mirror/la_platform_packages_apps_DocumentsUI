@@ -48,7 +48,7 @@
   <!-- ?attr/colorOnSurface -->
   <color name="drag_content_text_color">@android:color/system_neutral1_900</color>
   <!-- ?attr/colorOnError -->
-  <color name="drop_icon_symbol_color">@android:color/white</color>
+  <color name="drop_icon_reject_symbol_color">@android:color/white</color>
   <!-- ?attr/colorError -->
   <color name="drop_icon_reject_container_background">@color/m3_ref_palette_error40</color>
 </resources>

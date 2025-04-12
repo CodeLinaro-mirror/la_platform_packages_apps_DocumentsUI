@@ -191,12 +191,7 @@ final class GridPhotoHolder extends DocumentHolder {
         mIconThumb.animate().cancel();
         mIconThumb.setAlpha(0f);
 
-        mIconHelper.load(
-                mDoc,
-                mIconThumb,
-                mIconMimeLg,
-                /* subIconMime= */ null,
-                /* thumbnailLoadedCallback= */ null);
+        mIconHelper.load(mDoc, mIconThumb, mIconMimeLg, /* subIconMime= */ null);
 
         final String docSize =
                 Formatter.formatFileSize(mContext, getCursorLong(cursor, Document.COLUMN_SIZE));

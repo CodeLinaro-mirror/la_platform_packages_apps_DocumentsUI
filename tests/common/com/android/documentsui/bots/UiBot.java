@@ -238,6 +238,7 @@ public class UiBot extends Bots.BaseBot {
         } else {
             onView(ACTIONBAR_OVERFLOW).perform(click());
         }
+        mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
     }

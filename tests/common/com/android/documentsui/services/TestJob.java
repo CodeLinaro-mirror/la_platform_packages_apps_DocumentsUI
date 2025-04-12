@@ -92,11 +92,6 @@ public class TestJob extends Job {
                 R.plurals.copy_error_notification_title, R.drawable.ic_menu_copy);
     }
 
-    @Override
-    Notification getWarningNotification() {
-        throw new UnsupportedOperationException();
-    }
-
     JobProgress getJobProgress() {
         return new JobProgress(id, operationType, getState(), "test job", false);
     }

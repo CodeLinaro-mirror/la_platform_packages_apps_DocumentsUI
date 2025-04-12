@@ -20,19 +20,15 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import androidx.fragment.app.FragmentManager
-import com.android.documentsui.R
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
 
-/**
- * Manager that controls the Peek UI.
- */
-open class PeekViewManager(
-    private val mActivity: Activity
-) {
+/** Manager that controls the Peek UI. */
+open class PeekViewManager(private val mActivity: Activity) {
     companion object {
         private const val TAG = "PeekViewManager"
         private const val PEEK_OVERLAY_ACTIVE = "PEEK_OVERLAY_ACTIVE"
@@ -41,10 +37,7 @@ open class PeekViewManager(
     private lateinit var peekFragment: PeekFragment
     private lateinit var container: FrameLayout
 
-    open fun initFragment(
-        fm: FragmentManager,
-        savedInstanceState: Bundle?
-    ) {
+    open fun initFragment(fm: FragmentManager, savedInstanceState: Bundle?) {
         if (!isUsePeekPreviewFlagEnabled()) {
             Log.e(TAG, "Attempting to create PeekViewManager while Peek disabled")
             return
@@ -71,11 +64,8 @@ open class PeekViewManager(
         peekFragment.setViewManager(this)
 
         // Restore Peek overlay if necessary.
-        if (savedInstanceState != null && savedInstanceState.getBoolean(
-                PEEK_OVERLAY_ACTIVE,
-                false
-            )
-        ) {
+        if (savedInstanceState != null &&
+            savedInstanceState.getBoolean(PEEK_OVERLAY_ACTIVE, false)) {
             setContainerVisibility(true)
         }
     }

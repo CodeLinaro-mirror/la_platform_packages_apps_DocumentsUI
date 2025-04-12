@@ -14,10 +14,8 @@
      limitations under the License.
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- By default the nav rail item has a grey background when it's focused, but we need the
-     background to be put on the icon inside, so we override the focus background color to be
-     transparent here.
-     -->
-    <item android:state_focused="true" android:drawable="@android:color/transparent" />
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/drawer_item_height"/>
+    <!-- The color here is used as activated color in root_item_background.xml. -->
+    <solid android:color="?attr/colorSecondaryContainer"/>
+</shape>
