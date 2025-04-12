@@ -22,6 +22,8 @@
 
     <!-- used for search chip. -->
     <include layout="@layout/search_chip_row"/>
+    <!-- search options dropdown shown while search view is active. -->
+    <include layout="@layout/search_options_row"/>
 
     <LinearLayout
         android:id="@+id/tabs_container"

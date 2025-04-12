@@ -81,6 +81,7 @@ public final class SearchViewManagerTest {
     private TestMenuItem mSearchMenuItem;
     private TestableSearchViewManager mSearchViewManager;
     private SearchChipViewManager mSearchChipViewManager;
+    private SearchOptionsController mSearchOptionsController;
 
     private boolean mListenerOnSearchChangedCalled;
 
@@ -119,8 +120,11 @@ public final class SearchViewManagerTest {
 
         ViewGroup chipGroup = mock(ViewGroup.class);
         mSearchChipViewManager = spy(new SearchChipViewManager(chipGroup));
+        View searchOptionsView = mock(View.class);
+        mSearchOptionsController = new SearchOptionsController(searchOptionsView);
         mSearchViewManager = new TestableSearchViewManager(searchListener, mTestEventHandler,
-                mSearchChipViewManager, null /* savedState */, mTestTimer, mTestHandler);
+                mSearchChipViewManager, mSearchOptionsController, null /* savedState */,
+                mTestTimer, mTestHandler);
 
         mTestMenu = TestMenu.create();
         mSearchMenuItem = mTestMenu.findItem(R.id.option_menu_search);
@@ -136,10 +140,12 @@ public final class SearchViewManagerTest {
                 SearchManagerListener listener,
                 EventHandler<String> commandProcessor,
                 SearchChipViewManager chipViewManager,
+                SearchOptionsController optionsController,
                 @Nullable Bundle savedState,
                 Timer timer,
                 Handler handler) {
-            super(listener, commandProcessor, chipViewManager, savedState, timer, handler);
+            super(listener, commandProcessor, chipViewManager, optionsController, savedState, timer,
+                    handler);
         }
 
         @Override

@@ -16,7 +16,10 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.TruthJUnit.assume;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -25,12 +28,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import androidx.test.InstrumentationRegistry;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.BaseActivity;
@@ -52,6 +56,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -89,6 +94,19 @@ public class AppsRowManagerTest {
         return com.google.android.collect.Lists.newArrayList(true, false);
     }
 
+    @BeforeClass
+    public static void setUpClass() {
+        if (isUseMaterial3FlagEnabled()) {
+            // The AppsRowManager is only available on devices that don't specify `FEATURE_PC`.
+            assume().that(
+                            InstrumentationRegistry.getInstrumentation()
+                                    .getTargetContext()
+                                    .getPackageManager()
+                                    .hasSystemFeature(PackageManager.FEATURE_PC))
+                    .isFalse();
+        }
+    }
+
     @Before
     public void setUp() {
         mActionHandler = new TestActionHandler();
@@ -124,13 +142,13 @@ public class AppsRowManagerTest {
                     Lists.newArrayList(UserId.DEFAULT_USER, TestProvidersAccess.OtherUser.USER_ID,
                             TestProvidersAccess.AnotherUser.USER_ID);
             return new AppsRowManager(mActionHandler, mMaybeShowBadge, mTestUserManagerState,
-                    mTestConfigStore);
+                    mTestConfigStore, /*shouldShowByDefault=*/true);
         }
         mTestUserIdManager = new TestUserIdManager();
         mTestUserIdManager.userIds =
                 Lists.newArrayList(UserId.DEFAULT_USER, TestProvidersAccess.OtherUser.USER_ID);
         return new AppsRowManager(mActionHandler, mMaybeShowBadge, mTestUserIdManager,
-                mTestConfigStore);
+                mTestConfigStore, /*shouldShowByDefault=*/true);
     }
 
     @Test
