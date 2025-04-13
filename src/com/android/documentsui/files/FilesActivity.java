@@ -24,6 +24,7 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.ActivityManager.TaskDescription;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -224,11 +225,22 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     }
 
     private AppsRowManager getAppsRowManager() {
+        boolean shouldShowByDefault =
+                !isUseMaterial3FlagEnabled()
+                        || !getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC);
         return mConfigStore.isPrivateSpaceInDocsUIEnabled()
-                ? new AppsRowManager(mInjector.actions, mState.supportsCrossProfile(),
-                mUserManagerState, mConfigStore)
-                : new AppsRowManager(mInjector.actions, mState.supportsCrossProfile(),
-                        mUserIdManager, mConfigStore);
+                ? new AppsRowManager(
+                mInjector.actions,
+                mState.supportsCrossProfile(),
+                mUserManagerState,
+                mConfigStore,
+                shouldShowByDefault)
+                : new AppsRowManager(
+                        mInjector.actions,
+                        mState.supportsCrossProfile(),
+                        mUserIdManager,
+                        mConfigStore,
+                        shouldShowByDefault);
     }
 
     // This is called in the intent contains label and icon resources.

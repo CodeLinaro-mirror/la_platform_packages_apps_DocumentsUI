@@ -102,7 +102,7 @@ genrule {
     name: "statslog-docsui-java-gen",
     tools: ["stats-log-api-gen"],
     cmd: "$(location stats-log-api-gen) --java $(out) --module docsui" +
-        " --javaPackage com.android.documentsui --javaClass DocumentsStatsLog --minApiLevel 29",
+        " --javaPackage com.android.documentsui --javaClass DocumentsStatsLog --minApiLevel 30",
     out: ["com/android/documentsui/DocumentsStatsLog.java"],
 }
 

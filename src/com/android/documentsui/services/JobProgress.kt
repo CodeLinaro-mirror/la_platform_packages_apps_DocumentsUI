@@ -33,6 +33,16 @@ data class JobProgress @JvmOverloads constructor(
     @JvmField val msRemaining: Long = -1,
 ) : Parcelable {
 
+    val isIndeterminate get() =
+        state == Job.STATE_SET_UP &&
+                (currentBytes == -1L || requiredBytes == -1L || requiredBytes == 0L)
+
+    fun toPercent(): Float = when (state) {
+        in Job.STATE_CREATED..Job.STATE_STARTED -> 0f
+        Job.STATE_COMPLETED -> 100f
+        else -> 100f * currentBytes / requiredBytes
+    }
+
     override fun describeContents(): Int {
         return 0
     }

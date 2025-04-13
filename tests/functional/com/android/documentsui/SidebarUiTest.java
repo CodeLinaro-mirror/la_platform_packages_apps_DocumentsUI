@@ -16,28 +16,50 @@
 
 package com.android.documentsui;
 
+import static android.view.InputDevice.SOURCE_MOUSE;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 
+import android.view.MotionEvent;
+
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 @LargeTest
-public class SidebarUiTest extends ActivityTest<FilesActivity> {
+public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
 
-    public SidebarUiTest() {
-        super(FilesActivity.class);
-    }
-
-    @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         initTestFiles();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+    }
+
+    void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
+        bots.directory.waitForDocument(fileName1);
+        bots.directory.waitForDocument(fileName2);
+        bots.directory.waitForDocument(dirName1);
+        bots.directory.waitForDocument(fileNameNoRename);
+        bots.directory.assertDocumentsCount(4);
     }
 
     @HugeLongTest
@@ -56,5 +78,21 @@ public class SidebarUiTest extends ActivityTest<FilesActivity> {
 
         bots.roots.openRoot(ROOT_1_ID);
         bots.main.assertInActionMode(false);
+    }
+
+    @Test
+    public void testPasteIntoFolderOnRoot() throws UiObjectNotFoundException {
+        bots.main.switchToListMode();
+
+        // Right click a file and copy it.
+        onView(withText("file1.log")).perform(click(SOURCE_MOUSE, MotionEvent.BUTTON_SECONDARY));
+        onView(withText("Copy")).perform(click());
+
+        // Right click a root and try to paste the copied file into it.
+        bots.roots.rightClickRootAndClickMenuOption(ROOT_1_ID, "Paste into folder");
+
+        // Navigate to the root and ensure the file has been copied successfully.
+        bots.roots.openRoot(ROOT_1_ID);
+        bots.directory.waitForDocument("file1.log");
     }
 }

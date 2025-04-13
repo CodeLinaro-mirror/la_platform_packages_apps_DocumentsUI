@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2024 The Android Open Source Project
+<!-- Copyright (C) 2025 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,16 +13,11 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
-    <style name="EmptyStateTitleText">
-        <item name="android:textColor">@color/empty_state_text_color</item>
-        <item name="android:textSize">18sp</item>
-        <item name="fontFamily">@string/config_headerFontFamily</item>
-    </style>
 
-    <style name="EmptyStateMessageText">
-        <item name="android:textColor">@color/empty_state_message_text_color</item>
-        <item name="android:textSize">14sp</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
-    </style>
-</resources>
+<!-- We want a fixed width for medium/expanded screen. -->
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sorting_dialog_list"
+    android:layout_width="@dimen/bottom_sheet_dialog_width"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/bottom_sheet_dialog_padding_top"
+    android:paddingBottom="@dimen/bottom_sheet_dialog_padding_bottom"/>

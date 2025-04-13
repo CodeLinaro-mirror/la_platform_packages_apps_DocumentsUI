@@ -14,25 +14,9 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sorting_dialog_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-        android:paddingTop="?android:attr/listPreferredItemPaddingStart"
-        android:paddingBottom="?android:attr/listPreferredItemPaddingStart"
-        android:textAllCaps="true"
-        android:text="@string/sort_dimension_dialog_title"
-        android:textAppearance="@style/SortTitle"/>
-
-    <ListView
-        android:id="@+id/sorting_dialog_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-</LinearLayout>
+    android:paddingTop="@dimen/bottom_sheet_dialog_padding_top"
+    android:paddingBottom="@dimen/bottom_sheet_dialog_padding_bottom"/>
