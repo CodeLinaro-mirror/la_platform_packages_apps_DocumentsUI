@@ -21,20 +21,29 @@ import android.app.Notification.EXTRA_PROGRESS_INDETERMINATE
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
 import android.net.Uri
+import android.platform.test.annotations.RequiresFlagsDisabled
+import android.platform.test.annotations.RequiresFlagsEnabled
 import android.provider.DocumentsContract.buildDocumentUri
 import android.util.Log
 import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.services.FileOperationService.OPERATION_UNPACK
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.io.File
+import org.junit.Rule
 import org.junit.Test
 
 /** Tests UnpackJob. */
 @MediumTest
 internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
+    @get:Rule
+    val checkFlags = CheckAndForceMaterial3Flag()
+
     /** Tests with a MIME type that is not a supported archive type. */
     @Test
     fun unsupportedMimeType() {
@@ -432,6 +441,196 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
                 "/file-dir-same-name/pet/" to -1,
                 "/file-dir-same-name/pet/cat/" to -1,
                 "/file-dir-same-name/pet/cat/fish/" to -1,
+            )
+        )
+    }
+
+    /** Tests with a ZIP archive containing a corrupted file that can be detected via its CRC. */
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
+    fun badCrcChecked() {
+        val uri = createDocument("application/zip", "archives/zip/bad-crc.zip")
+        assertTreeIs(mutableMapOf("/bad-crc.zip" to 234))
+
+        val job = createJob(uri)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_CREATED)
+            assertThat(hasFailures).isFalse()
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+        }
+
+        job.run()
+
+        // The file with a bad CRC should be detected.
+        mJobListener.assertFailed()
+        mJobListener.assertFailureCount(1)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_COMPLETED)
+            assertThat(hasFailures).isTrue()
+            assertThat(msg).isEqualTo("Extracting “bad-crc.zip” to “TEST_ROOT_0”")
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+            assertThat(destination!!.peek().displayName).isEqualTo("bad-crc")
+        }
+
+        // The partially extracted file with a bad CRC should have been removed.
+        assertTreeIs(
+            mutableMapOf(
+                "/bad-crc.zip" to 234,
+                "/bad-crc/" to -1,
+            )
+        )
+    }
+
+    @Test
+    @RequiresFlagsDisabled(FLAG_ZIP_NG_RO)
+    fun badCrcUnchecked() {
+        val uri = createDocument("application/zip", "archives/zip/bad-crc.zip")
+        assertTreeIs(mutableMapOf("/bad-crc.zip" to 234))
+
+        val job = createJob(uri)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_CREATED)
+            assertThat(hasFailures).isFalse()
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+        }
+
+        job.run()
+
+        // The file with a bad CRC should not be detected.
+        mJobListener.assertFinished()
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_COMPLETED)
+            assertThat(hasFailures).isFalse()
+            assertThat(msg).isEqualTo("Extracting “bad-crc.zip” to “TEST_ROOT_0”")
+            assertThat(currentBytes).isEqualTo(62)
+            assertThat(requiredBytes).isEqualTo(62)
+            assertThat(msRemaining).isLessThan(0)
+            assertThat(destination!!.peek().displayName).isEqualTo("bad-crc")
+        }
+
+        assertTreeIs(
+            mutableMapOf(
+                "/bad-crc.zip" to 234,
+                "/bad-crc/" to -1,
+                "/bad-crc/bad-crc.txt" to 62,
+            )
+        )
+    }
+
+    /** Tests with a ZIP archive containing a corrupted repository with wrong file sizes. */
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
+    fun badSizesChecked() {
+        val uri = createDocument("application/zip", "archives/zip/bad-sizes.zip")
+        assertTreeIs(mutableMapOf("/bad-sizes.zip" to 886))
+
+        val job = createJob(uri)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_CREATED)
+            assertThat(hasFailures).isFalse()
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+        }
+
+        job.run()
+
+        // The files with incorrect sizes should be detected.
+        mJobListener.assertFailed()
+        mJobListener.assertFailureCount(7)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_COMPLETED)
+            assertThat(hasFailures).isTrue()
+            assertThat(msg).isEqualTo("Extracting “bad-sizes.zip” to “TEST_ROOT_0”")
+            assertThat(currentBytes).isEqualTo(3)
+            assertThat(requiredBytes).isEqualTo(3)
+            assertThat(msRemaining).isLessThan(0)
+            assertThat(destination!!.peek().displayName).isEqualTo("bad-sizes")
+        }
+
+        // Only the file with the correct size should have been extracted.
+        assertTreeIs(
+            mutableMapOf(
+                "/bad-sizes.zip" to 886,
+                "/bad-sizes/" to -1,
+                "/bad-sizes/d/" to -1,
+                "/bad-sizes/3.txt" to 3,
+            )
+        )
+    }
+
+    @Test
+    @RequiresFlagsDisabled(FLAG_ZIP_NG_RO)
+    fun badSizesUnchecked() {
+        val uri = createDocument("application/zip", "archives/zip/bad-sizes.zip")
+        assertTreeIs(mutableMapOf("/bad-sizes.zip" to 886))
+
+        val job = createJob(uri)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_CREATED)
+            assertThat(hasFailures).isFalse()
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+        }
+
+        job.run()
+
+        // The files with incorrect sizes should not be detected.
+        mJobListener.assertFinished()
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_COMPLETED)
+            assertThat(hasFailures).isFalse()
+            assertThat(msg).isEqualTo("Extracting “bad-sizes.zip” to “TEST_ROOT_0”")
+            assertThat(currentBytes).isEqualTo(28)
+            assertThat(requiredBytes).isEqualTo(28)
+            assertThat(msRemaining).isLessThan(0)
+            assertThat(destination!!.peek().displayName).isEqualTo("bad-sizes")
+        }
+
+        assertTreeIs(
+            mutableMapOf(
+                "/bad-sizes.zip" to 886,
+                "/bad-sizes/" to -1,
+                "/bad-sizes/d/" to -1,
+                "/bad-sizes/0.txt" to 0,
+                "/bad-sizes/1.txt" to 1,
+                "/bad-sizes/2.txt" to 2,
+                "/bad-sizes/3.txt" to 3,
+                "/bad-sizes/4.txt" to 4,
+                "/bad-sizes/5.txt" to 5,
+                "/bad-sizes/6.txt" to 6,
+                "/bad-sizes/7.txt" to 7,
             )
         )
     }
