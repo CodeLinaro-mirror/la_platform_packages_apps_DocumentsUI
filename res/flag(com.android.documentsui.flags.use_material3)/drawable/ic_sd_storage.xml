@@ -14,11 +14,13 @@ Copyright (C) 2024 The Android Open Source Project
     limitations under the License.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="24dp"
-        android:height="24dp"
-        android:viewportWidth="24.0"
-        android:viewportHeight="24.0">
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960">
+    <!-- fillColor will be set by tint color in the code. -->
     <path
-        android:fillColor="#5F6368"
-        android:pathData="M18 2h-8L4.02 8 4 20c0 1.1.9 2 2 2h12c1.1 0 2,-.9 2,-2V4c0,-1.1,-.9,-2,-2,-2zm-6 6h-2V4h2v4zm3 0h-2V4h2v4zm3 0h-2V4h2v4z"/>
+        android:fillColor="@android:color/white"
+        android:pathData="M360,440L440,440L440,280L360,280L360,440ZM480,440L560,440L560,280L480,280L480,440ZM600,440L680,440L680,280L600,280L600,440ZM240,880Q207,880 183.5,856.5Q160,833 160,800L160,320L400,80L720,80Q753,80 776.5,103.5Q800,127 800,160L800,800Q800,833 776.5,856.5Q753,880 720,880L240,880ZM240,800L720,800Q720,800 720,800Q720,800 720,800L720,160Q720,160 720,160Q720,160 720,160L434,160L240,354L240,800Q240,800 240,800Q240,800 240,800ZM240,800Q240,800 240,800Q240,800 240,800L240,800L434,800L720,800Q720,800 720,800Q720,800 720,800L720,800Q720,800 720,800Q720,800 720,800L240,800Z"/>
 </vector>
+
