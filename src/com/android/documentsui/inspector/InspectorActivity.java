@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,11 +118,7 @@ public class InspectorActivity extends AppCompatActivity {
         });
 
         getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
-        if (Build.VERSION.SDK_INT >= 29) {
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);
-            getWindow().setNavigationBarContrastEnforced(true);
-        } else {
-            getWindow().setNavigationBarColor(getColor(R.color.nav_bar_translucent));
-        }
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarContrastEnforced(true);
     }
 }

@@ -16,7 +16,6 @@
 <resources>
     <color name="app_background_color">#202124</color>
     <color name="background_floating">#3C4043</color>
-    <color name="nav_bar_translucent">#52000000</color>
 
     <!-- ?attr/colorPrimary -->
     <color name="primary">#D0BCFF</color>
@@ -26,15 +25,27 @@
     <color name="success">#3CBA5A</color>
     <color name="on_success">#002110</color>
 
-    <color name="error_image_color">@android:color/white</color>
+    <!-- ?attr/colorTertiary -->
+    <color name="drag_file_counter_background">#EFB8C8</color>
+    <!-- ?attr/colorOnTertiary -->
+    <color name="drag_file_counter_text_color">#492532</color>
+    <!-- ?attr/colorSurfaceDim -->
+    <color name="item_drag_shadow_background">#141218</color>
+    <!-- ?attr/colorSurfaceContainerLowest -->
+    <color name="drag_mime_icon_wrapper_background">#0F0D13</color>
+    <!-- ?attr/colorOnSurface -->
+    <color name="drag_content_text_color">#E6E0E9</color>
+    <!-- ?attr/colorOnError -->
+    <color name="drop_icon_reject_symbol_color">#601410</color>
+    <!-- ?attr/colorError -->
+    <color name="drop_icon_reject_container_background">#F2B8B5</color>
 
-    <color name="edge_effect">@android:color/white</color>
+    <color name="error_image_color">@android:color/white</color>
 
     <color name="list_divider_color">#9aa0a6</color>
 
-    <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant17</color>
-
-    <color name="fragment_pick_active_text_color">#202124</color> <!-- Grey 900 -->
+    <!-- ?attr/colorSurfaceContainerHigh -->
+    <color name="color_surface_header">#2B2930</color>
 
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <color name="search_chip_text_selected_color">@android:color/black</color>
