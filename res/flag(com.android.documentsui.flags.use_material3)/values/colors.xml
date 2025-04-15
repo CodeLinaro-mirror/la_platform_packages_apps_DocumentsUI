@@ -20,6 +20,7 @@
 
   <color name="app_background_color">@android:color/white</color>
   <color name="background_floating">@android:color/white</color>
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="nav_bar_translucent">#99FFFFFF</color>
 
   <!-- ?attr/colorPrimary -->
@@ -58,8 +59,10 @@
   <!-- ?attr/colorError -->
   <color name="drop_icon_reject_container_background">#B3261E</color>
 
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="tool_bar_gradient_max">#7f000000</color>
 
+  <!-- drag selection box colors -->
   <color name="band_select_background">?attr/colorPrimaryInverse</color>
   <color name="band_select_border">?attr/colorPrimaryContainer</color>
 
@@ -70,8 +73,6 @@
 
   <color name="error_image_color">#757575</color>
 
-  <color name="edge_effect">@android:color/black</color>
-
   <color name="list_divider_color">#1f000000</color>
 
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
@@ -79,17 +80,11 @@
 
   <!-- This is used when the app bar is in pinned mode inside the CollapsingToolbarLayout.
        The code in NavigationViewManager assume the value should be a plain color value so we can't
-       use the theme attribute "?attr/colorSurfaceContainerHigh" (which is a reference) here, hence
-       using the mapped system color in both here and dark mode.
+       use the theme attribute (which is a reference) here, hence using the mapped system color in
+       both here and dark mode.
   -->
-  <color name="color_surface_header">@color/m3_ref_palette_dynamic_neutral_variant92</color>
-
-  <color name="work_profile_button_stroke_color">@color/primary</color>
-
-  <color name="fragment_pick_inactive_button_color">#E0E0E0</color>
-  <color name="fragment_pick_inactive_text_color">#5F6368</color>
-  <color name="fragment_pick_active_button_color">@color/primary</color>
-  <color name="fragment_pick_active_text_color">@android:color/white</color>
+  <!-- ?attr/colorSurfaceContainerHigh -->
+  <color name="color_surface_header">#ECE6F0</color>
 
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="search_chip_text_selected_color">@android:color/white</color>
