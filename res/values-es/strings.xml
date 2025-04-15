@@ -228,6 +228,12 @@
     <string name="rename_error" msgid="6700093173508118635">"No se ha podido cambiar el nombre del documento"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Expulsar"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Se han convertido algunos archivos"</string>
+    <string name="job_progress_item_see_details" msgid="2069387639574541325">"Ver detalles"</string>
+    <string name="copy_completed" msgid="3749037014674785400">"Copiado"</string>
+    <string name="move_completed" msgid="3981250605092729273">"Movido"</string>
+    <string name="delete_completed" msgid="4149401155614626199">"Eliminado"</string>
+    <string name="compress_completed" msgid="8808356399995313077">"Comprimido"</string>
+    <string name="extract_completed" msgid="8824595789915249972">"Extraído"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"¿Permitir que <xliff:g id="APPNAME"><b>^1</b></xliff:g> acceda al directorio <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> (<xliff:g id="STORAGE"><i>^3</i></xliff:g>)?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"¿Permitir que <xliff:g id="APPNAME"><b>^1</b></xliff:g> acceda al directorio <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"¿Permitir que <xliff:g id="APPNAME"><b>^1</b></xliff:g> acceda a tus datos de <xliff:g id="STORAGE"><i>^2</i></xliff:g>, incluidos los vídeos y las fotos?"</string>
@@ -327,8 +333,6 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Mostrando modo de lista."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"Nombre del archivo"</string>
-    <!-- no translation found for a11y_peek_navigation_icon (6692873662104342476) -->
-    <skip />
-    <!-- no translation found for peek_no_preview (8717084152736749464) -->
-    <skip />
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Ocultar vista previa del archivo"</string>
+    <string name="peek_no_preview" msgid="8717084152736749464">"No hay ninguna vista previa disponible"</string>
 </resources>
