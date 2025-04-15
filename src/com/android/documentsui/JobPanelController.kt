@@ -51,7 +51,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
  * Adds a gap between items in a vertical Recycler View.
  */
 private class VerticalMarginItemDecoration(
-    private val mMarginSize: Int
+    private val marginSize: Int
 ) : RecyclerView.ItemDecoration() {
     override fun getItemOffsets(
         outRect: Rect,
@@ -60,7 +60,7 @@ private class VerticalMarginItemDecoration(
         state: RecyclerView.State
     ) {
         if (parent.getChildAdapterPosition(view) > 0) {
-            outRect.top = mMarginSize
+            outRect.top = marginSize
         }
     }
 }
@@ -69,7 +69,7 @@ private class VerticalMarginItemDecoration(
  * JobPanelController is responsible for receiving broadcast updates from the [FileOperationService]
  * and updating a given menu item to reflect the current progress.
  */
-class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
+class JobPanelController(private val activityContext: Context) : BroadcastReceiver() {
     companion object {
         private const val TAG = "JobPanelController"
         private const val MAX_PROGRESS = 100
@@ -245,41 +245,41 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
     }
 
     /** The current state of the menu progress item. */
-    private var mState = State.INVISIBLE
+    private var state = State.INVISIBLE
 
     /** The total progress from 0 to MAX_PROGRESS. */
-    private var mTotalProgress = 0
+    private var totalProgress = 0
 
     /** List of jobs currently tracked by this class. */
-    private val mCurrentJobs = LinkedHashMap<String, ProgressViewModel>()
+    private val currentJobs = LinkedHashMap<String, ProgressViewModel>()
 
     /** Current menu item being controlled by this class. */
-    private var mMenuItem: MenuItem? = null
+    private var menuItem: MenuItem? = null
 
     /** Current panel popup shown if any. */
-    private var mPopup: PopupWindow? = null
+    private var popup: PopupWindow? = null
 
     /** Adapter used to display JobProgresses in the recycler list. */
-    private var mProgressListAdapter: ProgressListAdapter? = null
+    private var progressListAdapter: ProgressListAdapter? = null
 
     init {
         val filter = IntentFilter(FileOperationService.ACTION_PROGRESS)
-        mContext.registerReceiver(this, filter, Context.RECEIVER_NOT_EXPORTED)
+        activityContext.registerReceiver(this, filter, Context.RECEIVER_NOT_EXPORTED)
     }
 
     private fun updateMenuItem(animate: Boolean) {
-        if (mState == State.INVISIBLE) {
-            mPopup?.dismiss()
+        if (state == State.INVISIBLE) {
+            popup?.dismiss()
         }
 
-        mMenuItem?.let {
-            Menus.setEnabledAndVisible(it, mState != State.INVISIBLE)
+        menuItem?.let {
+            Menus.setEnabledAndVisible(it, state != State.INVISIBLE)
             val icon = it.actionView as ProgressBar
-            when (mState) {
+            when (state) {
                 State.INDETERMINATE -> icon.isIndeterminate = true
                 State.VISIBLE -> icon.apply {
                     isIndeterminate = false
-                    setProgress(mTotalProgress, animate)
+                    setProgress(totalProgress, animate)
                 }
                 State.INVISIBLE -> {}
             }
@@ -290,34 +290,35 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
      * Sets the menu item controlled by this class. The item's actionView must be a [ProgressBar].
      */
     @Suppress("ktlint:standard:comment-wrapping")
-    fun setMenuItem(menuItem: MenuItem) {
-        val progressIcon = menuItem.actionView as ProgressBar
+    fun setMenuItem(newMenuItem: MenuItem) {
+        val progressIcon = newMenuItem.actionView as ProgressBar
         progressIcon.max = MAX_PROGRESS
         progressIcon.setOnClickListener { view ->
-            val panel = LayoutInflater.from(mContext).inflate(
+            val panel = LayoutInflater.from(activityContext).inflate(
                 R.layout.job_progress_panel,
                 /* root= */ null
             )
             val listAdapter = ProgressListAdapter(this)
-            listAdapter.submitList(ArrayList(mCurrentJobs.values))
+            listAdapter.submitList(ArrayList(currentJobs.values))
             panel.findViewById<RecyclerView>(R.id.job_progress_list).apply {
-                layoutManager = LinearLayoutManager(mContext)
+                layoutManager = LinearLayoutManager(context)
                 addItemDecoration(VerticalMarginItemDecoration(
-                    mContext.resources.getDimensionPixelSize(R.dimen.job_progress_list_gap)
+                    context.resources.getDimensionPixelSize(R.dimen.job_progress_list_gap)
                 ))
                 itemAnimator = null
                 adapter = listAdapter
             }
-            mProgressListAdapter = listAdapter
-            val popupWidth = mContext.resources.getDimension(R.dimen.job_progress_panel_width) +
-                    mContext.resources.getDimension(R.dimen.job_progress_panel_margin)
-            mPopup = PopupWindow(
+            progressListAdapter = listAdapter
+            val popupWidth =
+                activityContext.resources.getDimension(R.dimen.job_progress_panel_width) +
+                        activityContext.resources.getDimension(R.dimen.job_progress_panel_margin)
+            popup = PopupWindow(
                 /* contentView= */ panel,
                 /* width= */ popupWidth.toInt(),
                 /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
                 /* focusable= */ true
             ).apply {
-                setOnDismissListener { mProgressListAdapter = null }
+                setOnDismissListener { progressListAdapter = null }
                 showAsDropDown(
                     /* anchor= */ view,
                     /* xoff= */ view.width - popupWidth.toInt(),
@@ -325,7 +326,7 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
                 )
             }
         }
-        mMenuItem = menuItem
+        menuItem = newMenuItem
         updateMenuItem(animate = false)
     }
 
@@ -344,11 +345,11 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
 
         for (jobProgress in progresses) {
             Log.d(TAG, "Received $jobProgress")
-            mCurrentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) {
+            currentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) {
                 old, new -> ProgressViewModel(new.jobProgress, old.expanded)
             }
         }
-        for ((jobProgress, _) in mCurrentJobs.values) {
+        for ((jobProgress, _) in currentJobs.values) {
             if (jobProgress.state != Job.STATE_COMPLETED) {
                 allFinished = false
             }
@@ -358,30 +359,30 @@ class JobPanelController(private val mContext: Context) : BroadcastReceiver() {
             }
         }
 
-        if (mCurrentJobs.isEmpty()) {
-            mState = State.INVISIBLE
+        if (currentJobs.isEmpty()) {
+            state = State.INVISIBLE
         } else if (requiredBytes != 0L) {
-            mState = State.VISIBLE
-            mTotalProgress = (MAX_PROGRESS * currentBytes / requiredBytes).toInt()
+            state = State.VISIBLE
+            totalProgress = (MAX_PROGRESS * currentBytes / requiredBytes).toInt()
         } else if (allFinished) {
-            mState = State.VISIBLE
-            mTotalProgress = MAX_PROGRESS
+            state = State.VISIBLE
+            totalProgress = MAX_PROGRESS
         } else {
-            mState = State.INDETERMINATE
+            state = State.INDETERMINATE
         }
         updateMenuItem(animate = true)
-        mProgressListAdapter?.submitList(ArrayList(mCurrentJobs.values))
+        progressListAdapter?.submitList(ArrayList(currentJobs.values))
     }
 
     private fun dismissProgress(id: String) {
-        mCurrentJobs.remove(id)
+        currentJobs.remove(id)
         updateProgress(emptyList())
     }
 
     private fun toggleExpanded(id: String) {
-        mCurrentJobs.computeIfPresent(id) { _, (jobProgress, expanded) ->
+        currentJobs.computeIfPresent(id) { _, (jobProgress, expanded) ->
             ProgressViewModel(jobProgress, !expanded)
         }
-        mProgressListAdapter?.submitList(ArrayList(mCurrentJobs.values))
+        progressListAdapter?.submitList(ArrayList(currentJobs.values))
     }
 }
