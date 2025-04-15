@@ -140,7 +140,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         mActivityScenario!!.close()
     }
 
-    protected fun launchActivity() {
+    protected open fun launchActivity() {
         val intent = Intent(context, FilesActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         if (this.initialRoot != null) {
