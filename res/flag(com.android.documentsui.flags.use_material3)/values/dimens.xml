@@ -101,6 +101,7 @@
     <dimen name="grid_item_nameplate_inner_radius">4dp</dimen>
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="grid_item_elevation">2dp</dimen>
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="grid_item_radius">12dp</dimen>
     <dimen name="max_drawer_width">280dp</dimen>
     <dimen name="briefcase_icon_margin">8dp</dimen>
@@ -198,9 +199,9 @@
     <dimen name="search_chip_spacing">8dp</dimen>
     <dimen name="search_chip_half_spacing">4dp</dimen>
     <dimen name="search_chip_icon_padding">4dp</dimen>
+    <dimen name="search_chip_radius">8dp</dimen>
     <!-- block end -->
 
-    <dimen name="search_chip_radius">8dp</dimen>
     <dimen name="search_chip_group_padding_vertical">@dimen/space_extra_small_4</dimen>
     <dimen name="search_chip_inactive_stroke_width">1dp</dimen>
     <dimen name="main_container_padding_start">@dimen/space_small_4</dimen>
