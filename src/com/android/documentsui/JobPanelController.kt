@@ -240,12 +240,12 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
         }
     }
 
-    private enum class State {
+    private enum class MenuIconState {
         INVISIBLE, INDETERMINATE, VISIBLE
     }
 
     /** The current state of the menu progress item. */
-    private var state = State.INVISIBLE
+    private var menuIconState = MenuIconState.INVISIBLE
 
     /** The total progress from 0 to MAX_PROGRESS. */
     private var totalProgress = 0
@@ -268,20 +268,20 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
     }
 
     private fun updateMenuItem(animate: Boolean) {
-        if (state == State.INVISIBLE) {
+        if (menuIconState == MenuIconState.INVISIBLE) {
             popup?.dismiss()
         }
 
         menuItem?.let {
-            Menus.setEnabledAndVisible(it, state != State.INVISIBLE)
+            Menus.setEnabledAndVisible(it, menuIconState != MenuIconState.INVISIBLE)
             val icon = it.actionView as ProgressBar
-            when (state) {
-                State.INDETERMINATE -> icon.isIndeterminate = true
-                State.VISIBLE -> icon.apply {
+            when (menuIconState) {
+                MenuIconState.INDETERMINATE -> icon.isIndeterminate = true
+                MenuIconState.VISIBLE -> icon.apply {
                     isIndeterminate = false
                     setProgress(totalProgress, animate)
                 }
-                State.INVISIBLE -> {}
+                MenuIconState.INVISIBLE -> {}
             }
         }
     }
@@ -360,15 +360,15 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
         }
 
         if (currentJobs.isEmpty()) {
-            state = State.INVISIBLE
+            menuIconState = MenuIconState.INVISIBLE
         } else if (requiredBytes != 0L) {
-            state = State.VISIBLE
+            menuIconState = MenuIconState.VISIBLE
             totalProgress = (MAX_PROGRESS * currentBytes / requiredBytes).toInt()
         } else if (allFinished) {
-            state = State.VISIBLE
+            menuIconState = MenuIconState.VISIBLE
             totalProgress = MAX_PROGRESS
         } else {
-            state = State.INDETERMINATE
+            menuIconState = MenuIconState.INDETERMINATE
         }
         updateMenuItem(animate = true)
         progressListAdapter?.submitList(ArrayList(currentJobs.values))
