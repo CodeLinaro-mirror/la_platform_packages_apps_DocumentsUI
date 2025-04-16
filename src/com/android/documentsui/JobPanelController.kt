@@ -339,9 +339,8 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
     }
 
     private fun updateProgress(progresses: List<JobProgress>) {
-        var requiredBytes = 0L
-        var currentBytes = 0L
-        var allFinished = true
+        var currentPercent = 0f
+        var allIndeterminate = true
 
         for (jobProgress in progresses) {
             Log.d(TAG, "Received $jobProgress")
@@ -350,25 +349,19 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
             }
         }
         for ((jobProgress, _) in currentJobs.values) {
-            if (jobProgress.state != Job.STATE_COMPLETED) {
-                allFinished = false
-            }
-            if (jobProgress.requiredBytes != -1L && jobProgress.currentBytes != -1L) {
-                requiredBytes += jobProgress.requiredBytes
-                currentBytes += jobProgress.currentBytes
+            if (!jobProgress.isIndeterminate) {
+                allIndeterminate = false
+                currentPercent += jobProgress.toPercent()
             }
         }
 
         if (currentJobs.isEmpty()) {
             menuIconState = MenuIconState.INVISIBLE
-        } else if (requiredBytes != 0L) {
-            menuIconState = MenuIconState.VISIBLE
-            totalProgress = (MAX_PROGRESS * currentBytes / requiredBytes).toInt()
-        } else if (allFinished) {
-            menuIconState = MenuIconState.VISIBLE
-            totalProgress = MAX_PROGRESS
-        } else {
+        } else if (allIndeterminate) {
             menuIconState = MenuIconState.INDETERMINATE
+        } else {
+            menuIconState = MenuIconState.VISIBLE
+            totalProgress = (currentPercent / currentJobs.size).toInt()
         }
         updateMenuItem(animate = true)
         progressListAdapter?.submitList(ArrayList(currentJobs.values))
