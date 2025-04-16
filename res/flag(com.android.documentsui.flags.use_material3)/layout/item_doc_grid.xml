@@ -22,10 +22,7 @@
     android:layout_margin="@dimen/grid_item_margin"
     android:clickable="true"
     android:defaultFocusHighlightEnabled="false"
-    android:focusable="true"
-    android:paddingEnd="@dimen/grid_item_padding_end"
-    android:paddingStart="@dimen/grid_item_padding_start"
-    android:paddingTop="@dimen/grid_item_padding_top">
+    android:focusable="true">
 
 <!-- Main item thumbnail.  Comprised of two overlapping images, the
          visibility of which is controlled by code in
@@ -36,6 +33,7 @@
         android:layout_width="@dimen/grid_item_thumbnail_width"
         android:layout_height="@dimen/grid_item_thumbnail_height"
         android:layout_centerHorizontal="true"
+        android:duplicateParentState="true"
         android:background="@drawable/grid_thumbnail_background">
 
         <!-- stroke width will be controlled dynamically in the code. -->

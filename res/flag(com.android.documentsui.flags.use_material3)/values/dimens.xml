@@ -43,10 +43,14 @@
     <dimen name="progress_bar_height">4dp</dimen>
     <fraction name="grid_scale_min">85%</fraction>
     <fraction name="grid_scale_max">200%</fraction>
-    <dimen name="grid_width">150dp</dimen>
-    <dimen name="grid_height">132dp</dimen>
+    <dimen name="grid_width">144dp</dimen>
+    <dimen name="grid_height">128dp</dimen>
     <dimen name="grid_section_separator_height">0dp</dimen>
-    <dimen name="grid_item_margin">@dimen/space_small_1</dimen>
+    <dimen name="grid_item_margin">@dimen/space_extra_small_4</dimen>
+    <dimen name="grid_container_padding_left">@dimen/space_small_1</dimen>
+    <dimen name="grid_container_padding_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="grid_container_padding_right">@dimen/space_small_1</dimen>
+    <dimen name="grid_container_padding_bottom">@dimen/space_extra_small_4</dimen>
     <dimen name="grid_padding_horiz">4dp</dimen>
     <dimen name="grid_padding_vert">4dp</dimen>
     <dimen name="list_item_height">56dp</dimen>
@@ -72,12 +76,9 @@
     <dimen name="breadcrumb_item_arrow_size">16dp</dimen>
     <dimen name="dir_elevation">8dp</dimen>
     <dimen name="drag_shadow_size">120dp</dimen>
-    <dimen name="grid_item_padding_start">@dimen/space_extra_small_2</dimen>
-    <dimen name="grid_item_padding_end">@dimen/space_extra_small_2</dimen>
-    <dimen name="grid_item_padding_top">@dimen/space_extra_small_2</dimen>
     <dimen name="grid_item_thumbnail_width">80dp</dimen>
     <dimen name="grid_item_thumbnail_height">80dp</dimen>
-    <dimen name="grid_item_thumbnail_radius">12dp</dimen>
+    <dimen name="grid_item_thumbnail_radius">20dp</dimen>
     <dimen name="grid_item_icon_width">64dp</dimen>
     <dimen name="grid_item_icon_height">64dp</dimen>
     <dimen name="grid_item_nameplate_width">142dp</dimen>
@@ -204,8 +205,9 @@
     <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>
 
-    <dimen name="dialog_content_padding_top">18dp</dimen>
-    <dimen name="dialog_content_padding_bottom">24dp</dimen>
+    <dimen name="dialog_content_padding_horizontal">@dimen/space_small_4</dimen>
+    <dimen name="dialog_content_padding_top">@dimen/space_small_1</dimen>
+    <dimen name="dialog_content_padding_bottom">@dimen/space_small_4</dimen>
 
     <dimen name="apps_row_title_height">48dp</dimen>
     <dimen name="apps_row_title_padding_start">24dp</dimen>
@@ -249,6 +251,10 @@
     <dimen name="cross_profile_button_message_margin_top">@dimen/space_extra_small_2</dimen>
     <dimen name="cross_profile_button_margin_top">@dimen/space_small_1</dimen>
 
+    <dimen name="banner_content_padding_vertical">16dp</dimen>
+    <dimen name="banner_content_padding_start">@dimen/space_medium_1</dimen>
+    <dimen name="banner_content_padding_end">8dp</dimen>
+
     <dimen name="focus_ring_width">3dp</dimen>
     <!-- 3dp focus ring width + 2dp gap between the ring and the content -->
     <dimen name="focus_ring_gap">5dp</dimen>
@@ -262,6 +268,8 @@
     <!-- 360dp - 2 * header margin (16dp) - header line height (24dp) -->
     <dimen name="job_progress_list_max_height">304dp</dimen>
     <dimen name="job_progress_list_margin">@dimen/space_extra_small_6</dimen>
+    <dimen name="job_progress_list_gap">@dimen/space_extra_small_1</dimen>
+    <dimen name="job_progress_list_corner_radius">@dimen/space_extra_small_6</dimen>
 
     <dimen name="job_progress_item_padding">@dimen/space_small_1</dimen>
     <dimen name="job_progress_item_expand_margin_start">@dimen/space_small_4</dimen>

@@ -14,9 +14,28 @@
      limitations under the License.
 -->
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/peek_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peek_overlay_background"
-    android:focusable="false" />
+    android:background="@color/peek_overlay_scrim"
+    android:clickable="true"
+    android:focusable="false" >
+    <!-- Text and icons using android:white because the underlying black scrim doesn't dynamically
+    change colour. -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/peek_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/space_extra_small_4"
+        android:paddingEnd="@dimen/space_extra_small_4"
+        android:background="@color/peek_topbar_scrim"
+        app:titleMarginStart="@dimen/space_extra_small_2"
+        app:titleTextAppearance="?attr/textAppearanceTitleMedium"
+        app:titleTextColor="@android:color/white"
+        app:navigationContentDescription="@string/a11y_peek_navigation_icon"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@android:color/white" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

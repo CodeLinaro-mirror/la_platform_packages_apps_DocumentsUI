@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
-import android.text.format.DateUtils;
 
 import androidx.annotation.StringRes;
 
@@ -98,6 +97,7 @@ public class OperationProgressDialog {
                 prepareResId = R.string.compress_preparing;
                 break;
             case FileOperationService.OPERATION_EXTRACT:
+            case FileOperationService.OPERATION_UNPACK:
                 titleResId = R.string.extract_notification_title;
                 prepareResId = R.string.extract_preparing;
                 break;
