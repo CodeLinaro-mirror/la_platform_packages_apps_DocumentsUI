@@ -212,6 +212,12 @@
     <string name="rename_error" msgid="6700093173508118635">"ஆவணத்தின் பெயரை மாற்ற முடியவில்லை"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"வெளியேற்று"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"சில ஃபைல்கள்  மாற்றப்பட்டன"</string>
+    <string name="job_progress_item_see_details" msgid="2069387639574541325">"விவரங்களைப் பாருங்கள்"</string>
+    <string name="copy_completed" msgid="3749037014674785400">"நகலெடுக்கப்பட்டது"</string>
+    <string name="move_completed" msgid="3981250605092729273">"நகர்த்தப்பட்டது"</string>
+    <string name="delete_completed" msgid="4149401155614626199">"நீக்கப்பட்டது"</string>
+    <string name="compress_completed" msgid="8808356399995313077">"சுருக்கப்பட்டது"</string>
+    <string name="extract_completed" msgid="8824595789915249972">"பிரித்தெடுக்கப்பட்டது"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="STORAGE"><i>^3</i></xliff:g> இல் உள்ள <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> கோப்பகத்தை அணுக, <xliff:g id="APPNAME"><b>^1</b></xliff:g>ஐ அனுமதிக்கவா?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="DIRECTORY"><i>^2</i></xliff:g> கோப்பகத்தை அணுக, <xliff:g id="APPNAME"><b>^1</b></xliff:g>ஐ அனுமதிக்கவா?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="STORAGE"><i>^2</i></xliff:g> இல் உள்ள படங்கள், வீடியோக்கள் உட்பட எல்லா தரவையும் அணுக, <xliff:g id="APPNAME"><b>^1</b></xliff:g>ஐ அனுமதிக்கவா?"</string>
@@ -306,6 +312,5 @@
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ஃபைல் பெயர்"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ஃபைலின் மாதிரிக்காட்சியை மறைக்கும்"</string>
-    <!-- no translation found for peek_no_preview (8717084152736749464) -->
-    <skip />
+    <string name="peek_no_preview" msgid="8717084152736749464">"மாதிரிக்காட்சி இல்லை"</string>
 </resources>

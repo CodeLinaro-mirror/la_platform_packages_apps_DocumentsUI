@@ -212,6 +212,12 @@
     <string name="rename_error" msgid="6700093173508118635">"Imeshindwa kubadilisha jina la hati"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Ondoa"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Imebadilisha muundo wa baadhi ya faili"</string>
+    <string name="job_progress_item_see_details" msgid="2069387639574541325">"Angalia maelezo"</string>
+    <string name="copy_completed" msgid="3749037014674785400">"Imenakiliwa"</string>
+    <string name="move_completed" msgid="3981250605092729273">"Imesogezwa"</string>
+    <string name="delete_completed" msgid="4149401155614626199">"Imefutwa"</string>
+    <string name="compress_completed" msgid="8808356399995313077">"Imebanwa"</string>
+    <string name="extract_completed" msgid="8824595789915249972">"Imetolewa"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Ungependa kuruhusu <xliff:g id="APPNAME"><b>^1</b></xliff:g> ifikie saraka ya <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> kwenye <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Ungependa kuruhusu <xliff:g id="APPNAME"><b>^1</b></xliff:g> ifikie saraka ya <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Ungependa kuruhusu <xliff:g id="APPNAME"><b>^1</b></xliff:g> ifikie data yako, ikiwa ni pamoja na picha na video kwenye <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>
@@ -305,8 +311,6 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Kuonyesha katika hali ya orodha."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"Jina la faili"</string>
-    <!-- no translation found for a11y_peek_navigation_icon (6692873662104342476) -->
-    <skip />
-    <!-- no translation found for peek_no_preview (8717084152736749464) -->
-    <skip />
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Ficha onyesho la kukagua faili"</string>
+    <string name="peek_no_preview" msgid="8717084152736749464">"Hakuna toleo la kukagua linalopatikana"</string>
 </resources>

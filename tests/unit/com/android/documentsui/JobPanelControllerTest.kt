@@ -45,42 +45,42 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class JobPanelControllerTest {
     @get:Rule
-    val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
-    private val mContext = InstrumentationRegistry.getInstrumentation().targetContext
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     // The default progress bar only has an indeterminate state, so we need to style it to allow
     // determinate progress.
-    private val mProgressBar = ProgressBar(
-        mContext,
+    private val progressBar = ProgressBar(
+        context,
         null,
         android.R.attr.progressBarStyleHorizontal
     )
-    private val mMenuItem = ActionMenuView(mContext).menu.add("job_panel").apply {
-        actionView = mProgressBar
+    private val menuItem = ActionMenuView(context).menu.add("job_panel").apply {
+        actionView = progressBar
     }
-    private lateinit var mController: JobPanelController
-    private var mLastId = 0L
+    private lateinit var controller: JobPanelController
+    private var lastId = 0L
 
-    private fun sendProgress(progress: ArrayList<JobProgress>, id: Long = mLastId++) {
+    private fun sendProgress(progress: ArrayList<JobProgress>, id: Long = lastId++) {
         var intent = Intent(ACTION_PROGRESS).apply {
-            `package` = mContext.packageName
+            `package` = context.packageName
             putExtra("id", id)
             putParcelableArrayListExtra(EXTRA_PROGRESS, progress)
         }
-        mController.onReceive(mContext, intent)
+        controller.onReceive(context, intent)
     }
 
     @Before
     fun setUp() {
-        mController = JobPanelController(mContext)
-        mController.setMenuItem(mMenuItem)
+        controller = JobPanelController(context)
+        controller.setMenuItem(menuItem)
     }
 
     @Test
     fun testSingleJob() {
-        assertFalse(mMenuItem.isVisible())
-        assertFalse(mMenuItem.isEnabled())
+        assertFalse(menuItem.isVisible())
+        assertFalse(menuItem.isEnabled())
 
         val progress = MutableJobProgress(
             id = "jobId1",
@@ -94,9 +94,9 @@ class JobPanelControllerTest {
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(0, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(0, progressBar.progress)
 
         progress.apply {
             state = Job.STATE_SET_UP
@@ -105,9 +105,9 @@ class JobPanelControllerTest {
         }
         sendProgress(arrayListOf(progress.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(40, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(40, progressBar.progress)
 
         progress.apply {
             state = Job.STATE_COMPLETED
@@ -116,15 +116,15 @@ class JobPanelControllerTest {
         }
         sendProgress(arrayListOf(progress.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(100, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(100, progressBar.progress)
     }
 
     @Test
     fun testMultipleJobs() {
-        assertFalse(mMenuItem.isVisible())
-        assertFalse(mMenuItem.isEnabled())
+        assertFalse(menuItem.isVisible())
+        assertFalse(menuItem.isEnabled())
 
         val progress1 = MutableJobProgress(
             id = "jobId1",
@@ -148,9 +148,9 @@ class JobPanelControllerTest {
         )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(0, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(0, progressBar.progress)
 
         progress1.apply {
             state = Job.STATE_SET_UP
@@ -159,9 +159,9 @@ class JobPanelControllerTest {
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(8, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(8, progressBar.progress)
 
         progress1.apply {
             state = Job.STATE_COMPLETED
@@ -170,9 +170,9 @@ class JobPanelControllerTest {
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(20, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(20, progressBar.progress)
 
         progress2.apply {
             state = Job.STATE_SET_UP
@@ -181,9 +181,9 @@ class JobPanelControllerTest {
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(80, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(80, progressBar.progress)
 
         progress2.apply {
             state = Job.STATE_COMPLETED
@@ -192,8 +192,8 @@ class JobPanelControllerTest {
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
-        assertTrue(mMenuItem.isVisible())
-        assertTrue(mMenuItem.isEnabled())
-        assertEquals(100, mProgressBar.progress)
+        assertTrue(menuItem.isVisible())
+        assertTrue(menuItem.isEnabled())
+        assertEquals(100, progressBar.progress)
     }
 }
