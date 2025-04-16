@@ -24,6 +24,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
@@ -71,6 +72,7 @@ import com.android.documentsui.util.FileUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
@@ -427,6 +429,9 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         return !doc.isContainer();
     }
 
+    /**
+     * Picks a folder for the ACTION_OPEN_TREE or ACTION_PICK_COPY_DESTINATION picker.
+     */
     void pickDocument(FragmentManager fm, DocumentInfo pickTarget) {
         assert (pickTarget != null);
         mInjector.pickResult.increaseActionCount();
@@ -442,6 +447,28 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
             default:
                 // Should not be reached
                 throw new IllegalStateException("Invalid mState.action");
+        }
+    }
+
+    /**
+     * Picks selected documents for the ACTION_OPEN or ACTION_GET_CONTENT picker.
+     */
+    void pickSelected() {
+        if (!isUseMaterial3FlagEnabled()) {
+            return;
+        }
+        assert (mState.action == ACTION_OPEN || mState.action == ACTION_GET_CONTENT);
+        List<DocumentInfo> selection = mInjector.getModel().getDocuments(
+                mInjector.selectionMgr.getSelection());
+        if (selection.isEmpty()) {
+            Log.w(TAG, "There are no selected files");
+            return;
+        }
+
+        if (selection.size() > 1) {
+            mActivity.onDocumentsPicked(selection);
+        } else {
+            mActivity.onDocumentPicked(selection.getFirst());
         }
     }
 

@@ -98,6 +98,11 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
         return this
     }
 
+    /** Returns `Uri` of the file with `filename` within the `root`. */
+    fun getUriInRoot(root: String, fileName: String): Uri? {
+        return docsHelper.findDocument(getRoot(root).documentId, fileName).derivedUri
+    }
+
     /** Returns`RootInfo` for the for the specified `root`. */
     fun getRoot(root: String): RootInfo {
         return docsHelper.getRoot(root)
