@@ -70,11 +70,11 @@ private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progr
 @RunWith(AndroidJUnit4::class)
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule
-    val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
-    private var mLastId = 0L
+    private var lastId = 0L
 
-    private fun sendProgress(progresses: ArrayList<JobProgress>, id: Long = mLastId++) {
+    private fun sendProgress(progresses: ArrayList<JobProgress>, id: Long = lastId++) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var intent = Intent(ACTION_PROGRESS).apply {
             `package` = context.packageName
