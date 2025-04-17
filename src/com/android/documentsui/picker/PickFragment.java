@@ -47,10 +47,10 @@ import com.android.documentsui.ui.Snackbars;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
- * Display pick confirmation bar for selecting a directory.
+ * Display pick confirmation bar, usually for selecting a directory.
  */
-public class PickDirectoryFragment extends Fragment {
-    public static final String TAG = "PickDirectoryFragment";
+public class PickFragment extends Fragment {
+    public static final String TAG = "PickFragment";
 
     private static final String ACTION_KEY = "action";
     private static final String COPY_OPERATION_SUBTYPE_KEY = "copyOperationSubType";
@@ -73,7 +73,7 @@ public class PickDirectoryFragment extends Fragment {
         @Override
         public void onClick(View v) {
             mInjector.pickResult.increaseActionCount();
-            final BaseActivity activity = BaseActivity.get(PickDirectoryFragment.this);
+            final BaseActivity activity = BaseActivity.get(PickFragment.this);
             activity.setResult(FragmentActivity.RESULT_CANCELED);
             activity.finish();
         }
@@ -97,20 +97,20 @@ public class PickDirectoryFragment extends Fragment {
             return;
         }
 
-        final PickDirectoryFragment fragment = new PickDirectoryFragment();
+        final PickFragment fragment = new PickFragment();
         final FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.container_save, fragment, TAG);
         ft.commitNowAllowingStateLoss();
     }
 
-    public static PickDirectoryFragment get(FragmentManager fm) {
-        return (PickDirectoryFragment) fm.findFragmentByTag(TAG);
+    public static PickFragment get(FragmentManager fm) {
+        return (PickFragment) fm.findFragmentByTag(TAG);
     }
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContainer = inflater.inflate(R.layout.fragment_pick_directory, container, false);
+        mContainer = inflater.inflate(R.layout.fragment_pick, container, false);
 
         mPick = (Button) mContainer.findViewById(android.R.id.button1);
         mPickOverlay = mContainer.findViewById((R.id.pick_button_overlay));
