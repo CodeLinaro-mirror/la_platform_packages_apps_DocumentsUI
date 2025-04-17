@@ -49,6 +49,8 @@ import com.android.modules.utils.build.SdkLevel;
 import java.util.Map;
 import java.util.function.Function;
 
+// TODO(b/379776735): remove this file after use_material3 flag is launched.
+// GridDocumentHolder is used for all types of grid items.
 final class GridPhotoHolder extends DocumentHolder {
 
     private final ImageView mIconMimeLg;

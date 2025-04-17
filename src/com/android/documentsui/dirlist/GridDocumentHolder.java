@@ -165,15 +165,6 @@ final class GridDocumentHolder extends DocumentHolder {
                 mIconMimeSm.setAlpha(1f - checkAlpha);
             }
         }
-
-        // Do not show stroke when selected, only show stroke when not selected if it has thumbnail.
-        if (mIconWrapper != null) {
-            if (selected) {
-                mIconWrapper.setStrokeWidth(0);
-            } else if (mIconThumb.getDrawable() != null) {
-                mIconWrapper.setStrokeWidth(mThumbnailStrokeWidth);
-            }
-        }
     }
 
     @Override
@@ -283,6 +274,8 @@ final class GridDocumentHolder extends DocumentHolder {
 
         mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
         mTitle.setVisibility(View.VISIBLE);
+        // Show the full name in a tooltip.
+        itemView.setTooltipText(mDoc.displayName);
 
         // If file is partial, we want to show summary field as that's more relevant than fileSize
         // and date

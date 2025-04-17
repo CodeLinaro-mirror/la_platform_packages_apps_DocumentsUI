@@ -31,6 +31,7 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.junit.Assert.assertFalse;
 
+import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
@@ -46,6 +47,7 @@ import androidx.test.uiautomator.Until;
 import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,10 +60,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule();
+
     @Before
-    public void setUp() throws Exception {
-      super.setUp();
-      initTestFiles();
+    public void setUpTest() throws UiObjectNotFoundException, RemoteException {
       // Drawer interferes with a lot of search action; going to try to close any opened ones
       bots.roots.closeDrawer();
 
@@ -70,13 +73,12 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDownTest() {
         // manually close activity to avoid SearchFragment show when Activity close. ref b/142840883
         device.waitForIdle();
         device.pressBack();
         device.pressBack();
         device.pressBack();
-        super.tearDown();
     }
 
     private void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {

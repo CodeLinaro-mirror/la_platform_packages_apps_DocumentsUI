@@ -16,11 +16,19 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
+import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+
+import static com.google.common.truth.TruthJUnit.assume;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 import android.app.Instrumentation;
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
@@ -31,11 +39,13 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,18 +59,11 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
-    public void setUp() throws Exception {
-        super.setUp();
+    public void setUpTest() throws RemoteException {
         initTestFiles();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    @Override
-    public void initTestFiles() throws RemoteException {
+    private void initTestFiles() throws RemoteException {
         Uri uri = mDocsHelper.createFolder(rootDir0, dirName1);
         mDocsHelper.createFolder(uri, childDir1);
 
@@ -85,6 +88,54 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.main.assertSearchBarShow();
         } else {
             bots.main.assertWindowTitle("Recent");
+        }
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testRecentsSelectionClearsSearchBar() throws Exception {
+        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
+
+        // Create DocumentsProviderHelper to create files in Internal storage.
+        DocumentsProviderHelper storageDocsHelper =
+                new DocumentsProviderHelper(
+                        UserId.DEFAULT_USER, AUTHORITY_STORAGE, context, AUTHORITY_STORAGE);
+
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+
+        // Create Download folder if it doesn't exist.
+        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
+
+        if (info == null) {
+            ContentResolver cr = context.getContentResolver();
+            Uri uri = storageDocsHelper.createFolder(primaryRoot.documentId, "Download");
+            info = DocumentInfo.fromUri(cr, uri, UserId.DEFAULT_USER);
+        }
+
+        assertTrue(info != null && info.isDirectory());
+
+        // Open up Recents and create a file that should appear.
+        bots.roots.openRoot("Recent");
+        final String fileName = "Recent.txt";
+        storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
+        try {
+            bots.directory.waitForDocument(fileName);
+            bots.directory.selectDocument(fileName, 1);
+        } finally {
+            // Unselect the file and remove it.
+            bots.directory.selectDocument(fileName);
+            bots.roots.openRoot(primaryRoot.title);
+            bots.directory.openDocument("Download");
+
+            bots.directory.waitForDocument(fileName);
+            bots.directory.selectDocument(fileName, 1);
+
+            bots.main.clickToolbarItem(R.id.action_menu_delete);
+            bots.main.clickNonTextDialogOkButton();
+            device.waitForIdle();
+
+            bots.directory.findDocument(fileName).waitUntilGone(5000);
+            assertFalse(bots.directory.hasDocuments(fileName));
         }
     }
 

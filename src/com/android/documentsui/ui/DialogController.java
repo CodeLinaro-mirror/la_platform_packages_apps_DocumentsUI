@@ -101,6 +101,7 @@ public interface DialogController {
                     Snackbars.showCompress(mActivity, docCount);
                     break;
                 case FileOperationService.OPERATION_EXTRACT:
+                case FileOperationService.OPERATION_UNPACK:
                     Snackbars.showExtract(mActivity, docCount);
                     break;
                 case FileOperationService.OPERATION_DELETE:

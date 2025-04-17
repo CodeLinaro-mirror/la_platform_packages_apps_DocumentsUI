@@ -25,6 +25,11 @@
 
     <dimen name="toolbar_padding_start">@dimen/main_container_padding_start</dimen>
 
+    <dimen name="grid_container_padding_left">@dimen/space_small_4</dimen>
+    <dimen name="grid_container_padding_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="grid_container_padding_right">@dimen/space_small_4</dimen>
+    <dimen name="grid_container_padding_bottom">@dimen/space_extra_small_4</dimen>
+
     <dimen name="list_container_padding">@dimen/space_extra_small_6</dimen>
 
     <!-- list_container_padding + list_item_padding_start -->
