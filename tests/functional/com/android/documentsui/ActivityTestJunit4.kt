@@ -17,7 +17,6 @@ package com.android.documentsui
 
 import android.app.Activity
 import android.app.UiAutomation
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
@@ -45,8 +44,7 @@ import org.junit.Before
  * - Cleans up the test environment
  */
 abstract class ActivityTestJunit4<T : Activity?> {
-    @JvmField
-    var bots: Bots? = null
+    lateinit var bots: Bots
 
     @JvmField
     var device: UiDevice? = null
@@ -74,7 +72,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @JvmField
     var rootDir1: RootInfo? = null
-    protected var mResolver: ContentResolver? = null
 
     @JvmField
     protected var mDocsHelper: DocumentsProviderHelper? = null
@@ -115,7 +112,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
         Configurator.getInstance().toolType = MotionEvent.TOOL_TYPE_MOUSE
 
-        mResolver = context!!.getContentResolver()
         mDocsHelper = DocumentsProviderHelper(
             userId, this.testingProviderAuthority, context,
             this.testingProviderAuthority
@@ -133,7 +129,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         // automatically open for phone devices. Espresso register click() as (x, y) MotionEvents,
         // so if a drawer is on top of a file we want to select, it will actually click the drawer.
         // Thus to start a clean state, we always try to close first.
-        bots!!.roots!!.closeDrawer()
+        bots.roots!!.closeDrawer()
     }
 
     @After
@@ -195,14 +191,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     companion object {
-        // Testing files. For custom ones, override initTestFiles().
-        const val dirName1 = "Dir1"
-        const val childDir1 = "ChildDir1"
-        const val fileName1 = "file1.log"
-        const val fileName2 = "file12.png"
-        const val fileName3 = "anotherFile0.log"
-        const val fileName4 = "poodles.text"
-        const val fileNameNoRename = "NO_RENAMEfile.txt"
         const val TIMEOUT = 5000
     }
 }

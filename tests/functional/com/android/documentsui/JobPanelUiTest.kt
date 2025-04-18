@@ -26,8 +26,10 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -91,7 +93,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             hasFailures = false,
             currentBytes = 4,
             requiredBytes = 10,
-            msRemaining = -1
+            msRemaining = 10000,
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
@@ -102,6 +104,10 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         onView(withId(R.id.job_progress_item_title)).check(matches(withText("Job started")))
         onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
+        onView(withId(R.id.job_progress_item_primary_status))
+            .check(matches(withText("4 B of 10 B")))
+        onView(withId(R.id.job_progress_item_secondary_status))
+            .check(matches(withText("10 seconds left")))
     }
 
     @Test
@@ -118,7 +124,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             operationType = FileOperationService.OPERATION_MOVE,
             state = Job.STATE_COMPLETED,
             msg = "Job2 completed",
-            hasFailures = false,
+            hasFailures = true,
         )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
@@ -126,6 +132,15 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(matches(isDisplayed()))
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+
+        onView(withChild(withText(progress1.msg))).check(matches(allOf(
+            hasDescendant(withText(R.string.job_progress_item_completed)),
+            hasDescendant(withText(R.string.extract_completed)),
+        )))
+        onView(withChild(withText(progress2.msg))).check(matches(allOf(
+            hasDescendant(withText(R.string.job_progress_item_failed)),
+            hasDescendant(withText(R.string.job_progress_item_see_details)),
+        )))
 
         // Dismiss the first item.
         onView(allOf(withId(R.id.job_progress_item_dismiss), hasSibling(withText(progress1.msg))))

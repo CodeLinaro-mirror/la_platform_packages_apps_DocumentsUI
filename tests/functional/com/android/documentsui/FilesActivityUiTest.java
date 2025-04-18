@@ -20,7 +20,6 @@ import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
-import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -63,7 +62,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule()
                     .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
-                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, "ChildDir1")
+                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, TestFilesRule.CHILD_DIR_1)
                     .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
                     .createFileInRoot(ROOT_0_ID, "file1.png", "image/png")
                     .createFileInRoot(ROOT_0_ID, "file2.csv", "text/csv")
@@ -135,7 +134,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testRootClick_SetsWindowTitle() throws Exception {
         bots.roots.openRoot("Images");
         bots.main.assertWindowTitle("Images");
@@ -179,15 +178,15 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testNavigate_byBreadcrumb() throws Exception {
-        bots.directory.openDocument(dirName1);
-        bots.directory.waitForDocument(childDir1);  // wait for known content
-        bots.directory.assertDocumentsPresent(childDir1);
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
+        bots.directory.waitForDocument(TestFilesRule.CHILD_DIR_1);  // wait for known content
+        bots.directory.assertDocumentsPresent(TestFilesRule.CHILD_DIR_1);
 
         device.waitForIdle();
-        bots.breadcrumb.assertItemsPresent(dirName1, "TEST_ROOT_0");
+        bots.breadcrumb.assertItemsPresent(TestFilesRule.DIR_NAME_1, "TEST_ROOT_0");
 
         bots.breadcrumb.clickItem("TEST_ROOT_0");
-        bots.directory.waitForDocument(dirName1);
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
     }
 
     @Test
@@ -216,7 +215,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testRootChange_UpdatesSortHeader() throws Exception {
 
         // switch to separate display modes for two separate roots. Each

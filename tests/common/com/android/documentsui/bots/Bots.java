@@ -50,7 +50,6 @@ public final class Bots {
     public final UiBot main;
     public final InspectorBot inspector;
     public final NotificationsBot notifications;
-    public final PeekBot peek;
 
     public Bots(UiDevice device, UiAutomation automation, Context context, int timeout) {
         main = new UiBot(device, context, TIMEOUT);
@@ -64,7 +63,6 @@ public final class Bots {
         menu = new MenuBot(device, context, TIMEOUT);
         inspector = new InspectorBot(device, context, TIMEOUT);
         notifications = new NotificationsBot(device, context, TIMEOUT);
-        peek = new PeekBot(device, context, TIMEOUT);
     }
 
     /**
