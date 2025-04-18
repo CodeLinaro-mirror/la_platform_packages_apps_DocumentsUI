@@ -20,7 +20,6 @@ import android.app.UiAutomation
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.os.RemoteException
 import android.provider.DocumentsContract
 import android.view.KeyEvent
@@ -54,7 +53,9 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @JvmField
     var context: Context? = null
-    var userId: UserId? = null
+
+    @JvmField
+    protected var userId: UserId? = null
     var automation: UiAutomation? = null
 
     @JvmField
@@ -126,24 +127,18 @@ abstract class ActivityTestJunit4<T : Activity?> {
         disableScreenOffAndSleepTimeouts()
 
         setupTestingRoots()
-
         launchActivity()
-        resetStorage()
 
         // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will
         // automatically open for phone devices. Espresso register click() as (x, y) MotionEvents,
         // so if a drawer is on top of a file we want to select, it will actually click the drawer.
         // Thus to start a clean state, we always try to close first.
         bots!!.roots!!.closeDrawer()
-
-        // Configure the provider back to default.
-        mDocsHelper!!.configure(null, Bundle.EMPTY)
     }
 
     @After
     fun tearDown() {
         device!!.unfreezeRotation()
-        mDocsHelper!!.cleanUp()
         restoreScreenOffAndSleepTimeouts()
         mActivityScenario!!.close()
     }
@@ -163,7 +158,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @Throws(RemoteException::class)
     protected fun resetStorage() {
-        mDocsHelper!!.clear(null, null)
         device!!.waitForIdle()
     }
 

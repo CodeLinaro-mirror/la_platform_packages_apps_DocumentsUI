@@ -35,6 +35,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
+import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
@@ -84,6 +85,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val progress = MutableJobProgress(
             id = "jobId1",
+            operationType = FileOperationService.OPERATION_COPY,
             state = Job.STATE_SET_UP,
             msg = "Job started",
             hasFailures = false,
@@ -106,12 +108,14 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     fun testJobPanelItemDismiss() {
         val progress1 = MutableJobProgress(
             id = "jobId1",
+            operationType = FileOperationService.OPERATION_EXTRACT,
             state = Job.STATE_COMPLETED,
             msg = "Job1 completed",
             hasFailures = false,
         )
         val progress2 = MutableJobProgress(
             id = "jobId2",
+            operationType = FileOperationService.OPERATION_MOVE,
             state = Job.STATE_COMPLETED,
             msg = "Job2 completed",
             hasFailures = false,
