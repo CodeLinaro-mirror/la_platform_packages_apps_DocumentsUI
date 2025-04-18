@@ -22,20 +22,24 @@
     android:layout_height="match_parent"
     android:background="@color/peek_overlay_scrim"
     android:clickable="true"
-    android:focusable="false" >
+    android:focusable="false">
+
+    <com.android.documentsui.peek.RenderView
+        android:id="@+id/peek_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <!-- Text and icons using android:white because the underlying black scrim doesn't dynamically
     change colour. -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/peek_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="@dimen/space_extra_small_4"
-        android:paddingEnd="@dimen/space_extra_small_4"
         android:background="@color/peek_topbar_scrim"
-        app:titleMarginStart="@dimen/space_extra_small_2"
-        app:titleTextAppearance="?attr/textAppearanceTitleMedium"
-        app:titleTextColor="@android:color/white"
+        android:paddingEnd="@dimen/space_extra_small_4"
+        android:paddingStart="@dimen/space_extra_small_4"
         app:navigationContentDescription="@string/a11y_peek_navigation_icon"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="@android:color/white" />
+        app:navigationIconTint="@android:color/white"
+        app:titleMarginStart="@dimen/space_extra_small_2"
+        app:titleTextAppearance="@style/PeekTopBarTitleText" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
