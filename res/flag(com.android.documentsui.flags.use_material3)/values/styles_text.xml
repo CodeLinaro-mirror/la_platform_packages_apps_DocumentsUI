@@ -14,53 +14,88 @@
      limitations under the License.
 -->
 <resources>
-    <style name="SectionHeader" parent="@style/TextAppearance.Material3.TitleMedium">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textAllCaps">true</item>
+    <style name="TextAppearance.DocumentsUI.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
-        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="SortList" parent="@style/TextAppearance.Material3.BodyLarge">
+    <style name="SortList" parent="@style/TextAppearance.DocumentsUI.BodyLarge">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <!-- TODO(b/377770698): search -->
     <style name="SearchBarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="android:textSize">@dimen/search_bar_text_size</item>
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="SearchChipText" parent="@style/TextAppearance.Material3.LabelLarge">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
+    <style name="SearchChipText" parent="@style/TextAppearance.DocumentsUI.LabelLarge" />
 
-    <style name="AppsRowTitle" parent="@style/TextAppearance.Material3.LabelMedium">
+    <style name="AppsRowTitle" parent="@style/TextAppearance.DocumentsUI.LabelMedium">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="AppsItemSubText" parent="@style/TextAppearance.Material3.LabelSmall">
+    <style name="AppsItemSubText" parent="@style/TextAppearance.DocumentsUI.LabelSmall">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <!-- TODO(b/377770698): search -->
     <style name="AutoCompleteText" parent="@style/TextAppearance.AppCompat.Medium">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched.
+        This is currently only used in item_dir_grid, which will be removed after use_material3.
+    -->
     <style name="CardPrimaryText" parent="@style/TextAppearance.AppCompat.Subhead">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="ActionModeTitle" parent="@style/ToolbarTitle">
-        <item name="android:textSize">@dimen/action_mode_text_size</item>
-    </style>
-
-    <style name="ToolbarTitle" parent="@style/TextAppearance.Material3.TitleLarge">
+    <style name="ToolbarTitle" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
@@ -69,92 +104,71 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuPrimary" parent="@style/TextAppearance.Material3.LabelLarge">
+    <style name="DrawerMenuPrimary" parent="@style/TextAppearance.DocumentsUI.LabelLarge">
         <item name="android:textColor">@color/item_root_primary_text</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuSecondary" parent="@style/TextAppearance.Material3.BodySmall">
+    <style name="DrawerMenuSecondary" parent="@style/TextAppearance.DocumentsUI.BodySmall">
         <item name="android:textColor">@color/item_root_secondary_text</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- TODO(b/377770698): peek -->
     <style name="InspectorKeySubTitle" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
-    <style name="MaterialButtonTextAppearance" parent="@style/TextAppearance.Material3.LabelLarge">
+    <style name="MaterialButtonTextAppearance" parent="@style/TextAppearance.DocumentsUI.LabelLarge">
         <item name="android:textAllCaps">@bool/config_button_all_caps</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="BreadcrumbText" parent="@style/TextAppearance.Material3.TitleSmall">
+    <style name="BreadcrumbText" parent="@style/TextAppearance.DocumentsUI.TitleSmall">
         <item name="android:textColor">@color/horizontal_breadcrumb_color</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="EmptyStateTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+    <style name="EmptyStateTitleText" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="EmptyStateMessageText" parent="@style/TextAppearance.Material3.BodyMedium">
+    <style name="EmptyStateMessageText" parent="@style/TextAppearance.DocumentsUI.BodyMedium">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="TabTextAppearance" parent="@style/TextAppearance.Material3.TitleSmall">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
+    <style name="TabTextAppearance" parent="@style/TextAppearance.DocumentsUI.TitleSmall" />
 
-    <style name="FileItemLabelText" parent="@style/TextAppearance.Material3.TitleSmall">
+    <style name="FileItemLabelText" parent="@style/TextAppearance.DocumentsUI.TitleSmall">
         <item name="android:textColor">@color/doc_list_item_label_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="ItemCaptionText" parent="@style/TextAppearance.Material3.LabelSmall">
+    <style name="ItemCaptionText" parent="@style/TextAppearance.DocumentsUI.LabelSmall">
         <item name="android:textColor">@color/doc_list_item_subtitle_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="MenuItemTextAppearance" parent="@style/TextAppearance.Material3.LabelLarge">
+    <style name="MenuItemTextAppearance" parent="@style/TextAppearance.DocumentsUI.LabelLarge">
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="Subhead" parent="@style/TextAppearance.Material3.BodyLarge">
-        <item name="fontFamily">@string/config_fontFamily</item>
-    </style>
+    <style name="Subhead" parent="@style/TextAppearance.DocumentsUI.BodyLarge" />
 
-    <style name="NavRailItemTextAppearance" parent="@style/TextAppearance.Material3.LabelMedium">
-        <item name="fontFamily">@string/config_fontFamily</item>
-    </style>
+    <style name="NavRailItemTextAppearance" parent="@style/TextAppearance.DocumentsUI.LabelMedium" />
 
     <style name="ListTableHeaderText" parent="@style/TextAppearance.Material3.TitleSmall.Emphasized">
-        <item name="fontFamily">@string/config_fontFamily</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DragBadgeText" parent="@style/TextAppearance.Material3.TitleSmall">
+    <style name="DragBadgeText" parent="@style/TextAppearance.DocumentsUI.TitleSmall">
         <item name="android:textColor">@color/drag_content_text_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="DragCounterText" parent="@style/TextAppearance.Material3.LabelMedium">
+    <style name="DragCounterText" parent="@style/TextAppearance.DocumentsUI.LabelMedium">
         <item name="android:textColor">@color/drag_file_counter_text_color</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="JobProgressPanelHeaderText" parent="@style/TextAppearance.Material3.TitleMedium">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
+    <style name="JobProgressPanelHeaderText" parent="@style/TextAppearance.DocumentsUI.TitleMedium" />
 
-    <style name="JobProgressItemTitleText" parent="@style/TextAppearance.Material3.TitleSmall">
-        <item name="fontFamily">@string/config_fontFamily</item>
-    </style>
+    <style name="JobProgressItemTitleText" parent="@style/TextAppearance.DocumentsUI.TitleSmall" />
 
-    <style name="JobProgressItemStatusText" parent="@style/TextAppearance.Material3.LabelMedium">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
+    <style name="JobProgressItemStatusText" parent="@style/TextAppearance.DocumentsUI.LabelMedium" />
 
     <style name="JobProgressItemStatusText.Success">
         <item name="android:textColor">@color/success</item>
@@ -164,36 +178,32 @@
         <item name="android:textColor">?attr/colorError</item>
     </style>
 
-    <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.Material3.LabelLarge">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
+    <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.DocumentsUI.LabelLarge" />
 
+    <!-- Headline Small -->
     <style name="MaterialAlertDialogTitleStyle" parent="@style/MaterialAlertDialog.Material3.Title.Text">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
+    <!-- Body Medium -->
     <style name="MaterialAlertDialogBodyStyle" parent="@style/MaterialAlertDialog.Material3.Body.Text">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="BannerTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+    <style name="BannerTitleText" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="BannerSubtitleText" parent="@style/TextAppearance.Material3.BodyMedium">
+    <style name="BannerSubtitleText" parent="@style/TextAppearance.DocumentsUI.BodyMedium">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="BannerMessageText" parent="@style/TextAppearance.Material3.BodyMedium">
+    <style name="BannerMessageText" parent="@style/TextAppearance.DocumentsUI.BodyMedium">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
     </style>
 
-    <style name="PeekTopBarTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+    <style name="PeekTopBarTitleText" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="android:textColor">@android:color/white</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="PeekNoPreviewLabelText" parent="@style/TextAppearance.Material3.LabelLarge.Emphasized">

@@ -97,7 +97,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
         if (selected) {
             bots.main.clickDelete();
             device.waitForIdle();
-            bots.main.clickNonTextDialogOkButton();
+            bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         }
     }
 }

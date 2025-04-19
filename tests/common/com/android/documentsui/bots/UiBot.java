@@ -304,33 +304,29 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /** Clicks the OK button on a dialog. */
-    public void clickNonTextDialogOkButton() {
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
-        okButton.click();
-    }
-
-    /**
-     * Clicks the OK button on a dialog and attempts to close the soft keyboard.
-     * TODO(b/405807817): Merge this with the above method and update callers.
-     */
-    public void clickDialogOkButton() {
-        // Espresso has flaky results when keyboard shows up, so hiding it for now
-        // before trying to click on any dialog button
-        Espresso.closeSoftKeyboard();
+    public void clickDialogOkButton(boolean closeSoftKeyboard) {
+        // On dialogs with no text input, a soft keyboard doesn't show up at all and attempting to
+        // close it causes failures. Let's be intentional about the closure only on dialogs which
+        // have text input.
+        if (closeSoftKeyboard) {
+            // Espresso has flaky results when keyboard shows up, so hiding it for now
+            // before trying to click on any dialog button
+            Espresso.closeSoftKeyboard();
+        }
         UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
         okButton.click();
     }
 
     /** Clicks the Cancel button on a dialog. */
-    public void clickNonTextDialogCancelButton() {
-        UiObject2 cancelButton = mDevice.findObject(By.res("android:id/button2"));
-        cancelButton.click();
-    }
-
-    public void clickDialogCancelButton() throws UiObjectNotFoundException {
-        // Espresso has flaky results when keyboard shows up, so hiding it for now
-        // before trying to click on any dialog button
-        Espresso.closeSoftKeyboard();
+    public void clickDialogCancelButton(boolean closeSoftKeyboard) {
+        // On dialogs with no text input, a soft keyboard doesn't show up at all and attempting to
+        // close it causes failures. Let's be intentional about the closure only on dialogs which
+        // have text input.
+        if (closeSoftKeyboard) {
+            // Espresso has flaky results when keyboard shows up, so hiding it for now
+            // before trying to click on any dialog button
+            Espresso.closeSoftKeyboard();
+        }
         UiObject2 okButton = mDevice.findObject(By.res("android:id/button2"));
         okButton.click();
     }
