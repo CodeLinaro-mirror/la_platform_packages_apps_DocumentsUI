@@ -308,6 +308,7 @@ public class FileOperationService extends Service implements Job.Listener {
             if (record != null) {
                 record.job.cancel();
                 updateForegroundState(record.job);
+                onFinished(record.job);
             }
         }
 
@@ -428,11 +429,16 @@ public class FileOperationService extends Service implements Job.Listener {
         if (DEBUG) {
             Log.d(TAG, "onFinished: " + job.id);
         }
-        if (mVisualSignalsEnabled) {
-            mJobMonitor.sendProgress();
-        }
 
         synchronized (mJobs) {
+            if (!mJobs.containsKey(job.id)) {
+                return;
+            }
+
+            if (mVisualSignalsEnabled) {
+                mJobMonitor.sendProgress();
+            }
+
             // Delete the job from mJobs first to avoid this job being selected as the foreground
             // task again if we need to swap the foreground job.
             deleteJob(job);
@@ -476,9 +482,11 @@ public class FileOperationService extends Service implements Job.Listener {
                 }
 
                 notificationManager.cancel(candidate.id, NOTIFICATION_ID_PROGRESS);
-                Notification notification = (candidate.getState() == Job.STATE_STARTED)
-                        ? candidate.getSetupNotification()
-                        : candidate.getProgressNotification();
+                var jobState = candidate.getState();
+                Notification notification =
+                        (jobState == Job.STATE_CREATED || jobState == Job.STATE_STARTED)
+                                ? candidate.getSetupNotification()
+                                : candidate.getProgressNotification();
                 notificationManager.notify(NOTIFICATION_ID_PROGRESS, notification);
             }
         }
