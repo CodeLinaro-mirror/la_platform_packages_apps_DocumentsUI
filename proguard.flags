@@ -118,6 +118,7 @@
   int option_menu_settings;
   int option_menu_show_hidden_files;
   int option_menu_sort;
+  int peek_container;
   int root_menu_eject_root;
   int root_menu_open_in_new_window;
   int root_menu_paste_into_folder;

@@ -188,19 +188,21 @@ public class ReadableArchive extends Archive {
     }
 
     /**
-     * Creates a DocumentsArchive instance for opening, browsing and accessing
-     * documents within the archive passed as a file descriptor.
+     * Creates a ReadableArchive instance for opening, browsing and accessing documents within
+     * the archive passed as a file descriptor.
      * <p>
      * If the file descriptor is not seekable, then a snapshot will be created.
      * </p><p>
      * This method takes ownership for the passed descriptor. The caller must
      * not use it after passing.
      * </p>
-     * @param context Context of the provider.
-     * @param descriptor File descriptor for the archive's contents.
-     * @param archiveUri Uri of the archive document.
-     * @param accessMode Access mode for the archive {@see ParcelFileDescriptor}.
-     * @param notificationUri notificationUri Uri for notifying that the archive file has changed.
+     *
+     * @param context         Context of the provider.
+     * @param descriptor      File descriptor for the archive's contents.
+     * @param archiveUri      URI of the archive document.
+     * @param archiveMimeType MIME type of the archive document.
+     * @param accessMode      Access mode for the archive {@see ParcelFileDescriptor}.
+     * @param notificationUri URI for notifying that the archive file has changed.
      */
     public static ReadableArchive createForParcelFileDescriptor(
             Context context, ParcelFileDescriptor descriptor, Uri archiveUri,

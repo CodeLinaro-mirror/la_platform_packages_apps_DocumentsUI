@@ -19,6 +19,7 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -51,8 +52,9 @@ import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
 import com.android.modules.utils.build.SdkLevel;
 
+import com.google.android.material.imageview.ShapeableImageView;
+
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * A class to assist with loading and managing the Images (i.e. thumbnails and icons) associated
@@ -73,6 +75,8 @@ public class IconHelper {
     private final UserId mManagedUser;
     private final UserManagerState mUserManagerState;
     private final ConfigStore mConfigStore;
+    // It will be 0 when use_material3 flag is OFF.
+    private final int mThumbnailStrokeWidth;
 
     /**
      * @param mode MODE_GRID or MODE_LIST
@@ -97,6 +101,12 @@ public class IconHelper {
         mMaybeShowBadge = maybeShowBadge;
         mUserManagerState = userManagerState;
         mConfigStore = configStore;
+        if (isUseMaterial3FlagEnabled()) {
+            mThumbnailStrokeWidth =
+                    context.getResources().getDimensionPixelSize(R.dimen.thumbnail_border_width);
+        } else {
+            mThumbnailStrokeWidth = 0;
+        }
     }
 
     /**
@@ -152,18 +162,14 @@ public class IconHelper {
      * @param iconThumb   The itemview's thumbnail icon.
      * @param iconMime    The itemview's mime icon. Hidden when iconThumb is shown.
      * @param subIconMime The second itemview's mime icon. Always visible.
-     * @param thumbnailLoadedCallback The callback function which will be invoked after the
-     *                                thumbnail is loaded, with a boolean parameter to indicate
-     *                                if it's loaded or not.
      */
     public void load(
             DocumentInfo doc,
             ImageView iconThumb,
             ImageView iconMime,
-            @Nullable ImageView subIconMime,
-            @Nullable Consumer<Boolean> thumbnailLoadedCallback) {
+            @Nullable ImageView subIconMime) {
         load(doc.derivedUri, doc.userId, doc.mimeType, doc.flags, doc.icon, doc.lastModified,
-                iconThumb, iconMime, subIconMime, thumbnailLoadedCallback);
+                iconThumb, iconMime, subIconMime);
     }
 
     /**
@@ -177,13 +183,10 @@ public class IconHelper {
      * @param iconThumb       The itemview's thumbnail icon.
      * @param iconMime        The itemview's mime icon. Hidden when iconThumb is shown.
      * @param subIconMime     The second itemview's mime icon. Always visible.
-     * @param thumbnailLoadedCallback The callback function which will be invoked after the
-     *                                thumbnail is loaded, with a boolean parameter to indicate
-     *                                if it's loaded or not.
      */
     public void load(Uri uri, UserId userId, String mimeType, int docFlags, int docIcon,
             long docLastModified, ImageView iconThumb, ImageView iconMime,
-            @Nullable ImageView subIconMime, @Nullable Consumer<Boolean> thumbnailLoadedCallback) {
+            @Nullable ImageView subIconMime) {
         boolean loadedThumbnail = false;
 
         final String docAuthority = uri.getAuthority();
@@ -194,14 +197,7 @@ public class IconHelper {
         final boolean showThumbnail = supportsThumbnail && allowThumbnail && mThumbnailsEnabled;
         if (showThumbnail) {
             loadedThumbnail =
-                    loadThumbnail(
-                            uri,
-                            userId,
-                            docAuthority,
-                            docLastModified,
-                            iconThumb,
-                            iconMime,
-                            thumbnailLoadedCallback);
+                    loadThumbnail(uri, userId, docAuthority, docLastModified, iconThumb, iconMime);
         }
 
         final Drawable mimeIcon = getDocumentIcon(mContext, userId, docAuthority,
@@ -217,21 +213,22 @@ public class IconHelper {
             setMimeIcon(iconMime, mimeIcon);
             hideImageView(iconThumb);
         }
-        if (thumbnailLoadedCallback != null) {
-            thumbnailLoadedCallback.accept(loadedThumbnail);
+        if (isUseMaterial3FlagEnabled()) {
+            ((ShapeableImageView) iconThumb)
+                    .setStrokeWidth(loadedThumbnail ? mThumbnailStrokeWidth : 0);
         }
     }
 
     private boolean loadThumbnail(Uri uri, UserId userId, String docAuthority, long docLastModified,
-            ImageView iconThumb, ImageView iconMime,
-            @Nullable Consumer<Boolean> thumbnailLoadedCallback) {
+            ImageView iconThumb, ImageView iconMime) {
         final Result result = mThumbnailCache.getThumbnail(uri, userId, mCurrentSize);
 
         try {
             final Bitmap cachedThumbnail = result.getThumbnail();
             iconThumb.setImageBitmap(cachedThumbnail);
-            if (thumbnailLoadedCallback != null) {
-                thumbnailLoadedCallback.accept(cachedThumbnail != null);
+            if (isUseMaterial3FlagEnabled()) {
+                ((ShapeableImageView) iconThumb)
+                        .setStrokeWidth(cachedThumbnail != null ? mThumbnailStrokeWidth : 0);
             }
 
             boolean stale = (docLastModified > result.getLastModified());
@@ -252,8 +249,9 @@ public class IconHelper {
                                 iconThumb.setImageBitmap(bitmap);
                                 animator.accept(iconMime, iconThumb);
                             }
-                            if (thumbnailLoadedCallback != null) {
-                                thumbnailLoadedCallback.accept(bitmap != null);
+                            if (isUseMaterial3FlagEnabled()) {
+                                ((ShapeableImageView) iconThumb)
+                                        .setStrokeWidth(bitmap != null ? mThumbnailStrokeWidth : 0);
                             }
                         }, true /* addToCache */);
 

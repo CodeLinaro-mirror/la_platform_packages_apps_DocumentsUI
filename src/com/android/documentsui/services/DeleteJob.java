@@ -97,11 +97,6 @@ final class DeleteJob extends ResolvedResourcesJob {
                 R.plurals.delete_error_notification_title, R.drawable.ic_menu_delete);
     }
 
-    @Override
-    Notification getWarningNotification() {
-        throw new UnsupportedOperationException();
-    }
-
     private String getProgressMessage() {
         switch (getState()) {
             case Job.STATE_SET_UP:
@@ -125,6 +120,7 @@ final class DeleteJob extends ResolvedResourcesJob {
     JobProgress getJobProgress() {
         return new JobProgress(
                 id,
+                operationType,
                 getState(),
                 getProgressMessage(),
                 hasFailures());

@@ -238,6 +238,7 @@ public class UiBot extends Bots.BaseBot {
         } else {
             onView(ACTIONBAR_OVERFLOW).perform(click());
         }
+        mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
     }
@@ -318,6 +319,12 @@ public class UiBot extends Bots.BaseBot {
         Espresso.closeSoftKeyboard();
         UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
         okButton.click();
+    }
+
+    /** Clicks the Cancel button on a dialog. */
+    public void clickNonTextDialogCancelButton() {
+        UiObject2 cancelButton = mDevice.findObject(By.res("android:id/button2"));
+        cancelButton.click();
     }
 
     public void clickDialogCancelButton() throws UiObjectNotFoundException {

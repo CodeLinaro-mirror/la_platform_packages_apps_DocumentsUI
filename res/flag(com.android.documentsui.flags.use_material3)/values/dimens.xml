@@ -26,7 +26,6 @@
     <dimen name="icon_size">40dp</dimen>
     <dimen name="button_touch_size">48dp</dimen>
     <dimen name="root_icon_size">24dp</dimen>
-    <dimen name="thumbnail_clip_corner_radius">6dp</dimen>
     <dimen name="thumbnail_border_width">1dp</dimen>
     <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="root_icon_margin">0dp</dimen>
@@ -38,6 +37,7 @@
     <dimen name="check_icon_size">20dp</dimen>
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
+    <dimen name="list_item_thumbnail_corner_radius">8dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="progress_bar_height">4dp</dimen>
@@ -87,6 +87,7 @@
     <dimen name="grid_item_nameplate_marginTop">@dimen/space_extra_small_2</dimen>
     <dimen name="grid_item_nameplate_radius">8dp</dimen>
     <dimen name="grid_item_nameplate_inner_radius">4dp</dimen>
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="grid_item_elevation">2dp</dimen>
     <dimen name="grid_item_radius">12dp</dimen>
     <dimen name="max_drawer_width">280dp</dimen>
@@ -209,18 +210,16 @@
     <dimen name="dialog_content_padding_top">@dimen/space_small_1</dimen>
     <dimen name="dialog_content_padding_bottom">@dimen/space_small_4</dimen>
 
-    <dimen name="apps_row_title_height">48dp</dimen>
-    <dimen name="apps_row_title_padding_start">24dp</dimen>
-    <dimen name="apps_row_item_width">92dp</dimen>
-    <dimen name="apps_row_item_height">82dp</dimen>
-    <dimen name="apps_row_app_icon_size">32dp</dimen>
-    <dimen name="apps_row_app_icon_margin_horizontal">30dp</dimen>
-    <dimen name="apps_row_app_icon_margin_top">6dp</dimen>
-    <dimen name="apps_row_app_icon_margin_bottom">10dp</dimen>
-    <dimen name="apps_row_exit_icon_size">12dp</dimen>
+    <dimen name="apps_row_item_width">96dp</dimen>
+    <dimen name="apps_row_app_icon_size">24dp</dimen>
     <dimen name="apps_row_exit_icon_margin_top">2dp</dimen>
     <dimen name="apps_row_exit_icon_margin_bottom">6dp</dimen>
-    <dimen name="apps_row_item_text_margin_horizontal">8dp</dimen>
+    <dimen name="apps_row_item_padding_horizontal">8dp</dimen>
+    <dimen name="apps_row_margin_vertical">@dimen/space_extra_small_4</dimen>
+    <dimen name="apps_row_margin_horizontal">@dimen/space_small_1</dimen>
+    <dimen name="apps_row_padding">@dimen/space_extra_small_4</dimen>
+    <dimen name="apps_row_app_icon_margin_vertical">@dimen/space_extra_small_4</dimen>
+    <dimen name="apps_row_title_padding">@dimen/space_extra_small_4</dimen>
 
     <dimen name="profile_tab_radius">12dp</dimen>
 

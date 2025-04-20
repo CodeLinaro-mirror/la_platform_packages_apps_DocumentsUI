@@ -18,7 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
-import static com.android.documentsui.flags.Flags.FLAG_HIDE_ROOTS_ON_DESKTOP_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import android.content.pm.PackageManager;
 import android.platform.test.annotations.RequiresFlagsDisabled;
@@ -32,6 +32,7 @@ import androidx.test.filters.LargeTest;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,6 +45,9 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
+    @Rule
+    public final TestFilesRule mTestFilesRule = new TestFilesRule(/* skipCreation */ true);
+
     @Override
     protected RootInfo getInitialRoot() {
         return null;  // test the default, unaffected state of the app.
@@ -54,7 +58,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     public void testNavigate_FromEmptyDirectory() throws Exception {
         device.waitForIdle();
 
-        bots.roots.openRoot(rootDir0.title);
+        bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
 
         String msg = String.valueOf(context.getString(R.string.empty));
         bots.directory.assertPlaceholderMessageText(msg);
@@ -65,8 +69,8 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
-    public void testDefaultRoots_hideRootsOnDesktopFlagDisabled() throws Exception {
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    public void testDefaultRoots_useMaterial3FlagDisabled() throws Exception {
         device.waitForIdle();
 
         // Should also have Drive, but that requires pre-configuration of devices
@@ -82,8 +86,8 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
 
     @Test
     @HugeLongTest
-    @RequiresFlagsEnabled(FLAG_HIDE_ROOTS_ON_DESKTOP_RO)
-    public void testDefaultRoots_hideRootsOnDesktopFlagEnabled() throws Exception {
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testDefaultRoots_useMaterial3FlagEnabled() throws Exception {
         device.waitForIdle();
 
         String[] expectedRoots;

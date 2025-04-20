@@ -19,7 +19,6 @@ package com.android.documentsui.sidebar;
 import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.util.FlagUtils.isHideRootsOnDesktopFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.admin.DevicePolicyManager;
@@ -481,14 +480,13 @@ public class RootsFragment extends Fragment {
 
             if (root.isExternalStorageHome()) {
                 continue;
-            } else if (isHideRootsOnDesktopFlagEnabled()
+            } else if (isUseMaterial3FlagEnabled()
                     && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC)
                     && (root.isImages() || root.isVideos()
                     || root.isDocuments()
                     || root.isAudio())) {
                 // Hide Images/Videos/Documents/Audio roots on desktop.
                 Log.d(TAG, "Hiding " + root);
-                continue;
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
                         mUseRailAsContainer

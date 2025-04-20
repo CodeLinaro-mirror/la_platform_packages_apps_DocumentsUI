@@ -14,11 +14,6 @@
      limitations under the License.
 -->
 <resources>
-    <style name="SortTitle" parent="@style/TextAppearance.Material3.TitleLarge">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textSize">11sp</item>
-    </style>
-
     <style name="SectionHeader" parent="@style/TextAppearance.Material3.TitleMedium">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textAllCaps">true</item>
@@ -41,15 +36,14 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="AppsItemText">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:textSize">12sp</item>
-        <item name="fontFamily">@string/config_fontFamily</item>
+    <style name="AppsRowTitle" parent="@style/TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="AppsItemSubText">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-        <item name="android:textSize">11sp</item>
+    <style name="AppsItemSubText" parent="@style/TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="AutoCompleteText" parent="@style/TextAppearance.AppCompat.Medium">
@@ -70,10 +64,8 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuHeader" parent="@style/TextAppearance.Material3.BodyLarge">
-        <item name="android:textColor">?android:attr/textColorSecondary</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textSize">11sp</item>
+    <style name="DrawerMenuHeader" parent="@style/TextAppearance.Material3.TitleSmall.Emphasized">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
@@ -164,6 +156,14 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <style name="JobProgressItemStatusText.Success">
+        <item name="android:textColor">@color/job_progress_success</item>
+    </style>
+
+    <style name="JobProgressItemStatusText.Failure">
+        <item name="android:textColor">?attr/colorError</item>
+    </style>
+
     <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.Material3.LabelLarge">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
@@ -189,6 +189,16 @@
     <style name="BannerMessageText" parent="@style/TextAppearance.Material3.BodyMedium">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
         <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
+    <style name="PeekTopBarTitleText" parent="@style/TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+
+    <style name="PeekNoPreviewLabelText" parent="@style/TextAppearance.Material3.LabelLarge.Emphasized">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
 </resources>

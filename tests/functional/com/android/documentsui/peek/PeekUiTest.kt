@@ -15,18 +15,24 @@
  */
 package com.android.documentsui.peek
 
-import android.os.RemoteException
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
+import com.android.documentsui.StubProvider
+import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.rules.TestFilesRule
 import junit.framework.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -37,67 +43,63 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @RequiresFlagsEnabled(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO)
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
+    @get:Rule val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+
     @get:Rule
-    val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val testFilesRule: TestFilesRule =
+        TestFilesRule()
+            .createFileInRoot(StubProvider.ROOT_0_ID, "image.png", "image/png")
+            .createFileInRoot(StubProvider.ROOT_0_ID, "file0.log", "text/plain")
+
+    private lateinit var peekBot: PeekBot
 
     @Before
     fun setUpTest() {
-        initTestFiles()
-    }
-
-    @Throws(RemoteException::class)
-    private fun initTestFiles() {
-        mDocsHelper!!.createDocument(rootDir0, "image/png", "image.png")
-        mDocsHelper!!.createDocument(rootDir0, "text/plain", "file0.log")
+        peekBot = PeekBot(device!!, context!!, TIMEOUT)
     }
 
     fun validatePeekContents(fileName: String) {
-        bots!!.peek.waitForPeekActive()
-        bots!!.peek.assertHasTitle(fileName)
+        peekBot.assertPeekActive()
+        peekBot.assertHasTitle(fileName)
     }
 
     @Test
     @Throws(Exception::class)
     fun testSequentialFilePreview() {
-        bots!!.peek.assertPeekHidden()
-        bots!!.directory.selectDocument("image.png")
-        bots!!.main.clickActionItem("Get info")
-        bots!!.peek.waitForPeekActive()
-        bots!!.peek.assertHasTitle("image.png")
-        bots!!.peek.hide()
+        peekBot.assertPeekHidden()
+        bots.directory.selectDocument("image.png")
+        bots.main.clickActionItem("Get info")
+        validatePeekContents("image.png")
+        peekBot.hide()
 
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
-        bots!!.peek.waitForPeekActive()
-        bots!!.peek.assertHasTitle("file0.log")
-        bots!!.peek.hide()
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
+        validatePeekContents("file0.log")
+        peekBot.hide()
     }
 
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {
-        bots!!.peek.assertPeekHidden()
+        peekBot.assertPeekHidden()
         // Selecting a document should show the "1 selected" label.
-        bots!!.directory.selectDocument("image.png", 1)
-        bots!!.main.clickActionItem("Get info")
-        bots!!.peek.waitForPeekActive()
-        bots!!.peek.assertHasTitle("image.png")
+        bots.directory.selectDocument("image.png", 1)
+        bots.main.clickActionItem("Get info")
+        validatePeekContents("image.png")
         // The selection should not be possible, the "1 selected" label shouldn't show.
-        bots!!.directory.selectDocument("image.png")
+        bots.directory.selectDocument("image.png")
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
-        val selectionText: UiObject2? = device!!.wait(
-            Until.findObject(By.text(assertSelectionText)),
-            timeout
-        )
+        val selectionText: UiObject2? =
+            device!!.wait(Until.findObject(By.text(assertSelectionText)), timeout)
         Assert.assertNull(selectionText)
     }
 
     @Test
     @Throws(Exception::class)
     fun testRestorePeekActiveState() {
-        bots!!.directory.selectDocument("image.png")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("image.png")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
 
         // Recreate the activity (happens on window resize, for example), and ensure that the
@@ -105,14 +107,26 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         mActivityScenario!!.recreate()
         validatePeekContents("image.png")
 
-        bots!!.peek.hide()
+        peekBot.hide()
         mActivityScenario!!.recreate()
-        bots!!.peek.assertPeekHidden()
+        peekBot.assertPeekHidden()
 
-        bots!!.directory.selectDocument("file0.log")
-        bots!!.main.clickActionItem("Get info")
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
         mActivityScenario!!.recreate()
         validatePeekContents("file0.log")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testNoPreview() {
+        bots.directory.selectDocument("file0.log")
+        bots.main.clickActionItem("Get info")
+        validatePeekContents("file0.log")
+
+        // Use the "No preview available" content description to ensure that the "No preview" shape
+        // is showing.
+        onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
     }
 }

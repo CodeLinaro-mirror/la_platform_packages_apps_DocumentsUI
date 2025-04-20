@@ -53,11 +53,44 @@
         <item name="android:layout_margin">@dimen/search_bar_margin</item>
     </style>
 
-    <style name="CardViewStyle" parent="@style/Widget.Material3.CardView.Outlined">
-        <item name="cardBackgroundColor">@color/app_background_color</item>
+    <style name="ThumbnailCardViewStyle" parent="@style/Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLowest</item>
         <item name="cardPreventCornerOverlap">false</item>
         <item name="cardCornerRadius">@dimen/grid_item_radius</item>
-        <item name="cardElevation">@dimen/grid_item_elevation</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="ListThumbnailCardViewStyle" parent="@style/ThumbnailCardViewStyle">
+        <item name="cardCornerRadius">@dimen/list_item_thumbnail_corner_radius</item>
+    </style>
+
+    <style name="GridThumbnailCardViewStyle" parent="@style/ThumbnailCardViewStyle">
+        <item name="cardCornerRadius">@dimen/grid_item_radius</item>
+    </style>
+
+    <style name="ThumbnailImageViewStyle" parent="">
+        <item name="strokeColor">?attr/colorSecondaryContainer</item>
+        <!-- stroke width will be controlled dynamically in the code. -->
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="ListThumbnailImageViewStyle" parent="@style/ThumbnailImageViewStyle">
+        <item name="shapeAppearance">@style/ListThumbnailImageViewShapeAppearance</item>
+    </style>
+
+    <style name="GridThumbnailImageViewStyle" parent="@style/ThumbnailImageViewStyle">
+        <item name="shapeAppearance">@style/GridThumbnailImageViewShapeAppearance</item>
+    </style>
+
+    <style name="ListThumbnailImageViewShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/list_item_thumbnail_corner_radius</item>
+    </style>
+
+    <style name="GridThumbnailImageViewShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/grid_item_radius</item>
     </style>
 
     <style name="SnackbarButtonStyle" parent="@style/Widget.AppCompat.Button.Borderless">
@@ -181,12 +214,16 @@
     </style>
 
     <style name="NavRailItemStyle" parent="">
-        <item name="android:background">@drawable/nav_rail_item_background</item>
-        <item name="android:paddingVertical">6dp</item>
+        <!-- By default the nav rail item has a grey background when it's focused, but we need the
+        background to be put on the icon inside, thus the defaultFocusHighlightEnabled=false here.
+        -->
+        <item name="android:defaultFocusHighlightEnabled">false</item>
+        <item name="android:paddingHorizontal">@dimen/space_extra_small_4</item>
+        <item name="android:paddingVertical">@dimen/space_extra_small_3</item>
     </style>
 
     <style name="NavRailItemTextStyle" parent="">
-        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginTop">@dimen/space_extra_small_2</item>
         <item name="android:textColor">@color/nav_rail_item_text_color</item>
         <item name="android:textAppearance">@style/NavRailItemTextAppearance</item>
     </style>
@@ -198,8 +235,10 @@
 
     <style name="JobProgressItemCardStyle" parent="@style/Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
-        <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.ExtraSmall</item>
+        <item name="shapeAppearance">@style/JobProgressItemCardBaseShape</item>
     </style>
+
+    <style name="JobProgressItemCardBaseShape" parent="@style/ShapeAppearance.Material3.Corner.ExtraSmall" />
 
     <style name="JobProgressItemTitleStyle" parent="">
         <item name="android:textAppearance">@style/JobProgressItemTitleText</item>
