@@ -18,7 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="@dimen/grid_width"
-    android:layout_height="@dimen/grid_height"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/grid_item_margin"
     android:clickable="true"
     android:defaultFocusHighlightEnabled="false"
@@ -61,26 +61,56 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/preview_icon"
-        android:layout_width="@dimen/button_touch_size"
-        android:layout_height="@dimen/button_touch_size"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:clickable="true"
-        android:focusable="true"
-        android:pointerIcon="hand">
+        <ImageView
+            android:id="@+id/selection_circle"
+            android:layout_width="@dimen/button_container_size"
+            android:layout_height="@dimen/button_container_size"
+            android:layout_marginStart="@dimen/selection_circle_margin"
+            android:layout_marginTop="@dimen/selection_circle_margin"
+            android:layout_gravity="top|start"
+            android:background="@drawable/selection_circle"
+            android:contentDescription="@null"
+            android:elevation="0dp"
+            android:scaleType="center" />
 
         <ImageView
-            android:layout_width="@dimen/zoom_icon_size"
-            android:layout_height="@dimen/zoom_icon_size"
-            android:layout_gravity="center"
-            android:background="@drawable/circle_button_background"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_zoom_out" />
+            android:id="@+id/icon_check"
+            android:layout_width="@dimen/button_container_size"
+            android:layout_height="@dimen/button_container_size"
+            android:layout_gravity="top|start"
+            android:alpha="0"
+            android:background="@drawable/icon_check_background"
+            android:contentDescription="@null"
+            android:duplicateParentState="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_check_circle" />
+
+        <FrameLayout
+            android:id="@+id/preview_icon"
+            android:layout_width="@dimen/button_container_size"
+            android:layout_height="@dimen/button_container_size"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="@dimen/preview_icon_margin"
+            android:layout_marginTop="@dimen/preview_icon_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:pointerIcon="hand">
+
+                <!-- Black circle background -->
+                <ImageView
+                    android:layout_width="@dimen/preview_icon_circle_size"
+                    android:layout_height="@dimen/preview_icon_circle_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_button_background" />
+
+                <!-- White eye icon -->
+                <ImageView
+                    android:layout_width="@dimen/preview_icon_eye_size"
+                    android:layout_height="@dimen/preview_icon_eye_size"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_zoom_out" />
+
+        </FrameLayout>
 
     </FrameLayout>
 
@@ -89,7 +119,7 @@
     <LinearLayout
         android:id="@+id/nameplate"
         android:layout_width="@dimen/grid_item_nameplate_width"
-        android:layout_height="@dimen/grid_item_nameplate_height"
+        android:layout_height="wrap_content"
         android:layout_below="@id/thumbnail"
         android:layout_marginTop="@dimen/grid_item_nameplate_marginTop"
         android:background="@drawable/grid_nameplate_background"
