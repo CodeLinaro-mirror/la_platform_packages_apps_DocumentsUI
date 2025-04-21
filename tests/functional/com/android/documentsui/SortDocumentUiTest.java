@@ -27,6 +27,7 @@ import android.view.KeyEvent;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.sorting.SortDimension;
@@ -98,17 +99,17 @@ public class SortDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
      * @param sleep time to sleep in ms
      */
     private void initFiles(long sleep) throws Exception {
+        RootInfo root = mTestFilesRule.docsHelper.getRoot(StubProvider.ROOT_0_ID);
         for (int i = 0; i < FILES.length; ++i) {
             Uri uri =
-                    mTestFilesRule.docsHelper.createDocument(
-                            StubProvider.ROOT_0_ID, MIMES[i], FILES[i]);
+                    mTestFilesRule.docsHelper.createDocument(root, MIMES[i], FILES[i]);
             mTestFilesRule.docsHelper.writeDocument(uri, FILES[i].getBytes());
 
             Thread.sleep(sleep);
         }
 
         for (String dir : DIRS) {
-            mTestFilesRule.docsHelper.createFolder(StubProvider.ROOT_0_ID, dir);
+            mTestFilesRule.docsHelper.createFolder(root, dir);
 
             Thread.sleep(sleep);
         }

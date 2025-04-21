@@ -21,6 +21,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
 import android.provider.DocumentsContract
+import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.test.core.app.ActivityScenario
@@ -152,11 +153,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
         mActivityScenario = ActivityScenario.launch(intent)
     }
 
-    @Throws(RemoteException::class)
-    protected fun resetStorage() {
-        device!!.waitForIdle()
-    }
-
     @Throws(IOException::class)
     private fun disableScreenOffAndSleepTimeouts() {
         initialScreenOffTimeoutValue = device!!.executeShellCommand(
@@ -164,6 +160,11 @@ abstract class ActivityTestJunit4<T : Activity?> {
         )
         initialSleepTimeoutValue = device!!.executeShellCommand(
             "settings get secure sleep_timeout"
+        )
+        Log.w(
+            TAG,
+            """initialScreenOffTimeoutValue = '$initialScreenOffTimeoutValue'
+                |initialSleepTimeoutValue = '$initialSleepTimeoutValue'""".trimMargin()
         )
         device!!.executeShellCommand("settings put system screen_off_timeout -1")
         device!!.executeShellCommand("settings put secure sleep_timeout -1")
@@ -192,5 +193,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     companion object {
         const val TIMEOUT = 5000
+        const val TAG = "ActivityTestJunit4"
     }
 }
