@@ -235,7 +235,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
             SaveFragment.show(getSupportFragmentManager(), mimeType, title);
         } else if (mState.action == ACTION_OPEN_TREE ||
                 mState.action == ACTION_PICK_COPY_DESTINATION) {
-            PickFragment.show(getSupportFragmentManager());
+            PickDirectoryFragment.show(getSupportFragmentManager());
         } else if (!isUseMaterial3FlagEnabled()) {
             // If PickFragment or SaveFragment does not show,
             // Set save container background to transparent for edge to edge nav bar.
@@ -415,7 +415,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
         if (mState.action == ACTION_OPEN_TREE ||
                 mState.action == ACTION_PICK_COPY_DESTINATION) {
-            final PickFragment pick = PickFragment.get(fm);
+            final PickDirectoryFragment pick = PickDirectoryFragment.get(fm);
             if (pick != null) {
                 pick.setPickTarget(mState.action,
                         mState.copyOperationSubType, mState.restrictScopeStorage, cwd);
