@@ -14,6 +14,8 @@
 -->
 
 <resources>
+  <!-- ?attr/colorSurfaceContainer -->
+  <color name="app_background_color">@color/m3_ref_palette_dynamic_neutral_variant12</color>
   <!-- ?attr/colorPrimary -->
   <color name="primary">@android:color/system_accent1_200</color>
   <!-- ?attr/colorSurfaceContainerHigh -->
