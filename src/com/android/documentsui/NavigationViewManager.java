@@ -304,10 +304,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     public void update() {
-        // If use_material3 flag is ON, we don't want any scroll behavior, thus skipping this logic.
-        if (!isUseMaterial3FlagEnabled()) {
-            updateScrollFlag();
-        }
+        updateScrollFlag();
         updateToolbar();
         mProfileTabs.updateView();
 
