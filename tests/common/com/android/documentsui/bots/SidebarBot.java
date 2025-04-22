@@ -69,9 +69,10 @@ public class SidebarBot extends Bots.BaseBot {
         // We might need to expand drawer if not visible
         openDrawer();
 
-        final UiSelector rootsList = new UiSelector().resourceId(
-                mTargetPackage + ":id/container_roots").childSelector(
-                new UiSelector().resourceId(mRootListId));
+        final UiSelector rootsList =
+                new UiSelector()
+                        .resourceIdMatches(mTargetPackage + ":id/.*container_roots")
+                        .childSelector(new UiSelector().resourceId(mRootListId));
 
         // Wait for the first list item to appear
         new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
@@ -108,9 +109,12 @@ public class SidebarBot extends Bots.BaseBot {
     }
 
     public void openDrawer() throws UiObjectNotFoundException {
-        final UiSelector rootsList = new UiSelector().resourceId(
-                mTargetPackage + ":id/container_roots").childSelector(
-                new UiSelector().resourceId(mRootListId));
+        // Let's check for `nav_rail_container_roots` as well as `container_roots` to avoid opening
+        // the drawer in nav rail layout.
+        final UiSelector rootsList =
+                new UiSelector()
+                        .resourceIdMatches(mTargetPackage + ":id/.*container_roots")
+                        .childSelector(new UiSelector().resourceId(mRootListId));
 
         // We might need to expand drawer if not visible
         if (!new UiObject(rootsList).waitForExists(mTimeout)) {
