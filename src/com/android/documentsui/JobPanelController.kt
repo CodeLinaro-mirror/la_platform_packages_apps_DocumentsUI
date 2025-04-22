@@ -240,12 +240,12 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
         }
     }
 
-    private enum class State {
+    private enum class MenuIconState {
         INVISIBLE, INDETERMINATE, VISIBLE
     }
 
     /** The current state of the menu progress item. */
-    private var state = State.INVISIBLE
+    private var menuIconState = MenuIconState.INVISIBLE
 
     /** The total progress from 0 to MAX_PROGRESS. */
     private var totalProgress = 0
@@ -268,20 +268,20 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
     }
 
     private fun updateMenuItem(animate: Boolean) {
-        if (state == State.INVISIBLE) {
+        if (menuIconState == MenuIconState.INVISIBLE) {
             popup?.dismiss()
         }
 
         menuItem?.let {
-            Menus.setEnabledAndVisible(it, state != State.INVISIBLE)
+            Menus.setEnabledAndVisible(it, menuIconState != MenuIconState.INVISIBLE)
             val icon = it.actionView as ProgressBar
-            when (state) {
-                State.INDETERMINATE -> icon.isIndeterminate = true
-                State.VISIBLE -> icon.apply {
+            when (menuIconState) {
+                MenuIconState.INDETERMINATE -> icon.isIndeterminate = true
+                MenuIconState.VISIBLE -> icon.apply {
                     isIndeterminate = false
                     setProgress(totalProgress, animate)
                 }
-                State.INVISIBLE -> {}
+                MenuIconState.INVISIBLE -> {}
             }
         }
     }
@@ -339,9 +339,8 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
     }
 
     private fun updateProgress(progresses: List<JobProgress>) {
-        var requiredBytes = 0L
-        var currentBytes = 0L
-        var allFinished = true
+        var currentPercent = 0f
+        var allIndeterminate = true
 
         for (jobProgress in progresses) {
             Log.d(TAG, "Received $jobProgress")
@@ -350,25 +349,19 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
             }
         }
         for ((jobProgress, _) in currentJobs.values) {
-            if (jobProgress.state != Job.STATE_COMPLETED) {
-                allFinished = false
-            }
-            if (jobProgress.requiredBytes != -1L && jobProgress.currentBytes != -1L) {
-                requiredBytes += jobProgress.requiredBytes
-                currentBytes += jobProgress.currentBytes
+            if (!jobProgress.isIndeterminate) {
+                allIndeterminate = false
+                currentPercent += jobProgress.toPercent()
             }
         }
 
         if (currentJobs.isEmpty()) {
-            state = State.INVISIBLE
-        } else if (requiredBytes != 0L) {
-            state = State.VISIBLE
-            totalProgress = (MAX_PROGRESS * currentBytes / requiredBytes).toInt()
-        } else if (allFinished) {
-            state = State.VISIBLE
-            totalProgress = MAX_PROGRESS
+            menuIconState = MenuIconState.INVISIBLE
+        } else if (allIndeterminate) {
+            menuIconState = MenuIconState.INDETERMINATE
         } else {
-            state = State.INDETERMINATE
+            menuIconState = MenuIconState.VISIBLE
+            totalProgress = (currentPercent / currentJobs.size).toInt()
         }
         updateMenuItem(animate = true)
         progressListAdapter?.submitList(ArrayList(currentJobs.values))

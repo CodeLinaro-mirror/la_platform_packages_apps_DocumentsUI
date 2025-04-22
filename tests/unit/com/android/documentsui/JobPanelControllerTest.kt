@@ -143,7 +143,7 @@ class JobPanelControllerTest {
             msg = "Job started",
             hasFailures = false,
             currentBytes = 0,
-            requiredBytes = 40,
+            requiredBytes = 50,
             msRemaining = -1
         )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
@@ -161,7 +161,7 @@ class JobPanelControllerTest {
 
         assertTrue(menuItem.isVisible())
         assertTrue(menuItem.isEnabled())
-        assertEquals(8, progressBar.progress)
+        assertEquals(20, progressBar.progress)
 
         progress1.apply {
             state = Job.STATE_COMPLETED
@@ -172,7 +172,7 @@ class JobPanelControllerTest {
 
         assertTrue(menuItem.isVisible())
         assertTrue(menuItem.isEnabled())
-        assertEquals(20, progressBar.progress)
+        assertEquals(50, progressBar.progress)
 
         progress2.apply {
             state = Job.STATE_SET_UP
@@ -195,5 +195,39 @@ class JobPanelControllerTest {
         assertTrue(menuItem.isVisible())
         assertTrue(menuItem.isEnabled())
         assertEquals(100, progressBar.progress)
+    }
+
+    @Test
+    fun testIndeterminateJobs() {
+        val indeterminate = MutableJobProgress(
+            id = "indeterminate",
+            operationType = FileOperationService.OPERATION_MOVE,
+            state = Job.STATE_SET_UP,
+            msg = "Job started",
+            hasFailures = false,
+            currentBytes = -1,
+            requiredBytes = -1,
+            msRemaining = -1
+        )
+        val determinate = MutableJobProgress(
+            id = "determinate",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job started",
+            hasFailures = false,
+            currentBytes = 40,
+            requiredBytes = 100,
+            msRemaining = -1
+        )
+        sendProgress(arrayListOf(indeterminate.toJobProgress()))
+
+        assertTrue(menuItem.isVisible())
+        assertTrue(progressBar.isIndeterminate)
+
+        sendProgress(arrayListOf(indeterminate.toJobProgress(), determinate.toJobProgress()))
+
+        assertTrue(menuItem.isVisible())
+        assertFalse(progressBar.isIndeterminate)
+        assertEquals(20, progressBar.progress)
     }
 }
