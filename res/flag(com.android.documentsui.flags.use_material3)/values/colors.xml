@@ -17,15 +17,18 @@
   <!-- This is the window background, but also the background for anything
        else that needs to manually declare a background matching the "default"
        app background (e.g. the drawer overlay). -->
-
-  <color name="app_background_color">@android:color/white</color>
+  <!-- ?attr/colorSurfaceContainer -->
+  <color name="app_background_color">#F3EDF7</color>
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="background_floating">@android:color/white</color>
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="nav_bar_translucent">#99FFFFFF</color>
 
   <!-- ?attr/colorPrimary -->
   <color name="primary">#6750A4</color>
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="secondary">#E3F2FD</color> <!-- Blue 50 -->
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="hairline">#E0E0E0</color> <!-- Gray 300 -->
 
   <color name="success">#187231</color>
@@ -66,13 +69,20 @@
   <color name="band_select_background">?attr/colorPrimaryInverse</color>
   <color name="band_select_border">?attr/colorPrimaryContainer</color>
 
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched.
+       This is currently used in ic_launcher_downloads.xml (inside non flagged resource folder),
+       the XML file is not used anymore.
+   -->
   <color name="downloads_icon_background">#ff4688f2</color>
+  <!-- static color, the app icon background color in the launcher, window bar -->
   <color name="app_icon_background">#ff4688f2</color>
+  <!-- static color, used in the shortcut icons (triggered by long pressing the launcher icon) -->
   <color name="shortcut_foreground">#ff3367d6</color>
   <color name="shortcut_background">#fff5f5f5</color>
 
-  <color name="error_image_color">#757575</color>
+  <color name="error_image_color">?attr/colorPrimary</color>
 
+  <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
   <color name="list_divider_color">#1f000000</color>
 
   <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
