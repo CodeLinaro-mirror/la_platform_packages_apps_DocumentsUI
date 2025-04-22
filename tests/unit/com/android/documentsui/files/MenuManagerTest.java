@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -527,7 +528,7 @@ public final class MenuManagerTest {
         selectionDetails.containDirectories = false;
         mgr.inflateContextMenuForDocs(testMenu, inflater, selectionDetails);
 
-        assertEquals(R.menu.file_context_menu, inflater.lastInflatedMenuId);
+        assertEquals(getRes(R.menu.file_context_menu), inflater.lastInflatedMenuId);
     }
 
     @Test
@@ -538,7 +539,7 @@ public final class MenuManagerTest {
         selectionDetails.containDirectories = true;
         mgr.inflateContextMenuForDocs(testMenu, inflater, selectionDetails);
 
-        assertEquals(R.menu.dir_context_menu, inflater.lastInflatedMenuId);
+        assertEquals(getRes(R.menu.dir_context_menu), inflater.lastInflatedMenuId);
     }
 
     @Test
@@ -549,7 +550,7 @@ public final class MenuManagerTest {
         selectionDetails.containDirectories = true;
         mgr.inflateContextMenuForDocs(testMenu, inflater, selectionDetails);
 
-        assertEquals(R.menu.mixed_context_menu, inflater.lastInflatedMenuId);
+        assertEquals(getRes(R.menu.mixed_context_menu), inflater.lastInflatedMenuId);
     }
 
     @SuppressLint("VisibleForTests")
