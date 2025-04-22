@@ -17,10 +17,14 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static org.hamcrest.Matchers.allOf;
 
 import android.app.UiAutomation;
 import android.content.Context;
@@ -81,6 +85,26 @@ public class SidebarBot extends Bots.BaseBot {
         findRoot(label).click();
         // Close the drawer in case we select a pre-selected root already
         closeDrawer();
+    }
+
+    /** Open navigation root item from the navigation rail layout. */
+    public void openNavRailRoot(String label) throws UiObjectNotFoundException {
+        // Use UiScrollable to scroll into the view.
+        final UiSelector rootsList =
+                new UiSelector()
+                        .resourceId(mTargetPackage + ":id/nav_rail_container_roots")
+                        .childSelector(new UiSelector().resourceId(mRootListId));
+        new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
+        new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
+
+        // Use Espresso to click.
+        onView(allOf(withText(label), isDescendantOfA(withId(R.id.nav_rail_container_roots))))
+                .perform(click());
+    }
+
+    /** Open navigation drawer from the burger menu button within the navigation rail layout. */
+    public void openDrawerFromNavRail() {
+        onView(withId(R.id.nav_rail_burger_menu)).perform(click());
     }
 
     public void openDrawer() throws UiObjectNotFoundException {
