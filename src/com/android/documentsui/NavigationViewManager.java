@@ -304,10 +304,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     public void update() {
-        // If use_material3 flag is ON, we don't want any scroll behavior, thus skipping this logic.
-        if (!isUseMaterial3FlagEnabled()) {
-            updateScrollFlag();
-        }
+        updateScrollFlag();
         updateToolbar();
         mProfileTabs.updateView();
 
@@ -320,15 +317,11 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
 
         mDrawer.setTitle(mEnv.getDrawerTitle());
 
-        boolean showBurgerMenuOnToolbar = true;
-        if (isUseMaterial3FlagEnabled()) {
-            View navRailRoots = mActivity.findViewById(R.id.nav_rail_container_roots);
-            if (navRailRoots != null) {
-                // If nav rail exists, burger menu will show on the nav rail instead.
-                showBurgerMenuOnToolbar = false;
-            }
-        }
-
+        // Show burger menu on toolbar unless `use_material3` flag is on and the nav rail exists
+        // (the burger menu will show on the nav rail instead).
+        boolean showBurgerMenuOnToolbar =
+                !isUseMaterial3FlagEnabled()
+                        || mActivity.findViewById(R.id.nav_rail_container_roots) == null;
         if (showBurgerMenuOnToolbar) {
             mToolbar.setNavigationIcon(getActionBarIcon());
             mToolbar.setNavigationContentDescription(R.string.drawer_open);
@@ -337,18 +330,11 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
             mToolbar.setNavigationContentDescription(null);
         }
 
-        if ((!isUseMaterial3FlagEnabled() || !inSelectionMode()) && shouldShowSearchBar()) {
-            mBreadcrumb.show(false);
-            mToolbar.setTitle(null);
-            mSearchBarView.setVisibility(View.VISIBLE);
-            return;
-        }
-
-        mSearchBarView.setVisibility(View.GONE);
-
         if (isUseMaterial3FlagEnabled()) {
             updateActionMenu();
+
             if (inSelectionMode()) {
+                mSearchBarView.setVisibility(View.GONE);
                 final int quantity = mInjector.selectionMgr.getSelection().size();
                 final String title =
                         mToolbar.getContext()
@@ -362,6 +348,14 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
             }
         }
 
+        if (shouldShowSearchBar()) {
+            mBreadcrumb.show(false);
+            mToolbar.setTitle(null);
+            mSearchBarView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        mSearchBarView.setVisibility(View.GONE);
         String title =
                 mState.stack.size() <= 1 ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
