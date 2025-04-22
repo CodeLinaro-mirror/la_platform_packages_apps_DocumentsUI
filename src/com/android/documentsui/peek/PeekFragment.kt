@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.FileNotFoundException
 
@@ -57,9 +58,13 @@ class PeekFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.peek_layout, container, /* attachToRoot= */ false)
-        toolbar = view.findViewById(R.id.peek_toolbar)
-        previewFrame = view.findViewById(R.id.peek_preview)
+        val view = inflater.inflate(
+            getRes(R.layout.peek_layout),
+            container, /* attachToRoot= */
+            false
+        )
+        toolbar = view.findViewById(getRes(R.id.peek_toolbar))
+        previewFrame = view.findViewById(getRes(R.id.peek_preview))
 
         toolbar.setNavigationOnClickListener { clearAndHide() }
         return view

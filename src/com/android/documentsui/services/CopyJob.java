@@ -35,6 +35,7 @@ import static com.android.documentsui.services.FileOperationService.EXTRA_OPERAT
 import static com.android.documentsui.services.FileOperationService.MESSAGE_FINISH;
 import static com.android.documentsui.services.FileOperationService.MESSAGE_PROGRESS;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COPY;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -44,6 +45,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.icu.text.MessageFormat;
@@ -137,15 +139,15 @@ class CopyJob extends ResolvedResourcesJob {
     @Override
     Builder createProgressBuilder() {
         return super.createProgressBuilder(
-                service.getString(R.string.copy_notification_title),
-                R.drawable.ic_menu_copy,
+                service.getString(getRes(R.string.copy_notification_title)),
+                getRes(R.drawable.ic_menu_copy),
                 service.getString(android.R.string.cancel),
-                R.drawable.ic_cab_cancel);
+                getRes(R.drawable.ic_cab_cancel));
     }
 
     @Override
     public Notification getSetupNotification() {
-        return getSetupNotification(service.getString(R.string.copy_preparing));
+        return getSetupNotification(service.getString(getRes(R.string.copy_preparing)));
     }
 
     Notification getProgressNotification(@StringRes int msgId) {
@@ -156,7 +158,7 @@ class CopyJob extends ResolvedResourcesJob {
 
     @Override
     public Notification getProgressNotification() {
-        return getProgressNotification(R.string.copy_remaining);
+        return getProgressNotification(getRes(R.string.copy_remaining));
     }
 
     @Override
@@ -172,7 +174,7 @@ class CopyJob extends ResolvedResourcesJob {
     @Override
     Notification getFailureNotification() {
         return getFailureNotification(
-                R.plurals.copy_error_notification_title, R.drawable.ic_menu_copy);
+                getRes(R.plurals.copy_error_notification_title), getRes(R.drawable.ic_menu_copy));
     }
 
     @Override
@@ -182,20 +184,27 @@ class CopyJob extends ResolvedResourcesJob {
         navigateIntent.putExtra(EXTRA_OPERATION_TYPE, operationType);
 
         navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_DOCS, convertedFiles);
-
+        final Resources resources = service.getResources();
         // TODO: Consider adding a dialog on tapping the notification with a list of
         // converted files.
-        final Notification.Builder warningBuilder = createNotificationBuilder()
-                .setContentTitle(service.getResources().getString(
-                        R.string.notification_copy_files_converted_title))
-                .setContentText(service.getString(
-                        R.string.notification_touch_for_details))
-                .setContentIntent(PendingIntent.getActivity(appContext, 0, navigateIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
-                                | PendingIntent.FLAG_IMMUTABLE))
-                .setCategory(Notification.CATEGORY_ERROR)
-                .setSmallIcon(R.drawable.ic_menu_copy)
-                .setAutoCancel(true);
+        final Notification.Builder warningBuilder =
+                createNotificationBuilder()
+                        .setContentTitle(
+                                resources.getString(
+                                        getRes(R.string.notification_copy_files_converted_title)))
+                        .setContentText(
+                                service.getString(getRes(R.string.notification_touch_for_details)))
+                        .setContentIntent(
+                                PendingIntent.getActivity(
+                                        appContext,
+                                        0,
+                                        navigateIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                                | PendingIntent.FLAG_ONE_SHOT
+                                                | PendingIntent.FLAG_IMMUTABLE))
+                        .setCategory(Notification.CATEGORY_ERROR)
+                        .setSmallIcon(getRes(R.drawable.ic_menu_copy))
+                        .setAutoCancel(true);
         return warningBuilder.build();
     }
 
@@ -214,7 +223,8 @@ class CopyJob extends ResolvedResourcesJob {
                                     mResolvedDocs.get(0).displayName));
                 }
                 return (new MessageFormat(
-                        service.getString(R.string.copy_in_progress), Locale.getDefault()))
+                                service.getString(getRes(R.string.copy_in_progress)),
+                                Locale.getDefault()))
                         .format(formatArgs);
 
             default:

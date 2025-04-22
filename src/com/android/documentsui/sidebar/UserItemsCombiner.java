@@ -21,6 +21,7 @@ import static androidx.core.util.Preconditions.checkNotNull;
 
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.res.Resources;
@@ -101,10 +102,12 @@ class UserItemsCombiner {
                     personalRootList = mRootListOtherUser;
                     workRootList = mRootList;
                 }
-                result.add(new HeaderItem(getEnterpriseString(
-                        PERSONAL_TAB, R.string.personal_tab)));
+                result.add(
+                        new HeaderItem(
+                                getEnterpriseString(PERSONAL_TAB, getRes(R.string.personal_tab))));
                 result.addAll(personalRootList);
-                result.add(new HeaderItem(getEnterpriseString(WORK_TAB, R.string.work_tab)));
+                result.add(
+                        new HeaderItem(getEnterpriseString(WORK_TAB, getRes(R.string.work_tab))));
                 result.addAll(workRootList);
             } else {
                 result.addAll(mRootList);

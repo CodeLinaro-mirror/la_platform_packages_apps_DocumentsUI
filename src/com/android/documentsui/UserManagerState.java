@@ -22,6 +22,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -451,12 +452,13 @@ public interface UserManagerState {
                 if (mUserManager.isManagedProfile(userId.getIdentifier())) {
                     synchronized (mUserIdToLabelMap) {
                         mUserIdToLabelMap.put(
-                                userId, getEnterpriseString(WORK_TAB, R.string.work_tab));
+                                userId, getEnterpriseString(WORK_TAB, getRes(R.string.work_tab)));
                     }
                 } else {
                     synchronized (mUserIdToLabelMap) {
                         mUserIdToLabelMap.put(
-                                userId, getEnterpriseString(PERSONAL_TAB, R.string.personal_tab));
+                                userId,
+                                getEnterpriseString(PERSONAL_TAB, getRes(R.string.personal_tab)));
                     }
                 }
             }
@@ -465,7 +467,7 @@ public interface UserManagerState {
         @SuppressLint("NewApi")
         private String getProfileLabel(UserId userId) {
             if (userId.getIdentifier() == ActivityManager.getCurrentUser()) {
-                return getEnterpriseString(PERSONAL_TAB, R.string.personal_tab);
+                return getEnterpriseString(PERSONAL_TAB, getRes(R.string.personal_tab));
             }
             try {
                 Context userContext =
@@ -538,7 +540,7 @@ public interface UserManagerState {
                                 userId,
                                 SdkLevel.isAtLeastT()
                                         ? getWorkProfileBadge()
-                                        : mContext.getDrawable(R.drawable.ic_briefcase));
+                                        : mContext.getDrawable(getRes(R.drawable.ic_briefcase)));
                     }
                 }
             }
@@ -573,7 +575,7 @@ public interface UserManagerState {
                             .getDrawable(
                                     WORK_PROFILE_ICON,
                                     SOLID_COLORED,
-                                    () -> mContext.getDrawable(R.drawable.ic_briefcase));
+                                    () -> mContext.getDrawable(getRes(R.drawable.ic_briefcase)));
             return drawable;
         }
 

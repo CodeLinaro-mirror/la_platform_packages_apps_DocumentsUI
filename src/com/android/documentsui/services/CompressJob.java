@@ -19,6 +19,7 @@ package com.android.documentsui.services;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -69,26 +70,27 @@ final class CompressJob extends CopyJob {
     @Override
     Builder createProgressBuilder() {
         return super.createProgressBuilder(
-                service.getString(R.string.compress_notification_title),
-                R.drawable.ic_menu_compress,
+                service.getString(getRes(R.string.compress_notification_title)),
+                getRes(R.drawable.ic_menu_compress),
                 service.getString(android.R.string.cancel),
-                R.drawable.ic_cab_cancel);
+                getRes(R.drawable.ic_cab_cancel));
     }
 
     @Override
     public Notification getSetupNotification() {
-        return getSetupNotification(service.getString(R.string.compress_preparing));
+        return getSetupNotification(service.getString(getRes(R.string.compress_preparing)));
     }
 
     @Override
     public Notification getProgressNotification() {
-        return getProgressNotification(R.string.copy_remaining);
+        return getProgressNotification(getRes(R.string.copy_remaining));
     }
 
     @Override
     Notification getFailureNotification() {
         return getFailureNotification(
-                R.plurals.compress_error_notification_title, R.drawable.ic_menu_compress);
+                getRes(R.plurals.compress_error_notification_title),
+                getRes(R.drawable.ic_menu_compress));
     }
 
     @Override
@@ -104,7 +106,8 @@ final class CompressJob extends CopyJob {
                             mResolvedDocs.get(0).displayName));
                 }
                 return (new MessageFormat(
-                        service.getString(R.string.compress_in_progress), Locale.getDefault()))
+                                service.getString(getRes(R.string.compress_in_progress)),
+                                Locale.getDefault()))
                         .format(formatArgs);
             default:
                 return "";
@@ -125,7 +128,9 @@ final class CompressJob extends CopyJob {
         if (mResolvedDocs.size() == 1) {
             displayName = mResolvedDocs.get(0).displayName + NEW_ARCHIVE_EXTENSION;
         } else {
-            displayName = service.getString(R.string.new_archive_file_name, NEW_ARCHIVE_EXTENSION);
+            displayName =
+                    service.getString(
+                            getRes(R.string.new_archive_file_name), NEW_ARCHIVE_EXTENSION);
         }
 
         try {

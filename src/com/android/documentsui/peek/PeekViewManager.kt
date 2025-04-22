@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
+import com.android.documentsui.util.Material3Config.Companion.getRes
 
 /** Manager that controls the Peek UI. */
 open class PeekViewManager(private val mActivity: Activity) {
@@ -43,7 +44,7 @@ open class PeekViewManager(private val mActivity: Activity) {
             return
         }
 
-        val container: FrameLayout? = mActivity.findViewById(R.id.peek_overlay)
+        val container: FrameLayout? = mActivity.findViewById(getRes(R.id.peek_overlay))
         if (container == null) {
             Log.e(TAG, "Unable to find Peek container")
             return
@@ -52,11 +53,11 @@ open class PeekViewManager(private val mActivity: Activity) {
 
         // Initialize Peek fragment. The fragment manager automatically handles state restoration:
         // the fragment might already exist.
-        val existingFragment = fm.findFragmentById(R.id.peek_overlay)
+        val existingFragment = fm.findFragmentById(getRes(R.id.peek_overlay))
         if (existingFragment == null) {
             peekFragment = PeekFragment()
             val ft: FragmentTransaction = fm.beginTransaction()
-            ft.replace(R.id.peek_overlay, peekFragment)
+            ft.replace(getRes(R.id.peek_overlay), peekFragment)
             ft.commitAllowingStateLoss()
         } else {
             peekFragment = existingFragment as PeekFragment

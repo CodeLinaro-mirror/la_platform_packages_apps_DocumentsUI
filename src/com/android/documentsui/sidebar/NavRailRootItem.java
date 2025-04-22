@@ -16,6 +16,7 @@
 
 package com.android.documentsui.sidebar;
 
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.view.View;
 
@@ -30,7 +31,7 @@ public class NavRailRootItem extends RootItem {
 
     public NavRailRootItem(RootInfo root, ActionHandler actionHandler, boolean maybeShowBadge) {
         super(
-                R.layout.nav_rail_item_root,
+                getRes(R.layout.nav_rail_item_root),
                 root,
                 actionHandler,
                 "" /* packageName */,
@@ -42,7 +43,12 @@ public class NavRailRootItem extends RootItem {
             ActionHandler actionHandler,
             String packageName,
             boolean maybeShowBadge) {
-        super(R.layout.nav_rail_item_root, root, actionHandler, packageName, maybeShowBadge);
+        super(
+                getRes(R.layout.nav_rail_item_root),
+                root,
+                actionHandler,
+                packageName,
+                maybeShowBadge);
     }
 
     @Override

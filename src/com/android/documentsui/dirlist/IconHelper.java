@@ -20,6 +20,7 @@ import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -135,8 +136,9 @@ public class IconHelper {
                 thumbSize = mContext.getResources().getDimensionPixelSize(R.dimen.grid_width);
                 break;
             case MODE_LIST:
-                thumbSize = mContext.getResources().getDimensionPixelSize(
-                        R.dimen.list_item_thumbnail_size);
+                thumbSize =
+                        mContext.getResources()
+                                .getDimensionPixelSize(getRes(R.dimen.list_item_thumbnail_size));
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported layout mode: " + mode);

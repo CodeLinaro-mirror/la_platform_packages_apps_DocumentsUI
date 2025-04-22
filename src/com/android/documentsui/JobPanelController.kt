@@ -42,6 +42,7 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.util.FormatUtils
+import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -85,31 +86,37 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
         private val context = cardView.context
 
         // Header elements.
-        private val titleView = cardView.findViewById<TextView>(R.id.job_progress_item_title)
+        private val titleView = cardView.findViewById<TextView>(
+            getRes(R.id.job_progress_item_title)
+        )
         private val toggleExpandButton =
-            cardView.findViewById<MaterialButton>(R.id.job_progress_item_expand)
+            cardView.findViewById<MaterialButton>(getRes(R.id.job_progress_item_expand))
 
         // Body elements.
         private val progressView =
-            cardView.findViewById<LinearProgressIndicator>(R.id.job_progress_item_progress)
+            cardView.findViewById<LinearProgressIndicator>(getRes(R.id.job_progress_item_progress))
         private val primaryStatusView =
-            cardView.findViewById<TextView>(R.id.job_progress_item_primary_status)
+            cardView.findViewById<TextView>(getRes(R.id.job_progress_item_primary_status))
         private val statusSeparator =
-            cardView.findViewById<TextView>(R.id.job_progress_item_status_separator)
+            cardView.findViewById<TextView>(getRes(R.id.job_progress_item_status_separator))
         private val secondaryStatusView =
-            cardView.findViewById<TextView>(R.id.job_progress_item_secondary_status)
+            cardView.findViewById<TextView>(getRes(R.id.job_progress_item_secondary_status))
 
         // Buttons
-        private val cancelButton = cardView.findViewById<Button>(R.id.job_progress_item_cancel)
+        private val cancelButton = cardView.findViewById<Button>(
+            getRes(R.id.job_progress_item_cancel)
+        )
         private val showInFolderButton =
-            cardView.findViewById<Button>(R.id.job_progress_item_show_in_folder)
-        private val dismissButton = cardView.findViewById<Button>(R.id.job_progress_item_dismiss)
+            cardView.findViewById<Button>(getRes(R.id.job_progress_item_show_in_folder))
+        private val dismissButton = cardView.findViewById<Button>(
+            getRes(R.id.job_progress_item_dismiss)
+        )
 
         fun setJobProgress(jobProgress: JobProgress, expanded: Boolean) {
             titleView.text = jobProgress.msg
             toggleExpandButton.icon = context.getDrawable(when (expanded) {
-                true -> R.drawable.ic_job_progress_collapse
-                false -> R.drawable.ic_job_progress_expand
+                true -> getRes(R.drawable.ic_job_progress_collapse)
+                false -> getRes(R.drawable.ic_job_progress_expand)
             })
 
             updateProgressBar(jobProgress)
@@ -139,26 +146,32 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
             secondaryStatusView.isGone = false
             if (jobProgress.state == Job.STATE_COMPLETED) {
                 if (jobProgress.hasFailures) {
-                    primaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Failure)
-                    primaryStatusView.text = context.getString(R.string.job_progress_item_failed)
+                    primaryStatusView.setTextAppearance(
+                        getRes(R.style.JobProgressItemStatusText_Failure)
+                    )
+                    primaryStatusView.text = context.getString(
+                        getRes(R.string.job_progress_item_failed)
+                    )
                     secondaryStatusView.isGone = expanded
                     secondaryStatusView.text =
-                        context.getString(R.string.job_progress_item_see_details)
+                        context.getString(getRes(R.string.job_progress_item_see_details))
                 } else {
-                    primaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText_Success)
+                    primaryStatusView.setTextAppearance(
+                        getRes(R.style.JobProgressItemStatusText_Success)
+                    )
                     primaryStatusView.text =
-                        context.getString(R.string.job_progress_item_completed)
+                        context.getString(getRes(R.string.job_progress_item_completed))
                     secondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
                 }
             } else if (expanded && jobProgress.state == Job.STATE_SET_UP &&
                 !jobProgress.isIndeterminate) {
-                primaryStatusView.setTextAppearance(R.style.JobProgressItemStatusText)
+                primaryStatusView.setTextAppearance(getRes(R.style.JobProgressItemStatusText))
                 primaryStatusView.text = context.getString(
-                    R.string.job_progress_item_byte_progress,
+                    getRes(R.string.job_progress_item_byte_progress),
                     Formatter.formatFileSize(context, jobProgress.currentBytes),
                     Formatter.formatFileSize(context, jobProgress.requiredBytes),
                 )
-                secondaryStatusView.text = context.getString(R.string.copy_remaining,
+                secondaryStatusView.text = context.getString(getRes(R.string.copy_remaining),
                     FormatUtils.formatDuration(jobProgress.msRemaining))
             } else {
                 primaryStatusView.isGone = true
@@ -169,14 +182,19 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
 
         private fun getCompletionStatusString(@FileOperationService.OpType opType: Int): String {
             return when (opType) {
-                FileOperationService.OPERATION_COPY -> context.getString(R.string.copy_completed)
-                FileOperationService.OPERATION_MOVE -> context.getString(R.string.move_completed)
+                FileOperationService.OPERATION_COPY -> context.getString(
+                    getRes(R.string.copy_completed)
+                )
+
+                FileOperationService.OPERATION_MOVE -> context.getString(
+                    getRes(R.string.move_completed)
+                )
                 FileOperationService.OPERATION_DELETE ->
-                    context.getString(R.string.delete_completed)
+                    context.getString(getRes(R.string.delete_completed))
                 FileOperationService.OPERATION_COMPRESS ->
-                    context.getString(R.string.compress_completed)
+                    context.getString(getRes(R.string.compress_completed))
                 FileOperationService.OPERATION_EXTRACT ->
-                    context.getString(R.string.extract_completed)
+                    context.getString(getRes(R.string.extract_completed))
                 else -> ""
             }
         }
@@ -204,12 +222,12 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressItemHolder {
             val context = parent.context
             val view = LayoutInflater.from(context)
-                .inflate(R.layout.job_progress_item, parent, false) as MaterialCardView
+                .inflate(getRes(R.layout.job_progress_item), parent, false) as MaterialCardView
             if (viewType != 0) {
                 val outerRadius =
-                    context.resources.getDimension(R.dimen.job_progress_list_corner_radius)
+                    context.resources.getDimension(getRes(R.dimen.job_progress_list_corner_radius))
                 view.shapeAppearanceModel = ShapeAppearanceModel
-                    .builder(context, R.style.JobProgressItemCardBaseShape, 0)
+                    .builder(context, getRes(R.style.JobProgressItemCardBaseShape), 0)
                     .apply {
                         if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_TOP) {
                             setTopLeftCornerSize(outerRadius)
@@ -295,23 +313,26 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
         progressIcon.max = MAX_PROGRESS
         progressIcon.setOnClickListener { view ->
             val panel = LayoutInflater.from(activityContext).inflate(
-                R.layout.job_progress_panel,
+                getRes(R.layout.job_progress_panel),
                 /* root= */ null
             )
             val listAdapter = ProgressListAdapter(this)
             listAdapter.submitList(ArrayList(currentJobs.values))
-            panel.findViewById<RecyclerView>(R.id.job_progress_list).apply {
+            panel.findViewById<RecyclerView>(getRes(R.id.job_progress_list)).apply {
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(VerticalMarginItemDecoration(
-                    context.resources.getDimensionPixelSize(R.dimen.job_progress_list_gap)
+                    context.resources.getDimensionPixelSize(getRes(R.dimen.job_progress_list_gap))
                 ))
                 itemAnimator = null
                 adapter = listAdapter
             }
             progressListAdapter = listAdapter
             val popupWidth =
-                activityContext.resources.getDimension(R.dimen.job_progress_panel_width) +
-                        activityContext.resources.getDimension(R.dimen.job_progress_panel_margin)
+                activityContext.resources.getDimension(
+                    getRes(R.dimen.job_progress_panel_width)
+                ) + activityContext.resources.getDimension(
+                    getRes(R.dimen.job_progress_panel_margin)
+                )
             popup = PopupWindow(
                 /* contentView= */ panel,
                 /* width= */ popupWidth.toInt(),
