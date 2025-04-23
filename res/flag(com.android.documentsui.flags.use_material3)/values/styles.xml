@@ -230,6 +230,7 @@
 
     <style name="JobProgressItemTitleStyle" parent="">
         <item name="android:textAppearance">@style/JobProgressItemTitleText</item>
+        <item name="android:textAlignment">viewStart</item>
     </style>
 
     <style name="JobProgressItemTitleStyle.Collapsed">
