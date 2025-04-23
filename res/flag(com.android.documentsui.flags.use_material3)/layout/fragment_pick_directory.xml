@@ -17,9 +17,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="@dimen/picker_saver_container_padding_top"
-    android:paddingBottom="@dimen/picker_saver_container_padding_bottom">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,8 +26,8 @@
         android:baselineAligned="false"
         android:background="?attr/colorSurfaceContainer"
         android:gravity="center_vertical|end"
-        android:paddingStart="@dimen/bottom_bar_padding"
-        android:paddingEnd="@dimen/bottom_bar_padding"
+        android:paddingStart="@dimen/picker_saver_padding_start"
+        android:paddingEnd="@dimen/picker_saver_padding_end"
         android:paddingTop="@dimen/picker_saver_padding_top"
         android:paddingBottom="@dimen/picker_saver_padding_bottom">
 
@@ -39,7 +37,8 @@
             app:cornerRadius="@dimen/button_corner_radius"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/picker_saver_button_gap"
+            android:layout_marginBottom="@dimen/picker_saver_button_gap"
+            android:layout_marginTop="@dimen/picker_saver_button_gap"
             android:layout_marginEnd="@dimen/picker_saver_button_gap"
             android:text="@android:string/cancel" />
 
@@ -49,8 +48,9 @@
             app:cornerRadius="@dimen/button_corner_radius"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/picker_saver_button_gap"
-            android:layout_marginEnd="@dimen/picker_saver_button_gap" />
+            android:layout_marginBottom="@dimen/picker_saver_button_gap"
+            android:layout_marginTop="@dimen/picker_saver_button_gap"
+            android:layout_marginStart="@dimen/picker_saver_button_gap"/>
 
     </LinearLayout>
 
