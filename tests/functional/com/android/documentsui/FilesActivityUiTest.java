@@ -115,8 +115,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private void cleanupFile(String fileName, String primaryRootTitle)
             throws UiObjectNotFoundException {
-        // Unselect the file and remove it.
-        bots.directory.selectDocument(fileName);
         bots.roots.openRoot(primaryRootTitle);
         bots.directory.openDocument("Download");
 
@@ -148,6 +146,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         try {
             bots.directory.waitForDocument(fileName);
             bots.directory.selectDocument(fileName, 1);
+            bots.directory.selectDocument(fileName);
         } finally {
             cleanupFile(fileName, primaryRoot.title);
         }
