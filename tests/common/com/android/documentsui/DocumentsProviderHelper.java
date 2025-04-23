@@ -304,6 +304,25 @@ public class DocumentsProviderHelper {
         return children;
     }
 
+    /** List all the children for the specific `root`. */
+    public List<DocumentInfo> listAllChildren(RootInfo root) throws Exception {
+        List<DocumentInfo> children = new ArrayList<>();
+        try (Cursor cursor =
+                mClient.query(
+                        buildChildDocumentsUri(root.authority, root.documentId),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null)) {
+            Cursor wrapper = new RootCursorWrapper(mUserId, mAuthority, root.rootId, cursor, 100);
+            while (wrapper.moveToNext()) {
+                children.add(DocumentInfo.fromDirectoryCursor(wrapper));
+            }
+        }
+        return children;
+    }
+
     public void assertFileContents(Uri documentUri, byte[] expected) throws Exception {
         MoreAsserts.assertEquals(
                 "Copied file contents differ",
