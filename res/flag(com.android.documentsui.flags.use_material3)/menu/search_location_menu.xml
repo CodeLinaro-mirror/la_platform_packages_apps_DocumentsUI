@@ -17,9 +17,12 @@
 <!-- Dropdown menu showing possible search locations (this folder, root folder, everywhere). -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/everywhere_options"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_location_everywhere" />
     <item android:id="@+id/root_folder_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_location_root_folder" />
     <item android:id="@+id/this_folder_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_location_this_folder" />
 </menu>

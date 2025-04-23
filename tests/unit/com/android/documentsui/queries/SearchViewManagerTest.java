@@ -37,6 +37,7 @@ import static org.mockito.Mockito.when;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.view.View;
@@ -52,6 +53,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
 import com.android.documentsui.testing.TestEventHandler;
 import com.android.documentsui.testing.TestHandler;
@@ -389,6 +391,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testBuildQueryArgs_hasMimeType() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -402,6 +405,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testBuildQueryArgs_hasLargeFilesSize() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -414,6 +418,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testBuildQueryArgs_hasWeekAgoTime() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -444,6 +449,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testNotSupportsMimeTypesSearch_notShowChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -471,6 +477,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testNotSupportsSearch_notShowMenuAndChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);

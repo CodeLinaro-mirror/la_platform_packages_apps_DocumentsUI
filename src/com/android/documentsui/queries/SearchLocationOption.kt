@@ -32,4 +32,4 @@ enum class SearchLocationOption(val value: Int) {
  * For the given integer value, attempts to return the corresponding SearchLocationOption enum.
  */
 fun searchLocationOptionFor(value: Int): SearchLocationOption? =
-    enumValues<SearchLocationOption>().firstOrNull { it.ordinal == value }
+    enumValues<SearchLocationOption>().firstOrNull { it.value == value }

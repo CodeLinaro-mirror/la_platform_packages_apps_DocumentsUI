@@ -27,8 +27,8 @@ import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
+import com.android.documentsui.base.FolderInfo
 import com.android.documentsui.base.Lookup
-import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.UserId
 import com.android.documentsui.sorting.SortModel
 import com.google.common.util.concurrent.AbstractFuture
@@ -60,12 +60,12 @@ class SearchLoader(
     context: Context,
     userIdList: List<UserId>,
     mimeTypeLookup: Lookup<String, String>,
-    private val mObserver: LockingContentObserver,
-    private val mRootList: Collection<RootInfo>,
-    private val mQuery: String?,
-    private val mOptions: QueryOptions,
-    private val mSortModel: SortModel,
-    private val mExecutorService: ExecutorService,
+    private val observer: LockingContentObserver,
+    private val folderList: Collection<FolderInfo>,
+    private val query: String?,
+    private val options: QueryOptions,
+    private val sortModel: SortModel,
+    private val executorService: ExecutorService,
 ) : BaseFileLoader(context, userIdList, mimeTypeLookup) {
 
     /**
@@ -74,29 +74,28 @@ class SearchLoader(
      * method.
      */
     inner class SearchTask(
-        private val mRootId: String,
-        private val mSearchUri: Uri,
-        private val mQueryArgs: Bundle,
-        private val mLatch: CountDownLatch,
+        private val rootId: String,
+        private val searchUri: Uri,
+        private val queryArgs: Bundle,
+        private val latch: CountDownLatch,
     ) : Closeable, Runnable, AbstractFuture<Cursor>() {
-        private var mCursor: Cursor? = null
-        val cursor: Cursor? get() = mCursor
-        val taskId: String get() = mSearchUri.toString()
+        internal var cursor: Cursor? = null
+        val taskId: String get() = searchUri.toString()
 
         override fun close() {
-            mCursor = null
+            cursor = null
         }
 
         override fun run() {
             val queryDuration = measureTime {
                 try {
-                    mCursor = queryLocation(mRootId, mSearchUri, mQueryArgs, mOptions.maxResults)
-                    set(mCursor)
+                    cursor = queryLocation(rootId, searchUri, queryArgs, options.maxResults)
+                    set(cursor)
                 } finally {
-                    mLatch.countDown()
+                    latch.countDown()
                 }
             }
-            Log.d(TAG, "Query on $mSearchUri took $queryDuration")
+            Log.d(TAG, "Query on $searchUri took $queryDuration")
         }
     }
 
@@ -110,13 +109,12 @@ class SearchLoader(
         result.doc = DocumentInfo()
         result.cursor = emptyCursor()
 
-        val searchedRoots = mRootList
-        val countDownLatch = CountDownLatch(searchedRoots.size)
-        val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
+        val countDownLatch = CountDownLatch(folderList.size)
+        val rejectBeforeTimestamp = options.getRejectBeforeTimestamp()
 
         // Step 1: Build a list of search tasks.
         val searchTaskList =
-            createSearchTaskList(rejectBeforeTimestamp, countDownLatch, mRootList)
+            createSearchTaskList(rejectBeforeTimestamp, countDownLatch, folderList)
         Log.d(TAG, "${searchTaskList.size} tasks have been created")
 
         // Check if we are cancelled; if not copy the task list.
@@ -127,25 +125,25 @@ class SearchLoader(
 
         // Step 2: Enqueue tasks and wait for them to complete or time out.
         for (task in mSearchTaskList) {
-            mExecutorService.execute(task)
+            executorService.execute(task)
         }
         Log.d(TAG, "${mSearchTaskList.size} tasks have been enqueued")
 
         // Step 3: Wait for the results.
         try {
-            if (mOptions.isQueryTimeUnlimited()) {
+            if (options.isQueryTimeUnlimited()) {
                 Log.d(TAG, "Waiting for results with no time limit")
                 countDownLatch.await()
             } else {
-                Log.d(TAG, "Waiting ${mOptions.maxQueryTime!!.toMillis()}ms for results")
+                Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
                 countDownLatch.await(
-                    mOptions.maxQueryTime.toMillis(),
+                    options.maxQueryTime.toMillis(),
                     TimeUnit.MILLISECONDS
                 )
             }
             Log.d(TAG, "Waiting for results is done")
         } catch (e: InterruptedException) {
-            Log.d(TAG, "Failed to complete all searches within ${mOptions.maxQueryTime}")
+            Log.d(TAG, "Failed to complete all searches within ${options.maxQueryTime}")
             // TODO(b:388336095): Record a metrics indicating incomplete search.
             throw RuntimeException(e)
         }
@@ -169,52 +167,51 @@ class SearchLoader(
 
         // Step 5: Assign the cursor, after adding filtering and sorting, to the results.
         val mergedCursor = toSingleCursor(cursorList)
-        mergedCursor.registerContentObserver(mObserver)
+        mergedCursor.registerContentObserver(observer)
         val filteringCursor = FilteringCursorWrapper(mergedCursor)
-        filteringCursor.filterHiddenFiles(mOptions.showHidden)
+        filteringCursor.filterHiddenFiles(options.showHidden)
         filteringCursor.filterMimes(
-            mOptions.acceptableMimeTypes,
-            if (TextUtils.isEmpty(mQuery)) arrayOf<String>(Document.MIME_TYPE_DIR) else null
+            options.acceptableMimeTypes,
+            if (TextUtils.isEmpty(query)) arrayOf(Document.MIME_TYPE_DIR) else null
         )
         if (rejectBeforeTimestamp > 0L) {
             filteringCursor.filterLastModified(rejectBeforeTimestamp)
         }
-        result.cursor = mSortModel.sortCursor(filteringCursor, mMimeTypeLookup)
+        result.cursor = sortModel.sortCursor(filteringCursor, mMimeTypeLookup)
 
         // TODO(b:388336095): Record the total time it took to complete search.
         return result
     }
 
-    private fun createContentProviderQuery(root: RootInfo) =
-        if (TextUtils.isEmpty(mQuery) && mOptions.otherQueryArgs.isEmpty) {
+    private fun createContentProviderQuery(folder: FolderInfo) =
+        if (TextUtils.isEmpty(query) && options.otherQueryArgs.isEmpty) {
             // NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus
             // we only create the recents URI if both the query and other args are empty.
             DocumentsContract.buildRecentDocumentsUri(
-                root.authority,
-                root.rootId
+                folder.authority,
+                folder.folderId
             )
         } else {
-            // NOTE: We pass empty query, as the name matching query is placed in queryArgs.
             DocumentsContract.buildSearchDocumentsUri(
-                root.authority,
-                root.rootId,
-                ""
+                folder.authority,
+                folder.folderId,
+                query,
             )
         }
 
     private fun createQueryArgs(rejectBeforeTimestamp: Long): Bundle {
         val queryArgs = Bundle()
-        mSortModel.addQuerySortArgs(queryArgs)
+        sortModel.addQuerySortArgs(queryArgs)
         if (rejectBeforeTimestamp > 0L) {
             queryArgs.putLong(
                 DocumentsContract.QUERY_ARG_LAST_MODIFIED_AFTER,
                 rejectBeforeTimestamp
             )
         }
-        if (!TextUtils.isEmpty(mQuery)) {
-            queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, mQuery)
+        if (!TextUtils.isEmpty(query)) {
+            queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, query)
         }
-        queryArgs.putAll(mOptions.otherQueryArgs)
+        queryArgs.putAll(options.otherQueryArgs)
         return queryArgs
     }
 
@@ -224,20 +221,20 @@ class SearchLoader(
     private fun createSearchTaskList(
         rejectBeforeTimestamp: Long,
         countDownLatch: CountDownLatch,
-        rootList: Collection<RootInfo>
+        folderList: Collection<FolderInfo>
     ): List<SearchTask> {
         val searchTaskList = mutableListOf<SearchTask>()
-        for (root in rootList) {
+        for (folder in folderList) {
             if (isLoadInBackgroundCanceled) {
                 break
             }
-            val rootSearchUri = createContentProviderQuery(root)
+            val rootSearchUri = createContentProviderQuery(folder)
             // TODO(b:385789236): Correctly pass sort order information.
             val queryArgs = createQueryArgs(rejectBeforeTimestamp)
-            mSortModel.addQuerySortArgs(queryArgs)
+            sortModel.addQuerySortArgs(queryArgs)
             Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")
             val task = SearchTask(
-                root.rootId,
+                folder.folderId,
                 rootSearchUri,
                 queryArgs,
                 countDownLatch
