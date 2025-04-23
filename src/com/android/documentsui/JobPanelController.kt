@@ -22,6 +22,7 @@ import android.content.IntentFilter
 import android.graphics.Rect
 import android.text.format.Formatter
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -321,8 +322,9 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
                 setOnDismissListener { progressListAdapter = null }
                 showAsDropDown(
                     /* anchor= */ view,
-                    /* xoff= */ view.width - popupWidth.toInt(),
-                    /* yoff= */ 0
+                    /* xoff= */ 0,
+                    /* yoff= */ 0,
+                    /* gravity= */ Gravity.TOP or Gravity.END,
                 )
             }
         }
