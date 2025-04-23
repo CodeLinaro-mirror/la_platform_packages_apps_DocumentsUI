@@ -77,6 +77,7 @@ public class TestJob extends Job {
 
     @Override
     Notification getProgressNotification() {
+        assertStarted();
         ++mNumOfNotifications;
         double completed = mStarted ? 1F : 0F;
         return mProgressBuilder
