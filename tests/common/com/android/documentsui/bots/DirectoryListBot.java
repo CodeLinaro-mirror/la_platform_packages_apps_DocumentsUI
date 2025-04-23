@@ -60,7 +60,8 @@ public class DirectoryListBot extends Bots.BaseBot {
     private final String mDirListId;
     private final String mItemRootId;
     private final String mPreviewId;
-    private final String mIconId;
+    private final String mGridSelectionRegionId;
+    private final String mListSelectionRegionId;
 
     private final UiAutomation mAutomation;
 
@@ -72,7 +73,11 @@ public class DirectoryListBot extends Bots.BaseBot {
         mDirListId = mTargetPackage + ":id/dir_list";
         mItemRootId = mTargetPackage + ":id/item_root";
         mPreviewId = mTargetPackage + ":id/preview_icon";
-        mIconId = mTargetPackage + (isUseMaterial3FlagEnabled() ? ":id/icon_wrapper" : ":id/icon");
+        mListSelectionRegionId =
+                mTargetPackage + (isUseMaterial3FlagEnabled() ? ":id/icon_wrapper" : ":id/icon");
+        mGridSelectionRegionId =
+                mTargetPackage
+                        + (isUseMaterial3FlagEnabled() ? ":id/selection_circle" : ":id/icon");
     }
 
     public void assertDocumentsCount(int count) throws UiObjectNotFoundException {
@@ -209,11 +214,15 @@ public class DirectoryListBot extends Bots.BaseBot {
         final UiSelector docList = findDocumentsListSelector();
         new UiScrollable(docList).scrollIntoView(new UiSelector().text(label));
 
+        BySelector selectionRegionSelector = By.res(mGridSelectionRegionId);
+        if (mDevice.findObject(selectionRegionSelector) == null) {
+            selectionRegionSelector = By.res(mListSelectionRegionId);
+        }
         UiObject2 parent = mDevice.findObject(list).findObject(selector);
         UiObject2 selectionHotspot = null;
         for (int i = 1; i <= MAX_LAYOUT_LEVEL; i++) {
             parent = parent.getParent();
-            selectionHotspot = parent.findObject(By.res(mIconId));
+            selectionHotspot = parent.findObject(selectionRegionSelector);
             if (selectionHotspot != null) {
                 break;
             }
