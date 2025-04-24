@@ -22,6 +22,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -84,30 +85,30 @@ final class GridDocumentHolder extends DocumentHolder {
 
     GridDocumentHolder(Context context, ViewGroup parent, IconHelper iconHelper,
             ConfigStore configStore) {
-        super(context, parent, R.layout.item_doc_grid, configStore);
+        super(context, parent, getRes(R.layout.item_doc_grid), configStore);
 
         if (isUseMaterial3FlagEnabled()) {
-            mBullet = itemView.findViewById(R.id.bullet);
-            mIconWrapper = itemView.findViewById(R.id.icon_wrapper);
-            mSelectionCircle = (ImageView) itemView.findViewById(R.id.selection_circle);
+            mBullet = itemView.findViewById(getRes(R.id.bullet));
+            mIconWrapper = itemView.findViewById(getRes(R.id.icon_wrapper));
+            mSelectionCircle = (ImageView) itemView.findViewById(getRes(R.id.selection_circle));
             mIconLayout = null;
             mIconMimeSm = null;
         } else {
             mBullet = null;
             mIconWrapper = null;
             mSelectionCircle = null;
-            mIconLayout = itemView.findViewById(R.id.icon);
-            mIconMimeSm = (ImageView) itemView.findViewById(R.id.icon_mime_sm);
+            mIconLayout = itemView.findViewById(getRes(R.id.icon));
+            mIconMimeSm = (ImageView) itemView.findViewById(getRes(R.id.icon_mime_sm));
         }
 
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
-        mDate = (TextView) itemView.findViewById(R.id.date);
-        mDetails = (TextView) itemView.findViewById(R.id.details);
-        mIconCheck = (ImageView) itemView.findViewById(R.id.icon_check);
-        mIconMimeLg = (ImageView) itemView.findViewById(R.id.icon_mime_lg);
-        mIconThumb = (ImageView) itemView.findViewById(R.id.icon_thumb);
-        mIconBadge = (ImageView) itemView.findViewById(R.id.icon_profile_badge);
-        mPreviewIcon = itemView.findViewById(R.id.preview_icon);
+        mDate = (TextView) itemView.findViewById(getRes(R.id.date));
+        mDetails = (TextView) itemView.findViewById(getRes(R.id.details));
+        mIconCheck = (ImageView) itemView.findViewById(getRes(R.id.icon_check));
+        mIconMimeLg = (ImageView) itemView.findViewById(getRes(R.id.icon_mime_lg));
+        mIconThumb = (ImageView) itemView.findViewById(getRes(R.id.icon_thumb));
+        mIconBadge = (ImageView) itemView.findViewById(getRes(R.id.icon_profile_badge));
+        mPreviewIcon = itemView.findViewById(getRes(R.id.preview_icon));
         mIconHelper = iconHelper;
 
         if (SdkLevel.isAtLeastT() && !mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
@@ -118,8 +119,12 @@ final class GridDocumentHolder extends DocumentHolder {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private void setUpdatableWorkProfileIcon(Context context) {
         DevicePolicyManager dpm = context.getSystemService(DevicePolicyManager.class);
-        Drawable drawable = dpm.getResources().getDrawable(WORK_PROFILE_ICON, SOLID_COLORED, () ->
-                context.getDrawable(R.drawable.ic_briefcase));
+        Drawable drawable =
+                dpm.getResources()
+                        .getDrawable(
+                                WORK_PROFILE_ICON,
+                                SOLID_COLORED,
+                                () -> context.getDrawable(getRes(R.drawable.ic_briefcase)));
         mIconBadge.setImageDrawable(drawable);
     }
 

@@ -17,6 +17,7 @@
 package com.android.documentsui.base;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.util.Log;
 import android.util.Pair;
@@ -44,10 +45,11 @@ public class DebugHelper {
     };
 
     @SuppressWarnings("unchecked")
-    private static final Pair<String, Integer>[] sMessages = new Pair[]{
-            new Pair<>("Woof Woof", R.drawable.debug_msg_1),
-            new Pair<>("ワンワン", R.drawable.debug_msg_2)
-    };
+    private static final Pair<String, Integer>[] sMessages =
+            new Pair[] {
+                new Pair<>("Woof Woof", getRes(R.drawable.debug_msg_1)),
+                new Pair<>("ワンワン", getRes(R.drawable.debug_msg_2))
+            };
 
     private final Injector<?> mInjector;
 

@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -90,26 +91,38 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     public void updateKeyboardShortcutsMenu(
             List<KeyboardShortcutGroup> data, IntFunction<String> stringSupplier) {
-        KeyboardShortcutGroup group = new KeyboardShortcutGroup(
-                stringSupplier.apply(R.string.app_label));
-        group.addItem(new KeyboardShortcutInfo(
-                stringSupplier.apply(R.string.menu_cut_to_clipboard), KeyEvent.KEYCODE_X,
-                KeyEvent.META_CTRL_ON));
-        group.addItem(new KeyboardShortcutInfo(
-                stringSupplier.apply(R.string.menu_copy_to_clipboard), KeyEvent.KEYCODE_C,
-                KeyEvent.META_CTRL_ON));
-        group.addItem(new KeyboardShortcutInfo(
-                stringSupplier.apply(R.string.menu_paste_from_clipboard), KeyEvent.KEYCODE_V,
-                KeyEvent.META_CTRL_ON));
-        group.addItem(new KeyboardShortcutInfo(
-                stringSupplier.apply(R.string.menu_create_dir), KeyEvent.KEYCODE_E,
-                KeyEvent.META_CTRL_ON));
-        group.addItem(new KeyboardShortcutInfo(
-                stringSupplier.apply(R.string.menu_select_all), KeyEvent.KEYCODE_A,
-                KeyEvent.META_CTRL_ON));
-        group.addItem(new KeyboardShortcutInfo(
-                stringSupplier.apply(R.string.menu_new_window), KeyEvent.KEYCODE_N,
-                KeyEvent.META_CTRL_ON));
+        KeyboardShortcutGroup group =
+                new KeyboardShortcutGroup(stringSupplier.apply(getRes(R.string.app_label)));
+        group.addItem(
+                new KeyboardShortcutInfo(
+                        stringSupplier.apply(getRes(R.string.menu_cut_to_clipboard)),
+                        KeyEvent.KEYCODE_X,
+                        KeyEvent.META_CTRL_ON));
+        group.addItem(
+                new KeyboardShortcutInfo(
+                        stringSupplier.apply(getRes(R.string.menu_copy_to_clipboard)),
+                        KeyEvent.KEYCODE_C,
+                        KeyEvent.META_CTRL_ON));
+        group.addItem(
+                new KeyboardShortcutInfo(
+                        stringSupplier.apply(getRes(R.string.menu_paste_from_clipboard)),
+                        KeyEvent.KEYCODE_V,
+                        KeyEvent.META_CTRL_ON));
+        group.addItem(
+                new KeyboardShortcutInfo(
+                        stringSupplier.apply(getRes(R.string.menu_create_dir)),
+                        KeyEvent.KEYCODE_E,
+                        KeyEvent.META_CTRL_ON));
+        group.addItem(
+                new KeyboardShortcutInfo(
+                        stringSupplier.apply(getRes(R.string.menu_select_all)),
+                        KeyEvent.KEYCODE_A,
+                        KeyEvent.META_CTRL_ON));
+        group.addItem(
+                new KeyboardShortcutInfo(
+                        stringSupplier.apply(getRes(R.string.menu_new_window)),
+                        KeyEvent.KEYCODE_N,
+                        KeyEvent.META_CTRL_ON));
         data.add(group);
     }
 
@@ -124,7 +137,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     public void inflateContextMenuForContainer(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        inflater.inflate(R.menu.container_context_menu, menu);
+        inflater.inflate(getRes(R.menu.container_context_menu), menu);
         updateContextMenuForContainer(menu, selectionDetails);
     }
 
@@ -136,18 +149,18 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
         assert hasDir || hasFile;
         if (!hasDir) {
-            inflater.inflate(R.menu.file_context_menu, menu);
+            inflater.inflate(getRes(R.menu.file_context_menu), menu);
             updateContextMenuForFiles(menu, selectionDetails);
             return;
         }
 
         if (!hasFile) {
-            inflater.inflate(R.menu.dir_context_menu, menu);
+            inflater.inflate(getRes(R.menu.dir_context_menu), menu);
             updateContextMenuForDirs(menu, selectionDetails);
             return;
         }
 
-        inflater.inflate(R.menu.mixed_context_menu, menu);
+        inflater.inflate(getRes(R.menu.mixed_context_menu), menu);
         updateContextMenu(menu, selectionDetails);
     }
 
@@ -156,7 +169,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         if (mJobPanelController == null) {
             return;
         }
-        mJobPanelController.setMenuItem(menu.findItem(R.id.option_menu_job_progress));
+        mJobPanelController.setMenuItem(menu.findItem(getRes(R.id.option_menu_job_progress)));
     }
 
     @Override
@@ -323,7 +336,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Uri selectedUri = mUriLookup.lookup(selectedModelId);
             String appName = mAppNameLookup.getApplicationName(UserId.DEFAULT_USER,
                     selectedUri.getAuthority());
-            String title = res.getString(R.string.menu_view_in_owner, appName);
+            String title = res.getString(getRes(R.string.menu_view_in_owner), appName);
             view.setTitle(title);
         } else {
             Menus.setEnabledAndVisible(view, false);

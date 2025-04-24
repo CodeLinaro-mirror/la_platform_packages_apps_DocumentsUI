@@ -16,15 +16,16 @@
 package com.android.documentsui.queries
 
 import com.android.documentsui.R
+import com.android.documentsui.util.Material3Config.Companion.getRes
 
 /**
  * Enumerates possible options for the last modified filters. These values correspond directly
  * to the values of hte search_last_modified_menu.
  */
 enum class SearchLocationOption(val value: Int) {
-    CURRENT_FOLDER(R.id.this_folder_option),
-    ROOT_FOLDER(R.id.root_folder_option),
-    EVERYWHERE(R.id.everywhere_options),
+    CURRENT_FOLDER(getRes(R.id.this_folder_option)),
+    ROOT_FOLDER(getRes(R.id.root_folder_option)),
+    EVERYWHERE(getRes(R.id.everywhere_options)),
 }
 
 /**
