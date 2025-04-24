@@ -24,6 +24,7 @@ import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
@@ -435,15 +436,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mHandler = new Handler(Looper.getMainLooper());
         mActivity = (BaseActivity) getActivity();
-        mRootView = (AnimationView) inflater.inflate(R.layout.fragment_directory, container, false);
+        mRootView =
+                (AnimationView)
+                        inflater.inflate(getRes(R.layout.fragment_directory), container, false);
         if (isUseMaterial3FlagEnabled()) {
             mRootView.addOnSizeChangedListener(mOnSizeChangedListener);
         }
 
-        mProgressBar = mRootView.findViewById(R.id.progressbar);
+        mProgressBar = mRootView.findViewById(getRes(R.id.progressbar));
         assert mProgressBar != null;
 
-        mRecView = (RecyclerView) mRootView.findViewById(R.id.dir_list);
+        mRecView = (RecyclerView) mRootView.findViewById(getRes(R.id.dir_list));
         mRecView.setRecyclerListener(
                 new RecyclerListener() {
                     @Override
@@ -452,7 +455,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                     }
                 });
 
-        mRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(R.id.refresh_layout);
+        mRefreshLayout = (SwipeRefreshLayout) mRootView.findViewById(getRes(R.id.refresh_layout));
         mRefreshLayout.setOnRefreshListener(this);
         mRecView.setItemAnimator(new DirectoryItemAnimator());
 
@@ -597,22 +600,23 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         {
             // Limiting the scope of the localTracker so nobody uses it.
             // This block initializes/updates the global SelectionTracker held in mSelectionMgr.
-            SelectionTracker<String> localTracker = new SelectionTracker.Builder<>(
-                    mLocalState.mSelectionId,
-                    mRecView,
-                    new DocsStableIdProvider(mAdapter),
-                    mDetailsLookup,
-                    StorageStrategy.createStringStorage())
-                    .withBandOverlay(R.drawable.band_select_overlay)
-                    .withFocusDelegate(mFocusManager)
-                    .withOnDragInitiatedListener(dragStartListener::onDragEvent)
-                    .withOnContextClickListener(this::onContextMenuClick)
-                    .withOnItemActivatedListener(this::onItemActivated)
-                    .withOperationMonitor(mContentLock.getMonitor())
-                    .withSelectionPredicate(selectionPredicate)
-                    .withGestureTooltypes(MotionEvent.TOOL_TYPE_FINGER,
-                            MotionEvent.TOOL_TYPE_STYLUS)
-                    .build();
+            SelectionTracker<String> localTracker =
+                    new SelectionTracker.Builder<>(
+                                    mLocalState.mSelectionId,
+                                    mRecView,
+                                    new DocsStableIdProvider(mAdapter),
+                                    mDetailsLookup,
+                                    StorageStrategy.createStringStorage())
+                            .withBandOverlay(getRes(R.drawable.band_select_overlay))
+                            .withFocusDelegate(mFocusManager)
+                            .withOnDragInitiatedListener(dragStartListener::onDragEvent)
+                            .withOnContextClickListener(this::onContextMenuClick)
+                            .withOnItemActivatedListener(this::onItemActivated)
+                            .withOperationMonitor(mContentLock.getMonitor())
+                            .withSelectionPredicate(selectionPredicate)
+                            .withGestureTooltypes(
+                                    MotionEvent.TOOL_TYPE_FINGER, MotionEvent.TOOL_TYPE_STYLUS)
+                            .build();
             mInjector.updateSharedSelectionTracker(localTracker);
         }
 
@@ -829,9 +833,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             }
         }
         // Mode change is just visual change; no need to kick loader.
-        mRootView.announceForAccessibility(getString(
-                mState.derivedMode == State.MODE_GRID ? R.string.grid_mode_showing
-                        : R.string.list_mode_showing));
+        mRootView.announceForAccessibility(
+                getString(
+                        mState.derivedMode == State.MODE_GRID
+                                ? getRes(R.string.grid_mode_showing)
+                                : getRes(R.string.list_mode_showing)));
         onDisplayStateChanged();
     }
 
@@ -855,17 +861,26 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 int itemMarg = getResources().getDimensionPixelSize(R.dimen.grid_item_margin);
                 // Subtract the item's margin since we don't want to double count the margin in the
                 // distance between the outer grid items and the grid boundary.
-                int leftPad = getResources().getDimensionPixelSize(
-                        R.dimen.grid_container_padding_left)
-                        - itemMarg;
-                int topPad = getResources().getDimensionPixelSize(
-                        R.dimen.grid_container_padding_top)
-                        - itemMarg;
-                int rightPad = getResources().getDimensionPixelSize(
-                        R.dimen.grid_container_padding_right) - itemMarg;
-                int botPad = getResources().getDimensionPixelSize(
-                        R.dimen.grid_container_padding_bottom)
-                        - itemMarg;
+                int leftPad =
+                        getResources()
+                                        .getDimensionPixelSize(
+                                                getRes(R.dimen.grid_container_padding_left))
+                                - itemMarg;
+                int topPad =
+                        getResources()
+                                        .getDimensionPixelSize(
+                                                getRes(R.dimen.grid_container_padding_top))
+                                - itemMarg;
+                int rightPad =
+                        getResources()
+                                        .getDimensionPixelSize(
+                                                getRes(R.dimen.grid_container_padding_right))
+                                - itemMarg;
+                int botPad =
+                        getResources()
+                                        .getDimensionPixelSize(
+                                                getRes(R.dimen.grid_container_padding_bottom))
+                                - itemMarg;
                 mRecView.setPadding(leftPad, topPad + mAppBarHeight, rightPad,
                         botPad + mSaveLayoutHeight);
             } else {
@@ -899,8 +914,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private int getAppBarLayoutHeight() {
-        View appBarLayout = getActivity().findViewById(R.id.app_bar);
-        View collapsingBar = getActivity().findViewById(R.id.collapsing_toolbar);
+        View appBarLayout = getActivity().findViewById(getRes(R.id.app_bar));
+        View collapsingBar = getActivity().findViewById(getRes(R.id.collapsing_toolbar));
         return collapsingBar == null ? 0 : appBarLayout.getHeight();
     }
 
@@ -909,10 +924,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // but also includes the breadcrumb and the divider, so we need to use the total height
         // for their parent container.
         if (isUseMaterial3FlagEnabled()) {
-            View bottomSection = getActivity().findViewById(R.id.bottom_container);
+            View bottomSection = getActivity().findViewById(getRes(R.id.bottom_container));
             return bottomSection == null ? 0 : bottomSection.getHeight();
         }
-        View containerSave = getActivity().findViewById(R.id.container_save);
+        View containerSave = getActivity().findViewById(getRes(R.id.container_save));
         return containerSave == null ? 0 : containerSave.getHeight();
     }
 
@@ -1032,8 +1047,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mSelectionMgr.copySelection(selection);
 
         final int id = item.getItemId();
-        if ((isDesktopFileHandlingFlagEnabled() && id == R.id.dir_menu_open)
-                || (isZipNgFlagEnabled() && id == R.id.dir_menu_browse)) {
+        if ((isDesktopFileHandlingFlagEnabled() && id == getRes(R.id.dir_menu_open))
+                || (isZipNgFlagEnabled() && id == getRes(R.id.dir_menu_browse))) {
             // The "Open" menu item is displayed in desktop mode.
             // The "Browse" menu item is displayed for supported archives in advanced ZIP mode.
             // These menu items behave the same as a double click on the matching document which
@@ -1041,34 +1056,36 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // ItemDetails, we're using viewDocument that takes a Selection.
             viewDocument(selection);
             return true;
-        } else if (id == R.id.action_menu_select || id == R.id.dir_menu_open) {
+        } else if (id == getRes(R.id.action_menu_select) || id == getRes(R.id.dir_menu_open)) {
             // Note: this code path is never executed for `dir_menu_open`. The menu item is always
             // hidden unless the desktopFileHandling flag is enabled, in which case the menu item
             // will be handled by the condition above.
             openDocuments(selection);
             closeSelectionBar();
             return true;
-        } else if (id == R.id.action_menu_open_with || id == R.id.dir_menu_open_with) {
+        } else if (id == getRes(R.id.action_menu_open_with)
+                || id == getRes(R.id.dir_menu_open_with)) {
             showChooserForDoc(selection);
             return true;
-        } else if (id == R.id.dir_menu_open_in_new_window) {
+        } else if (id == getRes(R.id.dir_menu_open_in_new_window)) {
             mActions.openSelectedInNewWindow();
             return true;
-        } else if (id == R.id.action_menu_share || id == R.id.dir_menu_share) {
+        } else if (id == getRes(R.id.action_menu_share) || id == getRes(R.id.dir_menu_share)) {
             mActions.shareSelectedDocuments();
             return true;
-        } else if (id == R.id.action_menu_delete || id == R.id.dir_menu_delete) {
+        } else if (id == getRes(R.id.action_menu_delete) || id == getRes(R.id.dir_menu_delete)) {
             // deleteDocuments will end action mode if the documents are deleted.
             // It won't end action mode if user cancels the delete.
             mActions.showDeleteDialog();
             return true;
-        } else if (id == R.id.action_menu_copy_to) {
+        } else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
             closeSelectionBar();
             return true;
-        } else if (id == R.id.action_menu_compress || id == R.id.dir_menu_compress) {
+        } else if (id == getRes(R.id.action_menu_compress)
+                || id == getRes(R.id.dir_menu_compress)) {
             transferDocuments(selection, mState.stack,
                     FileOperationService.OPERATION_COMPRESS);
             // TODO: Only finish selection mode if compress is not canceled.
@@ -1077,13 +1094,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return true;
 
             // TODO: Implement extract (to the current directory).
-        } else if (id == R.id.action_menu_extract_to || id == R.id.option_menu_extract_all) {
+        } else if (id == getRes(R.id.action_menu_extract_to)
+                || id == getRes(R.id.option_menu_extract_all)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_EXTRACT);
             // TODO: Only finish selection mode if compress-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
             closeSelectionBar();
             return true;
-        } else if (id == R.id.action_menu_move_to) {
+        } else if (id == getRes(R.id.action_menu_move_to)) {
             if (mModel.hasDocuments(selection, DocumentFilters.NOT_MOVABLE)) {
                 mInjector.dialogs.showOperationUnsupported();
                 return true;
@@ -1092,7 +1110,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             closeSelectionBar();
             transferDocuments(selection, null, FileOperationService.OPERATION_MOVE);
             return true;
-        } else if (id == R.id.action_menu_inspect || id == R.id.dir_menu_inspect) {
+        } else if (id == getRes(R.id.action_menu_inspect) || id == getRes(R.id.dir_menu_inspect)) {
             closeSelectionBar();
             assert selection.size() <= 1;
             DocumentInfo doc = selection.isEmpty()
@@ -1101,34 +1119,36 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
             mActions.showPreview(doc);
             return true;
-        } else if (id == R.id.dir_menu_cut_to_clipboard) {
+        } else if (id == getRes(R.id.dir_menu_cut_to_clipboard)) {
             mActions.cutToClipboard();
             return true;
-        } else if (id == R.id.dir_menu_copy_to_clipboard) {
+        } else if (id == getRes(R.id.dir_menu_copy_to_clipboard)) {
             mActions.copyToClipboard();
             return true;
-        } else if (id == R.id.dir_menu_paste_from_clipboard) {
+        } else if (id == getRes(R.id.dir_menu_paste_from_clipboard)) {
             pasteFromClipboard();
             return true;
-        } else if (id == R.id.dir_menu_paste_into_folder) {
+        } else if (id == getRes(R.id.dir_menu_paste_into_folder)) {
             pasteIntoFolder();
             return true;
-        } else if (id == R.id.action_menu_select_all || id == R.id.dir_menu_select_all) {
+        } else if (id == getRes(R.id.action_menu_select_all)
+                || id == getRes(R.id.dir_menu_select_all)) {
             mActions.selectAllFiles();
             return true;
-        } else if (id == R.id.action_menu_deselect_all || id == R.id.dir_menu_deselect_all) {
+        } else if (id == getRes(R.id.action_menu_deselect_all)
+                || id == getRes(R.id.dir_menu_deselect_all)) {
             mActions.deselectAllFiles();
             return true;
-        } else if (id == R.id.action_menu_rename || id == R.id.dir_menu_rename) {
+        } else if (id == getRes(R.id.action_menu_rename) || id == getRes(R.id.dir_menu_rename)) {
             renameDocuments(selection);
             return true;
-        } else if (id == R.id.dir_menu_create_dir) {
+        } else if (id == getRes(R.id.dir_menu_create_dir)) {
             mActions.showCreateDirectoryDialog();
             return true;
-        } else if (id == R.id.dir_menu_view_in_owner) {
+        } else if (id == getRes(R.id.dir_menu_view_in_owner)) {
             mActions.viewInOwner();
             return true;
-        } else if (id == R.id.action_menu_sort) {
+        } else if (id == getRes(R.id.action_menu_sort)) {
             mActions.showSortDialog();
             return true;
         }
@@ -1166,7 +1186,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void cancelThumbnailTask(View view) {
-        final ImageView iconThumb = (ImageView) view.findViewById(R.id.icon_thumb);
+        final ImageView iconThumb = (ImageView) view.findViewById(getRes(R.id.icon_thumb));
         if (iconThumb != null) {
             mIconHelper.stopLoading(iconThumb);
         }
@@ -1280,16 +1300,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         int drawerTitleId;
         switch (mode) {
             case FileOperationService.OPERATION_COPY:
-                drawerTitleId = R.string.menu_copy;
+                drawerTitleId = getRes(R.string.menu_copy);
                 break;
             case FileOperationService.OPERATION_COMPRESS:
-                drawerTitleId = R.string.menu_compress;
+                drawerTitleId = getRes(R.string.menu_compress);
                 break;
             case FileOperationService.OPERATION_EXTRACT:
-                drawerTitleId = R.string.menu_extract;
+                drawerTitleId = getRes(R.string.menu_extract);
                 break;
             case FileOperationService.OPERATION_MOVE:
-                drawerTitleId = R.string.menu_move;
+                drawerTitleId = getRes(R.string.menu_move);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown mode: " + mode);
@@ -1436,7 +1456,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return;
         }
 
-        final View bar = mActivity.findViewById(R.id.collapsing_toolbar);
+        final View bar = mActivity.findViewById(getRes(R.id.collapsing_toolbar));
         if (bar != null) {
             bar.getViewTreeObserver().removeOnPreDrawListener(mToolbarPreDrawListener);
             if (enable) {
@@ -1486,7 +1506,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private static int getFragmentId() {
-        return R.id.container_directory;
+        return getRes(R.id.container_directory);
     }
 
     /**

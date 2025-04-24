@@ -22,6 +22,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import com.android.documentsui.R
 import com.android.documentsui.util.FlagUtils
+import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.chip.Chip
 
 /**
@@ -53,18 +54,18 @@ class SearchOptionsController(private val mContainer: View?) {
     init {
         if (FlagUtils.isUseMaterial3FlagEnabled() && mContainer != null) {
             makeTrigger(
-                R.id.search_location_trigger,
-                R.menu.search_location_menu,
+                getRes(R.id.search_location_trigger),
+                getRes(R.menu.search_location_menu),
                 this::onLocationSelected
             )
             makeTrigger(
-                R.id.search_last_modified_trigger,
-                R.menu.search_last_modified_menu,
+                getRes(R.id.search_last_modified_trigger),
+                getRes(R.menu.search_last_modified_menu),
                 this::onLastModifiedSelected
             )
             makeTrigger(
-                R.id.search_file_type_trigger,
-                R.menu.search_file_type_menu,
+                getRes(R.id.search_file_type_trigger),
+                getRes(R.menu.search_file_type_menu),
                 this::onFileTypeSelected
             )
         }

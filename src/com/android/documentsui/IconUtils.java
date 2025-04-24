@@ -38,7 +38,8 @@ public class IconUtils {
 
     static {
         if (isUseMaterial3FlagEnabled()) {
-            // Use Resources.getSystem().getIdentifier() here instead of R.drawable.ic_doc_folder
+            // Use Resources.getSystem().getIdentifier() here instead of
+            // getRes(R.drawable.ic_doc_folder)
             // because com.android.internal.R is not public.
             sCustomIconColorMap.put(
                     Resources.getSystem().getIdentifier("ic_doc_folder", "drawable", "android"),

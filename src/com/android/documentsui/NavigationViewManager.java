@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -139,8 +140,8 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
             Injector injector) {
 
         mActivity = activity;
-        mToolbar = activity.findViewById(R.id.toolbar);
-        mHeader = activity.findViewById(R.id.directory_header);
+        mToolbar = activity.findViewById(getRes(R.id.toolbar));
+        mHeader = activity.findViewById(getRes(R.id.directory_header));
         mDrawer = drawer;
         mState = state;
         mEnv = env;
@@ -150,7 +151,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
                 state,
                 this::onNavigationItemSelected,
                 isUseMaterial3FlagEnabled()
-                        ? activity.findViewById(R.id.breadcrumb_top_divider)
+                        ? activity.findViewById(getRes(R.id.breadcrumb_top_divider))
                         : null);
         mConfigStore = configStore;
         mInjector = injector;
@@ -173,8 +174,8 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
                         }
                     });
         }
-        mSearchBarView = activity.findViewById(R.id.searchbar_title);
-        mCollapsingBarLayout = activity.findViewById(R.id.collapsing_toolbar);
+        mSearchBarView = activity.findViewById(getRes(R.id.searchbar_title));
+        mCollapsingBarLayout = activity.findViewById(getRes(R.id.collapsing_toolbar));
         mDefaultActionBarBackground = mToolbar.getBackground();
         mDefaultOutlineProvider = mToolbar.getOutlineProvider();
         mShowSearchBar = activity.getResources().getBoolean(R.bool.show_search_bar);
@@ -184,16 +185,16 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         mDefaultStatusBarColorResId = a.getResourceId(0, -1);
         if (mDefaultStatusBarColorResId == -1) {
             Log.w(TAG, "Retrieve statusBarColorResId from theme failed, assigned default");
-            mDefaultStatusBarColorResId = R.color.app_background_color;
+            mDefaultStatusBarColorResId = getRes(R.color.app_background_color);
         }
         a.recycle();
 
         final Resources resources = mToolbar.getResources();
-        final int radius = resources.getDimensionPixelSize(R.dimen.search_bar_radius);
+        final int radius = resources.getDimensionPixelSize(getRes(R.dimen.search_bar_radius));
         final int marginStart =
-                resources.getDimensionPixelSize(R.dimen.search_bar_background_margin_start);
+                resources.getDimensionPixelSize(getRes(R.dimen.search_bar_background_margin_start));
         final int marginEnd =
-                resources.getDimensionPixelSize(R.dimen.search_bar_background_margin_end);
+                resources.getDimensionPixelSize(getRes(R.dimen.search_bar_background_margin_end));
         mSearchBarOutlineProvider = new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
@@ -227,8 +228,12 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         Window window = mActivity.getWindow();
         View actionBar =
                 window.getDecorView().findViewById(androidx.appcompat.R.id.action_mode_bar);
-        int dynamicHeaderColor = ContextCompat.getColor(mActivity,
-                offset == 0 ? mDefaultStatusBarColorResId : R.color.color_surface_header);
+        int dynamicHeaderColor =
+                ContextCompat.getColor(
+                        mActivity,
+                        offset == 0
+                                ? mDefaultStatusBarColorResId
+                                : getRes(R.color.color_surface_header));
         if (actionBar != null) {
             // Action bar needs to be updated separately for selection mode.
             actionBar.setBackgroundColor(dynamicHeaderColor);
@@ -321,10 +326,10 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         // (the burger menu will show on the nav rail instead).
         boolean showBurgerMenuOnToolbar =
                 !isUseMaterial3FlagEnabled()
-                        || mActivity.findViewById(R.id.nav_rail_container_roots) == null;
+                        || mActivity.findViewById(getRes(R.id.nav_rail_container_roots)) == null;
         if (showBurgerMenuOnToolbar) {
             mToolbar.setNavigationIcon(getActionBarIcon());
-            mToolbar.setNavigationContentDescription(R.string.drawer_open);
+            mToolbar.setNavigationContentDescription(getRes(R.string.drawer_open));
         } else {
             mToolbar.setNavigationIcon(null);
             mToolbar.setNavigationContentDescription(null);
@@ -339,10 +344,11 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
                 final String title =
                         mToolbar.getContext()
                                 .getResources()
-                                .getQuantityString(R.plurals.elements_selected, quantity, quantity);
+                                .getQuantityString(
+                                        getRes(R.plurals.elements_selected), quantity, quantity);
                 mToolbar.setTitle(title);
                 mActivity.getWindow().setTitle(title);
-                mToolbar.setNavigationIcon(R.drawable.ic_cancel);
+                mToolbar.setNavigationIcon(getRes(R.drawable.ic_cancel));
                 mToolbar.setNavigationContentDescription(android.R.string.cancel);
                 return;
             }
@@ -377,7 +383,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     }
 
     private boolean hasActionMenu() {
-        return mToolbar.getMenu().findItem(R.id.action_menu_open_with) != null;
+        return mToolbar.getMenu().findItem(getRes(R.id.action_menu_open_with)) != null;
     }
 
     /** Updates the action menu based on whether a selection is currently being made or not. */
@@ -389,7 +395,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         if (inSelectionMode()) {
             if (!isMenuInflated || !hasActionMenu()) {
                 mToolbar.getMenu().clear();
-                mToolbar.inflateMenu(R.menu.action_mode_menu);
+                mToolbar.inflateMenu(getRes(R.menu.action_mode_menu));
                 mToolbar.invalidateMenu();
             }
             mInjector.menuManager.updateActionMenu(mToolbar.getMenu(), mSelectionDetails);
@@ -398,7 +404,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
 
         if (!isMenuInflated || hasActionMenu()) {
             mToolbar.getMenu().clear();
-            mToolbar.inflateMenu(R.menu.activity);
+            mToolbar.inflateMenu(getRes(R.menu.activity));
             mToolbar.invalidateMenu();
             boolean fullBarSearch =
                     mActivity.getResources().getBoolean(R.bool.full_bar_search_view);
@@ -437,7 +443,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
             // Tablet mode does not use CollapsingBarLayout
             // (res/layout-sw720dp/directory_app_bar.xml or res/layout/fixed_layout.xml)
             if (shouldShowSearchBar()) {
-                mToolbar.setBackgroundResource(R.drawable.search_bar_background);
+                mToolbar.setBackgroundResource(getRes(R.drawable.search_bar_background));
                 mToolbar.setOutlineProvider(mSearchBarOutlineProvider);
             } else {
                 mToolbar.setBackground(mDefaultActionBarBackground);
@@ -451,10 +457,11 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
 
         int headerTopOffset = 0;
         if (shouldShowSearchBar() && !mIsActionModeActivated) {
-            mToolbar.setBackgroundResource(R.drawable.search_bar_background);
+            mToolbar.setBackgroundResource(getRes(R.drawable.search_bar_background));
             mToolbar.setOutlineProvider(mSearchBarOutlineProvider);
-            int searchBarMargin = mToolbar.getResources().getDimensionPixelSize(
-                    R.dimen.search_bar_margin);
+            int searchBarMargin =
+                    mToolbar.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.search_bar_margin));
             toolbarLayoutParams.setMargins(searchBarMargin, searchBarMargin, searchBarMargin,
                     searchBarMargin);
             mToolbar.setLayoutParams(toolbarLayoutParams);
@@ -464,8 +471,9 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         } else {
             mToolbar.setBackground(mDefaultActionBarBackground);
             mToolbar.setOutlineProvider(mDefaultOutlineProvider);
-            int actionBarMargin = mToolbar.getResources().getDimensionPixelSize(
-                    R.dimen.action_bar_margin);
+            int actionBarMargin =
+                    mToolbar.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.action_bar_margin));
             toolbarLayoutParams.setMargins(0, 0, 0, /* bottom= */ actionBarMargin);
             mToolbar.setLayoutParams(toolbarLayoutParams);
             mToolbar.setElevation(
@@ -492,7 +500,7 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
     private @Nullable
     Drawable getActionBarIcon() {
         if (mDrawer.isPresent()) {
-            return mToolbar.getContext().getDrawable(R.drawable.ic_hamburger);
+            return mToolbar.getContext().getDrawable(getRes(R.drawable.ic_hamburger));
         } else {
             return null;
         }

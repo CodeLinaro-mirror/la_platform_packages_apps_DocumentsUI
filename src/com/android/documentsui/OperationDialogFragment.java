@@ -17,9 +17,11 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -104,7 +106,7 @@ public class OperationDialogFragment extends DialogFragment {
 
         builder.setMessage(Html.fromHtml(message));
         builder.setPositiveButton(
-                R.string.close,
+                getRes(R.string.close),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -117,25 +119,22 @@ public class OperationDialogFragment extends DialogFragment {
         // dialog body text style, we need to manually apply it. In addition, set the same padding
         // as other dialogs.
         if (isUseMaterial3FlagEnabled()) {
+            final Resources resources = getResources();
             dialog.setOnShowListener(
                     dialogInterface -> {
                         TextView body =
                                 ((AlertDialog) dialogInterface).findViewById(android.R.id.message);
                         if (body != null) {
-                            body.setTextAppearance(R.style.MaterialAlertDialogBodyStyle);
+                            body.setTextAppearance(getRes(R.style.MaterialAlertDialogBodyStyle));
                             body.setPadding(
-                                    getResources()
-                                            .getDimensionPixelSize(
-                                                    R.dimen.dialog_content_padding_horizontal),
-                                    getResources()
-                                            .getDimensionPixelSize(
-                                                    R.dimen.dialog_content_padding_top),
-                                    getResources()
-                                            .getDimensionPixelSize(
-                                                    R.dimen.dialog_content_padding_horizontal),
-                                    getResources()
-                                            .getDimensionPixelSize(
-                                                    R.dimen.dialog_content_padding_bottom));
+                                    resources.getDimensionPixelSize(
+                                            getRes(R.dimen.dialog_content_padding_horizontal)),
+                                    resources.getDimensionPixelSize(
+                                            getRes(R.dimen.dialog_content_padding_top)),
+                                    resources.getDimensionPixelSize(
+                                            getRes(R.dimen.dialog_content_padding_horizontal)),
+                                    resources.getDimensionPixelSize(
+                                            getRes(R.dimen.dialog_content_padding_bottom)));
                         }
                     });
         }

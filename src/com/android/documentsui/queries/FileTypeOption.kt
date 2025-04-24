@@ -16,17 +16,18 @@
 package com.android.documentsui.queries
 
 import com.android.documentsui.R
+import com.android.documentsui.util.Material3Config.Companion.getRes
 
 /**
  * Enumerates possible file types used for restricting file search. These values correspond directly
  * to the values of the search_file_type_menu.
  */
 enum class FileTypeOption(val value: Int) {
-    ANY_TYPE(R.id.file_type_all_option),
-    AUDIO(R.id.file_type_audio_option),
-    DOCUMENTS(R.id.file_type_documents_option),
-    IMAGES(R.id.file_type_images_option),
-    VIDEO(R.id.file_type_videos_option),
+    ANY_TYPE(getRes(R.id.file_type_all_option)),
+    AUDIO(getRes(R.id.file_type_audio_option)),
+    DOCUMENTS(getRes(R.id.file_type_documents_option)),
+    IMAGES(getRes(R.id.file_type_images_option)),
+    VIDEO(getRes(R.id.file_type_videos_option)),
 }
 
 /**

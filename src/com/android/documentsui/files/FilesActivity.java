@@ -21,6 +21,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager.TaskDescription;
 import android.content.Intent;
@@ -85,7 +86,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     private final ProfileTabsAddons mProfileTabsAddonsStub = new StubProfileTabsAddons();
 
     public FilesActivity() {
-        super(R.layout.files_activity, TAG);
+        super(getRes(R.layout.files_activity), TAG);
     }
 
     // make these methods visible in this package to work around compiler bug http://b/62218600
@@ -101,7 +102,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
     @Override
     public void onCreate(Bundle icicle) {
-        setTheme(R.style.DocumentsTheme);
+        setTheme(getRes(R.style.DocumentsTheme));
 
         MessageBuilder messages = new MessageBuilder(this);
         Features features = Features.create(this);
@@ -119,12 +120,13 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
-        mInjector.focusManager = new FocusManager(
-                mInjector.features,
-                mInjector.selectionMgr,
-                mDrawer,
-                this::focusSidebar,
-                getColor(R.color.primary));
+        mInjector.focusManager =
+                new FocusManager(
+                        mInjector.features,
+                        mInjector.selectionMgr,
+                        mDrawer,
+                        this::focusSidebar,
+                        getColor(getRes(R.color.primary)));
 
         mInjector.menuManager = new MenuManager(
                 mInjector.features,
@@ -194,7 +196,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         RootsFragment.show(getSupportFragmentManager(), /* includeApps= */ false,
                 /* intent= */ null);
         if (isUseMaterial3FlagEnabled()) {
-            View navRailRoots = findViewById(R.id.nav_rail_container_roots);
+            View navRailRoots = findViewById(getRes(R.id.nav_rail_container_roots));
             if (navRailRoots != null) {
                 // Medium layout, populate navigation rail layout.
                 RootsFragment.showNavRail(getSupportFragmentManager(), /* includeApps= */ false,
@@ -217,7 +219,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         // hence the edge to edge nav bar is no longer required.
         if (!isUseMaterial3FlagEnabled()) {
             // Set save container background to transparent for edge to edge nav bar.
-            View saveContainer = findViewById(R.id.container_save);
+            View saveContainer = findViewById(getRes(R.id.container_save));
             saveContainer.setBackgroundColor(Color.TRANSPARENT);
         }
 
@@ -344,7 +346,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         Intent intent = getIntent();
         return (intent != null && intent.hasExtra(Intent.EXTRA_TITLE))
                 ? intent.getStringExtra(Intent.EXTRA_TITLE)
-                : getString(R.string.app_label);
+                : getString(getRes(R.string.app_label));
     }
 
     @Override
@@ -359,22 +361,22 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
-        if (id == R.id.option_menu_create_dir) {
+        if (id == getRes(R.id.option_menu_create_dir)) {
             assert (canCreateDirectory());
             mInjector.actions.showCreateDirectoryDialog();
-        } else if (id == R.id.option_menu_new_window) {
+        } else if (id == getRes(R.id.option_menu_new_window)) {
             mInjector.actions.openInNewWindow(mState.stack);
-        } else if (id == R.id.option_menu_settings) {
+        } else if (id == getRes(R.id.option_menu_settings)) {
             mInjector.actions.openSettings(getCurrentRoot());
-        } else if (id == R.id.option_menu_extract_all) {
+        } else if (id == getRes(R.id.option_menu_extract_all)) {
             if (!isZipNgFlagEnabled()) return false;
             final DirectoryFragment dir = getDirectoryFragment();
             if (dir == null) return false;
             mInjector.actions.selectAllFiles();
             return dir.onContextItemSelected(item);
-        } else if (id == R.id.option_menu_select_all) {
+        } else if (id == getRes(R.id.option_menu_select_all)) {
             mInjector.actions.selectAllFiles();
-        } else if (id == R.id.option_menu_inspect) {
+        } else if (id == getRes(R.id.option_menu_inspect)) {
             mInjector.actions.showPreview(getCurrentDirectory());
         } else {
             final boolean ok = super.onOptionsItemSelected(item);

@@ -2,6 +2,7 @@ package com.android.documentsui.sorting;
 
 import static com.android.documentsui.base.SharedMinimal.TAG;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -96,17 +97,21 @@ public class SortListFragment extends DialogFragment {
         boolean isAscending = direction == SortDimension.SORT_DIRECTION_ASCENDING;
         final int id = dimension.getId();
         if (id == SortModel.SORT_DIMENSION_ID_TITLE) {
-            return isAscending ? R.string.sort_dimension_name_ascending :
-                    R.string.sort_dimension_name_descending;
+            return isAscending
+                    ? getRes(R.string.sort_dimension_name_ascending)
+                    : getRes(R.string.sort_dimension_name_descending);
         } else if (id == SortModel.SORT_DIMENSION_ID_DATE) {
-            return isAscending ? R.string.sort_dimension_date_ascending :
-                    R.string.sort_dimension_date_descending;
+            return isAscending
+                    ? getRes(R.string.sort_dimension_date_ascending)
+                    : getRes(R.string.sort_dimension_date_descending);
         } else if (id == SortModel.SORT_DIMENSION_ID_FILE_TYPE) {
-            return isAscending ? R.string.sort_dimension_file_type_ascending :
-                    R.string.sort_dimension_file_type_descending;
+            return isAscending
+                    ? getRes(R.string.sort_dimension_file_type_ascending)
+                    : getRes(R.string.sort_dimension_file_type_descending);
         } else if (id == SortModel.SORT_DIMENSION_ID_SIZE) {
-            return isAscending ? R.string.sort_dimension_size_ascending :
-                    R.string.sort_dimension_size_descending;
+            return isAscending
+                    ? getRes(R.string.sort_dimension_size_ascending)
+                    : getRes(R.string.sort_dimension_size_descending);
         }
         return dimension.getLabelId();
     }
@@ -123,7 +128,7 @@ public class SortListFragment extends DialogFragment {
 
         BottomSheetDialog dialog =
                 new BottomSheetDialog(getContext());
-        dialog.setContentView(R.layout.dialog_sorting);
+        dialog.setContentView(getRes(R.layout.dialog_sorting));
 
         // Workaround for solve issue about dialog not full expanded when landscape.
         FrameLayout bottomSheet = (FrameLayout)
@@ -131,7 +136,7 @@ public class SortListFragment extends DialogFragment {
         BottomSheetBehavior.from(bottomSheet)
                 .setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        ListView listView = dialog.findViewById(R.id.sorting_dialog_list);
+        ListView listView = dialog.findViewById(getRes(R.id.sorting_dialog_list));
 
         listView.setAdapter(new SortingListAdapter(getContext(), mSortingList));
         // When use_material flag is ON, we want to show hover effect on the list item, which
@@ -165,7 +170,7 @@ public class SortListFragment extends DialogFragment {
     private class SortingListAdapter extends ArrayAdapter<SortItem> {
 
         public SortingListAdapter(Context context, List<SortItem> list) {
-            super(context, R.layout.sort_list_item, list);
+            super(context, getRes(R.layout.sort_list_item), list);
         }
 
         @Override
@@ -185,7 +190,7 @@ public class SortListFragment extends DialogFragment {
             if (isUseMaterial3FlagEnabled()) {
                 // Note "Relative" version of "setCompoundDrawable" handles RTL automatically.
                 text.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0, 0, selected ? R.drawable.ic_done : 0, 0);
+                        0, 0, selected ? getRes(R.drawable.ic_done) : 0, 0);
                 // "clickable=true" on the item level makes the list level click listener stop
                 // working, we need to bind click listener on the item level.
                 text.setOnClickListener(v -> onItemClicked(null, v, position, 0));

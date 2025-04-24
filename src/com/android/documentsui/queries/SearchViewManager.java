@@ -20,8 +20,9 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -227,7 +228,7 @@ public class SearchViewManager implements
      */
     public void install(Menu menu, boolean isFullBarSearch, boolean isShowSearchBar) {
         mMenu = menu;
-        mMenuItem = mMenu.findItem(R.id.option_menu_search);
+        mMenuItem = mMenu.findItem(getRes(R.id.option_menu_search));
         mSearchView = (SearchView) mMenuItem.getActionView();
 
         mSearchView.setOnQueryTextListener(this);
@@ -275,7 +276,7 @@ public class SearchViewManager implements
      */
     public void updateMenu() {
         if (mMenu != null && isExpanded() && mFullBar) {
-            mMenu.setGroupVisible(R.id.group_hide_when_searching, false);
+            mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), false);
         }
     }
 
@@ -424,7 +425,7 @@ public class SearchViewManager implements
     private void onSearchExpanded() {
         mSearchExpanded = true;
         if (mFullBar && mMenu != null) {
-            mMenu.setGroupVisible(R.id.group_hide_when_searching, false);
+            mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), false);
         }
 
         mListener.onSearchViewChanged(true);
@@ -589,7 +590,7 @@ public class SearchViewManager implements
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        mMenu.setGroupVisible(R.id.group_hide_when_searching, true);
+        mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), true);
 
         // Handles case when search view is collapsed by using the arrow on the left of the bar
         if (isExpanded() || isSearching()) {

@@ -23,6 +23,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_EX
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -99,7 +100,7 @@ public class PickDirectoryFragment extends Fragment {
 
         final PickDirectoryFragment fragment = new PickDirectoryFragment();
         final FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.container_save, fragment, TAG);
+        ft.replace(getRes(R.id.container_save), fragment, TAG);
         ft.commitNowAllowingStateLoss();
     }
 
@@ -110,10 +111,10 @@ public class PickDirectoryFragment extends Fragment {
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContainer = inflater.inflate(R.layout.fragment_pick_directory, container, false);
+        mContainer = inflater.inflate(getRes(R.layout.fragment_pick_directory), container, false);
 
         mPick = (Button) mContainer.findViewById(android.R.id.button1);
-        mPickOverlay = mContainer.findViewById((R.id.pick_button_overlay));
+        mPickOverlay = mContainer.findViewById((getRes(R.id.pick_button_overlay)));
         mPickOverlay.setOnClickListener(mPickListener);
         mPick.setOnClickListener(mPickListener);
 
@@ -180,7 +181,7 @@ public class PickDirectoryFragment extends Fragment {
 
         switch (mAction) {
             case State.ACTION_OPEN_TREE:
-                mPick.setText(getString(R.string.open_tree_button));
+                mPick.setText(getString(getRes(R.string.open_tree_button)));
                 // When use_material3 flag is enabled, all form factors should have the pick button
                 // wrap the text content instead of taking up the full width.
                 if (!isUseMaterial3FlagEnabled()) {
@@ -208,16 +209,16 @@ public class PickDirectoryFragment extends Fragment {
                 int titleId;
                 switch (mCopyOperationSubType) {
                     case OPERATION_COPY:
-                        titleId = R.string.button_copy;
+                        titleId = getRes(R.string.button_copy);
                         break;
                     case OPERATION_COMPRESS:
-                        titleId = R.string.button_compress;
+                        titleId = getRes(R.string.button_compress);
                         break;
                     case OPERATION_EXTRACT:
-                        titleId = R.string.button_extract;
+                        titleId = getRes(R.string.button_extract);
                         break;
                     case OPERATION_MOVE:
-                        titleId = R.string.button_move;
+                        titleId = getRes(R.string.button_move);
                         break;
                     default:
                         throw new UnsupportedOperationException();
