@@ -112,6 +112,7 @@ abstract class Material3Config private constructor() {
 
     @JvmStatic
     fun overrideForTest(overrides: Map<Int, Int>) {
+      initialized = true
       idMapping = overrides
     }
   }
