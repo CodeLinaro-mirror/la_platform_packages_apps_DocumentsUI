@@ -178,7 +178,8 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
         mCollapsingBarLayout = activity.findViewById(getRes(R.id.collapsing_toolbar));
         mDefaultActionBarBackground = mToolbar.getBackground();
         mDefaultOutlineProvider = mToolbar.getOutlineProvider();
-        mShowSearchBar = activity.getResources().getBoolean(R.bool.show_search_bar);
+        mShowSearchBar = isUseMaterial3FlagEnabled() ? false : activity.getResources().getBoolean(
+                R.bool.show_search_bar);
 
         final int[] styledAttrs = {android.R.attr.statusBarColor};
         TypedArray a = mActivity.obtainStyledAttributes(styledAttrs);
@@ -408,7 +409,9 @@ public class NavigationViewManager extends SelectionTracker.SelectionObserver<St
             mToolbar.invalidateMenu();
             boolean fullBarSearch =
                     mActivity.getResources().getBoolean(R.bool.full_bar_search_view);
-            boolean showSearchBar = mActivity.getResources().getBoolean(R.bool.show_search_bar);
+            boolean showSearchBar =
+                    isUseMaterial3FlagEnabled() ? false : mActivity.getResources().getBoolean(
+                            R.bool.show_search_bar);
             mInjector.searchManager.install(mToolbar.getMenu(), fullBarSearch, showSearchBar);
             if (isVisualSignalsFlagEnabled()) {
                 mInjector.menuManager.instantiateJobProgress(mToolbar.getMenu());
