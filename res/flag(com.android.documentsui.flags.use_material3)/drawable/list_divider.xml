@@ -14,6 +14,7 @@
      limitations under the License.
 -->
 
+<!-- TODO(b/379776735): remove this file use_material3 flag is launched. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:tint="?android:attr/colorForeground">
     <solid android:color="@color/list_divider_color" />

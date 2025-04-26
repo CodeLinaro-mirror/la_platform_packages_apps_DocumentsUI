@@ -16,6 +16,12 @@
 
 package com.android.documentsui;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
@@ -38,6 +44,7 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
@@ -85,11 +92,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
     }
 
-    @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
-    public void testRecentsSelectionClearsSearchBar() throws Exception {
-        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
-
+    private DocumentsProviderHelper setupStorageAuthorityDocsHelper() throws Exception {
         // Create DocumentsProviderHelper to create files in Internal storage.
         DocumentsProviderHelper storageDocsHelper =
                 new DocumentsProviderHelper(
@@ -107,29 +110,45 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
 
         assertTrue(info != null && info.isDirectory());
+        return storageDocsHelper;
+    }
+
+    private void cleanupFile(String fileName, String primaryRootTitle)
+            throws UiObjectNotFoundException {
+        bots.roots.openRoot(primaryRootTitle);
+        bots.directory.openDocument("Download");
+
+        bots.directory.waitForDocument(fileName);
+        bots.directory.selectDocument(fileName, 1);
+
+        bots.main.clickToolbarItem(R.id.action_menu_delete);
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        device.waitForIdle();
+
+        bots.directory.findDocument(fileName).waitUntilGone(5000);
+        assertFalse(bots.directory.hasDocuments(fileName));
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testRecentsSelectionClearsSearchBar() throws Exception {
+        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
+
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
 
         // Open up Recents and create a file that should appear.
         bots.roots.openRoot("Recent");
         final String fileName = "Recent.txt";
         storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
+
         try {
             bots.directory.waitForDocument(fileName);
             bots.directory.selectDocument(fileName, 1);
-        } finally {
-            // Unselect the file and remove it.
             bots.directory.selectDocument(fileName);
-            bots.roots.openRoot(primaryRoot.title);
-            bots.directory.openDocument("Download");
-
-            bots.directory.waitForDocument(fileName);
-            bots.directory.selectDocument(fileName, 1);
-
-            bots.main.clickToolbarItem(R.id.action_menu_delete);
-            bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-            device.waitForIdle();
-
-            bots.directory.findDocument(fileName).waitUntilGone(5000);
-            assertFalse(bots.directory.hasDocuments(fileName));
+        } finally {
+            cleanupFile(fileName, primaryRoot.title);
         }
     }
 
@@ -237,6 +256,49 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         } else {
             bots.roots.openRoot("Videos");
             bots.sort.assertHeaderHide();
+        }
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testClearSelectionInRecentsResetsActions() throws Exception {
+        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
+
+        // Ensure Downloads exists and get the location of the main root (e.g. "Pixel Tablet").
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
+
+        // Create a file in "Download".
+        final String fileName = "recent_file.txt";
+        storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
+
+        // Navigate to "Download" and ensure the file exists (this should ensure it also exists in
+        // Recent).
+        bots.roots.openRoot(primaryRoot.title);
+        bots.directory.openDocument("Download");
+        bots.directory.waitForDocument(fileName);
+
+        // Open Recent and wait for the document to appear.
+        bots.roots.openRoot("Recent");
+        bots.directory.waitForDocument(fileName);
+
+        try {
+            // The search option menu shows up when no items are selected, use this as a proxy for
+            // the options menu being refreshed (it should only show when a file is selected).
+            onView(withId(R.id.action_menu_share)).check(doesNotExist());
+
+            // Select the recent document, which will refresh the options menu and the share action
+            // menu item should appear.
+            bots.directory.selectDocument(fileName, 1);
+            onView(withId(R.id.action_menu_share)).check(matches(isDisplayed()));
+
+            // Deselect the file and ensure the share menu disappears (this ensures the menu is
+            // refreshed).
+            bots.directory.selectDocument(fileName);
+            onView(withId(R.id.action_menu_share)).check(doesNotExist());
+        } finally {
+            cleanupFile(fileName, primaryRoot.title);
         }
     }
 }

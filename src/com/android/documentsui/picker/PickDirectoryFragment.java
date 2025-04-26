@@ -23,6 +23,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_EX
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -47,10 +48,10 @@ import com.android.documentsui.ui.Snackbars;
 import com.google.android.material.snackbar.Snackbar;
 
 /**
- * Display pick confirmation bar, usually for selecting a directory.
+ * Display pick confirmation bar for selecting a directory.
  */
-public class PickFragment extends Fragment {
-    public static final String TAG = "PickFragment";
+public class PickDirectoryFragment extends Fragment {
+    public static final String TAG = "PickDirectoryFragment";
 
     private static final String ACTION_KEY = "action";
     private static final String COPY_OPERATION_SUBTYPE_KEY = "copyOperationSubType";
@@ -73,7 +74,7 @@ public class PickFragment extends Fragment {
         @Override
         public void onClick(View v) {
             mInjector.pickResult.increaseActionCount();
-            final BaseActivity activity = BaseActivity.get(PickFragment.this);
+            final BaseActivity activity = BaseActivity.get(PickDirectoryFragment.this);
             activity.setResult(FragmentActivity.RESULT_CANCELED);
             activity.finish();
         }
@@ -97,23 +98,23 @@ public class PickFragment extends Fragment {
             return;
         }
 
-        final PickFragment fragment = new PickFragment();
+        final PickDirectoryFragment fragment = new PickDirectoryFragment();
         final FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.container_save, fragment, TAG);
+        ft.replace(getRes(R.id.container_save), fragment, TAG);
         ft.commitNowAllowingStateLoss();
     }
 
-    public static PickFragment get(FragmentManager fm) {
-        return (PickFragment) fm.findFragmentByTag(TAG);
+    public static PickDirectoryFragment get(FragmentManager fm) {
+        return (PickDirectoryFragment) fm.findFragmentByTag(TAG);
     }
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContainer = inflater.inflate(R.layout.fragment_pick, container, false);
+        mContainer = inflater.inflate(getRes(R.layout.fragment_pick_directory), container, false);
 
         mPick = (Button) mContainer.findViewById(android.R.id.button1);
-        mPickOverlay = mContainer.findViewById((R.id.pick_button_overlay));
+        mPickOverlay = mContainer.findViewById((getRes(R.id.pick_button_overlay)));
         mPickOverlay.setOnClickListener(mPickListener);
         mPick.setOnClickListener(mPickListener);
 
@@ -180,7 +181,7 @@ public class PickFragment extends Fragment {
 
         switch (mAction) {
             case State.ACTION_OPEN_TREE:
-                mPick.setText(getString(R.string.open_tree_button));
+                mPick.setText(getString(getRes(R.string.open_tree_button)));
                 // When use_material3 flag is enabled, all form factors should have the pick button
                 // wrap the text content instead of taking up the full width.
                 if (!isUseMaterial3FlagEnabled()) {
@@ -208,16 +209,16 @@ public class PickFragment extends Fragment {
                 int titleId;
                 switch (mCopyOperationSubType) {
                     case OPERATION_COPY:
-                        titleId = R.string.button_copy;
+                        titleId = getRes(R.string.button_copy);
                         break;
                     case OPERATION_COMPRESS:
-                        titleId = R.string.button_compress;
+                        titleId = getRes(R.string.button_compress);
                         break;
                     case OPERATION_EXTRACT:
-                        titleId = R.string.button_extract;
+                        titleId = getRes(R.string.button_extract);
                         break;
                     case OPERATION_MOVE:
-                        titleId = R.string.button_move;
+                        titleId = getRes(R.string.button_move);
                         break;
                     default:
                         throw new UnsupportedOperationException();

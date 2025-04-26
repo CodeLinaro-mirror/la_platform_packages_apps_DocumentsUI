@@ -17,6 +17,7 @@
 package com.android.documentsui.sidebar;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.util.Log;
 import android.view.View;
@@ -34,7 +35,11 @@ class SpacerItem extends Item {
 
     public SpacerItem() {
         // Multiple spacer items can share the same string id as they're identical.
-        super(R.layout.item_root_spacer, "" /* title */, STRING_ID, UserId.UNSPECIFIED_USER);
+        super(
+                getRes(R.layout.item_root_spacer),
+                "" /* title */,
+                STRING_ID,
+                UserId.UNSPECIFIED_USER);
     }
 
     @Override

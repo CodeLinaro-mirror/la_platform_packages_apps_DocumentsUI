@@ -20,6 +20,7 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -76,26 +77,26 @@ final class MoveJob extends CopyJob {
     @Override
     Builder createProgressBuilder() {
         return super.createProgressBuilder(
-                service.getString(R.string.move_notification_title),
-                R.drawable.ic_menu_copy,
+                service.getString(getRes(R.string.move_notification_title)),
+                getRes(R.drawable.ic_menu_copy),
                 service.getString(android.R.string.cancel),
-                R.drawable.ic_cab_cancel);
+                getRes(R.drawable.ic_cab_cancel));
     }
 
     @Override
     public Notification getSetupNotification() {
-        return getSetupNotification(service.getString(R.string.move_preparing));
+        return getSetupNotification(service.getString(getRes(R.string.move_preparing)));
     }
 
     @Override
     public Notification getProgressNotification() {
-        return getProgressNotification(R.string.copy_remaining);
+        return getProgressNotification(getRes(R.string.copy_remaining));
     }
 
     @Override
     Notification getFailureNotification() {
         return getFailureNotification(
-                R.plurals.move_error_notification_title, R.drawable.ic_menu_copy);
+                getRes(R.plurals.move_error_notification_title), getRes(R.drawable.ic_menu_copy));
     }
 
     @Override
@@ -113,7 +114,8 @@ final class MoveJob extends CopyJob {
                             mResolvedDocs.get(0).displayName));
                 }
                 return (new MessageFormat(
-                        service.getString(R.string.move_in_progress), Locale.getDefault()))
+                                service.getString(getRes(R.string.move_in_progress)),
+                                Locale.getDefault()))
                         .format(formatArgs);
             default:
                 return "";

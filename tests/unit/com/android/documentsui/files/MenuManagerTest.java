@@ -16,11 +16,15 @@
 
 package com.android.documentsui.files;
 
+import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import static junit.framework.Assert.assertEquals;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -140,6 +144,12 @@ public final class MenuManagerTest {
 
     @Before
     public void setUp() {
+        if (isVisualSignalsFlagEnabled()) {
+            // The job progress indicator toolbar icon registers itself as a broadcast receiver to
+            // receive updates, so we need to stub that functionality out.
+            doReturn(null).when(activity).registerReceiver(any(), any(), anyInt());
+        }
+
         testMenu = TestMenu.create();
 
         // The context menu on anything in DirectoryList (including no selection).

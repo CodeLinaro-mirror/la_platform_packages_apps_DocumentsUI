@@ -22,6 +22,7 @@ import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -84,7 +85,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     private SharedInputHandler mSharedInputHandler;
 
     public PickActivity() {
-        super(R.layout.documents_activity, TAG);
+        super(getRes(R.layout.documents_activity), TAG);
     }
 
     // make these methods visible in this package to work around compiler bug http://b/62218600
@@ -100,7 +101,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
     @Override
     public void onCreate(Bundle icicle) {
-        setTheme(R.style.DocumentsTheme);
+        setTheme(getRes(R.style.DocumentsTheme));
         Features features = Features.create(this);
 
         mInjector = new Injector<>(
@@ -116,12 +117,13 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
-        mInjector.focusManager = new FocusManager(
-                mInjector.features,
-                mInjector.selectionMgr,
-                mDrawer,
-                this::focusSidebar,
-                getColor(R.color.primary));
+        mInjector.focusManager =
+                new FocusManager(
+                        mInjector.features,
+                        mInjector.selectionMgr,
+                        mDrawer,
+                        this::focusSidebar,
+                        getColor(getRes(R.color.primary)));
 
         mInjector.menuManager = new MenuManager(
                 mSearchManager,
@@ -235,13 +237,13 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
             SaveFragment.show(getSupportFragmentManager(), mimeType, title);
         } else if (mState.action == ACTION_OPEN_TREE ||
                 mState.action == ACTION_PICK_COPY_DESTINATION) {
-            PickFragment.show(getSupportFragmentManager());
+            PickDirectoryFragment.show(getSupportFragmentManager());
         } else if (!isUseMaterial3FlagEnabled()) {
             // If PickFragment or SaveFragment does not show,
             // Set save container background to transparent for edge to edge nav bar.
             // However when the use_material3 flag is on, the file path bar is at the bottom of the
             // layout and hence the edge to edge nav bar is no longer required.
-            View saveContainer = findViewById(R.id.container_save);
+            View saveContainer = findViewById(getRes(R.id.container_save));
             saveContainer.setBackgroundColor(Color.TRANSPARENT);
         }
 
@@ -268,7 +270,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                     /* includeApps= */ mState.action == ACTION_GET_CONTENT,
                     /* intent= */ moreApps);
             if (isUseMaterial3FlagEnabled()) {
-                View navRailRoots = findViewById(R.id.nav_rail_container_roots);
+                View navRailRoots = findViewById(getRes(R.id.nav_rail_container_roots));
                 if (navRailRoots != null) {
                     // Medium layout, populate navigation rail layout.
                     RootsFragment.showNavRail(getSupportFragmentManager(),
@@ -415,7 +417,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
         if (mState.action == ACTION_OPEN_TREE ||
                 mState.action == ACTION_PICK_COPY_DESTINATION) {
-            final PickFragment pick = PickFragment.get(fm);
+            final PickDirectoryFragment pick = PickDirectoryFragment.get(fm);
             if (pick != null) {
                 pick.setPickTarget(mState.action,
                         mState.copyOperationSubType, mState.restrictScopeStorage, cwd);

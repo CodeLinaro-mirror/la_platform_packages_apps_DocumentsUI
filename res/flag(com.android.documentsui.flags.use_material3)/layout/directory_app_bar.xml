@@ -23,17 +23,12 @@
     android:layout_height="wrap_content"
     android:touchscreenBlocksFocus="false">
 
-    <!-- Technically we don't need this CollapsingToolbarLayout wrapper when use_material3 flag
-         is ON, because we don't want to hide anything in the app header area when scrolling, but
-         some files (e.g. NavigationViewManager and others) uses the existence of this element to
-         do some specific logic, hence leaving it here with "noScroll" behavior.
-     -->
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/collapsing_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleEnabled="false"
-        app:layout_scrollFlags="noScroll">
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,7 +52,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:touchscreenBlocksFocus="false">
+            android:touchscreenBlocksFocus="false"
+            android:background="?attr/colorSurfaceBright"
+            app:layout_collapseMode="pin">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/searchbar_title"

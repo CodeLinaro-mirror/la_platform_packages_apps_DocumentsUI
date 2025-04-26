@@ -16,6 +16,8 @@
 
 package com.android.documentsui.sidebar;
 
+import static com.android.documentsui.util.Material3Config.getRes;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
@@ -23,7 +25,7 @@ import android.widget.LinearLayout;
 import com.android.documentsui.R;
 
 public final class RootItemView extends LinearLayout {
-    private static final int[] STATE_HIGHLIGHTED = {R.attr.state_highlighted};
+    private static final int[] STATE_HIGHLIGHTED = {getRes(R.attr.state_highlighted)};
 
     private boolean mHighlighted = false;
 

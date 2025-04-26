@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.util.Material3Config.Companion.getRes
 
 /** Custom view component that renders the preview in Peek. */
 class RenderView(context: Context, attrs: AttributeSet?) :
@@ -35,6 +36,6 @@ class RenderView(context: Context, attrs: AttributeSet?) :
 
     @Suppress("ktlint:standard:comment-wrapping")
     private fun handleUnsupportedFileType() {
-        LayoutInflater.from(context).inflate(R.layout.peek_no_preview, /* root= */ this)
+        LayoutInflater.from(context).inflate(getRes(R.layout.peek_no_preview), /* root= */ this)
     }
 }

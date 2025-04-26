@@ -16,8 +16,7 @@
 
 package com.android.documentsui;
 
-import com.android.documentsui.DragAndDropManager.State;
-import com.android.documentsui.base.MimeTypes;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -26,12 +25,15 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.ImageView;
 
+import com.android.documentsui.DragAndDropManager.State;
+import com.android.documentsui.base.MimeTypes;
+
 /**
  * Provides a way to encapsulate droppable badge toggling logic into a single class.
  */
 public final class DropBadgeView extends ImageView {
-    private static final int[] STATE_REJECT_DROP = { R.attr.state_reject_drop };
-    private static final int[] STATE_COPY = { R.attr.state_copy };
+    private static final int[] STATE_REJECT_DROP = {getRes(R.attr.state_reject_drop)};
+    private static final int[] STATE_COPY = {getRes(R.attr.state_copy)};
 
     private @State int mState;
     private LayerDrawable mBackground;
@@ -39,10 +41,10 @@ public final class DropBadgeView extends ImageView {
     public DropBadgeView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final int badgeHeight = context.getResources()
-                .getDimensionPixelSize(R.dimen.drop_icon_height);
-        final int badgeWidth = context.getResources()
-                .getDimensionPixelSize(R.dimen.drop_icon_width);
+        final int badgeHeight =
+                context.getResources().getDimensionPixelSize(getRes(R.dimen.drop_icon_height));
+        final int badgeWidth =
+                context.getResources().getDimensionPixelSize(getRes(R.dimen.drop_icon_width));
         final int iconSize = context.getResources().getDimensionPixelSize(R.dimen.root_icon_size);
 
         Drawable okBadge = context.getResources().getDrawable(R.drawable.drop_badge_states, null);

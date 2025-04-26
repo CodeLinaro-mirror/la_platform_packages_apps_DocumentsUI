@@ -22,6 +22,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
@@ -73,8 +74,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             mSearchManager.showMenu(null);
 
             // Show on toolbar because there are only two menu items while ACTION_OPEN_TREE.
-            menu.findItem(R.id.option_menu_sort).setShowAsAction(mState.action == ACTION_OPEN_TREE
-                    ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER);
+            menu.findItem(getRes(R.id.option_menu_sort))
+                    .setShowAsAction(
+                            mState.action == ACTION_OPEN_TREE
+                                    ? MenuItem.SHOW_AS_ACTION_ALWAYS
+                                    : MenuItem.SHOW_AS_ACTION_NEVER);
         }
     }
 
@@ -136,6 +140,6 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         Menus.setEnabledAndVisible(select, (mState.action == ACTION_GET_CONTENT
                 || mState.action == ACTION_OPEN)
                 && selectionDetails.size() > 0);
-        select.setTitle(R.string.menu_select);
+        select.setTitle(getRes(R.string.menu_select));
     }
 }
