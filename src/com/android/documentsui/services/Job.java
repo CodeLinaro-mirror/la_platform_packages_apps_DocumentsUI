@@ -85,7 +85,7 @@ abstract public class Job implements Runnable {
      * A job is in canceled state as long as {@link #cancel()} is called on it, even after it is
      * completed.
      */
-    static final int STATE_CANCELED = 4;
+    public static final int STATE_CANCELED = 4;
 
     static final String INTENT_TAG_WARNING = "warning";
     static final String INTENT_TAG_FAILURE = "failure";

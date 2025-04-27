@@ -212,6 +212,12 @@
     <string name="rename_error" msgid="6700093173508118635">"ドキュメントの名前を変更できませんでした"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"取り外し"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"一部のファイルが変換されました"</string>
+    <string name="job_progress_item_see_details" msgid="2069387639574541325">"詳細を表示"</string>
+    <string name="copy_completed" msgid="3749037014674785400">"コピーしました"</string>
+    <string name="move_completed" msgid="3981250605092729273">"移動しました"</string>
+    <string name="delete_completed" msgid="4149401155614626199">"削除しました"</string>
+    <string name="compress_completed" msgid="8808356399995313077">"圧縮しました"</string>
+    <string name="extract_completed" msgid="8824595789915249972">"解凍しました"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g>アプリに <xliff:g id="STORAGE"><i>^3</i></xliff:g>の <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ディレクトリへのアクセスを許可しますか？"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g>アプリに <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ディレクトリへのアクセスを許可しますか？"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="STORAGE"><i>^2</i></xliff:g>の写真や動画などのデータへのアクセスを<xliff:g id="APPNAME"><b>^1</b></xliff:g>アプリに許可しますか？"</string>
@@ -306,6 +312,5 @@
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ファイル名"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ファイルのプレビューを非表示にする"</string>
-    <!-- no translation found for peek_no_preview (8717084152736749464) -->
-    <skip />
+    <string name="peek_no_preview" msgid="8717084152736749464">"プレビューは利用できません"</string>
 </resources>

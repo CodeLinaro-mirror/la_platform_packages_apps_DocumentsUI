@@ -212,6 +212,12 @@
     <string name="rename_error" msgid="6700093173508118635">"ไม่สามารถเปลี่ยนชื่อเอกสาร"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"นำอุปกรณ์ออก"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"แปลงบางไฟล์แล้ว"</string>
+    <string name="job_progress_item_see_details" msgid="2069387639574541325">"ดูรายละเอียด"</string>
+    <string name="copy_completed" msgid="3749037014674785400">"คัดลอกแล้ว"</string>
+    <string name="move_completed" msgid="3981250605092729273">"ย้ายแล้ว"</string>
+    <string name="delete_completed" msgid="4149401155614626199">"ลบแล้ว"</string>
+    <string name="compress_completed" msgid="8808356399995313077">"บีบอัดแล้ว"</string>
+    <string name="extract_completed" msgid="8824595789915249972">"แตกไฟล์แล้ว"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"ให้สิทธิ์ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ในการเข้าถึงไดเรกทอรี <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ใน <xliff:g id="STORAGE"><i>^3</i></xliff:g> ไหม"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"ให้สิทธิ์ <xliff:g id="APPNAME"><b>^1</b></xliff:g> เข้าถึงไดเรกทอรี <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ไหม"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"ให้สิทธิ์ <xliff:g id="APPNAME"><b>^1</b></xliff:g> เข้าถึงข้อมูลของคุณ รวมถึงรูปภาพและวิดีโอใน <xliff:g id="STORAGE"><i>^2</i></xliff:g> ไหม"</string>
@@ -306,6 +312,5 @@
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ชื่อไฟล์"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ซ่อนตัวอย่างไฟล์"</string>
-    <!-- no translation found for peek_no_preview (8717084152736749464) -->
-    <skip />
+    <string name="peek_no_preview" msgid="8717084152736749464">"ไม่มีตัวอย่าง"</string>
 </resources>

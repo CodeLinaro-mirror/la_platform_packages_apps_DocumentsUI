@@ -32,6 +32,7 @@ import androidx.legacy.app.ActionBarDrawerToggle;
 
 import com.android.documentsui.base.Display;
 import com.android.documentsui.base.Providers;
+import com.android.documentsui.util.ColorUtils;
 
 /**
  * A facade over the various pieces comprising "roots fragment in a Drawer".
@@ -143,9 +144,17 @@ public abstract class DrawerController implements DrawerListener {
         public void setDropTargetHighlight(View v, boolean highlight) {
             assert (v.getId() == R.id.drawer_edge);
 
-            @ColorRes int id = highlight ? R.color.secondary :
-                android.R.color.transparent;
-            v.setBackgroundColor(id);
+            if (isUseMaterial3FlagEnabled()) {
+                int highlightColor =
+                        ColorUtils.resolveMaterialColorAttribute(
+                                v.getContext(),
+                                com.google.android.material.R.attr.colorPrimaryContainer);
+                int normalColor = v.getResources().getColor(android.R.color.transparent, null);
+                v.setBackgroundColor(highlight ? highlightColor : normalColor);
+            } else {
+                @ColorRes int id = highlight ? R.color.secondary : android.R.color.transparent;
+                v.setBackgroundColor(id);
+            }
         }
 
         @Override

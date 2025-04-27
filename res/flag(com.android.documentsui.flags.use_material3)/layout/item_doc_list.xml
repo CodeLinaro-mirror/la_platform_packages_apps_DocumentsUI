@@ -15,7 +15,6 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -82,24 +81,24 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:orientation="vertical"
+          android:orientation="horizontal"
           android:layout_gravity="center_vertical"
           android:layout_marginEnd="@dimen/list_item_icon_size">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+        <ImageView
+            android:id="@+id/icon_profile_badge"
+            android:layout_height="@dimen/briefcase_icon_size"
+            android:layout_width="@dimen/briefcase_icon_size"
+            android:layout_marginEnd="@dimen/briefcase_icon_margin"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_briefcase"
+            android:tint="@color/briefcase_icon_color"
+            android:contentDescription="@string/a11y_work" />
 
-          <ImageView
-              android:id="@+id/icon_profile_badge"
-              android:layout_height="@dimen/briefcase_icon_size"
-              android:layout_width="@dimen/briefcase_icon_size"
-              android:layout_marginEnd="@dimen/briefcase_icon_margin"
-              android:layout_gravity="center_vertical"
-              android:src="@drawable/ic_briefcase"
-              android:tint="@color/doc_list_item_badge_icon_color"
-              android:contentDescription="@string/a11y_work" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
           <com.google.android.material.textview.MaterialTextView
               android:id="@android:id/title"
@@ -110,23 +109,23 @@
               android:textAlignment="viewStart"
               android:textAppearance="@style/FileItemLabelText" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/line2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-          <com.google.android.material.textview.MaterialTextView
-              android:id="@+id/metadata"
+          <LinearLayout
+              android:id="@+id/line2"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:ellipsize="end"
-              android:singleLine="true"
-              android:textAppearance="@style/ItemCaptionText" />
+              android:baselineAligned="false"
+              android:gravity="center_vertical"
+              android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/metadata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textAppearance="@style/ItemCaptionText" />
+
+          </LinearLayout>
 
         </LinearLayout>
 

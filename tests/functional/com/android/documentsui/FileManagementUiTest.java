@@ -78,7 +78,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         device.waitForIdle();
         bots.main.clickToolbarItem(R.id.action_menu_delete);
 
-        bots.main.clickNonTextDialogOkButton();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
         bots.directory.assertDocumentsAbsent("file1.png");
@@ -143,7 +143,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         device.waitForIdle();
         bots.main.clickToolbarItem(R.id.action_menu_delete);
 
-        bots.main.clickNonTextDialogCancelButton();
+        bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);
 
         bots.directory.waitForDocument("file1.png");
     }

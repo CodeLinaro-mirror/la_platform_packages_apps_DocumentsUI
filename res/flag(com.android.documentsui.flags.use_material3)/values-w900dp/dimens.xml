@@ -22,6 +22,7 @@
     <dimen name="list_item_padding_start">20dp</dimen>
     <dimen name="list_item_padding_end">0dp</dimen>
     <dimen name="list_item_icon_margin_end">@dimen/space_extra_small_4</dimen>
+    <dimen name="briefcase_icon_margin">@dimen/space_extra_small_4</dimen>
 
     <dimen name="max_drawer_width">320dp</dimen>
 

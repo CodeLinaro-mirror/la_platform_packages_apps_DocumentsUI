@@ -29,7 +29,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.MessageQueue.IdleHandler;
 import android.preference.PreferenceManager;
@@ -614,12 +613,8 @@ public abstract class BaseActivity
                 });
 
         getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
-        if (Build.VERSION.SDK_INT >= 29) {
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);
-            getWindow().setNavigationBarContrastEnforced(true);
-        } else {
-            getWindow().setNavigationBarColor(getColor(R.color.nav_bar_translucent));
-        }
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarContrastEnforced(true);
     }
 
     @Override

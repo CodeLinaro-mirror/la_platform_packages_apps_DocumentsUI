@@ -212,6 +212,12 @@
     <string name="rename_error" msgid="6700093173508118635">"ලේඛනය යළි නම් කිරීම අසාර්ථක විය"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"පිටතට ගන්න"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"සමහර ගොනු පරිවර්තනය කරන ලදී"</string>
+    <string name="job_progress_item_see_details" msgid="2069387639574541325">"විස්තර බලන්න"</string>
+    <string name="copy_completed" msgid="3749037014674785400">"පිටපත් කරන ලදි"</string>
+    <string name="move_completed" msgid="3981250605092729273">"ගෙන යන ලදි"</string>
+    <string name="delete_completed" msgid="4149401155614626199">"මකන ලදි"</string>
+    <string name="compress_completed" msgid="8808356399995313077">"සම්පීඩිත"</string>
+    <string name="extract_completed" msgid="8824595789915249972">"උපුටා ගන්නා ලදි"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> හට <xliff:g id="STORAGE"><i>^3</i></xliff:g> මත <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> නාමාවලිය වෙත ප්‍රවේශය දෙන්නද?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> ප්‍රවේශය <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> නාමාවලිය වෙත ලබා දෙන්නද?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="STORAGE"><i>^2</i></xliff:g> හි, ඡායාරූප සහ වීඩියෝ ඇතුළුව, ඔබේ දත්තවලට <xliff:g id="APPNAME"><b>^1</b></xliff:g> හට ප්‍රවේශය ලබා දෙන්නද?"</string>
@@ -305,8 +311,6 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"ලැයිස්තු ප්‍රකාරය තුළ පෙන්වමින්."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ගොනුවේ නම"</string>
-    <!-- no translation found for a11y_peek_navigation_icon (6692873662104342476) -->
-    <skip />
-    <!-- no translation found for peek_no_preview (8717084152736749464) -->
-    <skip />
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ගොනු පෙරදසුන සඟවන්න"</string>
+    <string name="peek_no_preview" msgid="8717084152736749464">"පෙරදසුනක් නොමැත."</string>
 </resources>
