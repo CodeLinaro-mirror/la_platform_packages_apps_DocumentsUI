@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -241,6 +242,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {
         boolean enabled = selectionDetails.canExtract();
         Menus.setEnabledAndVisible(extractTo, enabled);
+        if (isZipNgFlagEnabled()) extractTo.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     }
 
     @Override

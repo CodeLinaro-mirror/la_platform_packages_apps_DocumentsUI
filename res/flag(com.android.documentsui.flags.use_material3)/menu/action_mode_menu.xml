@@ -65,9 +65,9 @@
         android:id="@+id/action_menu_extract_to"
         android:title="@string/menu_extract"
         android:icon="@drawable/ic_menu_extract"
-        android:showAsAction="always"
+        android:showAsAction="never"
         android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_move_to"
         android:title="@string/menu_move"
