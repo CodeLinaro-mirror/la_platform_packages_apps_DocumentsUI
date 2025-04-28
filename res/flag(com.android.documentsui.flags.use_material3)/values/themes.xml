@@ -63,7 +63,6 @@
         <item name="actionBarTheme">@style/ActionBarTheme</item>
         <item name="toolbarStyle">@style/ToolbarStyles</item>
         <item name="toolbarNavigationButtonStyle">@style/HamburgerMenuButtonStyle</item>
-        <item name="actionModeStyle">@style/ActionModeStyle</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButtonStyle</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>

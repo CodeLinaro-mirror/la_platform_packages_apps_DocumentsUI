@@ -53,12 +53,14 @@
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/job_progress_item_progress"
+            style="@style/JobProgressItemProgressStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/job_progress_item_progress_margin_top"
             app:layout_constraintStart_toStartOf="@id/job_progress_item_title"
             app:layout_constraintEnd_toEndOf="@id/job_progress_item_expand"
-            app:layout_constraintTop_toBottomOf="@id/job_progress_item_header_barrier" />
+            app:layout_constraintTop_toBottomOf="@id/job_progress_item_header_barrier"
+            app:layout_constraintHorizontal_bias="0" />
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/job_progress_item_primary_status"
             android:layout_width="wrap_content"
@@ -89,14 +91,14 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/job_progress_item_padding"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/job_progress_item_secondary_status" />
+            app:layout_constraintTop_toBottomOf="@id/job_progress_item_primary_status" />
         <!-- Used to provide a consistent margin regardless of which button is displayed. -->
         <Space
             android:id="@+id/job_progress_item_button_margin"
             android:layout_width="@dimen/job_progress_item_buttons_margin_start"
             android:layout_height="@dimen/job_progress_item_buttons_margin_top"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/job_progress_item_secondary_status" />
+            app:layout_constraintTop_toBottomOf="@id/job_progress_item_primary_status" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/job_progress_item_cancel"
             style="@style/JobProgressItemActionButtonStyle"

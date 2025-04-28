@@ -101,7 +101,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.setDialogText(newName);
 
         device.waitForIdle();
-        bots.main.clickDialogOkButton();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
 
         bots.directory.waitForDocument(newName);
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
@@ -146,7 +146,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.main.setDialogText(newName);
 
-        bots.main.clickDialogCancelButton();
+        bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
 
         bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsAbsent(newName);
@@ -176,7 +176,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRename_NameExists() throws Exception {
         renameWithConflict();
 
-        bots.main.clickDialogCancelButton();
+        bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
 
         bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
         bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
@@ -191,7 +191,7 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.setDialogText(newName);
 
         device.waitForIdle();
-        bots.main.clickDialogOkButton();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
 
         bots.directory.waitForDocument(newName);
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);

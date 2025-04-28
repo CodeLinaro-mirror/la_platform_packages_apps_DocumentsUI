@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (C) 2024 The Android Open Source Project
+  ~ Copyright (C) 2025 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <style name="TabTextAppearance" parent="@style/TextAppearance.Material3.TitleMedium">
-        <item name="android:textSize">14sp</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-        <item name="android:textColor">?android:attr/colorAccent</item>
-    </style>
-</resources>
+<!-- Though there's only one state here but we can't declare this as a normal color variable in
+     colors.xml, it will trigger an attribute resolve error.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorSecondary" />
+</selector>

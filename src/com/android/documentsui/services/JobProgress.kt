@@ -44,6 +44,11 @@ data class JobProgress @JvmOverloads constructor(
         else -> 100f * currentBytes / requiredBytes
     }
 
+    val isFinal get() = when (state) {
+        Job.STATE_COMPLETED, Job.STATE_CANCELED -> true
+        else -> false
+    }
+
     override fun describeContents(): Int {
         return 0
     }

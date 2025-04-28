@@ -125,7 +125,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.selectDocument(fileName, 1);
 
             bots.main.clickToolbarItem(R.id.action_menu_delete);
-            bots.main.clickNonTextDialogOkButton();
+            bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
             device.waitForIdle();
 
             bots.directory.findDocument(fileName).waitUntilGone(5000);
@@ -157,7 +157,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void filesListed_LiveUpdates() throws Exception {
-        mTestFilesRule.createFileInRoot(ROOT_0_ID, "yummers/sandwich", "Ham & Cheese.sandwich");
+        RootInfo root = mTestFilesRule.docsHelper.getRoot(ROOT_0_ID);
+        mTestFilesRule.docsHelper.createDocument(root, "yummers/sandwich", "Ham & Cheese.sandwich");
 
         bots.directory.waitForDocument("Ham & Cheese.sandwich");
         bots.directory.assertDocumentsPresent(

@@ -16,7 +16,6 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_item_background"
@@ -101,7 +100,7 @@
                     android:layout_marginEnd="@dimen/briefcase_icon_margin"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_briefcase"
-                    android:tint="@color/doc_list_item_badge_icon_color"
+                    android:tint="@color/briefcase_icon_color"
                     android:contentDescription="@string/a11y_work"/>
 
                 <com.google.android.material.textview.MaterialTextView
