@@ -19,11 +19,14 @@ import android.app.ActivityOptions
 import android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM
 import android.content.Intent
 import android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT
+import android.content.res.Resources
 import android.graphics.Rect
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.Display
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -31,7 +34,6 @@ import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import kotlin.math.roundToInt
 import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,23 +48,34 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
     private const val MEDIUM_WINDOW_HEIGHT = 900
   }
 
+  private fun dpToPx(dp: Float, metrics: DisplayMetrics?): Float {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, metrics)
+  }
+
+  private fun pxToDp(px: Float, metrics: DisplayMetrics): Float {
+    return TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_DIP, px, metrics)
+  }
+
   /** Override the base method to launch activity in a specified window size. */
   override fun launchActivity() {
+    // check assumption before launching the activity.
+    assumeMinWindowSizeAndFreeFormWindowFeature()
+
     val intent = Intent(context, FilesActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     if (this.initialRoot != null) {
       intent.setAction(Intent.ACTION_VIEW)
       intent.setDataAndType(this.initialRoot!!.uri, DocumentsContract.Root.MIME_TYPE_ITEM)
     }
-    val density = context!!.resources.displayMetrics.density
+    val displayMetrics = Resources.getSystem().displayMetrics
     val options = ActivityOptions.makeBasic()
     options.launchWindowingMode = WINDOWING_MODE_FREEFORM
     options.setLaunchBounds(
       Rect(
         0,
         0,
-        (MEDIUM_WINDOW_WIDTH * density).roundToInt(),
-        (MEDIUM_WINDOW_HEIGHT * density).roundToInt(),
+        dpToPx(MEDIUM_WINDOW_WIDTH.toFloat(), displayMetrics).roundToInt(),
+        dpToPx(MEDIUM_WINDOW_HEIGHT.toFloat(), displayMetrics).roundToInt(),
       )
     )
     options.setLaunchDisplayId(Display.DEFAULT_DISPLAY)
@@ -70,17 +83,16 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
   }
 
   /** Making sure the test device meets the minimum window size and have freeform window feature. */
-  @Before
   fun assumeMinWindowSizeAndFreeFormWindowFeature() {
     assumeTrue(
       "Skipping test: test device doesn't support FreeForm window.",
       context!!.getPackageManager().hasSystemFeature(FEATURE_FREEFORM_WINDOW_MANAGEMENT),
     )
-    val displayMetrics = context!!.resources.displayMetrics
+    val displayMetrics = Resources.getSystem().displayMetrics
     assumeTrue(
       "Skipping test: test device window size is too small to support medium layout.",
-      displayMetrics.widthPixels / displayMetrics.density >= MEDIUM_WINDOW_WIDTH &&
-        displayMetrics.heightPixels / displayMetrics.density >= MEDIUM_WINDOW_HEIGHT,
+      pxToDp(displayMetrics.widthPixels.toFloat(), displayMetrics) >= MEDIUM_WINDOW_WIDTH &&
+        pxToDp(displayMetrics.heightPixels.toFloat(), displayMetrics) >= MEDIUM_WINDOW_HEIGHT,
     )
   }
 
@@ -95,6 +107,8 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
   fun testNavRailDrawerRootsNavigation() {
     bots.main.assertWindowTitle(StubProvider.ROOT_0_ID)
     bots.roots.openDrawerFromNavRail()
+    // The following openRoot will open root from the drawer instead of the navigation rail because
+    // the drawer is open explicitly above.
     bots.roots.openRoot(StubProvider.ROOT_1_ID)
     bots.main.assertWindowTitle(StubProvider.ROOT_1_ID)
   }
