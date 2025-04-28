@@ -21,7 +21,6 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Intent;
@@ -340,14 +339,7 @@ public class SearchViewManager implements
         }
 
         // Recent root show open search bar, do not show duplicate search icon.
-        boolean enabled = supportsSearch && (!stack.isRecents() || !mShowSearchBar);
-        mMenuItem.setVisible(enabled);
-        if (isUseMaterial3FlagEnabled()) {
-            // When the use_material3 flag is enabled, we inflate and deflate the menu.
-            // This causes the search button to be disabled on inflation, toggle it in
-            // this scenario.
-            mMenuItem.setEnabled(enabled);
-        }
+        mMenuItem.setVisible(supportsSearch && (!stack.isRecents() || !mShowSearchBar));
 
         if (!isSearchV2Enabled()) {
             mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());

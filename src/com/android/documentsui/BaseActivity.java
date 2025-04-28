@@ -21,6 +21,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -287,7 +288,7 @@ public abstract class BaseActivity
 
                 if (isUseMaterial3FlagEnabled()) {
                     // Whenever a search chip is clicked, close the navigation bar.
-                    mNavigator.closeSelectionBar();
+                    mInjector.selectionBarController.closeSelectionBar();
                 }
             }
 
@@ -444,8 +445,7 @@ public abstract class BaseActivity
                     breadcrumb,
                     profileTabsContainer,
                     DocumentsApplication.getUserManagerState(this),
-                    mConfigStore,
-                    mInjector);
+                    mConfigStore);
         }
         return new NavigationViewManager(
                 this,
@@ -455,8 +455,7 @@ public abstract class BaseActivity
                 breadcrumb,
                 profileTabsContainer,
                 DocumentsApplication.getUserIdManager(this),
-                mConfigStore,
-                mInjector);
+                mConfigStore);
     }
 
     public void onPreferenceChanged(String pref) {
@@ -472,7 +471,7 @@ public abstract class BaseActivity
 
         Runnable finishActionMode =
                 (isUseMaterial3FlagEnabled())
-                        ? mNavigator::closeSelectionBar
+                        ? mInjector.selectionBarController::closeSelectionBar
                         : mInjector.actionModeController::finishActionMode;
 
         mRootsMonitor =
@@ -496,13 +495,6 @@ public abstract class BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (isUseMaterial3FlagEnabled()) {
-            // In Material3 the menu is now inflated in the `NavigationViewMenu`. This is currently
-            // to allow for us to inflate between the action_menu and the activity menu. Once the
-            // Material 3 flag is removed, the menus will be merged and we can rely on this single
-            // inflation point.
-            return super.onCreateOptionsMenu(menu);
-        }
         boolean showMenu = super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(getRes(R.menu.activity), menu);
@@ -527,15 +519,18 @@ public abstract class BaseActivity
     @CallSuper
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        mSearchManager.showMenu(mState.stack);
+
         // Remove the subMenu when material3 is launched b/379776735.
         if (isUseMaterial3FlagEnabled()) {
-            if (mNavigator != null) {
-                mNavigator.updateActionMenu();
-            }
+            mInjector.menuManager.updateSubMenu(null);
         } else {
-            mSearchManager.showMenu(mState.stack);
             final ActionMenuView subMenuView = findViewById(getRes(R.id.sub_menu));
             mInjector.menuManager.updateSubMenu(subMenuView.getMenu());
+        }
+
+        if (isVisualSignalsFlagEnabled()) {
+            mInjector.menuManager.instantiateJobProgress(menu);
         }
 
         return true;
@@ -647,7 +642,7 @@ public abstract class BaseActivity
         }
 
         if (isUseMaterial3FlagEnabled()) {
-            mNavigator.closeSelectionBar();
+            mInjector.selectionBarController.closeSelectionBar();
         } else {
             mInjector.actionModeController.finishActionMode();
         }

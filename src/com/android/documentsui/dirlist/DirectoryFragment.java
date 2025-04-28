@@ -93,6 +93,7 @@ import com.android.documentsui.Metrics;
 import com.android.documentsui.Model;
 import com.android.documentsui.ProfileTabsController;
 import com.android.documentsui.R;
+import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.ThumbnailCache;
 import com.android.documentsui.TimeoutTask;
 import com.android.documentsui.base.DocumentFilters;
@@ -178,9 +179,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     @ContentScoped
     private ActionHandler mActions;
 
-    @Injected
-    @ContentScoped
-    private ActionModeController mActionModeController;
+    // Returns null when the `use_material3` flag is enabled.
+    @Injected @ContentScoped private @Nullable ActionModeController mActionModeController;
+
+    // Returns null when the `use_material3` flag is disabled.
+    @Injected @ContentScoped private @Nullable SelectionBarController mSelectionBarController;
 
     @Injected
     @ContentScoped
@@ -645,8 +648,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 .attach(mRecView);
 
         if (isUseMaterial3FlagEnabled()) {
-            mSelectionMgr.addObserver(mActivity.getNavigator());
-            mActivity.getNavigator().updateSelection(mSelectionMetadata, this::handleMenuItemClick);
+            mSelectionBarController =
+                    mInjector.getSelectionBarController(
+                            mSelectionMetadata, this::handleMenuItemClick);
+            mSelectionMgr.addObserver(mSelectionBarController);
         } else {
             mActionModeController =
                     mInjector.getActionModeController(
@@ -1033,7 +1038,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void closeSelectionBar() {
         if (isUseMaterial3FlagEnabled()) {
-            mActivity.getNavigator().closeSelectionBar();
+            mSelectionBarController.closeSelectionBar();
         } else {
             mActionModeController.finishActionMode();
         }
@@ -1641,11 +1646,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 // For orientation changed case, sometimes the docs loading comes after the menu
                 // update. We need to update the menu here to ensure the status is correct.
                 mInjector.menuManager.updateModel(mModel);
-                if (isUseMaterial3FlagEnabled()) {
-                    mActivity.getNavigator().updateActionMenu();
-                } else {
-                    mInjector.menuManager.updateOptionMenu();
-                }
+                mInjector.menuManager.updateOptionMenu();
                 if (VersionUtils.isAtLeastS()) {
                     mActivity.updateHeader(update.hasCrossProfileException());
                 } else {
