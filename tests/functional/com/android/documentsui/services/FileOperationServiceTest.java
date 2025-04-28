@@ -109,8 +109,6 @@ public class FileOperationServiceTest extends ServiceTestCase<FileOperationServi
 
         assertNull(mService.features);
         mService.features = features;
-
-        mService.mVisualSignalsEnabled = false;
     }
 
     @Override
@@ -265,26 +263,37 @@ public class FileOperationServiceTest extends ServiceTestCase<FileOperationServi
     public void testRunsInForeground_MultipleJobs() throws Exception {
         startService(createCopyIntent(Arrays.asList(ALPHA_DOC), BETA_DOC));
         startService(createCopyIntent(Arrays.asList(GAMMA_DOC), DELTA_DOC));
+        Job job2 = mCopyJobs.get(1);
 
         mExecutor.run(0);
         mForegroundManager.assertInForeground();
 
-        mHandler.dispatchAllMessages();
+        while (mTestNotificationManager.hasNotification(
+                FileOperationService.NOTIFICATION_ID_PROGRESS, job2.id)) {
+            mHandler.dispatchNextMessage();
+        }
         mForegroundManager.assertInForeground();
     }
 
     public void testFinishesInBackground_MultipleJobs() throws Exception {
         startService(createCopyIntent(Arrays.asList(ALPHA_DOC), BETA_DOC));
         startService(createCopyIntent(Arrays.asList(GAMMA_DOC), DELTA_DOC));
+        Job job2 = mCopyJobs.get(1);
 
         mExecutor.run(0);
         mForegroundManager.assertInForeground();
 
-        mHandler.dispatchAllMessages();
+        while (mTestNotificationManager.hasNotification(
+                FileOperationService.NOTIFICATION_ID_PROGRESS, job2.id)) {
+            mHandler.dispatchNextMessage();
+        }
         mForegroundManager.assertInForeground();
 
         mExecutor.run(0);
-        mHandler.dispatchAllMessages();
+        while (mTestNotificationManager.hasNotification(
+                FileOperationService.NOTIFICATION_ID_PROGRESS, null)) {
+            mHandler.dispatchNextMessage();
+        }
         mForegroundManager.assertInBackground();
     }
 
