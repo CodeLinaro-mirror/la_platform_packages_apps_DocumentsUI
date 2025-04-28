@@ -44,7 +44,9 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
@@ -296,7 +298,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             // Deselect the file and ensure the share menu disappears (this ensures the menu is
             // refreshed).
             bots.directory.selectDocument(fileName);
-            onView(withId(R.id.action_menu_share)).check(doesNotExist());
+            device.wait(Until.gone(By.desc("Share")), /* timeout= */ 5000);
         } finally {
             cleanupFile(fileName, primaryRoot.title);
         }

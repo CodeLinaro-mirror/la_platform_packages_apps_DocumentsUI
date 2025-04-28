@@ -17,7 +17,6 @@
 package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -361,7 +360,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Ensure the selection has cleared and the "1 file selected" text is not displayed.
         device.wait(Until.findObject(By.text(TestFilesRule.FILE_NAME_2).selected(false)), mTimeout);
-        onView(withText("1 selected")).check(doesNotExist());
+        device.wait(Until.gone(By.text("1 selected")), mTimeout);
     }
 
     @Test
