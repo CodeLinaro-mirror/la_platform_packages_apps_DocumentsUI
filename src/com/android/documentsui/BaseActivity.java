@@ -608,6 +608,12 @@ public abstract class BaseActivity
 
                         View rootsContainer = findViewById(getRes(R.id.container_roots));
                         rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+
+                        View navRailContainer = findViewById(R.id.nav_rail_container_roots);
+                        if (navRailContainer != null) {
+                            navRailContainer.setPadding(
+                                    0, 0, 0, insets.getSystemWindowInsetBottom());
+                        }
                     }
 
                     return insets.consumeSystemWindowInsets();
