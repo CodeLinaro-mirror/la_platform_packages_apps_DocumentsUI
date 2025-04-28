@@ -21,6 +21,7 @@ import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.view.View
 import android.widget.ProgressBar
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
@@ -84,6 +85,13 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         context.sendBroadcast(intent)
     }
 
+    private fun openPanel() {
+        onView(withId(R.id.option_menu_job_progress))
+            .check(matches(isDisplayed()))
+            .perform(click())
+        onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+    }
+
     @Test
     fun testInProgressItems() {
         onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
@@ -101,10 +109,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
-        onView(withId(R.id.option_menu_job_progress))
-            .check(matches(isDisplayed()))
-            .perform(click())
-        onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+        openPanel()
 
         val expectedPrimaryStatus = "4 B of 10 B"
         val expectedSecondaryStatus = "10 seconds left"
@@ -144,10 +149,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
-        onView(withId(R.id.option_menu_job_progress))
-            .check(matches(isDisplayed()))
-            .perform(click())
-        onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+        openPanel()
 
         onView(withChild(withText(progress1.msg)))
             .check(selectedDescendantsMatch(
@@ -182,6 +184,55 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(doesNotExist())
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress2)))
             .perform(click())
+        onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
+        onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
+    }
+
+    @Test
+    fun testJobCanceled() {
+        val progress1 = MutableJobProgress(
+            id = "jobId1",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job1",
+            hasFailures = false,
+            currentBytes = 10,
+            requiredBytes = 20,
+            msRemaining = 1000,
+        )
+        val progress2 = MutableJobProgress(
+            id = "jobId2",
+            operationType = FileOperationService.OPERATION_EXTRACT,
+            state = Job.STATE_CREATED,
+            msg = "Job2",
+            hasFailures = false,
+        )
+        sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
+
+        // Overall progress should be 25%.
+        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(25)))
+
+        openPanel()
+
+        // Check both items are displayed.
+        onView(withText(progress1.msg)).check(matches(isDisplayed()))
+        onView(withText(progress2.msg)).check(matches(isDisplayed()))
+
+        // Cancel the first job. Only the second item should be displayed.
+        progress1.state = Job.STATE_CANCELED
+        sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
+        onView(withText(progress1.msg)).check(doesNotExist())
+        onView(withText(progress2.msg)).check(matches(isDisplayed()))
+
+        // Overall progress should be 0% as the first job doesn't count. We need to close the popup
+        // panel first in order to check the menu item behind.
+        Espresso.pressBack()
+        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(0)))
+        openPanel()
+
+        // Cancel the second job. The panel should disappear.
+        progress2.state = Job.STATE_CANCELED
+        sendProgress(arrayListOf(progress2.toJobProgress()))
         onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }

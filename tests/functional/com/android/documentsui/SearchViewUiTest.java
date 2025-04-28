@@ -17,7 +17,6 @@
 package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -25,6 +24,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
+import static com.android.documentsui.conditions.HasChildCountCondition.hasMoreThanOneChild;
+import static com.android.documentsui.conditions.HasChildCountCondition.hasOneChild;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -41,6 +42,7 @@ import android.provider.Settings;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
@@ -62,6 +64,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
+
+    // UI timeout to wait for elements to appear, set to 5 seconds.
+    private final int mTimeout = 5000;
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException, RemoteException {
@@ -354,7 +359,35 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 .perform(new RelaxedClickAction());
 
         // Ensure the selection has cleared and the "1 file selected" text is not displayed.
-        device.wait(Until.findObject(By.text(TestFilesRule.FILE_NAME_2).selected(false)), 5000);
-        onView(withText("1 selected")).check(doesNotExist());
+        device.wait(Until.findObject(By.text(TestFilesRule.FILE_NAME_2).selected(false)), mTimeout);
+        device.wait(Until.gone(By.text("1 selected")), mTimeout);
+    }
+
+    @Test
+    @RequiresFlagsDisabled(
+            FLAG_USE_MATERIAL3) // TODO(b/412895530): Enable for `use_material3` once fixed.
+    public void testSelectionWhileSearchingHidesSearchBar() throws UiObjectNotFoundException {
+        String pkg = bots.directory.mTargetPackage;
+
+        // The `mTestFilesRule` creates more than 1 file, so ensure that that is the case before
+        // proceeding.
+        UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
+        directoryList.wait(hasMoreThanOneChild(), mTimeout);
+
+        // Click the search icon and wait until the only result is the file that was searced for.
+        bots.search.clickIcon();
+        bots.search.setInputText(TestFilesRule.FILE_NAME_1);
+        directoryList.wait(hasOneChild(), mTimeout);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+
+        // Select the document. This implicitly verifies that the bar at the top shows the text "1
+        // selected" which, in all conditions, occludes the search input box.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+
+        // Deselect the document and click the clear button on the search view (if the selection bar
+        // at the top is visible this won't be possible).
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1);
+        bots.search.clickSearchViewClearButton();
+        device.wait(Until.findObject(By.res(pkg + ":id/history_list")), mTimeout);
     }
 }
