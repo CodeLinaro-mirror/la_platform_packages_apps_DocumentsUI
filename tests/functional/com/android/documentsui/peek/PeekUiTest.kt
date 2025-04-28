@@ -67,12 +67,12 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Throws(Exception::class)
     fun testSequentialFilePreview() {
         peekBot.assertPeekHidden()
-        bots.directory.selectDocument("image.png")
+        bots.directory.selectDocument("image.png", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
         peekBot.hide()
 
-        bots.directory.selectDocument("file0.log")
+        bots.directory.selectDocument("file0.log", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
         peekBot.hide()
@@ -87,7 +87,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
         // The selection should not be possible, the "1 selected" label shouldn't show.
-        bots.directory.selectDocument("image.png")
+        val selectionHotspot: UiObject2 = bots.directory.findSelectionHotspot("image.png")
+        Assert.assertNull(selectionHotspot)
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
         val selectionText: UiObject2? =
@@ -98,7 +99,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testRestorePeekActiveState() {
-        bots.directory.selectDocument("image.png")
+        bots.directory.selectDocument("image.png", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
 
@@ -111,7 +112,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         mActivityScenario!!.recreate()
         peekBot.assertPeekHidden()
 
-        bots.directory.selectDocument("file0.log")
+        bots.directory.selectDocument("file0.log", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
         mActivityScenario!!.recreate()
@@ -121,7 +122,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testNoPreview() {
-        bots.directory.selectDocument("file0.log")
+        bots.directory.selectDocument("file0.log", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
 

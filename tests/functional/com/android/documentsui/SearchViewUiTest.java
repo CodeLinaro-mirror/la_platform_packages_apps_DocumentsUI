@@ -386,7 +386,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Deselect the document and click the clear button on the search view (if the selection bar
         // at the top is visible this won't be possible).
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.clearSelection();
         bots.search.clickSearchViewClearButton();
         device.wait(Until.findObject(By.res(pkg + ":id/history_list")), mTimeout);
     }

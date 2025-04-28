@@ -16,6 +16,12 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,6 +29,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+
+import static org.hamcrest.Matchers.allOf;
 
 import android.app.UiAutomation;
 import android.content.Context;
@@ -43,6 +51,8 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
+
+import com.android.documentsui.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,7 +198,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         Configurator.getInstance().setToolType(toolType);
     }
 
-    public void selectDocument(String label) throws UiObjectNotFoundException {
+    private void selectDocument(String label) throws UiObjectNotFoundException {
         waitForDocument(label);
         UiObject2 selectionHotspot = findSelectionHotspot(label);
         selectionHotspot.click();
@@ -228,6 +238,14 @@ public class DirectoryListBot extends Bots.BaseBot {
             }
         }
         return selectionHotspot;
+    }
+
+    /**
+     * Clicks the "X" cancel selection button.
+     */
+    public void clearSelection() {
+        onView(allOf(withContentDescription("Cancel"),
+                isDescendantOfA(withId(R.id.toolbar)))).perform(click());
     }
 
     public void pasteFilesFromClipboard() {
