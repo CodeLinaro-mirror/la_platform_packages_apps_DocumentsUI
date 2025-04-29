@@ -28,13 +28,14 @@
 
     <ImageView
         android:id="@+id/sort_arrow"
-        android:layout_height="@dimen/doc_header_sort_icon_size"
-        android:layout_width="@dimen/doc_header_sort_icon_size"
-        android:layout_marginStart="3dp"
+        android:layout_height="@dimen/doc_header_sort_icon_height"
+        android:layout_width="@dimen/doc_header_sort_icon_width"
+        android:scaleType="center"
+        android:layout_marginStart="@dimen/doc_header_sort_icon_margin_start"
         android:visibility="gone"
         android:focusable="true"
         android:clickable="true"
-        android:background="?attr/colorSurfaceBright"
+        android:background="@drawable/sort_icon_background"
         android:src="@drawable/ic_sort_arrow"
         android:contentDescription="@null"/>
 </merge>
