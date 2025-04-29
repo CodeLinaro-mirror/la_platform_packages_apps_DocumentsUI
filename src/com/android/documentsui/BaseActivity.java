@@ -508,7 +508,8 @@ public abstract class BaseActivity
         getMenuInflater().inflate(getRes(R.menu.activity), menu);
         mNavigator.update();
         boolean fullBarSearch = getResources().getBoolean(R.bool.full_bar_search_view);
-        boolean showSearchBar = getResources().getBoolean(R.bool.show_search_bar);
+        boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
+                R.bool.show_search_bar);
         mSearchManager.install(menu, fullBarSearch, showSearchBar);
 
         // Remove the subMenu when material3 is launched b/379776735.

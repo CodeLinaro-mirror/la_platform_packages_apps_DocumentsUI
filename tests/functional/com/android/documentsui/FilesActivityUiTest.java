@@ -28,8 +28,7 @@ import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
-
-import static com.google.common.truth.TruthJUnit.assume;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -86,10 +85,13 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("Recent");
 
         boolean showSearchBar =
-                context.getResources().getBoolean(R.bool.show_search_bar);
+                isUseMaterial3FlagEnabled() ? false : context.getResources().getBoolean(
+                        R.bool.show_search_bar);
         if (showSearchBar) {
             bots.main.assertSearchBarShow();
         } else {
+            bots.main.assertSearchBarGone();
+            bots.search.assertIconVisible(true);
             bots.main.assertWindowTitle("Recent");
         }
     }
@@ -129,29 +131,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.directory.findDocument(fileName).waitUntilGone(5000);
         assertFalse(bots.directory.hasDocuments(fileName));
-    }
-
-    @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
-    public void testRecentsSelectionClearsSearchBar() throws Exception {
-        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
-
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
-
-        // Open up Recents and create a file that should appear.
-        bots.roots.openRoot("Recent");
-        final String fileName = "Recent.txt";
-        storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
-
-        try {
-            bots.directory.waitForDocument(fileName);
-            bots.directory.selectDocument(fileName, 1);
-            bots.directory.selectDocument(fileName);
-        } finally {
-            cleanupFile(fileName, primaryRoot.title);
-        }
     }
 
     @Test
@@ -264,8 +243,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
     public void testClearSelectionInRecentsResetsActions() throws Exception {
-        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
-
         // Ensure Downloads exists and get the location of the main root (e.g. "Pixel Tablet").
         DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);

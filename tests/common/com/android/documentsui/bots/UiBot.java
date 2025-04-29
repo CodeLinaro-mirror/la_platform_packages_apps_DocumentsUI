@@ -23,6 +23,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -122,6 +123,14 @@ public class UiBot extends Bots.BaseBot {
      */
     public void assertSearchBarShow() {
         onView(withId(R.id.searchbar_title)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Checks that the search bar is not visible.
+     */
+    public void assertSearchBarGone() {
+        onView(withId(R.id.searchbar_title)).check(
+                matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
     }
 
     /**
