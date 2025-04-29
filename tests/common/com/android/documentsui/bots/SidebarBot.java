@@ -82,13 +82,17 @@ public class SidebarBot extends Bots.BaseBot {
         return new UiObject(rootsList.childSelector(new UiSelector().text(label)));
     }
 
+    /** Open navigation root either from the Drawer or the Navigation rail. */
     public void openRoot(String label) throws UiObjectNotFoundException {
         findRoot(label).click();
         // Close the drawer in case we select a pre-selected root already
         closeDrawer();
     }
 
-    /** Open navigation root item from the navigation rail layout. */
+    /**
+     * Use openRoot above for general usage, which caters both the navigation rail and the drawer,
+     * only use openNavRailRoot if you want to open root explicitly from the navigation rail.
+     */
     public void openNavRailRoot(String label) throws UiObjectNotFoundException {
         // Use UiScrollable to scroll into the view.
         final UiSelector rootsList =

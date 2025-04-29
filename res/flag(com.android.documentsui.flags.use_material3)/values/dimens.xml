@@ -44,10 +44,12 @@
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="selection_circle_margin">1dp</dimen>
-    <dimen name="selection_outer_circle_padding">5dp</dimen>
-    <dimen name="selection_outer_stroke_size">1dp</dimen>
-    <dimen name="selection_inner_circle_padding">6dp</dimen>
-    <dimen name="selection_inner_stroke_size">2dp</dimen>
+    <dimen name="selection_circle_shadow_bottom_offset">6dp</dimen>
+    <dimen name="selection_circle_shadow_right_offset">6dp</dimen>
+    <dimen name="selection_circle_shadow_top_offset">8dp</dimen>
+    <dimen name="selection_circle_shadow_left_offset">8dp</dimen>
+    <dimen name="selection_circle_offset">7dp</dimen>
+    <dimen name="selection_stroke_size">2dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
     <dimen name="list_item_thumbnail_corner_radius">8dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
@@ -173,7 +175,12 @@
     <!-- drag_mime_icon_wrapper_size + drop_icon_offset -->
     <dimen name="drop_badge_container_size">27dp</dimen>
 
+    <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="doc_header_sort_icon_size">32dp</dimen>
+    <dimen name="doc_header_sort_icon_width">28dp</dimen>
+    <dimen name="doc_header_sort_icon_height">32dp</dimen>
+    <dimen name="doc_header_sort_icon_margin_start">10dp</dimen>
+    <dimen name="doc_header_sort_icon_radius">100dp</dimen>
     <dimen name="doc_header_height">48dp</dimen>
 
     <dimen name="dropdown_sort_widget_margin">12dp</dimen>

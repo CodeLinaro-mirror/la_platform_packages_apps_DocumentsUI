@@ -13,33 +13,31 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- Draw a 20% black circle with essentially 2 strokes, the inner stroke is white and 2dp wide, the
-     outer stroke is 20% black and 1dp wide. To achieve this draw a bigger circle to be the outer
-     stroke, then draw the inner circle on top that contains both the circle and the inner stroke.
-     -->
+<!-- Draw a 5% black circle with a white stroke. Simulate a shadow by drawing 20% black ring at a
+     1dp offset from the circle. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- The outer 1dp 20% black stroke. -->
-    <item android:bottom="@dimen/selection_outer_circle_padding"
-        android:left="@dimen/selection_outer_circle_padding"
-        android:right="@dimen/selection_outer_circle_padding"
-        android:top="@dimen/selection_outer_circle_padding">
+    <!-- The 20% black ring acting as a shadow. -->
+    <item android:bottom="@dimen/selection_circle_shadow_bottom_offset"
+        android:left="@dimen/selection_circle_shadow_left_offset"
+        android:right="@dimen/selection_circle_shadow_right_offset"
+        android:top="@dimen/selection_circle_shadow_top_offset">
         <shape android:shape="oval">
             <solid android:color="@android:color/transparent" />
             <stroke
-                android:width="@dimen/selection_outer_stroke_size"
-                android:color="@color/selection_circle_black" />
+                android:width="@dimen/selection_stroke_size"
+                android:color="@color/selection_shadow_black" />
         </shape>
     </item>
-    <!-- The inner 2 dp white stroke on a 20% black circle. -->
+    <!-- The 5% black circle with a 2 dp white stroke. -->
     <item
-        android:bottom="@dimen/selection_inner_circle_padding"
-        android:left="@dimen/selection_inner_circle_padding"
-        android:right="@dimen/selection_inner_circle_padding"
-        android:top="@dimen/selection_inner_circle_padding">
+        android:bottom="@dimen/selection_circle_offset"
+        android:left="@dimen/selection_circle_offset"
+        android:right="@dimen/selection_circle_offset"
+        android:top="@dimen/selection_circle_offset">
         <shape android:shape="oval">
             <solid android:color="@color/selection_circle_black"/>
             <stroke
-                android:width="@dimen/selection_inner_stroke_size"
+                android:width="@dimen/selection_stroke_size"
                 android:color="@android:color/white" />
         </shape>
     </item>

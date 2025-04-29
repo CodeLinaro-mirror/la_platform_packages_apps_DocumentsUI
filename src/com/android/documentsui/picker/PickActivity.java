@@ -53,6 +53,7 @@ import com.android.documentsui.Metrics;
 import com.android.documentsui.ProfileTabsController;
 import com.android.documentsui.ProviderExecutor;
 import com.android.documentsui.R;
+import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
@@ -131,7 +132,13 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 new DirectoryDetails(this),
                 mInjector.getModel()::getItemCount);
 
-        if (!isUseMaterial3FlagEnabled()) {
+        if (isUseMaterial3FlagEnabled()) {
+            mInjector.selectionBarController =
+                    new SelectionBarController(
+                            findViewById(getRes(R.id.selection_bar)),
+                            mInjector.menuManager,
+                            mInjector.selectionMgr);
+        } else {
             mInjector.actionModeController =
                     new ActionModeController(
                             this,

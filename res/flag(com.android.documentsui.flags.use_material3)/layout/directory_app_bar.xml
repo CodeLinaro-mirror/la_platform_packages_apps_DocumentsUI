@@ -66,6 +66,15 @@
 
         </com.google.android.material.appbar.MaterialToolbar>
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/selection_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:touchscreenBlocksFocus="false"
+            android:background="?attr/colorSurfaceBright"
+            android:visibility="gone"
+            app:layout_collapseMode="pin"/>
+
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 </com.google.android.material.appbar.AppBarLayout>

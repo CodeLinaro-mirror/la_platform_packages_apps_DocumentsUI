@@ -14,6 +14,13 @@
      limitations under the License.
 -->
 
+<!--
+     All of the `item`'s below have both `android:showAsAction` and `app:showAsAction`
+     intentionally. This is because when the `use_material3` flag is disabled, the menu is inflated
+     into a menu via ActionMode and when the flag is enabled it is inflated into a MaterialToolbar.
+     The former requires `android:showAsAction` whilst the latter requires `app:showAsAction`. When
+     the `use_material3` flag has rolled out by default, the `android:showAsAction` can be removed.
+-->
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -65,9 +72,9 @@
         android:id="@+id/action_menu_extract_to"
         android:title="@string/menu_extract"
         android:icon="@drawable/ic_menu_extract"
-        android:showAsAction="always"
+        android:showAsAction="never"
         android:visible="false"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_menu_move_to"
         android:title="@string/menu_move"

@@ -137,7 +137,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     fun tearDown() {
         device!!.unfreezeRotation()
         restoreScreenOffAndSleepTimeouts()
-        mActivityScenario!!.close()
+        mActivityScenario?.close()
     }
 
     protected open fun launchActivity() {
