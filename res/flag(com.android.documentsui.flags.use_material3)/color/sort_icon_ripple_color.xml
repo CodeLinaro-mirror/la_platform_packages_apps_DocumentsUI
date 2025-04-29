@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2024 The Android Open Source Project
+    Copyright (C) 2025 The Android Open Source Project
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
     limitations under the License.
   -->
 
-<rotate xmlns:android="http://schemas.android.com/apk/res/android"
-        android:drawable="@drawable/ic_arrow_upward"
-        android:fromDegrees="0"
-        android:toDegrees="180"
-        android:pivotX="50%"
-        android:pivotY="50%"/>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:alpha="@dimen/ripple_overlay_alpha" android:color="?attr/colorOnSurface"/>
+</selector>
