@@ -44,10 +44,12 @@
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="zoom_icon_size">24dp</dimen>
     <dimen name="selection_circle_margin">1dp</dimen>
-    <dimen name="selection_outer_circle_padding">5dp</dimen>
-    <dimen name="selection_outer_stroke_size">1dp</dimen>
-    <dimen name="selection_inner_circle_padding">6dp</dimen>
-    <dimen name="selection_inner_stroke_size">2dp</dimen>
+    <dimen name="selection_circle_shadow_bottom_offset">6dp</dimen>
+    <dimen name="selection_circle_shadow_right_offset">6dp</dimen>
+    <dimen name="selection_circle_shadow_top_offset">8dp</dimen>
+    <dimen name="selection_circle_shadow_left_offset">8dp</dimen>
+    <dimen name="selection_circle_offset">7dp</dimen>
+    <dimen name="selection_stroke_size">2dp</dimen>
     <dimen name="list_item_thumbnail_size">40dp</dimen>
     <dimen name="list_item_thumbnail_corner_radius">8dp</dimen>
     <dimen name="grid_item_icon_size">30dp</dimen>
