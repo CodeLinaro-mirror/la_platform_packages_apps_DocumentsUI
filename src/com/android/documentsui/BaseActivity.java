@@ -50,6 +50,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -595,15 +596,9 @@ public abstract class BaseActivity
                             insets.getSystemWindowInsetRight(),
                             0);
 
-                    // When use_material3 flag is ON and FEATURE_FREEFORM_WINDOW_MANAGEMENT is
-                    // enabled, then there should not be any additional bottom gap in full screen
-                    // mode. Otherwise need to take into account the system window insets such as
-                    // the bottom swipe up navigation gesture.
-                    if (!isUseMaterial3FlagEnabled()
-                            || !getApplicationContext()
-                                    .getPackageManager()
-                                    .hasSystemFeature(
-                                            PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT)) {
+                    boolean isNavBarVisible =
+                            insets.isVisible(WindowInsetsCompat.Type.navigationBars());
+                    if (isNavBarVisible) {
                         View saveContainer = findViewById(getRes(R.id.container_save));
                         saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
 
