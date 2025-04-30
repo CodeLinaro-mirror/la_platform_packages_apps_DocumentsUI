@@ -258,10 +258,6 @@ public class UiBot extends Bots.BaseBot {
         onView(withText(label)).perform(click());
     }
 
-    public void clickSaveButton() {
-        onView(withId(android.R.id.button1)).perform(click());
-    }
-
     public boolean waitForActionModeBarToAppear() {
         String actionModeId = isUseMaterial3FlagEnabled() ? "toolbar" : "action_mode_bar";
         UiObject2 bar =
