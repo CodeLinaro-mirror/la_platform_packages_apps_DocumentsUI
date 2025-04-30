@@ -209,7 +209,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
         Instrumentation.ActivityMonitor monitor = new Instrumentation.ActivityMonitor(
                 InspectorActivity.class.getName(), null, false);
-        bots.directory.selectDocument("file0.log");
+        bots.directory.selectDocument("file0.log", 1);
         bots.main.clickActionItem("Get info");
         monitor.waitForActivityWithTimeout(TIMEOUT);
     }
@@ -274,7 +274,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Deselect the file and ensure the share menu disappears (this ensures the menu is
             // refreshed).
-            bots.directory.selectDocument(fileName);
+            bots.directory.clearSelection();
             device.wait(Until.gone(By.desc("Share")), /* timeout= */ 5000);
         } finally {
             cleanupFile(fileName, primaryRoot.title);
