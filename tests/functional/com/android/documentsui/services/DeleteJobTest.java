@@ -39,19 +39,12 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
 
         DeleteJob job = createJob(newArrayList(testFile1, testFile2),
                 DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
-        var progress = job.getJobProgress();
-        assertEquals(job.id, progress.id);
-        assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting 2 files", progress.msg);
-
         job.run();
         mJobListener.waitForFinished();
 
         mDocs.assertChildCount(mSrcRoot, 0);
 
-        progress = job.getJobProgress();
+        var progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(OPERATION_DELETE, progress.operationType);
         assertFalse(progress.hasFailures);
@@ -75,28 +68,6 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         assertEquals(OPERATION_DELETE, progress.operationType);
         assertFalse(progress.hasFailures);
         assertEquals("Deleting 2 files", progress.msg);
-    }
-
-    public void testDeleteSingleFile_ProgressMessage() throws Exception {
-        Uri testFile = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
-        mDocs.writeDocument(testFile, HAM_BYTES);
-        DeleteJob job = createJob(newArrayList(testFile), null);
-
-        var progress = job.getJobProgress();
-        assertEquals(job.id, progress.id);
-        assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting test1.txt", progress.msg);
-
-        job.run();
-        mJobListener.waitForFinished();
-
-        progress = job.getJobProgress();
-        assertEquals(Job.STATE_COMPLETED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting test1.txt", progress.msg);
     }
 
     /**

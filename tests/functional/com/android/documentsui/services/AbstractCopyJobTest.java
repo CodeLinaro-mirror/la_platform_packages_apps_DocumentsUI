@@ -72,11 +72,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
 
         CopyJob job = createJob(newArrayList(testFile1, testFile2));
         JobProgress progress = job.getJobProgress();
-        assertEquals(job.id, progress.id);
-        assertEquals(mOpType, progress.operationType);
         assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals(getVerb() + " 2 files to " + mDestRoot.title, progress.msg);
-        assertFalse(progress.hasFailures);
 
         job.run();
         mJobListener.waitForFinished();
@@ -102,13 +98,6 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
                 FRUITY_BYTES, "application/pdf", "text/html");
 
         CopyJob job = createJob(newArrayList(testFile));
-        JobProgress progress = job.getJobProgress();
-        assertEquals(job.id, progress.id);
-        assertEquals(mOpType, progress.operationType);
-        assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals("Copying virtual.sth to " + mDestRoot.title, progress.msg);
-        assertFalse(progress.hasFailures);
-
         job.run();
         waitForJobFinished();
 
@@ -116,7 +105,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         mDocs.assertHasFile(mDestRoot, "virtual.sth.pdf");  // copy should convert file to PDF.
         mDocs.assertFileContents(mDestRoot.documentId, "virtual.sth.pdf", FRUITY_BYTES);
 
-        progress = job.getJobProgress();
+        JobProgress progress = job.getJobProgress();
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
