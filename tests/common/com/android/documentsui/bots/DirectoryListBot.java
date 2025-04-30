@@ -244,8 +244,9 @@ public class DirectoryListBot extends Bots.BaseBot {
      * Clicks the "X" cancel selection button.
      */
     public void clearSelection() {
+        int parentId = isUseMaterial3FlagEnabled() ? R.id.selection_bar : R.id.toolbar;
         onView(allOf(withContentDescription("Cancel"),
-                isDescendantOfA(withId(R.id.toolbar)))).perform(click());
+                isDescendantOfA(withId(parentId)))).perform(click());
     }
 
     public void pasteFilesFromClipboard() {
