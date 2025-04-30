@@ -24,7 +24,7 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,10 +32,10 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.spy
 
 class TestSearchOptionsListener() : SearchOptionsListener {
-    var mOptionsState: SearchOptionsState? = null
+    var optionsState: SearchOptionsState? = null
 
     override fun onOptionsChanged(options: SearchOptionsState) {
-        mOptionsState = options
+        optionsState = options
     }
 }
 
@@ -46,46 +46,46 @@ class SearchOptionsControllerTest {
     @get:Rule
     val checkFlags = CheckAndForceMaterial3Flag()
 
-    var mContext: Context? = null
-    var mController: SearchOptionsController? = null
-    var mContainer: LinearLayout? = null
-    val mOptionsListener = TestSearchOptionsListener()
+    var context: Context? = null
+    var controller: SearchOptionsController? = null
+    var container: LinearLayout? = null
+    val optionsListener = TestSearchOptionsListener()
 
     @Before
     fun setUp() {
-        mContext = InstrumentationRegistry.getInstrumentation().targetContext
-        mContainer = spy(LinearLayout(mContext))
-        mController = SearchOptionsController(mContainer)
-        mController!!.setOptionChangeListener(mOptionsListener)
+        context = InstrumentationRegistry.getInstrumentation().targetContext
+        container = spy(LinearLayout(context))
+        controller = SearchOptionsController(container)
+        controller!!.setOptionChangeListener(optionsListener)
     }
 
     @Test
     fun testOptionsUpdateWorks() {
         for (e in SearchLocationOption.entries) {
-            mController!!.onLocationSelected(e.value)
-            mController!!.notifyOptionsChangeListener()
-            assertEquals(mOptionsListener.mOptionsState!!.location, e)
+            controller!!.onLocationSelected(e.value)
+            controller!!.notifyOptionsChangeListener()
+            assertEquals(optionsListener.optionsState!!.location, e)
         }
         for (e in LastModifiedOption.entries) {
-            mController!!.onLastModifiedSelected(e.value)
-            mController!!.notifyOptionsChangeListener()
-            assertEquals(mOptionsListener.mOptionsState!!.lastModified, e)
+            controller!!.onLastModifiedSelected(e.value)
+            controller!!.notifyOptionsChangeListener()
+            assertEquals(optionsListener.optionsState!!.lastModified, e)
         }
         for (e in FileTypeOption.entries) {
-            mController!!.onFileTypeSelected(e.value)
-            mController!!.notifyOptionsChangeListener()
-            assertEquals(mOptionsListener.mOptionsState!!.fileType, e)
+            controller!!.onFileTypeSelected(e.value)
+            controller!!.notifyOptionsChangeListener()
+            assertEquals(optionsListener.optionsState!!.fileType, e)
         }
     }
 
     @Test
     fun testGetOptionsQueryArgs() {
         // Reset the options to minimum filtering state.
-        mController!!.onLocationSelected(SearchLocationOption.EVERYWHERE.ordinal)
-        mController!!.onLastModifiedSelected(LastModifiedOption.ANY_TIME.ordinal)
-        mController!!.onFileTypeSelected(FileTypeOption.ANY_TYPE.ordinal)
+        controller!!.onLocationSelected(SearchLocationOption.EVERYWHERE.ordinal)
+        controller!!.onLastModifiedSelected(LastModifiedOption.ANY_TIME.ordinal)
+        controller!!.onFileTypeSelected(FileTypeOption.ANY_TYPE.ordinal)
 
-        val queryArgs = mController!!.getOptionsQueryArgs()
+        val queryArgs = controller!!.getOptionsQueryArgs()
         // Expect no query args with the default (no limits) settings.
         assertEquals(queryArgs.size, 0)
     }
