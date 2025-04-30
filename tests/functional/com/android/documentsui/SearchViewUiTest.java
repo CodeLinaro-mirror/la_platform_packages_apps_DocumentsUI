@@ -17,6 +17,8 @@
 package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -52,6 +54,7 @@ import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -70,7 +73,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException, RemoteException {
-        // Drawer interferes with a lot of search action; going to try to close any opened ones
         bots.roots.closeDrawer();
 
         // wait for a file to be present in default dir.
@@ -328,7 +330,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchDropdowns() throws Exception {
-        bots.roots.openRoot("Downloads");
         bots.search.clickIcon();
         bots.search.setInputText("foo");
         // Verify that menu triggers (chips) are showing.
@@ -338,7 +339,61 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2FileTypeDropdown() throws Exception {
+        // Start search with term "file1" limiting results to images only.
+        bots.search.clickIcon();
+        bots.search.setInputText("file");
+        bots.keyboard.pressEnter();
+        // Select images files only.
+        onView(withId(R.id.search_file_type_trigger)).perform(click());
+        onView(withText(R.string.chip_title_images)).inRoot(isPlatformPopup()).perform(click());
+
+        // Silence subsequent warnings about device being potentially null.
+        Assert.assertNotNull(device);
+
+        // There should be only file12.png left.
+        device.waitForIdle();
+        device.wait(Until.findObject(By.text(TestFilesRule.FILE_NAME_2).selected(false)), 5000);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2LastModifiedDropdown() throws Exception {
+        // Start search with term "file1" limiting results modified in the last 30 days.
+        bots.search.clickIcon();
+        bots.search.setInputText("file");
+        bots.keyboard.pressEnter();
+        onView(withId(R.id.search_last_modified_trigger)).perform(click());
+        onView(withText(R.string.search_last_modified_30_days)).inRoot(isPlatformPopup()).perform(
+                click());
+
+        // Silence subsequent warnings about device being potentially null.
+        Assert.assertNotNull(device);
+        device.waitForIdle();
+        bots.directory.assertDocumentsCountOnList(true, 3);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2SearchLocationDropdown() throws Exception {
+        // Start search with term "file1", but rather than searching locally, search everywhere.
+        bots.search.clickIcon();
+        bots.search.setInputText("file");
+        bots.keyboard.pressEnter();
+        onView(withId(R.id.search_location_trigger)).perform(click());
+        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
+                click());
+
+        // Silence subsequent warnings about device being potentially null.
+        Assert.assertNotNull(device);
+        device.waitForIdle();
+        bots.directory.assertDocumentsCountOnList(true, 3);
+    }
+
+    @Test
     @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testSearchView_TogglingASearchChipClearsSelection() throws Exception {
         // Get the label of the device (this will be used to navigate to the ExternalStorageProvider
         // as the custom roots added for test do not show the search chips).

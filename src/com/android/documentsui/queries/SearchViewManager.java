@@ -51,13 +51,18 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
+import com.android.documentsui.base.FolderInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.modules.utils.build.SdkLevel;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Manages searching UI behavior.
@@ -90,6 +95,7 @@ public class SearchViewManager implements
     private boolean mFullBar;
     private boolean mIsHistorySearch;
     private boolean mShowSearchBar;
+    private @Nullable SearchLocationOption mLocationOption;
 
     private @Nullable Menu mMenu;
     private @Nullable MenuItem mMenuItem;
@@ -126,7 +132,15 @@ public class SearchViewManager implements
         mUiHandler = handler;
         mChipViewManager = chipViewManager;
         mChipViewManager.setSearchChipViewManagerListener(this::onChipCheckedStateChanged);
-        mSearchOptionsController = searchOptionsController;
+        if (!isSearchV2Enabled()) {
+            mSearchOptionsController = null;
+        } else {
+            mSearchOptionsController = searchOptionsController;
+            mLocationOption = SearchLocationOption.CURRENT_FOLDER;
+            if (mSearchOptionsController != null) {
+                mSearchOptionsController.setOptionChangeListener(this::onSearchOptionsChanged);
+            }
+        }
 
         if (savedState != null) {
             mCurrentSearch = savedState.getString(Shared.EXTRA_QUERY);
@@ -138,6 +152,11 @@ public class SearchViewManager implements
 
     private void onChipCheckedStateChanged(View v) {
         mListener.onSearchChipStateChanged(v);
+        performSearch(mCurrentSearch);
+    }
+
+    private void onSearchOptionsChanged(SearchOptionsState optionsState) {
+        mLocationOption = optionsState.getLocation();
         performSearch(mCurrentSearch);
     }
 
@@ -166,7 +185,9 @@ public class SearchViewManager implements
      * @return the bundle of query arguments
      */
     public Bundle buildQueryArgs() {
-        final Bundle queryArgs = mChipViewManager.getCheckedChipQueryArgs();
+        final Bundle queryArgs = isSearchV2Enabled() && mSearchOptionsController.isVisible()
+                ? mSearchOptionsController.getOptionsQueryArgs()
+                : mChipViewManager.getCheckedChipQueryArgs();
         if (!TextUtils.isEmpty(mCurrentSearch)) {
             queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, mCurrentSearch);
         } else if (isExpanded() && isSearching()) {
@@ -694,6 +715,54 @@ public class SearchViewManager implements
 
     public boolean isExpanded() {
         return mSearchExpanded;
+    }
+
+    /**
+     * For the given set of roots, and the current state of the document stack, it returns a list
+     * of searchable folders. This method uses the state of the search options to narrow down
+     * the list of folders to the one that the user asks to be searched.
+     *
+     * @param roots The list of roots that are used to form a list of searchable folders.
+     * @param stack The current state of the document stack.
+     * @return A list of folders that should be searched based on the search options.
+     */
+    public Collection<FolderInfo> getSearchFolders(Collection<RootInfo> roots,
+            DocumentStack stack) {
+        Collection<FolderInfo> folderList = new ArrayList<>();
+        // A predicate that selects all searchable roots that have an authority and a rootID.
+        // TODO(b:391232249): Resolve if we should test for r.isStorage() to eliminate media roots.
+        Predicate<RootInfo> baseFilter =
+                r -> r.supportsSearch() && r.authority != null && r.rootId != null;
+        if (stack.isRecents()) {
+            Predicate<RootInfo> filter = baseFilter;
+            if (mLocationOption != SearchLocationOption.EVERYWHERE) {
+                // If we are not searching everywhere, limit the search to local roots only.
+                filter = baseFilter.and(RootInfo::isLocalOnly);
+            }
+            folderList = roots.stream().filter(filter).map(FolderInfo::new).collect(
+                    Collectors.toList());
+        } else if (mLocationOption != null) {
+            switch (mLocationOption) {
+                case CURRENT_FOLDER: {
+                    // TODO(b:391232249): Searching with stack.peek().documentId does not work.
+                    // Here we are searching with rootId, even though we are suppose to search
+                    // in the current folder. This needs to be fixed.
+                    folderList.add(new FolderInfo(stack.getRoot()));
+                    break;
+                }
+                case ROOT_FOLDER:
+                    folderList.add(new FolderInfo(stack.getRoot()));
+                    break;
+                case EVERYWHERE:
+                    folderList = roots.stream().filter(baseFilter).map(FolderInfo::new).collect(
+                            Collectors.toList());
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            "Unhandled location option " + mLocationOption.name());
+            }
+        }
+        return folderList;
     }
 
     public interface SearchManagerListener {

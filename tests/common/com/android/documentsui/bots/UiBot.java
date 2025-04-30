@@ -137,21 +137,21 @@ public class UiBot extends Bots.BaseBot {
      * Checks that the UI chip that toggles location search menu is visible.
      */
     public void assertLocationTriggerShows() {
-        onView(withText(R.string.search_location_this_folder)).check(matches(isDisplayed()));
+        onView(withId(R.id.search_location_trigger)).check(matches(isDisplayed()));
     }
 
     /**
      * Checks that the UI chip that toggles last modified menu is visible.
      */
     public void assertLastModifiedTriggerShows() {
-        onView(withText(R.string.search_last_modified_any_time)).check(matches(isDisplayed()));
+        onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
     }
 
     /**
      * Checks that the UI chip that toggles file type menu is visible.
      */
     public void assertFileTypeTriggerShows() {
-        onView(withText(R.string.search_file_type_all)).check(matches(isDisplayed()));
+        onView(withId(R.id.search_file_type_trigger)).check(matches(isDisplayed()));
     }
 
     public void assertMenuEnabled(int id, boolean enabled) {

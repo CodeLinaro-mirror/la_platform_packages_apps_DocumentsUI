@@ -80,11 +80,11 @@ public class SearchChipViewManager {
     private static final ChipComparator CHIP_COMPARATOR = new ChipComparator();
 
     // we will get the icon drawable with the first mimeType
-    private static final String[] IMAGES_MIMETYPES = new String[]{"image/*"};
-    private static final String[] VIDEOS_MIMETYPES = new String[]{"video/*"};
-    private static final String[] AUDIO_MIMETYPES =
+    public static final String[] IMAGES_MIMETYPES = new String[]{"image/*"};
+    public static final String[] VIDEOS_MIMETYPES = new String[]{"video/*"};
+    public static final String[] AUDIO_MIMETYPES =
             new String[]{"audio/*", "application/ogg", "application/x-flac"};
-    private static final String[] DOCUMENTS_MIMETYPES = MimeTypes.getDocumentMimeTypeArray();
+    public static final String[] DOCUMENTS_MIMETYPES = MimeTypes.getDocumentMimeTypeArray();
     private static final String[] EMPTY_MIMETYPES = new String[]{""};
 
     private static final Map<Integer, SearchChipData> sMimeTypesChipItems = new HashMap<>();
