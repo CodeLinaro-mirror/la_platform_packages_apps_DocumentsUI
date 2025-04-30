@@ -58,10 +58,12 @@ class DragShadowBuilder extends View.DragShadowBuilder {
     private final int mShadowYOffset;
 
     DragShadowBuilder(Context context) {
-        mWidth = context.getResources().getDimensionPixelSize(R.dimen.drag_shadow_width);
-        mHeight = context.getResources().getDimensionPixelSize(R.dimen.drag_shadow_height);
-        mShadowRadius = context.getResources().getDimensionPixelSize(R.dimen.drag_shadow_radius);
-        mPadding = context.getResources().getDimensionPixelSize(R.dimen.drag_shadow_padding);
+        mWidth = context.getResources().getDimensionPixelSize(getRes(R.dimen.drag_shadow_width));
+        mHeight = context.getResources().getDimensionPixelSize(getRes(R.dimen.drag_shadow_height));
+        mShadowRadius =
+                context.getResources().getDimensionPixelSize(getRes(R.dimen.drag_shadow_radius));
+        mPadding =
+                context.getResources().getDimensionPixelSize(getRes(R.dimen.drag_shadow_padding));
 
         mShadowView =
                 LayoutInflater.from(context).inflate(getRes(R.layout.drag_shadow_layout), null);
@@ -72,16 +74,20 @@ class DragShadowBuilder extends View.DragShadowBuilder {
                     LayoutInflater.from(context)
                             .inflate(getRes(R.layout.additional_drag_shadow), null);
             mDragContentRadius =
-                    context.getResources().getDimensionPixelSize(R.dimen.drag_content_radius);
+                    context.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.drag_content_radius));
             mAdditionalLayerOffset =
                     context.getResources()
                             .getDimensionPixelSize(getRes(R.dimen.drag_additional_layer_offset));
             mDragFileCounterOffset =
-                    context.getResources().getDimensionPixelSize(R.dimen.drag_file_counter_offset);
+                    context.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.drag_file_counter_offset));
             mShadow2Radius =
-                    context.getResources().getDimensionPixelSize(R.dimen.drag_shadow_2_radius);
+                    context.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.drag_shadow_2_radius));
             mShadowYOffset =
-                    context.getResources().getDimensionPixelSize(R.dimen.drag_shadow_y_offset);
+                    context.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.drag_shadow_y_offset));
         } else {
             mAdditionalShadowView = null;
             mDragContentRadius = 0;
