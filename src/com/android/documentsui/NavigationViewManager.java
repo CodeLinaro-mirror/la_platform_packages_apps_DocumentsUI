@@ -358,7 +358,8 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
                     searchBarMargin);
             mToolbar.setLayoutParams(toolbarLayoutParams);
             mToolbar.setElevation(
-                    mToolbar.getResources().getDimensionPixelSize(R.dimen.search_bar_elevation));
+                    mToolbar.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.search_bar_elevation)));
             headerTopOffset = toolbarLayoutParams.height + searchBarMargin * 2;
         } else {
             mToolbar.setBackground(mDefaultActionBarBackground);
@@ -369,7 +370,8 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             toolbarLayoutParams.setMargins(0, 0, 0, /* bottom= */ actionBarMargin);
             mToolbar.setLayoutParams(toolbarLayoutParams);
             mToolbar.setElevation(
-                    mToolbar.getResources().getDimensionPixelSize(R.dimen.action_bar_elevation));
+                    mToolbar.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.action_bar_elevation)));
             headerTopOffset = toolbarLayoutParams.height + actionBarMargin;
         }
 

@@ -236,15 +236,15 @@ public class SortModel implements Parcelable {
             queryArgs.putStringArray(
                     ContentResolver.QUERY_ARG_SORT_COLUMNS,
                     new String[]{Document.COLUMN_DISPLAY_NAME});
-        } else if (id == SortModel.SORT_DIMENSION_ID_DATE) {
+        } else if (id == getRes(SortModel.SORT_DIMENSION_ID_DATE)) {
             queryArgs.putStringArray(
                     ContentResolver.QUERY_ARG_SORT_COLUMNS,
                     new String[]{Document.COLUMN_LAST_MODIFIED});
-        } else if (id == SortModel.SORT_DIMENSION_ID_SIZE) {
+        } else if (id == getRes(SortModel.SORT_DIMENSION_ID_SIZE)) {
             queryArgs.putStringArray(
                     ContentResolver.QUERY_ARG_SORT_COLUMNS,
                     new String[]{Document.COLUMN_SIZE});
-        } else if (id == SortModel.SORT_DIMENSION_ID_FILE_TYPE) {
+        } else if (id == getRes(SortModel.SORT_DIMENSION_ID_FILE_TYPE)) {
             // Unfortunately sorting by mime type is pretty much guaranteed different from
             // sorting by user-friendly type, so there is no point to guide the provider to sort
             // in a particular order.
@@ -287,11 +287,11 @@ public class SortModel implements Parcelable {
             return null;
         } else if (id == SortModel.SORT_DIMENSION_ID_TITLE) {
             columnName = Document.COLUMN_DISPLAY_NAME;
-        } else if (id == SortModel.SORT_DIMENSION_ID_DATE) {
+        } else if (id == getRes(SortModel.SORT_DIMENSION_ID_DATE)) {
             columnName = Document.COLUMN_LAST_MODIFIED;
-        } else if (id == SortModel.SORT_DIMENSION_ID_SIZE) {
+        } else if (id == getRes(SortModel.SORT_DIMENSION_ID_SIZE)) {
             columnName = Document.COLUMN_SIZE;
-        } else if (id == SortModel.SORT_DIMENSION_ID_FILE_TYPE) {
+        } else if (id == getRes(SortModel.SORT_DIMENSION_ID_FILE_TYPE)) {
             // Unfortunately sorting by mime type is pretty much guaranteed different from
             // sorting by user-friendly type, so there is no point to guide the provider to sort
             // in a particular order.
@@ -459,7 +459,7 @@ public class SortModel implements Parcelable {
 
         // Size column
         dimensions.add(
-                builder.withId(SORT_DIMENSION_ID_SIZE)
+                builder.withId(getRes(SORT_DIMENSION_ID_SIZE))
                         .withLabelId(getRes(R.string.sort_dimension_size))
                         .withDataType(SortDimension.DATA_TYPE_NUMBER)
                         .withSortCapability(SortDimension.SORT_CAPABILITY_BOTH_DIRECTION)
@@ -469,7 +469,7 @@ public class SortModel implements Parcelable {
 
         // Type column
         dimensions.add(
-                builder.withId(SORT_DIMENSION_ID_FILE_TYPE)
+                builder.withId(getRes(SORT_DIMENSION_ID_FILE_TYPE))
                         .withLabelId(getRes(R.string.sort_dimension_file_type))
                         .withDataType(SortDimension.DATA_TYPE_STRING)
                         .withSortCapability(SortDimension.SORT_CAPABILITY_BOTH_DIRECTION)
@@ -479,7 +479,7 @@ public class SortModel implements Parcelable {
 
         // Date column
         dimensions.add(
-                builder.withId(SORT_DIMENSION_ID_DATE)
+                builder.withId(getRes(SORT_DIMENSION_ID_DATE))
                         .withLabelId(getRes(R.string.sort_dimension_date))
                         .withDataType(SortDimension.DATA_TYPE_NUMBER)
                         .withSortCapability(SortDimension.SORT_CAPABILITY_BOTH_DIRECTION)

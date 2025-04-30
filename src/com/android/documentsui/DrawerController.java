@@ -90,7 +90,7 @@ public abstract class DrawerController implements DrawerListener {
         // Material design specification for navigation drawer:
         // https://www.google.com/design/spec/patterns/navigation-drawer.html
         float width = Display.screenWidth(activity) - Display.actionBarHeight(activity);
-        float maxWidth = activity.getResources().getDimension(R.dimen.max_drawer_width);
+        float maxWidth = activity.getResources().getDimension(getRes(R.dimen.max_drawer_width));
         int finalWidth = (int) ((width > maxWidth ? maxWidth : width));
 
         if (DEBUG)
