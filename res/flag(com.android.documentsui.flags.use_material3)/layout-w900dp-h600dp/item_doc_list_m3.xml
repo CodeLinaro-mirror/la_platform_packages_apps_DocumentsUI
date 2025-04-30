@@ -21,18 +21,20 @@
     android:background="@drawable/list_item_background_m3"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/list_item_height_m3"
+    android:paddingStart="@dimen/list_item_padding_start"
+    android:paddingEnd="@dimen/list_item_padding_end"
+    android:paddingVertical="@dimen/list_item_padding_vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:gravity="center_vertical"
-        android:minHeight="@dimen/list_item_height_m3"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/list_item_padding_start"
-        android:paddingEnd="@dimen/list_item_padding_end"
-        android:paddingVertical="@dimen/list_item_padding_vertical">
+        android:layout_weight="0.4"
+        android:layout_marginEnd="12dp"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:id="@+id/icon"
@@ -42,7 +44,6 @@
             android:layout_marginEnd="@dimen/list_item_icon_margin_end">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/icon_wrapper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 style="@style/ListThumbnailCardViewStyle">
@@ -78,83 +79,68 @@
 
         </FrameLayout>
 
-        <!-- This is the one special case where we want baseline alignment! -->
+        <ImageView
+            android:id="@+id/icon_profile_badge"
+            android:layout_height="@dimen/briefcase_icon_size_m3"
+            android:layout_width="@dimen/briefcase_icon_size_m3"
+            android:layout_marginEnd="@dimen/briefcase_icon_margin_m3"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_briefcase_m3"
+            android:tint="@color/briefcase_icon_color"
+            android:contentDescription="@string/a11y_work"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@android:id/title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal" >
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.4"
-                android:layout_marginEnd="12dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/icon_profile_badge"
-                    android:layout_height="@dimen/briefcase_icon_size_m3"
-                    android:layout_width="@dimen/briefcase_icon_size_m3"
-                    android:layout_marginEnd="@dimen/briefcase_icon_margin_m3"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_briefcase_m3"
-                    android:tint="@color/briefcase_icon_color"
-                    android:contentDescription="@string/a11y_work"/>
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@android:id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="middle"
-                    android:singleLine="true"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/FileItemLabelText"/>
-            </LinearLayout>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/file_type"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:textAlignment="viewStart"
-                style="@style/FileItemLabelStyle"/>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/size"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:textAlignment="viewStart"
-                style="@style/FileItemLabelStyle"/>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.2"
-                android:textAlignment="viewStart"
-                style="@style/FileItemLabelStyle"/>
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/preview_icon"
-            android:layout_width="@dimen/list_item_icon_size"
-            android:layout_height="@dimen/list_item_icon_size"
-            android:layout_marginEnd="@dimen/list_item_icon_margin_end"
-            android:focusable="true">
-
-            <ImageView
-                android:layout_width="@dimen/check_icon_size_m3"
-                android:layout_height="@dimen/check_icon_size_m3"
-                android:layout_gravity="center"
-                android:scaleType="fitCenter"
-                android:tint="@color/doc_list_item_badge_icon_color"
-                android:src="@drawable/ic_zoom_out_m3"/>
-
-        </FrameLayout>
+            android:layout_gravity="center_vertical"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/FileItemLabelText"/>
 
     </LinearLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/file_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:textAlignment="viewStart"
+        style="@style/FileItemLabelStyle"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/size"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:textAlignment="viewStart"
+        style="@style/FileItemLabelStyle"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:textAlignment="viewStart"
+        style="@style/FileItemLabelStyle"/>
+
+    <FrameLayout
+        android:id="@+id/preview_icon"
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_gravity="center"
+        android:layout_marginEnd="@dimen/list_item_icon_margin_end"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="@dimen/check_icon_size_m3"
+            android:layout_height="@dimen/check_icon_size_m3"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:tint="@color/doc_list_item_badge_icon_color"
+            android:src="@drawable/ic_zoom_out_m3"/>
+
+    </FrameLayout>
 
 </LinearLayout>
