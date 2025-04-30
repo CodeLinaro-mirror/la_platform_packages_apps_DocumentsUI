@@ -17,6 +17,7 @@
 package com.android.documentsui.sidebar;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.util.Log;
@@ -45,6 +46,10 @@ class SpacerItem extends Item {
     @Override
     void bindView(View convertView) {
         // Nothing to bind
+        if (isUseMaterial3FlagEnabled()) {
+            // Let TalkBack ignore the spacer item.
+            convertView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
+        }
     }
 
     @Override
