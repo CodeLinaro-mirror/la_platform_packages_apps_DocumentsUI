@@ -16,8 +16,6 @@
 
 package com.android.documentsui.services;
 
-import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -77,9 +75,6 @@ class TestCopyJobProcessTracker<T extends CopyJobProgressTracker> {
 
     void updateProgressAndRemainingTime(long elapsedTime) {
         mTimeSupplier.mValue = elapsedTime;
-        if (isVisualSignalsFlagEnabled()) {
-            mProcessTracker.updateEstimateRemainingTime();
-        }
         mProcessTracker.update(mProgressBuilder, mRemainTimeFormatter);
     }
 

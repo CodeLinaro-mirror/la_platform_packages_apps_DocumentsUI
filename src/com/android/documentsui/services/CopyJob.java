@@ -49,6 +49,7 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.DeadObjectException;
 import android.os.FileUtils;
@@ -98,6 +99,7 @@ import java.io.SyncFailedException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -208,9 +210,27 @@ class CopyJob extends ResolvedResourcesJob {
     }
 
     protected String getProgressMessage() {
-        Map<String, Object> formatArgs = new HashMap<>();
-        formatArgs.put("directory", BidiFormatter.getInstance().unicodeWrap(mDstInfo.displayName));
-        return getProgressMessage(R.string.copy_in_progress, formatArgs);
+        switch (getState()) {
+            case Job.STATE_SET_UP:
+            case Job.STATE_COMPLETED:
+            case Job.STATE_CANCELED:
+                Map<String, Object> formatArgs = new HashMap<>();
+                formatArgs.put("count", mResolvedDocs.size());
+                formatArgs.put("directory",
+                        BidiFormatter.getInstance().unicodeWrap(mDstInfo.displayName));
+                if (mResolvedDocs.size() == 1) {
+                    formatArgs.put("filename",
+                            BidiFormatter.getInstance().unicodeWrap(
+                                    mResolvedDocs.get(0).displayName));
+                }
+                return (new MessageFormat(
+                                service.getString(getRes(R.string.copy_in_progress)),
+                                Locale.getDefault()))
+                        .format(formatArgs);
+
+            default:
+                return "";
+        }
     }
 
     @Override
