@@ -17,15 +17,21 @@
 <!-- Dropdown menu showing possible limits on the last modified values. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/last_modified_any_time_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_last_modified_any_time" />
     <item android:id="@+id/last_modified_1_day_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_last_modified_1_day" />
     <item android:id="@+id/last_modified_2_days_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_last_modified_2_days" />
     <item android:id="@+id/last_modified_7_days_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_last_modified_7_days" />
     <item android:id="@+id/last_modified_30_days_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_last_modified_30_days" />
     <item android:id="@+id/last_modified_365_days_option"
+        android:icon="@drawable/ic_done"
         android:title="@string/search_last_modified_365_days" />
 </menu>

@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.UserProperties;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -863,7 +864,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         if (isUseMaterial3FlagEnabled()) {
             if (mode == MODE_GRID) {
-                int itemMarg = getResources().getDimensionPixelSize(R.dimen.grid_item_margin);
+                int itemMarg =
+                        getResources().getDimensionPixelSize(getRes(R.dimen.grid_item_margin));
                 // Subtract the item's margin since we don't want to double count the margin in the
                 // distance between the outer grid items and the grid boundary.
                 int leftPad =
@@ -914,7 +916,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
         mIconHelper.setViewMode(mode);
 
-        int range = getResources().getDimensionPixelOffset(R.dimen.refresh_icon_range);
+        int range = getResources().getDimensionPixelOffset(getRes(R.dimen.refresh_icon_range));
         mRefreshLayout.setProgressViewOffset(true, mAppBarHeight, mAppBarHeight + range);
     }
 
@@ -986,11 +988,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // List mode is a "grid" with 1 column.
             return 1;
         }
+        Resources resources = getResources();
         float scaling = isUseMaterial3FlagEnabled() ? 1.0f : mLiveScale;
 
-        int cellWidth = (int) (getResources().getDimensionPixelSize(R.dimen.grid_width) * scaling);
-        int cellMargin = 2 * (int) (getResources().getDimensionPixelSize(R.dimen.grid_item_margin)
-                * scaling);
+        int cellWidth =
+                (int) (resources.getDimensionPixelSize(getRes(R.dimen.grid_width)) * scaling);
+        int cellMargin =
+                2
+                        * (int)
+                                (resources.getDimensionPixelSize(getRes(R.dimen.grid_item_margin))
+                                        * scaling);
         int viewPadding =
                 (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * scaling);
         int viewWidth =
@@ -1028,9 +1035,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private int getDirectoryPadding(@ViewMode int mode) {
         switch (mode) {
             case MODE_GRID:
-                return getResources().getDimensionPixelSize(R.dimen.grid_container_padding);
+                return getResources().getDimensionPixelSize(getRes(R.dimen.grid_container_padding));
             case MODE_LIST:
-                return getResources().getDimensionPixelSize(R.dimen.list_container_padding);
+                return getResources().getDimensionPixelSize(getRes(R.dimen.list_container_padding));
             default:
                 throw new IllegalArgumentException("Unsupported layout mode: " + mode);
         }

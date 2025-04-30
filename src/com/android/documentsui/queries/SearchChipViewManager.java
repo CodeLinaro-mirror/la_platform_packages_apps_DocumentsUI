@@ -80,11 +80,11 @@ public class SearchChipViewManager {
     private static final ChipComparator CHIP_COMPARATOR = new ChipComparator();
 
     // we will get the icon drawable with the first mimeType
-    private static final String[] IMAGES_MIMETYPES = new String[]{"image/*"};
-    private static final String[] VIDEOS_MIMETYPES = new String[]{"video/*"};
-    private static final String[] AUDIO_MIMETYPES =
+    public static final String[] IMAGES_MIMETYPES = new String[]{"image/*"};
+    public static final String[] VIDEOS_MIMETYPES = new String[]{"video/*"};
+    public static final String[] AUDIO_MIMETYPES =
             new String[]{"audio/*", "application/ogg", "application/x-flac"};
-    private static final String[] DOCUMENTS_MIMETYPES = MimeTypes.getDocumentMimeTypeArray();
+    public static final String[] DOCUMENTS_MIMETYPES = MimeTypes.getDocumentMimeTypeArray();
     private static final String[] EMPTY_MIMETYPES = new String[]{""};
 
     private static final Map<Integer, SearchChipData> sMimeTypesChipItems = new HashMap<>();
@@ -102,35 +102,27 @@ public class SearchChipViewManager {
     static {
         sMimeTypesChipItems.put(
                 TYPE_IMAGES,
-                new SearchChipData(
-                        TYPE_IMAGES, getRes(R.string.chip_title_images), IMAGES_MIMETYPES));
+                new SearchChipData(TYPE_IMAGES, R.string.chip_title_images, IMAGES_MIMETYPES));
         if (VersionUtils.isAtLeastR()) {
             sMimeTypesChipItems.put(
                     TYPE_DOCUMENTS,
                     new SearchChipData(
-                            TYPE_DOCUMENTS,
-                            getRes(R.string.chip_title_documents),
-                            DOCUMENTS_MIMETYPES));
+                            TYPE_DOCUMENTS, R.string.chip_title_documents, DOCUMENTS_MIMETYPES));
         }
         sMimeTypesChipItems.put(
                 TYPE_AUDIO,
-                new SearchChipData(TYPE_AUDIO, getRes(R.string.chip_title_audio), AUDIO_MIMETYPES));
+                new SearchChipData(TYPE_AUDIO, R.string.chip_title_audio, AUDIO_MIMETYPES));
         sMimeTypesChipItems.put(
                 TYPE_VIDEOS,
-                new SearchChipData(
-                        TYPE_VIDEOS, getRes(R.string.chip_title_videos), VIDEOS_MIMETYPES));
+                new SearchChipData(TYPE_VIDEOS, R.string.chip_title_videos, VIDEOS_MIMETYPES));
         sDefaultChipItems.put(
                 TYPE_LARGE_FILES,
                 new SearchChipData(
-                        TYPE_LARGE_FILES,
-                        getRes(R.string.chip_title_large_files),
-                        EMPTY_MIMETYPES));
+                        TYPE_LARGE_FILES, R.string.chip_title_large_files, EMPTY_MIMETYPES));
         sDefaultChipItems.put(
                 TYPE_FROM_THIS_WEEK,
                 new SearchChipData(
-                        TYPE_FROM_THIS_WEEK,
-                        getRes(R.string.chip_title_from_this_week),
-                        EMPTY_MIMETYPES));
+                        TYPE_FROM_THIS_WEEK, R.string.chip_title_from_this_week, EMPTY_MIMETYPES));
     }
 
     public SearchChipViewManager(@NonNull ViewGroup chipGroup) {

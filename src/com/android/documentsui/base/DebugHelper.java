@@ -44,12 +44,7 @@ public class DebugHelper {
             {0xFF4885ed, 0xFF0D47A1}
     };
 
-    @SuppressWarnings("unchecked")
-    private static final Pair<String, Integer>[] sMessages =
-            new Pair[] {
-                new Pair<>("Woof Woof", getRes(R.drawable.debug_msg_1)),
-                new Pair<>("ワンワン", getRes(R.drawable.debug_msg_2))
-            };
+    private final Pair<String, Integer>[] mMessages;
 
     private final Injector<?> mInjector;
 
@@ -62,6 +57,14 @@ public class DebugHelper {
 
     public DebugHelper(Injector<?> injector) {
         mInjector = injector;
+
+        @SuppressWarnings("unchecked")
+        Pair<String, Integer>[] messages =
+                new Pair[] {
+                    new Pair<>("Woof Woof", getRes(R.drawable.debug_msg_1)),
+                    new Pair<>("ワンワン", getRes(R.drawable.debug_msg_2))
+                };
+        mMessages = messages;
     }
 
     public int[] getNextColors() {
@@ -77,11 +80,11 @@ public class DebugHelper {
     public Pair<String, Integer> getNextMessage() {
         assert (mInjector.features.isDebugSupportEnabled());
 
-        if (mMessageIndex == sMessages.length) {
+        if (mMessageIndex == mMessages.length) {
             mMessageIndex = 0;
         }
 
-        return sMessages[mMessageIndex++];
+        return mMessages[mMessageIndex++];
     }
 
     public void debugCheck(long time, int keyCode) {
