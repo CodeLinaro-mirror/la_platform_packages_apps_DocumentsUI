@@ -53,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:touchscreenBlocksFocus="false"
+            android:background="?attr/colorSurfaceBright"
             app:layout_collapseMode="pin">
 
             <com.google.android.material.textview.MaterialTextView
