@@ -20,10 +20,15 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_CO
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import android.net.Uri;
 import android.provider.DocumentsContract.Document;
 
 import androidx.test.filters.MediumTest;
+
+import org.junit.Test;
 
 @MediumTest
 public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
@@ -32,18 +37,22 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
         super(OPERATION_COPY);
     }
 
+    @Test
     public void testCopyFiles() throws Exception {
         runCopyFilesTest();
     }
 
+    @Test
     public void testCopyVirtualTypedFile() throws Exception {
         runCopyVirtualTypedFileTest();
     }
 
+    @Test
     public void testCopyVirtualNonTypedFile() throws Exception {
         runCopyVirtualNonTypedFileTest();
     }
 
+    @Test
     public void testCopy_BackendSideVirtualTypedFile_Fallback() throws Exception {
         mDocs.assertChildCount(mDestRoot, 0);
 
@@ -68,35 +77,43 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
         assertEquals(-1, progress.requiredBytes);
     }
 
+    @Test
     public void testCopyEmptyDir() throws Exception {
         runCopyEmptyDirTest();
     }
 
+    @Test
     public void testCopyDirRecursively() throws Exception {
         runCopyDirRecursivelyTest();
     }
 
+    @Test
     public void testCopyDirRecursively_loadingInFirstCursor() throws Exception {
         mDocs.setLoadingDuration(500);
         testCopyDirRecursively();
     }
 
+    @Test
     public void testNoCopyDirToSelf() throws Exception {
         runNoCopyDirToSelfTest();
     }
 
+    @Test
     public void testNoCopyDirToDescendent() throws Exception {
         runNoCopyDirToDescendentTest();
     }
 
+    @Test
     public void testCopyFileWithReadErrors() throws Exception {
         runCopyFileWithReadErrorsTest();
     }
 
+    @Test
     public void testCopyProgressWithFileCount() throws Exception {
         runCopyProgressForFileCountTest();
     }
 
+    @Test
     public void testCopyProgressWithByteCount() throws Exception {
         runCopyProgressForByteCountTest();
     }

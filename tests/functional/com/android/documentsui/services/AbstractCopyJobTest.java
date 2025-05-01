@@ -18,14 +18,15 @@ package com.android.documentsui.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import android.app.Notification;
 import android.net.Uri;
 import android.provider.DocumentsContract;
 import android.text.format.DateUtils;
-
-import androidx.test.filters.MediumTest;
 
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
@@ -35,7 +36,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@MediumTest
 public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJobTest<T> {
 
     private final @OpType int mOpType;
