@@ -18,6 +18,7 @@ package com.android.documentsui.services;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -190,10 +191,11 @@ public class FileOperationService extends Service implements Job.Listener {
 
     private void setUpNotificationChannel() {
         if (features.isNotificationChannelEnabled()) {
-            NotificationChannel channel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.app_label),
-                    NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel =
+                    new NotificationChannel(
+                            NOTIFICATION_CHANNEL_ID,
+                            getString(getRes(R.string.app_label)),
+                            NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
         }
     }

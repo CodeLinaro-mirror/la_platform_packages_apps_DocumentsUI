@@ -26,6 +26,7 @@ import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED
 import static com.android.documentsui.services.FileOperationService.EXTRA_JOB_ID;
 import static com.android.documentsui.services.FileOperationService.EXTRA_OPERATION_TYPE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -310,16 +311,24 @@ abstract public class Job implements Runnable {
         navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_DOCS, failedDocs);
         navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_URIS, failedUris);
 
-        final Notification.Builder errorBuilder = createNotificationBuilder()
-                .setContentTitle(service.getResources().getQuantityString(titleId,
-                        failureCount, failureCount))
-                .setContentText(service.getString(R.string.notification_touch_for_details))
-                .setContentIntent(PendingIntent.getActivity(appContext, 0, navigateIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT
-                        | PendingIntent.FLAG_MUTABLE))
-                .setCategory(Notification.CATEGORY_ERROR)
-                .setSmallIcon(icon)
-                .setAutoCancel(true);
+        final Notification.Builder errorBuilder =
+                createNotificationBuilder()
+                        .setContentTitle(
+                                service.getResources()
+                                        .getQuantityString(titleId, failureCount, failureCount))
+                        .setContentText(
+                                service.getString(getRes(R.string.notification_touch_for_details)))
+                        .setContentIntent(
+                                PendingIntent.getActivity(
+                                        appContext,
+                                        0,
+                                        navigateIntent,
+                                        PendingIntent.FLAG_UPDATE_CURRENT
+                                                | PendingIntent.FLAG_ONE_SHOT
+                                                | PendingIntent.FLAG_MUTABLE))
+                        .setCategory(Notification.CATEGORY_ERROR)
+                        .setSmallIcon(icon)
+                        .setAutoCancel(true);
 
         return errorBuilder.build();
     }

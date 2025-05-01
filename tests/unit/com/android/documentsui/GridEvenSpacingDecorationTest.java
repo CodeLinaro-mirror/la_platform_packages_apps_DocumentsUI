@@ -48,6 +48,7 @@ public class GridEvenSpacingDecorationTest {
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
     private static final int ITEM_WIDTH = 100;
+    private static final int ITEM_HEIGHT = 100;
     private static final int ITEM_COUNT = 3;
     private TestRecyclerView mTestRecView;
     @Mock
@@ -64,7 +65,7 @@ public class GridEvenSpacingDecorationTest {
         mTestRecView.setLayoutManager(mMockGridLayoutManager);
 
         // All items have the same width.
-        mLayoutParamsForItem = new ViewGroup.MarginLayoutParams(ITEM_WIDTH, 100);
+        mLayoutParamsForItem = new ViewGroup.MarginLayoutParams(ITEM_WIDTH, ITEM_HEIGHT);
         mMockItems = new ArrayList<>();
         for (int i = 0; i < ITEM_COUNT; i++) {
             View mockItem = mock(View.class);
@@ -81,8 +82,7 @@ public class GridEvenSpacingDecorationTest {
         when(mMockGridLayoutManager.getSpanCount()).thenReturn(ITEM_COUNT);
 
         // Parent width fits the ITEM_COUNT items perfectly within one row.
-        mTestRecView.setLeft(0);
-        mTestRecView.setRight(ITEM_WIDTH * ITEM_COUNT);
+        mTestRecView.setMeasuredWithAndHeight(ITEM_WIDTH * ITEM_COUNT, ITEM_HEIGHT);
 
         for (View mockItem : mMockItems) {
             Rect rect = new Rect();
@@ -108,8 +108,8 @@ public class GridEvenSpacingDecorationTest {
         int leftPad = 10;
         int rightPad = 5;
         mTestRecView.setPadding(leftPad, 0, rightPad, 0);
-        mTestRecView.setLeft(0);
-        mTestRecView.setRight(leftPad + itemWidthWithMargins * ITEM_COUNT + rightPad);
+        mTestRecView.setMeasuredWithAndHeight(
+                leftPad + itemWidthWithMargins * ITEM_COUNT + rightPad, ITEM_HEIGHT);
 
         for (View mockItem : mMockItems) {
             Rect rect = new Rect();
@@ -135,9 +135,8 @@ public class GridEvenSpacingDecorationTest {
         int leftPad = 10;
         int rightPad = 5;
         mTestRecView.setPadding(leftPad, 0, rightPad, 0);
-        mTestRecView.setLeft(0);
         int spaceForItems = itemWidthWithMargins * (ITEM_COUNT + 1) - 12;
-        mTestRecView.setRight(leftPad + spaceForItems + rightPad);
+        mTestRecView.setMeasuredWithAndHeight(leftPad + spaceForItems + rightPad, ITEM_HEIGHT);
 
         // The space is divided into "span count" number of equal size buckets. The items will be
         // centred within their buckets.
@@ -168,9 +167,8 @@ public class GridEvenSpacingDecorationTest {
         int leftPad = 10;
         int rightPad = 5;
         mTestRecView.setPadding(leftPad, 0, rightPad, 0);
-        mTestRecView.setLeft(0);
         int spaceForItems = itemWidthWithMargins * (ITEM_COUNT + 1) + 12;
-        mTestRecView.setRight(leftPad + spaceForItems + rightPad);
+        mTestRecView.setMeasuredWithAndHeight(leftPad + spaceForItems + rightPad, ITEM_HEIGHT);
 
         // The space is divided into "span count" number of equal size buckets. The items will be
         // centred within their buckets.
@@ -201,9 +199,8 @@ public class GridEvenSpacingDecorationTest {
         int leftPad = 10;
         int rightPad = 5;
         mTestRecView.setPadding(leftPad, 0, rightPad, 0);
-        mTestRecView.setLeft(0);
         int spaceForItems = itemWidthWithMargins * spanCount;
-        mTestRecView.setRight(leftPad + spaceForItems + rightPad);
+        mTestRecView.setMeasuredWithAndHeight(leftPad + spaceForItems + rightPad, ITEM_HEIGHT * 2);
 
         for (View mockItem : mMockItems) {
             Rect rect = new Rect();
@@ -231,9 +228,9 @@ public class GridEvenSpacingDecorationTest {
         int leftPad = 10;
         int rightPad = 5;
         mTestRecView.setPadding(leftPad, 0, rightPad, 0);
-        mTestRecView.setLeft(0);
         int spaceForItems = itemWidthWithMargins * (ITEM_COUNT + 1) + 12;
-        mTestRecView.setRight(leftPad + spaceForItems + rightPad);
+        mTestRecView.setMeasuredWithAndHeight(leftPad + spaceForItems + rightPad, ITEM_HEIGHT * 2);
+
 
         // The space is divided into "span count" number of equal size buckets. The items will be
         // centred within their buckets.
