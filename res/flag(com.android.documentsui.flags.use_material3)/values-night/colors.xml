@@ -14,13 +14,11 @@
      limitations under the License.
 -->
 <resources>
-    <color name="app_background_color">#202124</color>
-    <color name="background_floating">#3C4043</color>
+    <!-- ?attr/colorSurfaceContainer -->
+    <color name="app_background_color">#211F26</color>
 
     <!-- ?attr/colorPrimary -->
     <color name="primary">#D0BCFF</color>
-    <color name="secondary">#3D8AB4F8</color>
-    <color name="hairline">#5F6368</color>
 
     <color name="success">#3CBA5A</color>
     <color name="on_success">#002110</color>
@@ -41,8 +39,6 @@
     <color name="drop_icon_reject_container_background">#F2B8B5</color>
 
     <color name="error_image_color">@android:color/white</color>
-
-    <color name="list_divider_color">#9aa0a6</color>
 
     <!-- ?attr/colorSurfaceContainerHigh -->
     <color name="color_surface_header">#2B2930</color>

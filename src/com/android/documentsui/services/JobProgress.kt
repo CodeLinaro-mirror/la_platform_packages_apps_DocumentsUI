@@ -39,8 +39,8 @@ data class JobProgress @JvmOverloads constructor(
                 (currentBytes == -1L || requiredBytes == -1L || requiredBytes == 0L)
 
     fun toPercent(): Float = when (state) {
-        in Job.STATE_CREATED..Job.STATE_STARTED -> 0f
-        Job.STATE_COMPLETED -> 100f
+        Job.STATE_CREATED, Job.STATE_STARTED -> 0f
+        Job.STATE_COMPLETED, Job.STATE_CANCELED -> 100f
         else -> 100f * currentBytes / requiredBytes
     }
 
