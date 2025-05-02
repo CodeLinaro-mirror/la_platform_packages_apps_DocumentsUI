@@ -374,13 +374,11 @@ abstract class Material3Config private constructor() {
     @JvmStatic
     @AnyRes
     fun getRes(@AnyRes originalResourceId: Int): Int {
+      // NOTE: isUseMaterial3FlagEnabled() already checks for the config forceMaterial3.
       if (!isUseMaterial3FlagEnabled()) {
         return originalResourceId
       }
-      // TODO(lucmult): Enable this condition when all the resources are merged in one APK.
-      // if (!(Material3Config.getInstance().forceMaterial3 ?: false)) {
-      //   return originalResourceId
-      // }
+
       if (!initialized) {
         initializeIdMapping()
       }
