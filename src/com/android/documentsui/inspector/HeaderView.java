@@ -68,7 +68,9 @@ public final class HeaderView extends RelativeLayout implements HeaderDisplay {
         mThumbnail = (ImageView) mHeader.findViewById(getRes(R.id.inspector_thumbnail));
 
         int width = (int) Display.screenWidth((Activity)context);
-        int height = mContext.getResources().getDimensionPixelSize(R.dimen.inspector_header_height);
+        int height =
+                mContext.getResources()
+                        .getDimensionPixelSize(getRes(R.dimen.inspector_header_height));
         mImageDimensions = new Point(width, height);
         addView(mHeader);
     }

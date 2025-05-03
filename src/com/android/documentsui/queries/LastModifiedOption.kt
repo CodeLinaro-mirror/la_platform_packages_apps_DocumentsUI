@@ -17,22 +17,23 @@ package com.android.documentsui.queries
 
 import com.android.documentsui.R
 import com.android.documentsui.util.Material3Config.Companion.getRes
+import kotlin.time.Duration.Companion.days
 
 /**
  * Enumerates possible options for the last modified filters. These values correspond directly
  * to the values of hte search_last_modified_menu.
  */
-enum class LastModifiedOption(val value: Int) {
-    ANY_TIME(getRes(R.id.last_modified_any_time_option)),
-    LAST_DAY(getRes(R.id.last_modified_1_day_option)),
-    LAST_2_DAYS(getRes(R.id.last_modified_2_days_option)),
-    LAST_7_DAYS(getRes(R.id.last_modified_7_days_option)),
-    LAST_30_DAYS(getRes(R.id.last_modified_30_days_option)),
-    LAST_365_DAYS(getRes(R.id.last_modified_365_days_option)),
+enum class LastModifiedOption(val value: Int, val millis: Long) {
+    ANY_TIME(getRes(R.id.last_modified_any_time_option), 0),
+    LAST_DAY(getRes(R.id.last_modified_1_day_option), 1.days.inWholeMilliseconds),
+    LAST_2_DAYS(getRes(R.id.last_modified_2_days_option), 2.days.inWholeMilliseconds),
+    LAST_7_DAYS(getRes(R.id.last_modified_7_days_option), 7.days.inWholeMilliseconds),
+    LAST_30_DAYS(getRes(R.id.last_modified_30_days_option), 30.days.inWholeMilliseconds),
+    LAST_365_DAYS(getRes(R.id.last_modified_365_days_option), 365.days.inWholeMilliseconds),
 }
 
 /**
  * For the given integer value, attempts to return the corresponding LastModifiedOption enum.
  */
 fun lastModifiedOptionFor(value: Int): LastModifiedOption? =
-    enumValues<LastModifiedOption>().firstOrNull { it.ordinal == value }
+    enumValues<LastModifiedOption>().firstOrNull { it.value == value }

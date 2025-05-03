@@ -192,6 +192,8 @@
   int rename_error;
   int search_bar_hint;
   int share_via;
+  int search_last_modified_30_days;
+  int search_location_everywhere;
   int sort_dimension_date;
   int sort_dimension_file_type;
   int sort_dimension_name;

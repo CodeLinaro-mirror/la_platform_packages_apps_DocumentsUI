@@ -32,6 +32,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.spy
 
+class TestSearchOptionsListener() : SearchOptionsListener {
+    var mOptionsState: SearchOptionsState? = null
+
+    override fun onOptionsChanged(options: SearchOptionsState) {
+        mOptionsState = options
+    }
+}
+
 @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -42,27 +50,44 @@ class SearchOptionsControllerTest {
     var mContext: Context? = null
     var mController: SearchOptionsController? = null
     var mContainer: LinearLayout? = null
+    val mOptionsListener = TestSearchOptionsListener()
 
     @Before
     fun setUp() {
         mContext = InstrumentationRegistry.getInstrumentation().targetContext
         mContainer = spy(LinearLayout(mContext))
         mController = SearchOptionsController(mContainer)
+        mController!!.setOptionChangeListener(mOptionsListener)
     }
 
     @Test
     fun testOptionsUpdateWorks() {
         for (e in SearchLocationOption.entries) {
-            mController!!.onLocationSelected(e.ordinal)
-            assertEquals(mController!!.locationOption, e)
+            mController!!.onLocationSelected(e.value)
+            mController!!.notifyOptionsChangeListener()
+            assertEquals(mOptionsListener.mOptionsState!!.location, e)
         }
         for (e in LastModifiedOption.entries) {
-            mController!!.onLastModifiedSelected(e.ordinal)
-            assertEquals(mController!!.lastModifiedOption, e)
+            mController!!.onLastModifiedSelected(e.value)
+            mController!!.notifyOptionsChangeListener()
+            assertEquals(mOptionsListener.mOptionsState!!.lastModified, e)
         }
         for (e in FileTypeOption.entries) {
-            mController!!.onFileTypeSelected(e.ordinal)
-            assertEquals(mController!!.fileTypeOption, e)
+            mController!!.onFileTypeSelected(e.value)
+            mController!!.notifyOptionsChangeListener()
+            assertEquals(mOptionsListener.mOptionsState!!.fileType, e)
         }
+    }
+
+    @Test
+    fun testGetOptionsQueryArgs() {
+        // Reset the options to minimum filtering state.
+        mController!!.onLocationSelected(SearchLocationOption.EVERYWHERE.ordinal)
+        mController!!.onLastModifiedSelected(LastModifiedOption.ANY_TIME.ordinal)
+        mController!!.onFileTypeSelected(FileTypeOption.ANY_TYPE.ordinal)
+
+        val queryArgs = mController!!.getOptionsQueryArgs()
+        // Expect no query args with the default (no limits) settings.
+        assertEquals(queryArgs.size, 0)
     }
 }

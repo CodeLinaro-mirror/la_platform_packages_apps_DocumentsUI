@@ -33,5 +33,5 @@ enum class FileTypeOption(val value: Int) {
 /**
  * For the given integer value, attempts to return the corresponding FileTypeOption enum.
  */
-fun fileTypeOptionForValue(value: Int): FileTypeOption? =
-    enumValues<FileTypeOption>().firstOrNull { it.ordinal == value }
+fun fileTypeOptionFor(value: Int): FileTypeOption? =
+    enumValues<FileTypeOption>().firstOrNull { it.value == value }

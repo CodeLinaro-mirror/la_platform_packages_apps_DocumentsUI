@@ -85,22 +85,36 @@
                     android:paddingTop="@dimen/main_container_padding_top"
                     android:background="@drawable/main_container_top_section_background">
 
-                    <com.google.android.material.appbar.MaterialToolbar
-                        android:id="@+id/toolbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        android:layout_marginTop="@dimen/action_bar_margin"
-                        android:touchscreenBlocksFocus="false">
+                    <FrameLayout
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent">
 
-                        <TextView
-                            android:id="@+id/searchbar_title"
+                        <com.google.android.material.appbar.MaterialToolbar
+                            android:id="@+id/toolbar"
                             android:layout_width="match_parent"
-                            android:layout_height="?android:attr/actionBarSize"
-                            android:gravity="center_vertical"
-                            android:text="@string/search_bar_hint"
-                            android:textAppearance="@style/SearchBarTitle" />
+                            android:layout_height="?attr/actionBarSize"
+                            android:layout_marginTop="@dimen/action_bar_margin"
+                            android:touchscreenBlocksFocus="false">
 
-                    </com.google.android.material.appbar.MaterialToolbar>
+                            <TextView
+                                android:id="@+id/searchbar_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="?android:attr/actionBarSize"
+                                android:gravity="center_vertical"
+                                android:text="@string/search_bar_hint"
+                                android:textAppearance="@style/SearchBarTitle" />
+
+                        </com.google.android.material.appbar.MaterialToolbar>
+
+                        <com.google.android.material.appbar.MaterialToolbar
+                            android:id="@+id/selection_bar"
+                            android:layout_width="match_parent"
+                            android:layout_height="?attr/actionBarSize"
+                            android:touchscreenBlocksFocus="false"
+                            android:background="?attr/colorSurfaceBright"
+                            android:visibility="gone"/>
+
+                    </FrameLayout>
 
                     <include layout="@layout/directory_header" />
 

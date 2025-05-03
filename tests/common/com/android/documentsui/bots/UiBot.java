@@ -23,6 +23,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -125,24 +126,32 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /**
+     * Checks that the search bar is not visible.
+     */
+    public void assertSearchBarGone() {
+        onView(withId(R.id.searchbar_title)).check(
+                matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
+    }
+
+    /**
      * Checks that the UI chip that toggles location search menu is visible.
      */
     public void assertLocationTriggerShows() {
-        onView(withText(R.string.search_location_this_folder)).check(matches(isDisplayed()));
+        onView(withId(R.id.search_location_trigger)).check(matches(isDisplayed()));
     }
 
     /**
      * Checks that the UI chip that toggles last modified menu is visible.
      */
     public void assertLastModifiedTriggerShows() {
-        onView(withText(R.string.search_last_modified_any_time)).check(matches(isDisplayed()));
+        onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
     }
 
     /**
      * Checks that the UI chip that toggles file type menu is visible.
      */
     public void assertFileTypeTriggerShows() {
-        onView(withText(R.string.search_file_type_all)).check(matches(isDisplayed()));
+        onView(withId(R.id.search_file_type_trigger)).check(matches(isDisplayed()));
     }
 
     public void assertMenuEnabled(int id, boolean enabled) {
@@ -247,10 +256,6 @@ public class UiBot extends Bots.BaseBot {
         onView(TOOLBAR_OVERFLOW).perform(click());
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
-    }
-
-    public void clickSaveButton() {
-        onView(withId(android.R.id.button1)).perform(click());
     }
 
     public boolean waitForActionModeBarToAppear() {

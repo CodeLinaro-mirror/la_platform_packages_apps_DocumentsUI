@@ -87,6 +87,13 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
 
         setLayoutManager(mLayoutManager);
         addOnItemTouchListener(new ClickListener(getContext(), this::onSingleTapUp));
+
+        // When use_material3 flag is ON, the item is focusable but the whole row is not focusable.
+        if (isUseMaterial3FlagEnabled()) {
+            // Noe: setting this in the XML file via "android:focusable=false") somehow doesn't
+            // work, i.e. the breadcrumb bar is still focusable, hence forcing it here in the code.
+            setFocusable(false);
+        }
     }
 
     @Override
