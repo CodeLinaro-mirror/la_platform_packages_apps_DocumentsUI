@@ -16,18 +16,19 @@
 package com.android.documentsui.queries
 
 import com.android.documentsui.R
+import com.android.documentsui.util.Material3Config.Companion.getRes
 
 /**
  * Enumerates possible options for the last modified filters. These values correspond directly
  * to the values of hte search_last_modified_menu.
  */
 enum class LastModifiedOption(val value: Int) {
-    ANY_TIME(R.id.last_modified_any_time_option),
-    LAST_DAY(R.id.last_modified_1_day_option),
-    LAST_2_DAYS(R.id.last_modified_2_days_option),
-    LAST_7_DAYS(R.id.last_modified_7_days_option),
-    LAST_30_DAYS(R.id.last_modified_30_days_option),
-    LAST_365_DAYS(R.id.last_modified_365_days_option),
+    ANY_TIME(getRes(R.id.last_modified_any_time_option)),
+    LAST_DAY(getRes(R.id.last_modified_1_day_option)),
+    LAST_2_DAYS(getRes(R.id.last_modified_2_days_option)),
+    LAST_7_DAYS(getRes(R.id.last_modified_7_days_option)),
+    LAST_30_DAYS(getRes(R.id.last_modified_30_days_option)),
+    LAST_365_DAYS(getRes(R.id.last_modified_365_days_option)),
 }
 
 /**

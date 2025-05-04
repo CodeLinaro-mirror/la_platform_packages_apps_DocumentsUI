@@ -16,6 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -130,21 +131,21 @@ public class AppsRowManager {
     }
 
     public void updateView(BaseActivity activity) {
-        final View appsRowLayout = activity.findViewById(R.id.apps_row);
+        final View appsRowLayout = activity.findViewById(getRes(R.id.apps_row));
 
         if (!shouldShow(activity.getDisplayState(), activity.isSearchExpanded())) {
             appsRowLayout.setVisibility(View.GONE);
             return;
         }
 
-        final LinearLayout appsGroup = activity.findViewById(R.id.apps_group);
+        final LinearLayout appsGroup = activity.findViewById(getRes(R.id.apps_group));
         appsGroup.removeAllViews();
 
         final LayoutInflater inflater = activity.getLayoutInflater();
         final UserId selectedUser = activity.getSelectedUser();
         for (AppsRowItemData data : mDataList) {
             if (selectedUser.equals(data.getUserId())) {
-                View item = inflater.inflate(R.layout.apps_item, appsGroup, false);
+                View item = inflater.inflate(getRes(R.layout.apps_item), appsGroup, false);
                 bindView(item, data);
                 appsGroup.addView(item);
             }
@@ -154,9 +155,9 @@ public class AppsRowManager {
     }
 
     private void bindView(View view, AppsRowItemData data) {
-        final ImageView app_icon = view.findViewById(R.id.app_icon);
+        final ImageView app_icon = view.findViewById(getRes(R.id.app_icon));
         final TextView title = view.findViewById(android.R.id.title);
-        final TextView summary = view.findViewById(R.id.summary);
+        final TextView summary = view.findViewById(getRes(R.id.summary));
 
         app_icon.setImageDrawable(data.getIconDrawable(view.getContext()));
         title.setText(data.getTitle());

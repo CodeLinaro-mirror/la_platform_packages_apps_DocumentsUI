@@ -18,6 +18,7 @@ package com.android.documentsui.services;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.Notification.Builder;
@@ -68,21 +69,21 @@ final class DeleteJob extends ResolvedResourcesJob {
     @Override
     Builder createProgressBuilder() {
         return super.createProgressBuilder(
-                service.getString(R.string.delete_notification_title),
-                R.drawable.ic_menu_delete,
+                service.getString(getRes(R.string.delete_notification_title)),
+                getRes(R.drawable.ic_menu_delete),
                 service.getString(android.R.string.cancel),
-                R.drawable.ic_cab_cancel);
+                getRes(R.drawable.ic_cab_cancel));
     }
 
     @Override
     public Notification getSetupNotification() {
-        return getSetupNotification(service.getString(R.string.delete_preparing));
+        return getSetupNotification(service.getString(getRes(R.string.delete_preparing)));
     }
 
     @Override
     public Notification getProgressNotification() {
         mProgressBuilder.setProgress(mResourceUris.getItemCount(), mDocsProcessed, false);
-        String format = service.getString(R.string.delete_progress);
+        String format = service.getString(getRes(R.string.delete_progress));
         mProgressBuilder.setSubText(
                 String.format(format, mDocsProcessed, mResourceUris.getItemCount()));
 
@@ -94,7 +95,8 @@ final class DeleteJob extends ResolvedResourcesJob {
     @Override
     Notification getFailureNotification() {
         return getFailureNotification(
-                R.plurals.delete_error_notification_title, R.drawable.ic_menu_delete);
+                getRes(R.plurals.delete_error_notification_title),
+                getRes(R.drawable.ic_menu_delete));
     }
 
     private String getProgressMessage() {
@@ -109,7 +111,8 @@ final class DeleteJob extends ResolvedResourcesJob {
                             mResolvedDocs.get(0).displayName));
                 }
                 return (new MessageFormat(
-                        service.getString(R.string.delete_in_progress), Locale.getDefault()))
+                                service.getString(getRes(R.string.delete_in_progress)),
+                                Locale.getDefault()))
                         .format(formatArgs);
             default:
                 return "";

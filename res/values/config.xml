@@ -75,4 +75,7 @@
 
     <!-- The maximum record of search history. -->
     <integer name="config_maximum_search_history">200</integer>
+
+    <!-- The Material3 theme is only enabled IFF this config is true AND the flag `use_material3` is enabled. -->
+    <bool name="force_material3">false</bool>
 </resources>
