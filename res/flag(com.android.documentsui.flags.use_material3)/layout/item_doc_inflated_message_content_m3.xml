@@ -40,6 +40,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="25dp"
         android:gravity="center_horizontal"
-        style="?android:attr/textAppearanceListItem"/>
+        style="@style/EmptyStateTitleTextM3"/>
 
 </LinearLayout>
