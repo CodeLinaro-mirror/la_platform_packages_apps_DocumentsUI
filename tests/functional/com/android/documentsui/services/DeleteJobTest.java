@@ -20,16 +20,22 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_DE
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import android.net.Uri;
 import android.provider.DocumentsContract;
 
 import androidx.test.filters.MediumTest;
+
+import org.junit.Test;
 
 import java.util.List;
 
 @MediumTest
 public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
 
+    @Test
     public void testDeleteFiles() throws Exception {
         Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
         mDocs.writeDocument(testFile1, HAM_BYTES);
@@ -51,6 +57,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         assertEquals("Deleting 2 files", progress.msg);
     }
 
+    @Test
     public void testDeleteFiles_NoSrcParent() throws Exception {
         Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
         mDocs.writeDocument(testFile1, HAM_BYTES);
