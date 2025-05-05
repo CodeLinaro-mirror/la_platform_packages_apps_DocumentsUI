@@ -83,8 +83,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         mDirListId = mTargetPackage + ":id/dir_list";
         mItemRootId = mTargetPackage + ":id/item_root";
         mPreviewId = mTargetPackage + ":id/preview_icon";
-        mListSelectionRegionId =
-                mTargetPackage + (isUseMaterial3FlagEnabled() ? ":id/icon_wrapper" : ":id/icon");
+        mListSelectionRegionId = mTargetPackage + ":id/icon";
         mGridSelectionRegionId =
                 mTargetPackage
                         + (isUseMaterial3FlagEnabled() ? ":id/selection_circle" : ":id/icon");

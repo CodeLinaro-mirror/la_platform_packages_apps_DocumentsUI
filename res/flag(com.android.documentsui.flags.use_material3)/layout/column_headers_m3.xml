@@ -28,14 +28,6 @@
     android:background="?attr/colorSurfaceBright"
     android:visibility="gone">
 
-    <!-- Placeholder for MIME/thumbnail icon -->
-    <View
-        android:layout_width="@dimen/list_item_icon_size"
-        android:layout_height="@dimen/list_item_icon_size"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="@dimen/list_item_icon_margin_end"
-        android:layout_marginStart="0dp"/>
-
     <!-- Column headers: Name only for compact/medium size screen -->
     <com.android.documentsui.sorting.HeaderCell
         android:id="@android:id/title"

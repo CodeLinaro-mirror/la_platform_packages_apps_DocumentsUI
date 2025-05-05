@@ -21,133 +21,117 @@
     android:background="@drawable/list_item_background_m3"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="vertical">
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/list_item_height_m3"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/list_item_padding_start"
+    android:paddingEnd="@dimen/list_item_padding_end"
+    android:paddingVertical="@dimen/list_item_padding_vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:gravity="center_vertical"
-        android:minHeight="@dimen/list_item_height_m3"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/list_item_padding_start"
-        android:paddingEnd="@dimen/list_item_padding_end"
-        android:paddingVertical="@dimen/list_item_padding_vertical">
+    <FrameLayout
+        android:id="@+id/icon"
+        android:pointerIcon="hand"
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_marginEnd="@dimen/list_item_icon_margin_end">
 
-      <FrameLayout
-          android:id="@+id/icon"
-          android:pointerIcon="hand"
-          android:layout_width="@dimen/list_item_icon_size"
-          android:layout_height="@dimen/list_item_icon_size"
-          android:layout_marginEnd="@dimen/list_item_icon_margin_end">
+      <com.google.android.material.card.MaterialCardView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          style="@style/ListThumbnailCardViewStyle">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/icon_wrapper"
+        <ImageView
+            android:id="@+id/icon_mime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:scaleType="centerInside" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/icon_thumb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            style="@style/ListThumbnailCardViewStyle">
-
-          <ImageView
-              android:id="@+id/icon_mime"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              android:contentDescription="@null"
-              android:scaleType="centerInside" />
-
-          <com.google.android.material.imageview.ShapeableImageView
-              android:id="@+id/icon_thumb"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:contentDescription="@null"
-              android:scaleType="centerCrop"
-              style="@style/ListThumbnailImageViewStyle" />
-
-          <ImageView
-              android:id="@+id/icon_check"
-              android:layout_width="@dimen/check_icon_size_m3"
-              android:layout_height="@dimen/check_icon_size_m3"
-              android:layout_gravity="center"
-              android:alpha="0"
-              android:contentDescription="@null"
-              android:scaleType="fitCenter"
-              android:src="@drawable/ic_check_circle_m3" />
-
-        </com.google.android.material.card.MaterialCardView>
-
-      </FrameLayout>
-
-      <LinearLayout
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:orientation="horizontal"
-          android:layout_gravity="center_vertical"
-          android:layout_marginEnd="@dimen/list_item_icon_size">
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            style="@style/ListThumbnailImageViewStyle" />
 
         <ImageView
-            android:id="@+id/icon_profile_badge"
-            android:layout_height="@dimen/briefcase_icon_size_m3"
-            android:layout_width="@dimen/briefcase_icon_size_m3"
-            android:layout_marginEnd="@dimen/briefcase_icon_margin_m3"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_briefcase_m3"
-            android:tint="@color/briefcase_icon_color"
-            android:contentDescription="@string/a11y_work" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-          <com.google.android.material.textview.MaterialTextView
-              android:id="@android:id/title"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:ellipsize="middle"
-              android:singleLine="true"
-              android:textAlignment="viewStart"
-              android:textAppearance="@style/FileItemLabelText" />
-
-          <LinearLayout
-              android:id="@+id/line2"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:baselineAligned="false"
-              android:gravity="center_vertical"
-              android:orientation="horizontal">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/metadata"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textAppearance="@style/ItemCaptionTextM3" />
-
-          </LinearLayout>
-
-        </LinearLayout>
-
-      </LinearLayout>
-
-      <FrameLayout
-          android:id="@+id/preview_icon"
-          android:layout_width="@dimen/list_item_icon_size"
-          android:layout_height="@dimen/list_item_icon_size"
-          android:focusable="true"
-          android:clickable="true">
-
-        <ImageView
+            android:id="@+id/icon_check"
             android:layout_width="@dimen/check_icon_size_m3"
             android:layout_height="@dimen/check_icon_size_m3"
             android:layout_gravity="center"
+            android:alpha="0"
+            android:contentDescription="@null"
             android:scaleType="fitCenter"
-            android:tint="@color/doc_list_item_badge_icon_color"
-            android:src="@drawable/ic_zoom_out_m3" />
+            android:src="@drawable/ic_check_circle_m3" />
 
-      </FrameLayout>
+      </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/icon_profile_badge"
+        android:layout_height="@dimen/briefcase_icon_size_m3"
+        android:layout_width="@dimen/briefcase_icon_size_m3"
+        android:layout_marginEnd="@dimen/briefcase_icon_margin_m3"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_briefcase_m3"
+        android:tint="@color/briefcase_icon_color"
+        android:contentDescription="@string/a11y_work" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+      <com.google.android.material.textview.MaterialTextView
+          android:id="@android:id/title"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:ellipsize="middle"
+          android:singleLine="true"
+          android:textAlignment="viewStart"
+          android:textAppearance="@style/FileItemLabelText" />
+
+      <LinearLayout
+          android:id="@+id/line2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:baselineAligned="false"
+          android:gravity="center_vertical"
+          android:orientation="horizontal">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/metadata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="@style/ItemCaptionTextM3" />
+
+      </LinearLayout>
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/preview_icon"
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_gravity="center"
+        android:focusable="true"
+        android:clickable="true">
+
+      <ImageView
+          android:layout_width="@dimen/check_icon_size_m3"
+          android:layout_height="@dimen/check_icon_size_m3"
+          android:layout_gravity="center"
+          android:scaleType="fitCenter"
+          android:tint="@color/doc_list_item_badge_icon_color"
+          android:src="@drawable/ic_zoom_out_m3" />
+
+    </FrameLayout>
 
 </LinearLayout>
