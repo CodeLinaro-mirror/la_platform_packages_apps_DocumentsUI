@@ -203,8 +203,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         String copyPercentage = progressNotification.extras.getString(Notification.EXTRA_SUB_TEXT);
 
         // the percentage representation should not be NaN.
-        assertNotEquals(copyPercentage.equals(NumberFormat.getPercentInstance().format(Double.NaN)),
-                "Percentage representation should not be NaN.");
+        assertNotEquals("Percentage representation should not be NaN.",
+                NumberFormat.getPercentInstance().format(Double.NaN), copyPercentage);
 
         mDocs.assertChildCount(mDestRoot, 1);
         mDocs.assertHasDirectory(mDestRoot, "emptyDir");
@@ -221,8 +221,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         String copyPercentage = progressNotification.extras.getString(Notification.EXTRA_SUB_TEXT);
 
         // the percentage representation should not be NaN.
-        assertNotEquals(copyPercentage.equals(NumberFormat.getPercentInstance().format(Double.NaN)),
-                "Percentage representation should not be NaN.");
+        assertNotEquals("Percentage representation should not be NaN.",
+                NumberFormat.getPercentInstance().format(Double.NaN), copyPercentage);
 
         mDocs.assertChildCount(mDestRoot, 1);
         mDocs.assertHasDirectory(mDestRoot, "emptyDir");
