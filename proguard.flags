@@ -218,5 +218,6 @@
 
 -keep class com.android.documentsui.util.Material3Config {
   static int getRes(int);
-  static void overrideForTest(java.util.Map);
+  static void overrideMappingForTest(java.util.Map);
+  static void setEnabledForTest(boolean);
 }

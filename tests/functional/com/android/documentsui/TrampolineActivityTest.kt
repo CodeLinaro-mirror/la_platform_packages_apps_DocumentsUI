@@ -30,6 +30,7 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import java.util.Optional
 import java.util.regex.Pattern
 import org.junit.Assert.assertNotNull
@@ -153,7 +154,7 @@ class TrampolineActivityTest() {
         lateinit var testData: GetContentIntentData
 
         @get:Rule
-        val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+        val checkFlags = CheckAndForceMaterial3Flag()
 
         @Before
         fun setUp() {
