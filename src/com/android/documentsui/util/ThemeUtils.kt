@@ -307,7 +307,6 @@ private fun initializeIdMapping() {
     R.style.DrawerMenuHeader to R.style.DrawerMenuHeaderM3,
     R.style.DrawerMenuPrimary to R.style.DrawerMenuPrimaryM3,
     R.style.DrawerMenuSecondary to R.style.DrawerMenuSecondaryM3,
-    R.style.EmptyStateMessageText to R.style.EmptyStateMessageTextM3,
     R.style.EmptyStateTitleText to R.style.EmptyStateTitleTextM3,
     R.style.InspectorKeySubTitle to R.style.InspectorKeySubTitleM3,
     R.style.ItemCaptionText to R.style.ItemCaptionTextM3,
