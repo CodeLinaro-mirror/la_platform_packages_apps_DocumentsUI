@@ -38,7 +38,7 @@
         android:paddingEnd="@dimen/space_extra_small_4"
         android:paddingStart="@dimen/space_extra_small_4"
         app:navigationContentDescription="@string/a11y_peek_navigation_icon"
-        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIcon="@drawable/ic_arrow_back_m3"
         app:navigationIconTint="@android:color/white"
         app:titleMarginStart="@dimen/space_extra_small_2"
         app:titleTextAppearance="@style/PeekTopBarTitleText" />

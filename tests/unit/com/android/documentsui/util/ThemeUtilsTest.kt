@@ -18,11 +18,10 @@ package com.android.documentsui.util
 
 import android.platform.test.annotations.RequiresFlagsDisabled
 import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.documentsui.R
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -32,11 +31,11 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ThemeUtilsTest {
     @get:Rule
-    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val checkFlags = CheckAndForceMaterial3Flag()
 
     @Before
     fun setUp() {
-        Material3Config.overrideForTest(mapOf(R.id.option_menu_debug to 111))
+        Material3Config.overrideMappingForTest(mapOf(R.id.option_menu_debug to 111))
     }
 
     @Test
