@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/job_progress_item_padding"
             android:layout_marginStart="@dimen/job_progress_item_padding"
+            app:layout_constrainedHeight="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/job_progress_item_expand"
             app:layout_constraintTop_toTopOf="parent" />

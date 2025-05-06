@@ -230,13 +230,9 @@
     <style name="JobProgressItemCardBaseShape" parent="@style/ShapeAppearance.Material3.Corner.ExtraSmall" />
 
     <style name="JobProgressItemTitleStyle" parent="">
+        <item name="android:ellipsize">end</item>
         <item name="android:textAppearance">@style/JobProgressItemTitleText</item>
         <item name="android:textAlignment">viewStart</item>
-    </style>
-
-    <style name="JobProgressItemTitleStyle.Collapsed">
-        <item name="android:ellipsize">end</item>
-        <item name="android:maxLines">1</item>
     </style>
 
     <style name="JobProgressItemExpandButtonStyle" parent="@style/Widget.Material3.Button.IconButton.Filled">
