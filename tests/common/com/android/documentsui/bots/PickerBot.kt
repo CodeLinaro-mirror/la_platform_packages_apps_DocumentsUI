@@ -15,13 +15,19 @@
  */
 package com.android.documentsui.bots
 
-import android.R
 import android.content.Context
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isEnabled
+import androidx.test.espresso.matcher.ViewMatchers.isNotEnabled
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.uiautomator.UiDevice
+import com.android.documentsui.R
 import com.android.documentsui.bots.Bots.BaseBot
+import com.android.documentsui.util.Material3Config.Companion.getRes
 
 /**
  * A test helper class that provides support for controlling picker activities
@@ -36,6 +42,69 @@ class PickerBot(device: UiDevice?, context: Context?, timeout: Int) : BaseBot(
      * Clicks the save button with id button1
      */
     fun clickSaveButton() {
-        Espresso.onView(ViewMatchers.withId(R.id.button1)).perform(ViewActions.click())
+        onView(withId(android.R.id.button1)).perform(click())
+    }
+
+    /**
+     * Checks that the pick button doesn't exist.
+     */
+    fun checkPickButtonDoesNotExist() {
+        onView(withId(getRes(R.id.button_pick))).check(doesNotExist())
+    }
+
+    /**
+     * Checks that the cancel button doesn't exist.
+     */
+    fun checkCancelButtonDoesNotExist() {
+        onView(withId(getRes(R.id.button_cancel))).check(doesNotExist())
+    }
+
+    /**
+     * Checks that the pick button is shown.
+     */
+    fun checkPickButtonDisplayed() {
+        onView(withId(getRes(R.id.button_pick))).check(matches(isDisplayed()))
+    }
+
+    /**
+     * Checks that the cancel button is shown.
+     */
+    fun checkCancelButtonDisplayed() {
+        onView(withId(getRes(R.id.button_cancel))).check(matches(isDisplayed()))
+    }
+
+    /**
+     * Checks that the pick button is enabled.
+     */
+    fun checkPickButtonEnabled() {
+        onView(withId(getRes(R.id.button_pick))).check(matches(isEnabled()))
+    }
+
+    /**
+     * Checks that the cancel button is enabled.
+     */
+    fun checkCancelButtonEnabled() {
+        onView(withId(getRes(R.id.button_cancel))).check(matches(isEnabled()))
+    }
+
+    /**
+     * Checks that the pick button is disabled.
+     */
+    fun checkPickButtonDisabled() {
+        onView(withId(getRes(R.id.button_pick))).check(matches(isNotEnabled()))
+    }
+
+    /**
+     * Clicks the pick button.
+     */
+    fun clickPickButton() {
+        onView(withId(getRes(R.id.button_pick))).perform(click())
+    }
+
+    /**
+     * Clicks the cancel button.
+     */
+    fun clickCancelButton() {
+        onView(withId(getRes(R.id.button_cancel))).perform(click())
     }
 }

@@ -24,11 +24,11 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract.Document;
 
 import androidx.test.filters.MediumTest;
+
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +37,7 @@ import org.junit.Test;
 public class MoveJobTest extends AbstractCopyJobTest<MoveJob> {
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     public MoveJobTest() {
         super(OPERATION_MOVE);

@@ -16,7 +16,6 @@
 
 <ripple
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:color="@color/breadcrumb_item_ripple_color">
     <item
         android:id="@android:id/mask"
@@ -24,6 +23,9 @@
 
     <item>
         <selector>
+            <item android:state_enabled="false">
+                <color android:color="@android:color/transparent"/>
+            </item>
             <item android:state_pressed="true">
                 <shape android:tint="?attr/colorOnSurfaceVariant">
                     <corners android:radius="@dimen/breadcrumb_item_height_m3" />

@@ -23,6 +23,7 @@ import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 
 import android.content.Context;
 import android.content.Intent;
@@ -258,6 +259,13 @@ public abstract class BaseActivity
                 DirectoryFragment dir = getDirectoryFragment();
                 if (dir != null) {
                     dir.scrollToTop();
+                }
+            }
+
+            @Override
+            public void onSearchStarting() {
+                if (isSearchV2Enabled()) {
+                    mInjector.getModel().setLoading(true);
                 }
             }
 

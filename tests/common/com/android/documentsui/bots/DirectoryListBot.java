@@ -244,7 +244,7 @@ public class DirectoryListBot extends Bots.BaseBot {
      */
     public void clearSelection() {
         int parentId = isUseMaterial3FlagEnabled() ? R.id.selection_bar : R.id.toolbar;
-        onView(allOf(withContentDescription("Cancel"),
+        onView(allOf(withContentDescription(R.string.clear_selection),
                 isDescendantOfA(withId(parentId)))).perform(click());
     }
 

@@ -203,7 +203,7 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
                     isFirst ? mEnv.getCurrentRoot().title : mState.stack.get(position).displayName);
             if (isUseMaterial3FlagEnabled()) {
                 // The last path part in the breadcrumb is not clickable.
-                holder.mTitle.setEnabled(!isLast);
+                holder.itemView.setEnabled(!isLast);
             } else {
                 holder.mTitle.setEnabled(isLast);
             }
