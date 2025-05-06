@@ -22,6 +22,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.database.Cursor;
@@ -137,7 +138,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateSelect(MenuItem select, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(select, (mState.action == ACTION_GET_CONTENT
+        Menus.setEnabledAndVisible(select,
+                !isUseMaterial3FlagEnabled() && (mState.action == ACTION_GET_CONTENT
                 || mState.action == ACTION_OPEN)
                 && selectionDetails.size() > 0);
         select.setTitle(getRes(R.string.menu_select));
