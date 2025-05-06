@@ -21,14 +21,23 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/breadcrumb_height"
     android:gravity="center_vertical"
+    android:focusable="true"
+    android:clickable="true"
+    android:defaultFocusHighlightEnabled="false"
     android:orientation="horizontal">
 
+    <!-- We can't put clickable/focusable on the TextView below even though we only want the
+         highlight/focus ring on the TextView instead of the whole item, this is because there is a
+         specific logic in HorizontalBreadcrumb when binding click event, the event is bound
+         on the whole item directly and there are special a11y handling (check the
+         `setAccessibilityDelegateCompat` call). Given we don't want the focus background on
+         the item, we also need defaultFocusHighlightEnabled above and duplicateParentState
+         below.  -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/breadcrumb_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:clickable="true"
+        android:duplicateParentState="true"
         android:maxWidth="275dp"
         android:gravity="center_vertical"
         android:maxLines="1"
