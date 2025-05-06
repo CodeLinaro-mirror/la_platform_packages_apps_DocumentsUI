@@ -36,17 +36,17 @@ import java.time.ZoneId
  * and converts them to a state of the dropdowns. It must be created with the view that contains
  * the buttons that trigger showing or hiding of the dropdowns.
  */
-class SearchOptionsController(private val mContainer: View?) {
+class SearchOptionsController(private val container: View?) {
     // The value of currently selected options. Initialized to sensible defaults.
-    private var mLastModifiedOption: LastModifiedOption = LastModifiedOption.ANY_TIME
-    private var mFileTypeOption: FileTypeOption = FileTypeOption.ANY_TYPE
-    private var mLocationOption: SearchLocationOption = SearchLocationOption.CURRENT_FOLDER
+    private var lastModifiedOption: LastModifiedOption = LastModifiedOption.ANY_TIME
+    private var fileTypeOption: FileTypeOption = FileTypeOption.ANY_TYPE
+    private var locationOption: SearchLocationOption = SearchLocationOption.CURRENT_FOLDER
 
     // A single listener to query option change events.
-    private var mOptionsListener: SearchOptionsListener? = null
+    private var optionsListener: SearchOptionsListener? = null
 
     init {
-        if (FlagUtils.isUseMaterial3FlagEnabled() && mContainer != null) {
+        if (FlagUtils.isUseMaterial3FlagEnabled() && container != null) {
             makeTrigger(
                 getRes(R.id.search_location_trigger),
                 getRes(R.menu.search_location_menu),
@@ -67,9 +67,9 @@ class SearchOptionsController(private val mContainer: View?) {
 
     private fun getSelectedMenuOption(@MenuRes menuId: Int): Int {
         return when (menuId) {
-            R.menu.search_location_menu -> mLocationOption.value
-            R.menu.search_last_modified_menu -> mLastModifiedOption.value
-            R.menu.search_file_type_menu -> mFileTypeOption.value
+            R.menu.search_location_menu -> locationOption.value
+            R.menu.search_last_modified_menu -> lastModifiedOption.value
+            R.menu.search_file_type_menu -> fileTypeOption.value
             else -> throw IllegalArgumentException("Unexpected menu ID $menuId")
         }
     }
@@ -82,7 +82,7 @@ class SearchOptionsController(private val mContainer: View?) {
         @MenuRes menuId: Int,
         callback: (option: Int) -> Boolean
     ) {
-        val trigger = mContainer?.findViewById<Chip>(triggerId)
+        val trigger = container?.findViewById<Chip>(triggerId)
         trigger?.setOnClickListener {
             showMenu(trigger, menuId) {
                 if (callback(it)) {
@@ -98,12 +98,11 @@ class SearchOptionsController(private val mContainer: View?) {
      */
     fun onLocationSelected(locationId: Int): Boolean {
         val selectedOption = searchLocationOptionFor(locationId) ?: return false
-        return if (selectedOption == mLocationOption) {
-            false
-        } else {
-            mLocationOption = selectedOption
-            true
+        if (selectedOption == locationOption) {
+            return false
         }
+        locationOption = selectedOption
+        return true
     }
 
     /**
@@ -112,12 +111,11 @@ class SearchOptionsController(private val mContainer: View?) {
      */
     fun onFileTypeSelected(fileTypeId: Int): Boolean {
         val selectedOption = fileTypeOptionFor(fileTypeId) ?: return false
-        return if (selectedOption == mFileTypeOption) {
-            false
-        } else {
-            mFileTypeOption = selectedOption
-            true
+        if (selectedOption == fileTypeOption) {
+            return false
         }
+        fileTypeOption = selectedOption
+        return true
     }
 
     /**
@@ -126,23 +124,22 @@ class SearchOptionsController(private val mContainer: View?) {
      */
     fun onLastModifiedSelected(lastModifiedId: Int): Boolean {
         val selectedOption = lastModifiedOptionFor(lastModifiedId) ?: return false
-        return if (selectedOption == mLastModifiedOption) {
-            false
-        } else {
-            mLastModifiedOption = selectedOption
-            true
+        if (selectedOption == lastModifiedOption) {
+            return false
         }
+        lastModifiedOption = selectedOption
+        return true
     }
 
     /**
      * Notifies an option listener about options change, if one is registered.
      */
     fun notifyOptionsChangeListener() {
-        mOptionsListener?.onOptionsChanged(
+        optionsListener?.onOptionsChanged(
             SearchOptionsState(
-                mFileTypeOption,
-                mLastModifiedOption,
-                mLocationOption
+                fileTypeOption,
+                lastModifiedOption,
+                locationOption
             )
         )
     }
@@ -152,7 +149,7 @@ class SearchOptionsController(private val mContainer: View?) {
      * is set to null, that is equivalent to removing the listener.
      */
     fun setOptionChangeListener(listener: SearchOptionsListener) {
-        mOptionsListener = listener
+        optionsListener = listener
     }
 
     /**
@@ -161,13 +158,13 @@ class SearchOptionsController(private val mContainer: View?) {
      */
     private fun getLastModifiedQueryArgs(): Bundle {
         val bundle = Bundle()
-        if (mLastModifiedOption != LastModifiedOption.ANY_TIME) {
+        if (lastModifiedOption != LastModifiedOption.ANY_TIME) {
             bundle.putLong(
                 DocumentsContract.QUERY_ARG_LAST_MODIFIED_AFTER,
                 LocalDate.now()
                     .atStartOfDay(ZoneId.systemDefault())
                     .toInstant()
-                    .toEpochMilli() - mLastModifiedOption.millis
+                    .toEpochMilli() - lastModifiedOption.millis
             )
         }
         return bundle
@@ -175,7 +172,7 @@ class SearchOptionsController(private val mContainer: View?) {
 
     private fun getFileTypeQueryArgs(): Bundle {
         val bundle = Bundle()
-        val mimeTypes = when (mFileTypeOption) {
+        val mimeTypes = when (fileTypeOption) {
             FileTypeOption.AUDIO -> SearchChipViewManager.AUDIO_MIMETYPES
             FileTypeOption.DOCUMENTS -> SearchChipViewManager.DOCUMENTS_MIMETYPES
             FileTypeOption.IMAGES -> SearchChipViewManager.IMAGES_MIMETYPES
@@ -202,14 +199,14 @@ class SearchOptionsController(private val mContainer: View?) {
      * Sets the visibility of the search drop down options bar.
      */
     fun setVisible(visible: Boolean) {
-        mContainer?.visibility = if (visible) View.VISIBLE else View.GONE
+        container?.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     /**
      * Returns whether or not this controller is visible.
      */
     fun isVisible(): Boolean {
-        return mContainer?.visibility == View.VISIBLE
+        return container?.visibility == View.VISIBLE
     }
 
     fun showMenu(chip: Chip, @MenuRes menuRes: Int, callback: (option: Int) -> Unit) {
