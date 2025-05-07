@@ -23,7 +23,7 @@ import android.provider.DocumentsContract
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.LockingContentObserver
-import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.base.FolderInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
@@ -86,34 +86,29 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
         val docs = createDocuments(TOTAL_FILE_COUNT)
         mockProvider!!.setNextChildDocumentsReturns(*docs)
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
-        val queryOptions =
-            QueryOptions(
-                TOTAL_FILE_COUNT + 1,
-                testParams.lastModifiedDelta,
-                null,
-                true,
-                arrayOf("*/*"),
-                testParams.otherArgs,
-            )
-        val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
+        val queryOptions = QueryOptions(
+            TOTAL_FILE_COUNT + 1,
+            testParams.lastModifiedDelta,
+            null,
+            true,
+            arrayOf("*/*"),
+            testParams.otherArgs,
+        )
 
-        // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
-        val rootFolderInfo = DocumentInfo()
-        rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
-        rootFolderInfo.userId = userIds[0]
+        val folderInfo =
+            listOf(FolderInfo(TestProvidersAccess.DOWNLOADS.authority, userIds[0].toString()))
 
-        val loader =
-            SearchLoader(
-                mActivity,
-                userIds,
-                TestFileTypeLookup(),
-                mContentObserver,
-                rootIds,
-                testParams.query,
-                queryOptions,
-                mEnv.state.sortModel,
-                mExecutor,
-            )
+        val loader = SearchLoader(
+            mActivity,
+            userIds,
+            TestFileTypeLookup(),
+            mContentObserver,
+            folderInfo,
+            testParams.query,
+            queryOptions,
+            mEnv.state.sortModel,
+            mExecutor,
+        )
         val directoryResult = loader.loadInBackground()
         assertEquals(testParams.expectedCount, getFileCount(directoryResult))
     }
@@ -123,7 +118,8 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     @Ignore("b/397095797")
     fun testBlankQueryAndRecency() {
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
-        val rootIds = listOf(TestProvidersAccess.DOWNLOADS)
+        val folderInfo =
+            listOf(FolderInfo(TestProvidersAccess.DOWNLOADS.authority, userIds[0].toString()))
         val noLastModifiedQueryOptions =
             QueryOptions(10, null, null, true, arrayOf("*/*"), Bundle())
 
@@ -134,7 +130,7 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 userIds,
                 TestFileTypeLookup(),
                 mContentObserver,
-                rootIds,
+                folderInfo,
                 "",
                 noLastModifiedQueryOptions,
                 mEnv.state.sortModel,
@@ -149,7 +145,7 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 userIds,
                 TestFileTypeLookup(),
                 mContentObserver,
-                rootIds,
+                folderInfo,
                 null,
                 noLastModifiedQueryOptions,
                 mEnv.state.sortModel,

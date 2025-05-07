@@ -40,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.android.documentsui.base.Menus
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
+import com.android.documentsui.services.FileOperations
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.util.FormatUtils
@@ -129,6 +130,7 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
             cancelButton.isVisible = expanded && !jobProgress.isFinal
             showInFolderButton.isVisible = expanded && jobProgress.isFinal
             dismissButton.isVisible = expanded && jobProgress.isFinal
+            cancelButton.setOnClickListener { FileOperations.cancel(context, jobProgress.id) }
             dismissButton.setOnClickListener { controller.dismissProgress(jobProgress.id) }
         }
 
@@ -367,8 +369,12 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
 
         for (jobProgress in progresses) {
             Log.d(TAG, "Received $jobProgress")
-            currentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) {
-                old, new -> ProgressViewModel(new.jobProgress, old.expanded)
+            if (jobProgress.state == Job.STATE_CANCELED) {
+                currentJobs.remove(jobProgress.id)
+            } else {
+                currentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) { old, new ->
+                    ProgressViewModel(new.jobProgress, old.expanded)
+                }
             }
         }
         for ((jobProgress, _) in currentJobs.values) {

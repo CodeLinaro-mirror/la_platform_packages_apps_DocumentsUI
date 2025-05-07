@@ -89,7 +89,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -1009,13 +1008,13 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mExecutorService = Executors.newFixedThreadPool(
                         GlobalSearchLoader.MAX_OUTSTANDING_TASK);
             }
-            DocumentStack stack = mState.stack;
-            RootInfo root = stack.getRoot();
             List<UserId> userIdList = DocumentsApplication.getUserIdManager(mActivity).getUserIds();
 
+            DocumentStack stack = mState.stack;
             Duration lastModifiedDelta = stack.isRecents()
                     ? Duration.ofMillis(RecentsLoader.REJECT_OLDER_THAN)
                     : null;
+            RootInfo root = stack.getRoot();
             int maxResults = (root == null || root.isRecents())
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
             QueryOptions options = new QueryOptions(
@@ -1028,22 +1027,13 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 // one of the searched content providers reports a change.
                 final LockingContentObserver observer = new LockingContentObserver(
                         mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
-                Collection<RootInfo> rootList = new ArrayList<>();
-                if (stack.isRecents()) {
-                    // TODO(b:381346575): Pass roots based on user selection.
-                    rootList.addAll(mProviders.getMatchingRootsBlocking(mState).stream()
-                            .filter(r -> r.supportsSearch() && r.authority != null
-                                    && r.rootId != null)
-                            .collect(Collectors.toList()));
-                } else {
-                    rootList.add(root);
-                }
+                Collection<RootInfo> roots = mProviders.getMatchingRootsBlocking(mState);
                 return new SearchLoader(
                         mActivity,
                         userIdList,
                         mInjector.fileTypeLookup,
                         observer,
-                        rootList,
+                        mSearchMgr.getSearchFolders(roots, stack),
                         mSearchMgr.getCurrentSearch(),
                         options,
                         mState.sortModel,
@@ -1064,7 +1054,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     options,
                     mState.sortModel
             );
-
         }
 
         @Override

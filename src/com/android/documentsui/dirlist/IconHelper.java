@@ -104,7 +104,8 @@ public class IconHelper {
         mConfigStore = configStore;
         if (isUseMaterial3FlagEnabled()) {
             mThumbnailStrokeWidth =
-                    context.getResources().getDimensionPixelSize(R.dimen.thumbnail_border_width);
+                    context.getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.thumbnail_border_width));
         } else {
             mThumbnailStrokeWidth = 0;
         }
@@ -133,7 +134,8 @@ public class IconHelper {
         int thumbSize;
         switch (mode) {
             case MODE_GRID:
-                thumbSize = mContext.getResources().getDimensionPixelSize(R.dimen.grid_width);
+                thumbSize =
+                        mContext.getResources().getDimensionPixelSize(getRes(R.dimen.grid_width));
                 break;
             case MODE_LIST:
                 thumbSize =

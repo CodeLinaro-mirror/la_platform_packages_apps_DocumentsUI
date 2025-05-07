@@ -53,6 +53,7 @@ import com.android.documentsui.ProfileTabsAddons;
 import com.android.documentsui.ProfileTabsController;
 import com.android.documentsui.ProviderExecutor;
 import com.android.documentsui.R;
+import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.ShortcutsUpdater;
 import com.android.documentsui.StubProfileTabsAddons;
@@ -144,7 +145,13 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 mInjector.getModel()::getItemUri,
                 mInjector.getModel()::getItemCount);
 
-        if (!isUseMaterial3FlagEnabled()) {
+        if (isUseMaterial3FlagEnabled()) {
+            mInjector.selectionBarController =
+                    new SelectionBarController(
+                            findViewById(getRes(R.id.selection_bar)),
+                            mInjector.menuManager,
+                            mInjector.selectionMgr);
+        } else {
             mInjector.actionModeController =
                     new ActionModeController(
                             this,
@@ -153,6 +160,11 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             mInjector.menuManager,
                             mInjector.messages);
         }
+
+        Runnable closeSelectionBarRunnable =
+                (isUseMaterial3FlagEnabled()
+                        ? mInjector.selectionBarController::closeSelectionBar
+                        : () -> {});
 
         mInjector.actions =
                 new ActionHandler<>(
@@ -163,7 +175,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         mSearchManager,
                         ProviderExecutor::forAuthority,
                         mInjector.actionModeController,
-                        getNavigator()::closeSelectionBar,
+                        closeSelectionBarRunnable,
                         clipper,
                         DocumentsApplication.getClipStore(this),
                         DocumentsApplication.getDragAndDropManager(this),
@@ -352,9 +364,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!isUseMaterial3FlagEnabled()) {
-            mInjector.menuManager.updateOptionMenu(menu);
-        }
+        mInjector.menuManager.updateOptionMenu(menu);
         return true;
     }
 

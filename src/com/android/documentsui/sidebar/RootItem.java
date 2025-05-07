@@ -161,7 +161,9 @@ public class RootItem extends Item {
         MaterialButton actionIcon = (MaterialButton) view;
         if (hasFocus) {
             final int focusRingWidth =
-                    actionIcon.getResources().getDimensionPixelSize(R.dimen.focus_ring_width);
+                    actionIcon
+                            .getResources()
+                            .getDimensionPixelSize(getRes(R.dimen.focus_ring_width));
             actionIcon.setStrokeWidth(focusRingWidth);
         } else {
             actionIcon.setStrokeWidth(0);
