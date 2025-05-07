@@ -32,6 +32,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -78,7 +80,8 @@ private class VerticalMarginItemDecoration(
 class JobPanelController(
     private val activityContext: Context,
     private val viewModel: JobPanelViewModel,
-) : BroadcastReceiver() {
+) : BroadcastReceiver(),
+    DefaultLifecycleObserver {
     companion object {
         private const val TAG = "JobPanelController"
         private const val MAX_PROGRESS = 100
@@ -324,6 +327,10 @@ class JobPanelController(
                 ))
                 itemAnimator = null
                 adapter = listAdapter
+                if (viewModel.listState != null) {
+                    layoutManager?.onRestoreInstanceState(viewModel.listState)
+                    viewModel.listState = null
+                }
             }
             progressListAdapter = listAdapter
             val popupWidth =
@@ -338,7 +345,10 @@ class JobPanelController(
                 /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
                 /* focusable= */ true
             ).apply {
-                setOnDismissListener { progressListAdapter = null }
+                setOnDismissListener {
+                    progressListAdapter = null
+                    popup = null
+                }
                 showAsDropDown(
                     /* anchor= */ view,
                     /* xoff= */ 0,
@@ -347,9 +357,22 @@ class JobPanelController(
                 )
             }
         }
+        // Restore the popup if we had saved state.
+        if (viewModel.listState != null) {
+            progressIcon.callOnClick()
+        }
         menuItem = newMenuItem
         // Don't animate for the initial state update.
         updateMenuItem(viewModel.getMenuState(), animate = false)
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        // We need to save the popup's UI state and manually dismiss the popup, as it somehow
+        // stays alive even if the activity is destroyed due to a configuration change.
+        viewModel.listState = popup?.contentView
+            ?.findViewById<RecyclerView>(R.id.job_progress_list)?.layoutManager
+            ?.onSaveInstanceState()
+        popup?.dismiss()
     }
 
     override fun onReceive(context: Context?, intent: Intent) {
