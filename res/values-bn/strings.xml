@@ -227,6 +227,8 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি নির্বাচন করা হয়েছে</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি নির্বাচন করা হয়েছে</item>
     </plurals>
+    <!-- no translation found for clear_selection (5965968983023105329) -->
+    <skip />
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম</item>
