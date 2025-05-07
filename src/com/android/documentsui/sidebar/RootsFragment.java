@@ -243,7 +243,7 @@ public class RootsFragment extends Fragment {
                 new OnGenericMotionListener() {
                     @Override
                     public boolean onGenericMotion(View v, MotionEvent event) {
-                        if (Events.isMouseEvent(event)
+                        if (Events.isMousyEvent(event)
                                 && event.getButtonState() == MotionEvent.BUTTON_SECONDARY) {
                             int x = (int) event.getX();
                             int y = (int) event.getY();
