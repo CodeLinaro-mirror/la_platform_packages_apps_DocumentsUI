@@ -126,7 +126,7 @@ public abstract class AbstractJobTest<T extends Job> {
     final T createJob(@OpType int opType, List<Uri> srcs, Uri srcParent, Uri destination)
             throws Exception {
         DocumentStack stack =
-                new DocumentStack(mSrcRoot, DocumentInfo.fromUri(mResolver, destination, mUserId));
+                new DocumentStack(mDestRoot, DocumentInfo.fromUri(mResolver, destination, mUserId));
 
         UrisSupplier urisSupplier = DocsProviders.createDocsProvider(srcs);
         FileOperation operation = new FileOperation.Builder()
