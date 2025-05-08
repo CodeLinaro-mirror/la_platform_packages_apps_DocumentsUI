@@ -61,7 +61,7 @@
                     app:rippleColor="@color/nav_rail_burger_icon_ripple_color"
                     app:strokeColor="?attr/colorPrimary"
                     android:contentDescription="@string/drawer_open"
-                    app:icon="@drawable/ic_hamburger" />
+                    app:icon="@drawable/ic_hamburger_m3" />
 
                 <FrameLayout
                     android:id="@+id/nav_rail_container_roots"
@@ -93,7 +93,7 @@
                             android:id="@+id/toolbar"
                             android:layout_width="match_parent"
                             android:layout_height="?attr/actionBarSize"
-                            android:layout_marginTop="@dimen/action_bar_margin"
+                            android:layout_marginTop="@dimen/action_bar_margin_m3"
                             android:touchscreenBlocksFocus="false">
 
                             <TextView
@@ -116,7 +116,7 @@
 
                     </FrameLayout>
 
-                    <include layout="@layout/directory_header" />
+                    <include layout="@layout/directory_header_m3" />
 
                 </LinearLayout>
 
@@ -129,7 +129,7 @@
                     android:layout_marginTop="@dimen/main_container_section_gap"
                     android:background="@drawable/main_container_middle_section_background">
 
-                    <include layout="@layout/column_headers"/>
+                    <include layout="@layout/column_headers_m3"/>
 
                     <FrameLayout
                         android:layout_width="match_parent"

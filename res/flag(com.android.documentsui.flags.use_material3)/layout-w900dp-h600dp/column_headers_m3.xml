@@ -32,95 +32,83 @@
     android:paddingStart="@dimen/table_header_padding_start"
     android:paddingEnd="@dimen/table_header_padding_end"
     android:visibility="gone">
-    <!-- Placeholder for MIME/thumbnail icon -->
-    <View
-        android:layout_width="@dimen/list_item_icon_size"
-        android:layout_height="@dimen/list_item_icon_size"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="@dimen/list_item_icon_margin_end"
-        android:layout_marginStart="0dp"/>
 
     <!-- Column headers -->
-    <LinearLayout
+    <com.android.documentsui.sorting.HeaderCell
+        android:id="@android:id/title"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_weight="0.4"
+        android:layout_marginEnd="12dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true">
 
-        <com.android.documentsui.sorting.HeaderCell
-            android:id="@android:id/title"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.4"
-            android:layout_marginEnd="12dp"
-            android:clickable="true"
-            android:focusable="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
+        <include layout="@layout/shared_cell_content_m3" />
+    </com.android.documentsui.sorting.HeaderCell>
 
-            <include layout="@layout/shared_cell_content_m3" />
-        </com.android.documentsui.sorting.HeaderCell>
+    <com.android.documentsui.sorting.HeaderCell
+        android:id="@android:id/summary"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:layout_marginEnd="0dp"
+        android:clickable="true"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true">
 
-        <com.android.documentsui.sorting.HeaderCell
-            android:id="@android:id/summary"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0"
-            android:layout_marginEnd="0dp"
-            android:clickable="true"
-            android:focusable="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
+        <include layout="@layout/shared_cell_content_m3" />
+    </com.android.documentsui.sorting.HeaderCell>
 
-            <include layout="@layout/shared_cell_content_m3" />
-        </com.android.documentsui.sorting.HeaderCell>
+    <com.android.documentsui.sorting.HeaderCell
+        android:id="@+id/file_type"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"
+        android:clickable="true"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true">
 
-        <com.android.documentsui.sorting.HeaderCell
-            android:id="@+id/file_type"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:clickable="true"
-            android:focusable="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
+        <include layout="@layout/shared_cell_content_m3" />
+    </com.android.documentsui.sorting.HeaderCell>
 
-            <include layout="@layout/shared_cell_content_m3" />
-        </com.android.documentsui.sorting.HeaderCell>
+    <com.android.documentsui.sorting.HeaderCell
+        android:id="@+id/size"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"
+        android:clickable="true"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true">
 
-        <com.android.documentsui.sorting.HeaderCell
-            android:id="@+id/size"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:clickable="true"
-            android:focusable="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
+        <include layout="@layout/shared_cell_content_m3" />
+    </com.android.documentsui.sorting.HeaderCell>
 
-            <include layout="@layout/shared_cell_content_m3" />
-        </com.android.documentsui.sorting.HeaderCell>
+    <com.android.documentsui.sorting.HeaderCell
+        android:id="@+id/date"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.2"
+        android:clickable="true"
+        android:focusable="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true">
 
-        <com.android.documentsui.sorting.HeaderCell
-            android:id="@+id/date"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:clickable="true"
-            android:focusable="false"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="true">
+        <include layout="@layout/shared_cell_content_m3" />
+    </com.android.documentsui.sorting.HeaderCell>
 
-            <include layout="@layout/shared_cell_content_m3" />
-        </com.android.documentsui.sorting.HeaderCell>
-    </LinearLayout>
-
-    <!-- Placeholder for preview icon in picker mode -->
+    <!-- Placeholder for preview icon in picker mode, have the same size as @id/preview_icon in
+         item_doc_list.xml, aim to align the file row columns with the able header columns.
+     -->
     <View
         android:id="@+id/preview_icon_placeholder"
         android:layout_width="@dimen/list_item_icon_size"

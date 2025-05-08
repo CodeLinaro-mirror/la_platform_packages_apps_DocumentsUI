@@ -48,14 +48,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textAppearance="@style/EmptyStateTitleTextM3"/>
+            android:textAppearance="@style/CrossProfileTitleTextM3"/>
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/message"
             android:layout_marginTop="@dimen/cross_profile_button_message_margin_top_m3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:textAppearance="@style/EmptyStateMessageTextM3"/>
+            android:textAppearance="@style/CrossProfileMessageTextM3"/>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button"
             android:layout_marginTop="@dimen/cross_profile_button_margin_top"
