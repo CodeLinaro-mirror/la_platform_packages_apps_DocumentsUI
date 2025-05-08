@@ -38,6 +38,7 @@ import android.view.View;
 
 import androidx.annotation.CallSuper;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.ActionModeController;
@@ -46,6 +47,8 @@ import com.android.documentsui.DocsSelectionHelper;
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.FocusManager;
 import com.android.documentsui.Injector;
+import com.android.documentsui.JobPanelController;
+import com.android.documentsui.JobPanelViewModel;
 import com.android.documentsui.MenuManager.DirectoryDetails;
 import com.android.documentsui.OperationDialogFragment;
 import com.android.documentsui.OperationDialogFragment.DialogType;
@@ -129,7 +132,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         this::focusSidebar,
                         getColor(getRes(R.color.primary)));
 
-        mInjector.menuManager = new MenuManager(
+        MenuManager menuManager = new MenuManager(
                 mInjector.features,
                 mSearchManager,
                 mState,
@@ -139,11 +142,16 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         return clipper.hasItemsToPaste();
                     }
                 },
-                isVisualSignalsFlagEnabled() ? this : getApplicationContext(),
+                getApplicationContext(),
                 mInjector.selectionMgr,
                 mProviders::getApplicationName,
                 mInjector.getModel()::getItemUri,
                 mInjector.getModel()::getItemCount);
+        if (isVisualSignalsFlagEnabled()) {
+            menuManager.setJobPanelController(new JobPanelController(this,
+                    new ViewModelProvider(this).get(JobPanelViewModel.class)));
+        }
+        mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =

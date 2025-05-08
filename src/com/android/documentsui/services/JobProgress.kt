@@ -66,8 +66,8 @@ data class JobProgress @JvmOverloads constructor(
         }
     }
 
-    companion object CREATOR : Parcelable.Creator<JobProgress?> {
-        override fun createFromParcel(parcel: Parcel): JobProgress? {
+    companion object CREATOR : Parcelable.Creator<JobProgress> {
+        override fun createFromParcel(parcel: Parcel): JobProgress {
             return JobProgress(
                 parcel.readString()!!,
                 parcel.readInt(),
