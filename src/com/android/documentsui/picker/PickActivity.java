@@ -371,9 +371,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!isUseMaterial3FlagEnabled()) {
-            mInjector.menuManager.updateOptionMenu(menu);
-        }
+        mInjector.menuManager.updateOptionMenu(menu);
 
         final DocumentInfo cwd = getCurrentDirectory();
 
