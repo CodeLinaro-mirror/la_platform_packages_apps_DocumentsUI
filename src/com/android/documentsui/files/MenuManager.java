@@ -17,7 +17,6 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -61,7 +60,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     private final SelectionTracker<String> mSelectionManager;
     private final Lookup<String, Uri> mUriLookup;
     private final LookupApplicationName mAppNameLookup;
-    @Nullable private final JobPanelController mJobPanelController;
+    @Nullable private JobPanelController mJobPanelController;
 
     public MenuManager(
             Features features,
@@ -81,12 +80,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;
         mUriLookup = uriLookup;
+    }
 
-        if (isVisualSignalsFlagEnabled()) {
-            mJobPanelController = new JobPanelController(context);
-        } else {
-            mJobPanelController = null;
-        }
+    // TODO(b/378011512): Remove and merge with constructor once visual signals flag is removed.
+    public void setJobPanelController(JobPanelController controller) {
+        mJobPanelController = controller;
     }
 
     @Override

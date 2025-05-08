@@ -244,6 +244,8 @@
       <item quantity="few">Izabrane su <xliff:g id="COUNT_1">%1$d</xliff:g> stavke</item>
       <item quantity="other">Izabrano je <xliff:g id="COUNT_1">%1$d</xliff:g> stavki</item>
     </plurals>
+    <!-- no translation found for clear_selection (5965968983023105329) -->
+    <skip />
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> stavka</item>
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> stavke</item>

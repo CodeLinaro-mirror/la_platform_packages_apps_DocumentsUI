@@ -244,6 +244,8 @@
       <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> נבחרו</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> נבחרו</item>
     </plurals>
+    <!-- no translation found for clear_selection (5965968983023105329) -->
+    <skip />
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים</item>
       <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים</item>

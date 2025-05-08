@@ -26,6 +26,7 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.assertion.ViewAssertions.selectedDescendantsMatch
 import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
@@ -107,6 +108,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             msRemaining = 10000,
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
+
+        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(40)))
 
         openPanel()
 
@@ -234,5 +237,46 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         sendProgress(arrayListOf(progress2.toJobProgress()))
         onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
+    }
+
+    @Test
+    fun testPersistsOnRecreate() {
+        val progress = MutableJobProgress(
+            id = "jobId1",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job started",
+            hasFailures = false,
+            currentBytes = 4,
+            requiredBytes = 10,
+            msRemaining = 10000,
+        )
+        sendProgress(arrayListOf(progress.toJobProgress()))
+        mActivityScenario!!.recreate()
+
+        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(40)))
+
+        openPanel()
+        onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
+
+        mActivityScenario!!.recreate()
+
+        val progress2 = MutableJobProgress(
+            id = "jobId2",
+            operationType = FileOperationService.OPERATION_MOVE,
+            state = Job.STATE_SET_UP,
+            msg = "Job started",
+            hasFailures = false,
+            currentBytes = 6,
+            requiredBytes = 10,
+            msRemaining = 10000,
+        )
+        sendProgress(arrayListOf(progress.toJobProgress(), progress2.toJobProgress()))
+
+        onView(withId(R.id.job_progress_list)).check(matches(hasChildCount(2)))
+
+        // Close the job panel.
+        Espresso.pressBack()
+        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(50)))
     }
 }

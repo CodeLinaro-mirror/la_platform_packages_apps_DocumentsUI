@@ -100,7 +100,7 @@ final class MoveJob extends CopyJob {
     @Override
     protected String getProgressMessage() {
         Map<String, Object> formatArgs = new HashMap<>();
-        formatArgs.put("directory", BidiFormatter.getInstance().unicodeWrap(mDstInfo.displayName));
+        formatArgs.put("directory", BidiFormatter.getInstance().unicodeWrap(stack.getTitle()));
         return getProgressMessage(R.string.move_in_progress, formatArgs);
     }
 
