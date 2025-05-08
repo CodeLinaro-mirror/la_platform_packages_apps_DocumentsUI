@@ -240,6 +240,44 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    public void testRootChange_NonM3PerRootViewModeState() throws Exception {
+        // Assign different view modes across "Images" and "Videos" roots.
+        // Images root --> grid mode
+        // Videos root --> list mode
+        bots.roots.openRoot("Images");
+        bots.main.switchToGridMode();
+        bots.main.assertInGridMode();
+        bots.roots.openRoot("Videos");
+        bots.main.switchToListMode();
+        bots.main.assertInListMode();
+
+        // Assert that the different roots maintain their respective view modes.
+        bots.roots.openRoot("Images");
+        bots.main.assertInGridMode();
+        bots.roots.openRoot("Videos");
+        bots.main.assertInListMode();
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testRootChange_M3GlobalViewModeState() throws Exception {
+        bots.roots.openRoot("Recent");
+        bots.main.switchToGridMode();
+        bots.main.assertInGridMode();
+
+        // Switch to a different root and assert still in grid mode.
+        bots.roots.openRoot(ROOT_0_ID);
+        bots.main.assertInGridMode();
+
+        // Switch back to list mode and assert still in list mode on a different root.
+        bots.main.switchToListMode();
+        bots.main.assertInListMode();
+        bots.roots.openRoot("Recent");
+        bots.main.assertInListMode();
+    }
+
+    @Test
     @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
     public void testClearSelectionInRecentsResetsActions() throws Exception {
         // Ensure Downloads exists and get the location of the main root (e.g. "Pixel Tablet").
