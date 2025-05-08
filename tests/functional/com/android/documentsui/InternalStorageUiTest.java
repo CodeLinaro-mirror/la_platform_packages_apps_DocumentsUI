@@ -61,7 +61,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRenameFile() throws Exception {
         createTestFiles();
 
-        bots.directory.selectDocument(fileName);
+        bots.directory.selectDocument(fileName, 1);
         device.waitForIdle();
 
         bots.main.clickRename();
@@ -85,12 +85,12 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
         boolean selected = false;
         // Delete the added file for not affect user and also avoid error on next test.
         if (bots.directory.hasDocuments(fileName)) {
-            bots.directory.selectDocument(fileName);
+            bots.directory.selectDocument(fileName, 1);
             device.waitForIdle();
             selected = true;
         }
         if (bots.directory.hasDocuments(newFileName)) {
-            bots.directory.selectDocument(newFileName);
+            bots.directory.selectDocument(newFileName, 1);
             device.waitForIdle();
             selected = true;
         }

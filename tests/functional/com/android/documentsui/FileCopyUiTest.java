@@ -520,7 +520,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
         device.waitForIdle();
 
         // Select Download folder.
-        bots.directory.selectDocument("Download");
+        bots.directory.selectDocument("Download", 1);
         device.waitForIdle();
 
         // Click copy button.

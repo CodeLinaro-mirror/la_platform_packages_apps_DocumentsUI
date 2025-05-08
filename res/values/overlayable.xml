@@ -55,6 +55,7 @@
             <item type="drawable" name="ic_sd_storage"/>
             <item type="drawable" name="ic_root_smartphone"/>
             <item type="drawable" name="root_list_selector"/>
+            <item type="drawable" name="ic_advanced_shortcut"/>
             <!-- END DRAWABLE -->
 
             <!-- START BOOLEAN CONFIG -->

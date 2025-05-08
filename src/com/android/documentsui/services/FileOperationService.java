@@ -614,7 +614,16 @@ public class FileOperationService extends Service implements Job.Listener {
             var progress = new ArrayList<JobProgress>();
             synchronized (mJobs) {
                 for (JobRecord rec : mJobs.values()) {
-                    progress.add(rec.job.getJobProgress());
+                    var job = rec.job;
+                    progress.add(job.getJobProgress());
+
+                    // Only job in set up state has progress bar
+                    if (job.getState() == Job.STATE_SET_UP) {
+                        notificationManager.notify(
+                                mForegroundJob == job ? null : job.id,
+                                NOTIFICATION_ID_PROGRESS,
+                                job.getProgressNotification());
+                    }
                 }
             }
             Intent intent = new Intent();

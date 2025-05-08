@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.UserProperties;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -93,6 +94,7 @@ import com.android.documentsui.Metrics;
 import com.android.documentsui.Model;
 import com.android.documentsui.ProfileTabsController;
 import com.android.documentsui.R;
+import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.ThumbnailCache;
 import com.android.documentsui.TimeoutTask;
 import com.android.documentsui.base.DocumentFilters;
@@ -178,9 +180,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     @ContentScoped
     private ActionHandler mActions;
 
-    @Injected
-    @ContentScoped
-    private ActionModeController mActionModeController;
+    // Returns null when the `use_material3` flag is enabled.
+    @Injected @ContentScoped private @Nullable ActionModeController mActionModeController;
+
+    // Returns null when the `use_material3` flag is disabled.
+    @Injected @ContentScoped private @Nullable SelectionBarController mSelectionBarController;
 
     @Injected
     @ContentScoped
@@ -645,8 +649,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 .attach(mRecView);
 
         if (isUseMaterial3FlagEnabled()) {
-            mSelectionMgr.addObserver(mActivity.getNavigator());
-            mActivity.getNavigator().updateSelection(mSelectionMetadata, this::handleMenuItemClick);
+            mSelectionBarController =
+                    mInjector.getSelectionBarController(
+                            mSelectionMetadata, this::handleMenuItemClick);
+            mSelectionMgr.addObserver(mSelectionBarController);
         } else {
             mActionModeController =
                     mInjector.getActionModeController(
@@ -858,7 +864,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         if (isUseMaterial3FlagEnabled()) {
             if (mode == MODE_GRID) {
-                int itemMarg = getResources().getDimensionPixelSize(R.dimen.grid_item_margin);
+                int itemMarg =
+                        getResources().getDimensionPixelSize(getRes(R.dimen.grid_item_margin));
                 // Subtract the item's margin since we don't want to double count the margin in the
                 // distance between the outer grid items and the grid boundary.
                 int leftPad =
@@ -909,7 +916,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
         mIconHelper.setViewMode(mode);
 
-        int range = getResources().getDimensionPixelOffset(R.dimen.refresh_icon_range);
+        int range = getResources().getDimensionPixelOffset(getRes(R.dimen.refresh_icon_range));
         mRefreshLayout.setProgressViewOffset(true, mAppBarHeight, mAppBarHeight + range);
     }
 
@@ -981,11 +988,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // List mode is a "grid" with 1 column.
             return 1;
         }
+        Resources resources = getResources();
         float scaling = isUseMaterial3FlagEnabled() ? 1.0f : mLiveScale;
 
-        int cellWidth = (int) (getResources().getDimensionPixelSize(R.dimen.grid_width) * scaling);
-        int cellMargin = 2 * (int) (getResources().getDimensionPixelSize(R.dimen.grid_item_margin)
-                * scaling);
+        int cellWidth =
+                (int) (resources.getDimensionPixelSize(getRes(R.dimen.grid_width)) * scaling);
+        int cellMargin =
+                2
+                        * (int)
+                                (resources.getDimensionPixelSize(getRes(R.dimen.grid_item_margin))
+                                        * scaling);
         int viewPadding =
                 (int) ((mRecView.getPaddingLeft() + mRecView.getPaddingRight()) * scaling);
         int viewWidth =
@@ -1023,9 +1035,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private int getDirectoryPadding(@ViewMode int mode) {
         switch (mode) {
             case MODE_GRID:
-                return getResources().getDimensionPixelSize(R.dimen.grid_container_padding);
+                return getResources().getDimensionPixelSize(getRes(R.dimen.grid_container_padding));
             case MODE_LIST:
-                return getResources().getDimensionPixelSize(R.dimen.list_container_padding);
+                return getResources().getDimensionPixelSize(getRes(R.dimen.list_container_padding));
             default:
                 throw new IllegalArgumentException("Unsupported layout mode: " + mode);
         }
@@ -1033,7 +1045,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void closeSelectionBar() {
         if (isUseMaterial3FlagEnabled()) {
-            mActivity.getNavigator().closeSelectionBar();
+            mSelectionBarController.closeSelectionBar();
         } else {
             mActionModeController.finishActionMode();
         }
@@ -1641,11 +1653,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 // For orientation changed case, sometimes the docs loading comes after the menu
                 // update. We need to update the menu here to ensure the status is correct.
                 mInjector.menuManager.updateModel(mModel);
-                if (isUseMaterial3FlagEnabled()) {
-                    mActivity.getNavigator().updateActionMenu();
-                } else {
-                    mInjector.menuManager.updateOptionMenu();
-                }
+                mInjector.menuManager.updateOptionMenu();
                 if (VersionUtils.isAtLeastS()) {
                     mActivity.updateHeader(update.hasCrossProfileException());
                 } else {

@@ -28,8 +28,7 @@ import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
-
-import static com.google.common.truth.TruthJUnit.assume;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -44,7 +43,9 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
@@ -84,10 +85,13 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("Recent");
 
         boolean showSearchBar =
-                context.getResources().getBoolean(R.bool.show_search_bar);
+                isUseMaterial3FlagEnabled() ? false : context.getResources().getBoolean(
+                        R.bool.show_search_bar);
         if (showSearchBar) {
             bots.main.assertSearchBarShow();
         } else {
+            bots.main.assertSearchBarGone();
+            bots.search.assertIconVisible(true);
             bots.main.assertWindowTitle("Recent");
         }
     }
@@ -127,29 +131,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.directory.findDocument(fileName).waitUntilGone(5000);
         assertFalse(bots.directory.hasDocuments(fileName));
-    }
-
-    @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
-    public void testRecentsSelectionClearsSearchBar() throws Exception {
-        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
-
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
-
-        // Open up Recents and create a file that should appear.
-        bots.roots.openRoot("Recent");
-        final String fileName = "Recent.txt";
-        storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
-
-        try {
-            bots.directory.waitForDocument(fileName);
-            bots.directory.selectDocument(fileName, 1);
-            bots.directory.selectDocument(fileName);
-        } finally {
-            cleanupFile(fileName, primaryRoot.title);
-        }
     }
 
     @Test
@@ -228,7 +209,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
         Instrumentation.ActivityMonitor monitor = new Instrumentation.ActivityMonitor(
                 InspectorActivity.class.getName(), null, false);
-        bots.directory.selectDocument("file0.log");
+        bots.directory.selectDocument("file0.log", 1);
         bots.main.clickActionItem("Get info");
         monitor.waitForActivityWithTimeout(TIMEOUT);
     }
@@ -262,8 +243,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
     public void testClearSelectionInRecentsResetsActions() throws Exception {
-        assume().that(context.getResources().getBoolean(R.bool.show_search_bar)).isTrue();
-
         // Ensure Downloads exists and get the location of the main root (e.g. "Pixel Tablet").
         DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
@@ -295,8 +274,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Deselect the file and ensure the share menu disappears (this ensures the menu is
             // refreshed).
-            bots.directory.selectDocument(fileName);
-            onView(withId(R.id.action_menu_share)).check(doesNotExist());
+            bots.directory.clearSelection();
+            device.wait(Until.gone(By.desc("Share")), /* timeout= */ 5000);
         } finally {
             cleanupFile(fileName, primaryRoot.title);
         }
