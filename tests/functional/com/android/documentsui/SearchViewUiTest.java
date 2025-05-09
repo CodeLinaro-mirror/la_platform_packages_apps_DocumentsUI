@@ -37,8 +37,6 @@ import static org.junit.Assert.assertFalse;
 import android.os.RemoteException;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.Settings;
 
 import androidx.test.filters.LargeTest;
@@ -51,6 +49,7 @@ import androidx.test.uiautomator.Until;
 import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
@@ -63,7 +62,7 @@ import org.junit.Test;
 public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();

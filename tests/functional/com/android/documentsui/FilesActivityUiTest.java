@@ -38,8 +38,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -53,6 +51,7 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -64,7 +63,7 @@ import org.junit.runner.RunWith;
 public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule =

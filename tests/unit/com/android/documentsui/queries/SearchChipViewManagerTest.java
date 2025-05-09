@@ -31,8 +31,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +48,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.util.VersionUtils;
 
 import com.google.android.material.chip.Chip;
@@ -82,7 +81,7 @@ public final class SearchChipViewManagerTest {
     private LinearLayout mChipGroup;
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Before
     public void setUp() {

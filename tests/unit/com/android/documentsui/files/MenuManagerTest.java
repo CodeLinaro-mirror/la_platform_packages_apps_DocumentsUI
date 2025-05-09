@@ -31,8 +31,6 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
@@ -48,6 +46,7 @@ import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.TestData;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
@@ -141,7 +140,7 @@ public final class MenuManagerTest {
     private int mFilesCount;
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Before
     public void setUp() {

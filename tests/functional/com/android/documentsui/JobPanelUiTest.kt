@@ -17,8 +17,6 @@ package com.android.documentsui
 
 import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.view.View
 import android.widget.ProgressBar
 import androidx.test.espresso.Espresso
@@ -38,6 +36,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
@@ -71,7 +70,7 @@ private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progr
 @RunWith(AndroidJUnit4::class)
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule
-    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val checkFlags = CheckAndForceMaterial3Flag()
 
     private var lastId = 0L
 

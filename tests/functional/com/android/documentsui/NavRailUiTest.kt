@@ -22,8 +22,6 @@ import android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT
 import android.content.res.Resources
 import android.graphics.Rect
 import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.util.DisplayMetrics
 import android.util.TypedValue
@@ -32,6 +30,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import kotlin.math.roundToInt
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
@@ -41,7 +40,8 @@ import org.junit.runner.RunWith
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
 @RunWith(AndroidJUnit4::class)
 class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
-  @get:Rule val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+  @get:Rule
+  val checkFlags = CheckAndForceMaterial3Flag()
 
   companion object {
     private const val MEDIUM_WINDOW_WIDTH = 700

@@ -26,7 +26,7 @@ class FlagUtils {
     companion object {
         @JvmStatic
         fun isUseMaterial3FlagEnabled(): Boolean {
-            return Flags.useMaterial3()
+            return Flags.useMaterial3() && Material3Config.getInstance().forceMaterial3 == true
         }
 
         @JvmStatic

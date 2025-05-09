@@ -16,8 +16,6 @@
 package com.android.documentsui.peek
 
 import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -32,6 +30,7 @@ import com.android.documentsui.StubProvider
 import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.rules.TestFilesRule
 import junit.framework.Assert
 import org.junit.Before
@@ -43,7 +42,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @RequiresFlagsEnabled(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO)
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
-    @get:Rule val mCheckFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    @get:Rule
+    val checkFlags = CheckAndForceMaterial3Flag()
 
     @get:Rule
     val testFilesRule: TestFilesRule =

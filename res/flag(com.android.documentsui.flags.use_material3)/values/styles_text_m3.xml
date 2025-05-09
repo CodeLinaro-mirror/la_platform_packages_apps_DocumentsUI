@@ -125,11 +125,15 @@
         <item name="android:textColor">@color/horizontal_breadcrumb_color_m3</item>
     </style>
 
-    <style name="EmptyStateTitleTextM3" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
+    <style name="CrossProfileTitleTextM3" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
-    <style name="EmptyStateMessageTextM3" parent="@style/TextAppearance.DocumentsUI.BodyMedium">
+    <style name="CrossProfileMessageTextM3" parent="@style/TextAppearance.DocumentsUI.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="EmptyStateTitleTextM3" parent="@style/TextAppearance.DocumentsUI.TitleMedium">
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
