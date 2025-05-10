@@ -470,6 +470,8 @@
         <item quantity="one"><xliff:g id="count" example="1">%1$d</xliff:g> selected</item>
         <item quantity="other"><xliff:g id="count" example="3">%1$d</xliff:g> selected</item>
     </plurals>
+    <!-- Text used as the content description of the cancel button when files are selected. -->
+    <string name="clear_selection">Clear selection</string>
 
     <!-- Label text showing user how many items are being dragged. Can be one or more elements. -->
     <plurals name="elements_dragged">
