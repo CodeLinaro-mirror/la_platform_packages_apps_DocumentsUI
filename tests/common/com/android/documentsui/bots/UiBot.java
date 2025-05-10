@@ -185,6 +185,24 @@ public class UiBot extends Bots.BaseBot {
                 .check(matches(withText(is(expected))));
     }
 
+    /**
+     * Checks that the current view state is in list mode.
+     */
+    public void assertInListMode() {
+        // In list mode, there should be the grid mode button that is visible.
+        final UiObject2 gridModeBtn = menuGridMode();
+        assertNotNull(gridModeBtn);
+    }
+
+    /**
+     * Checks that the current view state is in grid mode.
+     */
+    public void assertInGridMode() {
+        // In grid mode, there should be the list mode button that is visible.
+        final UiObject2 listModeBtn = menuListMode();
+        assertNotNull(listModeBtn);
+    }
+
     public boolean inFixedLayout() {
         TypedValue val = new TypedValue();
         // We alias files_activity to either fixed or drawer layouts based
