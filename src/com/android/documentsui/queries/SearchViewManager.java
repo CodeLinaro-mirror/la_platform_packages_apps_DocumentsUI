@@ -593,6 +593,9 @@ public class SearchViewManager implements
     }
 
     private void performSearch(String newText) {
+        if (isSearchV2Enabled()) {
+            mListener.onSearchStarting();
+        }
         cancelQueuedSearch();
         synchronized (mSearchLock) {
             mQueuedSearchTask = createSearchTask(newText);
@@ -767,6 +770,13 @@ public class SearchViewManager implements
 
     public interface SearchManagerListener {
         void onSearchChanged(@Nullable String query);
+
+        /**
+         * Called when the search is about to start. There may be other tasks performed
+         * before actual searching commences, such as debouncing, etc. However, this is
+         * the signal that the SearchViewManager is getting ready to start searching.
+         */
+        void onSearchStarting();
 
         void onSearchFinished();
 

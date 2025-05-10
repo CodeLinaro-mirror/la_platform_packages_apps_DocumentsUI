@@ -245,8 +245,11 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         } else if (mState.action == ACTION_OPEN_TREE ||
                 mState.action == ACTION_PICK_COPY_DESTINATION) {
             PickDirectoryFragment.show(getSupportFragmentManager());
+        } else if (isUseMaterial3FlagEnabled() && (mState.action == ACTION_OPEN
+                || mState.action == ACTION_GET_CONTENT)) {
+            PickFilesFragment.show(getSupportFragmentManager(), mState.action);
         } else if (!isUseMaterial3FlagEnabled()) {
-            // If PickFragment or SaveFragment does not show,
+            // If PickDirectoryFragment, PickFilesFragment or SaveFragment does not show,
             // Set save container background to transparent for edge to edge nav bar.
             // However when the use_material3 flag is on, the file path bar is at the bottom of the
             // layout and hence the edge to edge nav bar is no longer required.
@@ -371,9 +374,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (!isUseMaterial3FlagEnabled()) {
-            mInjector.menuManager.updateOptionMenu(menu);
-        }
+        mInjector.menuManager.updateOptionMenu(menu);
 
         final DocumentInfo cwd = getCurrentDirectory();
 

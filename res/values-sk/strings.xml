@@ -261,6 +261,8 @@
       <item quantity="other">Vybrané: <xliff:g id="COUNT_1">%1$d</xliff:g></item>
       <item quantity="one">Vybrané: <xliff:g id="COUNT_0">%1$d</xliff:g></item>
     </plurals>
+    <!-- no translation found for clear_selection (5965968983023105329) -->
+    <skip />
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> položky</item>
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> položky</item>
@@ -348,7 +350,7 @@
     <string name="search_file_type_all" msgid="6613664493134355781">"Všetky typy"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"Odstrániť históriu vyhľadávania <xliff:g id="TEXT">%1$s</xliff:g>"</string>
     <string name="personal_tab" msgid="3878576287868528503">"Osobné"</string>
-    <string name="work_tab" msgid="7265359366883747413">"Práca"</string>
+    <string name="work_tab" msgid="7265359366883747413">"Pracovné"</string>
     <string name="a11y_work" msgid="7504431382825242153">"Práca"</string>
     <string name="drag_from_another_app" msgid="8310249276199969905">"Nemôžete presúvať súbory z inej aplikácie."</string>
     <string name="grid_mode_showing" msgid="2803166871485028508">"Zobrazované v režime mriežky."</string>

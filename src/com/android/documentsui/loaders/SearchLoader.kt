@@ -29,6 +29,7 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.FolderInfo
 import com.android.documentsui.base.Lookup
+import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.base.UserId
 import com.android.documentsui.sorting.SortModel
 import com.google.common.util.concurrent.AbstractFuture
@@ -95,7 +96,9 @@ class SearchLoader(
                     latch.countDown()
                 }
             }
-            Log.d(TAG, "Query on $searchUri took $queryDuration")
+            if (DEBUG) {
+                Log.d(TAG, "Query on $searchUri took $queryDuration")
+            }
         }
     }
 
@@ -115,7 +118,9 @@ class SearchLoader(
         // Step 1: Build a list of search tasks.
         val searchTaskList =
             createSearchTaskList(rejectBeforeTimestamp, countDownLatch, folderList)
-        Log.d(TAG, "${searchTaskList.size} tasks have been created")
+        if (DEBUG) {
+            Log.d(TAG, "${searchTaskList.size} tasks have been created")
+        }
 
         // Check if we are cancelled; if not copy the task list.
         if (isLoadInBackgroundCanceled) {
@@ -127,23 +132,33 @@ class SearchLoader(
         for (task in mSearchTaskList) {
             executorService.execute(task)
         }
-        Log.d(TAG, "${mSearchTaskList.size} tasks have been enqueued")
+        if (DEBUG) {
+            Log.d(TAG, "${mSearchTaskList.size} tasks have been enqueued")
+        }
 
         // Step 3: Wait for the results.
         try {
             if (options.isQueryTimeUnlimited()) {
-                Log.d(TAG, "Waiting for results with no time limit")
+                if (DEBUG) {
+                    Log.d(TAG, "Waiting for results with no time limit")
+                }
                 countDownLatch.await()
             } else {
-                Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
+                if (DEBUG) {
+                    Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
+                }
                 countDownLatch.await(
-                    options.maxQueryTime.toMillis(),
+                    options.maxQueryTime!!.toMillis(),
                     TimeUnit.MILLISECONDS
                 )
             }
-            Log.d(TAG, "Waiting for results is done")
+            if (DEBUG) {
+                Log.d(TAG, "Waiting for results is done")
+            }
         } catch (e: InterruptedException) {
-            Log.d(TAG, "Failed to complete all searches within ${options.maxQueryTime}")
+            if (DEBUG) {
+                Log.d(TAG, "Failed to complete all searches within ${options.maxQueryTime}")
+            }
             // TODO(b:388336095): Record a metrics indicating incomplete search.
             throw RuntimeException(e)
         }
@@ -151,7 +166,9 @@ class SearchLoader(
         // Step 4: Collect cursors from done tasks.
         val cursorList = mutableListOf<Cursor>()
         for (task in mSearchTaskList) {
-            Log.d(TAG, "Processing task ${task.taskId}")
+            if (DEBUG) {
+                Log.d(TAG, "Processing task ${task.taskId}")
+            }
             if (isLoadInBackgroundCanceled) {
                 break
             }
@@ -159,11 +176,15 @@ class SearchLoader(
             val cursor = task.cursor
             if (task.isDone && cursor != null) {
                 // TODO(b:388336095): Record a metric for null and not null cursor.
-                Log.d(TAG, "Task ${task.taskId} has ${cursor.count} results")
+                if (DEBUG) {
+                    Log.d(TAG, "Task ${task.taskId} has ${cursor.count} results")
+                }
                 cursorList.add(cursor)
             }
         }
-        Log.d(TAG, "Search complete with ${cursorList.size} cursors collected")
+        if (DEBUG) {
+            Log.d(TAG, "Search complete with ${cursorList.size} cursors collected")
+        }
 
         // Step 5: Assign the cursor, after adding filtering and sorting, to the results.
         val mergedCursor = toSingleCursor(cursorList)
@@ -177,7 +198,7 @@ class SearchLoader(
         if (rejectBeforeTimestamp > 0L) {
             filteringCursor.filterLastModified(rejectBeforeTimestamp)
         }
-        result.cursor = sortModel.sortCursor(filteringCursor, mMimeTypeLookup)
+        result.cursor = sortModel.sortCursor(filteringCursor, mimeTypeLookup)
 
         // TODO(b:388336095): Record the total time it took to complete search.
         return result
@@ -232,7 +253,9 @@ class SearchLoader(
             // TODO(b:385789236): Correctly pass sort order information.
             val queryArgs = createQueryArgs(rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
-            Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")
+            if (DEBUG) {
+                Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")
+            }
             val task = SearchTask(
                 folder.folderId,
                 rootSearchUri,
@@ -248,7 +271,9 @@ class SearchLoader(
         for (task in mSearchTaskList) {
             task.close()
         }
-        Log.d(TAG, "Resetting search loader; search task list emptied.")
+        if (DEBUG) {
+            Log.d(TAG, "Resetting search loader; search task list emptied.")
+        }
         super.onReset()
     }
 }

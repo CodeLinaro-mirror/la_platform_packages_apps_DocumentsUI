@@ -38,8 +38,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -53,6 +51,7 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -64,7 +63,7 @@ import org.junit.runner.RunWith;
 public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -238,6 +237,44 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.roots.openRoot("Videos");
             bots.sort.assertHeaderHide();
         }
+    }
+
+    @Test
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    public void testRootChange_NonM3PerRootViewModeState() throws Exception {
+        // Assign different view modes across "Images" and "Videos" roots.
+        // Images root --> grid mode
+        // Videos root --> list mode
+        bots.roots.openRoot("Images");
+        bots.main.switchToGridMode();
+        bots.main.assertInGridMode();
+        bots.roots.openRoot("Videos");
+        bots.main.switchToListMode();
+        bots.main.assertInListMode();
+
+        // Assert that the different roots maintain their respective view modes.
+        bots.roots.openRoot("Images");
+        bots.main.assertInGridMode();
+        bots.roots.openRoot("Videos");
+        bots.main.assertInListMode();
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testRootChange_M3GlobalViewModeState() throws Exception {
+        bots.roots.openRoot("Recent");
+        bots.main.switchToGridMode();
+        bots.main.assertInGridMode();
+
+        // Switch to a different root and assert still in grid mode.
+        bots.roots.openRoot(ROOT_0_ID);
+        bots.main.assertInGridMode();
+
+        // Switch back to list mode and assert still in list mode on a different root.
+        bots.main.switchToListMode();
+        bots.main.assertInListMode();
+        bots.roots.openRoot("Recent");
+        bots.main.assertInListMode();
     }
 
     @Test

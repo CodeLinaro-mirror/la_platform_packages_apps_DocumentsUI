@@ -24,9 +24,7 @@ import android.app.Notification;
 import android.app.Notification.Builder;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.icu.text.MessageFormat;
 import android.net.Uri;
-import android.text.BidiFormatter;
 import android.util.Log;
 
 import com.android.documentsui.MetricConsts;
@@ -39,9 +37,6 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -100,23 +95,7 @@ final class DeleteJob extends ResolvedResourcesJob {
     }
 
     private String getProgressMessage() {
-        switch (getState()) {
-            case Job.STATE_SET_UP:
-            case Job.STATE_COMPLETED:
-            case Job.STATE_CANCELED:
-                Map<String, Object> formatArgs = new HashMap<>();
-                formatArgs.put("count", mResolvedDocs.size());
-                if (mResolvedDocs.size() == 1) {
-                    formatArgs.put("filename", BidiFormatter.getInstance().unicodeWrap(
-                            mResolvedDocs.get(0).displayName));
-                }
-                return (new MessageFormat(
-                                service.getString(getRes(R.string.delete_in_progress)),
-                                Locale.getDefault()))
-                        .format(formatArgs);
-            default:
-                return "";
-        }
+        return getProgressMessage(R.string.delete_in_progress);
     }
 
     @Override

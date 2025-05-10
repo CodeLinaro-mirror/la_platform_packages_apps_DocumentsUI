@@ -307,7 +307,6 @@ private fun initializeIdMapping() {
     R.style.DrawerMenuHeader to R.style.DrawerMenuHeaderM3,
     R.style.DrawerMenuPrimary to R.style.DrawerMenuPrimaryM3,
     R.style.DrawerMenuSecondary to R.style.DrawerMenuSecondaryM3,
-    R.style.EmptyStateMessageText to R.style.EmptyStateMessageTextM3,
     R.style.EmptyStateTitleText to R.style.EmptyStateTitleTextM3,
     R.style.InspectorKeySubTitle to R.style.InspectorKeySubTitleM3,
     R.style.ItemCaptionText to R.style.ItemCaptionTextM3,
@@ -374,13 +373,11 @@ abstract class Material3Config private constructor() {
     @JvmStatic
     @AnyRes
     fun getRes(@AnyRes originalResourceId: Int): Int {
+      // NOTE: isUseMaterial3FlagEnabled() already checks for the config forceMaterial3.
       if (!isUseMaterial3FlagEnabled()) {
         return originalResourceId
       }
-      // TODO(lucmult): Enable this condition when all the resources are merged in one APK.
-      // if (!(Material3Config.getInstance().forceMaterial3 ?: false)) {
-      //   return originalResourceId
-      // }
+
       if (!initialized) {
         initializeIdMapping()
       }
@@ -403,9 +400,16 @@ abstract class Material3Config private constructor() {
     }
 
     @JvmStatic
-    fun overrideForTest(overrides: Map<Int, Int>) {
+    fun overrideMappingForTest(overrides: Map<Int, Int>) {
       initialized = true
       idMapping = overrides
+    }
+
+    @JvmStatic
+    fun setEnabledForTest(enabled: Boolean) {
+      getInstance().forceMaterial3 = enabled
+      // Force the mapping to be re-initialized.
+      initialized = false
     }
   }
 }

@@ -38,6 +38,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.view.View;
@@ -55,6 +56,7 @@ import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.testing.TestEventHandler;
 import com.android.documentsui.testing.TestHandler;
 import com.android.documentsui.testing.TestMenu;
@@ -62,6 +64,7 @@ import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestTimer;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -76,6 +79,9 @@ import java.util.TimerTask;
 @SmallTest
 public final class SearchViewManagerTest {
 
+    @Rule
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+
     private TestEventHandler<String> mTestEventHandler;
     private TestTimer mTestTimer;
     private TestHandler mTestHandler;
@@ -83,9 +89,9 @@ public final class SearchViewManagerTest {
     private TestMenuItem mSearchMenuItem;
     private TestableSearchViewManager mSearchViewManager;
     private SearchChipViewManager mSearchChipViewManager;
-    private SearchOptionsController mSearchOptionsController;
 
     private boolean mListenerOnSearchChangedCalled;
+    private int mOnSearchStartingCallCount;
 
     @Before
     public void setUp() {
@@ -93,10 +99,17 @@ public final class SearchViewManagerTest {
         mTestTimer = new TestTimer();
         mTestHandler = new TestHandler();
 
+        mOnSearchStartingCallCount = 0;
+
         final SearchManagerListener searchListener = new SearchManagerListener() {
             @Override
             public void onSearchChanged(@Nullable String query) {
                 mListenerOnSearchChangedCalled = true;
+            }
+
+            @Override
+            public void onSearchStarting() {
+                ++mOnSearchStartingCallCount;
             }
 
             @Override
@@ -123,9 +136,14 @@ public final class SearchViewManagerTest {
         ViewGroup chipGroup = mock(ViewGroup.class);
         mSearchChipViewManager = spy(new SearchChipViewManager(chipGroup));
         View searchOptionsView = mock(View.class);
-        mSearchOptionsController = new SearchOptionsController(searchOptionsView);
-        mSearchViewManager = new TestableSearchViewManager(searchListener, mTestEventHandler,
-                mSearchChipViewManager, mSearchOptionsController, null /* savedState */,
+        SearchOptionsController mSearchOptionsController = new SearchOptionsController(
+                searchOptionsView);
+        mSearchViewManager = new TestableSearchViewManager(
+                searchListener,
+                mTestEventHandler,
+                mSearchChipViewManager,
+                mSearchOptionsController,
+                /*savedState=*/null,
                 mTestTimer, mTestHandler);
 
         mTestMenu = TestMenu.create();
@@ -391,7 +409,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
+    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testBuildQueryArgs_hasMimeType() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -405,7 +423,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
+    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testBuildQueryArgs_hasLargeFilesSize() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -418,7 +436,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
+    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testBuildQueryArgs_hasWeekAgoTime() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -436,6 +454,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testSupportsMimeTypesSearch_showChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -449,7 +468,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
+    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testNotSupportsMimeTypesSearch_notShowChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -477,7 +496,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled(Flags.FLAG_USE_SEARCH_V2_READ_ONLY)
+    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testNotSupportsSearch_notShowMenuAndChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -489,6 +508,17 @@ public final class SearchViewManagerTest {
 
         assertFalse(mSearchMenuItem.isVisible());
         verify(mSearchChipViewManager, times(1)).setChipsRowVisible(false);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testOnSearchStartingCalled() {
+        mSearchViewManager.onClick(null);
+        mTestEventHandler.nextReturn(true);
+        mSearchViewManager.onQueryTextChange("q");
+        assertEquals(1, mOnSearchStartingCallCount);
+        mSearchViewManager.onQueryTextChange("c");
+        assertEquals(2, mOnSearchStartingCallCount);
     }
 
     private static Set<SearchChipData> getFakeSearchChipDataList() {

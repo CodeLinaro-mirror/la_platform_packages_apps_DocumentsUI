@@ -17,18 +17,18 @@
 <!-- Dropdown menu showing possible file type options (any type, documents, audio, etc.) -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/file_type_all_option"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_done_m3"
         android:title="@string/search_file_type_all" />
     <item android:id="@+id/file_type_audio_option"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_done_m3"
         android:title="@string/chip_title_audio" />
     <item android:id="@+id/file_type_documents_option"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_done_m3"
         android:title="@string/chip_title_documents" />
     <item android:id="@+id/file_type_images_option"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_done_m3"
         android:title="@string/chip_title_images" />
     <item android:id="@+id/file_type_videos_option"
-        android:icon="@drawable/ic_done"
+        android:icon="@drawable/ic_done_m3"
         android:title="@string/chip_title_videos" />
 </menu>

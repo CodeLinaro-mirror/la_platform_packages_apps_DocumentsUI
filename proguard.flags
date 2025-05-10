@@ -149,6 +149,7 @@
 -keep class com.android.documentsui.R$string {
   int cant_select_work_files_error_message;
   int cant_select_work_files_error_title;
+  int clear_selection;
   int copy_notification_title;
   int copy_preparing;
   int copy_remaining;
@@ -218,5 +219,6 @@
 
 -keep class com.android.documentsui.util.Material3Config {
   static int getRes(int);
-  static void overrideForTest(java.util.Map);
+  static void overrideMappingForTest(java.util.Map);
+  static void setEnabledForTest(boolean);
 }

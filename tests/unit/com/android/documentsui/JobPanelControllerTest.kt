@@ -17,8 +17,6 @@ package com.android.documentsui
 
 import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.widget.ActionMenuView
 import android.widget.ProgressBar
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,6 +24,7 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
@@ -45,7 +44,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class JobPanelControllerTest {
     @get:Rule
-    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val checkFlags = CheckAndForceMaterial3Flag()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -73,7 +72,7 @@ class JobPanelControllerTest {
 
     @Before
     fun setUp() {
-        controller = JobPanelController(context)
+        controller = JobPanelController(context, JobPanelViewModel())
         controller.setMenuItem(menuItem)
     }
 

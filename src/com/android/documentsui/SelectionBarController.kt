@@ -86,7 +86,7 @@ class SelectionBarController(
                 )
         selectionBar.title = title
         selectionBar.setNavigationIcon(getRes(R.drawable.ic_cancel))
-        selectionBar.setNavigationContentDescription(android.R.string.cancel)
+        selectionBar.setNavigationContentDescription(R.string.clear_selection)
         selectionBar.setOnMenuItemClickListener { menuItemClicker?.accept(it) == true }
         selectionBar.setNavigationOnClickListener { closeSelectionBar() }
         updateSelectionMenu()

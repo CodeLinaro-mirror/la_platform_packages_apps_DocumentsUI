@@ -23,8 +23,6 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import android.content.pm.PackageManager;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -32,6 +30,7 @@ import androidx.test.filters.LargeTest;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -43,7 +42,7 @@ import org.junit.runner.RunWith;
 public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule(/* skipCreation */ true);

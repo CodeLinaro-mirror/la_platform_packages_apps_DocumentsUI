@@ -17,12 +17,11 @@ package com.android.documentsui.loaders
 
 import android.os.Bundle
 import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
@@ -56,7 +55,7 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     }
 
     @get:Rule
-    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val checkFlags = CheckAndForceMaterial3Flag()
 
     @Test
     @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
