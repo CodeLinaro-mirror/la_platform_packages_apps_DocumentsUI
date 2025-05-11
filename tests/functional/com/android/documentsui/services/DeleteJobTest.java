@@ -27,11 +27,11 @@ import static org.junit.Assert.assertFalse;
 
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 
 import androidx.test.filters.MediumTest;
+
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,7 +42,7 @@ import java.util.List;
 public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Test
     public void testDeleteFiles() throws Exception {

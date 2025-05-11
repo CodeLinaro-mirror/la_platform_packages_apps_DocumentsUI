@@ -116,10 +116,15 @@ class JobPanelController(private val activityContext: Context) : BroadcastReceiv
 
         fun setJobProgress(jobProgress: JobProgress, expanded: Boolean) {
             titleView.text = jobProgress.msg
-            toggleExpandButton.icon = context.getDrawable(when (expanded) {
-                true -> getRes(R.drawable.ic_job_progress_collapse)
-                false -> getRes(R.drawable.ic_job_progress_expand)
-            })
+            if (expanded) {
+                titleView.isSingleLine = false
+                toggleExpandButton.icon =
+                    context.getDrawable(getRes(R.drawable.ic_job_progress_collapse))
+            } else {
+                titleView.isSingleLine = true
+                toggleExpandButton.icon =
+                    context.getDrawable(getRes(R.drawable.ic_job_progress_expand))
+            }
 
             updateProgressBar(jobProgress)
             setStatusText(jobProgress, expanded)
