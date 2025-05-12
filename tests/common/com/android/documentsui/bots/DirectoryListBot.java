@@ -243,8 +243,11 @@ public class DirectoryListBot extends Bots.BaseBot {
      * Clicks the "X" cancel selection button.
      */
     public void clearSelection() {
-        int parentId = isUseMaterial3FlagEnabled() ? R.id.selection_bar : R.id.toolbar;
-        onView(allOf(withContentDescription(R.string.clear_selection),
+        int parentId = isUseMaterial3FlagEnabled()
+                ? R.id.selection_bar : androidx.appcompat.R.id.action_mode_bar;
+        int contentDescription = isUseMaterial3FlagEnabled()
+                ? R.string.clear_selection : android.R.string.cancel;
+        onView(allOf(withContentDescription(contentDescription),
                 isDescendantOfA(withId(parentId)))).perform(click());
     }
 
