@@ -73,22 +73,22 @@ data class LoaderTestParams(
  * Common base class for search and folder loaders.
  */
 open class BaseLoaderTest {
-    lateinit var mEnv: TestEnv
-    lateinit var mActivity: TestActivity
-    lateinit var mTestConfigStore: TestConfigStore
+    lateinit var environment: TestEnv
+    lateinit var activity: TestActivity
+    lateinit var testConfigStore: TestConfigStore
 
     @Before
     fun setUp() {
-        mEnv = TestEnv.create()
-        mTestConfigStore = TestConfigStore()
-        mEnv.state.configStore = mTestConfigStore
-        mEnv.state.showHiddenFiles = false
+        environment = TestEnv.create()
+        testConfigStore = TestConfigStore()
+        environment.state.configStore = testConfigStore
+        environment.state.showHiddenFiles = false
         val parcel = Parcel.obtain()
-        mEnv.state.sortModel = SortModel.CREATOR.createFromParcel(parcel)
+        environment.state.sortModel = SortModel.CREATOR.createFromParcel(parcel)
 
-        mActivity = TestActivity.create(mEnv)
-        mActivity.activityManager = ActivityManagers.create(false)
-        mActivity.userManager = UserManagers.create()
+        activity = TestActivity.create(environment)
+        activity.activityManager = ActivityManagers.create(false)
+        activity.userManager = UserManagers.create()
     }
 
     /**
@@ -104,7 +104,7 @@ open class BaseLoaderTest {
         return Array<DocumentInfo>(count) { i ->
             val id = String.format(Locale.US, "%05d", i)
             val name = "sample-$id.${extensionList[i % extensionList.size]}"
-            mEnv.model.createDocumentForUser(
+            environment.model.createDocumentForUser(
                 name,
                 TestModel.guessMimeType(name),
                 flags,
