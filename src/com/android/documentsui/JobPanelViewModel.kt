@@ -78,11 +78,15 @@ class JobPanelViewModel : ViewModel() {
     }
 
     /**
-     * Updates the list of progresses managed by this class.
+     * Updates the list of progresses managed by this class. This function will add and update all
+     * given items, while removing any queued/in progress items not in [progresses]. Completed items
+     * are kept.
      */
     fun updateProgress(progresses: List<JobProgress>) {
+        val seen = hashSetOf<String>()
         for (jobProgress in progresses) {
             if (DEBUG) Log.d(TAG, "Received $jobProgress")
+            seen.add(jobProgress.id)
             if (jobProgress.state == Job.STATE_CANCELED) {
                 _currentJobs.remove(jobProgress.id)
             } else {
@@ -91,6 +95,7 @@ class JobPanelViewModel : ViewModel() {
                 }
             }
         }
+        _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }
     }
 
     /**
