@@ -269,6 +269,10 @@
     <dimen name="cross_profile_button_message_margin_top_m3">@dimen/space_extra_small_2</dimen>
     <dimen name="cross_profile_button_margin_top">@dimen/space_small_1</dimen>
 
+    <dimen name="empty_state_artwork_margin_top">@dimen/space_medium_5</dimen>
+    <dimen name="empty_state_artwork_margin_bottom">@dimen/space_small_1</dimen>
+    <dimen name="empty_state_message_margin_bottom">@dimen/space_medium_5</dimen>
+
     <dimen name="banner_content_padding_vertical">16dp</dimen>
     <dimen name="banner_content_padding_start">@dimen/space_medium_1</dimen>
     <dimen name="banner_content_padding_end">8dp</dimen>
