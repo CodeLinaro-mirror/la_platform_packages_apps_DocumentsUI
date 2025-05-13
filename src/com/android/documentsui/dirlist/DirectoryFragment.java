@@ -585,7 +585,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mRecView.setAccessibilityDelegateCompat(
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
-                        (View child) -> onAccessibilityLongClick(child)));
+                        (View child) -> onAccessibilityLongClick(child), mState.action));
         mSelectionMetadata = new SelectionMetadata(mModel::getItem);
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
