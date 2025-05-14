@@ -41,6 +41,9 @@
     <style name="TextAppearance.DocumentsUI.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
+    <style name="TextAppearance.DocumentsUI.TitleSmall.Emphasized" parent="TextAppearance.Material3.TitleSmall.Emphasized">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
     <style name="TextAppearance.DocumentsUI.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
@@ -51,6 +54,9 @@
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
     <style name="TextAppearance.DocumentsUI.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="fontFamily">@string/config_fontFamilyMedium</item>
+    </style>
+    <style name="TextAppearance.DocumentsUI.LabelLarge.Emphasized" parent="TextAppearance.Material3.LabelLarge.Emphasized">
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
     <style name="TextAppearance.DocumentsUI.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
@@ -99,9 +105,8 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
-    <style name="DrawerMenuHeaderM3" parent="@style/TextAppearance.Material3.TitleSmall.Emphasized">
+    <style name="DrawerMenuHeaderM3" parent="@style/TextAppearance.DocumentsUI.TitleSmall.Emphasized">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
     <style name="DrawerMenuPrimaryM3" parent="@style/TextAppearance.DocumentsUI.LabelLarge">
@@ -156,9 +161,7 @@
 
     <style name="NavRailItemTextAppearance" parent="@style/TextAppearance.DocumentsUI.LabelMedium" />
 
-    <style name="ListTableHeaderText" parent="@style/TextAppearance.Material3.TitleSmall.Emphasized">
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
-    </style>
+    <style name="ListTableHeaderText" parent="@style/TextAppearance.DocumentsUI.TitleSmall.Emphasized" />
 
     <style name="DragBadgeText" parent="@style/TextAppearance.DocumentsUI.TitleSmall">
         <item name="android:textColor">@color/drag_content_text_color</item>
@@ -210,9 +213,8 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="PeekNoPreviewLabelText" parent="@style/TextAppearance.Material3.LabelLarge.Emphasized">
+    <style name="PeekNoPreviewLabelText" parent="@style/TextAppearance.DocumentsUI.LabelLarge.Emphasized">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
-        <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
 </resources>
