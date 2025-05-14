@@ -26,8 +26,8 @@
         android:id="@+id/artwork"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginTop="@dimen/empty_state_artwork_margin_top"
+        android:layout_marginBottom="@dimen/empty_state_artwork_margin_bottom"
         android:scaleType="fitCenter"
         android:maxHeight="250dp"
         android:adjustViewBounds="true"
@@ -38,7 +38,7 @@
         android:id="@+id/message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="@dimen/empty_state_message_margin_bottom"
         android:gravity="center_horizontal"
         style="@style/EmptyStateTitleTextM3"/>
 
