@@ -29,8 +29,8 @@
     android:layout_height="@dimen/doc_header_height_m3"
     android:baselineAligned="false"
     android:gravity="center_vertical"
-    android:paddingStart="@dimen/table_header_padding_start"
-    android:paddingEnd="@dimen/table_header_padding_end"
+    android:paddingStart="@dimen/main_container_padding_start"
+    android:paddingEnd="@dimen/main_container_padding_end"
     android:visibility="gone">
 
     <!-- Column headers -->

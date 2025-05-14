@@ -18,6 +18,7 @@
     <dimen name="grid_padding_horiz_m3">16dp</dimen>
     <dimen name="grid_padding_vert_m3">16dp</dimen>
 
+    <dimen name="list_container_padding_m3">@dimen/space_extra_small_6</dimen>
     <dimen name="list_item_height_m3">48dp</dimen>
     <dimen name="list_item_padding_start">20dp</dimen>
     <dimen name="list_item_padding_end">0dp</dimen>
@@ -37,9 +38,4 @@
     <dimen name="toolbar_padding_end">@dimen/space_small_3</dimen>
 
     <dimen name="drawer_padding_top">@dimen/space_small_1</dimen>
-
-    <!-- list_container_padding + list_item_padding_start -->
-    <dimen name="table_header_padding_start">32dp</dimen>
-    <!-- list_container_padding + list_item_padding_end -->
-    <dimen name="table_header_padding_end">12dp</dimen>
 </resources>

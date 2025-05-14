@@ -86,7 +86,7 @@ class FolderLoader(
             filteredCursor.filterLastModified(rejectBeforeTimestamp)
         }
         // TODO(b:380945065): Add filtering by category, such as images, audio, video.
-        val sortedCursor = mSortModel.sortCursor(filteredCursor, mMimeTypeLookup)
+        val sortedCursor = mSortModel.sortCursor(filteredCursor, mimeTypeLookup)
 
         result.doc = mListedDir
         result.cursor = sortedCursor
