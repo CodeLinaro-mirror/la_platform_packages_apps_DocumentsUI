@@ -244,8 +244,7 @@
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> odabrane</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> odabranih</item>
     </plurals>
-    <!-- no translation found for clear_selection (5965968983023105329) -->
-    <skip />
+    <string name="clear_selection" msgid="5965968983023105329">"Poništi odabir"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> stavka</item>
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> stavke</item>

@@ -227,8 +227,7 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ</item>
     </plurals>
-    <!-- no translation found for clear_selection (5965968983023105329) -->
-    <skip />
+    <string name="clear_selection" msgid="5965968983023105329">"ಆಯ್ಕೆಯನ್ನು ತೆರವುಗೊಳಿಸಿ"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ಐಟಂಗಳು</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ಐಟಂಗಳು</item>
