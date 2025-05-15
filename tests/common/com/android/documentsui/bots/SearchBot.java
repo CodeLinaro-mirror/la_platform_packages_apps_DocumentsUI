@@ -16,8 +16,6 @@
 
 package com.android.documentsui.bots;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -33,10 +31,14 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import android.content.Context;
 import android.view.View;
 
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
+import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
 
@@ -86,7 +88,9 @@ public class SearchBot extends Bots.BaseBot {
     }
 
     public void setInputText(String query) throws UiObjectNotFoundException {
-        onView(SEARCH_INPUT).perform(typeText(query));
+        BySelector selector = By.res(mTargetPackage + ":id/search_src_text");
+        UiObject2 searchInput = mDevice.wait(Until.findObject(selector), 5000);
+        searchInput.setText(query);
     }
 
     public void assertIconVisible(boolean visible) {
