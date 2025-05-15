@@ -65,6 +65,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.openDocument("broken.zip");
 
         final String msg = String.valueOf(context.getString(R.string.empty));
+        bots.directory.waitForHolderMessage();
         bots.directory.assertPlaceholderMessageText(msg);
     }
 
