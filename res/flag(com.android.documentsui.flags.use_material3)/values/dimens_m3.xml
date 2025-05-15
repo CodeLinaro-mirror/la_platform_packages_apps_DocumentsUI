@@ -79,7 +79,7 @@
     <dimen name="list_item_icon_padding_m3">16dp</dimen>
     <dimen name="list_divider_inset_m3">72dp</dimen>
     <!-- block end -->
-    <dimen name="breadcrumb_padding_horizontal">@dimen/space_small_3</dimen>
+    <dimen name="breadcrumb_padding_horizontal">@dimen/space_extra_small_6</dimen>
     <!-- TODO(b/379776735): remove this after use_material3 flag is launched. -->
     <dimen name="breadcrumb_item_padding_m3">8dp</dimen>
     <dimen name="breadcrumb_item_padding_horizontal">12dp</dimen>
@@ -113,11 +113,6 @@
     <dimen name="briefcase_icon_grid_padding">2dp</dimen>
     <dimen name="briefcase_icon_size_photo_m3">24dp</dimen>
     <dimen name="button_corner_radius_m3">2dp</dimen>
-
-    <!-- list_container_padding + list_item_padding_start -->
-    <dimen name="table_header_padding_start">24dp</dimen>
-    <!-- list_container_padding + list_item_padding_end -->
-    <dimen name="table_header_padding_end">16dp</dimen>
 
     <dimen name="bottom_sheet_dialog_width">640dp</dimen>
     <dimen name="bottom_sheet_dialog_radius">28dp</dimen>
@@ -241,7 +236,6 @@
     <dimen name="apps_row_exit_icon_margin_bottom_m3">6dp</dimen>
     <dimen name="apps_row_item_padding_horizontal">8dp</dimen>
     <dimen name="apps_row_margin_vertical">@dimen/space_extra_small_4</dimen>
-    <dimen name="apps_row_margin_horizontal">@dimen/space_small_1</dimen>
     <dimen name="apps_row_padding">@dimen/space_extra_small_4</dimen>
     <dimen name="apps_row_app_icon_margin_vertical">@dimen/space_extra_small_4</dimen>
     <dimen name="apps_row_title_padding">@dimen/space_extra_small_4</dimen>
@@ -274,6 +268,10 @@
     <dimen name="cross_profile_progress_margin_bottom">@dimen/space_small_1</dimen>
     <dimen name="cross_profile_button_message_margin_top_m3">@dimen/space_extra_small_2</dimen>
     <dimen name="cross_profile_button_margin_top">@dimen/space_small_1</dimen>
+
+    <dimen name="empty_state_artwork_margin_top">@dimen/space_medium_5</dimen>
+    <dimen name="empty_state_artwork_margin_bottom">@dimen/space_small_1</dimen>
+    <dimen name="empty_state_message_margin_bottom">@dimen/space_medium_5</dimen>
 
     <dimen name="banner_content_padding_vertical">16dp</dimen>
     <dimen name="banner_content_padding_start">@dimen/space_medium_1</dimen>
