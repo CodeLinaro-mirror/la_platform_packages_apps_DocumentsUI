@@ -30,6 +30,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.UserManager;
 import android.os.ext.SdkExtensions;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -571,16 +572,22 @@ public class RootsFragment extends Fragment {
     private List<Item> getPresentableListPrivateSpaceEnabled(Context context, State state,
             List<List<Item>> rootListAllUsers, List<UserId> userIds,
             UserManagerState userManagerState) {
-        return new UserItemsCombiner(context.getResources(),
-                context.getSystemService(DevicePolicyManager.class), state)
+        return new UserItemsCombiner(
+                        context.getResources(),
+                        context.getSystemService(UserManager.class),
+                        context.getSystemService(DevicePolicyManager.class),
+                        state)
                 .setRootListForAllUsers(rootListAllUsers)
                 .createPresentableListForAllUsers(userIds, userManagerState.getUserIdToLabelMap());
     }
 
     private List<Item> getPresentableListPrivateSpaceDisabled(Context context, State state,
             List<Item> rootList, List<Item> rootListOtherUser) {
-        return new UserItemsCombiner(context.getResources(),
-                context.getSystemService(DevicePolicyManager.class), state)
+        return new UserItemsCombiner(
+                        context.getResources(),
+                        context.getSystemService(UserManager.class),
+                        context.getSystemService(DevicePolicyManager.class),
+                        state)
                 .setRootListForCurrentUser(rootList)
                 .setRootListForOtherUser(rootListOtherUser)
                 .createPresentableList();
