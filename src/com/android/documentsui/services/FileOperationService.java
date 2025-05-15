@@ -71,6 +71,7 @@ public class FileOperationService extends Service implements Job.Listener {
 
     public static final String ACTION_PROGRESS = "com.android.documentsui.action.PROGRESS";
     public static final String EXTRA_PROGRESS = "com.android.documentsui.PROGRESS";
+    public static final String EXTRA_PROGRESS_ID = "com.android.documentsui.PROGRESS_ID";
 
     @IntDef({
             OPERATION_UNKNOWN,
@@ -629,7 +630,7 @@ public class FileOperationService extends Service implements Job.Listener {
             Intent intent = new Intent();
             intent.setPackage(getPackageName());
             intent.setAction(ACTION_PROGRESS);
-            intent.putExtra("id", mLastId++);
+            intent.putExtra(EXTRA_PROGRESS_ID, mLastId++);
             intent.putParcelableArrayListExtra(EXTRA_PROGRESS, progress);
             sendBroadcast(intent);
         }
