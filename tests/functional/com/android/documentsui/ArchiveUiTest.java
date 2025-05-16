@@ -16,6 +16,12 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
+import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
+
+import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
@@ -34,7 +40,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     @Test
-    public void withValidArchive() throws Exception {
+    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    public void clickToBrowseValidArchive() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
@@ -44,9 +51,52 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    public void withInvalidArchive() throws Exception {
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void browseValidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("archive.zip");
+        bots.menu.clickMenuItem("Browse");
+        bots.directory.waitForDocument("file1.txt");
+        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.openDocument("dir1");
+        bots.directory.waitForDocument("cherries.txt");
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void openValidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("archive.zip");
+        bots.menu.clickMenuItem("Open");
+        bots.directory.waitForDocument("file1.txt");
+        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.openDocument("dir1");
+        bots.directory.waitForDocument("cherries.txt");
+    }
+
+    @Test
+    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    public void clickToBrowseInvalidArchive() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("broken.zip");
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void browseInvalidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("broken.zip");
+        bots.menu.clickMenuItem("Browse");
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void openInvalidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("broken.zip");
+        bots.menu.clickMenuItem("Open");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 }
