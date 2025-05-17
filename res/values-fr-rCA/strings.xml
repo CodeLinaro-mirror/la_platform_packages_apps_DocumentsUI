@@ -244,8 +244,7 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments sélectionnés</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments sélectionnés</item>
     </plurals>
-    <!-- no translation found for clear_selection (5965968983023105329) -->
-    <skip />
+    <string name="clear_selection" msgid="5965968983023105329">"Effacer la sélection"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> article</item>
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> articles</item>

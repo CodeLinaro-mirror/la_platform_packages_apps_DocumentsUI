@@ -30,6 +30,7 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFIL
 import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFILE_NOT_ALLOWED_TITLE;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.Manifest;
@@ -45,6 +46,7 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.util.Log;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
@@ -486,15 +488,21 @@ abstract class Message {
 
         private void updateToInflatedEmptyMessage() {
             final CharSequence message;
+            final @DrawableRes int drawableId;
             if (mEnv.isInSearchMode()) {
                 message = String.format(
                         String.valueOf(
                                 mEnv.getContext().getResources().getText(R.string.no_results)),
                         mEnv.getDisplayState().stack.getRoot().title);
+                drawableId =
+                        isUseMaterial3FlagEnabled()
+                                ? R.drawable.empty_search
+                                : R.drawable.empty;
             } else {
                 message = mEnv.getContext().getResources().getText(R.string.empty);
+                drawableId = getRes(R.drawable.empty);
             }
-            update(null, message, null, mEnv.getContext().getDrawable(getRes(R.drawable.empty)));
+            update(null, message, null, mEnv.getContext().getDrawable(drawableId));
         }
 
         private String getEnterpriseString(String updatableStringId, int defaultStringId) {

@@ -148,8 +148,10 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 mInjector.getModel()::getItemUri,
                 mInjector.getModel()::getItemCount);
         if (isVisualSignalsFlagEnabled()) {
-            menuManager.setJobPanelController(new JobPanelController(this,
-                    new ViewModelProvider(this).get(JobPanelViewModel.class)));
+            JobPanelController jobPanelController = new JobPanelController(this,
+                    new ViewModelProvider(this).get(JobPanelViewModel.class));
+            getLifecycle().addObserver(jobPanelController);
+            menuManager.setJobPanelController(jobPanelController);
         }
         mInjector.menuManager = menuManager;
 

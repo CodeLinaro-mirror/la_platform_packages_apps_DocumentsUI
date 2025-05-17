@@ -35,6 +35,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- defaultFocusHighlightEnabled=false to prevent unexpected focus background when there
+             is not item, do not use focusable=false because we still want it to be focused in
+             TalkBack. -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dir_list"
             android:layout_width="match_parent"
@@ -46,6 +49,7 @@
             android:clipToPadding="false"
             android:scrollbars="none"
             android:drawSelectorOnTop="true"
+            android:defaultFocusHighlightEnabled="false"
             app:fastScrollEnabled="false"/>
 
     </com.android.documentsui.dirlist.DocumentsSwipeRefreshLayout>
