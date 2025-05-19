@@ -54,7 +54,6 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -152,10 +151,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    // TODO(b/414507592): Remove once recent searches is enabled again.
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testSearchFragment_DismissedOnCloseAfterCancel() throws Exception {
-        // TODO(b/414478221): Add search history for docked searchbar.
-        Assume.assumeFalse(context.getResources().getBoolean(R.bool.show_docked_search));
-
         bots.search.expand();
         bots.search.setInputText("query text");
 
@@ -297,10 +295,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    // TODO(b/414507592): Remove once recent searches is enabled again.
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testSearchHistory_showAfterSearchViewClear() throws Exception {
-        // TODO(b/414478221): Add search history for docked searchbar.
-        Assume.assumeFalse(context.getResources().getBoolean(R.bool.show_docked_search));
-
         bots.search.expand();
         bots.search.setInputText("chocolate");
 
@@ -315,10 +312,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    // TODO(b/414507592): Remove once recent searches is enabled again.
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testSearchView_focusClearedAfterSelectingSearchHistory() throws Exception {
-        // TODO(b/414478221): Add search history for docked searchbar.
-        Assume.assumeFalse(context.getResources().getBoolean(R.bool.show_docked_search));
-
         String queryText = "history";
         bots.search.expand();
         bots.search.setInputText(queryText);
