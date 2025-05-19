@@ -61,6 +61,9 @@ public class SearchFragment extends Fragment {
             Log.w(TAG, "Skip show because state saved");
             return;
         }
+        if (fm.getHost().getContext().getResources().getBoolean(R.bool.show_docked_search)) {
+            return;
+        }
 
         final SearchFragment fragment = new SearchFragment();
         final Bundle args = new Bundle();
