@@ -47,6 +47,7 @@
   int full_bar_search_view;
   int is_launcher_enabled;
   int show_search_bar;
+  int show_apps_row;
 }
 -keep class com.android.documentsui.R$color {
   int app_background_color;

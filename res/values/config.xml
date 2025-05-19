@@ -29,6 +29,9 @@
     <!-- Indicates if showing as search bar design -->
     <bool name="show_search_bar">false</bool>
 
+    <!-- Indicates if showing the apps row -->
+    <bool name="show_apps_row">true</bool>
+
     <!-- Indicates if showing hidden files by default -->
     <bool name="show_hidden_files_by_default">false</bool>
 
