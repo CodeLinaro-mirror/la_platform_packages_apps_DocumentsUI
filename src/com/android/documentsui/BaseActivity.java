@@ -511,7 +511,8 @@ public abstract class BaseActivity
         boolean fullBarSearch = getResources().getBoolean(R.bool.full_bar_search_view);
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
                 R.bool.show_search_bar);
-        mSearchManager.install(menu, fullBarSearch, showSearchBar);
+        boolean showDockedSearch = getResources().getBoolean(R.bool.show_docked_search);
+        mSearchManager.install(menu, fullBarSearch, showSearchBar, showDockedSearch);
 
         // Remove the subMenu when material3 is launched b/379776735.
         final ActionMenuView subMenuView = findViewById(getRes(R.id.sub_menu));
