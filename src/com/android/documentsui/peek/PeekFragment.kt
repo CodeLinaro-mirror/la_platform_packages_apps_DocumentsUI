@@ -178,7 +178,9 @@ class PeekFragment : Fragment() {
             when {
                 docInfo.mimeType.startsWith("image/") ->
                     ImagePreviewHandler(previewFrame!!, docInfo)
-                else -> DefaultPreviewHandler(previewFrame!!)
+                docInfo.mimeType.startsWith("audio/") or docInfo.mimeType.startsWith("video/") ->
+                    AudioAndVideoPreviewHandler(previewFrame!!, docInfo)
+                else -> UnsupportedPreviewHandler(previewFrame!!)
             }
         metadataSheetController?.accept(docInfo)
     }
