@@ -508,7 +508,7 @@ public abstract class BaseActivity
 
         getMenuInflater().inflate(getRes(R.menu.activity), menu);
         mNavigator.update();
-        boolean fullBarSearch = getResources().getBoolean(R.bool.full_bar_search_view);
+        boolean fullBarSearch = getResources().getBoolean(getRes(R.bool.full_bar_search_view));
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
                 R.bool.show_search_bar);
         boolean showDockedSearch = getResources().getBoolean(R.bool.show_docked_search);
