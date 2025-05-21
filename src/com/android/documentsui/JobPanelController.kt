@@ -79,6 +79,7 @@ private class VerticalMarginItemDecoration(
  */
 class JobPanelController(
     private val activityContext: Context,
+    private val actions: ActionHandler,
     private val viewModel: JobPanelViewModel,
 ) : BroadcastReceiver(),
     DefaultLifecycleObserver {
@@ -140,10 +141,23 @@ class JobPanelController(
             toggleExpandButton.setOnClickListener { controller.toggleExpanded(jobProgress.id) }
 
             cancelButton.isVisible = expanded && !jobProgress.isFinal
-            showInFolderButton.isVisible = expanded && jobProgress.isFinal
+            if (cancelButton.isVisible) {
+                cancelButton.setOnClickListener { FileOperations.cancel(context, jobProgress.id) }
+            }
+
             dismissButton.isVisible = expanded && jobProgress.isFinal
-            cancelButton.setOnClickListener { FileOperations.cancel(context, jobProgress.id) }
-            dismissButton.setOnClickListener { controller.dismissProgress(jobProgress.id) }
+            if (dismissButton.isVisible) {
+                dismissButton.setOnClickListener { controller.dismissProgress(jobProgress.id) }
+            }
+
+            if (expanded && jobProgress.isFinal && jobProgress.destination != null) {
+                showInFolderButton.isVisible = true
+                showInFolderButton.setOnClickListener {
+                    controller.showInFolder(jobProgress)
+                }
+            } else {
+                showInFolderButton.isVisible = false
+            }
         }
 
         private fun updateProgressBar(jobProgress: JobProgress) {
@@ -394,5 +408,10 @@ class JobPanelController(
     private fun toggleExpanded(id: String) {
         viewModel.toggleExpanded(id)
         progressListAdapter?.submitList(ArrayList(viewModel.currentJobs.values))
+    }
+
+    private fun showInFolder(jobProgress: JobProgress) {
+        actions.jumpToDirectory(jobProgress.destination)
+        popup?.dismiss()
     }
 }

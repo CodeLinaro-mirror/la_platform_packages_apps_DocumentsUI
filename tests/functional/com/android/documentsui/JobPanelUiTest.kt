@@ -17,6 +17,7 @@ package com.android.documentsui
 
 import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.view.KeyEvent
 import android.view.View
 import android.widget.ProgressBar
 import androidx.test.espresso.Espresso
@@ -38,6 +39,7 @@ import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.TestFilesRule
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
@@ -72,6 +74,9 @@ private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progr
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule
     val checkFlags = CheckAndForceMaterial3Flag()
+
+    @get:Rule
+    val testFiles = TestFilesRule()
 
     private var lastId = 0L
 
@@ -278,5 +283,36 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         // Close the job panel.
         Espresso.pressBack()
         onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(50)))
+    }
+
+    @Test
+    fun testShowInFolder() {
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON)
+
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON)
+
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1)
+
+        openPanel()
+        onView(withId(R.id.job_progress_item_title)).perform(click())
+        onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
+
+        // The panel should have been dismissed when we navigate.
+        onView(withId(R.id.job_progress_item_title)).check(doesNotExist())
+        bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+
+        // Try from a different folder.
+        Espresso.pressBack()
+        openPanel()
+        onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
+        bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+
+        // Try from a different root.
+        bots.roots.openRoot(StubProvider.ROOT_1_ID)
+        openPanel()
+        onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
+        bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
     }
 }
