@@ -383,7 +383,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchV2SearchLocationDropdown() throws Exception {
         // Start search with term "file1", but rather than searching locally, search everywhere.
         bots.search.expand();
-        bots.search.setInputText("file");
+        bots.search.setInputText("fred-dog.jpg");
         bots.keyboard.pressEnter();
         onView(withId(R.id.search_location_trigger)).perform(click());
         onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
@@ -392,7 +392,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
         device.waitForIdle();
-        bots.directory.assertDocumentsCountOnList(true, 3);
+        bots.directory.assertDocumentsCountOnList(true, 1);
     }
 
     @Test
