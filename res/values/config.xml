@@ -26,6 +26,9 @@
          layouts we reduce this to an input-box adjacent to menu actions. -->
     <bool name="full_bar_search_view">true</bool>
 
+    <!-- Indicates if showing Audio / Downloads / Images / Video roots -->
+    <bool name="show_media_roots">true</bool>
+
     <!-- Indicates if showing as search bar design -->
     <bool name="show_search_bar">false</bool>
 
