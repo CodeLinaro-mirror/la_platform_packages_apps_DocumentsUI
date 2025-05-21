@@ -18,6 +18,7 @@ package com.android.documentsui.services
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.android.documentsui.base.DocumentStack
 
 /**
  * Represents the current progress on an individual job owned by the FileOperationService.
@@ -29,6 +30,7 @@ data class JobProgress @JvmOverloads constructor(
     @JvmField @Job.State val state: Int,
     @JvmField val msg: String?,
     @JvmField val hasFailures: Boolean,
+    @JvmField val destination: DocumentStack? = null,
     @JvmField val currentBytes: Long = -1,
     @JvmField val requiredBytes: Long = -1,
     @JvmField val msRemaining: Long = -1,
@@ -60,6 +62,7 @@ data class JobProgress @JvmOverloads constructor(
             writeInt(state)
             writeString(msg)
             writeBoolean(hasFailures)
+            writeParcelable(destination, flags)
             writeLong(currentBytes)
             writeLong(requiredBytes)
             writeLong(msRemaining)
@@ -74,6 +77,10 @@ data class JobProgress @JvmOverloads constructor(
                 parcel.readInt(),
                 parcel.readString(),
                 parcel.readBoolean(),
+                parcel.readParcelable(
+                    DocumentStack::class.java.classLoader,
+                    DocumentStack::class.java
+                ),
                 parcel.readLong(),
                 parcel.readLong(),
                 parcel.readLong(),

@@ -31,6 +31,7 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.MutableJobProgress
+import com.android.documentsui.testing.TestActionHandler
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
@@ -72,7 +73,7 @@ class JobPanelControllerTest {
 
     @Before
     fun setUp() {
-        controller = JobPanelController(context, JobPanelViewModel())
+        controller = JobPanelController(context, TestActionHandler(), JobPanelViewModel())
         controller.setMenuItem(menuItem)
     }
 
