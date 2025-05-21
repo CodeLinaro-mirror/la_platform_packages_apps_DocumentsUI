@@ -42,13 +42,31 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
         @JvmStatic
         @Parameters(name = "with parameters {0}")
         fun data() = listOf(
-            LoaderTestParams("", null, Bundle(), TOTAL_FILE_COUNT),
+            LoaderTestParams(TOTAL_FILE_COUNT, "", null, ALL_RESULTS, Bundle(), TOTAL_FILE_COUNT),
+            // Result limiting only works for search, not folder navigation, expect limit to be ignored.
+            LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
             // The first file is at NOW, the second at NOW - 1h, etc.
-            LoaderTestParams("", Duration.ofMinutes(1L), Bundle(), 1),
-            LoaderTestParams("", Duration.ofMinutes(60L + 1), Bundle(), 2),
             LoaderTestParams(
+                TOTAL_FILE_COUNT,
+                "",
+                Duration.ofMinutes(1L),
+                ALL_RESULTS,
+                Bundle(),
+                1
+            ),
+            LoaderTestParams(
+                TOTAL_FILE_COUNT,
+                "",
+                Duration.ofMinutes(60L + 1),
+                ALL_RESULTS,
+                Bundle(),
+                2
+            ),
+            LoaderTestParams(
+                TOTAL_FILE_COUNT,
                 "",
                 Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
+                ALL_RESULTS,
                 Bundle(),
                 TOTAL_FILE_COUNT
             ),
@@ -65,7 +83,8 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     fun setUpTest() {
         queryOptions =
             QueryOptions(
-                TOTAL_FILE_COUNT,
+                testParams.fakeFileCount + 1,
+                testParams.maxResultsPerRoot,
                 testParams.lastModifiedDelta,
                 null,
                 true,
