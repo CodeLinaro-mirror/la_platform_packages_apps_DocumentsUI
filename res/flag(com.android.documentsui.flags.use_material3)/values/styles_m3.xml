@@ -37,7 +37,7 @@
     <style name="JobProgressToolbarIndicatorStyle" parent="@style/Widget.Material3.CircularProgressIndicator.ExtraSmall">
         <item name="android:background">?attr/actionBarItemBackground</item>
         <item name="indicatorSize">@dimen/job_progress_toolbar_indicator_size</item>
-        <item name="indicatorInset">@dimen/space_extra_small_6</item>
+        <item name="indicatorInset">0dp</item>
     </style>
 
     <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">

@@ -18,6 +18,7 @@ package com.android.documentsui
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.JobPanelViewModel.MenuIconState
 import com.android.documentsui.JobPanelViewModel.ProgressViewModel
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
@@ -25,9 +26,9 @@ import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.Job
 import com.android.documentsui.testing.MutableJobProgress
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
 import kotlin.collections.emptyList
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -176,6 +177,56 @@ class JobPanelViewModelTest {
         assertEquals(
             listOf(progress1).withExpandStates(false),
             ArrayList(viewModel.currentJobs.values)
+        )
+    }
+
+    @Test
+    fun testHasFailures() {
+        val viewModel = JobPanelViewModel()
+
+        val inProgress = MutableJobProgress(
+            id = "in_progress_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job in progress",
+            hasFailures = false,
+            currentBytes = 40,
+            requiredBytes = 100,
+        )
+
+        val failed = MutableJobProgress(
+            id = "failed_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_COMPLETED,
+            msg = "Job failed",
+            hasFailures = true,
+        )
+
+        assertEquals(MenuIconState.INVISIBLE, viewModel.getMenuState())
+
+        viewModel.updateProgress(listOf(failed).toJobProgressList())
+        assertEquals(
+            MenuIconState.VISIBLE(totalProgress = 100, hasFailures = true),
+            viewModel.getMenuState()
+        )
+
+        viewModel.updateProgress(listOf(inProgress).toJobProgressList())
+        assertEquals(
+            MenuIconState.VISIBLE(totalProgress = 70, hasFailures = true),
+            viewModel.getMenuState()
+        )
+
+        viewModel.dismissProgress(failed.id)
+        assertEquals(
+            MenuIconState.VISIBLE(totalProgress = 40, hasFailures = false),
+            viewModel.getMenuState()
+        )
+
+        inProgress.hasFailures = true
+        viewModel.updateProgress(listOf(inProgress).toJobProgressList())
+        assertEquals(
+            MenuIconState.VISIBLE(totalProgress = 40, hasFailures = true),
+            viewModel.getMenuState()
         )
     }
 }
