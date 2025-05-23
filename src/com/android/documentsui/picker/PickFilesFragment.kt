@@ -56,7 +56,7 @@ class PickFilesFragment : Fragment() {
 
     private val cancelListener: View.OnClickListener = object : View.OnClickListener {
         override fun onClick(v: View?) {
-            actionHandler!!.finishPicking()
+            actionHandler!!.cancelPicking()
         }
     }
 

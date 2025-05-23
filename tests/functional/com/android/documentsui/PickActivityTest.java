@@ -23,7 +23,6 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -319,9 +318,7 @@ public class PickActivityTest {
 
         // Check that the files weren't picked.
         Instrumentation.ActivityResult result = mRule.getActivityResult();
-        assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_OK);
-        ClipData clipData = result.getResultData().getClipData();
-        assertNull(clipData);
+        assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_CANCELED);
 
         // Check that the activity is finishing.
         assertThat(pickActivity.isFinishing()).isTrue();
