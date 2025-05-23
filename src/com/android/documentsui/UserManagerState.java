@@ -47,6 +47,7 @@ import androidx.annotation.RequiresPermission;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.documentsui.base.Features;
+import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -83,6 +84,15 @@ public interface UserManagerState {
      * UserId}.CURRENT_USER can forward {@link Intent} to that {@link UserId}
      */
     Map<UserId, Boolean> getCanForwardToProfileIdMap(Intent intent);
+
+
+    /**
+     * Returns a map of {@link UserId} to boolean value indicating whether the {@link
+     * UserId}.CURRENT_USER can forward {@link Intent} to that {@link UserId} excluding
+     * {@link State#excludedUserIds}. If the {@link UserId}.CURRENT_USER is hidden, the next
+     * available user is used.
+     */
+    Map<UserId, Boolean> getCanForwardToProfileIdMapForAllowedUsers(Intent intent, State state);
 
     /**
      * Updates the state of the list of userIds and all the associated maps according the intent
@@ -225,6 +235,22 @@ public interface UserManagerState {
             synchronized (mCanForwardToProfileIdMap) {
                 if (mCanForwardToProfileIdMap.isEmpty()) {
                     getCanForwardToProfileIdMapInternal(intent);
+                }
+                return mCanForwardToProfileIdMap;
+            }
+        }
+
+        @Override
+        public Map<UserId, Boolean> getCanForwardToProfileIdMapForAllowedUsers(Intent intent,
+                State state) {
+            synchronized (mCanForwardToProfileIdMap) {
+                if (mCanForwardToProfileIdMap.isEmpty()) {
+                    if (android.multiuser.Flags.enableMovingContentIntoPrivateSpace()) {
+                        getCanForwardToProfileIdMapInternalForAllowedUsers(intent,
+                                UserId.nonExcludedUsers(state, getUserIds()));
+                    } else {
+                        getCanForwardToProfileIdMapInternal(intent);
+                    }
                 }
                 return mCanForwardToProfileIdMap;
             }
@@ -608,6 +634,39 @@ public interface UserManagerState {
                             userId,
                             isCrossProfileAllowedToUser(
                                     mContext, intent, mCurrentUser, userId));
+                }
+            }
+        }
+
+        /**
+         * Updates Cross Profile access for all non-excluded user profiles in {@code getUserIds()}
+         *
+         * <p>This method looks at a variety of situations for each Profile and decides if the
+         * profile's content is accessible by the current process owner user id.
+         *
+         * <ol>
+         *   <li>UserProperties attributes for CrossProfileDelegation are checked first. When the
+         *       profile delegates to the parent profile, the parent's access is used.
+         *   <li>{@link CrossProfileIntentForwardingActivity}s are resolved via the process owner's
+         *       PackageManager, and are considered when evaluating cross profile to the target
+         *       profile.
+         * </ol>
+         *
+         * <p>In the event none of the above checks succeeds, the profile is considered to be
+         * inaccessible to the current process user.
+         *
+         * @param intent The intent DocumentsUI is currently running under, for
+         *     CrossProfileForwardActivity checking.
+         */
+        private void getCanForwardToProfileIdMapInternalForAllowedUsers(Intent intent,
+                List<UserId> userIds) {
+            synchronized (mCanForwardToProfileIdMap) {
+                mCanForwardToProfileIdMap.clear();
+                for (UserId userId : userIds) {
+                    mCanForwardToProfileIdMap.put(
+                            userId,
+                            isCrossProfileAllowedToUser(
+                                    mContext, intent, userIds.getFirst(), userId));
                 }
             }
         }

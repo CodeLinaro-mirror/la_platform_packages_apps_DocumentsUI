@@ -62,6 +62,7 @@ java_defaults {
         "androidx.recyclerview_recyclerview",
         "androidx.recyclerview_recyclerview-selection",
         "androidx.transition_transition",
+        "android.multiuser.flags-aconfig-java",
         "apache-commons-compress",
         "com.google.android.material_material",
         "docsui-change-ids",

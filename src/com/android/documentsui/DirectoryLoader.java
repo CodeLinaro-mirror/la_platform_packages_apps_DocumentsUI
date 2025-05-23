@@ -130,14 +130,14 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
             if (mSearchMode) {
                 queryArgs.putAll(mQueryArgs);
                 if (shouldSearchAcrossProfile()) {
-                    for (UserId userId : getUserIds()) {
+                    for (UserId userId : UserId.nonExcludedUsers(mState, getUserIds())) {
                         if (mState.canInteractWith(userId)) {
                             userIds.add(userId);
                         }
                     }
                 }
             }
-            if (userIds.isEmpty()) {
+            if (userIds.isEmpty() && !mRoot.userId.isExcluded(mState)) {
                 userIds.add(mRoot.userId);
             }
 
