@@ -293,6 +293,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Välj en annan mapp för att skydda din integritet"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Skapa ny mapp"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Sök på den här enheten"</string>
+    <string name="search_bar_clear" msgid="2072000748823434188">"Rensa text"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"Denna mapp"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Rotmapp"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Överallt"</string>
