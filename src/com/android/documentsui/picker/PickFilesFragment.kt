@@ -48,16 +48,12 @@ class PickFilesFragment : Fragment() {
         }
     }
     private var selectionMgr: DocsSelectionHelper? = null
-    private val pickListener: View.OnClickListener = object : View.OnClickListener {
-        override fun onClick(v: View?) {
-            actionHandler!!.pickSelected()
-        }
+    private val pickListener: View.OnClickListener = View.OnClickListener {
+        actionHandler!!.pickSelected()
     }
 
-    private val cancelListener: View.OnClickListener = object : View.OnClickListener {
-        override fun onClick(v: View?) {
-            actionHandler!!.cancelPicking()
-        }
+    private val cancelListener: View.OnClickListener = View.OnClickListener {
+        actionHandler!!.cancelPicking()
     }
 
     private var actionHandler: ActionHandler<PickActivity?>? = null
