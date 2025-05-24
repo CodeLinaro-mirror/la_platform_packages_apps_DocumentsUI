@@ -25,7 +25,6 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager.TaskDescription;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -147,12 +146,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 mProviders::getApplicationName,
                 mInjector.getModel()::getItemUri,
                 mInjector.getModel()::getItemCount);
-        if (isVisualSignalsFlagEnabled()) {
-            JobPanelController jobPanelController = new JobPanelController(this,
-                    new ViewModelProvider(this).get(JobPanelViewModel.class));
-            getLifecycle().addObserver(jobPanelController);
-            menuManager.setJobPanelController(jobPanelController);
-        }
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {
@@ -191,6 +184,14 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         DocumentsApplication.getDragAndDropManager(this),
                         mPeekViewManager,
                         mInjector);
+
+        if (isVisualSignalsFlagEnabled()) {
+            JobPanelController jobPanelController = new JobPanelController(this,
+                    mInjector.actions,
+                    new ViewModelProvider(this).get(JobPanelViewModel.class));
+            getLifecycle().addObserver(jobPanelController);
+            menuManager.setJobPanelController(jobPanelController);
+        }
 
         mInjector.searchManager = mSearchManager;
 
@@ -251,7 +252,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     private AppsRowManager getAppsRowManager() {
         boolean shouldShowByDefault =
                 !isUseMaterial3FlagEnabled()
-                        || !getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC);
+                        || getResources().getBoolean(R.bool.show_apps_row);
         return mConfigStore.isPrivateSpaceInDocsUIEnabled()
                 ? new AppsRowManager(
                 mInjector.actions,

@@ -38,6 +38,7 @@ private const val TAG = "ThemeUtils"
 @Suppress("ktlint:standard:max-line-length")
 private fun initializeIdMapping() {
   idMapping = mapOf(
+    R.bool.full_bar_search_view to R.bool.full_bar_search_view_m3,
     R.color.app_background_color to R.color.app_background_color_m3,
     R.color.app_icon_background to R.color.app_icon_background_m3,
     R.color.background_floating to R.color.background_floating_m3,
@@ -292,6 +293,7 @@ private fun initializeIdMapping() {
     R.menu.file_context_menu to R.menu.file_context_menu_m3,
     R.menu.mixed_context_menu to R.menu.mixed_context_menu_m3,
     R.menu.root_context_menu to R.menu.root_context_menu_m3,
+    R.string.scrolling_behavior to R.string.scrolling_behavior_m3,
     R.style.ActionBarTheme to R.style.ActionBarThemeM3,
     R.style.ActionBarThemeCommon to R.style.ActionBarThemeCommonM3,
     R.style.AppsItemSubText to R.style.AppsItemSubTextM3,

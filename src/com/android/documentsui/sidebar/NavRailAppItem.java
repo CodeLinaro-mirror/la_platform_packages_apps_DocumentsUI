@@ -47,4 +47,13 @@ public class NavRailAppItem extends AppItem {
 
         bindIcon(icon);
     }
+
+    @Override
+    public String toString() {
+        return "NavRailAppItem{"
+                + "id=" + stringId
+                + ", userId=" + userId
+                + ", resolveInfo=" + info
+                + "}";
+    }
 }

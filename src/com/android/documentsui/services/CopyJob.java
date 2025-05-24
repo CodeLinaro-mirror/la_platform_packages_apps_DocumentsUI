@@ -221,7 +221,8 @@ class CopyJob extends ResolvedResourcesJob {
                     operationType,
                     getState(),
                     getProgressMessage(),
-                    hasFailures());
+                    hasFailures(),
+                    stack);
         }
         mProgressTracker.updateEstimateRemainingTime();
         return new JobProgress(
@@ -230,6 +231,7 @@ class CopyJob extends ResolvedResourcesJob {
                 getState(),
                 getProgressMessage(),
                 hasFailures(),
+                stack,
                 mProgressTracker.getCurrentBytes(),
                 mProgressTracker.getRequiredBytes(),
                 mProgressTracker.getRemainingTimeEstimate());

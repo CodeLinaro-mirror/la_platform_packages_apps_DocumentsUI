@@ -42,9 +42,13 @@ class JobPanelViewModel : ViewModel() {
      * The UI state representation of the toolbar progress icon.
      */
     sealed class MenuIconState {
-        data object INVISIBLE : MenuIconState()
-        data object INDETERMINATE : MenuIconState()
-        data class VISIBLE(val totalProgress: Int) : MenuIconState()
+        abstract val hasFailures: Boolean
+        data object INVISIBLE : MenuIconState() {
+            override val hasFailures get() = false
+        }
+        data class INDETERMINATE(override val hasFailures: Boolean) : MenuIconState()
+        data class VISIBLE(val totalProgress: Int, override val hasFailures: Boolean) :
+            MenuIconState()
     }
 
     /** List of jobs currently tracked. */
@@ -58,11 +62,15 @@ class JobPanelViewModel : ViewModel() {
     fun getMenuState(): MenuIconState {
         var currentPercent = 0f
         var allIndeterminate = true
+        var hasFailures = false
 
         for ((jobProgress, _) in currentJobs.values) {
             if (!jobProgress.isIndeterminate) {
                 allIndeterminate = false
                 currentPercent += jobProgress.toPercent()
+            }
+            if (jobProgress.hasFailures) {
+                hasFailures = true
             }
         }
 
@@ -70,19 +78,23 @@ class JobPanelViewModel : ViewModel() {
         if (currentJobs.isEmpty()) {
             state = MenuIconState.INVISIBLE
         } else if (allIndeterminate) {
-            state = MenuIconState.INDETERMINATE
+            state = MenuIconState.INDETERMINATE(hasFailures)
         } else {
-            state = MenuIconState.VISIBLE((currentPercent / currentJobs.size).toInt())
+            state = MenuIconState.VISIBLE((currentPercent / currentJobs.size).toInt(), hasFailures)
         }
         return state
     }
 
     /**
-     * Updates the list of progresses managed by this class.
+     * Updates the list of progresses managed by this class. This function will add and update all
+     * given items, while removing any queued/in progress items not in [progresses]. Completed items
+     * are kept.
      */
     fun updateProgress(progresses: List<JobProgress>) {
+        val seen = hashSetOf<String>()
         for (jobProgress in progresses) {
             if (DEBUG) Log.d(TAG, "Received $jobProgress")
+            seen.add(jobProgress.id)
             if (jobProgress.state == Job.STATE_CANCELED) {
                 _currentJobs.remove(jobProgress.id)
             } else {
@@ -91,6 +103,7 @@ class JobPanelViewModel : ViewModel() {
                 }
             }
         }
+        _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }
     }
 
     /**

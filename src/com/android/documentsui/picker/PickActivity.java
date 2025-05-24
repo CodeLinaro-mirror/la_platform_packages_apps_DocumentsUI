@@ -25,7 +25,6 @@ import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
@@ -187,7 +186,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     private AppsRowManager getAppsRowManager() {
         boolean shouldShowByDefault =
                 !isUseMaterial3FlagEnabled()
-                        || !getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC);
+                        || getResources().getBoolean(R.bool.show_apps_row);
         return mConfigStore.isPrivateSpaceInDocsUIEnabled()
                 ? new AppsRowManager(
                 mInjector.actions,

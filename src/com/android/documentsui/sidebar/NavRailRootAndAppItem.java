@@ -39,4 +39,15 @@ public class NavRailRootAndAppItem extends RootAndAppItem {
     public void bindView(View convertView) {
         bindIconAndTitle(convertView);
     }
+
+    @Override
+    public String toString() {
+        return "NavRailRootAndAppItem{"
+                + "id=" + stringId
+                + ", userId=" + userId
+                + ", root=" + root
+                + ", resolveInfo=" + resolveInfo
+                + ", docInfo=" + docInfo
+                + "}";
+    }
 }

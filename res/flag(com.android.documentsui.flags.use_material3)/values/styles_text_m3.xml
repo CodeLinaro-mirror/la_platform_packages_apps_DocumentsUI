@@ -66,6 +66,10 @@
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 
+    <style name="TextAppearance.DocumentsUI.SearchBar" parent="TextAppearance.Material3.SearchBar">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
+
     <style name="SortListM3" parent="@style/TextAppearance.DocumentsUI.BodyLarge">
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>

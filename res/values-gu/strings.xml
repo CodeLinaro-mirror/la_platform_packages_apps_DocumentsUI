@@ -293,6 +293,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"તમારી પ્રાઇવસી સુરક્ષિત રાખવા માટે, અન્ય ફોલ્ડર પસંદ કરો"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"નવું ફોલ્ડર બનાવો"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"આ ડિવાઇસ શોધો"</string>
+    <!-- no translation found for search_bar_clear (2072000748823434188) -->
+    <skip />
     <string name="search_location_this_folder" msgid="6458835123175563013">"આ ફોલ્ડર"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"રૂટ ફોલ્ડર"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"સર્વત્ર"</string>

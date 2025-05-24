@@ -45,4 +45,13 @@ public class NavRailProfileItem extends ProfileItem {
 
         bindIcon(icon);
     }
+
+    @Override
+    public String toString() {
+        return "NavRailProfileItem{"
+                + "id=" + stringId
+                + ", userId=" + userId
+                + ", resolveInfo=" + info
+                + "}";
+    }
 }

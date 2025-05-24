@@ -104,8 +104,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testSearchIconVisible() throws Exception {
         // The default root (root 0) supports search
-        bots.search.assertInputExists(false);
-        bots.search.assertIconVisible(true);
+        bots.search.assertIsExpanded(false);
     }
 
     @Test
@@ -113,16 +112,15 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchIconHidden() throws Exception {
         bots.roots.openRoot(ROOT_1_ID);  // root 1 doesn't support search
 
-        bots.search.assertIconVisible(false);
-        bots.search.assertInputExists(false);
+        bots.search.assertIsVisible(false);
     }
 
     @Test
     public void testSearchView_ExpandsOnClick() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         device.waitForIdle();
 
-        bots.search.assertInputExists(true);
+        bots.search.assertIsExpanded(true);
         bots.search.assertInputFocused(true);
 
         // FIXME: Matchers fail the not-present check if we've ever clicked this.
@@ -132,10 +130,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @RequiresFlagsDisabled({FLAG_USE_MATERIAL3}) // Enable when b/397315793 is fixed.
     public void testSearchView_ShouldHideOptionMenuOnExpanding() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         device.waitForIdle();
 
-        bots.search.assertInputExists(true);
+        bots.search.assertIsExpanded(true);
         bots.search.assertInputFocused(true);
         device.waitForIdle();
 
@@ -146,16 +144,17 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testSearchView_CollapsesOnBack() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         device.pressBack();
 
-        bots.search.assertIconVisible(true);
-        bots.search.assertInputExists(false);
+        bots.search.assertIsExpanded(false);
     }
 
     @Test
+    // TODO(b/414507592): Remove once recent searches is enabled again.
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testSearchFragment_DismissedOnCloseAfterCancel() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("query text");
 
         // Cancel search
@@ -166,56 +165,58 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         device.pressBack();
         device.waitForIdle();
 
-        bots.search.assertIconVisible(true);
-        bots.search.assertInputExists(false);
+        bots.search.assertIsExpanded(false);
         bots.search.assertSearchHistoryVisible(false);
     }
 
     @Test
     public void testSearchView_ClearsTextOnBack() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("file2");
 
         device.pressBack();
-        device.pressBack();
+        // When docked search is enable pressing back twice will kill the activity.
+        if (!context.getResources().getBoolean(R.bool.show_docked_search)) {
+            device.pressBack();
+        }
 
         // Wait for a file in the default directory to be listed.
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
 
-        bots.search.assertIconVisible(true);
-        bots.search.assertInputExists(false);
+        bots.search.assertIsExpanded(false);
     }
 
     @Test
     public void testSearchView_ClearsSearchOnBack() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("file1");
         bots.keyboard.pressEnter();
         device.waitForIdle();
 
         device.pressBack();
 
-        bots.search.assertIconVisible(true);
-        bots.search.assertInputExists(false);
+        bots.search.assertIsExpanded(false);
     }
 
     @Test
     public void testSearchView_ClearsAutoSearchOnBack() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("chocolate");
         //Wait for auto search result, it should be no results and show holder message.
         bots.directory.waitForHolderMessage();
 
         device.pressBack();
-        device.pressBack();
+        // When docked search is enable pressing back twice will kill the activity.
+        if (!context.getResources().getBoolean(R.bool.show_docked_search)) {
+            device.pressBack();
+        }
 
-        bots.search.assertIconVisible(true);
-        bots.search.assertInputExists(false);
+        bots.search.assertIsExpanded(false);
     }
 
     @Test
     public void testSearchView_StateAfterSearch() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("file1");
         bots.keyboard.pressEnter();
         device.waitForIdle();
@@ -225,7 +226,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testSearch_ResultsFound() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("file1");
         bots.keyboard.pressEnter();
 
@@ -235,10 +236,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testSearch_NoResults() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("chocolate");
 
         bots.keyboard.pressEnter();
+        device.waitForIdle(3000);
 
         String msg = String.valueOf(context.getString(R.string.no_results));
         bots.directory.assertPlaceholderMessageText(String.format(msg, "TEST_ROOT_0"));
@@ -246,7 +248,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Suppress
     public void testSearchResultsFound_ClearsOnBack() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText(TestFilesRule.FILE_NAME_1);
 
         bots.keyboard.pressEnter();
@@ -258,7 +260,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Suppress
     public void testSearchNoResults_ClearsOnBack() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("chocolate bunny");
 
         bots.keyboard.pressEnter();
@@ -276,7 +278,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
             return;
         }
 
-        bots.search.clickIcon();
+        bots.search.expand();
 
         bots.search.setInputText(TestFilesRule.FILE_NAME_1);
 
@@ -293,8 +295,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    // TODO(b/414507592): Remove once recent searches is enabled again.
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testSearchHistory_showAfterSearchViewClear() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("chocolate");
 
         bots.keyboard.pressEnter();
@@ -303,15 +307,16 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.clickSearchViewClearButton();
         device.waitForIdle();
 
-        bots.search.assertInputExists(true);
         bots.search.assertInputFocused(true);
         bots.search.assertSearchHistoryVisible(true);
     }
 
     @Test
+    // TODO(b/414507592): Remove once recent searches is enabled again.
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testSearchView_focusClearedAfterSelectingSearchHistory() throws Exception {
         String queryText = "history";
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText(queryText);
         bots.keyboard.pressEnter();
         device.waitForIdle();
@@ -329,7 +334,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchDropdowns() throws Exception {
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("foo");
         // Verify that menu triggers (chips) are showing.
         bots.main.assertLocationTriggerShows();
@@ -341,7 +346,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2FileTypeDropdown() throws Exception {
         // Start search with term "file1" limiting results to images only.
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("file");
         bots.keyboard.pressEnter();
         // Select images files only.
@@ -360,7 +365,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2LastModifiedDropdown() throws Exception {
         // Start search with term "file1" limiting results modified in the last 30 days.
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText("file");
         bots.keyboard.pressEnter();
         onView(withId(R.id.search_last_modified_trigger)).perform(click());
@@ -377,8 +382,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2SearchLocationDropdown() throws Exception {
         // Start search with term "file1", but rather than searching locally, search everywhere.
-        bots.search.clickIcon();
-        bots.search.setInputText("file");
+        bots.search.expand();
+        bots.search.setInputText("fred-dog.jpg");
         bots.keyboard.pressEnter();
         onView(withId(R.id.search_location_trigger)).perform(click());
         onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
@@ -387,7 +392,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
         device.waitForIdle();
-        bots.directory.assertDocumentsCountOnList(true, 3);
+        bots.directory.assertDocumentsCountOnList(true, 1);
     }
 
     @Test
@@ -429,7 +434,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         directoryList.wait(hasMoreThanOneChild(), mTimeout);
 
         // Click the search icon and wait until the only result is the file that was searced for.
-        bots.search.clickIcon();
+        bots.search.expand();
         bots.search.setInputText(TestFilesRule.FILE_NAME_1);
         directoryList.wait(hasOneChild(), mTimeout);
         bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);

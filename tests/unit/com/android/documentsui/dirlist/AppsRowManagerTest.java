@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
@@ -28,7 +29,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,13 +97,12 @@ public class AppsRowManagerTest {
     @BeforeClass
     public static void setUpClass() {
         if (isUseMaterial3FlagEnabled()) {
-            // The AppsRowManager is only available on devices that don't specify `FEATURE_PC`.
+            // The AppsRowManager is only available on devices that have the `show_apps_row`
+            // config enabled.
             assume().that(
                             InstrumentationRegistry.getInstrumentation()
                                     .getTargetContext()
-                                    .getPackageManager()
-                                    .hasSystemFeature(PackageManager.FEATURE_PC))
-                    .isFalse();
+                                    .getResources().getBoolean(R.bool.show_apps_row)).isTrue();
         }
     }
 
@@ -115,10 +114,12 @@ public class AppsRowManagerTest {
         mAppsRowManager = getAppsRowManager();
 
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.setTheme(getRes(R.style.DocumentsTheme));
+        context.getTheme().applyStyle(getRes(R.style.DocumentsDefaultTheme), false);
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         mState = new State();
         mActivity = mock(BaseActivity.class);
-        mAppsRow = layoutInflater.inflate(R.layout.apps_row, null);
+        mAppsRow = layoutInflater.inflate(getRes(R.layout.apps_row), null);
         mAppsGroup = mAppsRow.findViewById(R.id.apps_row);
 
         mState.configStore = mTestConfigStore;

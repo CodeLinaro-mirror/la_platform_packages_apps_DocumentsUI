@@ -53,6 +53,8 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
+import com.android.documentsui.base.FolderInfo;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
@@ -70,7 +72,9 @@ import org.junit.runner.RunWith;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -89,6 +93,7 @@ public final class SearchViewManagerTest {
     private TestMenuItem mSearchMenuItem;
     private TestableSearchViewManager mSearchViewManager;
     private SearchChipViewManager mSearchChipViewManager;
+    private SearchOptionsController mSearchOptionsController;
 
     private boolean mListenerOnSearchChangedCalled;
     private int mOnSearchStartingCallCount;
@@ -136,8 +141,7 @@ public final class SearchViewManagerTest {
         ViewGroup chipGroup = mock(ViewGroup.class);
         mSearchChipViewManager = spy(new SearchChipViewManager(chipGroup));
         View searchOptionsView = mock(View.class);
-        SearchOptionsController mSearchOptionsController = new SearchOptionsController(
-                searchOptionsView);
+        mSearchOptionsController = new SearchOptionsController(searchOptionsView);
         mSearchViewManager = new TestableSearchViewManager(
                 searchListener,
                 mTestEventHandler,
@@ -148,7 +152,7 @@ public final class SearchViewManagerTest {
 
         mTestMenu = TestMenu.create();
         mSearchMenuItem = mTestMenu.findItem(R.id.option_menu_search);
-        mSearchViewManager.install(mTestMenu, true, false);
+        mSearchViewManager.install(mTestMenu, true, false, false);
     }
 
     private static class TestableSearchViewManager extends SearchViewManager {
@@ -503,7 +507,7 @@ public final class SearchViewManagerTest {
         root.queryArgs = QUERY_ARG_MIME_TYPES;
         DocumentStack stack = new DocumentStack(root, new DocumentInfo());
 
-        mSearchViewManager.install(mTestMenu, true, false);
+        mSearchViewManager.install(mTestMenu, true, false, false);
         mSearchViewManager.showMenu(stack);
 
         assertFalse(mSearchMenuItem.isVisible());
@@ -530,5 +534,35 @@ public final class SearchViewManagerTest {
         chipDataList.add(new SearchChipData(MetricConsts.TYPE_CHIP_FROM_THIS_WEEK,
                 0 /* titleRes */, new String[]{""}));
         return chipDataList;
+    }
+
+    @Test
+    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testMediaAndDownloadsHiddenOnSearchEverywhere() {
+        RootInfo mediaRoot = spy(new RootInfo());
+        mediaRoot.authority = Providers.AUTHORITY_MEDIA;
+        mediaRoot.rootId = "images";
+        mediaRoot.flags =  DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
+        RootInfo downloadsRoot = spy(new RootInfo());
+        downloadsRoot.authority = Providers.AUTHORITY_DOWNLOADS;
+        downloadsRoot.rootId = "downloads";
+        downloadsRoot.flags =  DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
+        RootInfo externalRoot = spy(new RootInfo());
+        externalRoot.authority = Providers.AUTHORITY_STORAGE;
+        externalRoot.rootId = "primary";
+        externalRoot.flags =  DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
+
+        Collection<RootInfo> roots = List.of(mediaRoot, downloadsRoot, externalRoot);
+        DocumentInfo nestedFolder = new DocumentInfo();
+        nestedFolder.authority = Providers.AUTHORITY_DOWNLOADS;
+        nestedFolder.documentId = "xyz:Nested";
+        DocumentStack stack = new DocumentStack(downloadsRoot, nestedFolder);
+        // Force search everywhere in mSearchViewManager. This is a private variable, so we
+        // use this round-about method of setting it.
+        mSearchOptionsController.onLocationSelected(SearchLocationOption.EVERYWHERE.getValue());
+        mSearchOptionsController.notifyOptionsChangeListener();
+
+        assertEquals(List.of(new FolderInfo(externalRoot)),
+                mSearchViewManager.getSearchFolders(roots, stack));
     }
 }

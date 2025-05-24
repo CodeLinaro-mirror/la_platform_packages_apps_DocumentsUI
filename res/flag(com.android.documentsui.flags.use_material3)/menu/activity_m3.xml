@@ -17,6 +17,15 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+<!-- The docked search bar is only visible on larger screens. -->
+    <item
+        android:id="@+id/option_menu_docked_search"
+        android:title="@string/menu_search"
+        android:icon="@drawable/ic_menu_search"
+        android:imeOptions="actionSearch"
+        android:visible="false"
+        app:showAsAction="always"
+        app:actionLayout="@layout/docked_search_bar" />
 <!-- showAsAction flag impacts the behavior of SearchView.
      When set to collapseActionView, collapsing SearchView to icon is the
      default behavior. It would fit UX, however after expanding SearchView is
