@@ -56,6 +56,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.FolderInfo;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
@@ -63,6 +64,7 @@ import com.android.modules.utils.build.SdkLevel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
@@ -854,21 +856,34 @@ public class SearchViewManager implements
             folderList = roots.stream().filter(filter).map(FolderInfo::new).collect(
                     Collectors.toList());
         } else if (mLocationOption != null) {
+            RootInfo root = stack.getRoot();
+            if (root == null) {
+                return Collections.emptyList();
+            }
+            DocumentInfo topFolder = stack.peek();
             switch (mLocationOption) {
-                case CURRENT_FOLDER: {
+                case CURRENT_FOLDER:
+                    // Fall-through.
                     // TODO(b:391232249): Searching with stack.peek().documentId does not work.
-                    // Here we are searching with rootId, even though we are suppose to search
-                    // in the current folder. This needs to be fixed.
-                    folderList.add(new FolderInfo(stack.getRoot()));
+                case ROOT_FOLDER: {
+                    if (Providers.AUTHORITY_DOWNLOADS.equals(root.authority) && topFolder != null) {
+                        folderList.add(new FolderInfo(topFolder));
+                    } else {
+                        // Here we are searching with rootId, even though we are suppose to search
+                        // in the current folder. This needs to be fixed.
+                        folderList.add(new FolderInfo(root));
+                    }
                     break;
                 }
-                case ROOT_FOLDER:
-                    folderList.add(new FolderInfo(stack.getRoot()));
+                case EVERYWHERE: {
+                    // When searching locally, to avoid duplicates, do not rely on MediaStore or
+                    // DownloadStorageProvider.
+                    folderList = roots.stream().filter(baseFilter.and(
+                            r -> !Providers.AUTHORITY_MEDIA.equals(r.authority)
+                                    && !Providers.AUTHORITY_DOWNLOADS.equals(r.authority))).map(
+                            FolderInfo::new).collect(Collectors.toList());
                     break;
-                case EVERYWHERE:
-                    folderList = roots.stream().filter(baseFilter).map(FolderInfo::new).collect(
-                            Collectors.toList());
-                    break;
+                }
                 default:
                     throw new IllegalStateException(
                             "Unhandled location option " + mLocationOption.name());

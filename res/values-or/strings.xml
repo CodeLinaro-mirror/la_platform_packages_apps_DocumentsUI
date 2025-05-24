@@ -293,6 +293,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ଆପଣଙ୍କ ଗୋପନୀୟତାକୁ ସୁରକ୍ଷିତ କରିବାକୁ ଅନ୍ୟ ଏକ ଫୋଲ୍ଡର୍ ବାଛନ୍ତୁ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ନୂଆ ଫୋଲ୍ଡର୍ ତିଆରି କରନ୍ତୁ"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ଏହି ଡିଭାଇସକୁ ସର୍ଚ୍ଚ କରନ୍ତୁ"</string>
+    <string name="search_bar_clear" msgid="2072000748823434188">"ଟେକ୍ସଟ ଖାଲି କରନ୍ତୁ"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"ଏହି ଫୋଲ୍ଡର"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ମୂଳ ଫୋଲ୍ଡର"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"ସବୁ ସ୍ଥାନରେ"</string>

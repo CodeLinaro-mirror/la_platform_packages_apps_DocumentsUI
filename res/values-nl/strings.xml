@@ -293,6 +293,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Kies een andere map om je privacy te beschermen"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Nieuwe map maken"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Zoeken op dit apparaat"</string>
+    <!-- no translation found for search_bar_clear (2072000748823434188) -->
+    <skip />
     <string name="search_location_this_folder" msgid="6458835123175563013">"Deze map"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Hoofdmap"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Overal"</string>

@@ -293,6 +293,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Изберете друга папка, за да защитите поверителността си"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Създаване на нова папка"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Търсете в това устройство"</string>
+    <string name="search_bar_clear" msgid="2072000748823434188">"Изчистване на текста"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"Тази папка"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Главна папка"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Навсякъде"</string>
