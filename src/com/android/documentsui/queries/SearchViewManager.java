@@ -317,11 +317,8 @@ public class SearchViewManager implements
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (!s.isEmpty()) {
-                        dockedSearchClear.setVisibility(View.VISIBLE);
-                    } else {
-                        dockedSearchClear.setVisibility(View.INVISIBLE);
-                    }
+                    dockedSearchClear.setVisibility(
+                            TextUtils.isEmpty(s) ? View.INVISIBLE : View.VISIBLE);
                     onQueryTextChange(s.toString());
                 }
 

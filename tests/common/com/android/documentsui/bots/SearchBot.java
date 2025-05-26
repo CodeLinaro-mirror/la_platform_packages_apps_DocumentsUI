@@ -16,6 +16,8 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -35,7 +37,6 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
@@ -57,14 +58,6 @@ public class SearchBot extends Bots.BaseBot {
     private static final Matcher<View> SEARCH_WIDGET = allOf(
             withId(R.id.option_menu_search),
             anyOf(isClickable(), hasDescendant(isClickable())));
-
-    // Note that input is visible when the clicky button is not
-    // present. So to clearly qualify the two...we explicitly
-    // require this input be not clickable.
-    @SuppressWarnings("unchecked")
-    private static final Matcher<View> SEARCH_INPUT = allOf(
-            withId(androidx.appcompat.R.id.search_src_text),
-            isDisplayed());
 
     public SearchBot(UiDevice device, Context context, int timeout) {
         super(device, context, timeout);
@@ -101,12 +94,13 @@ public class SearchBot extends Bots.BaseBot {
     public void setInputText(String query) throws UiObjectNotFoundException {
         if (!showsDockedSearch()) {
             BySelector selector = By.res(mTargetPackage + ":id/search_src_text");
-            UiObject2 searchInput = mDevice.wait(Until.findObject(selector), 5000);
-            searchInput.setText(query);
+            mDevice.wait(Until.findObject(selector), 5000);
+            onView(allOf(withId(androidx.appcompat.R.id.search_src_text), isDisplayed()))
+                    .perform(typeText(query));
         } else {
             BySelector selector = By.res(mTargetPackage + ":id/docked_search_text");
-            UiObject2 searchInput = mDevice.wait(Until.findObject(selector), 5000);
-            searchInput.setText(query);
+            mDevice.wait(Until.findObject(selector), 5000);
+            onView(allOf(withId(R.id.docked_search_text), isDisplayed())).perform(typeText(query));
         }
     }
 
