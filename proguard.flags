@@ -46,6 +46,7 @@
   int feature_notification_channel;
   int full_bar_search_view;
   int is_launcher_enabled;
+  int show_media_roots;
   int show_search_bar;
   int show_apps_row;
 }

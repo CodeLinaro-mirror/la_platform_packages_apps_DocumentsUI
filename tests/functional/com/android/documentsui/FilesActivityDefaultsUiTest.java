@@ -18,11 +18,6 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
-import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-
-import android.content.pm.PackageManager;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -68,43 +63,18 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
-    public void testDefaultRoots_useMaterial3FlagDisabled() throws Exception {
+    public void testDefaultRoots() throws Exception {
         device.waitForIdle();
 
         // Should also have Drive, but that requires pre-configuration of devices
         // We omit for now.
         bots.roots.assertRootsPresent(
-                "Images",
-                "Videos",
-                "Audio",
                 "Downloads",
                 ROOT_0_ID,
                 ROOT_1_ID);
-    }
 
-    @Test
-    @HugeLongTest
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
-    public void testDefaultRoots_useMaterial3FlagEnabled() throws Exception {
-        device.waitForIdle();
-
-        String[] expectedRoots;
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC)) {
-            expectedRoots = new String[]{"Downloads",
-                    ROOT_0_ID,
-                    ROOT_1_ID};
-        } else {
-            expectedRoots = new String[]{
-                    "Images",
-                    "Videos",
-                    "Audio",
-                    "Downloads",
-                    ROOT_0_ID,
-                    ROOT_1_ID};
+        if (context.getResources().getBoolean(R.bool.show_media_roots)) {
+            bots.roots.assertRootsPresent("Audio", "Images");
         }
-        // Should also have Drive, but that requires pre-configuration of devices
-        // We omit for now.
-        bots.roots.assertRootsPresent(expectedRoots);
     }
 }
