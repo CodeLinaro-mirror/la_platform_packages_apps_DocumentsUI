@@ -103,7 +103,11 @@ abstract public class Job implements Runnable {
 
     final UrisSupplier mResourceUris;
 
-    int failureCount = 0;
+    /**
+     * Number of errors. It is modified by the main thread running setUp(), start() and finish(),
+     * and it is read by the progress reporting thread running getJobProgress().
+     */
+    volatile int failureCount = 0;
     final ArrayList<DocumentInfo> failedDocs = new ArrayList<>();
     final ArrayList<Uri> failedUris = new ArrayList<>();
 

@@ -203,9 +203,7 @@ class UnpackJob(
             if (DEBUG) Log.d(TAG, "Canceled unpacking of ${archiveInfo.derivedUri}")
         } catch (t: Throwable) {
             Log.e(TAG, "Cannot unpack ${redact(archiveInfo.derivedUri)}", t)
-            synchronized(this) {
-                onFileFailed(archiveInfo)
-            }
+            onFileFailed(archiveInfo)
         }
 
         return false
@@ -289,9 +287,7 @@ class UnpackJob(
             if (DEBUG) Log.d(TAG, "Canceled unpacking of ${redact(archiveInfo.derivedUri)}")
         } catch (t: Throwable) {
             Log.e(TAG, "Cannot unpack ${redact(archiveInfo.derivedUri)}", t)
-            synchronized(this) {
-                onFileFailed(archiveInfo)
-            }
+            onFileFailed(archiveInfo)
         }
     }
 
@@ -325,8 +321,8 @@ class UnpackJob(
             Log.e(TAG, "Cannot extract ${redact(path)} from ${redact(archiveInfo.derivedUri)}", t)
             synchronized(this) {
                 tracker.filesRequired--
-                onResolveFailed(Uri.withAppendedPath(dirUri, fileName))
             }
+            onResolveFailed(Uri.withAppendedPath(dirUri, fileName))
         }
 
         // Adjust progress expectations after extracting a file.
