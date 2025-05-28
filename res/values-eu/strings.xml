@@ -227,8 +227,7 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> hautatuta</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> hautatuta</item>
     </plurals>
-    <!-- no translation found for clear_selection (5965968983023105329) -->
-    <skip />
+    <string name="clear_selection" msgid="5965968983023105329">"Garbitu hautapena"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementu</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elementu</item>
