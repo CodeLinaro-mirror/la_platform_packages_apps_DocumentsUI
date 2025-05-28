@@ -42,13 +42,25 @@ open class PeekViewManager(
     }
 
     protected open fun initialize() {
+        // Restore the Peek overlay if it was active.
+        if (viewModel.overlayActive.value == true) {
+            maybeInitializeFragment()
+            setContainerVisibility(true)
+        }
+    }
+
+    /**
+     * Sets the Peek fragment. By either querying it if it has been restored by the fragment
+     * manager, or by initializing it.
+     */
+    private fun maybeInitializeFragment() {
         // The fragment manager automatically handles state restoration: the fragment might already
         // exist.
         val existingFragment = fm.findFragmentById(getRes(R.id.peek_overlay))
         if (existingFragment == null) {
             peekFragment = PeekFragment()
             val ft: FragmentTransaction = fm.beginTransaction()
-            ft.replace(getRes(R.id.peek_overlay), peekFragment)
+            ft.add(getRes(R.id.peek_overlay), peekFragment)
             ft.commitAllowingStateLoss()
         } else {
             peekFragment = existingFragment as PeekFragment
@@ -68,6 +80,7 @@ open class PeekViewManager(
     }
 
     open fun peekDocument(doc: DocumentInfo) {
+        maybeInitializeFragment()
         if (!::peekFragment.isInitialized) {
             Log.e(TAG, "PeekFragment has not been initialized")
             return
