@@ -54,6 +54,7 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
@@ -70,6 +71,7 @@ import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
 import com.android.documentsui.peek.PeekViewManager;
+import com.android.documentsui.peek.PeekViewModel;
 import com.android.documentsui.prefs.LocalPreferences;
 import com.android.documentsui.prefs.PreferencesMonitor;
 import com.android.documentsui.queries.CommandInterceptor;
@@ -438,8 +440,15 @@ public abstract class BaseActivity
         updateRecentsSetting();
 
         if (isUsePeekPreviewFlagEnabled()) {
-            mPeekViewManager = new PeekViewManager(this);
-            mPeekViewManager.initFragment(getSupportFragmentManager(), savedInstanceState);
+            ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+            PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
+            mPeekViewManager = new PeekViewManager(
+                    viewModel,
+                    findViewById(getRes(R.id.peek_overlay)),
+                    getSupportFragmentManager());
+            viewModel.getOverlayActive().observe(
+                    this,
+                    mPeekViewManager);
         }
     }
 
@@ -1044,9 +1053,6 @@ public abstract class BaseActivity
         super.onSaveInstanceState(state);
         state.putParcelable(Shared.EXTRA_STATE, mState);
         mSearchManager.onSaveInstanceState(state);
-        if (isUsePeekPreviewFlagEnabled()) {
-            mPeekViewManager.onSaveInstanceState(state);
-        }
     }
 
     @Override
