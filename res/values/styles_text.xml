@@ -149,5 +149,4 @@
     <style name="Body1" parent="@android:style/TextAppearance.Material.Body1">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
-
 </resources>

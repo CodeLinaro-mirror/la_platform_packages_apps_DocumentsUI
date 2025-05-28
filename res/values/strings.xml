@@ -608,6 +608,9 @@
     <!-- Search hint on search view. [CHAR LIMIT=48] -->
     <string name="search_bar_hint">Search this device</string>
 
+    <!-- Content description for the X button to clear text [CHAR_LIMIT=NONE] -->
+    <string name="search_bar_clear">Clear text</string>
+
     <!-- Search location selector placeholder for this folder -->
     <string name="search_location_this_folder">This folder</string>
 
