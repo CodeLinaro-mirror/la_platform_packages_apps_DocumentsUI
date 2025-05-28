@@ -15,6 +15,7 @@
  */
 package com.android.documentsui
 
+import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.documentsui.base.SharedMinimal.DEBUG
@@ -49,6 +50,7 @@ class JobPanelViewModel : ViewModel() {
     /** List of jobs currently tracked. */
     private val _currentJobs = LinkedHashMap<String, ProgressViewModel>()
     val currentJobs: Map<String, ProgressViewModel> get() = _currentJobs
+    var listState: Parcelable? = null
 
     /**
      * Gets the state of the toolbar progress icon based off the current jobs tracked.
