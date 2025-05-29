@@ -293,8 +293,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"మీ గోప్యతను కాపాడుకోవటానికి, మరొక ఫోల్డర్‌ను ఎంచుకోండి"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"కొత్త ఫోల్డర్‌ని క్రియేట్ చేయండి"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ఈ పరికరాన్ని సెర్చ్ చేయండి"</string>
-    <!-- no translation found for search_bar_clear (2072000748823434188) -->
-    <skip />
+    <string name="search_bar_clear" msgid="2072000748823434188">"టెక్స్ట్‌ను క్లియర్ చేయండి"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"ఈ ఫోల్డర్"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"రూట్ ఫోల్డర్"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"ప్రతిచోటా"</string>

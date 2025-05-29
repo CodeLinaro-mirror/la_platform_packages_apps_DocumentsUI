@@ -293,8 +293,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"為保護你的隱私，請選擇其他資料夾"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"建立新資料夾"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"搜尋這部裝置"</string>
-    <!-- no translation found for search_bar_clear (2072000748823434188) -->
-    <skip />
+    <string name="search_bar_clear" msgid="2072000748823434188">"清除文字"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"這個資料夾"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"根資料夾"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"不限位置"</string>
