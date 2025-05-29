@@ -40,7 +40,9 @@ class PeekViewModel : ViewModel() {
      * associated with the overlay being active.
      */
     fun setDocInfoAndActivateOverlay(docInfo: DocumentInfo) {
-        _docInfo.value = docInfo
+        // OverlayActive has to be set first, since its value is relevant for the listener of
+        // docInfo.
         _overlayActive.value = true
+        _docInfo.value = docInfo
     }
 }
