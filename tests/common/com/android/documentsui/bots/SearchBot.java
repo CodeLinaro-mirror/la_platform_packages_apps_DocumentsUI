@@ -16,8 +16,6 @@
 
 package com.android.documentsui.bots;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -33,10 +31,14 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import android.content.Context;
 import android.view.View;
 
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
+import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
 
@@ -68,14 +70,25 @@ public class SearchBot extends Bots.BaseBot {
         super(device, context, timeout);
     }
 
-    public void clickIcon() throws UiObjectNotFoundException {
-        UiObject searchView = findSearchView();
-        searchView.click();
+    public void expand() throws UiObjectNotFoundException {
+        if (!showsDockedSearch()) {
+            UiObject searchView = findObject(mTargetPackage + ":id/option_menu_search");
+            searchView.click();
+        } else {
+            findDockedSearchInput().click();
+        }
     }
 
     public void clickSearchViewClearButton() throws UiObjectNotFoundException {
-        UiObject clear = findSearchViewClearButton();
-        clear.click();
+        if (!showsDockedSearch()) {
+            UiObject clear = findObject(mTargetPackage + ":id/option_menu_search",
+                    mTargetPackage + ":id/search_close_btn");
+            clear.click();
+        } else {
+            UiObject clear = findObject(mTargetPackage + ":id/option_menu_docked_search",
+                    mTargetPackage + ":id/docked_search_clear");
+            clear.click();
+        }
     }
 
     // Click on the search history item with specified queryText, if exists.
@@ -86,7 +99,37 @@ public class SearchBot extends Bots.BaseBot {
     }
 
     public void setInputText(String query) throws UiObjectNotFoundException {
-        onView(SEARCH_INPUT).perform(typeText(query));
+        if (!showsDockedSearch()) {
+            BySelector selector = By.res(mTargetPackage + ":id/search_src_text");
+            UiObject2 searchInput = mDevice.wait(Until.findObject(selector), 5000);
+            searchInput.setText(query);
+        } else {
+            BySelector selector = By.res(mTargetPackage + ":id/docked_search_text");
+            UiObject2 searchInput = mDevice.wait(Until.findObject(selector), 5000);
+            searchInput.setText(query);
+        }
+    }
+
+    public void assertIsExpanded(boolean expanded) throws UiObjectNotFoundException {
+        if (!showsDockedSearch()) {
+            assertIconVisible(!expanded);
+            assertEquals(expanded, findSearchViewTextField().exists());
+        } else {
+            assertTrue(findDockedSearchInput().exists());
+        }
+    }
+
+    public void assertIsVisible(boolean visible) throws UiObjectNotFoundException {
+        if (!showsDockedSearch()) {
+            assertIconVisible(visible);
+            // Only look for input when asserting invisible. Input visibility is checked with
+            // assertIsExpanded.
+            if (!visible) {
+                assertFalse(findSearchViewTextField().exists());
+            }
+        } else {
+            assertEquals(visible, findDockedSearchInput().exists());
+        }
     }
 
     public void assertIconVisible(boolean visible) {
@@ -115,7 +158,12 @@ public class SearchBot extends Bots.BaseBot {
 
     public void assertInputEquals(String query)
             throws UiObjectNotFoundException {
-        UiObject textField = findSearchViewTextField();
+        UiObject textField;
+        if (showsDockedSearch()) {
+            textField = findDockedSearchInput();
+        } else {
+            textField = findSearchViewTextField();
+        }
 
         assertTrue(textField.exists());
         assertEquals(query, textField.getText());
@@ -123,19 +171,15 @@ public class SearchBot extends Bots.BaseBot {
 
     public void assertInputFocused(boolean focused)
             throws UiObjectNotFoundException {
-        UiObject textField = findSearchViewTextField();
+        UiObject textField;
+        if (showsDockedSearch()) {
+            textField = findDockedSearchInput();
+        } else {
+            textField = findSearchViewTextField();
+        }
 
         assertTrue(textField.exists());
         assertEquals(focused, textField.isFocused());
-    }
-
-    public void assertInputExists(boolean exists)
-            throws UiObjectNotFoundException {
-        assertEquals(exists, findSearchViewTextField().exists());
-    }
-
-    private UiObject findSearchView() {
-        return findObject(mTargetPackage + ":id/option_menu_search");
     }
 
     private UiObject findSearchHistoryView() {
@@ -147,15 +191,11 @@ public class SearchBot extends Bots.BaseBot {
                 mTargetPackage + ":id/search_src_text");
     }
 
-    private UiObject findSearchViewClearButton() {
-        return findObject(mTargetPackage + ":id/option_menu_search",
-                mTargetPackage + ":id/search_close_btn");
+    private UiObject findDockedSearchInput() {
+        return findObject(mTargetPackage + ":id/docked_search_text");
     }
 
-    private UiObject findSearchViewIcon() {
-        return mContext.getResources().getBoolean(R.bool.full_bar_search_view)
-                ? findObject(mTargetPackage + ":id/option_menu_search")
-                : findObject(mTargetPackage + ":id/option_menu_search",
-                        "android:id/search_button");
+    private boolean showsDockedSearch() {
+        return mContext.getResources().getBoolean(R.bool.show_docked_search);
     }
 }

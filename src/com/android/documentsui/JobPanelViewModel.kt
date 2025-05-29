@@ -15,6 +15,7 @@
  */
 package com.android.documentsui
 
+import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.documentsui.base.SharedMinimal.DEBUG
@@ -49,6 +50,7 @@ class JobPanelViewModel : ViewModel() {
     /** List of jobs currently tracked. */
     private val _currentJobs = LinkedHashMap<String, ProgressViewModel>()
     val currentJobs: Map<String, ProgressViewModel> get() = _currentJobs
+    var listState: Parcelable? = null
 
     /**
      * Gets the state of the toolbar progress icon based off the current jobs tracked.
@@ -76,11 +78,15 @@ class JobPanelViewModel : ViewModel() {
     }
 
     /**
-     * Updates the list of progresses managed by this class.
+     * Updates the list of progresses managed by this class. This function will add and update all
+     * given items, while removing any queued/in progress items not in [progresses]. Completed items
+     * are kept.
      */
     fun updateProgress(progresses: List<JobProgress>) {
+        val seen = hashSetOf<String>()
         for (jobProgress in progresses) {
             if (DEBUG) Log.d(TAG, "Received $jobProgress")
+            seen.add(jobProgress.id)
             if (jobProgress.state == Job.STATE_CANCELED) {
                 _currentJobs.remove(jobProgress.id)
             } else {
@@ -89,6 +95,7 @@ class JobPanelViewModel : ViewModel() {
                 }
             }
         }
+        _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }
     }
 
     /**

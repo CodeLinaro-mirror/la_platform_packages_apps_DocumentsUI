@@ -28,7 +28,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,13 +96,12 @@ public class AppsRowManagerTest {
     @BeforeClass
     public static void setUpClass() {
         if (isUseMaterial3FlagEnabled()) {
-            // The AppsRowManager is only available on devices that don't specify `FEATURE_PC`.
+            // The AppsRowManager is only available on devices that have the `show_apps_row`
+            // config enabled.
             assume().that(
                             InstrumentationRegistry.getInstrumentation()
                                     .getTargetContext()
-                                    .getPackageManager()
-                                    .hasSystemFeature(PackageManager.FEATURE_PC))
-                    .isFalse();
+                                    .getResources().getBoolean(R.bool.show_apps_row)).isTrue();
         }
     }
 

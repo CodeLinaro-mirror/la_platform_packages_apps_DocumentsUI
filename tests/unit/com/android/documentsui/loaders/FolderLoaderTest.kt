@@ -25,7 +25,8 @@ import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,23 +58,31 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     @get:Rule
     val checkFlags = CheckAndForceMaterial3Flag()
 
-    @Test
-    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
-    fun testLoadInBackground() {
-        val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
-        val docs = createDocuments(TOTAL_FILE_COUNT)
-        mockProvider!!.setNextChildDocumentsReturns(*docs)
-        val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
-        val queryOptions =
+    val contentLock = ContentLock()
+    lateinit var queryOptions: QueryOptions
+
+    @Before
+    override fun setUp() {
+        super.setUp()
+        queryOptions =
             QueryOptions(
                 TOTAL_FILE_COUNT,
                 testParams.lastModifiedDelta,
                 null,
                 true,
-                arrayOf<String>("*/*"),
+                arrayOf("*/*"),
                 testParams.otherArgs,
             )
-        val contentLock = ContentLock()
+        // Set up sample files using Downloads provider.
+        val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
+        val docs = createDocuments(TOTAL_FILE_COUNT)
+        mockProvider!!.setNextChildDocumentsReturns(*docs)
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    fun testLoadInBackground() {
+        val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
         // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
         val rootFolderInfo = DocumentInfo()
         rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
@@ -87,6 +96,28 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 contentLock,
                 TestProvidersAccess.DOWNLOADS,
                 rootFolderInfo,
+                queryOptions,
+                mEnv.state.sortModel
+            )
+        val directoryResult = loader.loadInBackground()
+        assertEquals(testParams.expectedCount, getFileCount(directoryResult))
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    fun testListRootIfNullFolder() {
+        val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
+        val docs = createDocuments(TOTAL_FILE_COUNT)
+        mockProvider!!.setNextChildDocumentsReturns(*docs)
+
+        val loader =
+            FolderLoader(
+                mActivity,
+                listOf(TestProvidersAccess.DOWNLOADS.userId),
+                TestFileTypeLookup(),
+                contentLock,
+                TestProvidersAccess.DOWNLOADS,
+                null,
                 queryOptions,
                 mEnv.state.sortModel
             )

@@ -16,6 +16,7 @@
 
 package com.android.documentsui.queries;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -59,6 +60,10 @@ public class SearchFragment extends Fragment {
     public static void showFragment(FragmentManager fm, String initQuery) {
         if (fm.isStateSaved()) {
             Log.w(TAG, "Skip show because state saved");
+            return;
+        }
+        // TODO(b/414507592): Enable recent searches after DockedSearchBar is available.
+        if (isUseMaterial3FlagEnabled()) {
             return;
         }
 
