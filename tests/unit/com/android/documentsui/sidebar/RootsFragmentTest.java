@@ -32,6 +32,7 @@ import android.platform.test.annotations.RequiresFlagsEnabled;
 import androidx.test.filters.MediumTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.android.documentsui.R;
 import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.TestUserManagerState;
 import com.android.documentsui.base.RootInfo;
@@ -72,29 +73,31 @@ public class RootsFragmentTest {
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
     private TestUserManagerState mTestUserManagerState;
 
-    private static final String[] EXPECTED_SORTED_RESULT_FOR_NON_DESKTOP = {
-            TestProvidersAccess.RECENTS.title,
-            TestProvidersAccess.IMAGE.title,
-            TestProvidersAccess.VIDEO.title,
-            TestProvidersAccess.AUDIO.title,
-            TestProvidersAccess.DOCUMENT.title,
-            TestProvidersAccess.DOWNLOADS.title,
-            "" /* SpacerItem */,
-            TestProvidersAccess.EXTERNALSTORAGE.title,
-            TestProvidersAccess.HAMMY.title,
-            "" /* SpacerItem */,
-            TestProvidersAccess.INSPECTOR.title,
-            TestProvidersAccess.PICKLES.title};
+    private static final String[] EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE = {
+        TestProvidersAccess.RECENTS.title,
+        TestProvidersAccess.IMAGE.title,
+        TestProvidersAccess.VIDEO.title,
+        TestProvidersAccess.AUDIO.title,
+        TestProvidersAccess.DOCUMENT.title,
+        TestProvidersAccess.DOWNLOADS.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.EXTERNALSTORAGE.title,
+        TestProvidersAccess.HAMMY.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.INSPECTOR.title,
+        TestProvidersAccess.PICKLES.title
+    };
 
-    private static final String[] EXPECTED_SORTED_RESULT_FOR_DESKTOP = {
-            TestProvidersAccess.RECENTS.title,
-            TestProvidersAccess.DOWNLOADS.title,
-            "" /* SpacerItem */,
-            TestProvidersAccess.EXTERNALSTORAGE.title,
-            TestProvidersAccess.HAMMY.title,
-            "" /* SpacerItem */,
-            TestProvidersAccess.INSPECTOR.title,
-            TestProvidersAccess.PICKLES.title};
+    private static final String[] EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_FALSE = {
+        TestProvidersAccess.RECENTS.title,
+        TestProvidersAccess.DOWNLOADS.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.EXTERNALSTORAGE.title,
+        TestProvidersAccess.HAMMY.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.INSPECTOR.title,
+        TestProvidersAccess.PICKLES.title
+    };
 
     @Rule
     public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
@@ -147,13 +150,12 @@ public class RootsFragmentTest {
                 UserId.DEFAULT_USER,
                 Collections.singletonList(UserId.DEFAULT_USER),
                 /* maybeShowBadge */ false, mTestUserManagerState);
-        assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_FOR_NON_DESKTOP));
+        assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE));
     }
 
     @Test
     @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
-    public void testSortLoadResult_WithCorrectOrder_onNonDesktop() {
-        when(mPackageManager.hasSystemFeature(PackageManager.FEATURE_PC)).thenReturn(false);
+    public void testSortLoadResult_WithCorrectOrder_showMediaRoots() {
         List<Item> items = mRootsFragment.sortLoadResult(
                 mContext,
                 mEnv.state,
@@ -162,22 +164,11 @@ public class RootsFragmentTest {
                 UserId.DEFAULT_USER,
                 Collections.singletonList(UserId.DEFAULT_USER),
                 /* maybeShowBadge */ false, mTestUserManagerState);
-        assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_FOR_NON_DESKTOP));
-    }
-
-    @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
-    public void testSortLoadResult_WithCorrectOrder_onDesktop() {
-        when(mPackageManager.hasSystemFeature(PackageManager.FEATURE_PC)).thenReturn(true);
-        List<Item> items = mRootsFragment.sortLoadResult(
-                mContext,
-                mEnv.state,
-                createFakeRootInfoList(),
-                null /* excludePackage */, null /* handlerAppIntent */, new TestProvidersAccess(),
-                UserId.DEFAULT_USER,
-                Collections.singletonList(UserId.DEFAULT_USER),
-                /* maybeShowBadge */ false, mTestUserManagerState);
-        assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_FOR_DESKTOP));
+        if (mContext.getResources().getBoolean(R.bool.show_media_roots)) {
+            assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE));
+        } else {
+            assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_FALSE));
+        }
     }
 
     @Test

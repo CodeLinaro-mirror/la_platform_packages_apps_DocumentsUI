@@ -476,8 +476,9 @@ public class RootsFragment extends Fragment {
         final RootItemListBuilder storageProvidersBuilder = new RootItemListBuilder(selectedUser,
                 userIds);
         final List<RootItem> otherProviders = new ArrayList<>();
-        final boolean hideMediaRoots = isUseMaterial3FlagEnabled()
-                && !getResources().getBoolean(R.bool.show_media_roots);
+        final boolean hideMediaRoots =
+                isUseMaterial3FlagEnabled()
+                        && !context.getResources().getBoolean(R.bool.show_media_roots);
 
         for (final RootInfo root : roots) {
             final RootItem item;
