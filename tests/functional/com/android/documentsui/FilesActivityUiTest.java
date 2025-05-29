@@ -304,9 +304,11 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             // the options menu being refreshed (it should only show when a file is selected).
             onView(withId(R.id.action_menu_share)).check(doesNotExist());
 
-            // Select the recent document, which will refresh the options menu and the share action
-            // menu item should appear.
-            bots.directory.selectDocument(fileName, 1);
+            // Select the first document in Recents that has a selectable region. We have previously
+            // staged a file so there should be at least 1, but depending on the device and the
+            // cleanup of the device this might not always be the case. The document that gets
+            // selected doesn't really matter, just that one is selected.
+            bots.directory.selectFirstDocument();
             onView(withId(R.id.action_menu_share)).check(matches(isDisplayed()));
 
             // Deselect the file and ensure the share menu disappears (this ensures the menu is
