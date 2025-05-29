@@ -52,7 +52,19 @@ data class LoaderTestParams(
     val otherArgs: Bundle,
     // The number of files that are expected, for the above parameters, to be found by a loader.
     val expectedCount: Int,
-)
+) {
+    override fun toString(): String {
+        var base = "query '$query'"
+        if (lastModifiedDelta != null) {
+            val durationInMs = lastModifiedDelta.toSeconds()
+            base = "$base, modified in the last ${durationInMs}s"
+        }
+        if (!otherArgs.isEmpty) {
+            base = "$base, and $otherArgs"
+        }
+        return "$base, expecting $expectedCount matches"
+    }
+}
 
 /**
  * Common base class for search and folder loaders.
@@ -63,7 +75,7 @@ open class BaseLoaderTest {
     lateinit var mTestConfigStore: TestConfigStore
 
     @Before
-    open fun setUp() {
+    fun setUp() {
         mEnv = TestEnv.create()
         mTestConfigStore = TestConfigStore()
         mEnv.state.configStore = mTestConfigStore
