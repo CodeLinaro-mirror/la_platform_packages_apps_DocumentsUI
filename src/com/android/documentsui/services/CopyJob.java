@@ -171,7 +171,7 @@ class CopyJob extends ResolvedResourcesJob {
     }
 
     @Override
-    Notification getFailureNotification() {
+    public Notification getFailureNotification() {
         return getFailureNotification(
                 getRes(R.plurals.copy_error_notification_title), getRes(R.drawable.ic_menu_copy));
     }
