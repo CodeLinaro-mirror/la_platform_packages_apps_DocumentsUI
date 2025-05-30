@@ -114,42 +114,38 @@ abstract class ArchiveEntryInputStream extends InputStream {
         }
     }
 
-    static InputStream create(@NonNull ArchiveHandle archiveHandle,
-            @NonNull ArchiveEntry archiveEntry) throws IOException {
-        if (archiveHandle == null) {
-            throw new IllegalArgumentException("archiveHandle is null");
+    static @NonNull InputStream create(@NonNull ArchiveHandle handle, @NonNull ArchiveEntry entry)
+            throws IOException {
+        if (handle == null) {
+            throw new IllegalArgumentException("handle is null");
         }
 
-        if (archiveEntry == null) {
-            throw new IllegalArgumentException("ArchiveEntry is empty");
+        if (entry == null) {
+            throw new IllegalArgumentException("entry is null");
         }
 
-        if (archiveEntry.isDirectory() || archiveEntry.getSize() < 0
-                || TextUtils.isEmpty(archiveEntry.getName())) {
+        if (entry.isDirectory() || entry.getSize() < 0 || TextUtils.isEmpty(entry.getName())) {
             throw new IllegalArgumentException("ArchiveEntry is an invalid file entry");
         }
 
-        Object commonArchive = archiveHandle.getCommonArchive();
+        final Object archive = handle.getCommonArchive();
 
-        if (commonArchive instanceof SevenZFile) {
-            return new WrapArchiveInputStream(
-                (b, off, len) -> ((SevenZFile) commonArchive).read(b, off, len),
-                archiveEntry,
-                () -> ((SevenZFile) commonArchive).getNextEntry());
-        } else if (commonArchive instanceof ZipFile) {
-            final InputStream inputStream =
-                    ((ZipFile) commonArchive).getInputStream((ZipArchiveEntry) archiveEntry);
-            return new WrapZipFileInputStream(
-                (b, off, len) -> inputStream.read(b, off, len),
-                archiveEntry,
-                () -> inputStream.close());
-        } else if (commonArchive instanceof ArchiveInputStream) {
-            return new WrapArchiveInputStream(
-                (b, off, len) -> ((ArchiveInputStream) commonArchive).read(b, off, len),
-                archiveEntry,
-                () -> ((ArchiveInputStream) commonArchive).getNextEntry());
+        if (archive instanceof SevenZFile) {
+            final SevenZFile file = (SevenZFile) archive;
+            return new WrapArchiveInputStream(file::read, entry, file::getNextEntry);
         }
 
-        return null;
+        if (archive instanceof ZipFile) {
+            final ZipFile file = (ZipFile) archive;
+            InputStream stream = file.getInputStream((ZipArchiveEntry) entry);
+            return new WrapZipFileInputStream(stream::read, entry, stream);
+        }
+
+        if (archive instanceof ArchiveInputStream) {
+            final ArchiveInputStream stream = (ArchiveInputStream) archive;
+            return new WrapArchiveInputStream(stream::read, entry, stream::getNextEntry);
+        }
+
+        throw new IllegalArgumentException("Unexpected archive type " + archive);
     }
 }

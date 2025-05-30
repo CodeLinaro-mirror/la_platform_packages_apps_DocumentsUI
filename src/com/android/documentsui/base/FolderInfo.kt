@@ -23,5 +23,6 @@ package com.android.documentsui.base
  * DocumentInfo.
  */
 data class FolderInfo(val folderId: String, val authority: String) {
+    constructor(folder: DocumentInfo) : this(folder.documentId, folder.authority)
     constructor(rootInfo: RootInfo) : this(rootInfo.rootId, rootInfo.authority)
 }

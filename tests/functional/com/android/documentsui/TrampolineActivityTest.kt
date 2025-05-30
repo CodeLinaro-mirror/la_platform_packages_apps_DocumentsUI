@@ -31,6 +31,10 @@ import com.android.documentsui.picker.TrampolineActivity
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import java.util.Optional
 import java.util.regex.Pattern
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.BeforeClass
@@ -59,15 +63,36 @@ class TrampolineActivityTest() {
 
         private lateinit var device: UiDevice
 
-        fun removePhotopickerAndDocumentsUITasks() {
+        suspend fun removePhotopickerAndDocumentsUITasks() {
+            var taskIds = findPhotopickerAndDocumentsUITasks()
+
+            for (taskId in taskIds) {
+                device.executeShellCommand("am stack remove $taskId")
+            }
+
+            withTimeoutOrNull(5.seconds) {
+                while (taskIds.isNotEmpty()) {
+                    delay(100)
+                    taskIds = findPhotopickerAndDocumentsUITasks()
+                }
+                true
+            }
+        }
+
+        private fun findPhotopickerAndDocumentsUITasks(): Set<String> {
             // Get the current list of tasks that are visible.
             val result = device.executeShellCommand("am stack list")
 
             // Identify any that are from DocumentsUI or Photopicker and close them.
             val matcher = STACK_LIST_REGEX.matcher(result)
+
+            val taskIds = mutableSetOf<String>()
             while (matcher.find()) {
-                device.executeShellCommand("am stack remove ${matcher.group("taskId")}")
+                val taskId = matcher.group("taskId")
+                taskIds.add(taskId)
             }
+
+            return taskIds
         }
 
         @BeforeClass
@@ -156,8 +181,13 @@ class TrampolineActivityTest() {
 
         @Before
         fun setUp() {
-            removePhotopickerAndDocumentsUITasks()
+            runBlocking {
+                removePhotopickerAndDocumentsUITasks()
+            }
+        }
 
+        @Test
+        fun testCorrectAppIsLaunched() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
@@ -168,10 +198,7 @@ class TrampolineActivityTest() {
             }
 
             context.startActivity(intent)
-        }
 
-        @Test
-        fun testCorrectAppIsLaunched() {
             val bySelector = when (testData.expectedApp) {
                 AppType.PHOTOPICKER -> By.pkg(PHOTOPICKER_PACKAGE_REGEX)
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
@@ -205,7 +232,9 @@ class TrampolineActivityTest() {
 
         @Before
         fun setUp() {
-            removePhotopickerAndDocumentsUITasks()
+            runBlocking {
+                removePhotopickerAndDocumentsUITasks()
+            }
         }
 
         @Test

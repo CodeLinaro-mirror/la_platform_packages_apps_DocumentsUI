@@ -18,6 +18,8 @@ package com.android.documentsui
 import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.widget.ActionMenuView
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -31,9 +33,11 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.MutableJobProgress
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import com.android.documentsui.testing.TestActionHandler
+import com.android.documentsui.util.Material3Config.Companion.getRes
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,9 +58,17 @@ class JobPanelControllerTest {
         context,
         null,
         android.R.attr.progressBarStyleHorizontal
-    )
+    ).apply {
+        id = getRes(R.id.job_progress_toolbar_indicator)
+    }
+    private val badge = ImageView(context).apply {
+        id = getRes(R.id.job_progress_toolbar_badge)
+    }
     private val menuItem = ActionMenuView(context).menu.add("job_panel").apply {
-        actionView = progressBar
+        actionView = FrameLayout(context).apply {
+            addView(progressBar)
+            addView(badge)
+        }
     }
     private lateinit var controller: JobPanelController
     private var lastId = 0L
@@ -72,7 +84,7 @@ class JobPanelControllerTest {
 
     @Before
     fun setUp() {
-        controller = JobPanelController(context, JobPanelViewModel())
+        controller = JobPanelController(context, TestActionHandler(), JobPanelViewModel())
         controller.setMenuItem(menuItem)
     }
 

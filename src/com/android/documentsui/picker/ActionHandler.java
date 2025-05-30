@@ -504,6 +504,20 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         }
     }
 
+    /** Cancels the picking by first setting the last accessed location first. */
+    void cancelPicking() {
+        new SetLastAccessedStackTask(mActivity, mLastAccessed, mState.stack, this::onPickCanceled)
+                .executeOnExecutor(getExecutorForCurrentDirectory());
+    }
+
+    /** Sets the activity result to canceled and finishes the current activity. */
+    private void onPickCanceled() {
+        if (DEBUG) Log.d(TAG, "onPickCanceled()");
+
+        mActivity.setResult(FragmentActivity.RESULT_CANCELED, /* intent= */ null, 0);
+        mActivity.finish();
+    }
+
     void finishPicking(Uri... docs) {
         new SetLastAccessedStackTask(
                 mActivity,

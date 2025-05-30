@@ -293,6 +293,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"আপোনাৰ গোপনীয়তা সুৰক্ষিত কৰিবলৈ অন্য এটা ফ’ল্ডাৰ বাছনি কৰক"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"নতুন ফ\'ল্ডাৰ সৃষ্টি কৰক"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"এই ডিভাইচটো সন্ধান কৰক"</string>
+    <!-- no translation found for search_bar_clear (2072000748823434188) -->
+    <skip />
     <string name="search_location_this_folder" msgid="6458835123175563013">"এই ফ’ল্ডাৰটোত"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"মূল ফ’ল্ডাৰ"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"সকলোতে"</string>

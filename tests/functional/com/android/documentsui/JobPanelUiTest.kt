@@ -17,6 +17,7 @@ package com.android.documentsui
 
 import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.view.KeyEvent
 import android.view.View
 import android.widget.ProgressBar
 import androidx.test.espresso.Espresso
@@ -38,6 +39,7 @@ import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.TestFilesRule
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
@@ -73,6 +75,9 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule
     val checkFlags = CheckAndForceMaterial3Flag()
 
+    @get:Rule
+    val testFiles = TestFilesRule()
+
     private var lastId = 0L
 
     private fun sendProgress(progresses: ArrayList<JobProgress>, id: Long = lastId++) {
@@ -86,7 +91,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     private fun openPanel() {
-        onView(withId(R.id.option_menu_job_progress))
+        onView(withId(R.id.job_progress_toolbar_indicator))
             .check(matches(isDisplayed()))
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
@@ -94,7 +99,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
     @Test
     fun testInProgressItems() {
-        onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
 
         val progress = MutableJobProgress(
@@ -109,7 +114,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
-        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(40)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
 
         openPanel()
 
@@ -186,7 +191,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(doesNotExist())
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress2)))
             .perform(click())
-        onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }
 
@@ -212,7 +217,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
         // Overall progress should be 25%.
-        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(25)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(25)))
 
         openPanel()
 
@@ -229,13 +234,13 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         // Overall progress should be 0% as the first job doesn't count. We need to close the popup
         // panel first in order to check the menu item behind.
         Espresso.pressBack()
-        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(0)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(0)))
         openPanel()
 
         // Cancel the second job. The panel should disappear.
         progress2.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress2.toJobProgress()))
-        onView(withId(R.id.option_menu_job_progress)).check(doesNotExist())
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }
 
@@ -254,7 +259,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         sendProgress(arrayListOf(progress.toJobProgress()))
         mActivityScenario!!.recreate()
 
-        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(40)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
 
         openPanel()
         onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
@@ -277,6 +282,82 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Close the job panel.
         Espresso.pressBack()
-        onView(withId(R.id.option_menu_job_progress)).check(matches(withProgress(50)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(50)))
+    }
+
+    @Test
+    fun testShowInFolder() {
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON)
+
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON)
+
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1)
+
+        openPanel()
+        onView(withId(R.id.job_progress_item_title)).perform(click())
+        onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
+
+        // The panel should have been dismissed when we navigate.
+        onView(withId(R.id.job_progress_item_title)).check(doesNotExist())
+        bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+
+        // Try from a different folder.
+        Espresso.pressBack()
+        openPanel()
+        onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
+        bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+
+        // Try from a different root.
+        bots.roots.openRoot(StubProvider.ROOT_1_ID)
+        openPanel()
+        onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
+        bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+    }
+
+    @Test
+    fun testFailedItem() {
+        val inProgress = MutableJobProgress(
+            id = "in_progress_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job in progress",
+            hasFailures = false,
+            currentBytes = 40,
+            requiredBytes = 100,
+        )
+
+        val failed = MutableJobProgress(
+            id = "failed_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_COMPLETED,
+            msg = "Job failed",
+            hasFailures = true,
+        )
+
+        sendProgress(arrayListOf(inProgress.toJobProgress()))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
+        onView(allOf(withId(R.id.job_progress_toolbar_badge), isDisplayed())).check(doesNotExist())
+
+        sendProgress(arrayListOf(inProgress.toJobProgress(), failed.toJobProgress()))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(70)))
+        onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
+
+        mActivityScenario!!.recreate()
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(70)))
+        onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
+
+        openPanel()
+        onView(withText(R.string.job_progress_item_failed)).perform(click())
+        onView(allOf(withId(R.id.job_progress_item_dismiss), isDisplayed())).perform(click())
+        Espresso.pressBack()
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
+        onView(allOf(withId(R.id.job_progress_toolbar_badge), isDisplayed())).check(doesNotExist())
+
+        inProgress.hasFailures = true
+        sendProgress(arrayListOf(inProgress.toJobProgress()))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
+        onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
     }
 }

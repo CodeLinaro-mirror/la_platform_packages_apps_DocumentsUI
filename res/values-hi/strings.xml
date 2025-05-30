@@ -227,8 +227,7 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> चयनित</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> चयनित</item>
     </plurals>
-    <!-- no translation found for clear_selection (5965968983023105329) -->
-    <skip />
+    <string name="clear_selection" msgid="5965968983023105329">"चुनी गई फ़ाइलें हटाएं"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> आइटम</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> आइटम</item>
@@ -294,6 +293,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"अपनी निजता की सुरक्षा करने के लिए, कोई और फ़ोल्डर चुनें"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"नया फ़ोल्डर बनाएं"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"इस डिवाइस के बारे में खोजें"</string>
+    <!-- no translation found for search_bar_clear (2072000748823434188) -->
+    <skip />
     <string name="search_location_this_folder" msgid="6458835123175563013">"यह फ़ोल्डर"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"रूट फ़ोल्डर"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"हर जगह"</string>
