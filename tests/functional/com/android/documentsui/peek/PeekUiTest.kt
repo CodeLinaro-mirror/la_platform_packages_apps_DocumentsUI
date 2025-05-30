@@ -27,7 +27,6 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
-import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
@@ -35,7 +34,8 @@ import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.rules.TestFilesRule
 import java.io.IOException
-import junit.framework.Assert
+import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -97,15 +97,18 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {
-        showAndCheckPreview("file0.log")
-        // The selection should not be possible, the "1 selected" label shouldn't show.
+        // Selecting a document should show the "1 selected" label.
+        bots.directory.selectDocument("file0.log", 1)
+        // Show preview.
+        bots.main.clickActionItem("Get info")
+        checkPreviewActive("file0.log")
+        // When the preview is shown, the selection is still technically possible, but the scrim
+        // intercepts click events. The "1 selected" label shouldn't show.
         val selectionHotspot: UiObject2 = bots.directory.findSelectionHotspot("file0.log")
-        Assert.assertNull(selectionHotspot)
-        val assertSelectionText = "1 selected"
-        val timeout: Long = 1000
-        val selectionText: UiObject2? =
-            device!!.wait(Until.findObject(By.text(assertSelectionText)), timeout)
-        Assert.assertNull(selectionText)
+        assertNotNull(selectionHotspot)
+        selectionHotspot.click()
+        device!!.waitForIdle()
+        assertNull(device!!.findObject(By.text("1 selected")))
     }
 
     @Test
