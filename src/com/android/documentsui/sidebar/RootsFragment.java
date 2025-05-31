@@ -476,18 +476,18 @@ public class RootsFragment extends Fragment {
         final RootItemListBuilder storageProvidersBuilder = new RootItemListBuilder(selectedUser,
                 userIds);
         final List<RootItem> otherProviders = new ArrayList<>();
+        final boolean hideMediaRoots = isUseMaterial3FlagEnabled()
+                && !getResources().getBoolean(R.bool.show_media_roots);
 
         for (final RootInfo root : roots) {
             final RootItem item;
 
             if (root.isExternalStorageHome()) {
-                continue;
-            } else if (isUseMaterial3FlagEnabled()
-                    && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_PC)
+                // No-op.
+            } else if (hideMediaRoots
                     && (root.isImages() || root.isVideos()
                     || root.isDocuments()
                     || root.isAudio())) {
-                // Hide Images/Videos/Documents/Audio roots on desktop.
                 Log.d(TAG, "Hiding " + root);
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
