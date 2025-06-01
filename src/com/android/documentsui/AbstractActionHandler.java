@@ -277,6 +277,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
+    public void jumpToDirectory(DocumentStack stack) {
+        // reset() takes ownership of the passed in stack's document list, so we need to make a copy
+        // first.
+        mState.stack.reset(new DocumentStack(stack));
+        mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+    }
+
+    @Override
     public void openSettings(RootInfo root) {
         throw new UnsupportedOperationException("Can't open settings.");
     }

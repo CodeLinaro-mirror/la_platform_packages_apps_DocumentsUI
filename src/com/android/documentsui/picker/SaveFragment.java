@@ -202,12 +202,13 @@ public class SaveFragment extends Fragment {
 
     };
 
-    private View.OnClickListener mCancelListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mInjector.actions.finishPicking();
-        }
-    };
+    private View.OnClickListener mCancelListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mInjector.actions.cancelPicking();
+                }
+            };
 
     private void performSave() {
         if (mReplaceTarget != null) {

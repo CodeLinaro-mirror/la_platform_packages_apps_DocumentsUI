@@ -95,7 +95,12 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
         )
 
         val folderInfo =
-            listOf(FolderInfo(TestProvidersAccess.DOWNLOADS.authority, userIds[0].toString()))
+            listOf(
+                FolderInfo(
+                    TestProvidersAccess.DOWNLOADS.rootId,
+                    TestProvidersAccess.DOWNLOADS.authority
+                )
+            )
 
         val loader = SearchLoader(
             mActivity,
@@ -118,7 +123,12 @@ class SearchLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     fun testBlankQueryAndRecency() {
         val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
         val folderInfo =
-            listOf(FolderInfo(TestProvidersAccess.DOWNLOADS.authority, userIds[0].toString()))
+            listOf(
+                FolderInfo(
+                    TestProvidersAccess.DOWNLOADS.rootId,
+                    TestProvidersAccess.DOWNLOADS.authority
+                )
+            )
         val noLastModifiedQueryOptions =
             QueryOptions(10, null, null, true, arrayOf("*/*"), Bundle())
 

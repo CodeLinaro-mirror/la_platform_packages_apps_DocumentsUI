@@ -244,8 +244,7 @@
       <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> נבחרו</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> נבחרו</item>
     </plurals>
-    <!-- no translation found for clear_selection (5965968983023105329) -->
-    <skip />
+    <string name="clear_selection" msgid="5965968983023105329">"ביטול הבחירה"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים</item>
       <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים</item>
@@ -316,6 +315,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"כדי להגן על הפרטיות שלך, עליך לבחור תיקייה אחרת"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"יצירת תיקייה חדשה"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"חיפוש המכשיר הזה"</string>
+    <!-- no translation found for search_bar_clear (2072000748823434188) -->
+    <skip />
     <string name="search_location_this_folder" msgid="6458835123175563013">"התיקייה הזו"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"תיקיית הבסיס"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"כל מקום"</string>

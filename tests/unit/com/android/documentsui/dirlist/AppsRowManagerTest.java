@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
@@ -113,10 +114,12 @@ public class AppsRowManagerTest {
         mAppsRowManager = getAppsRowManager();
 
         Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        context.setTheme(getRes(R.style.DocumentsTheme));
+        context.getTheme().applyStyle(getRes(R.style.DocumentsDefaultTheme), false);
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         mState = new State();
         mActivity = mock(BaseActivity.class);
-        mAppsRow = layoutInflater.inflate(R.layout.apps_row, null);
+        mAppsRow = layoutInflater.inflate(getRes(R.layout.apps_row), null);
         mAppsGroup = mAppsRow.findViewById(R.id.apps_row);
 
         mState.configStore = mTestConfigStore;
