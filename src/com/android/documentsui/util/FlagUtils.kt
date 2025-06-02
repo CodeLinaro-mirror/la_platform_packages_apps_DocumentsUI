@@ -56,5 +56,10 @@ class FlagUtils {
         fun isUsePeekPreviewFlagEnabled(): Boolean {
             return Flags.usePeekPreviewRo() && isUseMaterial3FlagEnabled()
         }
+
+        @JvmStatic
+        fun isTrashFlowEnabled(): Boolean {
+            return Flags.enableTrashFlowRo()
+        }
     }
 }
