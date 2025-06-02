@@ -42,8 +42,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @RequiresFlagsEnabled(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO)
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
-    @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    @get:Rule val checkFlags = CheckAndForceMaterial3Flag()
 
     @get:Rule
     val testFilesRule: TestFilesRule =
@@ -98,23 +97,26 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
 
     @Test
     @Throws(Exception::class)
-    fun testRestorePeekActiveState() {
+    fun testPeekRestorationOnConfigurationChange() {
         bots.directory.selectDocument("image.png", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("image.png")
 
-        // Recreate the activity (happens on window resize, for example), and ensure that the
-        // preview overlay is still showing.
+        // Recreate the activity to simulate a configuration change (window resize, for example),
+        // and ensure that the preview is restored.
         mActivityScenario!!.recreate()
         validatePeekContents("image.png")
 
         peekBot.hide()
+        // Ensure that the Peek overlay isn't showing when the activity gets recreated after the
+        // overlay has been hidden.
         mActivityScenario!!.recreate()
         peekBot.assertPeekHidden()
 
         bots.directory.selectDocument("file0.log", 1)
         bots.main.clickActionItem("Get info")
         validatePeekContents("file0.log")
+        // Check Peek's contents when restoring a different preview.
         mActivityScenario!!.recreate()
         validatePeekContents("file0.log")
     }
