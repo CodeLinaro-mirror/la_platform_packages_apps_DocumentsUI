@@ -18,6 +18,7 @@ package com.android.documentsui
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.os.Build.VERSION_CODES
+import android.os.ext.SdkExtensions
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -199,23 +200,41 @@ class TrampolineActivityTest() {
 
             context.startActivity(intent)
 
-            val bySelector = when (testData.expectedApp) {
-                AppType.PHOTOPICKER -> By.pkg(PHOTOPICKER_PACKAGE_REGEX)
+            // Photopicker was introduced into the platform in Android T, however it was backported
+            // to R via SdkExtensions in MediaProvider. Ensure that the target device has the
+            // backport otherwise fallback to DocumentsUI.
+            val isPhotopickerAvailable = SdkExtensions.getExtensionVersion(VERSION_CODES.R) >= 2
+            val bySelector = when {
+                testData.expectedApp == AppType.PHOTOPICKER && isPhotopickerAvailable -> By.pkg(
+                    PHOTOPICKER_PACKAGE_REGEX
+                )
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
             }
 
             val builder = StringBuilder()
             builder.append("Intent with mimetype ${testData.mimeType}")
             if (testData.extraMimeTypes.isPresent) {
-                builder.append(
-                    " and EXTRA_MIME_TYPES of ${
+                val extraMimeTypes = when {
+                    testData.extraMimeTypes.get().isNotEmpty() -> {
                         testData.extraMimeTypes.get().joinToString(", ")
-                    }"
+                    }
+                    else -> "empty array"
+                }
+                builder.append(
+                    " and EXTRA_MIME_TYPES of ($extraMimeTypes)"
                 )
             }
-            builder.append(
-                " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
-            )
+            if (testData.expectedApp == AppType.PHOTOPICKER && !isPhotopickerAvailable) {
+                builder.append(
+                    " didn't cause ${AppType.DOCUMENTSUI} to appear " +
+                        "(${AppType.PHOTOPICKER} is expected, but is not available in this " +
+                        "environment) after ${UI_TIMEOUT}ms"
+                )
+            } else {
+                builder.append(
+                    " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
+                )
+            }
 
             assertNotNull(
                 builder.toString(),
