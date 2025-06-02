@@ -62,8 +62,7 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     lateinit var queryOptions: QueryOptions
 
     @Before
-    override fun setUp() {
-        super.setUp()
+    fun setUpTest() {
         queryOptions =
             QueryOptions(
                 TOTAL_FILE_COUNT,
