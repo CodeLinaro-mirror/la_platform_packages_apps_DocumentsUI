@@ -56,3 +56,11 @@ flag {
     bug: "411269618"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "enable_trash_flow_ro"
+    namespace: "documentsui"
+    description: "Enables the documents trash flow"
+    bug: "409265240"
+    is_fixed_read_only: true
+}

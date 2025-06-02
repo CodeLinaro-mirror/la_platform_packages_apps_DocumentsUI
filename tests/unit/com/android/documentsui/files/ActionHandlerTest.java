@@ -143,7 +143,7 @@ public class ActionHandlerTest {
         mDialogs = new TestDialogController();
         mClipper = new TestDocumentClipper();
         mDragAndDropManager = new TestDragAndDropManager();
-        mPeekViewManager = new TestPeekViewManager(mActivity);
+        mPeekViewManager = new TestPeekViewManager();
         mTestConfigStore = new TestConfigStore();
         mEnv.state.configStore = mTestConfigStore;
 
