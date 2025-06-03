@@ -34,6 +34,7 @@ java_defaults {
         "docsui-flags-aconfig-java-lib",
         "flag-junit",
         "guava",
+        "kotlinx_coroutines_test",
         "mockito-target",
     ],
 }
