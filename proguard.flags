@@ -234,3 +234,12 @@
 -keep class com.android.documentsui.JobPanelViewModel$Companion {
   public void setDisableAutoDismiss(boolean);
 }
+
+# This is used in the unit test RecyclerRootsAdapterTest
+-keep class androidx.recyclerview.widget.RecyclerView$AdapterDataObserver {
+  public void onItemRangeChanged(int, int, Object);
+}
+
+# Temporarily add this here because the class is not used in the source code yet, will remove it
+# after adopting the class in the follow-up CL.
+-keep class com.android.documentsui.sidebar.RecyclerRootsAdapter { *; }
