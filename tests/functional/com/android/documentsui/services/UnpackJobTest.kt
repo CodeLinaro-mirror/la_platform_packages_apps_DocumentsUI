@@ -436,6 +436,55 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         )
     }
 
+    /** Tests with an empty ZIP archive. */
+    @Test
+    fun emptyZip() {
+        val uri = createDocument("application/zip", "archives/zip/empty.zip")
+        assertTreeIs(mutableMapOf("/empty.zip" to 22))
+
+        val job = createJob(uri)
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_CREATED)
+            assertThat(hasFailures).isFalse()
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+        }
+
+        job.run()
+        mJobListener.assertFinished()
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_UNPACK)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_COMPLETED)
+            assertThat(hasFailures).isFalse()
+            assertThat(msg).isEqualTo("Extracting “empty.zip” to “TEST_ROOT_0”")
+            assertThat(currentBytes).isEqualTo(0)
+            assertThat(requiredBytes).isEqualTo(0)
+            assertThat(msRemaining).isLessThan(0)
+            assertThat(destination!!.peek().displayName).isEqualTo("empty")
+        }
+
+        with(job.getProgressNotification()) {
+            assertThat(category).isEqualTo(CATEGORY_PROGRESS)
+            with(extras) {
+                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Extracting files")
+                assertThat(getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isTrue()
+            }
+        }
+
+        assertTreeIs(
+            mutableMapOf(
+                "/empty.zip" to 22,
+                "/empty/" to -1,
+            )
+        )
+    }
+
     /** Tests the various system notifications with a partially encrypted ZIP archive. */
     @Test
     fun notifications() {
