@@ -1104,8 +1104,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // Need to plum down into handling the way we do with deleteDocuments.
             closeSelectionBar();
             return true;
-
-            // TODO: Implement extract (to the current directory).
+        } else if (isZipNgFlagEnabled() && id == getRes(R.id.dir_menu_extract_here)) {
+            transferDocuments(selection, mState.stack, FileOperationService.OPERATION_UNPACK);
+            closeSelectionBar();
+            return true;
         } else if (id == getRes(R.id.action_menu_extract_to)
                 || id == getRes(R.id.option_menu_extract_all)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_EXTRACT);

@@ -220,10 +220,10 @@ public abstract class FileOperation implements Parcelable {
             return builder.toString();
         }
 
-        // TODO: Implement
         @Override
-        Job createJob(Context service, Job.Listener listener, String id, Features features) {
-            throw new UnsupportedOperationException();
+        UnpackJob createJob(Context service, Job.Listener listener, String id, Features features) {
+            return new UnpackJob(
+                    service, listener, id, getDestination(), getSrc(), features);
         }
 
         private UnpackOperation(Parcel in) {

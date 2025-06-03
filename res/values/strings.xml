@@ -419,6 +419,10 @@
         =1 {Copying <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
         other {Copying # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
     }</string>
+    <string name="extract_in_progress" translatable="false">{count, plural,
+        =1 {Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+        other {Extracting # archives to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+    }</string>
     <string name="move_in_progress" translatable="false">{count, plural,
         =1 {Moving <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
         other {Moving # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
