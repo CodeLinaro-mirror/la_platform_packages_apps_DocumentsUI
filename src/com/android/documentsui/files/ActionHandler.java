@@ -393,7 +393,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         if (docs.size() == 1) {
             intent = new Intent(Intent.ACTION_SEND);
             DocumentInfo doc = docs.get(0);
-            intent.setType(doc.mimeType);
+            intent.setDataAndType(doc.getDocumentUri(), doc.mimeType);
             intent.putExtra(Intent.EXTRA_STREAM, doc.getDocumentUri());
 
         } else if (docs.size() > 1) {
