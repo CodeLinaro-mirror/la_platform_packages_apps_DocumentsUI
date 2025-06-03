@@ -19,11 +19,10 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
-import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 
 import android.content.Context;
 import android.content.Intent;
@@ -54,7 +53,6 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
@@ -70,8 +68,6 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
-import com.android.documentsui.peek.PeekViewManager;
-import com.android.documentsui.peek.PeekViewModel;
 import com.android.documentsui.prefs.LocalPreferences;
 import com.android.documentsui.prefs.PreferencesMonitor;
 import com.android.documentsui.queries.CommandInterceptor;
@@ -103,7 +99,6 @@ public abstract class BaseActivity
 
     protected SearchViewManager mSearchManager;
     protected AppsRowManager mAppsRowManager;
-    protected @Nullable PeekViewManager mPeekViewManager;
     protected UserIdManager mUserIdManager;
     protected UserManagerState mUserManagerState;
     protected State mState;
@@ -438,18 +433,6 @@ public abstract class BaseActivity
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
         updateRecentsSetting();
-
-        if (isUsePeekPreviewFlagEnabled()) {
-            ViewModelProvider viewModelProvider = new ViewModelProvider(this);
-            PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
-            mPeekViewManager = new PeekViewManager(
-                    viewModel,
-                    findViewById(getRes(R.id.peek_overlay)),
-                    getSupportFragmentManager());
-            viewModel.getOverlayActive().observe(
-                    this,
-                    mPeekViewManager);
-        }
     }
 
     private NavigationViewManager getNavigationViewManager(Breadcrumb breadcrumb,
