@@ -1026,8 +1026,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             int maxResults = (root == null || root.isRecents())
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
             QueryOptions options = new QueryOptions(
-                    maxResults, lastModifiedDelta, Duration.ofMillis(MAX_SEARCH_TIME_MS),
-                    mState.showHiddenFiles, mState.acceptMimes, mSearchMgr.buildQueryArgs());
+                    maxResults, maxResults, lastModifiedDelta,
+                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles,
+                    mState.acceptMimes, mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 Log.d(TAG, "Creating search loader V2");
