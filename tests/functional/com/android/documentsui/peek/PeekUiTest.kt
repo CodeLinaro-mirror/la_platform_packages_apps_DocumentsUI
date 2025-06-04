@@ -132,4 +132,16 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         // is showing.
         onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun testMetadataSheet() {
+        bots.directory.selectDocument("file0.log", 1)
+        bots.main.clickActionItem("Get info")
+
+        // Check the metadata sheet state before and after recreating the activity.
+        peekBot.validateMetadataSheetState(true)
+        mActivityScenario!!.recreate()
+        peekBot.validateMetadataSheetState(true)
+    }
 }
