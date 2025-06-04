@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.loaders
 
+import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -220,7 +221,10 @@ class SearchLoader(
             )
         }
 
-    private fun createQueryArgs(rejectBeforeTimestamp: Long): Bundle {
+    private fun createQueryArgs(
+        rootSupportsSearchResultLimiting: Boolean,
+        rejectBeforeTimestamp: Long
+    ): Bundle {
         val queryArgs = Bundle()
         sortModel.addQuerySortArgs(queryArgs)
         if (rejectBeforeTimestamp > 0L) {
@@ -231,6 +235,9 @@ class SearchLoader(
         }
         if (!TextUtils.isEmpty(query)) {
             queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, query)
+        }
+        if (rootSupportsSearchResultLimiting && options.maxResultsPerRoot > ALL_RESULTS) {
+            queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, options.maxResultsPerRoot)
         }
         queryArgs.putAll(options.otherQueryArgs)
         return queryArgs
@@ -251,7 +258,8 @@ class SearchLoader(
             }
             val rootSearchUri = createContentProviderQuery(folder)
             // TODO(b:385789236): Correctly pass sort order information.
-            val queryArgs = createQueryArgs(rejectBeforeTimestamp)
+            val queryArgs =
+                createQueryArgs(folder.supportsSearchResultLimiting, rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
             if (DEBUG) {
                 Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")

@@ -44,17 +44,21 @@ fun getFileCount(result: DirectoryResult?) = result?.cursor?.count ?: -1
  * returned files matches the expectations.
  */
 data class LoaderTestParams(
-    // A query, matched against file names. May be empty.
+    // Number of fake files to populate the mock (queried) DocumentsProvider with.
+    val fakeFileCount: Int,
+    // A query, matched against the fake file names. May be empty.
     val query: String,
     // The delta from now that indicates maximum age of matched files.
     val lastModifiedDelta: Duration?,
-    // The extra arguments typically supplied by search view manager.
+    // The maximum number of files to ask each Root for (QueryOptions.ALL_RESULTS means no limit).
+    val maxResultsPerRoot: Int,
+    // The extra arguments typically supplied by SearchViewManager.
     val otherArgs: Bundle,
     // The number of files that are expected, for the above parameters, to be found by a loader.
     val expectedCount: Int,
 ) {
     override fun toString(): String {
-        var base = "query '$query'"
+        var base = "query '$query', maxResultsPerRoot: '$maxResultsPerRoot'"
         if (lastModifiedDelta != null) {
             base = "$base, modified in the last $lastModifiedDelta"
         }

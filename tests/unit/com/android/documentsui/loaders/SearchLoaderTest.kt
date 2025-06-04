@@ -66,14 +66,56 @@ class SearchLoaderTest {
             @JvmStatic
             @Parameters(name = "with parameters {0}")
             fun data() = listOf(
-                LoaderTestParams("sample", null, Bundle(), TOTAL_FILE_COUNT),
-                LoaderTestParams("txt", null, Bundle(), 2),
-                LoaderTestParams("foozig", null, Bundle(), 0),
+                // Specifying ALL_RESULTS as the limit should return as many results as the root allows,
+                // for TestDocumentsProvider this is 23 (to match FileSystemProvider's legacy default),
+                // which our TOTAL_FILE_COUNT is well below (so expect all files to be returned).
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "sample",
+                    null,
+                    ALL_RESULTS,
+                    Bundle(),
+                    TOTAL_FILE_COUNT
+                ),
+                // Specifying a positive, non-zero search result limit should work.
+                LoaderTestParams(TOTAL_FILE_COUNT, "sample", null, 2, Bundle(), 2),
+                // Specifying a zero search results limit should return zero files.
+                LoaderTestParams(TOTAL_FILE_COUNT, "sample", null, 0, Bundle(), 0),
+                LoaderTestParams(TOTAL_FILE_COUNT, "txt", null, ALL_RESULTS, Bundle(), 2),
+                LoaderTestParams(TOTAL_FILE_COUNT, "foozig", null, ALL_RESULTS, Bundle(), 0),
                 // The first file is at NOW, the second at NOW - 1h; expect 2.
-                LoaderTestParams("sample", Duration.ofMinutes(60 + 1), Bundle(), 2),
-                LoaderTestParams("sample", null, createQueryArgs("image/*"), 2),
-                LoaderTestParams("sample", null, createQueryArgs("image/*", "video/*"), 6),
-                LoaderTestParams("sample", null, createQueryArgs("application/pdf"), 0),
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "sample",
+                    Duration.ofMinutes(60 + 1),
+                    ALL_RESULTS,
+                    Bundle(),
+                    2
+                ),
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "sample",
+                    null,
+                    ALL_RESULTS,
+                    createQueryArgs("image/*"),
+                    2
+                ),
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "sample",
+                    null,
+                    ALL_RESULTS,
+                    createQueryArgs("image/*", "video/*"),
+                    6
+                ),
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "sample",
+                    null,
+                    ALL_RESULTS,
+                    createQueryArgs("application/pdf"),
+                    0
+                ),
             )
         }
 
@@ -92,11 +134,12 @@ class SearchLoaderTest {
         @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
         fun testLoadInBackground() {
             val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
-            val docs = createDocuments(TOTAL_FILE_COUNT)
+            val docs = createDocuments(testParams.fakeFileCount)
             mockProvider!!.setNextChildDocumentsReturns(*docs)
             val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
             val queryOptions = QueryOptions(
-                TOTAL_FILE_COUNT + 1,
+                testParams.fakeFileCount + 1,
+                testParams.maxResultsPerRoot,
                 testParams.lastModifiedDelta,
                 null,
                 true,
@@ -107,7 +150,8 @@ class SearchLoaderTest {
             val folderInfo = listOf(
                 FolderInfo(
                     TestProvidersAccess.DOWNLOADS.rootId,
-                    TestProvidersAccess.DOWNLOADS.authority
+                    TestProvidersAccess.DOWNLOADS.authority,
+                    TestProvidersAccess.DOWNLOADS.supportsSearchResultLimit()
                 )
             )
 
@@ -185,11 +229,13 @@ class SearchLoaderTest {
             val folderInfo = listOf(
                 FolderInfo(
                     TestProvidersAccess.PICKLES.rootId,
-                    TestProvidersAccess.PICKLES.authority
+                    TestProvidersAccess.PICKLES.authority,
+                    TestProvidersAccess.DOWNLOADS.supportsSearchResultLimit()
                 ),
                 FolderInfo(
                     TestProvidersAccess.HOME.rootId,
-                    TestProvidersAccess.HOME.authority
+                    TestProvidersAccess.HOME.authority,
+                    TestProvidersAccess.DOWNLOADS.supportsSearchResultLimit()
                 ),
             )
             val loader = SearchLoader(
@@ -199,7 +245,15 @@ class SearchLoaderTest {
                 mContentObserver,
                 folderInfo,
                 "document-",
-                QueryOptions(maxCount, null, null, false, arrayOf("image/png"), Bundle()),
+                QueryOptions(
+                    maxCount,
+                    ALL_RESULTS,
+                    null,
+                    null,
+                    false,
+                    arrayOf("image/png"),
+                    Bundle()
+                ),
                 sortModel,
                 mExecutor,
             )

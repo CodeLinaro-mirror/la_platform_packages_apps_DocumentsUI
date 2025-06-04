@@ -22,7 +22,26 @@ package com.android.documentsui.base
  * interchangeably. Additionally the "folderId" is rootId for the RootInfo, but documentId for
  * DocumentInfo.
  */
-data class FolderInfo(val folderId: String, val authority: String) {
-    constructor(folder: DocumentInfo) : this(folder.documentId, folder.authority)
-    constructor(rootInfo: RootInfo) : this(rootInfo.rootId, rootInfo.authority)
+data class FolderInfo(
+    val folderId: String,
+    val authority: String,
+    // Specifies whether the Root this folder exists on supports search result limiting: this can
+    // help to find more search results (increasing the limit) or improve performance (decreasing
+    // the limit). We could just send the limit regardless of whether the root says it supports this
+    // but this allows SearchLoader to be judicious and not starting sending new parameters that
+    // it hasn't done in the past.
+    //
+    // TODO(b:419704219) remove this property when RootInfo/DocumentInfo have a shared interface.
+    val supportsSearchResultLimiting: Boolean
+) {
+    constructor(rootInfo: RootInfo) : this(
+        rootInfo.rootId,
+        rootInfo.authority,
+        rootInfo.supportsSearchResultLimit()
+    )
+    constructor(folder: DocumentInfo, folderRoot: RootInfo) : this(
+        folder.documentId,
+        folder.authority,
+        folderRoot.supportsSearchResultLimit()
+    )
 }
