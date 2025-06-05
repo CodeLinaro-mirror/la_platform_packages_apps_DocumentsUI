@@ -83,7 +83,7 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
         // events.
         setAccessibilityDelegateCompat(
                 new AccessibilityEventRouter(this,
-                        (View child) -> onAccessibilityClick(child), null));
+                        (View child) -> onAccessibilityClick(child), null, state.action));
 
         setLayoutManager(mLayoutManager);
         addOnItemTouchListener(new ClickListener(getContext(), this::onSingleTapUp));
