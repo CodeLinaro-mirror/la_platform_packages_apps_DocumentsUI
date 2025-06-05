@@ -272,5 +272,39 @@ class SearchLoaderTest {
                 "document-$index.png"
             })
         }
+
+        @Test
+        fun testExtraArgs() {
+            mEnv.mockProviders.apply {
+                get(TestProvidersAccess.PICKLES.authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png", "avi"))
+                )
+            }
+            val folderInfo = listOf(
+                FolderInfo(
+                    TestProvidersAccess.PICKLES.rootId,
+                    TestProvidersAccess.PICKLES.authority
+                ),
+            )
+            val loader = SearchLoader(
+                mActivity,
+                listOf(TestProvidersAccess.PICKLES.userId, TestProvidersAccess.HOME.userId),
+                TestFileTypeLookup(),
+                mContentObserver,
+                folderInfo,
+                "document",
+                QueryOptions(10, null, null, false, arrayOf("image/png"), Bundle()),
+                mEnv.state.sortModel,
+                mExecutor,
+            )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            val extras = result.cursor.extras
+            expect.that(extras).isNotNull()
+            expect.that(extras.containsKey(DocumentsContract.EXTRA_LOADING)).isTrue()
+            // TODO(417818526): Add ability to force mock providers to be extra slow, so that
+            // we can test for the case when they do not finish on time.
+            expect.that(extras.getBoolean(DocumentsContract.EXTRA_LOADING)).isFalse()
+        }
     }
 }
