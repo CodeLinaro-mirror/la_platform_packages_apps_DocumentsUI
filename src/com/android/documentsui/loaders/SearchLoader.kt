@@ -165,7 +165,6 @@ class SearchLoader(
         }
 
         // Step 4: Collect cursors from done tasks.
-        var allDone = true
         val cursorList = mutableListOf<Cursor>()
         for (task in mSearchTaskList) {
             if (DEBUG) {
@@ -176,9 +175,7 @@ class SearchLoader(
             }
             // TODO(b:388336095): Record a metric for each done and not done task.
             val cursor = task.cursor
-            if (!task.isDone) {
-                allDone = false
-            } else if (cursor != null) {
+            if (task.isDone && cursor != null) {
                 // TODO(b:388336095): Record a metric for null and not null cursor.
                 if (DEBUG) {
                     Log.d(TAG, "Task ${task.taskId} has ${cursor.count} results")
@@ -191,12 +188,7 @@ class SearchLoader(
         }
 
         // Step 5: Assign the cursor, after adding filtering and sorting, to the results.
-        val cursorExtras = Bundle().apply {
-            putBoolean(DocumentsContract.EXTRA_LOADING, !allDone)
-        }
-        val mergedCursor = toSingleCursor(cursorList).apply {
-            setExtras(cursorExtras)
-        }
+        val mergedCursor = toSingleCursor(cursorList)
         mergedCursor.registerContentObserver(observer)
         val filteringCursor = FilteringCursorWrapper(mergedCursor)
         filteringCursor.filterHiddenFiles(options.showHidden)
