@@ -30,19 +30,13 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.sidesheet.SideSheetBehavior
+import com.google.android.material.sidesheet.SideSheetCallback
 import java.io.FileNotFoundException
 
 /** Manages the Peek UI. */
 class PeekFragment : Fragment() {
     companion object {
         private const val TAG = "PeekFragment"
-    }
-
-    // Interface for custom view components that are rendered based on a DocumentInfo.
-    interface Display {
-        fun accept(doc: DocumentInfo)
-
-        fun clear()
     }
 
     // ViewModel holding the UI state of Peek, scoped to DocumentsUI's activity.
@@ -59,6 +53,20 @@ class PeekFragment : Fragment() {
     private var metadataContainer: FrameLayout? = null
     private var metadataView: MetadataView? = null
     private var metadataSheetBehavior: SideSheetBehavior<FrameLayout>? = null
+
+    // Listening for side sheet state updates is relevant when the metadata sheet is dragged.
+    private val metadataSheetStateListener =
+        object : SideSheetCallback() {
+            override fun onStateChanged(sideSheet: View, newState: Int) {
+                if (newState != SideSheetBehavior.STATE_EXPANDED &&
+                    newState != SideSheetBehavior.STATE_HIDDEN) {
+                        return
+                    }
+                viewModel.toggleMetadataSheet(newState == SideSheetBehavior.STATE_EXPANDED)
+            }
+
+            override fun onSlide(sideSheet: View, slideOffset: Float) {}
+        }
 
     @Suppress("ktlint:standard:comment-wrapping")
     override fun onCreateView(
@@ -86,9 +94,10 @@ class PeekFragment : Fragment() {
         previewFrame = view.findViewById(getRes(R.id.peek_preview_frame))
 
         metadataContainer = view.findViewById(R.id.peek_metadata_container)
-        metadataView = MetadataView(requireContext())
+        metadataView = MetadataView(requireContext(), viewModel)
         metadataContainer!!.addView(metadataView)
         metadataSheetBehavior = SideSheetBehavior.from(metadataContainer!!)
+        metadataSheetBehavior!!.addCallback(metadataSheetStateListener)
 
         val savedDocInfo = viewModel.docInfo.value
         if (savedDocInfo != null) {
@@ -138,6 +147,11 @@ class PeekFragment : Fragment() {
         return view
     }
 
+    override fun onDestroyView() {
+        metadataSheetBehavior!!.removeCallback(metadataSheetStateListener)
+        super.onDestroyView()
+    }
+
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         // Hide the metadata sheet to override the Material SideSheet state restoration behavior.
@@ -179,7 +193,6 @@ class PeekFragment : Fragment() {
                     ImagePreviewHandler(previewFrame!!, docInfo)
                 else -> DefaultPreviewHandler(previewFrame!!)
             }
-        metadataView!!.accept(docInfo)
     }
 
     private fun clearAndHide() {
