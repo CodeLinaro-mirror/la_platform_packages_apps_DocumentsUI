@@ -92,7 +92,7 @@ final class MoveJob extends CopyJob {
     }
 
     @Override
-    Notification getFailureNotification() {
+    public Notification getFailureNotification() {
         return getFailureNotification(
                 getRes(R.plurals.move_error_notification_title), getRes(R.drawable.ic_menu_copy));
     }

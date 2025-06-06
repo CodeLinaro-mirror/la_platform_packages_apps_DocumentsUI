@@ -215,6 +215,25 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertSelection(number);
     }
 
+    private BySelector getSelectionRegionSelector() {
+        BySelector selectionRegionSelector = By.res(mGridSelectionRegionId);
+        if (mDevice.findObject(selectionRegionSelector) == null) {
+            selectionRegionSelector = By.res(mListSelectionRegionId);
+        }
+        return selectionRegionSelector;
+    }
+
+    /** Select the first document that has a selectable region in the list or grid view. */
+    public void selectFirstDocument() throws UiObjectNotFoundException {
+        final BySelector list = By.res(mDirListId);
+        final BySelector selectionRegionSelector = getSelectionRegionSelector();
+
+        UiObject2 firstAvailableSelectionHotspot =
+                mDevice.findObject(list).findObject(selectionRegionSelector);
+        firstAvailableSelectionHotspot.click();
+        assertSelection(1);
+    }
+
     public UiObject2 findSelectionHotspot(String label) throws UiObjectNotFoundException {
         final BySelector list = By.res(mDirListId);
 
@@ -223,10 +242,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         final UiSelector docList = findDocumentsListSelector();
         new UiScrollable(docList).scrollIntoView(new UiSelector().text(label));
 
-        BySelector selectionRegionSelector = By.res(mGridSelectionRegionId);
-        if (mDevice.findObject(selectionRegionSelector) == null) {
-            selectionRegionSelector = By.res(mListSelectionRegionId);
-        }
+        final BySelector selectionRegionSelector = getSelectionRegionSelector();
         UiObject2 parent = mDevice.findObject(list).findObject(selector);
         UiObject2 selectionHotspot = null;
         for (int i = 1; i <= MAX_LAYOUT_LEVEL; i++) {

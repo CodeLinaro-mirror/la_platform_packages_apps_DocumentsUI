@@ -17,6 +17,7 @@ package com.android.documentsui
 
 import android.content.Intent
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.view.MenuItem
 import android.widget.ActionMenuView
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -52,24 +53,10 @@ class JobPanelControllerTest {
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    // The default progress bar only has an indeterminate state, so we need to style it to allow
-    // determinate progress.
-    private val progressBar = ProgressBar(
-        context,
-        null,
-        android.R.attr.progressBarStyleHorizontal
-    ).apply {
-        id = getRes(R.id.job_progress_toolbar_indicator)
-    }
-    private val badge = ImageView(context).apply {
-        id = getRes(R.id.job_progress_toolbar_badge)
-    }
-    private val menuItem = ActionMenuView(context).menu.add("job_panel").apply {
-        actionView = FrameLayout(context).apply {
-            addView(progressBar)
-            addView(badge)
-        }
-    }
+    private lateinit var progressBar: ProgressBar
+    private lateinit var badge: ImageView
+    private lateinit var menuItem: MenuItem
+
     private lateinit var controller: JobPanelController
     private var lastId = 0L
 
@@ -84,6 +71,25 @@ class JobPanelControllerTest {
 
     @Before
     fun setUp() {
+        // The default progress bar only has an indeterminate state, so we need to style it to allow
+        // determinate progress.
+        progressBar = ProgressBar(
+            context,
+            null,
+            android.R.attr.progressBarStyleHorizontal
+        ).apply {
+            id = getRes(R.id.job_progress_toolbar_indicator)
+        }
+        badge = ImageView(context).apply {
+            id = getRes(R.id.job_progress_toolbar_badge)
+        }
+        menuItem = ActionMenuView(context).menu.add("job_panel").apply {
+            actionView = FrameLayout(context).apply {
+                addView(progressBar)
+                addView(badge)
+            }
+        }
+
         controller = JobPanelController(context, TestActionHandler(), JobPanelViewModel())
         controller.setMenuItem(menuItem)
     }

@@ -185,9 +185,10 @@ abstract public class Job implements Runnable {
     abstract void finish();
 
     abstract void start();
-    abstract Notification getSetupNotification();
-    abstract Notification getProgressNotification();
-    abstract Notification getFailureNotification();
+
+    public abstract Notification getSetupNotification();
+    public abstract Notification getProgressNotification();
+    public abstract Notification getFailureNotification();
 
     /** Must be implemented if hasWarnings() can return true. */
     Notification getWarningNotification() {
@@ -402,7 +403,7 @@ abstract public class Job implements Runnable {
     /**
      * Listener interface employed by the service that owns us as well as tests.
      */
-    interface Listener {
+    public interface Listener {
         void onStart(Job job);
         void onFinished(Job job);
     }

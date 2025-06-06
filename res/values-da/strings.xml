@@ -293,8 +293,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"For at beskytte dit privatliv skal du vælge en anden mappe"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Opret ny mappe"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Søg på denne enhed"</string>
-    <!-- no translation found for search_bar_clear (2072000748823434188) -->
-    <skip />
+    <string name="search_bar_clear" msgid="2072000748823434188">"Ryd tekst"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"Denne mappe"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Rodmappe"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Overalt"</string>
