@@ -121,7 +121,7 @@ abstract public class Job implements Runnable {
     private final Map<String, ContentProviderClient> mClients = new HashMap<>();
     private final Features mFeatures;
 
-    private volatile @State int mState = STATE_CREATED;
+    private @State int mState = STATE_CREATED;
 
     /**
      * A simple progressable job, much like an AsyncTask, but with support
@@ -155,19 +155,30 @@ abstract public class Job implements Runnable {
 
     @Override
     public final void run() {
-        if (isCanceled()) {
-            // Canceled before running
-            return;
+        synchronized (this) {
+            if (mState == STATE_CANCELED) {
+                // Canceled before running
+                return;
+            }
+
+            mState = STATE_STARTED;
         }
 
-        mState = STATE_STARTED;
         listener.onStart(this);
 
         try {
-            boolean result = setUp();
-            if (result && !isCanceled()) {
-                mState = STATE_SET_UP;
-                start();
+            boolean ok = setUp();
+
+            if (ok) {
+                synchronized (this) {
+                    if (mState == STATE_CANCELED) {
+                        ok = false;
+                    } else {
+                        mState = STATE_SET_UP;
+                    }
+                }
+
+                if (ok) start();
             }
         } catch (RuntimeException e) {
             // No exceptions should be thrown here, as all calls to the provider must be
@@ -175,7 +186,10 @@ abstract public class Job implements Runnable {
             Log.e(TAG, "Operation failed due to an unhandled runtime exception.", e);
             Metrics.logFileOperationErrors(operationType, failedDocs, failedUris);
         } finally {
-            mState = (mState == STATE_STARTED || mState == STATE_SET_UP) ? STATE_COMPLETED : mState;
+            synchronized (this) {
+                if (mState == STATE_STARTED || mState == STATE_SET_UP) mState = STATE_COMPLETED;
+            }
+
             finish();
             listener.onFinished(this);
 
@@ -245,21 +259,24 @@ abstract public class Job implements Runnable {
         }
     }
 
-    final @State int getState() {
+    final synchronized @State int getState() {
         return mState;
     }
 
+    /** Requests the cancellation of this job. Can be called from any thread. */
     final void cancel() {
-        mState = STATE_CANCELED;
+        synchronized (this) {
+            mState = STATE_CANCELED;
+        }
         mSignal.cancel();
         Metrics.logFileOperationCancelled(operationType);
     }
 
-    final boolean isCanceled() {
+    final synchronized boolean isCanceled() {
         return mState == STATE_CANCELED;
     }
 
-    final boolean isFinished() {
+    final synchronized boolean isFinished() {
         return mState == STATE_CANCELED || mState == STATE_COMPLETED;
     }
 
