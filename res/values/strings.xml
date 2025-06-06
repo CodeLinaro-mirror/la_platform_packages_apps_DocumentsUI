@@ -694,4 +694,10 @@
 
     <!-- Accessibility label for an image preview in Peek. -->
     <string name="a11y_peek_image_preview">Image preview of <xliff:g id="filename" example="image.png">%s</xliff:g></string>
+
+    <!-- Accessibility label for the toolbar's "show info" toggle button in Peek. -->
+    <string name="a11y_peek_hide_info_button">Hide info panel</string>
+
+    <!-- Accessibility label for the toolbar's "hide info" toggle button in Peek. -->
+    <string name="a11y_peek_show_info_button">Show info panel</string>
 </resources>
