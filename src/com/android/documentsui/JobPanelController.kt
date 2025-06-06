@@ -415,6 +415,7 @@ class JobPanelController(
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
+        activityContext.unregisterReceiver(this)
         // We need to save the popup's UI state and manually dismiss the popup, as it somehow
         // stays alive even if the activity is destroyed due to a configuration change.
         viewModel.listState = popup?.contentView
