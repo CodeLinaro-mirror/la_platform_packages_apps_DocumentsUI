@@ -342,9 +342,12 @@ interface Config {
 class Material3ConfigImpl() : Config {
   override var forceMaterial3: Boolean? = null
     set(value) {
-      if (field != null) {
-        Log.e(TAG, "forceMaterial3 is already set to $forceMaterial3")
-        return
+      if (field != null && field != value) {
+        Log.w(
+            TAG,
+            "forceMaterial3 already set ($field) but overriding to $value. " +
+                    "This could result in unstable behaviour."
+        )
       }
 
       field = value
