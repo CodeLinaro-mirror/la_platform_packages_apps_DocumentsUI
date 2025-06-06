@@ -17,7 +17,6 @@ package com.android.documentsui.services
 
 import android.app.Notification
 import android.content.Context
-import android.icu.text.MessageFormat
 import android.net.Uri
 import android.os.FileUtils.copy
 import android.os.OperationCanceledException
@@ -45,7 +44,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.text.NumberFormat
 import java.util.LinkedList
-import java.util.Locale
 import org.apache.commons.compress.archivers.ArchiveEntry
 
 /**
@@ -103,7 +101,7 @@ class UnpackJob(
         val absoluteTarget: Double
         val remainingTime: Long
 
-        synchronized(this) {
+        synchronized(tracker) {
             absoluteProgress = tracker.absoluteProgress
             absoluteTarget = tracker.absoluteTarget
             remainingTime = tracker.getRemainingTimeEstimate(absoluteProgress, absoluteTarget)
@@ -147,24 +145,22 @@ class UnpackJob(
     }
 
     /** This method is called on a different thread than the thread running the extraction. */
-    @Synchronized
     public override fun getJobProgress(): JobProgress {
         val args: MutableMap<String, Any> = mutableMapOf(
-            "directory" to BidiFormatter.getInstance().unicodeWrap(dstInfo.displayName),
-            "count" to mResolvedDocs.size,
+            "directory" to BidiFormatter.getInstance().unicodeWrap(dstInfo.displayName)
         )
 
-        if (mResolvedDocs.size == 1) {
-            args.put(
-                "filename",
-                BidiFormatter.getInstance().unicodeWrap(archiveInfo.displayName)
-            )
-        }
+        val message = getProgressMessage(R.string.extract_in_progress, args)
 
-        val message = MessageFormat(
-            service.getString(getRes(R.string.extract_in_progress)),
-            Locale.getDefault()
-        ).format(args)
+        val bytesCopied: Long
+        val bytesRequired: Long
+        val timeEstimate: Long
+
+        synchronized(tracker) {
+            bytesCopied = tracker.bytesCopied
+            bytesRequired = tracker.bytesRequired
+            timeEstimate = tracker.remainingTimeEstimate
+        }
 
         return JobProgress(
             id,
@@ -173,9 +169,9 @@ class UnpackJob(
             message,
             hasFailures(),
             stack,
-            tracker.bytesCopied,
-            tracker.bytesRequired,
-            tracker.remainingTimeEstimate
+            bytesCopied,
+            bytesRequired,
+            timeEstimate
         )
     }
 
@@ -183,14 +179,11 @@ class UnpackJob(
 
     private val archiveInfo: DocumentInfo
         get() {
-            assert(mResolvedDocs.size == 1)
             return mResolvedDocs.first()
         }
 
     override fun setUp(): Boolean {
-        synchronized(this) {
-            if (!super.setUp()) return false
-        }
+        if (!super.setUp()) return false
 
         if (DEBUG) Log.d(TAG, "Unpacking ${archiveInfo.derivedUri}")
 
@@ -258,7 +251,7 @@ class UnpackJob(
             if (!entry.isDirectory()) {
                 // The entry represents a file. Get the path of its containing directory.
                 path = path.getParentFile()!!
-                synchronized(this) {
+                synchronized(tracker) {
                     tracker.bytesRequired += entry.getSize()
                     tracker.filesRequired++
                 }
@@ -266,7 +259,7 @@ class UnpackJob(
 
             while (dirs.add(path.toString())) {
                 path = path.getParentFile()!!
-                synchronized(this) {
+                synchronized(tracker) {
                     tracker.dirsRequired++
                 }
             }
@@ -274,7 +267,7 @@ class UnpackJob(
     }
 
     override fun start() {
-        synchronized(this) {
+        synchronized(tracker) {
             tracker.addPoint()
         }
 
@@ -319,14 +312,14 @@ class UnpackJob(
             throw e
         } catch (t: Throwable) {
             Log.e(TAG, "Cannot extract ${redact(path)} from ${redact(archiveInfo.derivedUri)}", t)
-            synchronized(this) {
+            synchronized(tracker) {
                 tracker.filesRequired--
             }
             onPathFailed(path.toString())
         }
 
         // Adjust progress expectations after extracting a file.
-        synchronized(this) {
+        synchronized(tracker) {
             tracker.bytesRequired -= entry.getSize() - tracker.bytesCopiedInCurrentFile
             tracker.bytesCopiedInPreviousFiles += tracker.bytesCopiedInCurrentFile
             tracker.bytesCopiedInCurrentFile = 0
@@ -351,10 +344,11 @@ class UnpackJob(
         }
     }
 
-    @Synchronized
     private fun trackBytesInCurrentFile(bytes: Long) {
-        tracker.bytesCopiedInCurrentFile = bytes
-        tracker.addPoint()
+        synchronized(tracker) {
+            tracker.bytesCopiedInCurrentFile = bytes
+            tracker.addPoint()
+        }
     }
 
     private fun copyFile(inputStream: InputStream, outputFile: Uri) {
@@ -378,7 +372,7 @@ class UnpackJob(
             releaseClient(outputFile)
         }
 
-        synchronized(this) {
+        synchronized(tracker) {
             tracker.filesCopied++
             tracker.addPoint()
         }
@@ -420,7 +414,7 @@ class UnpackJob(
         if (VERBOSE) Log.v(TAG, "Created dir ${redact(newDirUri)}")
         dirPathToUri.put(path.toString(), newDirUri)
 
-        synchronized(this) {
+        synchronized(tracker) {
             tracker.dirsCreated++
             tracker.addPoint()
         }
