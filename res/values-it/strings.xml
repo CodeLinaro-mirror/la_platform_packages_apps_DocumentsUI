@@ -245,6 +245,11 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> selezionato</item>
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"Cancella selezione"</string>
+    <string name="document_click_action" msgid="8073338575301415356">"aprire"</string>
+    <string name="selected_document_click_action" msgid="792826130200234885">"deselezionare"</string>
+    <string name="document_long_click_action" msgid="3789836661597702666">"selezionare"</string>
+    <string name="selected_document_long_click_action" msgid="666372407184527109">"trascinare"</string>
+    <string name="document_long_click_action_picker" msgid="943888101827856784">"selezionare più elementi"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> di elementi</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementi</item>
@@ -337,4 +342,6 @@
     <string name="file_name_hint" msgid="7843637320487415838">"Nome file"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Nascondi anteprima del file"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Nessuna anteprima disponibile"</string>
+    <!-- no translation found for a11y_peek_image_preview (3917148390186060263) -->
+    <skip />
 </resources>
