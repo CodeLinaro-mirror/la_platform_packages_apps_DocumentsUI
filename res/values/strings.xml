@@ -419,6 +419,10 @@
         =1 {Copying <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
         other {Copying # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
     }</string>
+    <string name="extract_in_progress" translatable="false">{count, plural,
+        =1 {Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+        other {Extracting # archives to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+    }</string>
     <string name="move_in_progress" translatable="false">{count, plural,
         =1 {Moving <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
         other {Moving # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
@@ -472,6 +476,22 @@
     </plurals>
     <!-- Text used as the content description of the cancel button when files are selected. -->
     <string name="clear_selection">Clear selection</string>
+    <!-- The voice announcement used as the description of the click action in the file
+         list/grid for normal document in browsing mode. For example: Double tap to open. -->
+    <string name="document_click_action">open</string>
+    <!-- The voice announcement used as the description of the click action in the file list/grid.
+         For example: Double tap to deselect. -->
+    <string name="selected_document_click_action">deselect</string>
+    <!-- The voice announcement used as the description of the long click action in the file
+         list/grid for normal document. For example: Double tap and hold to select. -->
+    <string name="document_long_click_action">select</string>
+    <!-- The voice announcement used as the description of the long click action in the file
+         list/grid for selected document. For example: Double tap and hold to drag. -->
+    <string name="selected_document_long_click_action">drag</string>
+    <!-- The voice announcement used as the description of the long click action in the file
+         list/grid for normal document in picking mode.
+         For example: Double tap and hold to select multiple. -->
+    <string name="document_long_click_action_picker">select multiple</string>
 
     <!-- Label text showing user how many items are being dragged. Can be one or more elements. -->
     <plurals name="elements_dragged">
@@ -674,4 +694,7 @@
 
     <!-- Text used in Peek to indicate that no preview is available. -->
     <string name="peek_no_preview">No preview available</string>
+
+    <!-- Accessibility label for an image preview in Peek. -->
+    <string name="a11y_peek_image_preview">Image preview of <xliff:g id="filename" example="image.png">%s</xliff:g></string>
 </resources>

@@ -22,6 +22,7 @@ import static com.android.documentsui.DocumentsApplication.acquireUnstableProvid
 import static com.android.documentsui.services.FileOperationService.EXTRA_CANCEL;
 import static com.android.documentsui.services.FileOperationService.EXTRA_DIALOG_TYPE;
 import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_DOCS;
+import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_PATHS;
 import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_URIS;
 import static com.android.documentsui.services.FileOperationService.EXTRA_JOB_ID;
 import static com.android.documentsui.services.FileOperationService.EXTRA_OPERATION_TYPE;
@@ -46,6 +47,7 @@ import android.util.Log;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.PluralsRes;
 
 import com.android.documentsui.Metrics;
@@ -103,9 +105,14 @@ abstract public class Job implements Runnable {
 
     final UrisSupplier mResourceUris;
 
-    int failureCount = 0;
+    /**
+     * Number of errors. It is modified by the main thread running setUp(), start() and finish(),
+     * and it is read by the progress reporting thread running getJobProgress().
+     */
+    volatile int failureCount = 0;
     final ArrayList<DocumentInfo> failedDocs = new ArrayList<>();
     final ArrayList<Uri> failedUris = new ArrayList<>();
+    final ArrayList<String> failedPaths = new ArrayList<>();
 
     final Notification.Builder mProgressBuilder;
 
@@ -114,7 +121,7 @@ abstract public class Job implements Runnable {
     private final Map<String, ContentProviderClient> mClients = new HashMap<>();
     private final Features mFeatures;
 
-    private volatile @State int mState = STATE_CREATED;
+    private @State int mState = STATE_CREATED;
 
     /**
      * A simple progressable job, much like an AsyncTask, but with support
@@ -148,19 +155,30 @@ abstract public class Job implements Runnable {
 
     @Override
     public final void run() {
-        if (isCanceled()) {
-            // Canceled before running
-            return;
+        synchronized (this) {
+            if (mState == STATE_CANCELED) {
+                // Canceled before running
+                return;
+            }
+
+            mState = STATE_STARTED;
         }
 
-        mState = STATE_STARTED;
         listener.onStart(this);
 
         try {
-            boolean result = setUp();
-            if (result && !isCanceled()) {
-                mState = STATE_SET_UP;
-                start();
+            boolean ok = setUp();
+
+            if (ok) {
+                synchronized (this) {
+                    if (mState == STATE_CANCELED) {
+                        ok = false;
+                    } else {
+                        mState = STATE_SET_UP;
+                    }
+                }
+
+                if (ok) start();
             }
         } catch (RuntimeException e) {
             // No exceptions should be thrown here, as all calls to the provider must be
@@ -168,7 +186,10 @@ abstract public class Job implements Runnable {
             Log.e(TAG, "Operation failed due to an unhandled runtime exception.", e);
             Metrics.logFileOperationErrors(operationType, failedDocs, failedUris);
         } finally {
-            mState = (mState == STATE_STARTED || mState == STATE_SET_UP) ? STATE_COMPLETED : mState;
+            synchronized (this) {
+                if (mState == STATE_STARTED || mState == STATE_SET_UP) mState = STATE_COMPLETED;
+            }
+
             finish();
             listener.onFinished(this);
 
@@ -238,21 +259,24 @@ abstract public class Job implements Runnable {
         }
     }
 
-    final @State int getState() {
+    final synchronized @State int getState() {
         return mState;
     }
 
+    /** Requests the cancellation of this job. Can be called from any thread. */
     final void cancel() {
-        mState = STATE_CANCELED;
+        synchronized (this) {
+            mState = STATE_CANCELED;
+        }
         mSignal.cancel();
         Metrics.logFileOperationCancelled(operationType);
     }
 
-    final boolean isCanceled() {
+    final synchronized boolean isCanceled() {
         return mState == STATE_CANCELED;
     }
 
-    final boolean isFinished() {
+    final synchronized boolean isFinished() {
         return mState == STATE_CANCELED || mState == STATE_COMPLETED;
     }
 
@@ -268,6 +292,11 @@ abstract public class Job implements Runnable {
     void onResolveFailed(Uri uri) {
         failureCount++;
         failedUris.add(uri);
+    }
+
+    void onPathFailed(@NonNull String path) {
+        failureCount++;
+        failedPaths.add(path);
     }
 
     final boolean hasFailures() {
@@ -309,8 +338,18 @@ abstract public class Job implements Runnable {
         final Intent navigateIntent = buildNavigateIntent(INTENT_TAG_FAILURE);
         navigateIntent.putExtra(EXTRA_DIALOG_TYPE, OperationDialogFragment.DIALOG_TYPE_FAILURE);
         navigateIntent.putExtra(EXTRA_OPERATION_TYPE, operationType);
-        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_DOCS, failedDocs);
-        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_URIS, failedUris);
+
+        // Limit the size of the lists getting passed with the failure notification.
+        final int maxListSize = 100;
+        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_DOCS,
+                failedDocs.size() <= maxListSize ? failedDocs
+                        : new ArrayList<>(failedDocs.subList(0, maxListSize)));
+        navigateIntent.putParcelableArrayListExtra(EXTRA_FAILED_URIS,
+                failedUris.size() <= maxListSize ? failedUris
+                        : new ArrayList<>(failedUris.subList(0, maxListSize)));
+        navigateIntent.putStringArrayListExtra(EXTRA_FAILED_PATHS,
+                failedPaths.size() <= maxListSize ? failedPaths
+                        : new ArrayList<>(failedPaths.subList(0, maxListSize)));
 
         final Notification.Builder errorBuilder =
                 createNotificationBuilder()

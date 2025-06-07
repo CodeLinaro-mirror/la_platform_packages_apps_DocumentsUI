@@ -245,6 +245,16 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments sélectionnés</item>
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"Annuler la sélection"</string>
+    <!-- no translation found for document_click_action (8073338575301415356) -->
+    <skip />
+    <!-- no translation found for selected_document_click_action (792826130200234885) -->
+    <skip />
+    <!-- no translation found for document_long_click_action (3789836661597702666) -->
+    <skip />
+    <!-- no translation found for selected_document_long_click_action (666372407184527109) -->
+    <skip />
+    <!-- no translation found for document_long_click_action_picker (943888101827856784) -->
+    <skip />
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> élément</item>
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments</item>
@@ -337,4 +347,6 @@
     <string name="file_name_hint" msgid="7843637320487415838">"Nom du fichier"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Masquer l\'aperçu du fichier"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Aucun aperçu disponible"</string>
+    <!-- no translation found for a11y_peek_image_preview (3917148390186060263) -->
+    <skip />
 </resources>

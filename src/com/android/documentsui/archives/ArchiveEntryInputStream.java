@@ -16,12 +16,16 @@
 
 package com.android.documentsui.archives;
 
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -29,17 +33,34 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 /**
  * To simulate the input stream by using ZipFile, SevenZFile, or ArchiveInputStream.
  */
 abstract class ArchiveEntryInputStream extends InputStream {
-    private final long mSize;
-    private final ReadSource mReadSource;
+    private final @NonNull ReadSource mReadSource;
+    /** Expected number of bytes if the data being extracted. */
+    private final long mExpectedSize;
+    /** Number of bytes having been extracted so far. */
+    private long mAccumulatedSize = 0;
+    /** Expected CRC when all the data has been extracted, or -1 if no CRC needs to be checked. */
+    private long mExpectedCrc = -1;
+    /** CRC accumulator, or null if no CRC needs to be checked. */
+    private @Nullable Checksum mCrcComputer = null;
 
-    private ArchiveEntryInputStream(ReadSource readSource, @NonNull ArchiveEntry archiveEntry) {
+    private ArchiveEntryInputStream(@NonNull ReadSource readSource, @NonNull ArchiveEntry entry) {
         mReadSource = readSource;
-        mSize = archiveEntry.getSize();
+        mExpectedSize = entry.getSize();
+        if (isZipNgFlagEnabled()) {
+            if (entry instanceof ZipArchiveEntry) {
+                mExpectedCrc = ((ZipArchiveEntry) entry).getCrc();
+            } else if (entry instanceof SevenZArchiveEntry) {
+                mExpectedCrc = ((SevenZArchiveEntry) entry).getCrcValue();
+            }
+            if (mExpectedCrc >= 0) mCrcComputer = new CRC32();
+        }
     }
 
     @Override
@@ -49,16 +70,51 @@ abstract class ArchiveEntryInputStream extends InputStream {
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        if (mReadSource != null) {
-            return mReadSource.read(b, off, len);
+        if (mReadSource == null) return -1;
+
+        final int n = mReadSource.read(b, off, len);
+
+        if (n >= 0) {
+            if (isZipNgFlagEnabled()) {
+                mAccumulatedSize += n;
+                if (mAccumulatedSize > mExpectedSize) {
+                    throw new IOException(
+                            "Extracted file is too long: Already extracted " + mAccumulatedSize
+                                    + " bytes when only " + mExpectedSize + " bytes are expected");
+                }
+
+                if (mCrcComputer != null) mCrcComputer.update(b, off, n);
+            }
+
+            return n;
         }
 
-        return -1; /* end of input stream */
+        // End of stream.
+        if (isZipNgFlagEnabled()) {
+            // Check file size.
+            if (mAccumulatedSize != mExpectedSize) {
+                throw new IOException(
+                        "Extracted file is too short: Only extracted " + mAccumulatedSize
+                                + " bytes when " + mExpectedSize + " bytes are expected");
+            }
+
+            // Check CRC.
+            if (mCrcComputer != null) {
+                final long crc = mCrcComputer.getValue();
+                mCrcComputer = null;
+                if (crc != mExpectedCrc) {
+                    throw new IOException(
+                            String.format("Bad CRC: got %08X, want %08X", crc, mExpectedCrc));
+                }
+            }
+        }
+
+        return -1;
     }
 
     @Override
     public int available() throws IOException {
-        return mReadSource == null ? 0 : StrictMath.toIntExact(mSize);
+        return mReadSource == null ? 0 : StrictMath.toIntExact(mExpectedSize);
     }
 
     /**

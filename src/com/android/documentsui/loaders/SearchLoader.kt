@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.loaders
 
+import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -164,6 +165,7 @@ class SearchLoader(
         }
 
         // Step 4: Collect cursors from done tasks.
+        var allDone = true
         val cursorList = mutableListOf<Cursor>()
         for (task in mSearchTaskList) {
             if (DEBUG) {
@@ -174,7 +176,9 @@ class SearchLoader(
             }
             // TODO(b:388336095): Record a metric for each done and not done task.
             val cursor = task.cursor
-            if (task.isDone && cursor != null) {
+            if (!task.isDone) {
+                allDone = false
+            } else if (cursor != null) {
                 // TODO(b:388336095): Record a metric for null and not null cursor.
                 if (DEBUG) {
                     Log.d(TAG, "Task ${task.taskId} has ${cursor.count} results")
@@ -187,7 +191,12 @@ class SearchLoader(
         }
 
         // Step 5: Assign the cursor, after adding filtering and sorting, to the results.
-        val mergedCursor = toSingleCursor(cursorList)
+        val cursorExtras = Bundle().apply {
+            putBoolean(DocumentsContract.EXTRA_LOADING, !allDone)
+        }
+        val mergedCursor = toSingleCursor(cursorList).apply {
+            setExtras(cursorExtras)
+        }
         mergedCursor.registerContentObserver(observer)
         val filteringCursor = FilteringCursorWrapper(mergedCursor)
         filteringCursor.filterHiddenFiles(options.showHidden)
@@ -220,7 +229,10 @@ class SearchLoader(
             )
         }
 
-    private fun createQueryArgs(rejectBeforeTimestamp: Long): Bundle {
+    private fun createQueryArgs(
+        rootSupportsSearchResultLimiting: Boolean,
+        rejectBeforeTimestamp: Long
+    ): Bundle {
         val queryArgs = Bundle()
         sortModel.addQuerySortArgs(queryArgs)
         if (rejectBeforeTimestamp > 0L) {
@@ -231,6 +243,9 @@ class SearchLoader(
         }
         if (!TextUtils.isEmpty(query)) {
             queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, query)
+        }
+        if (rootSupportsSearchResultLimiting && options.maxResultsPerRoot > ALL_RESULTS) {
+            queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, options.maxResultsPerRoot)
         }
         queryArgs.putAll(options.otherQueryArgs)
         return queryArgs
@@ -251,7 +266,8 @@ class SearchLoader(
             }
             val rootSearchUri = createContentProviderQuery(folder)
             // TODO(b:385789236): Correctly pass sort order information.
-            val queryArgs = createQueryArgs(rejectBeforeTimestamp)
+            val queryArgs =
+                createQueryArgs(folder.supportsSearchResultLimiting, rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
             if (DEBUG) {
                 Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")

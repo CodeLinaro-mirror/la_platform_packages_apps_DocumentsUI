@@ -16,26 +16,19 @@
 package com.android.documentsui.peek
 
 import android.content.Context
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
-import com.android.documentsui.util.Material3Config.Companion.getRes
 
-/** Custom view component that renders the preview in Peek. */
-class RenderView(context: Context, attrs: AttributeSet?) :
-    FrameLayout(context, attrs), PeekFragment.Display {
-    override fun accept(doc: DocumentInfo) {
-        handleUnsupportedFileType()
+/** Custom view component used to display the metadata in Peek. */
+class MetadataView(context: Context) : FrameLayout(context), PeekFragment.Display {
+    init {
+        @Suppress("ktlint:standard:comment-wrapping")
+        LayoutInflater.from(context).inflate(R.layout.peek_metadata_layout, /* root= */ this)
     }
 
-    override fun clear() {
-        removeAllViews()
-    }
+    override fun accept(doc: DocumentInfo) {}
 
-    @Suppress("ktlint:standard:comment-wrapping")
-    private fun handleUnsupportedFileType() {
-        LayoutInflater.from(context).inflate(getRes(R.layout.peek_no_preview), /* root= */ this)
-    }
+    override fun clear() {}
 }

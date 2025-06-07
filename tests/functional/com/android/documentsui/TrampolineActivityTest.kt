@@ -29,6 +29,8 @@ import androidx.test.uiautomator.Until
 import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.util.getPhotopickerGetContentComponentNameForType
+import com.google.common.truth.TruthJUnit.assume
 import java.util.Optional
 import java.util.regex.Pattern
 import kotlin.time.Duration.Companion.seconds
@@ -199,23 +201,42 @@ class TrampolineActivityTest() {
 
             context.startActivity(intent)
 
-            val bySelector = when (testData.expectedApp) {
-                AppType.PHOTOPICKER -> By.pkg(PHOTOPICKER_PACKAGE_REGEX)
+            val isPhotopickerGetContentComponentAvailable =
+                getPhotopickerGetContentComponentNameForType(
+                    context.packageManager, testData.mimeType) != null
+            val bySelector = when {
+                testData.expectedApp == AppType.PHOTOPICKER &&
+                        isPhotopickerGetContentComponentAvailable -> By.pkg(
+                    PHOTOPICKER_PACKAGE_REGEX
+                )
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
             }
 
             val builder = StringBuilder()
             builder.append("Intent with mimetype ${testData.mimeType}")
             if (testData.extraMimeTypes.isPresent) {
-                builder.append(
-                    " and EXTRA_MIME_TYPES of ${
+                val extraMimeTypes = when {
+                    testData.extraMimeTypes.get().isNotEmpty() -> {
                         testData.extraMimeTypes.get().joinToString(", ")
-                    }"
+                    }
+                    else -> "empty array"
+                }
+                builder.append(
+                    " and EXTRA_MIME_TYPES of ($extraMimeTypes)"
                 )
             }
-            builder.append(
-                " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
-            )
+            if (testData.expectedApp == AppType.PHOTOPICKER &&
+                !isPhotopickerGetContentComponentAvailable) {
+                builder.append(
+                    " didn't cause ${AppType.DOCUMENTSUI} to appear " +
+                        "(${AppType.PHOTOPICKER} is expected, but is not available in this " +
+                        "environment) after ${UI_TIMEOUT}ms"
+                )
+            } else {
+                builder.append(
+                    " didn't cause ${testData.expectedApp.name} to appear after ${UI_TIMEOUT}ms"
+                )
+            }
 
             assertNotNull(
                 builder.toString(),
@@ -240,6 +261,10 @@ class TrampolineActivityTest() {
         @Test
         fun testReferredGetContentFromPhotopickerShouldNotRedirectBack() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
+            assume().that(
+                getPhotopickerGetContentComponentNameForType(context.packageManager, "image/*")
+            ).isNotNull()
+
             val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

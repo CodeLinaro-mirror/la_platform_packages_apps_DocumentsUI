@@ -25,6 +25,7 @@ import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -388,6 +389,14 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo> {
 
     public boolean supportsMimeTypesSearch() {
         return queryArgs != null && queryArgs.contains(QUERY_ARG_MIME_TYPES);
+    }
+
+    /**
+     * Returns true if the DocumentsProvider hosting this root supports us specifying a limit for
+     * the maximum number of search results it should return.
+     */
+    public boolean supportsSearchResultLimit() {
+        return queryArgs != null && queryArgs.contains(ContentResolver.QUERY_ARG_LIMIT);
     }
 
     public boolean supportsEject() {

@@ -185,7 +185,8 @@
                 android:singleLine="true"
                 android:text="@string/bullet"
                 android:textAlignment="viewStart"
-                android:textAppearance="@style/ItemCaptionTextM3" />
+                android:textAppearance="@style/ItemCaptionTextM3"
+                android:importantForAccessibility="no" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/date"

@@ -307,4 +307,7 @@
     <dimen name="job_progress_item_status_separator_margin">@dimen/space_extra_small_2</dimen>
     <dimen name="job_progress_item_buttons_margin_start">@dimen/space_extra_small_2</dimen>
     <dimen name="job_progress_item_buttons_margin_top">@dimen/space_extra_small_1</dimen>
+
+    <dimen name="peek_metadata_sheet_width">320dp</dimen>
+    <dimen name="peek_metadata_sheet_corner_radius">16dp</dimen>
 </resources>
