@@ -66,6 +66,12 @@ java_defaults {
         "docsui-change-ids",
         "guava",
         "modules-utils-build_system",
+        // Glide and dependencies. Optimized out when use_peek_preview_ro flag enabled.
+        // See b/421076517 for more details.
+        "androidx.exifinterface_exifinterface",
+        "glide-disklrucache-prebuilt",
+        "glide-gifdecoder-prebuilt",
+        "glide-prebuilt",
     ],
 
     privileged: true,

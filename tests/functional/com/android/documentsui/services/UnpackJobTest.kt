@@ -323,6 +323,12 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         job.run()
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(4)
+        assertThat(job.failedPaths).containsExactly(
+            "/Encrypted AES-128.txt",
+            "/Encrypted AES-192.txt",
+            "/Encrypted AES-256.txt",
+            "/Encrypted ZipCrypto.txt"
+        )
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)
@@ -420,6 +426,14 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         // As a consequence, UnpackJob fails to extract some files from the archive.
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(6)
+        assertThat(job.failedPaths).containsExactly(
+            "/pet/cat",
+            "/pet",
+            "/pet/cat/fish",
+            "/pet/cat",
+            "/pet",
+            "/pet/cat/fish"
+        )
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)
@@ -469,6 +483,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         // The file with a bad CRC should be detected.
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(1)
+        assertThat(job.failedPaths).containsExactly("/bad-crc.txt")
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)
@@ -559,6 +574,15 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         // The files with incorrect sizes should be detected.
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(7)
+        assertThat(job.failedPaths).containsExactly(
+            "/0.txt",
+            "/1.txt",
+            "/2.txt",
+            "/4.txt",
+            "/5.txt",
+            "/6.txt",
+            "/7.txt"
+        )
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)

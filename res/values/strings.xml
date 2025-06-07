@@ -694,4 +694,7 @@
 
     <!-- Text used in Peek to indicate that no preview is available. -->
     <string name="peek_no_preview">No preview available</string>
+
+    <!-- Accessibility label for an image preview in Peek. -->
+    <string name="a11y_peek_image_preview">Image preview of <xliff:g id="filename" example="image.png">%s</xliff:g></string>
 </resources>
