@@ -33,8 +33,6 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
-import android.platform.test.flag.junit.CheckFlagsRule;
-import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 
 import androidx.test.filters.SmallTest;
@@ -47,6 +45,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.bots.Bots;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.picker.PickActivity;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.ui.TestDialogController;
@@ -88,7 +87,7 @@ public class PickActivityTest {
     }
 
     @Rule
-    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
