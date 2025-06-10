@@ -32,6 +32,7 @@ import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
+import androidx.core.content.IntentCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -425,7 +426,8 @@ class JobPanelController(
     }
 
     override fun onReceive(context: Context?, intent: Intent) {
-        val progresses = intent.getParcelableArrayListExtra(
+        val progresses = IntentCompat.getParcelableArrayListExtra(
+            intent,
             FileOperationService.EXTRA_PROGRESS,
             JobProgress::class.java
         )
