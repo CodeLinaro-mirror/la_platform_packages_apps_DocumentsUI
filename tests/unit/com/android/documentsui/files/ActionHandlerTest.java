@@ -24,6 +24,7 @@ import static com.android.documentsui.testing.IntentAsserts.assertHasExtraList;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraUri;
 import static com.android.documentsui.testing.IntentAsserts.assertTargetsComponent;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import static org.junit.Assert.assertEquals;
@@ -143,7 +144,7 @@ public class ActionHandlerTest {
         mDialogs = new TestDialogController();
         mClipper = new TestDocumentClipper();
         mDragAndDropManager = new TestDragAndDropManager();
-        mPeekViewManager = new TestPeekViewManager();
+        mPeekViewManager = isUsePeekPreviewFlagEnabled() ? new TestPeekViewManager() : null;
         mTestConfigStore = new TestConfigStore();
         mEnv.state.configStore = mTestConfigStore;
 
@@ -760,7 +761,6 @@ public class ActionHandlerTest {
     public void testShowInspector() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
 
-        mPeekViewManager.getPeekDocument().assertNotCalled();
         mActivity.startActivity.assertCalled();
         Intent intent = mActivity.startActivity.getLastValue();
         assertTargetsComponent(intent, InspectorActivity.class);
