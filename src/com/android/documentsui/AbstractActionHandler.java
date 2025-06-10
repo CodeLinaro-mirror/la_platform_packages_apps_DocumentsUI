@@ -20,7 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseSearchV2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.PendingIntent;
@@ -925,7 +925,12 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mState.stack.changeRoot(mActivity.getCurrentRoot());
             }
 
-            if (isUseSearchV2FlagEnabled()) {
+            if (isSearchV2Enabled()) {
+                // SearchV2 needs to know the root, as it fine-tunes it behavior based on where
+                // search is performed. Thus before creating a loader we update the search view
+                // manager with the current root. Search view manager then is ready to act
+                // appropriately, once it gets notified about search starting.
+                mSearchMgr.setCurrentRoot(mState.stack.getRoot());
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
