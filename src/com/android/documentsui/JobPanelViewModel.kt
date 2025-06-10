@@ -17,17 +17,34 @@ package com.android.documentsui
 
 import android.os.Parcelable
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 /**
  * Manages the UI state for the [JobPanelController].
+ *
+ * @param scopeOverride An optional CoroutineScope to be used instead of the default viewModelScope,
+ *   for use in tests.
  */
-class JobPanelViewModel : ViewModel() {
+class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
     companion object {
         private const val TAG = "JobPanelViewModel"
+        private const val AUTO_DISMISS_DELAY = 3000L
+
+        @VisibleForTesting
+        var disableAutoDismiss = false
     }
 
     /**
@@ -51,9 +68,24 @@ class JobPanelViewModel : ViewModel() {
             MenuIconState()
     }
 
+    private val scope = scopeOverride ?: viewModelScope
+
     /** List of jobs currently tracked. */
     private val _currentJobs = LinkedHashMap<String, ProgressViewModel>()
     val currentJobs: Map<String, ProgressViewModel> get() = _currentJobs
+
+    /** Tracks jobs that will be auto dismissed. */
+    private val pendingRemoves = HashSet<String>()
+
+    /** Signaled whenever there is an update to the jobs tracked. */
+    private val _jobUpdateEvent =
+        MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val jobUpdateEvent: SharedFlow<Unit> get() = _jobUpdateEvent
+
+    /** Keeps track of the current menu icon state. */
+    private val _menuIconState = MutableStateFlow<MenuIconState>(MenuIconState.INVISIBLE)
+    val menuIconState: StateFlow<MenuIconState> get() = _menuIconState
+
     var listState: Parcelable? = null
 
     /**
@@ -102,8 +134,22 @@ class JobPanelViewModel : ViewModel() {
                     ProgressViewModel(new.jobProgress, old.expanded)
                 }
             }
+
+            if (jobProgress.state == Job.STATE_COMPLETED && !jobProgress.hasFailures &&
+                !pendingRemoves.contains(jobProgress.id)) {
+                if (!disableAutoDismiss) {
+                    scope.launch {
+                        delay(AUTO_DISMISS_DELAY)
+                        dismissProgress(jobProgress.id)
+                        pendingRemoves.remove(jobProgress.id)
+                    }
+                }
+            }
         }
         _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }
+
+        _menuIconState.value = getMenuState()
+        _jobUpdateEvent.tryEmit(Unit)
     }
 
     /**
@@ -111,6 +157,9 @@ class JobPanelViewModel : ViewModel() {
      */
     fun dismissProgress(id: String) {
         _currentJobs.remove(id)
+
+        _menuIconState.value = getMenuState()
+        _jobUpdateEvent.tryEmit(Unit)
     }
 
     /**
@@ -120,5 +169,7 @@ class JobPanelViewModel : ViewModel() {
         _currentJobs.computeIfPresent(id) { _, (jobProgress, expanded) ->
             ProgressViewModel(jobProgress, !expanded)
         }
+
+        _jobUpdateEvent.tryEmit(Unit)
     }
 }

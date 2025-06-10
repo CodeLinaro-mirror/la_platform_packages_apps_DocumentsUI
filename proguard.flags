@@ -230,3 +230,7 @@
 -keep class com.google.android.material.sidesheet.SideSheetBehavior {
   public int getState();
 }
+
+-keep class com.android.documentsui.JobPanelViewModel$Companion {
+  public void setDisableAutoDismiss(boolean);
+}
