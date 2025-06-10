@@ -244,8 +244,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressEnter();
         device.waitForIdle(3000);
 
-        String msg = String.valueOf(context.getString(R.string.no_results));
-        bots.directory.assertPlaceholderMessageText(String.format(msg, "TEST_ROOT_0"));
+        bots.directory.waitAndAssertPlaceholderMessageText(
+                String.format(context.getString(R.string.no_results), "TEST_ROOT_0"));
     }
 
     @Suppress
