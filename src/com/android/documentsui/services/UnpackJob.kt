@@ -224,7 +224,11 @@ class UnpackJob(
         dirPathToUri.put("/", dirUri)
         val dirInfo = DocumentInfo.fromUri(resolver, dirUri, dstInfo.userId)
         if (VERBOSE) Log.v(TAG, "Created extraction dir ${redact(dirInfo)}")
-        stack.push(dirInfo)
+        // Create a new DocumentStack object instead of modifying the existing DocumentStack object
+        // in place. Since the stack is asynchronously read by the progress-reporting thread, this
+        // ensures that the referenced DocumentStack object is immutable and prevents any data race
+        // condition.
+        stack = DocumentStack(stack, dirInfo)
     }
 
     private fun openArchive() {

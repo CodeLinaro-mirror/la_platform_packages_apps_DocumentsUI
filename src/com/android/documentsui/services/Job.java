@@ -101,7 +101,13 @@ abstract public class Job implements Runnable {
 
     final @OpType int operationType;
     final String id;
-    final DocumentStack stack;
+
+    /**
+     * Don't modify the referenced DocumentStack object in place, in order to avoid any data race
+     * condition between the job-running thread and the progress-reporting thread. If the stack
+     * needs to be modified, create a new DocumentStack object and update the following reference.
+     */
+    volatile DocumentStack stack;
 
     final UrisSupplier mResourceUris;
 
