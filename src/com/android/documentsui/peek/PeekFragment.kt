@@ -59,18 +59,6 @@ class PeekFragment : Fragment() {
     private var metadataView: MetadataView? = null
     private var metadataSheetBehavior: SideSheetBehavior<FrameLayout>? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[PeekViewModel::class.java]
-        viewModel.docInfo.observe(
-            requireActivity(),
-            Observer { docInfo ->
-                // Executes immediately when the observer is set.
-                updateView(docInfo)
-            }
-        )
-    }
-
     @Suppress("ktlint:standard:comment-wrapping")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,6 +76,7 @@ class PeekFragment : Fragment() {
         metadataContainer!!.addView(metadataView)
         metadataSheetBehavior = SideSheetBehavior.from(metadataContainer!!)
 
+        viewModel = ViewModelProvider(requireActivity())[PeekViewModel::class.java]
         val savedDocInfo = viewModel.docInfo.value
         if (savedDocInfo != null) {
             try {
@@ -95,12 +84,14 @@ class PeekFragment : Fragment() {
                     savedDocInfo.userId.getContentResolver(context),
                     savedDocInfo.userId
                 )
-                updateView(savedDocInfo)
             } catch (e: FileNotFoundException) {
                 Log.e(TAG, "Stale document info: $e")
                 clearAndHide()
             }
         }
+        // The observer's `onChanged` method is called immediately after the observer is set, if
+        // docInfo has a value. Set the observer after `viewModel.docInfo.value` is updated above.
+        viewModel.docInfo.observe(requireActivity(), Observer { docInfo -> updateView(docInfo) })
         return view
     }
 
