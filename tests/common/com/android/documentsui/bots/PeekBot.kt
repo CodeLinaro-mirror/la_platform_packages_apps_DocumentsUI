@@ -115,11 +115,32 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
         mDevice.waitForIdle()
         onView(metadataContainerMatcher).check(metadataSheetExpandedStateAssertion(expectExpanded))
         onView(peekContainerMatcher).check(metadataSheetWidthAssertion(expectExpanded))
+        onView(
+                allOf(
+                    withId(R.id.peek_info),
+                    isDescendantOfA(toolbarMatcher),
+                    withContentDescription(
+                        if (expectExpanded) {
+                            R.string.a11y_peek_hide_info_button
+                        } else {
+                            R.string.a11y_peek_show_info_button
+                        }
+                    )
+                )
+        )
+            .check(matches(isDisplayed()))
     }
 
     fun hide() {
         onView(allOf(withContentDescription("Hide file preview"), isDescendantOfA(toolbarMatcher)))
             .perform(ViewActions.click())
         assertPeekHidden()
+    }
+
+    /* Toggles metadata sheet via the "info" toolbar button. */
+    fun toggleMetadataSheet() {
+        onView(
+            allOf(withId(R.id.peek_info), isDescendantOfA(toolbarMatcher))
+        ).perform(ViewActions.click())
     }
 }

@@ -184,7 +184,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             mActivity.startIntentSenderForResult(intent.getIntentSender(), CODE_AUTHENTICATION,
                     null, 0, 0, 0);
         } catch (IntentSender.SendIntentException cancelled) {
-            Log.d(TAG, "Authentication Pending Intent either canceled or ignored.");
+            if (DEBUG) {
+                Log.d(TAG, "Authentication Pending Intent either canceled or ignored.");
+            }
         }
     }
 
@@ -1036,7 +1038,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     mState.acceptMimes, mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
-                Log.d(TAG, "Creating search loader V2");
+                if (DEBUG) {
+                    Log.d(TAG, "Creating search loader V2");
+                }
                 // For search and recent we create an observer that restart the loader every time
                 // one of the searched content providers reports a change.
                 final LockingContentObserver observer = new LockingContentObserver(
@@ -1054,7 +1058,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                         mExecutorService
                 );
             }
-            Log.d(TAG, "Creating folder loader V2");
+            if (DEBUG) {
+                Log.d(TAG, "Creating folder loader V2");
+            }
             // For folder scan we pass the content lock to the loader so that it can register
             // an a callback to its internal method that forces a reload of the folder, every
             // time the content provider reports a change.

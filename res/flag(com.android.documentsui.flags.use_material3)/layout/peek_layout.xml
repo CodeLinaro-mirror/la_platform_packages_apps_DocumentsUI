@@ -42,6 +42,7 @@
             android:background="@color/peek_topbar_scrim"
             android:paddingEnd="@dimen/space_extra_small_4"
             android:paddingStart="@dimen/space_extra_small_4"
+            app:menu="@menu/peek_top_bar_menu"
             app:navigationContentDescription="@string/a11y_peek_navigation_icon"
             app:navigationIcon="@drawable/ic_arrow_back_m3"
             app:navigationIconTint="@android:color/white"

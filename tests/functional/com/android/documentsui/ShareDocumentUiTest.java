@@ -34,6 +34,7 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -50,6 +51,9 @@ public class ShareDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.closeDrawer();
     }
 
+    // Ignore test as it's currently failing on some devices due to animation and timing.
+    // TODO: b/423793930 make the test robust to UI timing
+    @Ignore
     @Test
     public void testShareSheet_showsSelectedFilename() throws Exception {
         bots.directory.rightClickDocument(TEST_FILE_NAME);

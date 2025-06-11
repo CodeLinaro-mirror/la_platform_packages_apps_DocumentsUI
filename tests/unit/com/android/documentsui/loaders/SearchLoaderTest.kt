@@ -47,7 +47,7 @@ private const val TOTAL_FILE_COUNT = 8
 
 fun createQueryArgs(vararg mimeTypes: String): Bundle {
     val args = Bundle()
-    args.putStringArray(DocumentsContract.QUERY_ARG_MIME_TYPES, arrayOf<String>(*mimeTypes))
+    args.putStringArray(DocumentsContract.QUERY_ARG_MIME_TYPES, arrayOf(*mimeTypes))
     return args
 }
 
@@ -58,9 +58,9 @@ class SearchLoaderTest {
     // Collection of tests that are parametrized by query, duration, and MIME type.
     @RunWith(Parameterized::class)
     class ParametrizedTests(private val testParams: LoaderTestParams) : BaseLoaderTest() {
-        lateinit var mExecutor: ExecutorService
-        val mContentLock = ContentLock()
-        val mContentObserver = LockingContentObserver(mContentLock) {}
+        lateinit var executor: ExecutorService
+        val contentLock = ContentLock()
+        val contentObserver = LockingContentObserver(contentLock) {}
 
         companion object {
             @JvmStatic
@@ -127,13 +127,13 @@ class SearchLoaderTest {
 
         @Before
         fun setUpTest() {
-            mExecutor = Executors.newSingleThreadExecutor()
+            executor = Executors.newSingleThreadExecutor()
         }
 
         @Test
         @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
         fun testLoadInBackground() {
-            val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
+            val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
             val docs = createDocuments(testParams.fakeFileCount)
             mockProvider!!.setNextChildDocumentsReturns(*docs)
             val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
@@ -156,15 +156,15 @@ class SearchLoaderTest {
             )
 
             val loader = SearchLoader(
-                mActivity,
+                activity,
                 userIds,
                 TestFileTypeLookup(),
-                mContentObserver,
+                contentObserver,
                 folderInfo,
                 testParams.query,
                 queryOptions,
-                mEnv.state.sortModel,
-                mExecutor,
+                environment.state.sortModel,
+                executor,
             )
             val directoryResult = loader.loadInBackground()
             expect.that(getFileCount(directoryResult)).isEqualTo(testParams.expectedCount)
@@ -196,7 +196,7 @@ class SearchLoaderTest {
             return Array(count) { i ->
                 val suffix = String.format(Locale.US, "%05d", 2 * i + suffixOffset)
                 val ext = extensions[i % extensions.size]
-                mEnv.model.createFile("document-$suffix.$ext")
+                environment.model.createFile("document-$suffix.$ext")
             }
         }
 
@@ -210,7 +210,7 @@ class SearchLoaderTest {
         fun testValidateMergeFilterSort() {
             val fileCount = 200
             val maxCount = fileCount / 2
-            mEnv.mockProviders.apply {
+            environment.mockProviders.apply {
                 // Pickles documents have IDs 0, 2, 4, .., 398. Half of the documents are images,
                 // the other half are documents (PDFs).
                 get(TestProvidersAccess.PICKLES.authority)!!.setNextChildDocumentsReturns(
@@ -239,7 +239,7 @@ class SearchLoaderTest {
                 ),
             )
             val loader = SearchLoader(
-                mActivity,
+                activity,
                 listOf(TestProvidersAccess.PICKLES.userId, TestProvidersAccess.HOME.userId),
                 TestFileTypeLookup(),
                 mContentObserver,
@@ -275,7 +275,7 @@ class SearchLoaderTest {
 
         @Test
         fun testExtraArgs() {
-            mEnv.mockProviders.apply {
+            environment.mockProviders.apply {
                 get(TestProvidersAccess.PICKLES.authority)!!.setNextChildDocumentsReturns(
                     *generateDocuments(2, 1, arrayOf("png", "avi"))
                 )
@@ -288,14 +288,14 @@ class SearchLoaderTest {
                 ),
             )
             val loader = SearchLoader(
-                mActivity,
+                activity,
                 listOf(TestProvidersAccess.PICKLES.userId, TestProvidersAccess.HOME.userId),
                 TestFileTypeLookup(),
                 mContentObserver,
                 folderInfo,
                 "document",
                 QueryOptions(10, ALL_RESULTS, null, null, false, arrayOf("image/png"), Bundle()),
-                mEnv.state.sortModel,
+                environment.state.sortModel,
                 mExecutor,
             )
             val result = loader.loadInBackground()

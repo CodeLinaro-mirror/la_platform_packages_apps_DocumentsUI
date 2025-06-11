@@ -92,7 +92,7 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
                 testParams.otherArgs,
             )
         // Set up sample files using Downloads provider.
-        val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
+        val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
         val docs = createDocuments(TOTAL_FILE_COUNT)
         mockProvider!!.setNextChildDocumentsReturns(*docs)
     }
@@ -108,14 +108,14 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
 
         val loader =
             FolderLoader(
-                mActivity,
+                activity,
                 userIds,
                 TestFileTypeLookup(),
                 contentLock,
                 TestProvidersAccess.DOWNLOADS,
                 rootFolderInfo,
                 queryOptions,
-                mEnv.state.sortModel
+                environment.state.sortModel
             )
         val directoryResult = loader.loadInBackground()
         assertEquals(testParams.expectedCount, getFileCount(directoryResult))
@@ -124,20 +124,20 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     @Test
     @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
     fun testListRootIfNullFolder() {
-        val mockProvider = mEnv.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
+        val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
         val docs = createDocuments(TOTAL_FILE_COUNT)
         mockProvider!!.setNextChildDocumentsReturns(*docs)
 
         val loader =
             FolderLoader(
-                mActivity,
+                activity,
                 listOf(TestProvidersAccess.DOWNLOADS.userId),
                 TestFileTypeLookup(),
                 contentLock,
                 TestProvidersAccess.DOWNLOADS,
                 null,
                 queryOptions,
-                mEnv.state.sortModel
+                environment.state.sortModel
             )
         val directoryResult = loader.loadInBackground()
         assertEquals(testParams.expectedCount, getFileCount(directoryResult))
