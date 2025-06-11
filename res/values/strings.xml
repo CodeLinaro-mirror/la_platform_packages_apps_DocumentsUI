@@ -689,6 +689,18 @@
     <!-- Peek metadata panel header title. -->
     <string name="peek_metadata_header_title">Details</string>
 
+    <!-- Peek metadata panel header title. -->
+    <string name="peek_metadata_general_info_title">General info</string>
+
+    <!-- Peek metadata "Size" row. -->
+    <string name="peek_metadata_size">Size</string>
+
+    <!-- Peek metadata "Type" row. -->
+    <string name="peek_metadata_type">Type</string>
+
+    <!-- Peek metadata "Date modified" row. -->
+    <string name="peek_metadata_date_modified">Date modified</string>
+
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
 
