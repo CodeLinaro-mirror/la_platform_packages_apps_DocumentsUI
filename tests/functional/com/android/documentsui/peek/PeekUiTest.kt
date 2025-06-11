@@ -147,18 +147,6 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
 
     @Test
     @Throws(Exception::class)
-    fun testMetadataSheet() {
-        bots.directory.selectDocument("file0.log", 1)
-        bots.main.clickActionItem("Get info")
-
-        // Check the metadata sheet state before and after recreating the activity.
-        peekBot.validateMetadataSheetState(true)
-        mActivityScenario!!.recreate()
-        peekBot.validateMetadataSheetState(true)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun testImagePreview() {
         // Check that the preview screen shows for "image.jpg"
         showAndCheckPreview("image.jpg")
@@ -171,5 +159,30 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         showAndCheckPreview("image.svg")
         onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
         onView(withContentDescription("Image preview of image.svg")).check(doesNotExist())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testMetadataSheet() {
+        showAndCheckPreview("file0.log")
+
+        // The metadata sheet is expanded by default. Check the metadata sheet state before and
+        // after recreating the activity.
+        peekBot.validateMetadataSheetState(true)
+        mActivityScenario!!.recreate()
+        peekBot.validateMetadataSheetState(true)
+
+        // Check the metadata sheet state after clicking the info toggle button, before and after
+        // hiding Peek, recreating the activity, and showing peek again.
+        peekBot.toggleMetadataSheet()
+        peekBot.validateMetadataSheetState(false)
+        peekBot.hide()
+        mActivityScenario!!.recreate()
+        showAndCheckPreview("image.jpg")
+        peekBot.validateMetadataSheetState(false)
+
+        // Check the metadata sheet state after restoring the metadata sheet with the toggle button.
+        peekBot.toggleMetadataSheet()
+        peekBot.validateMetadataSheetState(true)
     }
 }
