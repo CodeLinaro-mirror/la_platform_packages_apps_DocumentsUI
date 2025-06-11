@@ -139,6 +139,7 @@
   int files_activity;
   int fixed_layout;
   int item_doc_list;
+  int nav_rail_layout;
 }
 -keep class com.android.documentsui.R$menu {
   int dir_context_menu;
