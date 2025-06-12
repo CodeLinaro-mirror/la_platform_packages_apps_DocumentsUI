@@ -184,5 +184,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         // Check the metadata sheet state after restoring the metadata sheet with the toggle button.
         peekBot.toggleMetadataSheet()
         peekBot.validateMetadataSheetState(true)
+        peekBot.closeMetadataSheet()
+        peekBot.validateMetadataSheetState(false)
     }
 }

@@ -143,4 +143,14 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
             allOf(withId(R.id.peek_info), isDescendantOfA(toolbarMatcher))
         ).perform(ViewActions.click())
     }
+
+    /* Closes metadata sheet via its "close" button. */
+    fun closeMetadataSheet() {
+        onView(
+            allOf(
+                withId(R.id.peek_side_sheet_close_button),
+                isDescendantOfA(metadataContainerMatcher)
+            )
+        ).perform(ViewActions.click())
+    }
 }
