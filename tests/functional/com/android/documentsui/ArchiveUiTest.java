@@ -16,11 +16,6 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
-
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
-
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
@@ -32,14 +27,14 @@ import org.junit.Test;
 
 @LargeTest
 public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
-
     @Rule
     public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
-    private void archiveValid() throws Exception {
+    @Test
+    public void withValidArchive() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
@@ -49,35 +44,9 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_valid() throws Exception {
-        archiveValid();
-    }
-
-    @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_valid_searchV2() throws Exception {
-        archiveValid();
-    }
-
-    private void archiveInvalid() throws Exception {
+    public void withInvalidArchive() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("broken.zip");
-
-        final String msg = String.valueOf(context.getString(R.string.empty));
-        bots.directory.waitForHolderMessage();
-        bots.directory.assertPlaceholderMessageText(msg);
-    }
-
-    @Test
-    @RequiresFlagsDisabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_invalid() throws Exception {
-        archiveInvalid();
-    }
-
-    @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_invalid_searchV2() throws Exception {
-        archiveInvalid();
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 }

@@ -158,13 +158,11 @@ public class DirectoryListBot extends Bots.BaseBot {
      * Checks against placeholder text. Placeholder can be Empty page, No results page, or the
      * "Hourglass" page (ie. something-went-wrong page).
      */
-    public void assertPlaceholderMessageText(String message) throws UiObjectNotFoundException {
-        UiObject messageTextView = findPlaceholderMessageTextView();
+    public void waitAndAssertPlaceholderMessageText(String message)
+            throws UiObjectNotFoundException {
+        final UiObject messageTextView = findPlaceholderMessageTextView();
         assertTrue(messageTextView.exists());
-
-        String msg = String.valueOf(message);
-        assertEquals(msg, messageTextView.getText());
-
+        assertEquals(message, messageTextView.getText());
     }
 
     private UiObject findHeaderMessageTextView() {
@@ -179,13 +177,14 @@ public class DirectoryListBot extends Bots.BaseBot {
                 mTargetPackage + ":id/dismiss_button");
     }
 
-    private UiObject findPlaceholderMessageTextView() {
-        return findObject(
-                mDirContainerId,
-                mTargetPackage + ":id/message");
+    private UiObject findPlaceholderMessageTextView() throws UiObjectNotFoundException {
+        final String childResourceId = mTargetPackage + ":id/message";
+        new UiScrollable(new UiSelector().resourceId(mDirContainerId)).scrollIntoView(
+                new UiSelector().text(childResourceId));
+        return findObject(mDirContainerId, childResourceId);
     }
 
-    public void waitForHolderMessage() {
+    public void waitForHolderMessage() throws UiObjectNotFoundException {
         findPlaceholderMessageTextView().waitForExists(mTimeout);
     }
 
