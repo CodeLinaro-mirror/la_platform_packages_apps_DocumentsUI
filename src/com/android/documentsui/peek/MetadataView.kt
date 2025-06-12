@@ -17,18 +17,19 @@ package com.android.documentsui.peek
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import com.android.documentsui.R
-import com.android.documentsui.base.DocumentInfo
 
 /** Custom view component used to display the metadata in Peek. */
-class MetadataView(context: Context) : FrameLayout(context), PeekFragment.Display {
+class MetadataView(context: Context, private val viewModel: PeekViewModel) :
+    FrameLayout(context) {
     init {
         @Suppress("ktlint:standard:comment-wrapping")
-        LayoutInflater.from(context).inflate(R.layout.peek_metadata_layout, /* root= */ this)
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.peek_metadata_layout, /* root= */ this)
+        view.findViewById<View>(R.id.peek_side_sheet_close_button).setOnClickListener {
+            viewModel.toggleMetadataSheet(false)
+        }
     }
-
-    override fun accept(doc: DocumentInfo) {}
-
-    override fun clear() {}
 }

@@ -491,28 +491,30 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
     @Override
     public boolean onKeyShortcut(int keyCode, KeyEvent event) {
-        DirectoryFragment dir;
         // TODO: All key events should be statically bound using alphabeticShortcut.
         // But not working.
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_A:
-                mInjector.actions.selectAllFiles();
-                return true;
-            case KeyEvent.KEYCODE_X:
-                mInjector.actions.cutToClipboard();
-                return true;
-            case KeyEvent.KEYCODE_C:
-                mInjector.actions.copyToClipboard();
-                return true;
-            case KeyEvent.KEYCODE_V:
-                dir = getDirectoryFragment();
-                if (dir != null) {
-                    dir.pasteFromClipboard();
-                }
-                return true;
-            default:
-                return super.onKeyShortcut(keyCode, event);
+
+        if (event.hasModifiers(KeyEvent.META_CTRL_ON)) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_A:
+                    mInjector.actions.selectAllFiles();
+                    return true;
+                case KeyEvent.KEYCODE_X:
+                    mInjector.actions.cutToClipboard();
+                    return true;
+                case KeyEvent.KEYCODE_C:
+                    mInjector.actions.copyToClipboard();
+                    return true;
+                case KeyEvent.KEYCODE_V:
+                    DirectoryFragment dir = getDirectoryFragment();
+                    if (dir != null) {
+                        dir.pasteFromClipboard();
+                    }
+                    return true;
+            }
         }
+
+        return super.onKeyShortcut(keyCode, event);
     }
 
     @Override
