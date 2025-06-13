@@ -299,7 +299,6 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"Create new folder"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Search this device"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Clear text"</string>
-    <string name="search_location_this_folder" msgid="6458835123175563013">"This folder"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Root folder"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Everywhere"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"Any time"</string>
@@ -318,7 +317,10 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Showing in list mode."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"File name"</string>
+    <string name="peek_metadata_header_title" msgid="6196387248590120756">"Details"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Hide file preview"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"No preview available"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Image preview of <xliff:g id="FILENAME">%s</xliff:g>"</string>
+    <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Hide info panel"</string>
+    <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Show info panel"</string>
 </resources>

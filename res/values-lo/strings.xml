@@ -299,7 +299,6 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"ສ້າງໂຟນເດີໃໝ່"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ຊອກຫາອຸປະກອນນີ້"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"ລຶບລ້າງຂໍ້ຄວາມ"</string>
-    <string name="search_location_this_folder" msgid="6458835123175563013">"ໂຟນເດີນີ້"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ໂຟນເດີ root"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"ທຸກບ່ອນ"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"ຕະຫຼອດເວລາ"</string>
@@ -318,8 +317,13 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"ກຳລັງສະແດງໃນໂໝດລາຍຊື່."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ຊື່ໄຟລ໌"</string>
+    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
+    <skip />
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ເຊື່ອງຕົວຢ່າງໄຟລ໌"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"ບໍ່ມີຕົວຢ່າງ"</string>
-    <!-- no translation found for a11y_peek_image_preview (3917148390186060263) -->
+    <string name="a11y_peek_image_preview" msgid="3917148390186060263">"ຕົວຢ່າງຮູບຂອງ <xliff:g id="FILENAME">%s</xliff:g>"</string>
+    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
+    <skip />
+    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
     <skip />
 </resources>
