@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,7 @@ import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.sidesheet.SideSheetBehavior
 import java.io.FileNotFoundException
 
 /** Manages the Peek UI. */
@@ -50,6 +52,11 @@ class PeekFragment : Fragment() {
 
     // Rendering view.
     private var previewFrame: RenderView? = null
+
+    // Metadata view.
+    private var metadataContainer: FrameLayout? = null
+    private var metadataView: MetadataView? = null
+    private var metadataSheetBehavior: SideSheetBehavior<FrameLayout>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +82,11 @@ class PeekFragment : Fragment() {
         toolbar!!.setNavigationOnClickListener { clearAndHide() }
         previewFrame = view.findViewById(getRes(R.id.peek_preview))
 
+        metadataContainer = view.findViewById(R.id.peek_metadata_container)
+        metadataView = MetadataView(requireContext())
+        metadataContainer!!.addView(metadataView)
+        metadataSheetBehavior = SideSheetBehavior.from(metadataContainer!!)
+
         val savedDocInfo = viewModel.docInfo.value
         if (savedDocInfo != null) {
             try {
@@ -91,16 +103,41 @@ class PeekFragment : Fragment() {
         return view
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        // Hide the metadata sheet to override the Material SideSheet state restoration behavior.
+        // Details:
+        // After `onCreateView`, the metadataSheetBehavior restores the expanded state of the sheet
+        // via its `onRestoreInstanceState` implementation. `onViewStateRestored` is subsequently
+        // called, allowing us to override this state restoration with `metadataSheetBehavior.hide`.
+        // `updateView` is responsible for re-expanding the sheet, by posting a
+        // `metadataSheetBehavior.expand` task which executes after the fragment has been rendered
+        // on screen (which triggers an expand animation, addressing b/419446581).
+        metadataSheetBehavior?.hide()
+    }
+
     private fun updateView(docInfo: DocumentInfo?) {
         if (docInfo == null) {
             return
         }
-        if (toolbar == null || previewFrame == null) {
+        if (toolbar == null ||
+            previewFrame == null ||
+            metadataView == null ||
+            metadataContainer == null ||
+            metadataSheetBehavior == null) {
             // `updateView` will be called again when onCreateView executes.
             return
         }
+        // `Expand` needs to be called after the view is visible and fully drawn (see b/419446581).
+        // With the check above, we know that onCreateView has been called.
+        // The `post` task will execute after the current layout pass, ensuring that we can see the
+        // "expand" animation.
+        if (viewModel.overlayActive.value == true) {
+            metadataContainer!!.post { metadataSheetBehavior!!.expand() }
+        }
         toolbar!!.title = docInfo.displayName
         previewFrame!!.accept(docInfo)
+        metadataView!!.accept(docInfo)
     }
 
     private fun clearAndHide() {
