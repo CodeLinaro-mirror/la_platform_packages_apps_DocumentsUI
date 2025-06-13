@@ -19,6 +19,7 @@ package com.android.documentsui.files;
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -67,6 +68,8 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
+import com.android.documentsui.peek.PeekViewManager;
+import com.android.documentsui.peek.PeekViewModel;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
@@ -74,6 +77,8 @@ import com.android.documentsui.ui.MessageBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 /**
  * Standalone file management activity.
@@ -86,6 +91,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     private Injector<ActionHandler<FilesActivity>> mInjector;
     private ActivityInputHandler mActivityInputHandler;
     private SharedInputHandler mSharedInputHandler;
+    private @Nullable PeekViewManager mPeekViewManager;
     private final ProfileTabsAddons mProfileTabsAddonsStub = new StubProfileTabsAddons();
 
     public FilesActivity() {
@@ -162,6 +168,18 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             mNavigator,
                             mInjector.menuManager,
                             mInjector.messages);
+        }
+
+        if (isUsePeekPreviewFlagEnabled()) {
+            ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+            PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
+            mPeekViewManager = new PeekViewManager(
+                    viewModel,
+                    findViewById(getRes(R.id.peek_overlay)),
+                    getSupportFragmentManager());
+            viewModel.getOverlayActive().observe(
+                    this,
+                    mPeekViewManager);
         }
 
         Runnable closeSelectionBarRunnable =
