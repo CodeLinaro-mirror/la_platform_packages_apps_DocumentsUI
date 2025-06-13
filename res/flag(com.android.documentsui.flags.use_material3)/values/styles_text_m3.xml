@@ -50,6 +50,9 @@
     <style name="TextAppearance.DocumentsUI.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
+    <style name="TextAppearance.DocumentsUI.BodyMedium.Emphasized" parent="TextAppearance.Material3.BodyMedium.Emphasized">
+        <item name="fontFamily">@string/config_fontFamily</item>
+    </style>
     <style name="TextAppearance.DocumentsUI.BodySmall" parent="TextAppearance.Material3.BodySmall">
         <item name="fontFamily">@string/config_fontFamily</item>
     </style>
