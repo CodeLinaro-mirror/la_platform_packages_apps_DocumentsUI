@@ -56,8 +56,7 @@ data class LoaderTestParams(
     override fun toString(): String {
         var base = "query '$query'"
         if (lastModifiedDelta != null) {
-            val durationInMs = lastModifiedDelta.toSeconds()
-            base = "$base, modified in the last ${durationInMs}s"
+            base = "$base, modified in the last $lastModifiedDelta"
         }
         if (!otherArgs.isEmpty) {
             base = "$base, and $otherArgs"
