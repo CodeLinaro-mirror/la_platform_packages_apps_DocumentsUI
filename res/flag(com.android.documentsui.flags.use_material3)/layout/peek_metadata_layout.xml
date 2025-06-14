@@ -23,6 +23,7 @@
     android:backgroundTint="?attr/colorSurfaceContainerHigh">
     <!-- Header. -->
     <LinearLayout
+        android:id="@+id/peek_metadata_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/space_extra_small_6"
@@ -49,5 +50,25 @@
             android:layout_gravity="end"
             app:icon="@drawable/ic_close"
             app:iconTint="?attr/colorOnSurfaceVariant" />
+    </LinearLayout>
+
+    <!-- Contents. -->
+    <LinearLayout
+        android:id="@+id/peek_metadata_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/space_small_1"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/peek_metadata_header">
+        <!-- Padding bottom 6dp instead of 8, accounting for metadata item's
+        2dp top padding -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/space_extra_small_3"
+            android:paddingHorizontal="@dimen/space_extra_small_4"
+            android:text="@string/peek_metadata_general_info_title"
+            android:textAppearance="@style/TextAppearance.DocumentsUI.TitleSmall"
+            android:textColor="?attr/colorSecondary" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

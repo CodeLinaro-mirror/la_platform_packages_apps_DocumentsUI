@@ -228,16 +228,11 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g>개 선택됨</item>
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"선택 항목 지우기"</string>
-    <!-- no translation found for document_click_action (8073338575301415356) -->
-    <skip />
-    <!-- no translation found for selected_document_click_action (792826130200234885) -->
-    <skip />
-    <!-- no translation found for document_long_click_action (3789836661597702666) -->
-    <skip />
-    <!-- no translation found for selected_document_long_click_action (666372407184527109) -->
-    <skip />
-    <!-- no translation found for document_long_click_action_picker (943888101827856784) -->
-    <skip />
+    <string name="document_click_action" msgid="8073338575301415356">"열기"</string>
+    <string name="selected_document_click_action" msgid="792826130200234885">"선택 해제"</string>
+    <string name="document_long_click_action" msgid="3789836661597702666">"선택"</string>
+    <string name="selected_document_long_click_action" msgid="666372407184527109">"드래그"</string>
+    <string name="document_long_click_action_picker" msgid="943888101827856784">"여러 항목 선택"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="other">항목 <xliff:g id="COUNT_1">%1$d</xliff:g>개</item>
       <item quantity="one">항목 <xliff:g id="COUNT_0">%1$d</xliff:g>개</item>
@@ -304,7 +299,6 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"새 폴더 만들기"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"이 기기 검색"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"텍스트 삭제"</string>
-    <string name="search_location_this_folder" msgid="6458835123175563013">"이 폴더"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"루트 폴더"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"모든 지역"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"전체 기간"</string>
@@ -323,8 +317,13 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"목록 모드로 표시 중입니다."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"파일 이름"</string>
+    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
+    <skip />
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"파일 미리보기 숨기기"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"사용 가능한 미리보기 없음"</string>
-    <!-- no translation found for a11y_peek_image_preview (3917148390186060263) -->
+    <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> 이미지 미리보기"</string>
+    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
+    <skip />
+    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
     <skip />
 </resources>

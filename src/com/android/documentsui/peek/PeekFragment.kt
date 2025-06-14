@@ -193,6 +193,7 @@ class PeekFragment : Fragment() {
                     ImagePreviewHandler(previewFrame!!, docInfo)
                 else -> DefaultPreviewHandler(previewFrame!!)
             }
+        metadataView!!.accept(docInfo)
     }
 
     private fun clearAndHide() {
@@ -200,5 +201,6 @@ class PeekFragment : Fragment() {
         toolbar?.title = ""
         previewHandler?.clear()
         previewHandler = null
+        metadataView?.clear()
     }
 }
