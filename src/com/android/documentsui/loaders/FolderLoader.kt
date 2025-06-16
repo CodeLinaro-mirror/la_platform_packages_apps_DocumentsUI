@@ -29,7 +29,6 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
-import com.android.documentsui.base.UserId
 import com.android.documentsui.sorting.SortModel
 
 /**
@@ -51,14 +50,13 @@ import com.android.documentsui.sorting.SortModel
  */
 class FolderLoader(
     context: Context,
-    userIdList: List<UserId>,
     mimeTypeLookup: Lookup<String, String>,
     contentLock: ContentLock,
     private val mRoot: RootInfo,
     private val mListedDir: DocumentInfo?,
     private val mOptions: QueryOptions,
     private val mSortModel: SortModel,
-) : BaseFileLoader(context, userIdList, mimeTypeLookup) {
+) : BaseFileLoader(context, mimeTypeLookup) {
 
     // An observer registered on the cursor to force a reload if the cursor reports a change.
     private val mObserver = LockingContentObserver(contentLock, this::onContentChanged)
@@ -84,8 +82,7 @@ class FolderLoader(
         if (mListedDir != null && mListedDir.isInArchive) {
             result.setClient(openArchive(folderChildrenUri))
         }
-        var cursor =
-            queryLocation(mRoot.rootId, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
+        var cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
         if (cursor == null) {
             cursor = emptyCursor()
             result.setClient(null)

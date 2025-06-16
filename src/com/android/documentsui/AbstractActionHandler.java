@@ -1023,7 +1023,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mExecutorService = Executors.newFixedThreadPool(
                         GlobalSearchLoader.MAX_OUTSTANDING_TASK);
             }
-            List<UserId> userIdList = DocumentsApplication.getUserIdManager(mActivity).getUserIds();
 
             DocumentStack stack = mState.stack;
             Duration lastModifiedDelta = stack.isRecents()
@@ -1046,12 +1045,12 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 final LockingContentObserver observer = new LockingContentObserver(
                         mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
                 Collection<RootInfo> roots = mProviders.getMatchingRootsBlocking(mState);
+                Collection<RootInfo> searchableRoots = mSearchMgr.getSearchRoots(roots, stack);
                 return new SearchLoader(
                         mActivity,
-                        userIdList,
+                        searchableRoots,
                         mInjector.fileTypeLookup,
                         observer,
-                        mSearchMgr.getSearchFolders(roots, stack),
                         mSearchMgr.getCurrentSearch(),
                         options,
                         mState.sortModel,
@@ -1066,7 +1065,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // time the content provider reports a change.
             return new FolderLoader(
                     mActivity,
-                    userIdList,
                     mInjector.fileTypeLookup,
                     mContentLock,
                     root,
