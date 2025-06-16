@@ -183,7 +183,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             ))
         onView(withChild(withText(progress2.msg)))
             .check(selectedDescendantsMatch(
-                withText(R.string.move_failed),
+                withText(R.string.job_progress_item_failed),
                 isDisplayed()
             ))
             .check(selectedDescendantsMatch(
@@ -363,7 +363,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
 
         openPanel()
-        onView(withText(R.string.copy_failed)).perform(click())
+        onView(withText(R.string.job_progress_item_failed)).perform(click())
         onView(allOf(withId(R.id.job_progress_item_dismiss), isDisplayed())).perform(click())
         Espresso.pressBack()
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
