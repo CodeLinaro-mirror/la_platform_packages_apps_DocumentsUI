@@ -318,6 +318,10 @@
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"File name"</string>
     <string name="peek_metadata_header_title" msgid="6196387248590120756">"Details"</string>
+    <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"General info"</string>
+    <string name="peek_metadata_size" msgid="2377426288276139988">"Size"</string>
+    <string name="peek_metadata_type" msgid="1386923517471758392">"Type"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Date modified"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Hide file preview"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"No preview available"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Image preview of <xliff:g id="FILENAME">%s</xliff:g>"</string>
