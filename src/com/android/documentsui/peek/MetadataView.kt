@@ -25,28 +25,28 @@ import android.widget.LinearLayout
 import com.android.documentsui.DocumentsApplication
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.peek.MetadataItemView.LayoutType
 import java.util.Locale
 
 /** Custom view component used to display the metadata in Peek. */
-class MetadataView(context: Context, private val viewModel: PeekViewModel) :
-    FrameLayout(context) {
+class MetadataView(context: Context, private val viewModel: PeekViewModel) : FrameLayout(context) {
     private val sizeView =
         MetadataItemView(
             context,
             context.getString(R.string.peek_metadata_size),
-            MetadataItemView.LayoutType.TOP_CARD
+            LayoutType.TOP_CARD
         )
     private val typeView =
         MetadataItemView(
             context,
             context.getString(R.string.peek_metadata_type),
-            MetadataItemView.LayoutType.MIDDLE_CARD
+            LayoutType.MIDDLE_CARD
         )
     private val dateModifiedView =
         MetadataItemView(
             context,
             context.getString(R.string.peek_metadata_date_modified),
-            MetadataItemView.LayoutType.BOTTOM_CARD
+            LayoutType.BOTTOM_CARD
         )
 
     init {
