@@ -16,14 +16,11 @@
 package com.android.documentsui.peek
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import com.android.documentsui.R
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
 
 class MetadataItemView(context: Context, title: String, layoutType: LayoutType) :
     FrameLayout(context) {
@@ -41,35 +38,17 @@ class MetadataItemView(context: Context, title: String, layoutType: LayoutType) 
             LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT).apply {
                 topMargin = resources.getDimensionPixelSize(R.dimen.size_extra_small_1)
             }
-        val smallRadius = resources.getDimension(R.dimen.size_extra_small_2)
-        val largeRadius = resources.getDimension(R.dimen.size_small_2)
+        background =
+            when (layoutType) {
+                LayoutType.TOP_CARD ->
+                    getDrawable(context, R.drawable.peek_metadata_item_top_card_background)
 
-        val shapeAppearanceModel =
-            ShapeAppearanceModel.builder()
-                .setTopLeftCornerSize(
-                    if (layoutType == LayoutType.TOP_CARD) largeRadius else smallRadius
-                )
-                .setTopRightCornerSize(
-                    if (layoutType == LayoutType.TOP_CARD) largeRadius else smallRadius
-                )
-                .setBottomLeftCornerSize(
-                    if (layoutType == LayoutType.BOTTOM_CARD) largeRadius else smallRadius
-                )
-                .setBottomRightCornerSize(
-                    if (layoutType == LayoutType.BOTTOM_CARD) largeRadius else smallRadius
-                )
-                .build()
+                LayoutType.MIDDLE_CARD ->
+                    getDrawable(context, R.drawable.peek_metadata_item_middle_card_background)
 
-        val backgroundDrawable =
-            MaterialShapeDrawable(shapeAppearanceModel).apply {
-                fillColor =
-                    ColorStateList.valueOf(
-                        MaterialColors.getColor(
-                            this@MetadataItemView,
-                            com.google.android.material.R.attr.colorSurfaceBright))
+                LayoutType.BOTTOM_CARD ->
+                    getDrawable(context, R.drawable.peek_metadata_item_bottom_card_background)
             }
-
-        background = backgroundDrawable
 
         findViewById<TextView>(R.id.peek_item_title)?.apply { text = title }
     }
