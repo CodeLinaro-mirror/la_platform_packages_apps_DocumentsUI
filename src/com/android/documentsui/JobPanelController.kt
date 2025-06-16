@@ -186,9 +186,7 @@ class JobPanelController(
                     primaryStatusView.setTextAppearance(
                         getRes(R.style.JobProgressItemStatusText_Failure)
                     )
-                    primaryStatusView.text = context.getString(
-                        getRes(R.string.job_progress_item_failed)
-                    )
+                    primaryStatusView.text = getFailedStatusString(jobProgress.operationType)
                     secondaryStatusView.isGone = expanded
                     secondaryStatusView.text =
                         context.getString(getRes(R.string.job_progress_item_see_details))
@@ -219,19 +217,32 @@ class JobPanelController(
 
         private fun getCompletionStatusString(@FileOperationService.OpType opType: Int): String {
             return when (opType) {
-                FileOperationService.OPERATION_COPY -> context.getString(
-                    getRes(R.string.copy_completed)
-                )
-
-                FileOperationService.OPERATION_MOVE -> context.getString(
-                    getRes(R.string.move_completed)
-                )
+                FileOperationService.OPERATION_COPY ->
+                    context.getString(getRes(R.string.copy_completed))
+                FileOperationService.OPERATION_MOVE ->
+                    context.getString(getRes(R.string.move_completed))
                 FileOperationService.OPERATION_DELETE ->
                     context.getString(getRes(R.string.delete_completed))
                 FileOperationService.OPERATION_COMPRESS ->
                     context.getString(getRes(R.string.compress_completed))
                 FileOperationService.OPERATION_EXTRACT ->
                     context.getString(getRes(R.string.extract_completed))
+                else -> ""
+            }
+        }
+
+        private fun getFailedStatusString(@FileOperationService.OpType opType: Int): String {
+            return when (opType) {
+                FileOperationService.OPERATION_COPY ->
+                    context.getString(getRes(R.string.copy_failed))
+                FileOperationService.OPERATION_MOVE ->
+                    context.getString(getRes(R.string.move_failed))
+                FileOperationService.OPERATION_DELETE ->
+                    context.getString(getRes(R.string.delete_failed))
+                FileOperationService.OPERATION_COMPRESS ->
+                    context.getString(getRes(R.string.compress_failed))
+                FileOperationService.OPERATION_EXTRACT ->
+                    context.getString(getRes(R.string.extract_failed))
                 else -> ""
             }
         }
