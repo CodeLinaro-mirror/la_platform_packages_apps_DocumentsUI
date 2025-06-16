@@ -16,13 +16,18 @@
 
 package com.android.documentsui;
 
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 
+import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
@@ -30,6 +35,8 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.io.InputStream;
 
 @LargeTest
 public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
@@ -41,7 +48,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
-    public void clickToBrowseValidArchive() throws Exception {
+    public void browseArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
@@ -52,7 +59,28 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
-    public void browseValidArchive() throws Exception {
+    public void extractArchiveViaDefaultAction() throws Exception {
+        createArchiveInRootDir0();
+        bots.roots.openRoot(ROOT_0_ID);
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.openDocument("archive.zip");
+        assertExtractedArchive();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void extractArchiveViaContextMenu() throws Exception {
+        createArchiveInRootDir0();
+        bots.roots.openRoot(ROOT_0_ID);
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.rightClickDocument("archive.zip");
+        bots.menu.clickMenuItem("Extract here");
+        assertExtractedArchive();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void browseArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
@@ -64,7 +92,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void openValidArchive() throws Exception {
+    public void openArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
@@ -76,7 +104,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
-    public void clickToBrowseInvalidArchive() throws Exception {
+    public void browseInvalidArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("broken.zip");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
@@ -84,7 +112,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
-    public void browseInvalidArchive() throws Exception {
+    public void browseInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Browse");
@@ -93,10 +121,33 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void openInvalidArchive() throws Exception {
+    public void openInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
+    }
+
+    /** Creates a ZIP file in the test root 0, which is a writable folder. */
+    private void createArchiveInRootDir0() throws Exception {
+        assert mDocsHelper != null;
+        assert rootDir0 != null;
+        final Uri uri = mDocsHelper.createDocument(rootDir0, "application/zip", "archive.zip");
+        try (InputStream it = getInstrumentation().getContext().getAssets().open(
+                "archives/zip/hello.zip")) {
+            mDocsHelper.writeDocument(uri, it);
+        }
+    }
+
+    private void assertExtractedArchive() throws UiObjectNotFoundException {
+        bots.directory.waitForDocument("archive");
+        bots.directory.openDocument("archive");
+        bots.directory.waitForDocument("hello");
+        bots.directory.openDocument("hello");
+        bots.directory.waitForDocument("hello.txt");
+        bots.directory.waitForDocument("hello2.txt");
+        bots.directory.waitForDocument("inside_folder");
+        bots.directory.openDocument("inside_folder");
+        bots.directory.waitForDocument("hello_insside.txt");
     }
 }
