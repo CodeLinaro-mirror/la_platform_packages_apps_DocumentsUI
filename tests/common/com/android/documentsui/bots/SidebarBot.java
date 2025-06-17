@@ -34,6 +34,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.IdRes;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -208,5 +210,27 @@ public class SidebarBot extends Bots.BaseBot {
         mAutomation.injectInputEvent(motionUp, true);
 
         onView(withText(menuOption)).perform(new RelaxedClickAction());
+    }
+
+    /**
+     * Check if the specified position inside the root lists has focus or not.
+     * @param containerId the root list container id, the root list must be a recycler view.
+     * @param position the item position in
+     */
+    public void assertPositionFocused(@IdRes int containerId, int position) {
+        onView(allOf(withId(R.id.roots_list), isDescendantOfA(withId(containerId)))).check(
+                (view, noViewFoundException) -> {
+                    if (noViewFoundException != null) {
+                        throw noViewFoundException;
+                    }
+                    RecyclerView recyclerView = (RecyclerView) view;
+                    RecyclerView.ViewHolder viewHolder =
+                            recyclerView.findViewHolderForAdapterPosition(position);
+                    if (!viewHolder.itemView.isFocused()) {
+                        throw new AssertionError(
+                                "Expect item at position " + position
+                                        + " to be focused but it's not.");
+                    }
+                });
     }
 }
