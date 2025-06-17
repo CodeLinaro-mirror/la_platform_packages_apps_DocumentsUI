@@ -864,7 +864,7 @@ public class SearchViewManager implements
                     // TODO(b:391232249): Searching with stack.peek().documentId does not work.
                 case ROOT_FOLDER: {
                     if (Providers.AUTHORITY_DOWNLOADS.equals(root.authority) && topFolder != null) {
-                        folderList.add(new FolderInfo(topFolder));
+                        folderList.add(new FolderInfo(topFolder, root));
                     } else {
                         // Here we are searching with rootId, even though we are suppose to search
                         // in the current folder. This needs to be fixed.

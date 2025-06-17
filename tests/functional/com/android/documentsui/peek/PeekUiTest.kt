@@ -42,13 +42,12 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @RequiresFlagsEnabled(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO)
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
-    @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    @get:Rule val checkFlags = CheckAndForceMaterial3Flag()
 
     @get:Rule
     val testFilesRule: TestFilesRule =
         TestFilesRule()
-            .createFileInRoot(StubProvider.ROOT_0_ID, "image.png", "image/png")
+            .createFileInRoot(StubProvider.ROOT_0_ID, "image.jpg", "image/jpeg")
             .createFileInRoot(StubProvider.ROOT_0_ID, "file0.log", "text/plain")
 
     private lateinit var peekBot: PeekBot
@@ -58,7 +57,14 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         peekBot = PeekBot(device!!, context!!, TIMEOUT)
     }
 
-    fun validatePeekContents(fileName: String) {
+    private fun showAndCheckPreview(fileName: String) {
+        peekBot.assertPeekHidden()
+        bots.directory.selectDocument(fileName, 1)
+        bots.main.clickActionItem("Get info")
+        checkPreviewActive(fileName)
+    }
+
+    private fun checkPreviewActive(fileName: String) {
         peekBot.assertPeekActive()
         peekBot.assertHasTitle(fileName)
     }
@@ -66,28 +72,17 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testSequentialFilePreview() {
-        peekBot.assertPeekHidden()
-        bots.directory.selectDocument("image.png", 1)
-        bots.main.clickActionItem("Get info")
-        validatePeekContents("image.png")
+        showAndCheckPreview("image.jpg")
         peekBot.hide()
-
-        bots.directory.selectDocument("file0.log", 1)
-        bots.main.clickActionItem("Get info")
-        validatePeekContents("file0.log")
-        peekBot.hide()
+        showAndCheckPreview("file0.log")
     }
 
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {
-        peekBot.assertPeekHidden()
-        // Selecting a document should show the "1 selected" label.
-        bots.directory.selectDocument("image.png", 1)
-        bots.main.clickActionItem("Get info")
-        validatePeekContents("image.png")
+        showAndCheckPreview("file0.log")
         // The selection should not be possible, the "1 selected" label shouldn't show.
-        val selectionHotspot: UiObject2 = bots.directory.findSelectionHotspot("image.png")
+        val selectionHotspot: UiObject2 = bots.directory.findSelectionHotspot("file0.log")
         Assert.assertNull(selectionHotspot)
         val assertSelectionText = "1 selected"
         val timeout: Long = 1000
@@ -98,36 +93,47 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
 
     @Test
     @Throws(Exception::class)
-    fun testRestorePeekActiveState() {
-        bots.directory.selectDocument("image.png", 1)
-        bots.main.clickActionItem("Get info")
-        validatePeekContents("image.png")
+    fun testPeekRestorationOnConfigurationChange() {
+        showAndCheckPreview("image.jpg")
 
-        // Recreate the activity (happens on window resize, for example), and ensure that the
-        // preview overlay is still showing.
+        // Recreate the activity to simulate a configuration change (window resize, for example),
+        // and ensure that the preview is restored.
         mActivityScenario!!.recreate()
-        validatePeekContents("image.png")
+        checkPreviewActive("image.jpg")
 
         peekBot.hide()
+        // Ensure that the Peek overlay isn't showing when the activity gets recreated after the
+        // overlay has been hidden.
         mActivityScenario!!.recreate()
         peekBot.assertPeekHidden()
 
         bots.directory.selectDocument("file0.log", 1)
         bots.main.clickActionItem("Get info")
-        validatePeekContents("file0.log")
+        checkPreviewActive("file0.log")
+        // Check Peek's contents when restoring a different preview.
         mActivityScenario!!.recreate()
-        validatePeekContents("file0.log")
+        checkPreviewActive("file0.log")
     }
 
     @Test
     @Throws(Exception::class)
     fun testNoPreview() {
-        bots.directory.selectDocument("file0.log", 1)
-        bots.main.clickActionItem("Get info")
-        validatePeekContents("file0.log")
+        showAndCheckPreview("file0.log")
 
         // Use the "No preview available" content description to ensure that the "No preview" shape
         // is showing.
         onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testMetadataSheet() {
+        bots.directory.selectDocument("file0.log", 1)
+        bots.main.clickActionItem("Get info")
+
+        // Check the metadata sheet state before and after recreating the activity.
+        peekBot.validateMetadataSheetState(true)
+        mActivityScenario!!.recreate()
+        peekBot.validateMetadataSheetState(true)
     }
 }

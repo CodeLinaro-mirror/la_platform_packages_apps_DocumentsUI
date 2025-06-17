@@ -121,6 +121,7 @@
   int option_menu_show_hidden_files;
   int option_menu_sort;
   int peek_container;
+  int peek_preview_container;
   int root_menu_eject_root;
   int root_menu_open_in_new_window;
   int root_menu_paste_into_folder;
@@ -223,4 +224,9 @@
   static int getRes(int);
   static void overrideMappingForTest(java.util.Map);
   static void setEnabledForTest(boolean);
+}
+
+# The SideSheetBehavior state is not directly accessed from DocumentsUI, but is used in tests
+-keep class com.google.android.material.sidesheet.SideSheetBehavior {
+  public int getState();
 }

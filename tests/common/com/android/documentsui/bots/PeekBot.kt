@@ -16,7 +16,10 @@
 package com.android.documentsui.bots
 
 import android.content.Context
+import android.widget.FrameLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
@@ -30,6 +33,9 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiDevice
 import com.android.documentsui.R
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.sidesheet.SideSheetBehavior
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.allOf
 
 /**
@@ -43,6 +49,53 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
         allOf(withId(R.id.peek_container), isDescendantOfA(peekOverlayMatcher))
     private val toolbarMatcher =
         allOf(isAssignableFrom(MaterialToolbar::class.java), withId(R.id.peek_toolbar))
+    private val metadataContainerMatcher =
+        allOf(withId(R.id.peek_metadata_container), isDescendantOfA(peekContainerMatcher))
+
+    /**
+     * Validates the metadata sheet's expanded state. Assertion made on the metadata sheet
+     * container.
+     */
+    private fun metadataSheetExpandedStateAssertion(expectExpanded: Boolean): ViewAssertion {
+        return ViewAssertion { view, noViewFoundException ->
+            if (view == null) {
+                throw noViewFoundException
+            }
+            val metadataSheetBehavior = SideSheetBehavior.from(view)
+            assertEquals(
+                if (expectExpanded) {
+                    SideSheetBehavior.STATE_EXPANDED
+                } else {
+                    SideSheetBehavior.STATE_HIDDEN
+                },
+                metadataSheetBehavior.state
+            )
+        }
+    }
+
+    /**
+     * Validates that if the metadata sheet is expanded, the preview container is resized so that it
+     * doesn't overlap with the metadata sheet. Assertion made on the root of the Peek fragment.
+     */
+    private fun metadataSheetWidthAssertion(expectExpanded: Boolean): ViewAssertion {
+        return ViewAssertion { rootView, noViewFoundException ->
+            if (rootView == null) {
+                throw noViewFoundException
+            }
+            val previewContainer = rootView.findViewById<FrameLayout>(R.id.peek_preview_container)
+            val metadataContainer = rootView.findViewById<FrameLayout>(R.id.peek_metadata_container)
+            assertTrue(rootView is CoordinatorLayout)
+            assertTrue(metadataContainer.width > 0)
+            assertEquals(
+                rootView.width,
+                if (expectExpanded) {
+                    previewContainer.width + metadataContainer.width
+                } else {
+                    previewContainer.width
+                }
+            )
+        }
+    }
 
     fun assertPeekHidden() {
         onView(peekOverlayMatcher)
@@ -56,6 +109,12 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
     fun assertHasTitle(title: String) {
         onView(allOf(withText(title), isDescendantOfA(peekContainerMatcher)))
             .check(matches(isDisplayed()))
+    }
+
+    fun validateMetadataSheetState(expectExpanded: Boolean) {
+        mDevice.waitForIdle()
+        onView(metadataContainerMatcher).check(metadataSheetExpandedStateAssertion(expectExpanded))
+        onView(peekContainerMatcher).check(metadataSheetWidthAssertion(expectExpanded))
     }
 
     fun hide() {

@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.documentsui.testing
+package com.android.documentsui.peek
 
+import android.content.Context
+import android.view.LayoutInflater
 import android.widget.FrameLayout
-import androidx.fragment.app.FragmentManager
+import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
-import com.android.documentsui.peek.PeekViewManager
-import com.android.documentsui.peek.PeekViewModel
-import org.mockito.Mockito.mock
 
-class TestPeekViewManager() :
-    PeekViewManager(
-        PeekViewModel(),
-        mock(FrameLayout::class.java),
-        mock(FragmentManager::class.java)
-    ) {
-
-    val peekDocument = TestEventListener<DocumentInfo>()
-
-    override fun initialize() {}
-
-    override fun peekDocument(doc: DocumentInfo) {
-        peekDocument.accept(doc)
+/** Custom view component used to display the metadata in Peek. */
+class MetadataView(context: Context) : FrameLayout(context), PeekFragment.Display {
+    init {
+        @Suppress("ktlint:standard:comment-wrapping")
+        LayoutInflater.from(context).inflate(R.layout.peek_metadata_layout, /* root= */ this)
     }
+
+    override fun accept(doc: DocumentInfo) {}
+
+    override fun clear() {}
 }
