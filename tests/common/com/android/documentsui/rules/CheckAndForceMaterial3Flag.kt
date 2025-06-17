@@ -49,13 +49,23 @@ class CheckAndForceMaterial3Flag : TestRule {
                     flagsValueProvider.tearDownBeforeTest()
                 }
 
+                val originalFlagState = Material3Config.getInstance().forceMaterial3
+
                 // The try/finally above takes care of checking the state of the DeviceFlag, so the
                 // code only reaches here if the flag is in the desired state.
                 if (isMaterial3 != null) {
                     // Only force if the use_material3 flag is in use (aka not-null).
                     Material3Config.setEnabledForTest(isMaterial3)
                 }
-                base.evaluate()
+
+                // Restore the flag value if it has changed.
+                try {
+                    base.evaluate()
+                } finally {
+                    if (originalFlagState != Material3Config.getInstance().forceMaterial3) {
+                        Material3Config.setEnabledForTest(originalFlagState)
+                    }
+                }
             }
         }
     }
