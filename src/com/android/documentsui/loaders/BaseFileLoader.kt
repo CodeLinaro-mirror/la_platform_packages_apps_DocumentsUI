@@ -28,8 +28,8 @@ import android.util.Log
 import androidx.loader.content.AsyncTaskLoader
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.base.Lookup
+import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
-import com.android.documentsui.base.UserId
 import com.android.documentsui.roots.RootCursorWrapper
 
 const val TAG = "SearchV2"
@@ -70,7 +70,6 @@ fun toSingleCursor(cursorList: List<Cursor>): Cursor {
  */
 abstract class BaseFileLoader(
     context: Context,
-    private val userIdList: List<UserId>,
     protected val mimeTypeLookup: Lookup<String, String>,
 ) : AsyncTaskLoader<DirectoryResult>(context) {
 
@@ -191,38 +190,42 @@ abstract class BaseFileLoader(
      * if it fails to query the given location for all known users.
      */
     fun queryLocation(
-        rootId: String,
+        rootInfo: RootInfo,
         locationUri: Uri,
         queryArgs: Bundle?,
         maxResults: Int,
     ): Cursor? {
         val authority = locationUri.authority ?: return null
-        for (userId in userIdList) {
-            if (DEBUG) {
-                Log.d(TAG, "BaseFileLoader.queryLocation for $userId at $locationUri")
+        if (DEBUG) {
+            Log.d(TAG, "BaseFileLoader.queryLocation for ${rootInfo.userId} at $locationUri")
+        }
+        val resolver = rootInfo.userId.getContentResolver(context)
+        try {
+            resolver.acquireUnstableContentProviderClient(
+                authority
+            ).use { client ->
+                if (client == null) {
+                    return null
+                }
+                try {
+                    val cursor =
+                        client.query(locationUri, null, queryArgs, signal) ?: return null
+                    return RootCursorWrapper(
+                        rootInfo.userId,
+                        authority,
+                        rootInfo.rootId,
+                        cursor,
+                        maxResults
+                    )
+                } catch (e: RemoteException) {
+                    if (DEBUG) {
+                        Log.d(TAG, "Failed to get cursor for $locationUri", e)
+                    }
+                }
             }
-            val resolver = userId.getContentResolver(context)
-            try {
-                resolver.acquireUnstableContentProviderClient(
-                    authority
-                ).use { client ->
-                    if (client == null) {
-                        return null
-                    }
-                    try {
-                        val cursor =
-                            client.query(locationUri, null, queryArgs, signal) ?: return null
-                        return RootCursorWrapper(userId, authority, rootId, cursor, maxResults)
-                    } catch (e: RemoteException) {
-                        if (DEBUG) {
-                            Log.d(TAG, "Failed to get cursor for $locationUri", e)
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                if (DEBUG) {
-                    Log.d(TAG, "Failed to get a content provider client for $locationUri", e)
-                }
+        } catch (e: Exception) {
+            if (DEBUG) {
+                Log.d(TAG, "Failed to get a content provider client for $locationUri", e)
             }
         }
 

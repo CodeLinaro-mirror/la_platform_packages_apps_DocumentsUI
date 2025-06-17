@@ -56,21 +56,20 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
-import com.android.documentsui.base.FolderInfo;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
+import com.android.documentsui.base.UserId;
 import com.android.modules.utils.build.SdkLevel;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Manages searching UI behavior.
@@ -868,61 +867,61 @@ public class SearchViewManager implements
     }
 
     /**
+     * Returns roots that are queried for recent files.
+     * @param roots A stream of roots that is guaranteed to have rootId, and authority.
+     * @param userId The user ID of the recents root.
+     * @return The subset of roots to be queried about recent files.
+     */
+    private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
+        return roots.filter(r -> r.isLocalOnly()
+                && r.supportsRecents() && r.userId.equals(userId)
+                && !r.isDownloads() && !r.isExternalStorage()).collect(
+                Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * Returns all roots that can deliver search results. In order to avoid duplicate results,
+     * we remove all MEDIA sources, and downloads, since files in those providers are also known
+     * to the external storage provider.
+     * @param roots A stream of roots that is guaranteed to have rootId, and authority.
+     * @return The subset of roots that can be searched.
+     */
+    private Collection<RootInfo> getAllSearchableRoots(Stream<RootInfo> roots) {
+        return roots.filter(r -> !Providers.AUTHORITY_MEDIA.equals(r.authority)
+                && !r.isDownloads()).collect(Collectors.toList());
+    }
+
+    /**
      * For the given set of roots, and the current state of the document stack, it returns a list
      * of searchable folders. This method uses the state of the search options to narrow down
      * the list of folders to the one that the user asks to be searched.
      *
-     * @param roots The list of roots that are used to form a list of searchable folders.
+     * @param roots The starting list of potentially searchable roots.
      * @param stack The current state of the document stack.
-     * @return A list of folders that should be searched based on the search options.
+     * @return A list of searchable roots that should be searched based on the search options.
      */
-    public Collection<FolderInfo> getSearchFolders(Collection<RootInfo> roots,
+    public Collection<RootInfo> getSearchRoots(Collection<RootInfo> roots,
             DocumentStack stack) {
-        Collection<FolderInfo> folderList = new ArrayList<>();
-        // A predicate that selects all searchable roots that have an authority and a rootID.
-        // TODO(b:391232249): Resolve if we should test for r.isStorage() to eliminate media roots.
-        Predicate<RootInfo> baseFilter =
-                r -> r.supportsSearch() && r.authority != null && r.rootId != null;
-        if (stack.isRecents()) {
-            Predicate<RootInfo> filter = baseFilter;
-            if (mLocationOption != SearchLocationOption.EVERYWHERE) {
-                // If we are not searching everywhere, limit the search to local roots only.
-                filter = baseFilter.and(RootInfo::isLocalOnly);
-            }
-            folderList = roots.stream().filter(filter).map(FolderInfo::new).collect(
-                    Collectors.toList());
-        } else if (mLocationOption != null) {
-            RootInfo root = stack.getRoot();
-            if (root == null) {
-                return Collections.emptyList();
-            }
-            DocumentInfo topFolder = stack.peek();
-            switch (mLocationOption) {
-                case ROOT_FOLDER: {
-                    if (Providers.AUTHORITY_DOWNLOADS.equals(root.authority) && topFolder != null) {
-                        folderList.add(new FolderInfo(topFolder, root));
-                    } else {
-                        // Here we are searching with rootId, even though we are suppose to search
-                        // in the current folder. This needs to be fixed.
-                        folderList.add(new FolderInfo(root));
-                    }
-                    break;
-                }
-                case EVERYWHERE: {
-                    // When searching locally, to avoid duplicates, do not rely on MediaStore or
-                    // DownloadStorageProvider.
-                    folderList = roots.stream().filter(baseFilter.and(
-                            r -> !Providers.AUTHORITY_MEDIA.equals(r.authority)
-                                    && !Providers.AUTHORITY_DOWNLOADS.equals(r.authority))).map(
-                            FolderInfo::new).collect(Collectors.toList());
-                    break;
-                }
-                default:
-                    throw new IllegalStateException(
-                            "Unhandled location option " + mLocationOption.name());
-            }
+        if (mLocationOption == null || stack.getRoot() == null) {
+            // If we don't know where to search, search nowhere.
+            return Collections.emptyList();
         }
-        return folderList;
+        Stream<RootInfo> core = roots.stream().filter(
+                r -> r.rootId != null && r.authority != null && r.supportsSearch());
+        if (mLocationOption == SearchLocationOption.EVERYWHERE) {
+            // If the current location is everywhere get all searchable roots.
+            return getAllSearchableRoots(core);
+        }
+        if (stack.isRecents()) {
+            // For recents use recent roots that match current recent root user ID.
+            return getRecentRoots(core, stack.getRoot().userId);
+        }
+        if (mLocationOption != SearchLocationOption.ROOT_FOLDER) {
+            throw new IllegalStateException(
+                    "Unhandled location option " + mLocationOption.name());
+        }
+        // Just search current root.
+        return Collections.singletonList(stack.getRoot());
     }
 
     public interface SearchManagerListener {

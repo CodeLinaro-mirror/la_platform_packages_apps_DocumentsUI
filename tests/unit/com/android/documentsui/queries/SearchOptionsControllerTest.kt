@@ -61,17 +61,17 @@ class SearchOptionsControllerTest {
 
     @Test
     fun testOptionsUpdateWorks() {
-        for (e in SearchLocationOption.entries) {
+        for (e in enumValues<SearchLocationOption>()) {
             controller!!.onLocationSelected(e.value)
             controller!!.notifyOptionsChangeListener()
             assertEquals(optionsListener.optionsState!!.location, e)
         }
-        for (e in LastModifiedOption.entries) {
+        for (e in enumValues<LastModifiedOption>()) {
             controller!!.onLastModifiedSelected(e.value)
             controller!!.notifyOptionsChangeListener()
             assertEquals(optionsListener.optionsState!!.lastModified, e)
         }
-        for (e in FileTypeOption.entries) {
+        for (e in enumValues<FileTypeOption>()) {
             controller!!.onFileTypeSelected(e.value)
             controller!!.notifyOptionsChangeListener()
             assertEquals(optionsListener.optionsState!!.fileType, e)

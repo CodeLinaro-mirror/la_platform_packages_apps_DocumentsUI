@@ -24,6 +24,8 @@ import static android.provider.DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
 
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -53,7 +55,6 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
-import com.android.documentsui.base.FolderInfo;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
@@ -562,7 +563,6 @@ public final class SearchViewManagerTest {
         mSearchOptionsController.onLocationSelected(SearchLocationOption.EVERYWHERE.getValue());
         mSearchOptionsController.notifyOptionsChangeListener();
 
-        assertEquals(List.of(new FolderInfo(externalRoot)),
-                mSearchViewManager.getSearchFolders(roots, stack));
+        assertThat(mSearchViewManager.getSearchRoots(roots, stack)).containsExactly(externalRoot);
     }
 }

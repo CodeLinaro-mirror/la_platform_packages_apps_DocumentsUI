@@ -100,16 +100,14 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
     @Test
     @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
     fun testLoadInBackground() {
-        val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
         // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
         val rootFolderInfo = DocumentInfo()
         rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
-        rootFolderInfo.userId = userIds[0]
+        rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
 
         val loader =
             FolderLoader(
                 activity,
-                userIds,
                 TestFileTypeLookup(),
                 contentLock,
                 TestProvidersAccess.DOWNLOADS,
@@ -131,7 +129,6 @@ class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTes
         val loader =
             FolderLoader(
                 activity,
-                listOf(TestProvidersAccess.DOWNLOADS.userId),
                 TestFileTypeLookup(),
                 contentLock,
                 TestProvidersAccess.DOWNLOADS,
