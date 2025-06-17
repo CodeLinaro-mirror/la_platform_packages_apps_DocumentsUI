@@ -223,7 +223,7 @@
 -keep class com.android.documentsui.util.Material3Config {
   static int getRes(int);
   static void overrideMappingForTest(java.util.Map);
-  static void setEnabledForTest(boolean);
+  static void setEnabledForTest(java.lang.Boolean);
 }
 
 # The SideSheetBehavior state is not directly accessed from DocumentsUI, but is used in tests
