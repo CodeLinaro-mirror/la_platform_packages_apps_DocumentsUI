@@ -8,11 +8,14 @@
       "name": "DocumentsUIUnitTests"
     }
   ],
-  "desktop-postsubmit": [    {
-      "name": "DocumentsUIGoogleTests"
-    },
+  "desktop-presubmit": [
     {
       "name": "DocumentsUIUnitTests"
+    }
+  ],
+  "desktop-postsubmit": [
+    {
+      "name": "DocumentsUIGoogleTests"
     }
   ]
 }
