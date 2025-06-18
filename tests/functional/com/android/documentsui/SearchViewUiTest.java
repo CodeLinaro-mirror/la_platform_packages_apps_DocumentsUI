@@ -18,11 +18,11 @@ package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -41,6 +41,7 @@ import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.provider.Settings;
 
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
 import androidx.test.uiautomator.By;
@@ -446,7 +447,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("Recent");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
-        onView(withId(R.id.search_last_modified_trigger)).check(doesNotExist());
+        onView(withId(R.id.search_last_modified_trigger)).check(matches(withEffectiveVisibility(
+                ViewMatchers.Visibility.GONE)));
 
         // Move back to TEST_ROOT_0, repeat search, and expect the last modified trigger to be again
         // visible.
