@@ -245,6 +245,11 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> odabranih</item>
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"Poništi odabir"</string>
+    <string name="document_click_action" msgid="8073338575301415356">"otvaranje"</string>
+    <string name="selected_document_click_action" msgid="792826130200234885">"poništavanje odabira"</string>
+    <string name="document_long_click_action" msgid="3789836661597702666">"odabir"</string>
+    <string name="selected_document_long_click_action" msgid="666372407184527109">"povlačenje"</string>
+    <string name="document_long_click_action_picker" msgid="943888101827856784">"višestruki odabir"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> stavka</item>
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> stavke</item>
@@ -316,7 +321,6 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"Izradi novu mapu"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Pretraži ovaj uređaj"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Izbriši tekst"</string>
-    <string name="search_location_this_folder" msgid="6458835123175563013">"Ova mapa"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Korijenska mapa"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Svugdje"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"Bilo kad"</string>
@@ -335,6 +339,13 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Prikazivanje u načinu popisa."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"Naziv datoteke"</string>
+    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
+    <skip />
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Sakrij pregled datoteke"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Pregled nije dostupan"</string>
+    <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Pregled slike <xliff:g id="FILENAME">%s</xliff:g>"</string>
+    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
+    <skip />
+    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
+    <skip />
 </resources>

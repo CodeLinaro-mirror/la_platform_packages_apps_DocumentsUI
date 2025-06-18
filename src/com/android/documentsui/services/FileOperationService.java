@@ -63,6 +63,7 @@ public class FileOperationService extends Service implements Job.Listener {
 
     public static final String EXTRA_FAILED_URIS = "com.android.documentsui.FAILED_URIS";
     public static final String EXTRA_FAILED_DOCS = "com.android.documentsui.FAILED_DOCS";
+    public static final String EXTRA_FAILED_PATHS = "com.android.documentsui.FAILED_PATHS";
 
     // Extras used to start or cancel a file operation...
     public static final String EXTRA_JOB_ID = "com.android.documentsui.JOB_ID";
@@ -509,6 +510,9 @@ public class FileOperationService extends Service implements Job.Listener {
             }
             if (!job.failedDocs.isEmpty()) {
                 Log.e(TAG, "Job failed to process docs: " + job.failedDocs + ".");
+            }
+            if (!job.failedPaths.isEmpty()) {
+                Log.e(TAG, "Job failed to extract paths: " + job.failedPaths);
             }
             notificationManager.notify(
                     job.id, NOTIFICATION_ID_FAILURE, job.getFailureNotification());

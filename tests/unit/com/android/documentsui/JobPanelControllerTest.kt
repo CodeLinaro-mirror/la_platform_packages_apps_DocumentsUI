@@ -36,6 +36,10 @@ import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.MutableJobProgress
 import com.android.documentsui.testing.TestActionHandler
 import com.android.documentsui.util.Material3Config.Companion.getRes
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -46,6 +50,7 @@ import org.junit.runner.RunWith
 
 @SmallTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class JobPanelControllerTest {
     @get:Rule
@@ -91,6 +96,7 @@ class JobPanelControllerTest {
         }
 
         controller = JobPanelController(context, TestActionHandler(), JobPanelViewModel())
+        TestScope().launch(UnconfinedTestDispatcher()) { controller.observeViewModel() }
         controller.setMenuItem(menuItem)
     }
 

@@ -20,7 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseSearchV2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.app.PendingIntent;
@@ -184,7 +184,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             mActivity.startIntentSenderForResult(intent.getIntentSender(), CODE_AUTHENTICATION,
                     null, 0, 0, 0);
         } catch (IntentSender.SendIntentException cancelled) {
-            Log.d(TAG, "Authentication Pending Intent either canceled or ignored.");
+            if (DEBUG) {
+                Log.d(TAG, "Authentication Pending Intent either canceled or ignored.");
+            }
         }
     }
 
@@ -925,7 +927,12 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 mState.stack.changeRoot(mActivity.getCurrentRoot());
             }
 
-            if (isUseSearchV2FlagEnabled()) {
+            if (isSearchV2Enabled()) {
+                // SearchV2 needs to know the root, as it fine-tunes it behavior based on where
+                // search is performed. Thus before creating a loader we update the search view
+                // manager with the current root. Search view manager then is ready to act
+                // appropriately, once it gets notified about search starting.
+                mSearchMgr.setCurrentRoot(mState.stack.getRoot());
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
@@ -1031,7 +1038,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     mState.acceptMimes, mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
-                Log.d(TAG, "Creating search loader V2");
+                if (DEBUG) {
+                    Log.d(TAG, "Creating search loader V2");
+                }
                 // For search and recent we create an observer that restart the loader every time
                 // one of the searched content providers reports a change.
                 final LockingContentObserver observer = new LockingContentObserver(
@@ -1049,7 +1058,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                         mExecutorService
                 );
             }
-            Log.d(TAG, "Creating folder loader V2");
+            if (DEBUG) {
+                Log.d(TAG, "Creating folder loader V2");
+            }
             // For folder scan we pass the content lock to the loader so that it can register
             // an a callback to its internal method that forces a reload of the folder, every
             // time the content provider reports a change.

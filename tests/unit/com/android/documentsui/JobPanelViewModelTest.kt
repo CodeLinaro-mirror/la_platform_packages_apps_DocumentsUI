@@ -26,7 +26,8 @@ import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.Job
 import com.android.documentsui.testing.MutableJobProgress
-import kotlin.collections.emptyList
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -227,6 +228,66 @@ class JobPanelViewModelTest {
         assertEquals(
             MenuIconState.VISIBLE(totalProgress = 40, hasFailures = true),
             viewModel.getMenuState()
+        )
+    }
+
+    @Test
+    fun testAutoDismiss() = runTest {
+        val viewModel = JobPanelViewModel(this)
+
+        val inProgress = MutableJobProgress(
+            id = "in_progress_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job in progress",
+            hasFailures = false,
+            currentBytes = 40,
+            requiredBytes = 100,
+        )
+
+        val succeeded = MutableJobProgress(
+            id = "succeeded_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_COMPLETED,
+            msg = "Job succeeded",
+            hasFailures = false,
+        )
+
+        val failed = MutableJobProgress(
+            id = "failed_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_COMPLETED,
+            msg = "Job failed",
+            hasFailures = true,
+        )
+
+        val start = testScheduler.timeSource.markNow()
+        viewModel.updateProgress(listOf(inProgress, succeeded, failed).toJobProgressList())
+        testScheduler.advanceTimeBy(2.seconds)
+        assertEquals(
+            listOf(inProgress, succeeded, failed)
+                .withExpandStates(false, false, false),
+            ArrayList(viewModel.currentJobs.values)
+        )
+
+        inProgress.state = Job.STATE_COMPLETED
+        viewModel.updateProgress(listOf(inProgress).toJobProgressList())
+
+        // After three seconds from first update, the succeeded job should auto dismiss.
+        testScheduler.advanceTimeBy(1.seconds)
+        testScheduler.runCurrent()
+        assertEquals(
+            listOf(inProgress, failed)
+                .withExpandStates(false, false),
+            ArrayList(viewModel.currentJobs.values)
+        )
+
+        // The previously in progress job should auto dismiss at five seconds.
+        testScheduler.advanceUntilIdle()
+        assertEquals(5.seconds, start.elapsedNow())
+        assertEquals(
+            listOf(failed).withExpandStates(false),
+            ArrayList(viewModel.currentJobs.values)
         )
     }
 }

@@ -16,6 +16,8 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.util.Material3Config.getRes;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.Mockito.when;
@@ -85,8 +87,8 @@ public final class InflateMessageDocumentHolderTest {
         env.getDisplayState().action = State.ACTION_GET_CONTENT;
         env.getDisplayState().supportsCrossProfile = true;
 
-        mContext.setTheme(R.style.DocumentsTheme);
-        mContext.getTheme().applyStyle(R.style.DocumentsDefaultTheme,  /* force= */false);
+        mContext.setTheme(getRes(R.style.DocumentsTheme));
+        mContext.getTheme().applyStyle(getRes(R.style.DocumentsDefaultTheme), /* force= */ false);
 
         isPrivateSpaceEnabled = SdkLevel.isAtLeastS() && isPrivateSpaceEnabled;
         if (isPrivateSpaceEnabled) {

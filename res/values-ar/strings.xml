@@ -296,6 +296,11 @@
       <item quantity="one">تم اختيار عنصر واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>)</item>
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"محو التحديد"</string>
+    <string name="document_click_action" msgid="8073338575301415356">"فتح"</string>
+    <string name="selected_document_click_action" msgid="792826130200234885">"إلغاء الاختيار"</string>
+    <string name="document_long_click_action" msgid="3789836661597702666">"اختيار"</string>
+    <string name="selected_document_long_click_action" msgid="666372407184527109">"سحب"</string>
+    <string name="document_long_click_action_picker" msgid="943888101827856784">"اختيار عدة عناصر"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="zero"><xliff:g id="COUNT_1">%1$d</xliff:g> عنصر</item>
       <item quantity="two">عنصران (<xliff:g id="COUNT_1">%1$d</xliff:g>)</item>
@@ -382,7 +387,6 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"إنشاء مجلد جديد"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"البحث في هذا الجهاز"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"محو النص"</string>
-    <string name="search_location_this_folder" msgid="6458835123175563013">"هذا المجلد"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"المجلد الرئيسي"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"كل مكان"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"في أي وقت"</string>
@@ -401,6 +405,13 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"يتم العرض في وضع القائمة."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"اسم الملف"</string>
+    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
+    <skip />
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"إخفاء معاينة الملف"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"لا تتوفّر أي معاينة"</string>
+    <string name="a11y_peek_image_preview" msgid="3917148390186060263">"معاينة صورة <xliff:g id="FILENAME">%s</xliff:g>"</string>
+    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
+    <skip />
+    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
+    <skip />
 </resources>

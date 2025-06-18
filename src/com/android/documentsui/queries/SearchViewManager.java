@@ -24,6 +24,7 @@ import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,6 +66,7 @@ import com.android.modules.utils.build.SdkLevel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
@@ -110,6 +112,7 @@ public class SearchViewManager implements
     private @Nullable MenuItem mDockedSearch;
     private @Nullable EditText mDockedSearchEditText;
     private @Nullable FragmentManager mFragmentManager;
+    private @Nullable RootInfo mCurrentRoot;
 
     public SearchViewManager(
             SearchManagerListener listener,
@@ -141,11 +144,12 @@ public class SearchViewManager implements
         mUiHandler = handler;
         mChipViewManager = chipViewManager;
         mChipViewManager.setSearchChipViewManagerListener(this::onChipCheckedStateChanged);
+        mCurrentRoot = null;
         if (!isSearchV2Enabled()) {
             mSearchOptionsController = null;
         } else {
             mSearchOptionsController = searchOptionsController;
-            mLocationOption = SearchLocationOption.CURRENT_FOLDER;
+            mLocationOption = SearchLocationOption.ROOT_FOLDER;
             if (mSearchOptionsController != null) {
                 mSearchOptionsController.setOptionChangeListener(this::onSearchOptionsChanged);
             }
@@ -468,7 +472,7 @@ public class SearchViewManager implements
     }
 
     private int getPixelForDp(int dp) {
-        final float scale = mSearchView.getContext().getResources().getDisplayMetrics().density;
+        final float scale = getCurrentContext().getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
     }
 
@@ -539,6 +543,36 @@ public class SearchViewManager implements
     }
 
     /**
+     * Sets the current root for which searches may be executed. This is part of SearchV2 and
+     * has no effect otherwise. For SearchV2 the current root is used to extract the root
+     * title in the dropdown options.
+     * @param root The current root that may be searched.
+     */
+    public void setCurrentRoot(RootInfo root) {
+        if (isSearchV2Enabled()) {
+            mCurrentRoot = root;
+        }
+    }
+
+    /**
+     * Toggles between chips and dropdowns search option controls. This only has any effect if
+     * SearchV2 is enabled.
+     * @param controls Which controls are to be made visible.
+     */
+    private void useSearchOptions(SearchOptionsControls controls) {
+        if (isSearchV2Enabled()) {
+            if (mSearchOptionsController != null) {
+                if (SearchOptionsControls.DROPDOWNS == controls) {
+                    mSearchOptionsController.show(mCurrentRoot);
+                } else {
+                    mSearchOptionsController.hide();
+                }
+            }
+            mChipViewManager.setChipsRowVisible(SearchOptionsControls.CHIPS == controls);
+        }
+    }
+
+    /**
      * Clears the search. Triggers refreshing of the directory content.
      *
      * @return True if the default behavior of clearing/dismissing SearchView should be overridden.
@@ -546,13 +580,8 @@ public class SearchViewManager implements
      */
     @Override
     public boolean onClose() {
-        if (isSearchV2Enabled()) {
-            if (mSearchOptionsController != null) {
-                mSearchOptionsController.setVisible(false);
-            }
-            mChipViewManager.setChipsRowVisible(true);
-        }
-        return this.onStopSearch();
+        useSearchOptions(SearchOptionsControls.CHIPS);
+        return onStopSearch();
     }
 
     private boolean onStopSearch() {
@@ -675,12 +704,22 @@ public class SearchViewManager implements
         };
     }
 
+    /**
+     * A method to isolate the task of getting context out of search view. This method is here
+     * so that we have only one place where compiler may warn about NullPointerException.
+     * @return The current context in which this search view manager operates.
+     */
+    private Context getCurrentContext() {
+        return Objects.requireNonNull(mSearchView, "SearchView is null").getContext();
+    }
+
     @Override
     public boolean onQueryTextChange(String newText) {
         if (isSearchV2Enabled()) {
-            if (!newText.isEmpty()) {
-                mChipViewManager.setChipsRowVisible(false);
-                mSearchOptionsController.setVisible(true);
+            if (newText.isEmpty()) {
+                useSearchOptions(SearchOptionsControls.CHIPS);
+            } else {
+                useSearchOptions(SearchOptionsControls.DROPDOWNS);
             }
         }
         //Skip first search when search expanded
@@ -764,7 +803,7 @@ public class SearchViewManager implements
         }
 
         SearchHistoryManager.getInstance(
-                mSearchView.getContext().getApplicationContext()).addHistory(mCurrentSearch);
+                getCurrentContext().getApplicationContext()).addHistory(mCurrentSearch);
     }
 
     /**
@@ -779,7 +818,7 @@ public class SearchViewManager implements
         }
 
         SearchHistoryManager.getInstance(
-                mSearchView.getContext().getApplicationContext()).deleteHistory(history);
+                getCurrentContext().getApplicationContext()).deleteHistory(history);
     }
 
     private void logTextSearchMetric() {
@@ -859,9 +898,6 @@ public class SearchViewManager implements
             }
             DocumentInfo topFolder = stack.peek();
             switch (mLocationOption) {
-                case CURRENT_FOLDER:
-                    // Fall-through.
-                    // TODO(b:391232249): Searching with stack.peek().documentId does not work.
                 case ROOT_FOLDER: {
                     if (Providers.AUTHORITY_DOWNLOADS.equals(root.authority) && topFolder != null) {
                         folderList.add(new FolderInfo(topFolder, root));

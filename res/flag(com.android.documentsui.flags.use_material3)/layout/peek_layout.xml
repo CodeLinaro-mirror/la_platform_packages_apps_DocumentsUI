@@ -29,8 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.android.documentsui.peek.RenderView
-            android:id="@+id/peek_preview"
+        <FrameLayout
+            android:id="@+id/peek_preview_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <!-- Text and icons using android:white because the underlying black scrim doesn't
@@ -42,6 +42,7 @@
             android:background="@color/peek_topbar_scrim"
             android:paddingEnd="@dimen/space_extra_small_4"
             android:paddingStart="@dimen/space_extra_small_4"
+            app:menu="@menu/peek_top_bar_menu"
             app:navigationContentDescription="@string/a11y_peek_navigation_icon"
             app:navigationIcon="@drawable/ic_arrow_back_m3"
             app:navigationIconTint="@android:color/white"
