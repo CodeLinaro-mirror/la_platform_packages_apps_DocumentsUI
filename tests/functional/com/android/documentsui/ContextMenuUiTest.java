@@ -17,14 +17,18 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
 
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Before;
@@ -36,6 +40,8 @@ import java.util.Map;
 
 @LargeTest
 public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
+    @Rule
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -45,6 +51,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
                     .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
                     .createFileInRoot(ROOT_0_ID, "file1.png", "image/png")
                     .createFileInRoot(ROOT_0_ID, "file2.csv", "text/csv")
+                    .createFileInRoot(ROOT_0_ID, "archive.zip", "application/zip")
                     .createFileInRoot(ROOT_0_ID, "anotherFile0.log", "text/plain")
                     .createFileInRoot(ROOT_0_ID, "poodles.text", "text/plain");
 
@@ -55,6 +62,8 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.closeDrawer();
         menuItems = new HashMap<>();
 
+        menuItems.put("Extract here", false);
+        menuItems.put("Browse", false);
         menuItems.put("Share", false);
         menuItems.put("Open", false);
         menuItems.put("Open with", false);
@@ -78,6 +87,28 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put("Delete", true);
 
         bots.directory.rightClickDocument("file1.png");
+        bots.menu.assertPresentMenuItems(menuItems);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void testContextMenu_onArchive_shouldHaveBrowseMenuItem() throws Exception {
+        menuItems.clear();
+        menuItems.put("Extract here", true);
+        menuItems.put("Browse", true);
+
+        bots.directory.rightClickDocument("archive.zip");
+        bots.menu.assertPresentMenuItems(menuItems);
+    }
+
+    @Test
+    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    public void testContextMenu_onArchive_shouldNotHaveBrowseMenuItem() throws Exception {
+        menuItems.clear();
+        menuItems.put("Extract here", false);
+        menuItems.put("Browse", false);
+
+        bots.directory.rightClickDocument("archive.zip");
         bots.menu.assertPresentMenuItems(menuItems);
     }
 
