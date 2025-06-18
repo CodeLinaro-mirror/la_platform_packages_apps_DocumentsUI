@@ -248,3 +248,8 @@
 -keep class com.android.documentsui.queries.SearchOptionsState {
   *;
 }
+
+# Temporarily while use_material3 flag isn't fully rolled out.
+-keep interface com.android.documentsui.util.Config {
+  public java.lang.Boolean getForceMaterial3();
+}
