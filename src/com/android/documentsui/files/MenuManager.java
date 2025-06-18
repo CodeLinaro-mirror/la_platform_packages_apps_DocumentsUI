@@ -228,12 +228,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    protected void updateCompress(MenuItem compress, SelectionDetails selectionDetails) {
-        final boolean readOnly = !mDirDetails.canCreateDoc();
-        Menus.setEnabledAndVisible(compress, mFeatures.isArchiveCreationEnabled()
-                && !readOnly
-                && !selectionDetails.containsPartialFiles()
-                && !selectionDetails.canExtract());
+    protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
+        final boolean enabled = mFeatures.isArchiveCreationEnabled() && mDirDetails.canCreateDoc()
+                && !selection.containsPartialFiles() && !selection.canExtract();
+        Menus.setEnabledAndVisible(it, enabled);
+        if (enabled && isZipNgFlagEnabled()) it.setTitle(getRes(R.string.menu_zip));
     }
 
     @Override
