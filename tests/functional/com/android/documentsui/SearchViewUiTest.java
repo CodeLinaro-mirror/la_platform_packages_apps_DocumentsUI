@@ -178,7 +178,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.pressBack();
         // When docked search is enable pressing back twice will kill the activity.
-        if (!context.getResources().getBoolean(R.bool.show_docked_search)) {
+        if (!bots.search.showsDockedSearch()) {
             device.pressBack();
         }
 
@@ -209,7 +209,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.pressBack();
         // When docked search is enable pressing back twice will kill the activity.
-        if (!context.getResources().getBoolean(R.bool.show_docked_search)) {
+        if (!bots.search.showsDockedSearch()) {
             device.pressBack();
         }
 
