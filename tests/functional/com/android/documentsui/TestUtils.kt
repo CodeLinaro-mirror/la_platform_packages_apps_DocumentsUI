@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.documentsui.peek
+package com.android.documentsui
 
-import android.content.Context
-import com.android.documentsui.base.DocumentInfo
+import android.util.DisplayMetrics
+import android.util.TypedValue
 
-abstract class MetadataSheetController(context: Context, viewModel: PeekViewModel) {
-    internal val metadataView = MetadataView(context, viewModel)
+class TestUtils {
+    companion object {
+        fun dpToPx(dp: Float, metrics: DisplayMetrics?): Float {
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, metrics)
+        }
 
-    fun accept(docInfo: DocumentInfo) {
-        metadataView.accept(docInfo)
+        fun pxToDp(px: Float, metrics: DisplayMetrics): Float {
+            return TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_DIP, px, metrics)
+        }
     }
-
-    fun clear() {
-        metadataView.clear()
-    }
-
-    abstract fun show()
-    abstract fun hide()
-    abstract fun onDestroyView()
 }

@@ -15,8 +15,17 @@
  */
 package com.android.documentsui.peek
 
+import android.app.ActivityOptions
+import android.app.WindowConfiguration.WINDOWING_MODE_FREEFORM
+import android.content.Intent
+import android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT
+import android.content.res.Resources
+import android.graphics.Rect
 import android.os.RemoteException
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.provider.DocumentsContract
+import android.view.Display
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -28,6 +37,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
 import com.android.documentsui.ActivityTestJunit4
+import com.android.documentsui.TestUtils.Companion.dpToPx
+import com.android.documentsui.TestUtils.Companion.pxToDp
 import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
@@ -36,6 +47,8 @@ import com.android.documentsui.rules.TestFilesRule
 import java.io.IOException
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
+import kotlin.math.roundToInt
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -52,6 +65,54 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     val testFilesRule: TestFilesRule = TestFilesRule(/* skipCreation= */ true)
 
     private lateinit var peekBot: PeekBot
+
+    private fun relaunchActivityWithBounds(pxWidth: Int, pxHeight: Int) {
+        // Check assumption before launching the activity.
+        assumeMinWindowSizeAndFreeFormWindowFeature(pxWidth, pxHeight)
+
+        mActivityScenario!!.close()
+
+        val intent = Intent(context, FilesActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (this.initialRoot != null) {
+            intent.setAction(Intent.ACTION_VIEW)
+            intent.setDataAndType(
+                this.initialRoot!!.uri,
+                DocumentsContract.Root.MIME_TYPE_ITEM
+            )
+        }
+        val displayMetrics = Resources.getSystem().displayMetrics
+        val options = ActivityOptions.makeBasic()
+        options.launchWindowingMode = WINDOWING_MODE_FREEFORM
+        options.setLaunchBounds(
+            Rect(
+                0,
+                0,
+                dpToPx(pxWidth.toFloat(), displayMetrics).roundToInt(),
+                dpToPx(pxHeight.toFloat(), displayMetrics).roundToInt(),
+            )
+        )
+        options.setLaunchDisplayId(Display.DEFAULT_DISPLAY)
+        mActivityScenario = ActivityScenario.launch(intent, options.toBundle())
+    }
+
+    /**
+     * Make sure that the test device meets the minimum window size and have freeform window
+     * feature.
+     */
+    fun assumeMinWindowSizeAndFreeFormWindowFeature(pxWidth: Int, pxHeight: Int) {
+        assumeTrue(
+            "Skipping test: test device doesn't support FreeForm window.",
+            context!!.getPackageManager().hasSystemFeature(FEATURE_FREEFORM_WINDOW_MANAGEMENT),
+        )
+        val displayMetrics = Resources.getSystem().displayMetrics
+        assumeTrue(
+            "Skipping test: test device display size is too small to support provided " +
+                    "dimensions: ${pxWidth}x$pxHeight px.",
+            pxToDp(displayMetrics.widthPixels.toFloat(), displayMetrics) >= pxWidth &&
+                pxToDp(displayMetrics.heightPixels.toFloat(), displayMetrics) >= pxHeight,
+        )
+    }
 
     @Before
     fun setUpTest() {
@@ -163,28 +224,48 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
 
     @Test
     @Throws(Exception::class)
-    fun testMetadataSheet() {
+    fun testLargeScreenMetadataSheet() {
         showAndCheckPreview("file0.log")
 
         // The metadata sheet is expanded by default. Check the metadata sheet state before and
         // after recreating the activity.
-        peekBot.validateMetadataSheetState(true)
+        peekBot.validateCoplanarMetadataSheetState(true)
         mActivityScenario!!.recreate()
-        peekBot.validateMetadataSheetState(true)
+        peekBot.validateCoplanarMetadataSheetState(true)
 
         // Check the metadata sheet state after clicking the info toggle button, before and after
         // hiding Peek, recreating the activity, and showing peek again.
         peekBot.toggleMetadataSheet()
-        peekBot.validateMetadataSheetState(false)
+        peekBot.validateCoplanarMetadataSheetState(false)
         peekBot.hide()
         mActivityScenario!!.recreate()
         showAndCheckPreview("image.jpg")
-        peekBot.validateMetadataSheetState(false)
+        peekBot.validateCoplanarMetadataSheetState(false)
 
         // Check the metadata sheet state after restoring the metadata sheet with the toggle button.
         peekBot.toggleMetadataSheet()
-        peekBot.validateMetadataSheetState(true)
-        peekBot.closeMetadataSheet()
-        peekBot.validateMetadataSheetState(false)
+        peekBot.validateCoplanarMetadataSheetState(true)
+        peekBot.closeCoplanarMetadataSheet()
+        peekBot.validateCoplanarMetadataSheetState(false)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testResponsiveMetadataLayout() {
+        val largeWindowWidth = 1000
+        val mediumWindowWidth = 800
+        val windowHeight = 700
+
+        // Check the large layout version of the metadata sheet.
+        relaunchActivityWithBounds(largeWindowWidth, windowHeight)
+        showAndCheckPreview("file0.log")
+        peekBot.validateCoplanarMetadataSheetState(true)
+        mActivityScenario!!.close()
+
+        // Check the medium layout version of the metadata sheet.
+        relaunchActivityWithBounds(mediumWindowWidth, windowHeight)
+        bots.directory.selectDocument("image.jpg", 1)
+        bots.main.clickActionItem("Get info")
+        peekBot.validateModalMetadataSheetStateExpanded()
     }
 }
