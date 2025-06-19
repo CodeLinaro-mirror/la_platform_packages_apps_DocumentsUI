@@ -75,13 +75,27 @@ class PeekFragment : Fragment() {
 
         previewFrame = view.findViewById(getRes(R.id.peek_preview_frame))
 
-        // The metadata container is only defined in the large screen layout (w >= 900dp).
-        val metadataContainer = view.findViewById<FrameLayout>(R.id.peek_metadata_container)
-        if (metadataContainer != null) {
+        // The side sheet container is only defined in the large screen layout (w >= 900dp).
+        val sideSheetContainer = view.findViewById<FrameLayout>(
+            R.id.peek_coplanar_metadata_sheet_container
+        )
+        if (sideSheetContainer != null) {
             metadataSheetController = MetadataSideSheetController(
                 requireContext(), viewModel,
-                metadataContainer
+                sideSheetContainer
             )
+        }
+        // The bottom sheet container is only defined in the medium screen layout (w < 600dp).
+        val bottomSheetContainer = view.findViewById<FrameLayout>(
+            R.id.peek_bottom_metadata_sheet_container
+        )
+        if (bottomSheetContainer != null) {
+            val previewContainer = view.findViewById<FrameLayout>(
+                getRes(R.id.peek_preview_container)
+            )
+            metadataSheetController = MetadataBottomSheetController(requireContext(),
+                viewModel,
+                bottomSheetContainer, previewContainer!!)
         }
         // Display the modal side sheet by default, if the metadataSheetController hasn't been set.
         if (metadataSheetController == null) {

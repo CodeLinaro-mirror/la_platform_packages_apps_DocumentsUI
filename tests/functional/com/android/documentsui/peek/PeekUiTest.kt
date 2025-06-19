@@ -254,6 +254,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     fun testResponsiveMetadataLayout() {
         val largeWindowWidth = 1000
         val mediumWindowWidth = 800
+        val smallWindowWidth = 400
         val windowHeight = 700
 
         // Check the large layout version of the metadata sheet.
@@ -267,5 +268,12 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         bots.directory.selectDocument("image.jpg", 1)
         bots.main.clickActionItem("Get info")
         peekBot.validateModalMetadataSheetStateExpanded()
+
+        // Check the small layout version of the metadata sheet.
+        relaunchActivityWithBounds(smallWindowWidth, windowHeight)
+        showAndCheckPreview("image.svg")
+        peekBot.validateBottomMetadataSheetStateExpanded(true)
+        peekBot.toggleMetadataSheet()
+        peekBot.validateBottomMetadataSheetStateExpanded(false)
     }
 }
