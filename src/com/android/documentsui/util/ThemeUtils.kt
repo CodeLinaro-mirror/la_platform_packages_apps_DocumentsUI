@@ -39,6 +39,7 @@ private const val TAG = "ThemeUtils"
 private fun initializeIdMapping() {
   idMapping = mapOf(
     R.bool.full_bar_search_view to R.bool.full_bar_search_view_m3,
+    R.bool.show_docked_search to R.bool.show_docked_search_m3,
     R.color.app_background_color to R.color.app_background_color_m3,
     R.color.app_icon_background to R.color.app_icon_background_m3,
     R.color.background_floating to R.color.background_floating_m3,
