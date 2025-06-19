@@ -215,6 +215,9 @@ public final class Metrics {
             case FileOperationService.OPERATION_MOVE:
                 opCode = MetricConsts.FILEOP_MOVE_ERROR;
                 break;
+            case FileOperationService.OPERATION_UNPACK:
+                opCode = MetricConsts.FILEOP_UNPACK_ERROR;
+                break;
         }
         if (counts.systemProvider > 0) {
             DocumentsStatsLog.write(
