@@ -446,16 +446,17 @@ public final class SearchViewManagerTest {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
 
-        final long startTime = LocalDate.now().minusDays(7).atStartOfDay(ZoneId.systemDefault())
-                .toInstant().toEpochMilli();
+        final long weekAgoInstant = LocalDate.now().minusDays(7).atStartOfDay(
+                ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         final Bundle queryArgs = mSearchViewManager.buildQueryArgs();
         assertFalse(queryArgs.isEmpty());
 
-        final long endTime  = LocalDate.now().minusDays(7).atStartOfDay(ZoneId.systemDefault())
-                .toInstant().toEpochMilli();
-        final long weekAgoTime = queryArgs.getLong(QUERY_ARG_LAST_MODIFIED_AFTER);
-        assertTrue(weekAgoTime == endTime || weekAgoTime == startTime);
+        // The difference between our calculated instance, in milliseconds, and the one stored in
+        // the queryArgs should not be more than one minute. It is typically much less, but when
+        // looking for files a week old, one minute this or that way does not matter much.
+        final long lastModifiedArg = queryArgs.getLong(QUERY_ARG_LAST_MODIFIED_AFTER);
+        assertThat(weekAgoInstant - lastModifiedArg).isWithin(1000 * 60L).of(0);
     }
 
     @Test

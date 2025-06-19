@@ -23,6 +23,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static com.android.documentsui.util.Material3Config.getRes;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -189,7 +191,8 @@ public class SearchBot extends Bots.BaseBot {
         return findObject(mTargetPackage + ":id/docked_search_text");
     }
 
-    private boolean showsDockedSearch() {
-        return mContext.getResources().getBoolean(R.bool.show_docked_search);
+    /** Whether the UI is using the docked search. */
+    public boolean showsDockedSearch() {
+        return mContext.getResources().getBoolean(getRes(R.bool.show_docked_search));
     }
 }
