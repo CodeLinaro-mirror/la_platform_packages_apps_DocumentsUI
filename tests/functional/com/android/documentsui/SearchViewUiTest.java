@@ -18,6 +18,8 @@ package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -242,8 +244,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressEnter();
         device.waitForIdle(3000);
 
-        String msg = String.valueOf(context.getString(R.string.no_results));
-        bots.directory.assertPlaceholderMessageText(String.format(msg, "TEST_ROOT_0"));
+        bots.directory.waitAndAssertPlaceholderMessageText(
+                String.format(context.getString(R.string.no_results), "TEST_ROOT_0"));
     }
 
     @Suppress
@@ -381,11 +383,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2SearchLocationDropdown() throws Exception {
-        // Start search with term "file1", but rather than searching locally, search everywhere.
+        // Start search with term "fred-dog", but rather than searching locally, search everywhere.
         bots.search.expand();
         bots.search.setInputText("fred-dog.jpg");
         bots.keyboard.pressEnter();
         onView(withId(R.id.search_location_trigger)).perform(click());
+
+        // Click Everywhere, to search everywhere.
         onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
                 click());
 
@@ -393,6 +397,63 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         Assert.assertNotNull(device);
         device.waitForIdle();
         bots.directory.assertDocumentsCountOnList(true, 1);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2RootNameIsAdjusted() throws Exception {
+        // The test starts in TEST_ROOT_0
+        bots.search.expand();
+        bots.search.setInputText("-no-such-file-");
+        onView(withId(R.id.search_location_trigger)).perform(click());
+        // Check that the text in the dropdown window.
+        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).check(
+                matches(isDisplayed()));
+        onView(withText("TEST_ROOT_0")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
+        // Click the "Everywhere" entry to hide the popup. This is needed for the bots to be able
+        // to open the new root. But we also test that user choices are remembered.
+        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
+                click());
+
+        // Move to a different root.
+        bots.roots.openRoot("Paging Root");
+
+        // Start search, again.
+        bots.search.expand();
+        bots.search.setInputText("-no-such-file-");
+
+        // Verify that that the location still shows "Everywhere".
+        onView(withId(R.id.search_location_trigger)).check(
+                matches(withText(R.string.search_location_everywhere)));
+
+        // Click location trigger, and check that the root folder option is updated to Downloads.
+        onView(withId(R.id.search_location_trigger)).perform(click());
+        // Verify the dropdown menu to be updated.
+        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).check(
+                matches(isDisplayed()));
+        onView(withText("Paging Root")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2LastModifiedDropdownVisibility() throws Exception {
+        // Starts in TEST_ROOT_0. Start search and expect last modified dropdown to be visible.
+        bots.search.expand();
+        bots.search.setInputText("-no-such-file-");
+        onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
+
+        // Move to the Recents view and expect the last modified to be gone.
+        bots.roots.openRoot("Recent");
+        bots.search.expand();
+        bots.search.setInputText("-no-such-file-");
+        onView(withId(R.id.search_last_modified_trigger)).check(doesNotExist());
+
+        // Move back to TEST_ROOT_0, repeat search, and expect the last modified trigger to be again
+        // visible.
+        bots.roots.openRoot("TEST_ROOT_0");
+        bots.search.expand();
+        bots.search.setInputText("-no-such-file-");
+        onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
     }
 
     @Test

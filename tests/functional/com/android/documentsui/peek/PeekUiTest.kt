@@ -15,24 +15,27 @@
  */
 package com.android.documentsui.peek
 
+import android.os.RemoteException
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
-import androidx.test.uiautomator.Until
 import com.android.documentsui.ActivityTestJunit4
-import com.android.documentsui.StubProvider
 import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.rules.TestFilesRule
-import junit.framework.Assert
+import java.io.IOException
+import junit.framework.Assert.assertNotNull
+import junit.framework.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,17 +47,31 @@ import org.junit.runner.RunWith
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @get:Rule val checkFlags = CheckAndForceMaterial3Flag()
 
+    @Suppress("ktlint:standard:comment-wrapping")
     @get:Rule
-    val testFilesRule: TestFilesRule =
-        TestFilesRule()
-            .createFileInRoot(StubProvider.ROOT_0_ID, "image.jpg", "image/jpeg")
-            .createFileInRoot(StubProvider.ROOT_0_ID, "file0.log", "text/plain")
+    val testFilesRule: TestFilesRule = TestFilesRule(/* skipCreation= */ true)
 
     private lateinit var peekBot: PeekBot
 
     @Before
     fun setUpTest() {
         peekBot = PeekBot(device!!, context!!, TIMEOUT)
+        initFiles()
+    }
+
+    @Throws(RemoteException::class, IOException::class)
+    fun initFiles() {
+        createFile("images/sample.jpg", "image/jpeg", "image.jpg")
+        createFile("images/sample.svg", "image/svg+xml", "image.svg")
+        createFile("documents/sample.log", "text/plain", "file0.log")
+    }
+
+    private fun createFile(sourcePath: String, mimeType: String, fileName: String) {
+        val file = testFilesRule.docsHelper.createDocument(rootDir0, mimeType, fileName)
+        val assetManager = InstrumentationRegistry.getInstrumentation().context.assets
+        assetManager.open(sourcePath).use { inputStream ->
+            testFilesRule.docsHelper.writeDocument(file, inputStream.readAllBytes())
+        }
     }
 
     private fun showAndCheckPreview(fileName: String) {
@@ -80,15 +97,18 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {
-        showAndCheckPreview("file0.log")
-        // The selection should not be possible, the "1 selected" label shouldn't show.
+        // Selecting a document should show the "1 selected" label.
+        bots.directory.selectDocument("file0.log", 1)
+        // Show preview.
+        bots.main.clickActionItem("Get info")
+        checkPreviewActive("file0.log")
+        // When the preview is shown, the selection is still technically possible, but the scrim
+        // intercepts click events. The "1 selected" label shouldn't show.
         val selectionHotspot: UiObject2 = bots.directory.findSelectionHotspot("file0.log")
-        Assert.assertNull(selectionHotspot)
-        val assertSelectionText = "1 selected"
-        val timeout: Long = 1000
-        val selectionText: UiObject2? =
-            device!!.wait(Until.findObject(By.text(assertSelectionText)), timeout)
-        Assert.assertNull(selectionText)
+        assertNotNull(selectionHotspot)
+        selectionHotspot.click()
+        device!!.waitForIdle()
+        assertNull(device!!.findObject(By.text("1 selected")))
     }
 
     @Test
@@ -127,13 +147,44 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
 
     @Test
     @Throws(Exception::class)
-    fun testMetadataSheet() {
-        bots.directory.selectDocument("file0.log", 1)
-        bots.main.clickActionItem("Get info")
+    fun testImagePreview() {
+        // Check that the preview screen shows for "image.jpg"
+        showAndCheckPreview("image.jpg")
+        onView(withContentDescription("No preview available")).check(doesNotExist())
+        onView(withContentDescription("Image preview of image.jpg")).check(matches(isDisplayed()))
+        peekBot.hide()
 
-        // Check the metadata sheet state before and after recreating the activity.
+        // SVG files are not handled by ImageViews, check that the "no preview" fallback screen
+        // shows instead.
+        showAndCheckPreview("image.svg")
+        onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
+        onView(withContentDescription("Image preview of image.svg")).check(doesNotExist())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testMetadataSheet() {
+        showAndCheckPreview("file0.log")
+
+        // The metadata sheet is expanded by default. Check the metadata sheet state before and
+        // after recreating the activity.
         peekBot.validateMetadataSheetState(true)
         mActivityScenario!!.recreate()
         peekBot.validateMetadataSheetState(true)
+
+        // Check the metadata sheet state after clicking the info toggle button, before and after
+        // hiding Peek, recreating the activity, and showing peek again.
+        peekBot.toggleMetadataSheet()
+        peekBot.validateMetadataSheetState(false)
+        peekBot.hide()
+        mActivityScenario!!.recreate()
+        showAndCheckPreview("image.jpg")
+        peekBot.validateMetadataSheetState(false)
+
+        // Check the metadata sheet state after restoring the metadata sheet with the toggle button.
+        peekBot.toggleMetadataSheet()
+        peekBot.validateMetadataSheetState(true)
+        peekBot.closeMetadataSheet()
+        peekBot.validateMetadataSheetState(false)
     }
 }

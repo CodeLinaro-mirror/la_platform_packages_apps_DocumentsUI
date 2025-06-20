@@ -31,10 +31,15 @@ import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.VisibleForTesting
+import androidx.core.content.IntentCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -52,6 +57,8 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.shape.ShapeAppearanceModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Adds a gap between items in a vertical Recycler View.
@@ -382,10 +389,34 @@ class JobPanelController(
         }
         menuItem = newMenuItem
         // Don't animate for the initial state update.
-        updateMenuItem(viewModel.getMenuState(), animate = false)
+        updateMenuItem(viewModel.menuIconState.value, animate = false)
+    }
+
+    override fun onCreate(owner: LifecycleOwner) {
+        owner.lifecycleScope.launch {
+            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                observeViewModel()
+            }
+        }
+    }
+
+    // Exposed so unit tests can run this in a test scope.
+    @VisibleForTesting
+    suspend fun observeViewModel() = coroutineScope {
+        launch {
+            viewModel.jobUpdateEvent.collect {
+                progressListAdapter?.submitList(ArrayList(viewModel.currentJobs.values))
+            }
+        }
+        launch {
+            viewModel.menuIconState.collect { menuIconState ->
+                updateMenuItem(menuIconState, animate = true)
+            }
+        }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
+        activityContext.unregisterReceiver(this)
         // We need to save the popup's UI state and manually dismiss the popup, as it somehow
         // stays alive even if the activity is destroyed due to a configuration change.
         viewModel.listState = popup?.contentView
@@ -395,24 +426,20 @@ class JobPanelController(
     }
 
     override fun onReceive(context: Context?, intent: Intent) {
-        val progresses = intent.getParcelableArrayListExtra(
+        val progresses = IntentCompat.getParcelableArrayListExtra(
+            intent,
             FileOperationService.EXTRA_PROGRESS,
             JobProgress::class.java
         )
         viewModel.updateProgress(progresses!!)
-        updateMenuItem(viewModel.getMenuState(), animate = true)
-        progressListAdapter?.submitList(ArrayList(viewModel.currentJobs.values))
     }
 
     private fun dismissProgress(id: String) {
         viewModel.dismissProgress(id)
-        updateMenuItem(viewModel.getMenuState(), animate = true)
-        progressListAdapter?.submitList(ArrayList(viewModel.currentJobs.values))
     }
 
     private fun toggleExpanded(id: String) {
         viewModel.toggleExpanded(id)
-        progressListAdapter?.submitList(ArrayList(viewModel.currentJobs.values))
     }
 
     private fun showInFolder(jobProgress: JobProgress) {

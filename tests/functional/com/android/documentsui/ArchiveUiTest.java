@@ -16,7 +16,8 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
+import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -32,14 +33,15 @@ import org.junit.Test;
 
 @LargeTest
 public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
-
     @Rule
     public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
-    private void archiveValid() throws Exception {
+    @Test
+    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    public void clickToBrowseValidArchive() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
@@ -49,35 +51,52 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_valid() throws Exception {
-        archiveValid();
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void browseValidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("archive.zip");
+        bots.menu.clickMenuItem("Browse");
+        bots.directory.waitForDocument("file1.txt");
+        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.openDocument("dir1");
+        bots.directory.waitForDocument("cherries.txt");
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_valid_searchV2() throws Exception {
-        archiveValid();
+    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void openValidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("archive.zip");
+        bots.menu.clickMenuItem("Open");
+        bots.directory.waitForDocument("file1.txt");
+        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.openDocument("dir1");
+        bots.directory.waitForDocument("cherries.txt");
     }
 
-    private void archiveInvalid() throws Exception {
+    @Test
+    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    public void clickToBrowseInvalidArchive() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("broken.zip");
-
-        final String msg = String.valueOf(context.getString(R.string.empty));
-        bots.directory.waitForHolderMessage();
-        bots.directory.assertPlaceholderMessageText(msg);
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_invalid() throws Exception {
-        archiveInvalid();
+    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    public void browseInvalidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("broken.zip");
+        bots.menu.clickMenuItem("Browse");
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testArchive_invalid_searchV2() throws Exception {
-        archiveInvalid();
+    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void openInvalidArchive() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.rightClickDocument("broken.zip");
+        bots.menu.clickMenuItem("Open");
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 }

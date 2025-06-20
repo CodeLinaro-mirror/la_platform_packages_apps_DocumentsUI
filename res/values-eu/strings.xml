@@ -228,6 +228,11 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> hautatuta</item>
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"Garbitu hautapena"</string>
+    <string name="document_click_action" msgid="8073338575301415356">"ireki"</string>
+    <string name="selected_document_click_action" msgid="792826130200234885">"desautatu"</string>
+    <string name="document_long_click_action" msgid="3789836661597702666">"hautatu"</string>
+    <string name="selected_document_long_click_action" msgid="666372407184527109">"arrastatu"</string>
+    <string name="document_long_click_action_picker" msgid="943888101827856784">"hautatu bat baino gehiago"</string>
     <plurals name="elements_dragged" formatted="false" msgid="5932571296037626279">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementu</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elementu</item>
@@ -294,7 +299,6 @@
     <string name="create_new_folder_button" msgid="8859613309559794890">"Sortu karpeta bat"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Bilatu gailu honetan"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Garbitu testua"</string>
-    <string name="search_location_this_folder" msgid="6458835123175563013">"Karpeta hau"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Erroko karpeta"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Edonon"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"Edonoiz"</string>
@@ -313,6 +317,13 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Zerrenda moduan ikusgai."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"Fitxategiaren izena"</string>
+    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
+    <skip />
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Ezkutatu fitxategiaren aurrebista"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Ez dago aurrebistarik erabilgarri"</string>
+    <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> fitxategiaren aurrebista-irudia"</string>
+    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
+    <skip />
+    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
+    <skip />
 </resources>

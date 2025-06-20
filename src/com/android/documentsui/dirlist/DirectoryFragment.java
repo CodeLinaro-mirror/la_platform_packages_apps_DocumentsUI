@@ -16,11 +16,15 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
+import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -44,6 +48,7 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
@@ -818,14 +823,35 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private boolean onItemActivated(ItemDetails<String> item, MotionEvent e) {
-        if (((DocumentItemDetails) item).inPreviewIconHotspot(e)) {
-            return mActions.previewItem(item);
+        if (item instanceof DocumentItemDetails) {
+            final DocumentItemDetails docDetails = (DocumentItemDetails) item;
+            if (docDetails.inPreviewIconHotspot(e)) return mActions.previewItem(item);
+            if (startUnpackingArchive(docDetails)) return true;
         }
 
-        return mActions.openItem(
-                item,
-                ActionHandler.VIEW_TYPE_PREVIEW,
-                ActionHandler.VIEW_TYPE_REGULAR);
+        return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+    }
+
+    /**
+     * If the zip_ng_ro flag is enabled, and if DocsUI is in file manager mode (i.e. not in file
+     * picker mode), and if the activated item is a supported archive, then this method starts
+     * unpacking the archive.
+     *
+     * @return whether the archive is getting unpacked.
+     */
+    private boolean startUnpackingArchive(DocumentItemDetails docDetails) {
+        if (!isZipNgFlagEnabled() || mState.action != ACTION_BROWSE) return false;
+
+        final String key = docDetails.getSelectionKey();
+        if (TextUtils.isEmpty(key)) return false;
+
+        final DocumentInfo doc = mModel.getDocument(key);
+        if (doc == null || !doc.isArchive()) return false;
+
+        final MutableSelection<String> selected = new MutableSelection<>();
+        selected.add(key);
+        transferDocuments(selected, mState.stack, OPERATION_UNPACK);
+        return true;
     }
 
     public void onViewModeChanged() {
@@ -1105,7 +1131,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             closeSelectionBar();
             return true;
         } else if (isZipNgFlagEnabled() && id == getRes(R.id.dir_menu_extract_here)) {
-            transferDocuments(selection, mState.stack, FileOperationService.OPERATION_UNPACK);
+            transferDocuments(selection, mState.stack, OPERATION_UNPACK);
             closeSelectionBar();
             return true;
         } else if (id == getRes(R.id.action_menu_extract_to)
@@ -1179,8 +1205,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            mActions.openItem(holder.getItemDetails(), ActionHandler.VIEW_TYPE_PREVIEW,
-                    ActionHandler.VIEW_TYPE_REGULAR);
+            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
         }
         return true;
     }

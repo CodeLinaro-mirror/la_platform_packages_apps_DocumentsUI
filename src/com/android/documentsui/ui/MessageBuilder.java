@@ -33,6 +33,7 @@ import com.android.documentsui.base.Shared;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
 
+import java.io.File;
 import java.util.List;
 
 public class MessageBuilder {
@@ -94,7 +95,7 @@ public class MessageBuilder {
 
     public String generateListMessage(
             @DialogType int dialogType, @OpType int operationType, List<DocumentInfo> docs,
-            List<Uri> uris) {
+            List<Uri> uris, List<String> paths) {
         int resourceId;
 
         switch (dialogType) {
@@ -130,18 +131,32 @@ public class MessageBuilder {
         }
 
         final StringBuilder list = new StringBuilder("<p>");
-        for (DocumentInfo documentInfo : docs) {
-            list.append("&#8226; " + Html.escapeHtml(BidiFormatter.getInstance().unicodeWrap(
-                    documentInfo.displayName)) + "<br>");
-        }
-        if (uris != null) {
-            for (Uri uri : uris) {
-                list.append(
-                        "&#8226; "
-                                + BidiFormatter.getInstance().unicodeWrap(uri.toSafeString())
-                                + "<br>");
+        final BidiFormatter bdf = BidiFormatter.getInstance();
+
+        if (docs != null) {
+            for (DocumentInfo doc : docs) {
+                list.append("&#8226; ");
+                list.append(Html.escapeHtml(bdf.unicodeWrap(doc.displayName)));
+                list.append("<br>");
             }
         }
+
+        if (uris != null) {
+            for (Uri uri : uris) {
+                list.append("&#8226; ");
+                list.append(Html.escapeHtml(bdf.unicodeWrap(uri.toSafeString())));
+                list.append("<br>");
+            }
+        }
+
+        if (paths != null) {
+            for (String path : paths) {
+                list.append("&#8226; ");
+                list.append(Html.escapeHtml(bdf.unicodeWrap(new File(path).getName())));
+                list.append("<br>");
+            }
+        }
+
         list.append("</p>");
 
         final int totalItems = docs.size() + (uris != null ? uris.size() : 0);

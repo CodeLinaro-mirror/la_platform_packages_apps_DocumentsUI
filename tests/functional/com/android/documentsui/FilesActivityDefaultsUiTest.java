@@ -53,9 +53,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
         device.waitForIdle();
 
         bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
-
-        String msg = String.valueOf(context.getString(R.string.empty));
-        bots.directory.assertPlaceholderMessageText(msg);
+        bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
 
         // Check to make sure back button is properly handled by non-Doc type DocHolders
         device.pressBack();

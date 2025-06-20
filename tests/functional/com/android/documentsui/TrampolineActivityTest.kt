@@ -18,7 +18,6 @@ package com.android.documentsui
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.os.Build.VERSION_CODES
-import android.os.ext.SdkExtensions
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -30,6 +29,8 @@ import androidx.test.uiautomator.Until
 import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.util.getPhotopickerGetContentComponentNameForType
+import com.google.common.truth.TruthJUnit.assume
 import java.util.Optional
 import java.util.regex.Pattern
 import kotlin.time.Duration.Companion.seconds
@@ -200,12 +201,12 @@ class TrampolineActivityTest() {
 
             context.startActivity(intent)
 
-            // Photopicker was introduced into the platform in Android T, however it was backported
-            // to R via SdkExtensions in MediaProvider. Ensure that the target device has the
-            // backport otherwise fallback to DocumentsUI.
-            val isPhotopickerAvailable = SdkExtensions.getExtensionVersion(VERSION_CODES.R) >= 2
+            val isPhotopickerGetContentComponentAvailable =
+                getPhotopickerGetContentComponentNameForType(
+                    context.packageManager, testData.mimeType) != null
             val bySelector = when {
-                testData.expectedApp == AppType.PHOTOPICKER && isPhotopickerAvailable -> By.pkg(
+                testData.expectedApp == AppType.PHOTOPICKER &&
+                        isPhotopickerGetContentComponentAvailable -> By.pkg(
                     PHOTOPICKER_PACKAGE_REGEX
                 )
                 else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
@@ -224,7 +225,8 @@ class TrampolineActivityTest() {
                     " and EXTRA_MIME_TYPES of ($extraMimeTypes)"
                 )
             }
-            if (testData.expectedApp == AppType.PHOTOPICKER && !isPhotopickerAvailable) {
+            if (testData.expectedApp == AppType.PHOTOPICKER &&
+                !isPhotopickerGetContentComponentAvailable) {
                 builder.append(
                     " didn't cause ${AppType.DOCUMENTSUI} to appear " +
                         "(${AppType.PHOTOPICKER} is expected, but is not available in this " +
@@ -259,6 +261,10 @@ class TrampolineActivityTest() {
         @Test
         fun testReferredGetContentFromPhotopickerShouldNotRedirectBack() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
+            assume().that(
+                getPhotopickerGetContentComponentNameForType(context.packageManager, "image/*")
+            ).isNotNull()
+
             val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

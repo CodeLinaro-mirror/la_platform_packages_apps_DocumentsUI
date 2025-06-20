@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
@@ -170,16 +171,21 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             mInjector.messages);
         }
 
-        if (isUsePeekPreviewFlagEnabled()) {
-            ViewModelProvider viewModelProvider = new ViewModelProvider(this);
-            PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
-            mPeekViewManager = new PeekViewManager(
-                    viewModel,
-                    findViewById(getRes(R.id.peek_overlay)),
-                    getSupportFragmentManager());
-            viewModel.getOverlayActive().observe(
-                    this,
-                    mPeekViewManager);
+        // Directly use the generated method `usePeekPreviewRo` to optimize out Peek when the flag
+        // isn't enabled. The optimization is not happening with the FlagUtils's
+        // `isUsePeekPreviewFlagEnabled`.
+        if (usePeekPreviewRo()) {
+            if (isUsePeekPreviewFlagEnabled()) {
+                ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+                PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
+                mPeekViewManager = new PeekViewManager(
+                        viewModel,
+                        findViewById(getRes(R.id.peek_overlay)),
+                        getSupportFragmentManager());
+                viewModel.getOverlayActive().observe(
+                        this,
+                        mPeekViewManager);
+            }
         }
 
         Runnable closeSelectionBarRunnable =
@@ -317,15 +323,18 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
             final int opType = intent.getIntExtra(
                     FileOperationService.EXTRA_OPERATION_TYPE,
                     FileOperationService.OPERATION_COPY);
-            final ArrayList<DocumentInfo> docList =
-                    intent.getParcelableArrayListExtra(FileOperationService.EXTRA_FAILED_DOCS);
-            final ArrayList<Uri> uriList =
-                    intent.getParcelableArrayListExtra(FileOperationService.EXTRA_FAILED_URIS);
+            final ArrayList<DocumentInfo> failedDocs = intent.getParcelableArrayListExtra(
+                    FileOperationService.EXTRA_FAILED_DOCS, DocumentInfo.class);
+            final ArrayList<Uri> failedUris = intent.getParcelableArrayListExtra(
+                    FileOperationService.EXTRA_FAILED_URIS, Uri.class);
+            final ArrayList<String> failedPaths = intent.getStringArrayListExtra(
+                    FileOperationService.EXTRA_FAILED_PATHS);
             OperationDialogFragment.show(
                     getSupportFragmentManager(),
                     dialogType,
-                    docList,
-                    uriList,
+                    failedDocs,
+                    failedUris,
+                    failedPaths,
                     mState.stack,
                     opType);
         }
@@ -482,28 +491,30 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
     @Override
     public boolean onKeyShortcut(int keyCode, KeyEvent event) {
-        DirectoryFragment dir;
         // TODO: All key events should be statically bound using alphabeticShortcut.
         // But not working.
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_A:
-                mInjector.actions.selectAllFiles();
-                return true;
-            case KeyEvent.KEYCODE_X:
-                mInjector.actions.cutToClipboard();
-                return true;
-            case KeyEvent.KEYCODE_C:
-                mInjector.actions.copyToClipboard();
-                return true;
-            case KeyEvent.KEYCODE_V:
-                dir = getDirectoryFragment();
-                if (dir != null) {
-                    dir.pasteFromClipboard();
-                }
-                return true;
-            default:
-                return super.onKeyShortcut(keyCode, event);
+
+        if (event.hasModifiers(KeyEvent.META_CTRL_ON)) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_A:
+                    mInjector.actions.selectAllFiles();
+                    return true;
+                case KeyEvent.KEYCODE_X:
+                    mInjector.actions.cutToClipboard();
+                    return true;
+                case KeyEvent.KEYCODE_C:
+                    mInjector.actions.copyToClipboard();
+                    return true;
+                case KeyEvent.KEYCODE_V:
+                    DirectoryFragment dir = getDirectoryFragment();
+                    if (dir != null) {
+                        dir.pasteFromClipboard();
+                    }
+                    return true;
+            }
         }
+
+        return super.onKeyShortcut(keyCode, event);
     }
 
     @Override

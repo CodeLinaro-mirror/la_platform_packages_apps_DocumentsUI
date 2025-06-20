@@ -631,9 +631,6 @@
     <!-- Content description for the X button to clear text [CHAR_LIMIT=NONE] -->
     <string name="search_bar_clear">Clear text</string>
 
-    <!-- Search location selector placeholder for this folder -->
-    <string name="search_location_this_folder">This folder</string>
-
     <!-- Search location selector placeholder for root folder -->
     <string name="search_location_root_folder">Root folder</string>
 
@@ -689,9 +686,33 @@
     <!-- Text used at the top of the text field when saving a document. [CHAR_LIMIT=100] -->
     <string name="file_name_hint">File name</string>
 
+    <!-- Peek metadata panel header title. -->
+    <string name="peek_metadata_header_title">Details</string>
+
+    <!-- Peek metadata panel header title. -->
+    <string name="peek_metadata_general_info_title">General info</string>
+
+    <!-- Peek metadata "Size" row. -->
+    <string name="peek_metadata_size">Size</string>
+
+    <!-- Peek metadata "Type" row. -->
+    <string name="peek_metadata_type">Type</string>
+
+    <!-- Peek metadata "Date modified" row. -->
+    <string name="peek_metadata_date_modified">Date modified</string>
+
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
 
     <!-- Text used in Peek to indicate that no preview is available. -->
     <string name="peek_no_preview">No preview available</string>
+
+    <!-- Accessibility label for an image preview in Peek. -->
+    <string name="a11y_peek_image_preview">Image preview of <xliff:g id="filename" example="image.png">%s</xliff:g></string>
+
+    <!-- Accessibility label for the toolbar's "show info" toggle button in Peek. -->
+    <string name="a11y_peek_hide_info_button">Hide info panel</string>
+
+    <!-- Accessibility label for the toolbar's "hide info" toggle button in Peek. -->
+    <string name="a11y_peek_show_info_button">Show info panel</string>
 </resources>

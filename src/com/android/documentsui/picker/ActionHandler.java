@@ -468,7 +468,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         if (selection.size() > 1) {
             mActivity.onDocumentsPicked(selection);
         } else {
-            mActivity.onDocumentPicked(selection.getFirst());
+            mActivity.onDocumentPicked(selection.get(0));
         }
     }
 
