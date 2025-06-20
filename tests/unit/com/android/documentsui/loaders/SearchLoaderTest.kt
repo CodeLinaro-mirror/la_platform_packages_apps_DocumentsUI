@@ -23,7 +23,6 @@ import com.android.documentsui.ContentLock
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
-import com.android.documentsui.base.FolderInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.sorting.SortModel
@@ -136,7 +135,6 @@ class SearchLoaderTest {
             val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
             val docs = createDocuments(testParams.fakeFileCount)
             mockProvider!!.setNextChildDocumentsReturns(*docs)
-            val userIds = listOf(TestProvidersAccess.DOWNLOADS.userId)
             val queryOptions = QueryOptions(
                 testParams.fakeFileCount + 1,
                 testParams.maxResultsPerRoot,
@@ -147,20 +145,13 @@ class SearchLoaderTest {
                 testParams.otherArgs,
             )
 
-            val folderInfo = listOf(
-                FolderInfo(
-                    TestProvidersAccess.DOWNLOADS.rootId,
-                    TestProvidersAccess.DOWNLOADS.authority,
-                    TestProvidersAccess.DOWNLOADS.supportsSearchResultLimit()
-                )
-            )
+            val rootInfoList = listOf(TestProvidersAccess.DOWNLOADS)
 
             val loader = SearchLoader(
                 activity,
-                userIds,
+                rootInfoList,
                 TestFileTypeLookup(),
                 contentObserver,
-                folderInfo,
                 testParams.query,
                 queryOptions,
                 environment.state.sortModel,
@@ -226,24 +217,11 @@ class SearchLoaderTest {
             // Setup the sort model so that results are sorted by their name.
             val sortModel = SortModel.createModel()
             sortModel.setDefaultDimension(SortModel.SORT_DIMENSION_ID_TITLE)
-            val folderInfo = listOf(
-                FolderInfo(
-                    TestProvidersAccess.PICKLES.rootId,
-                    TestProvidersAccess.PICKLES.authority,
-                    TestProvidersAccess.DOWNLOADS.supportsSearchResultLimit()
-                ),
-                FolderInfo(
-                    TestProvidersAccess.HOME.rootId,
-                    TestProvidersAccess.HOME.authority,
-                    TestProvidersAccess.DOWNLOADS.supportsSearchResultLimit()
-                ),
-            )
             val loader = SearchLoader(
                 activity,
-                listOf(TestProvidersAccess.PICKLES.userId, TestProvidersAccess.HOME.userId),
+                listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
                 TestFileTypeLookup(),
                 mContentObserver,
-                folderInfo,
                 "document-",
                 QueryOptions(
                     maxCount,
@@ -280,19 +258,11 @@ class SearchLoaderTest {
                     *generateDocuments(2, 1, arrayOf("png", "avi"))
                 )
             }
-            val folderInfo = listOf(
-                FolderInfo(
-                    TestProvidersAccess.PICKLES.rootId,
-                    TestProvidersAccess.PICKLES.authority,
-                    TestProvidersAccess.PICKLES.supportsSearchResultLimit(),
-                ),
-            )
             val loader = SearchLoader(
                 activity,
-                listOf(TestProvidersAccess.PICKLES.userId, TestProvidersAccess.HOME.userId),
+                listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
                 TestFileTypeLookup(),
                 mContentObserver,
-                folderInfo,
                 "document",
                 QueryOptions(10, ALL_RESULTS, null, null, false, arrayOf("image/png"), Bundle()),
                 environment.state.sortModel,

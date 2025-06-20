@@ -101,7 +101,7 @@ open class BaseLoaderTest {
         val flags = (DocumentsContract.Document.FLAG_SUPPORTS_WRITE
                 or DocumentsContract.Document.FLAG_SUPPORTS_DELETE
                 or DocumentsContract.Document.FLAG_SUPPORTS_RENAME)
-        return Array<DocumentInfo>(count) { i ->
+        return Array(count) { i ->
             val id = String.format(Locale.US, "%05d", i)
             val name = "sample-$id.${extensionList[i % extensionList.size]}"
             environment.model.createDocumentForUser(

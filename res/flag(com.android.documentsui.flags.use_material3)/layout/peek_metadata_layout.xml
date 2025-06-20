@@ -19,8 +19,7 @@
     android:layout_width="@dimen/peek_metadata_sheet_width"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/space_small_1"
-    android:background="@drawable/peek_metadata_sheet_background"
-    android:backgroundTint="?attr/colorSurfaceContainerHigh">
+    android:background="@drawable/peek_metadata_sheet_background">
     <!-- Header. -->
     <LinearLayout
         android:id="@+id/peek_metadata_header"
@@ -33,7 +32,7 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -42,7 +41,7 @@
             app:titleTextAppearance="@style/TextAppearance.DocumentsUI.TitleMedium"
             android:textColor="?attr/colorOnSurface" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/peek_side_sheet_close_button"
             style="?attr/materialIconButtonStyle"
             android:layout_width="@dimen/icon_size_headline_large"
@@ -62,7 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/peek_metadata_header">
         <!-- Padding bottom 6dp instead of 8, accounting for metadata item's
         2dp top padding -->
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="@dimen/space_extra_small_3"
