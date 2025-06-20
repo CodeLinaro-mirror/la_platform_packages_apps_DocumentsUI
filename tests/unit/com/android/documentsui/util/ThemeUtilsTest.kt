@@ -19,6 +19,7 @@ package com.android.documentsui.util
 import android.platform.test.annotations.RequiresFlagsDisabled
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.android.documentsui.R
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
@@ -28,6 +29,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@SmallTest
 @RunWith(AndroidJUnit4::class)
 class ThemeUtilsTest {
     @get:Rule

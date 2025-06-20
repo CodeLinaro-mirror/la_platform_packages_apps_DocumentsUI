@@ -26,6 +26,7 @@ import android.provider.DocumentsContract
 import android.view.Display
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import com.android.documentsui.TestUtils.Companion.dpToPx
 import com.android.documentsui.TestUtils.Companion.pxToDp
 import com.android.documentsui.files.FilesActivity
@@ -37,6 +38,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@LargeTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
 @RunWith(AndroidJUnit4::class)
 class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
