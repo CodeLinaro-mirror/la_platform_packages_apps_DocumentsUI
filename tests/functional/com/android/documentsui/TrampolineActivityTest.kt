@@ -20,8 +20,8 @@ import android.content.Intent.ACTION_GET_CONTENT
 import android.os.Build.VERSION_CODES
 import android.platform.test.annotations.RequiresFlagsEnabled
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
-import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -47,7 +47,7 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
 
-@SmallTest
+@LargeTest
 @RunWith(Suite::class)
 @SuiteClasses(
     TrampolineActivityTest.ShouldLaunchCorrectPackageTest::class,
