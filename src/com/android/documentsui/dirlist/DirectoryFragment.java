@@ -802,7 +802,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     // TODO: Move to UserInputHander.
     protected boolean onContextMenuClick(MotionEvent e) {
 
-        if (mDetailsLookup.overItemWithSelectionKey(e)) {
+        if (mDetailsLookup.isOverItemWithSelectionKey(e)) {
             View childView = mRecView.findChildViewUnder(e.getX(), e.getY());
             ViewHolder holder = mRecView.getChildViewHolder(childView);
 
