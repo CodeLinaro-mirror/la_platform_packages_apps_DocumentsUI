@@ -51,6 +51,8 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.RelaxedClickAction;
+import com.android.documentsui.actions.WaitForCheckState;
+import com.android.documentsui.actions.WaitUntilVisible;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
@@ -459,6 +461,56 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
         onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2LastUsedChipCopiedToFileTypeDropdown() throws Exception {
+        // Click "Images" chip and wait until the chip becomes selected.
+        bots.search.findChip(R.string.chip_title_images, 500L)
+                .perform(new RelaxedClickAction())
+                .perform(new WaitForCheckState(true, 500L));
+
+        // Start search. Search text is not important.
+        final String query = "irrelevant";
+        bots.search.expand();
+        bots.search.setInputText(query);
+
+        // Verify that File Type trigger shows "Images" text.
+        onView(withId(R.id.search_file_type_trigger))
+                .perform(new WaitUntilVisible(500L))
+                .check(matches(withText(R.string.chip_title_images)));
+
+        // Clear the search text, to go back to directory listing, and wait for chips to show.
+        bots.search.clickSearchViewClearButton();
+
+        // Select Documents and Audio chips, in this order.
+        bots.search.findChip(R.string.chip_title_documents, 500L)
+                .perform(new RelaxedClickAction())
+                .perform(new WaitForCheckState(true, 500L));
+        // Clicking chips moves them around. Wait for things to settle down.
+        device.waitForIdle();
+        bots.search.findChip(R.string.chip_title_audio, 500L)
+                .perform(new RelaxedClickAction())
+                .perform(new WaitForCheckState(true, 500L));
+
+        bots.search.expand();
+        bots.search.setInputText(query);
+        onView(withId(R.id.search_file_type_trigger)).check(
+                matches(withText(R.string.chip_title_audio)));
+
+        // Clear the query again, to go back to chips.
+        bots.search.clickSearchViewClearButton();
+        // Uncheck Audio, and expect now Documents to be checked in file type dropdowns.
+        bots.search.findChip(R.string.chip_title_audio, 500L)
+                .perform(new RelaxedClickAction())
+                .perform(new WaitForCheckState(false, 500L));
+
+        // Enter the search query again, and verify that Documents file type is selected.
+        bots.search.expand();
+        bots.search.setInputText(query);
+        onView(withId(R.id.search_file_type_trigger)).check(
+                matches(withText(R.string.chip_title_documents)));
     }
 
     @Test

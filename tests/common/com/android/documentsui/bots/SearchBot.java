@@ -17,11 +17,14 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -35,6 +38,8 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.StringRes;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
@@ -44,6 +49,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.WaitUntilVisible;
 
 import org.hamcrest.Matcher;
 
@@ -80,7 +86,7 @@ public class SearchBot extends Bots.BaseBot {
                     mTargetPackage + ":id/search_close_btn");
             clear.click();
         } else {
-            UiObject clear = findObject(mTargetPackage + ":id/option_menu_docked_search",
+            UiObject clear = findObject(mTargetPackage + ":id/docked_search_toolbar",
                     mTargetPackage + ":id/docked_search_clear");
             clear.click();
         }
@@ -194,5 +200,18 @@ public class SearchBot extends Bots.BaseBot {
     /** Whether the UI is using the docked search. */
     public boolean showsDockedSearch() {
         return mContext.getResources().getBoolean(getRes(R.bool.show_docked_search));
+    }
+
+    /**
+     * Returns the view interaction for the chip with the given text, specified by the ID. Chips
+     * and dropdowns are dynamically added, so we wait for the chip to become visible.
+     * @param chipTextId The string ID of the chip text.
+     * @param timeoutMs How long to wait, in ms, for the chip to appear.
+     * @return The view interaction corresponding to the chip with the given ID.
+     */
+    public ViewInteraction findChip(@StringRes int chipTextId, long timeoutMs) {
+        return onView(allOf(withText(chipTextId),
+                isDescendantOfA(withId(R.id.search_chip_group)))).perform(
+                        new WaitUntilVisible(timeoutMs)).perform(scrollTo());
     }
 }
