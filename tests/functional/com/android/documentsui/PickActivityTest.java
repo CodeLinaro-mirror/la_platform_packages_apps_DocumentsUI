@@ -20,6 +20,7 @@ import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.TruthJUnit.assume;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -218,6 +219,7 @@ public class PickActivityTest {
     @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionOpenDocument_SingleFile()
             throws UiObjectNotFoundException {
+
         Intent intentOpenDocument = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intentOpenDocument.addCategory(Intent.CATEGORY_OPENABLE);
         intentOpenDocument.setType("*/*");
@@ -225,8 +227,12 @@ public class PickActivityTest {
         mBots.roots.openRoot(ROOT_0_ID);
 
         // There should be a Cancel (button2) and Select (button1) button.
-        mBots.picker.checkCancelButtonDisplayed();
-        mBots.picker.checkCancelButtonEnabled();
+        boolean showPickerCancelButton =
+                mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button);
+        if (showPickerCancelButton) {
+            mBots.picker.checkCancelButtonDisplayed();
+            mBots.picker.checkCancelButtonEnabled();
+        }
         mBots.picker.checkPickButtonDisplayed();
         // The Select button should be disabled since there are no selected files.
 
@@ -259,8 +265,12 @@ public class PickActivityTest {
         mBots.roots.openRoot(ROOT_0_ID);
 
         // There should be a Cancel (button2) and Select (button1) button.
-        mBots.picker.checkCancelButtonDisplayed();
-        mBots.picker.checkCancelButtonEnabled();
+        boolean showPickerCancelButton =
+                mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button);
+        if (showPickerCancelButton) {
+            mBots.picker.checkCancelButtonDisplayed();
+            mBots.picker.checkCancelButtonEnabled();
+        }
         mBots.picker.checkPickButtonDisplayed();
         // The Select button should be disabled since there are no selected files.
         mBots.picker.checkPickButtonDisabled();
@@ -301,6 +311,9 @@ public class PickActivityTest {
     @Test
     @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ClickCancel() throws UiObjectNotFoundException {
+        assume().that(mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button))
+                .isTrue();
+
         PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
 
         mBots.roots.openRoot(ROOT_0_ID);

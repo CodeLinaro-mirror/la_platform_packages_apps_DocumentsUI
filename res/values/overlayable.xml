@@ -67,6 +67,7 @@
             <item type="bool" name="show_apps_row"/>
             <item type="bool" name="show_media_roots"/>
             <item type="bool" name="show_search_bar"/>
+            <item type="bool" name="show_picker_cancel_button"/>
             <!-- END BOOLEAN CONFIG -->
 
             <!-- START STRING CONFIG -->

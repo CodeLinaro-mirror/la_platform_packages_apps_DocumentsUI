@@ -35,6 +35,9 @@
     <!-- Indicates if showing the apps row -->
     <bool name="show_apps_row">true</bool>
 
+    <!-- Indicates if the "Cancel" button should show in the various pickers. -->
+    <bool name="show_picker_cancel_button">false</bool>
+
     <!-- Indicates if showing hidden files by default -->
     <bool name="show_hidden_files_by_default">false</bool>
 
