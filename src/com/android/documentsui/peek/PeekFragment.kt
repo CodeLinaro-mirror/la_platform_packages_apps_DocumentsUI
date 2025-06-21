@@ -29,8 +29,6 @@ import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.sidesheet.SideSheetBehavior
-import com.google.android.material.sidesheet.SideSheetCallback
 import java.io.FileNotFoundException
 
 /** Manages the Peek UI. */
@@ -50,23 +48,7 @@ class PeekFragment : Fragment() {
     private var previewHandler: PreviewHandler? = null
 
     // Metadata view.
-    private var metadataContainer: FrameLayout? = null
-    private var metadataView: MetadataView? = null
-    private var metadataSheetBehavior: SideSheetBehavior<FrameLayout>? = null
-
-    // Listening for side sheet state updates is relevant when the metadata sheet is dragged.
-    private val metadataSheetStateListener =
-        object : SideSheetCallback() {
-            override fun onStateChanged(sideSheet: View, newState: Int) {
-                if (newState != SideSheetBehavior.STATE_EXPANDED &&
-                    newState != SideSheetBehavior.STATE_HIDDEN) {
-                        return
-                    }
-                viewModel.toggleMetadataSheet(newState == SideSheetBehavior.STATE_EXPANDED)
-            }
-
-            override fun onSlide(sideSheet: View, slideOffset: Float) {}
-        }
+    private var metadataSheetController: MetadataSheetController? = null
 
     @Suppress("ktlint:standard:comment-wrapping")
     override fun onCreateView(
@@ -93,11 +75,9 @@ class PeekFragment : Fragment() {
 
         previewFrame = view.findViewById(getRes(R.id.peek_preview_frame))
 
-        metadataContainer = view.findViewById(R.id.peek_metadata_container)
-        metadataView = MetadataView(requireContext(), viewModel)
-        metadataContainer!!.addView(metadataView)
-        metadataSheetBehavior = SideSheetBehavior.from(metadataContainer!!)
-        metadataSheetBehavior!!.addCallback(metadataSheetStateListener)
+        val metadataContainer = view.findViewById<FrameLayout>(R.id.peek_metadata_container)
+        metadataSheetController =
+            MetadataSheetController(requireContext(), viewModel, metadataContainer!!)
 
         val savedDocInfo = viewModel.docInfo.value
         if (savedDocInfo != null) {
@@ -111,8 +91,26 @@ class PeekFragment : Fragment() {
                 clearAndHide()
             }
         }
+        return view
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        // Hide the metadata sheet to override the Material SideSheet state restoration behavior.
+        // Details:
+        // After `onCreateView`, the expanded state of the sheet is self-restored via
+        // `onRestoreInstanceState` (e.g. SideSheetBehavior.onRestoreInstanceState of a coplanar
+        // side sheet). However instead, we want to restore this state based on the viewModel, and
+        // only after the layout has been fully drawn, in order to trigger an expand animation
+        // (addressing b/419446581).
+        // To do so, we hide the metadata sheet in `onViewStateRestored` (called after
+        // `onRestoreInstanceState`) to override this self-restoration behaviour.
+        // `updateView` is then responsible to expanding the sheet based on the view model's state.
+        metadataSheetController?.hide()
+
         // The observer's `onChanged` method is called immediately after the observer is set, if
-        // docInfo has a value. Set the observer after `viewModel.docInfo.value` is updated above.
+        // docInfo has a value. Set the observer after `viewModel.docInfo.value` is updated in
+        // `onCreateView`.
         viewModel.docInfo.observe(requireActivity(), Observer { docInfo -> updateView(docInfo) })
         viewModel.metadataSheetExpanded.observe(
             requireActivity(),
@@ -132,58 +130,38 @@ class PeekFragment : Fragment() {
                 // the metadata sheet is hidden, and its expanded state is restored in `updateView`
                 // once the overlay gets shown.
                 if (viewModel.overlayActive.value == true) {
-                    // Expand the metadata sheet in a post task to ensure that if the fragment is
-                    // being recreated, it triggers the expand animation (when relevant).
-                    metadataContainer!!.post {
-                        if (expanded) {
-                            metadataSheetBehavior!!.expand()
-                        } else {
-                            metadataSheetBehavior!!.hide()
-                        }
+                    if (expanded) {
+                        // Expand the metadata sheet in a post task to ensure that if the fragment
+                        // is being recreated, it triggers the expand animation.
+                        this@PeekFragment.view?.post { metadataSheetController?.show() }
+                    } else {
+                        metadataSheetController?.hide()
                     }
                 }
             }
         )
-        return view
     }
 
     override fun onDestroyView() {
-        metadataSheetBehavior!!.removeCallback(metadataSheetStateListener)
+        metadataSheetController?.onDestroyView()
         super.onDestroyView()
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        // Hide the metadata sheet to override the Material SideSheet state restoration behavior.
-        // Details:
-        // After `onCreateView`, the metadataSheetBehavior restores the expanded state of the sheet
-        // via its `onRestoreInstanceState` implementation. `onViewStateRestored` is subsequently
-        // called, allowing us to override this state restoration with `metadataSheetBehavior.hide`.
-        // `updateView` is responsible for re-expanding the sheet, by posting a
-        // `metadataSheetBehavior.expand` task which executes after the fragment has been rendered
-        // on screen (which triggers an expand animation, addressing b/419446581).
-        metadataSheetBehavior?.hide()
     }
 
     private fun updateView(docInfo: DocumentInfo?) {
         if (docInfo == null) {
             return
         }
-        if (toolbar == null ||
-            previewFrame == null ||
-            metadataView == null ||
-            metadataContainer == null ||
-            metadataSheetBehavior == null) {
+        if (toolbar == null || previewFrame == null || metadataSheetController == null) {
             // `updateView` will be called again when onCreateView executes.
             return
         }
         // `Expand` needs to be called after the view is visible and fully drawn (see b/419446581).
-        // With the check above, we know that onCreateView has been called.
-        // The `post` task will execute after the current layout pass, ensuring that we can see the
-        // "expand" animation.
+        // Given the check above, onCreateView has been called called.
         if (viewModel.overlayActive.value == true &&
             viewModel.metadataSheetExpanded.value == true) {
-            metadataContainer!!.post { metadataSheetBehavior!!.expand() }
+            // The `post` task will execute after the current layout pass, ensuring that we can see
+            // the "expand" animation.
+            view?.post { metadataSheetController?.show() }
         }
         toolbar!!.title = docInfo.displayName
         previewHandler?.clear()
@@ -193,7 +171,7 @@ class PeekFragment : Fragment() {
                     ImagePreviewHandler(previewFrame!!, docInfo)
                 else -> DefaultPreviewHandler(previewFrame!!)
             }
-        metadataView!!.accept(docInfo)
+        metadataSheetController?.accept(docInfo)
     }
 
     private fun clearAndHide() {
@@ -201,6 +179,6 @@ class PeekFragment : Fragment() {
         toolbar?.title = ""
         previewHandler?.clear()
         previewHandler = null
-        metadataView?.clear()
+        metadataSheetController?.clear()
     }
 }
