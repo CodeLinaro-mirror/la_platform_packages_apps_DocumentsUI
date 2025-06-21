@@ -44,6 +44,8 @@
     <string name="menu_copy" msgid="7404820171352314754">"ສຳເນົາໄປໃສ່..."</string>
     <string name="menu_move" msgid="2310760789561129882">"ຍ້າຍໄປໃສ່..."</string>
     <string name="menu_compress" msgid="37539111904724188">"ບີບອັດ"</string>
+    <!-- no translation found for menu_zip (5734673122376258045) -->
+    <skip />
     <string name="menu_extract" msgid="8171946945982532262">"ແຕກໄຟລ໌ໄປ…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"ດຶງຂໍ້ມູນຈາກເອກະສານທັງໝົດ…"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"ແຍກໄຟລ໌ອອກບ່ອນນີ້"</string>
@@ -317,18 +319,13 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"ກຳລັງສະແດງໃນໂໝດລາຍຊື່."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"ຊື່ໄຟລ໌"</string>
-    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
-    <skip />
-    <!-- no translation found for peek_metadata_general_info_title (5805064715498467299) -->
-    <skip />
-    <!-- no translation found for peek_metadata_size (2377426288276139988) -->
-    <skip />
-    <!-- no translation found for peek_metadata_type (1386923517471758392) -->
-    <skip />
-    <!-- no translation found for peek_metadata_date_modified (5403086549396155362) -->
-    <skip />
-    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ເຊື່ອງຕົວຢ່າງໄຟລ໌"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"ບໍ່ມີຕົວຢ່າງ"</string>
+    <string name="peek_metadata_header_title" msgid="6196387248590120756">"ລາຍລະອຽດ"</string>
+    <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"ຂໍ້ມູນທົ່ວໄປ"</string>
+    <string name="peek_metadata_size" msgid="2377426288276139988">"ຂະໜາດ"</string>
+    <string name="peek_metadata_type" msgid="1386923517471758392">"ປະເພດ"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"ວັນທີແກ້ໄຂ"</string>
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ເຊື່ອງຕົວຢ່າງໄຟລ໌"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"ຕົວຢ່າງຮູບຂອງ <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ເຊື່ອງແຜງຂໍ້ມູນ"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"ສະແດງແຜງຂໍ້ມູນ"</string>

@@ -44,6 +44,8 @@
     <string name="menu_copy" msgid="7404820171352314754">"Kopiraj v …"</string>
     <string name="menu_move" msgid="2310760789561129882">"Premakni v ..."</string>
     <string name="menu_compress" msgid="37539111904724188">"Stisni"</string>
+    <!-- no translation found for menu_zip (5734673122376258045) -->
+    <skip />
     <string name="menu_extract" msgid="8171946945982532262">"Razširi v …"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Razširi vse …"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"Ekstrahiraj sem"</string>
@@ -361,22 +363,15 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Prikazano v načinu seznama"</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"Ime datoteke"</string>
-    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
-    <skip />
-    <!-- no translation found for peek_metadata_general_info_title (5805064715498467299) -->
-    <skip />
-    <!-- no translation found for peek_metadata_size (2377426288276139988) -->
-    <skip />
-    <!-- no translation found for peek_metadata_type (1386923517471758392) -->
-    <skip />
-    <!-- no translation found for peek_metadata_date_modified (5403086549396155362) -->
-    <skip />
-    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Skrivanje predogleda datoteke"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Predogled ni na voljo"</string>
+    <string name="peek_metadata_header_title" msgid="6196387248590120756">"Podrobnosti"</string>
+    <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"Splošne informacije"</string>
+    <string name="peek_metadata_size" msgid="2377426288276139988">"Velikost"</string>
+    <string name="peek_metadata_type" msgid="1386923517471758392">"Vrsta"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Datum spremembe"</string>
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Skrivanje predogleda datoteke"</string>
     <!-- no translation found for a11y_peek_image_preview (3917148390186060263) -->
     <skip />
-    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
-    <skip />
-    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
-    <skip />
+    <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Skritje podokna z informacijami"</string>
+    <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Prikaz podokna z informacijami"</string>
 </resources>
