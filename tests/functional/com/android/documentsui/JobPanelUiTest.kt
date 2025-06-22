@@ -239,23 +239,37 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withText(progress1.msg)).check(matches(isDisplayed()))
         onView(withText(progress2.msg)).check(matches(isDisplayed()))
 
-        // Cancel the first job. Only the second item should be displayed.
+        // Cancel the first job.
         progress1.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
-        onView(withText(progress1.msg)).check(doesNotExist())
+        onView(withChild(withText(progress1.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_canceled),
+                isDisplayed()
+            ))
         onView(withText(progress2.msg)).check(matches(isDisplayed()))
 
-        // Overall progress should be 0% as the first job doesn't count. We need to close the popup
+        // Overall progress should be 50% as the first job is finished. We need to close the popup
         // panel first in order to check the menu item behind.
         Espresso.pressBack()
-        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(0)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(50)))
         openPanel()
 
-        // Cancel the second job. The panel should disappear.
+        // Cancel the second job.
         progress2.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress2.toJobProgress()))
-        onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
-        onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
+        onView(withChild(withText(progress1.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_canceled),
+                isDisplayed()
+            ))
+        onView(withChild(withText(progress2.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_canceled),
+                isDisplayed()
+            ))
+        Espresso.pressBack()
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(100)))
     }
 
     @Test
