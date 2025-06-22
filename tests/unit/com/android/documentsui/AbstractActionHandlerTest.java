@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static junit.framework.Assert.assertTrue;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.when;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 
@@ -39,6 +42,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.files.LauncherActivity;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
 import com.android.documentsui.testing.DocumentStackAsserts;
@@ -52,6 +56,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.collect.Lists;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -68,6 +73,9 @@ import java.util.concurrent.TimeUnit;
 @RunWith(Parameterized.class)
 @MediumTest
 public class AbstractActionHandlerTest {
+
+    @Rule
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
     private TestActivity mActivity;
@@ -128,6 +136,7 @@ public class AbstractActionHandlerTest {
                 throw new UnsupportedOperationException();
             }
         };
+        mHandler.reset(new ContentLock());
     }
 
     @Test
@@ -335,6 +344,8 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    // TODO(b:422900724): Remove the @RequiresFlagsDisabled directive.
     public void testLoadCrossProfileDoc_failsWithQuietModeException() throws Exception {
         mEnv.state.action = State.ACTION_GET_CONTENT;
         if (isPrivateSpaceEnabled) {
@@ -362,6 +373,8 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    // TODO(b:422900724): Remove the @RequiresFlagsDisabled directive.
     public void testLoadCrossProfileDoc_failsWithNoPermissionException() throws Exception {
         mEnv.state.action = State.ACTION_GET_CONTENT;
         mEnv.state.stack.changeRoot(TestProvidersAccess.OtherUser.HOME);
@@ -383,6 +396,8 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    // TODO(b:422900724): Remove the @RequiresFlagsDisabled directive.
     public void testLoadCrossProfileDoc_bothError_showNoPermissionException() throws Exception {
         mEnv.state.action = State.ACTION_GET_CONTENT;
         mEnv.state.stack.changeRoot(TestProvidersAccess.OtherUser.HOME);
@@ -407,6 +422,8 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    // TODO(b:422900724): Remove the @RequiresFlagsDisabled directive.
     public void testCrossProfileDocuments_reloadSuccessAfterCrossProfileError() throws Exception {
         mEnv.state.action = State.ACTION_GET_CONTENT;
         mEnv.state.stack.changeRoot(TestProvidersAccess.OtherUser.HOME);
@@ -459,6 +476,8 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    // TODO(b:422900724): Remove the @RequiresFlagsDisabled directive.
     public void testLoadChildrenDocuments_failsWithNonRecentsAndEmptyStack() throws Exception {
         mEnv.state.stack.changeRoot(TestProvidersAccess.HOME);
 

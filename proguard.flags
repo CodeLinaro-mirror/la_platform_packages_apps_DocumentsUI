@@ -139,6 +139,7 @@
   int files_activity;
   int fixed_layout;
   int item_doc_list;
+  int nav_rail_layout;
 }
 -keep class com.android.documentsui.R$menu {
   int dir_context_menu;
@@ -223,7 +224,7 @@
 -keep class com.android.documentsui.util.Material3Config {
   static int getRes(int);
   static void overrideMappingForTest(java.util.Map);
-  static void setEnabledForTest(boolean);
+  static void setEnabledForTest(java.lang.Boolean);
 }
 
 # The SideSheetBehavior state is not directly accessed from DocumentsUI, but is used in tests
@@ -243,3 +244,7 @@
 # Temporarily add this here because the class is not used in the source code yet, will remove it
 # after adopting the class in the follow-up CL.
 -keep class com.android.documentsui.sidebar.RecyclerRootsAdapter { *; }
+
+-keep class com.android.documentsui.queries.SearchOptionsState {
+  *;
+}

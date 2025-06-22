@@ -21,14 +21,14 @@
     android:paddingHorizontal="@dimen/space_small_1"
     android:paddingVertical="@dimen/space_extra_small_4"
     android:orientation="vertical">
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/peek_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
         app:titleTextAppearance="@style/TextAppearance.DocumentsUI.BodyMedium.Emphasized"
         android:textColor="?attr/colorOnSurface" />
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/peek_item_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

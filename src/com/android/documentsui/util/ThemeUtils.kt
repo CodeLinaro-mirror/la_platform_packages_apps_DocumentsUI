@@ -411,7 +411,7 @@ abstract class Material3Config private constructor() {
     }
 
     @JvmStatic
-    fun setEnabledForTest(enabled: Boolean) {
+    fun setEnabledForTest(enabled: Boolean?) {
       getInstance().forceMaterial3 = enabled
       // Force the mapping to be re-initialized.
       initialized = false

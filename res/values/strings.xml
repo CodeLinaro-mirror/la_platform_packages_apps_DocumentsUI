@@ -686,6 +686,9 @@
     <!-- Text used at the top of the text field when saving a document. [CHAR_LIMIT=100] -->
     <string name="file_name_hint">File name</string>
 
+    <!-- Text used in Peek to indicate that no preview is available. -->
+    <string name="peek_no_preview">No preview available</string>
+
     <!-- Peek metadata panel header title. -->
     <string name="peek_metadata_header_title">Details</string>
 
@@ -703,9 +706,6 @@
 
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
-
-    <!-- Text used in Peek to indicate that no preview is available. -->
-    <string name="peek_no_preview">No preview available</string>
 
     <!-- Accessibility label for an image preview in Peek. -->
     <string name="a11y_peek_image_preview">Image preview of <xliff:g id="filename" example="image.png">%s</xliff:g></string>

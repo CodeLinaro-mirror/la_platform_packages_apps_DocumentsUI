@@ -28,6 +28,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -203,17 +204,34 @@ public class UiBot extends Bots.BaseBot {
         assertNotNull(listModeBtn);
     }
 
+    /**
+     * Check if the app is running in fixed_layout.
+     */
     public boolean inFixedLayout() {
         TypedValue val = new TypedValue();
         // We alias files_activity to either fixed or drawer layouts based
         // on screen dimensions. In order to determine which layout
         // has been selected, we check the resolved value.
-        mContext.getResources().getValue(R.layout.files_activity, val, true);
-        return val.resourceId == R.layout.fixed_layout;
+        mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
+        return val.resourceId == getRes(R.layout.fixed_layout);
     }
 
+    /**
+     * Check if the app is running in nav_rail_layout.
+     */
+    public boolean isNavRailLayout() {
+        TypedValue val = new TypedValue();
+        mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
+        return val.resourceId == getRes(R.layout.nav_rail_layout);
+    }
+
+    /**
+     * Check if the app is running in drawer_layout.
+     */
     public boolean inDrawerLayout() {
-        return !inFixedLayout();
+        TypedValue val = new TypedValue();
+        mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
+        return val.resourceId == getRes(R.layout.drawer_layout);
     }
 
     public void switchToListMode() {

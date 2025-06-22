@@ -319,6 +319,14 @@
     <string name="file_name_hint" msgid="7843637320487415838">"ಫೈಲ್ ಹೆಸರು"</string>
     <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
     <skip />
+    <!-- no translation found for peek_metadata_general_info_title (5805064715498467299) -->
+    <skip />
+    <!-- no translation found for peek_metadata_size (2377426288276139988) -->
+    <skip />
+    <!-- no translation found for peek_metadata_type (1386923517471758392) -->
+    <skip />
+    <!-- no translation found for peek_metadata_date_modified (5403086549396155362) -->
+    <skip />
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ಫೈಲ್ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ಮರೆಮಾಡಿ"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"ಯಾವುದೇ ಪೂರ್ವವೀಕ್ಷಣೆ ಲಭ್ಯವಿಲ್ಲ"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> ಚಿತ್ರದ ಪೂರ್ವವೀಕ್ಷಣೆ"</string>
