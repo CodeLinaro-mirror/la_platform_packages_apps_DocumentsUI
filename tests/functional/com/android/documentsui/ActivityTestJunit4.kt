@@ -20,6 +20,7 @@ import android.app.UiAutomation
 import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
+import android.platform.test.microbenchmark.Functional
 import android.provider.DocumentsContract
 import android.util.Log
 import android.view.KeyEvent
@@ -37,6 +38,7 @@ import com.android.documentsui.files.FilesActivity
 import java.io.IOException
 import org.junit.After
 import org.junit.Before
+import org.junit.runner.RunWith
 
 /**
  * Provides basic test environment for UI tests:
@@ -44,6 +46,7 @@ import org.junit.Before
  * - Creates and gives access to test root directories and test files
  * - Cleans up the test environment
  */
+@RunWith(Functional::class)
 abstract class ActivityTestJunit4<T : Activity?> {
     lateinit var bots: Bots
 
@@ -125,6 +128,17 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
         setupTestingRoots()
         launchActivity()
+
+        val layoutType = if (bots.main.inFixedLayout()) {
+            "Fixed layout"
+        } else if (bots.main.isNavRailLayout()) {
+            "Nav rail layout"
+        } else if (bots.main.inDrawerLayout()) {
+            "Drawer layout"
+        } else {
+            "Unknown layout (should not happen)"
+        }
+        Log.d(TAG, "Test is running with layout: $layoutType.")
 
         // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will
         // automatically open for phone devices. Espresso register click() as (x, y) MotionEvents,

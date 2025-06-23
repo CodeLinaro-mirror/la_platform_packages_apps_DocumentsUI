@@ -37,6 +37,7 @@ java_defaults {
         "guava",
         "kotlinx_coroutines_test",
         "mockito-target",
+        "microbenchmark-device-lib",
     ],
 }
 
