@@ -22,6 +22,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
@@ -49,14 +50,16 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
         allOf(withId(R.id.peek_container), isDescendantOfA(peekOverlayMatcher))
     private val toolbarMatcher =
         allOf(isAssignableFrom(MaterialToolbar::class.java), withId(R.id.peek_toolbar))
-    private val metadataContainerMatcher =
+    private val coplanarMetadataSheetContainerMatcher =
         allOf(withId(R.id.peek_metadata_container), isDescendantOfA(peekContainerMatcher))
 
     /**
-     * Validates the metadata sheet's expanded state. Assertion made on the metadata sheet
+     * Validates the coplanar metadata sheet's expanded state. Assertion made on the metadata sheet
      * container.
      */
-    private fun metadataSheetExpandedStateAssertion(expectExpanded: Boolean): ViewAssertion {
+    private fun coplanarMetadataSheetExpandedStateAssertion(
+        expectExpanded: Boolean
+    ): ViewAssertion {
         return ViewAssertion { view, noViewFoundException ->
             if (view == null) {
                 throw noViewFoundException
@@ -77,7 +80,7 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
      * Validates that if the metadata sheet is expanded, the preview container is resized so that it
      * doesn't overlap with the metadata sheet. Assertion made on the root of the Peek fragment.
      */
-    private fun metadataSheetWidthAssertion(expectExpanded: Boolean): ViewAssertion {
+    private fun coplanarMetadataSheetWidthAssertion(expectExpanded: Boolean): ViewAssertion {
         return ViewAssertion { rootView, noViewFoundException ->
             if (rootView == null) {
                 throw noViewFoundException
@@ -111,10 +114,12 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
             .check(matches(isDisplayed()))
     }
 
-    fun validateMetadataSheetState(expectExpanded: Boolean) {
+    fun validateCoplanarMetadataSheetState(expectExpanded: Boolean) {
         mDevice.waitForIdle()
-        onView(metadataContainerMatcher).check(metadataSheetExpandedStateAssertion(expectExpanded))
-        onView(peekContainerMatcher).check(metadataSheetWidthAssertion(expectExpanded))
+        onView(
+            coplanarMetadataSheetContainerMatcher
+        ).check(coplanarMetadataSheetExpandedStateAssertion(expectExpanded))
+        onView(peekContainerMatcher).check(coplanarMetadataSheetWidthAssertion(expectExpanded))
         onView(
                 allOf(
                     withId(R.id.peek_info),
@@ -131,6 +136,11 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
             .check(matches(isDisplayed()))
     }
 
+    fun validateModalMetadataSheetStateExpanded() {
+        mDevice.waitForIdle()
+        onView(withId(R.id.peek_metadata_content)).inRoot(isDialog()).check(matches(isDisplayed()))
+    }
+
     fun hide() {
         onView(allOf(withContentDescription("Hide file preview"), isDescendantOfA(toolbarMatcher)))
             .perform(ViewActions.click())
@@ -144,12 +154,12 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
         ).perform(ViewActions.click())
     }
 
-    /* Closes metadata sheet via its "close" button. */
-    fun closeMetadataSheet() {
+    /* Closes the large window metadata sheet via its "close" button. */
+    fun closeCoplanarMetadataSheet() {
         onView(
             allOf(
                 withId(R.id.peek_side_sheet_close_button),
-                isDescendantOfA(metadataContainerMatcher)
+                isDescendantOfA(coplanarMetadataSheetContainerMatcher)
             )
         ).perform(ViewActions.click())
     }
