@@ -34,6 +34,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.documentsui.ActionHandler;
@@ -66,6 +67,7 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.ArrayList;
 import java.util.List;
 
+@SmallTest
 @RunWith(Parameterized.class)
 public class AppsRowManagerTest {
 
@@ -365,4 +367,3 @@ public class AppsRowManagerTest {
         assertEquals(View.GONE, mAppsRow.getVisibility());
     }
 }
-

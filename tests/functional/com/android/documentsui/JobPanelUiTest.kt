@@ -34,6 +34,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
@@ -71,6 +72,7 @@ private fun withProgress(expectedProgress: Int): Matcher<View> {
 // Helper function to match views inside a certain progress item view.
 private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progress.msg))
 
+@LargeTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {

@@ -26,6 +26,7 @@ import android.graphics.drawable.ColorDrawable;
 
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.test.InstrumentationRegistry;
+import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.R;
 
@@ -34,7 +35,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import org.junit.Before;
 import org.junit.Test;
 
-
+@SmallTest
 public class SearchBarScrollingViewBehaviorTest {
     private SearchBarScrollingViewBehavior mScrollingViewBehavior;
     private Context mContext;
