@@ -36,12 +36,15 @@ class MetadataSideSheetController(
     private val sheetStateListener =
         object : SideSheetCallback() {
             override fun onStateChanged(sideSheet: View, newState: Int) {
-                if (newState != SideSheetBehavior.STATE_EXPANDED &&
-                    newState != SideSheetBehavior.STATE_HIDDEN
-                ) {
-                    return
+                when (newState) {
+                    SideSheetBehavior.STATE_HIDDEN -> viewModel.toggleMetadataSheet(
+                        expanded = false
+                    )
+                    SideSheetBehavior.STATE_EXPANDED -> viewModel.toggleMetadataSheet(
+                        expanded = true
+                    )
+                    else -> {}
                 }
-                viewModel.toggleMetadataSheet(newState == SideSheetBehavior.STATE_EXPANDED)
             }
 
             override fun onSlide(sideSheet: View, slideOffset: Float) {}

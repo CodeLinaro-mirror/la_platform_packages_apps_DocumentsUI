@@ -49,12 +49,4 @@
             app:titleMarginStart="@dimen/space_extra_small_2"
             app:titleTextAppearance="@style/PeekTopBarTitleText" />
     </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/peek_coplanar_metadata_sheet_container"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        app:coplanarSiblingViewId="@id/peek_preview_container"
-        app:layout_behavior="com.google.android.material.sidesheet.SideSheetBehavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
