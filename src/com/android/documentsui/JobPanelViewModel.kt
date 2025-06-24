@@ -163,6 +163,16 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
     }
 
     /**
+     * Dismisses all completed progresses.
+     */
+    fun dismissCompleted() {
+        _currentJobs.entries.removeAll { (_, v) -> v.jobProgress.isFinal }
+
+        _menuIconState.value = getMenuState()
+        _jobUpdateEvent.tryEmit(Unit)
+    }
+
+    /**
      * Toggles the expanded state of a specific progress item.
      */
     fun toggleExpanded(id: String) {
