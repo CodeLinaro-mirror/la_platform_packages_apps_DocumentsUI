@@ -68,7 +68,7 @@ java_defaults {
         "guava",
         "modules-utils-build_system",
 
-        // The following dependencies are optimized out when use_peek_preview_ro flag enabled.
+        // The following dependencies are optimized out when use_peek_preview_ro is disabled.
         // See b/421076517 for more details.
         // Glide dependencies.
         "androidx.exifinterface_exifinterface",
@@ -76,7 +76,7 @@ java_defaults {
         "glide-disklrucache-prebuilt",
         "glide-gifdecoder-prebuilt",
         "glide-prebuilt",
-        // Exoplayer dependencies
+        // Exoplayer dependencies.
         "androidx.media3.media3-exoplayer",
         "androidx.media3.media3-ui",
     ],
