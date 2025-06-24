@@ -437,6 +437,8 @@
         =1 {Zipping <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
         other {Zipping # files}
     }</string>
+    <!-- Accessibility label for an icon button which shows the progress of file operations when clicked. -->
+    <string name="job_progress_icon_label">Show file progress</string>
     <string name="job_progress_panel_title" translatable="false">File Progress</string>
     <string name="job_progress_item_completed" translatable="false">Completed</string>
     <string name="job_progress_item_failed" translatable="false">Failed</string>
@@ -455,6 +457,11 @@
     <string name="compress_completed">Compressed</string>
     <!-- Status message shown when an extract file operation is completed. -->
     <string name="extract_completed">Extracted</string>
+
+    <!-- Accessibility label for a button to expand a notification. -->
+    <string name="expand_label">Expand</string>
+    <!-- Accessibility label for a button to collapse a notification. -->
+    <string name="collapse_label">Collapse</string>
 
     <!-- Text in an alert dialog asking user to grant app access to a given directory in an external storage volume -->
     <string name="open_external_dialog_request">Grant <xliff:g id="appName" example="System Settings"><b>^1</b></xliff:g>

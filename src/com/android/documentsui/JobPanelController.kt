@@ -136,10 +136,14 @@ class JobPanelController(
                 titleView.isSingleLine = false
                 toggleExpandButton.icon =
                     context.getDrawable(getRes(R.drawable.ic_job_progress_collapse))
+                toggleExpandButton.contentDescription =
+                    context.getString(getRes(R.string.collapse_label))
             } else {
                 titleView.isSingleLine = true
                 toggleExpandButton.icon =
                     context.getDrawable(getRes(R.drawable.ic_job_progress_expand))
+                toggleExpandButton.contentDescription =
+                    context.getString(getRes(R.string.expand_label))
             }
 
             updateProgressBar(jobProgress)
