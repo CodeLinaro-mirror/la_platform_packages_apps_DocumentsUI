@@ -114,21 +114,28 @@ class JobPanelViewModelTest {
 
         progress4.state = Job.STATE_CANCELED
         viewModel.updateProgress(listOf(progress4).toJobProgressList())
-        // Progresses 1 and 2 should be kept as they are in the completed state.
+        // Progresses 1, 2 and 4 should be kept as they are in final states.
         assertEquals(
-            listOf(progress1, progress2)
-                .withExpandStates(false, true),
+            listOf(progress1, progress2, progress4)
+                .withExpandStates(false, true, false),
             ArrayList(viewModel.currentJobs.values)
         )
 
         viewModel.updateProgress(emptyList())
         assertEquals(
-            listOf(progress1, progress2)
-                .withExpandStates(false, true),
+            listOf(progress1, progress2, progress4)
+                .withExpandStates(false, true, false),
             ArrayList(viewModel.currentJobs.values)
         )
 
         viewModel.dismissProgress("Job1")
+        assertEquals(
+            listOf(progress2, progress4)
+                .withExpandStates(true, false),
+            ArrayList(viewModel.currentJobs.values)
+        )
+
+        viewModel.dismissProgress("Job4")
         assertEquals(
             listOf(progress2).withExpandStates(true),
             ArrayList(viewModel.currentJobs.values)
@@ -270,7 +277,7 @@ class JobPanelViewModelTest {
             ArrayList(viewModel.currentJobs.values)
         )
 
-        inProgress.state = Job.STATE_COMPLETED
+        inProgress.state = Job.STATE_CANCELED
         viewModel.updateProgress(listOf(inProgress).toJobProgressList())
 
         // After three seconds from first update, the succeeded job should auto dismiss.
