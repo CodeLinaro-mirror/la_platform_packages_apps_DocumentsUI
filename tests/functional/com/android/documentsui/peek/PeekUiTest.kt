@@ -25,18 +25,22 @@ import android.os.RemoteException
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.provider.DocumentsContract
 import android.view.Display
+import androidx.media3.ui.R as ExoPlayerR
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiObject2
 import com.android.documentsui.ActivityTestJunit4
+import com.android.documentsui.R
 import com.android.documentsui.TestUtils.Companion.dpToPx
 import com.android.documentsui.TestUtils.Companion.pxToDp
 import com.android.documentsui.bots.PeekBot
@@ -48,6 +52,7 @@ import java.io.IOException
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertNull
 import kotlin.math.roundToInt
+import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -124,6 +129,8 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
     fun initFiles() {
         createFile("images/sample.jpg", "image/jpeg", "image.jpg")
         createFile("images/sample.svg", "image/svg+xml", "image.svg")
+        createFile("videos/sample.webm", "video/webm", "sample.webm")
+        createFile("videos/invalid.mp4", "video/mp4", "invalid.mp4")
         createFile("documents/sample.log", "text/plain", "file0.log")
     }
 
@@ -220,6 +227,28 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         showAndCheckPreview("image.svg")
         onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
         onView(withContentDescription("Image preview of image.svg")).check(doesNotExist())
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testVideoPreview() {
+        val playerContentFrameMatcher =
+            allOf(
+                withId(ExoPlayerR.id.exo_content_frame),
+                isDescendantOfA(withId(R.id.peek_container))
+            )
+
+        // Check that the preview screen shows for "sample.webm".
+        showAndCheckPreview("sample.webm")
+        onView(playerContentFrameMatcher).check(matches(isDisplayed()))
+        onView(withContentDescription("No preview available")).check(doesNotExist())
+        peekBot.hide()
+
+        // Invalid.mp4 does not contain video contents, check that "no preview" shows.
+        showAndCheckPreview("invalid.mp4")
+        onView(withContentDescription("No preview available")).check(matches(isDisplayed()))
+        onView(playerContentFrameMatcher).check(doesNotExist())
+        peekBot.hide()
     }
 
     @Test

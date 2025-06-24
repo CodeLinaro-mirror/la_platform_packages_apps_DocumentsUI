@@ -67,12 +67,17 @@ java_defaults {
         "docsui-change-ids",
         "guava",
         "modules-utils-build_system",
-        // Glide and dependencies. Optimized out when use_peek_preview_ro flag enabled.
+
+        // The following dependencies are optimized out when use_peek_preview_ro flag enabled.
         // See b/421076517 for more details.
+        // Glide dependencies.
         "androidx.exifinterface_exifinterface",
         "glide-disklrucache-prebuilt",
         "glide-gifdecoder-prebuilt",
         "glide-prebuilt",
+        // Exoplayer dependencies
+        "androidx.media3.media3-exoplayer",
+        "androidx.media3.media3-ui",
     ],
 
     privileged: true,
