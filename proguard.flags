@@ -232,6 +232,11 @@
   public int getState();
 }
 
+# The BottomSheetBehavior state is not directly accessed from DocumentsUI, but is used in tests
+-keep class com.google.android.material.bottomsheet.BottomSheetBehavior {
+  public float getHalfExpandedRatio();
+}
+
 -keep class com.android.documentsui.JobPanelViewModel$Companion {
   public void setDisableAutoDismiss(boolean);
 }
@@ -252,4 +257,9 @@
 # Temporarily while use_material3 flag isn't fully rolled out.
 -keep interface com.android.documentsui.util.Config {
   public java.lang.Boolean getForceMaterial3();
+}
+
+-keep class com.android.documentsui.peek.MetadataBottomSheetController {
+  public com.google.android.material.bottomsheet.BottomSheetBehavior getSheetBehavior();
+  public com.google.android.material.bottomsheet.BottomSheetBehavior$BottomSheetCallback getSheetStateListener();
 }

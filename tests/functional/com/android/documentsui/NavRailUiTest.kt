@@ -23,11 +23,12 @@ import android.content.res.Resources
 import android.graphics.Rect
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.provider.DocumentsContract
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import android.view.Display
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import com.android.documentsui.TestUtils.Companion.dpToPx
+import com.android.documentsui.TestUtils.Companion.pxToDp
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
@@ -37,6 +38,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@LargeTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
 @RunWith(AndroidJUnit4::class)
 class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
@@ -46,14 +48,6 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
   companion object {
     private const val MEDIUM_WINDOW_WIDTH = 700
     private const val MEDIUM_WINDOW_HEIGHT = 900
-  }
-
-  private fun dpToPx(dp: Float, metrics: DisplayMetrics?): Float {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, metrics)
-  }
-
-  private fun pxToDp(px: Float, metrics: DisplayMetrics): Float {
-    return TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_DIP, px, metrics)
   }
 
   /** Override the base method to launch activity in a specified window size. */
