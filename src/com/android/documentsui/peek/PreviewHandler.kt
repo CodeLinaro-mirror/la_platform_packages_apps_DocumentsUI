@@ -26,10 +26,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.android.documentsui.GlideApp
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.util.Material3Config.Companion.getRes
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -105,7 +105,7 @@ class ImagePreviewHandler(previewFrame: FrameLayout, doc: DocumentInfo) :
             }
         previewFrame.addView(imageView)
 
-        Glide.with(previewFrame)
+        GlideApp.with(previewFrame)
             .load(doc.derivedUri)
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -116,7 +116,7 @@ class ImagePreviewHandler(previewFrame: FrameLayout, doc: DocumentInfo) :
     override fun clear() {
         // Cancel any Glide load request if one is in progress.
         imageView?.let {
-            Glide.with(previewFrame).clear(it)
+            GlideApp.with(previewFrame).clear(it)
             imageView = null
         }
         super.clear()
