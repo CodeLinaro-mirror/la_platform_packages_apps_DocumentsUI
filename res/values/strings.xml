@@ -292,6 +292,10 @@
     <!-- Toast shown when a document is not allowed to share across users. This is a last-resort toast and not expected to be shown. [CHAR LIMIT=48] -->
     <string name="toast_action_not_allowed">Action not allowed</string>
 
+    <string name="no_application_dialog_title">Open with\u2026</string>
+    <string name="no_application_dialog_message">There are no supported apps installed. Try installing one from the Play Store.</string>
+    <string name="no_application_dialog_button">Search Play Store</string>
+
     <!-- Title of dialog when prompting user to select an app to share documents with [CHAR LIMIT=32] -->
     <string name="share_via">Share via</string>
 

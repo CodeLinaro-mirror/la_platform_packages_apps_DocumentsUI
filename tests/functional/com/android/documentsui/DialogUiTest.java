@@ -42,6 +42,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.dirlist.RenameDocumentFragment;
 import com.android.documentsui.files.DeleteDocumentFragment;
 import com.android.documentsui.files.FilesActivity;
+import com.android.documentsui.files.NoApplicationFragment;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.sorting.SortListFragment;
 import com.android.documentsui.sorting.SortModel;
@@ -129,6 +130,19 @@ public class DialogUiTest {
                 mCreateDirectoryFragment.getDialog().findViewById(android.R.id.text1);
 
         assertTrue(inputView.getHeight() > getInputTextHeight(inputView));
+    }
+
+    @Test
+    public void testNoAppDialogShows() throws Throwable {
+        DocumentInfo doc = new DocumentInfo();
+        doc.displayName = "doc.pdf";
+        mActivityTestRule.runOnUiThread(() -> NoApplicationFragment.show(mFragmentManager, doc));
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        NoApplicationFragment dialog =
+                (NoApplicationFragment) mFragmentManager.findFragmentByTag("NoApplicationFragment");
+
+        assertNotNull("Dialog was null", dialog.getDialog());
+        assertTrue("Dialog was not being shown", dialog.getDialog().isShowing());
     }
 
     @Test
@@ -260,6 +274,14 @@ public class DialogUiTest {
         SortModel sortModel = Mockito.mock(SortModel.class);
 
         SortListFragment.show(mFragmentManager, sortModel);
+    }
+
+    @Test
+    public void testNoAppDialog_skipWhenStateSaved() {
+        mFragmentManager = Mockito.mock(FragmentManager.class);
+        Mockito.when(mFragmentManager.isStateSaved()).thenReturn(true);
+
+        NoApplicationFragment.show(mFragmentManager, new DocumentInfo());
     }
 
     private static int getInputTextHeight(TextInputEditText v) {
