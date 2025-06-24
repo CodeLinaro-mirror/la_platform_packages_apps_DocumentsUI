@@ -460,6 +460,12 @@ public class SearchChipViewManager {
      * @param hasAnim     if true, play move animation. Otherwise, not.
      */
     private void reorderCheckedChips(@Nullable Chip clickedChip, boolean hasAnim) {
+        boolean supportChipMove = mChipGroup.getResources().getBoolean(
+                getRes(R.bool.move_search_chip_when_selected));
+        if (!supportChipMove) {
+            return;
+        }
+
         final ArrayList<Chip> chipList = new ArrayList<>();
         final int count = mChipGroup.getChildCount();
 
