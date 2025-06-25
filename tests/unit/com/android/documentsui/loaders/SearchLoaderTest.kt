@@ -20,6 +20,7 @@ import android.platform.test.annotations.RequiresFlagsEnabled
 import android.provider.DocumentsContract
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
+import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
@@ -34,6 +35,7 @@ import java.time.Duration
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -170,13 +172,13 @@ class SearchLoaderTest {
         @get:Rule
         val expect: Expect = Expect.create()
 
-        lateinit var mExecutor: ExecutorService
-        val mContentLock = ContentLock()
-        val mContentObserver = LockingContentObserver(mContentLock) {}
+        lateinit var executor: ExecutorService
+        val contentLock = ContentLock()
+        val contentObserver = LockingContentObserver(contentLock) {}
 
         @Before
         fun setUpTest() {
-            mExecutor = Executors.newSingleThreadExecutor()
+            executor = Executors.newSingleThreadExecutor()
         }
 
         fun generateDocuments(
@@ -221,7 +223,7 @@ class SearchLoaderTest {
                 activity,
                 listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
                 TestFileTypeLookup(),
-                mContentObserver,
+                contentObserver,
                 "document-",
                 QueryOptions(
                     maxCount,
@@ -233,7 +235,7 @@ class SearchLoaderTest {
                     Bundle()
                 ),
                 sortModel,
-                mExecutor,
+                executor,
             )
             val result = loader.loadInBackground()
             expect.that(result?.cursor?.getCount()).isEqualTo(maxCount)
@@ -262,11 +264,11 @@ class SearchLoaderTest {
                 activity,
                 listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
                 TestFileTypeLookup(),
-                mContentObserver,
+                contentObserver,
                 "document",
                 QueryOptions(10, ALL_RESULTS, null, null, false, arrayOf("image/png"), Bundle()),
                 environment.state.sortModel,
-                mExecutor,
+                executor,
             )
             val result = loader.loadInBackground()
             expect.that(result!!.cursor).isNotNull()
@@ -276,6 +278,48 @@ class SearchLoaderTest {
             // TODO(417818526): Add ability to force mock providers to be extra slow, so that
             // we can test for the case when they do not finish on time.
             expect.that(extras.getBoolean(DocumentsContract.EXTRA_LOADING)).isFalse()
+        }
+
+        @Test
+        fun testShowOrHideHiddenFiles() {
+            val commonSearchString = "verdant"
+            val doc1 = environment.model.createFile(".test$commonSearchString")
+            val doc2 = environment.model.createFile("test$commonSearchString")
+            doc1.documentId = ".test"
+            doc2.documentId = "parent_folder/.hidden_folder/test"
+            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
+                setNextChildDocumentsReturns(
+                    doc1,
+                    doc2
+                )
+            }
+
+            val hideHiddenLoader = SearchLoader(
+                activity,
+                listOf(TestProvidersAccess.DOWNLOADS),
+                TestFileTypeLookup(),
+                contentObserver,
+                commonSearchString,
+                QueryOptions(10, ALL_RESULTS, null, null, false, null, Bundle()),
+                environment.state.sortModel,
+                executor,
+            )
+
+            var result: DirectoryResult = hideHiddenLoader.loadInBackground()!!
+            assertEquals(0, result.cursor.getCount())
+
+            val showHiddenLoader = SearchLoader(
+                activity,
+                listOf(TestProvidersAccess.DOWNLOADS),
+                TestFileTypeLookup(),
+                contentObserver,
+                commonSearchString,
+                QueryOptions(10, ALL_RESULTS, null, null, true, null, Bundle()),
+                environment.state.sortModel,
+                executor,
+            )
+            result = showHiddenLoader.loadInBackground()!!
+            assertEquals(2, result.cursor.getCount())
         }
     }
 }

@@ -302,6 +302,16 @@ public class UiBot extends Bots.BaseBot {
         return (bar != null);
     }
 
+    /**
+     * Waits for the job progress toolbar icon to become visible.
+     */
+    public boolean waitForJobProgressToolbarIconToAppear() {
+        return mDevice.wait(
+                Until.findObject(By.res(mTargetPackage + ":id/job_progress_toolbar_indicator")),
+                mTimeout
+        ) != null;
+    }
+
     public void clickRename() throws UiObjectNotFoundException {
         if (!waitForActionModeBarToAppear()) {
             throw new UiObjectNotFoundException("ActionMode bar not found");

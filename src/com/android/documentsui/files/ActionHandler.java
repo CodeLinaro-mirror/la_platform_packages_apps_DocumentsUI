@@ -313,7 +313,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             doc.userId.startActivityAsUser(mActivity, intent);
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "Failed to view settings in application for " + doc.derivedUri, e);
-            mDialogs.showNoApplicationFound();
+            mDialogs.showNoApplicationFoundToast();
         }
     }
 
@@ -570,22 +570,30 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         if (isDesktopFileHandlingFlagEnabled()) {
             Intent intent = buildViewIntent(doc);
+            if (intent.resolveActivity(mActivity.getPackageManager()) == null) {
+                mDialogs.showNoApplicationFoundDialog(mActivity.getSupportFragmentManager(), doc);
+                return;
+            }
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
+
             try {
                 doc.userId.startActivityAsUser(mActivity, intent);
             } catch (ActivityNotFoundException e) {
-                mDialogs.showNoApplicationFound();
+                mDialogs.showNoApplicationFoundDialog(
+                        mActivity.getSupportFragmentManager(), doc);
             }
         } else {
             Intent intent = Intent.createChooser(buildViewIntent(doc), null);
             intent.putExtra(Intent.EXTRA_AUTO_LAUNCH_SINGLE_CHOICE, false);
+
             try {
                 doc.userId.startActivityAsUser(mActivity, intent);
             } catch (ActivityNotFoundException e) {
-                mDialogs.showNoApplicationFound();
+                mDialogs.showNoApplicationFoundToast();
             }
         }
+
     }
 
     private void showInspector(DocumentInfo doc) {
