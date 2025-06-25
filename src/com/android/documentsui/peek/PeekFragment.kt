@@ -166,6 +166,7 @@ class PeekFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        previewHandler?.clear()
         metadataSheetController?.onDestroyView()
         super.onDestroyView()
     }
