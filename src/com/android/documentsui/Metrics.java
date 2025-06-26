@@ -437,7 +437,10 @@ public final class Metrics {
     }
 
     /** @see #sanitizeRoot(Uri) */
-    public static @MetricConsts.Root int sanitizeRoot(RootInfo root) {
+    public static @MetricConsts.Root int sanitizeRoot(@Nullable RootInfo root) {
+        if (root == null) {
+            return MetricConsts.ROOT_UNKNOWN;
+        }
         if (root.isRecents()) {
             // Recents root is special and only identifiable via this method call. Other roots are
             // identified by URI.

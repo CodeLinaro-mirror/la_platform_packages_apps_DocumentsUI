@@ -282,7 +282,8 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         // When the search view is expanded, most of the toolbar is hidden. Except when docked
         // search is enabled, in which case the toolbar is shown as normal.
-        boolean showDockedSearch = mActivity.getResources().getBoolean(R.bool.show_docked_search);
+        boolean showDockedSearch =
+                mActivity.getResources().getBoolean(getRes(R.bool.show_docked_search));
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
