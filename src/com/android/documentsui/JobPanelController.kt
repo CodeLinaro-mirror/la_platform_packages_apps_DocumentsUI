@@ -355,6 +355,10 @@ class JobPanelController(
                 getRes(R.layout.job_progress_panel),
                 /* root= */ null
             )
+
+            panel.findViewById<Button>(R.id.job_progress_panel_dismiss_all)
+                .setOnClickListener { viewModel.dismissCompleted() }
+
             val listAdapter = ProgressListAdapter(this)
             listAdapter.submitList(ArrayList(viewModel.currentJobs.values))
             panel.findViewById<RecyclerView>(getRes(R.id.job_progress_list)).apply {
