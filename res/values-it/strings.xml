@@ -342,6 +342,5 @@
     <string name="file_name_hint" msgid="7843637320487415838">"Nome file"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Nascondi anteprima del file"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Nessuna anteprima disponibile"</string>
-    <!-- no translation found for a11y_peek_image_preview (3917148390186060263) -->
-    <skip />
+    <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Anteprima dell\'immagine <xliff:g id="FILENAME">%s</xliff:g>"</string>
 </resources>
