@@ -76,6 +76,8 @@
     <string name="menu_move">Move to\u2026</string>
     <!-- Menu item title that compresses the selected documents to the current directory [CHAR LIMIT=28] -->
     <string name="menu_compress">Compress</string>
+    <!-- Menu item title that zips the selected documents and creates an archive in the current directory [CHAR LIMIT=28] -->
+    <string name="menu_zip">Zip</string>
     <!-- Menu item title that extracts the selected documents [CHAR LIMIT=28] -->
     <string name="menu_extract">Extract to\u2026</string>
     <!-- Menu item title that extracts all the documents in the current directory [CHAR LIMIT=28] -->
