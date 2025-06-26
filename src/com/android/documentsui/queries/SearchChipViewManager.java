@@ -432,13 +432,18 @@ public class SearchChipViewManager {
         // When use_material3 flag is ON, we don't want to use MIME type icons for
         // image/audio/video/document from the system.
         if (isUseMaterial3FlagEnabled()) {
-            return switch (chipType) {
-                case TYPE_IMAGES -> context.getDrawable(getRes(R.drawable.ic_chip_image));
-                case TYPE_AUDIO -> context.getDrawable(getRes(R.drawable.ic_chip_audio));
-                case TYPE_VIDEOS -> context.getDrawable(getRes(R.drawable.ic_chip_video));
-                case TYPE_DOCUMENTS -> context.getDrawable(getRes(R.drawable.ic_chip_document));
-                default -> null;
-            };
+            switch (chipType) {
+                case TYPE_IMAGES:
+                    return context.getDrawable(getRes(R.drawable.ic_chip_image));
+                case TYPE_AUDIO:
+                    return context.getDrawable(getRes(R.drawable.ic_chip_audio));
+                case TYPE_VIDEOS:
+                    return context.getDrawable(getRes(R.drawable.ic_chip_video));
+                case TYPE_DOCUMENTS:
+                    return context.getDrawable(getRes(R.drawable.ic_chip_document));
+                default:
+                    return null;
+            }
         }
 
         if (chipType == TYPE_DOCUMENTS) {
