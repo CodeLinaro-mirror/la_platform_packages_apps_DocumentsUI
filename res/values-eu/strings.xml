@@ -44,8 +44,7 @@
     <string name="menu_copy" msgid="7404820171352314754">"Kopiatu hemen…"</string>
     <string name="menu_move" msgid="2310760789561129882">"Eraman hona…"</string>
     <string name="menu_compress" msgid="37539111904724188">"Konprimatu"</string>
-    <!-- no translation found for menu_zip (5734673122376258045) -->
-    <skip />
+    <string name="menu_zip" msgid="5734673122376258045">"Konprimatu"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Atera hona…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Atera guztia…"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"Erauzi hona"</string>
@@ -129,6 +128,12 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Ezin dira ezabatu dokumentu batzuk"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ezin dira partekatu <xliff:g id="COUNT">%1$d</xliff:g> fitxategi baino gehiago"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Ez da onartzen ekintza"</string>
+    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
+    <skip />
+    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
+    <skip />
+    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
+    <skip />
     <string name="share_via" msgid="8725082736005677161">"Partekatu honekin:"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopiatu fitxategiak"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Fitxategiak konprimatzen"</string>
@@ -214,12 +219,20 @@
     <string name="rename_error" msgid="6700093173508118635">"Ezin izan zaio aldatu izena dokumentuari"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Atera"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Artxibo batzuk bihurtu dira"</string>
+    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
+    <skip />
+    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
+    <skip />
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Ikusi xehetasunak"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Kopiatu da"</string>
     <string name="move_completed" msgid="3981250605092729273">"Tokiz aldatu da"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Ezabatu da"</string>
     <string name="compress_completed" msgid="8808356399995313077">"Konprimatu da"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Atera da"</string>
+    <!-- no translation found for expand_label (5683357671239615207) -->
+    <skip />
+    <!-- no translation found for collapse_label (4530974883269531062) -->
+    <skip />
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> aplikazioari <xliff:g id="STORAGE"><i>^3</i></xliff:g> unitateko <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> direktoriorako sarbidea eman nahi diozu?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> aplikazioari <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> direktoriorako sarbidea eman nahi diozu?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> aplikazioari zure datuak erabiltzeko baimena eman nahi diozu (besteak beste, <xliff:g id="STORAGE"><i>^2</i></xliff:g> biltegian dituzun argazkiak eta bideoak)?"</string>
