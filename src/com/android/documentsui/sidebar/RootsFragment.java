@@ -319,7 +319,8 @@ public class RootsFragment extends Fragment {
                             && SdkLevel.isAtLeastS()) {
                         userManagerState = DocumentsApplication.getUserManagerState(getContext());
                         Map<UserId, Boolean> canForwardToProfileIdMap =
-                                userManagerState.getCanForwardToProfileIdMap(handlerAppIntent);
+                                userManagerState.getCanForwardToProfileIdMapForAllowedUsers(intent,
+                                        state);
                         updateCrossProfileMapStateAndMaybeRefresh(canForwardToProfileIdMap);
                     } else {
                         crossProfileResolveInfo = CrossProfileUtils.getCrossProfileResolveInfo(
