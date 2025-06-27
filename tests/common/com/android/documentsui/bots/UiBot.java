@@ -127,6 +127,12 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /**
+     * Checks that the docked search bar is visible.
+     */
+    public void assertDockedSearchBarShow() {
+        onView(withId(R.id.docked_search_toolbar)).check(matches(isDisplayed()));
+    }
+    /**
      * Checks that the search bar is not visible.
      */
     public void assertSearchBarGone() {
