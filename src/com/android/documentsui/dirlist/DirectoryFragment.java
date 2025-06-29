@@ -1295,6 +1295,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             case FileOperationService.OPERATION_MOVE:
                 Metrics.logUserAction(MetricConsts.USER_ACTION_MOVE_TO);
                 break;
+            case FileOperationService.OPERATION_UNPACK:
+                Metrics.logUserAction(MetricConsts.USER_ACTION_UNPACK);
+                break;
         }
 
         UrisSupplier srcs;

@@ -44,6 +44,8 @@
     <string name="menu_copy" msgid="7404820171352314754">"复制到…"</string>
     <string name="menu_move" msgid="2310760789561129882">"移至…"</string>
     <string name="menu_compress" msgid="37539111904724188">"压缩"</string>
+    <!-- no translation found for menu_zip (5734673122376258045) -->
+    <skip />
     <string name="menu_extract" msgid="8171946945982532262">"解压到…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"提取全部…"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"解压缩到此处"</string>
@@ -317,21 +319,14 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"目前以列表模式显示。"</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"文件名"</string>
-    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
-    <skip />
-    <!-- no translation found for peek_metadata_general_info_title (5805064715498467299) -->
-    <skip />
-    <!-- no translation found for peek_metadata_size (2377426288276139988) -->
-    <skip />
-    <!-- no translation found for peek_metadata_type (1386923517471758392) -->
-    <skip />
-    <!-- no translation found for peek_metadata_date_modified (5403086549396155362) -->
-    <skip />
-    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"隐藏文件预览"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"无法预览"</string>
+    <string name="peek_metadata_header_title" msgid="6196387248590120756">"详细信息"</string>
+    <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"常规信息"</string>
+    <string name="peek_metadata_size" msgid="2377426288276139988">"大小"</string>
+    <string name="peek_metadata_type" msgid="1386923517471758392">"类型"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"修改日期"</string>
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"隐藏文件预览"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>的图片预览"</string>
-    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
-    <skip />
-    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
-    <skip />
+    <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"隐藏信息面板"</string>
+    <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"显示信息面板"</string>
 </resources>

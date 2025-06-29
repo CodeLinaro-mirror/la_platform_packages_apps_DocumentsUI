@@ -394,8 +394,8 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(copyTo, false);
     }
 
-    protected void updateCompress(MenuItem compress, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(compress, false);
+    protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
+        Menus.setEnabledAndVisible(it, false);
     }
 
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {

@@ -44,6 +44,8 @@
     <string name="menu_copy" msgid="7404820171352314754">"Copier dans…"</string>
     <string name="menu_move" msgid="2310760789561129882">"Déplacer dans…"</string>
     <string name="menu_compress" msgid="37539111904724188">"Compresser"</string>
+    <!-- no translation found for menu_zip (5734673122376258045) -->
+    <skip />
     <string name="menu_extract" msgid="8171946945982532262">"Extraire vers…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Tout extraire…"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"Extraire ici"</string>
@@ -339,21 +341,14 @@
     <string name="list_mode_showing" msgid="1225413902295895166">"Affichage en mode liste."</string>
     <string name="bullet" msgid="5606740650312122766">"•"</string>
     <string name="file_name_hint" msgid="7843637320487415838">"Nom de fichier"</string>
-    <!-- no translation found for peek_metadata_header_title (6196387248590120756) -->
-    <skip />
-    <!-- no translation found for peek_metadata_general_info_title (5805064715498467299) -->
-    <skip />
-    <!-- no translation found for peek_metadata_size (2377426288276139988) -->
-    <skip />
-    <!-- no translation found for peek_metadata_type (1386923517471758392) -->
-    <skip />
-    <!-- no translation found for peek_metadata_date_modified (5403086549396155362) -->
-    <skip />
-    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Masquer l\'aperçu du fichier"</string>
     <string name="peek_no_preview" msgid="8717084152736749464">"Aucun aperçu n\'est accessible"</string>
+    <string name="peek_metadata_header_title" msgid="6196387248590120756">"Détails"</string>
+    <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"Informations générales"</string>
+    <string name="peek_metadata_size" msgid="2377426288276139988">"Taille"</string>
+    <string name="peek_metadata_type" msgid="1386923517471758392">"Type"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Date de modification"</string>
+    <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Masquer l\'aperçu du fichier"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Aperçu de l\'image de <xliff:g id="FILENAME">%s</xliff:g>"</string>
-    <!-- no translation found for a11y_peek_hide_info_button (918293386310947930) -->
-    <skip />
-    <!-- no translation found for a11y_peek_show_info_button (9028075652389911413) -->
-    <skip />
+    <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Masquer le panneau d\'information"</string>
+    <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Afficher le panneau d\'information"</string>
 </resources>
