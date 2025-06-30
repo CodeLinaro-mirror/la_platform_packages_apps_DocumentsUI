@@ -44,8 +44,7 @@
     <string name="menu_copy" msgid="7404820171352314754">"වෙත පිටපත් කරන්න..."</string>
     <string name="menu_move" msgid="2310760789561129882">"වෙත ගෙනයන්න..."</string>
     <string name="menu_compress" msgid="37539111904724188">"සම්පීඩනය කරන්න"</string>
-    <!-- no translation found for menu_zip (5734673122376258045) -->
-    <skip />
+    <string name="menu_zip" msgid="5734673122376258045">"Zip"</string>
     <string name="menu_extract" msgid="8171946945982532262">"උපුටා ගන්න…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"සියල්ල උපුටා ගන්න…"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"මෙතනට උපුටා ගන්න"</string>
@@ -222,8 +221,7 @@
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"සමහර ගොනු පරිවර්තනය කරන ලදී"</string>
     <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
     <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"අවලංගු කරන ලදි"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"විස්තර බලන්න"</string>
     <string name="copy_completed" msgid="3749037014674785400">"පිටපත් කරන ලදි"</string>
     <string name="move_completed" msgid="3981250605092729273">"ගෙන යන ලදි"</string>
