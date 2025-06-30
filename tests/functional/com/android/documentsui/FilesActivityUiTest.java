@@ -27,7 +27,6 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -79,12 +78,11 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     // It is special cased in a variety of ways, which is why we just want
     // to be able to click on it.
     @Test
+    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
     public void testClickRecent() throws Exception {
         bots.roots.openRoot("Recent");
 
-        boolean showSearchBar =
-                isUseMaterial3FlagEnabled() ? false : context.getResources().getBoolean(
-                        R.bool.show_search_bar);
+        boolean showSearchBar = context.getResources().getBoolean(R.bool.show_search_bar);
         if (showSearchBar) {
             bots.main.assertSearchBarShow();
         } else {
@@ -92,6 +90,16 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.search.assertIconVisible(true);
             bots.main.assertWindowTitle("Recent");
         }
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    public void testClickRecentM3() throws Exception {
+        bots.roots.openRoot("Recent");
+
+        bots.main.assertSearchBarGone();
+        bots.main.assertDockedSearchBarShow();
+        bots.main.assertWindowTitle("Recent");
     }
 
     private DocumentsProviderHelper setupStorageAuthorityDocsHelper() throws Exception {
