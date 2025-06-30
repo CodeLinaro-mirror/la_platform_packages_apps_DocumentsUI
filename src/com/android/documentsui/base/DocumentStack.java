@@ -195,9 +195,7 @@ public class DocumentStack implements Durable, Parcelable {
      * {@link #mRoot} instead of making a copy.
      */
     public void reset(DocumentStack stack) {
-        if (DEBUG) {
-            Log.d(TAG, "Resetting the whole darn stack to: " + stack);
-        }
+        if (DEBUG) Log.d(TAG, "Reset the whole stack to: " + stack);
 
         mList = stack.mList;
         mRoot = stack.mRoot;
