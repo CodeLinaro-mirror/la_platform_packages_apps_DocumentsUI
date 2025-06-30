@@ -17,6 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 
@@ -91,7 +92,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void testContextMenu_onArchive_shouldHaveBrowseMenuItem() throws Exception {
         menuItems.clear();
         menuItems.put("Extract here", true);
