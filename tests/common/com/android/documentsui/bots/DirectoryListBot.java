@@ -94,10 +94,36 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertEquals(count, docsList.getChildCount());
     }
 
+    /**
+     * Checks if the given set of file labels is visible, without scrolling.
+     * @param labels The labels to be found in the current view.
+     * @throws UiObjectNotFoundException If files with given labels do not exist.
+     */
+    public void assertDocumentsVisible(String... labels) throws UiObjectNotFoundException {
+        assertDocumentsExistWithScroll(false, labels);
+    }
+
+    /**
+     * Checks if the given set of file labels is visible, with scrolling.
+     * @param labels The labels to be found in the current view, scrolling included.
+     * @throws UiObjectNotFoundException If files with given labels do not exist.
+     */
     public void assertDocumentsPresent(String... labels) throws UiObjectNotFoundException {
+        assertDocumentsExistWithScroll(true, labels);
+    }
+
+    /**
+     * Checks if the given set of file labels is exists. The scroll variable controls if the code
+     * is allowed to scroll the file panel to try to locate the documents.
+     * @param scroll If file view may be scrolled to find the specified file labels.
+     * @param labels The labels to be found in the current view, scrolling included.
+     * @throws UiObjectNotFoundException If files with given labels do not exist.
+     */
+    public void assertDocumentsExistWithScroll(boolean scroll, String... labels)
+            throws UiObjectNotFoundException {
         List<String> absent = new ArrayList<>();
         for (String label : labels) {
-            if (!findDocument(label).exists()) {
+            if (!findDocument(label, scroll).exists()) {
                 absent.add(label);
             }
         }
