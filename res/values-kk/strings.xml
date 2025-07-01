@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Кейбір құжаттар жойылмады"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> файлдан артық бөлісу мүмкін емес."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Бұл әрекетке рұқсат жоқ."</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Ашу жолы…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Қолдау көрсетілетін ешқандай қолданба орнатылмаған. Play Store-дан орнатып көріңіз."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store дүкенінен іздеу"</string>
     <string name="share_via" msgid="8725082736005677161">"Бөлісу әдісі"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Файлдар көшірілуде"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Файлдар сығу"</string>
@@ -219,8 +216,7 @@
     <string name="rename_error" msgid="6700093173508118635">"Құжаттың аты өзгертілмеді"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Шығару"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Кейбір файлдар түрлендірілді"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Файл прогресін көрсету"</string>
     <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
     <skip />
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Мәліметтерді көру"</string>
@@ -229,10 +225,8 @@
     <string name="delete_completed" msgid="4149401155614626199">"Жойылды."</string>
     <string name="compress_completed" msgid="8808356399995313077">"Сығылды."</string>
     <string name="extract_completed" msgid="8824595789915249972">"Шығарылды."</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="expand_label" msgid="5683357671239615207">"Жаю"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Жию"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> қолданбасына <xliff:g id="STORAGE"><i>^3</i></xliff:g> жадындағы <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> каталогына кіру рұқсаты берілсін бе?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> қолданбасына <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> каталогына кіру рұқсаты берілсін бе?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> қолданбасына <xliff:g id="STORAGE"><i>^2</i></xliff:g> жадындағы деректерге, соның ішінде фотосуреттерге және бейнелерге кіру рұқсаты берілсін бе?"</string>
