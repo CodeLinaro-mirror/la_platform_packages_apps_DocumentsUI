@@ -53,6 +53,7 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -324,6 +325,11 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
     @Test
     fun testShowInFolder() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService, which we cannot easily force from the test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
         bots.keyboard.pressKey(KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON)
 
