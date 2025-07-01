@@ -27,6 +27,7 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -98,7 +99,13 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("Recent");
 
         bots.main.assertSearchBarGone();
-        bots.main.assertDockedSearchBarShow();
+        boolean showDockedSearch = context.getResources().getBoolean(
+                getRes(R.bool.show_docked_search));
+        if (showDockedSearch) {
+            bots.main.assertDockedSearchBarShow();
+        } else {
+            bots.main.assertOptionsMenuSearchShow();
+        }
         bots.main.assertWindowTitle("Recent");
     }
 

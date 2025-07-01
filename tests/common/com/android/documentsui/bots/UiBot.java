@@ -132,6 +132,14 @@ public class UiBot extends Bots.BaseBot {
     public void assertDockedSearchBarShow() {
         onView(withId(R.id.docked_search_toolbar)).check(matches(isDisplayed()));
     }
+
+    /**
+     * Checks that the search menu item is visible.
+     */
+    public void assertOptionsMenuSearchShow() {
+        onView(withId(R.id.option_menu_search)).check(matches(isDisplayed()));
+    }
+
     /**
      * Checks that the search bar is not visible.
      */

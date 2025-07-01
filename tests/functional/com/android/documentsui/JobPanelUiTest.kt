@@ -26,7 +26,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.assertion.ViewAssertions.selectedDescendantsMatch
-import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.BoundedDiagnosingMatcher
 import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -59,13 +59,18 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private fun withProgress(expectedProgress: Int): Matcher<View> {
-    return object : BoundedMatcher<View, ProgressBar>(ProgressBar::class.java) {
-        override fun matchesSafely(view: ProgressBar): Boolean {
-            return view.progress == expectedProgress
+    return object : BoundedDiagnosingMatcher<View, ProgressBar>(ProgressBar::class.java) {
+        override fun matchesSafely(view: ProgressBar, mismatchDescription: Description): Boolean {
+            if (view.progress == expectedProgress) {
+                return true
+            } else {
+                mismatchDescription.appendText("actual progress was ${view.progress}")
+                return false
+            }
         }
 
-        override fun describeTo(description: Description) {
-            description.appendText("with progress: " + expectedProgress)
+        override fun describeMoreTo(description: Description) {
+            description.appendText("with progress: $expectedProgress")
         }
     }
 }
