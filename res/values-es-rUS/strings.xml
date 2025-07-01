@@ -233,8 +233,7 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"Expulsar"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Se convirtieron algunos archivos"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar progreso del archivo"</string>
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Cancelada"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Ver detalles"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Se copió"</string>
     <string name="move_completed" msgid="3981250605092729273">"Se movió"</string>
