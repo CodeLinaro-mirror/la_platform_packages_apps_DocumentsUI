@@ -411,7 +411,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
         // Check that copied folder exists
         bots.roots.openRoot(rootLabel);
         device.waitForIdle();
-        bots.directory.assertDocumentsPresent(TARGET_FOLDER);
+        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
         DocumentInfo parent = helper.findDocument(rootInfo.documentId, TARGET_FOLDER);
@@ -431,7 +431,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
         // Check that original folder exists
         bots.roots.openRoot(StubProvider.ROOT_0_ID);
-        bots.directory.assertDocumentsPresent(TARGET_FOLDER);
+        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
         assertFilesCopied(StubProvider.ROOT_1_ID, rootDir1, mDocsHelper);
@@ -448,7 +448,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
         // Check that original folder exists
         bots.roots.openRoot(mSdCardLabel);
-        bots.directory.assertDocumentsPresent(TARGET_FOLDER);
+        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
         assertFilesCopied(mDeviceLabel, mPrimaryRoot, mStorageDocsHelper);
@@ -465,7 +465,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
         // Check that original folder exists
         bots.roots.openRoot(mDeviceLabel);
-        bots.directory.assertDocumentsPresent(TARGET_FOLDER);
+        bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
         assertFilesCopied(mSdCardLabel, mSdCardRoot, mStorageDocsHelper);

@@ -234,7 +234,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressEnter();
 
         bots.directory.assertDocumentsCountOnList(true, 2);
-        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1, TestFilesRule.FILE_NAME_2);
+        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1, TestFilesRule.FILE_NAME_2);
     }
 
     @Test

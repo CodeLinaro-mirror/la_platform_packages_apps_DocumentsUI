@@ -53,7 +53,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -86,7 +86,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -98,7 +98,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
