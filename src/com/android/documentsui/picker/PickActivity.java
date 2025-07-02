@@ -75,7 +75,7 @@ import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -542,32 +542,36 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     }
 
     private void setExcludedUsers(State state, Intent intent) {
-        int[] excludedUserIdsArray = intent.getIntArrayExtra(
-                DocumentsContract.EXTRA_EXCLUDED_USERS);
-        // Validate if we are not excluding all the users
-        if (excludedUserIdsArray != null && excludedUserIdsArray.length > 0) {
-            List<UserHandle> allUsers = getApplicationContext().getSystemService(
-                    UserManager.class).getAllProfiles();
-            Set<Integer> excludedIdsSet = Arrays.stream(excludedUserIdsArray)
-                    .boxed()
-                    .collect(Collectors.toSet());
+        try {
+            ArrayList<UserHandle> excludedUsersArray = intent.getParcelableArrayListExtra(
+                    DocumentsContract.EXTRA_EXCLUDED_USERS, UserHandle.class);
+            // Validate if we are not excluding all the users
+            if (excludedUsersArray != null && !excludedUsersArray.isEmpty()) {
+                List<UserHandle> allUsers = getApplicationContext().getSystemService(
+                        UserManager.class).getAllProfiles();
+                Set<Integer> excludedIdsSet = excludedUsersArray.stream()
+                        .map(UserHandle::getIdentifier)
+                        .collect(Collectors.toSet());
 
-            // Check if the set of excluded IDs contains every available user ID.
-            boolean allUsersAreExcluded = true;
-            if (allUsers.isEmpty()) {
-                allUsersAreExcluded = false;
-            } else {
-                for (UserHandle user : allUsers) {
-                    if (!excludedIdsSet.contains(user.getIdentifier())) {
-                        allUsersAreExcluded = false;
-                        break;
+                // Check if the set of excluded IDs contains every available user ID.
+                boolean allUsersAreExcluded = true;
+                if (allUsers.isEmpty()) {
+                    allUsersAreExcluded = false;
+                } else {
+                    for (UserHandle user : allUsers) {
+                        if (!excludedIdsSet.contains(user.getIdentifier())) {
+                            allUsersAreExcluded = false;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!allUsersAreExcluded) {
-                state.excludedUserIds = excludedIdsSet;
+                if (!allUsersAreExcluded) {
+                    state.excludedUserIds = excludedIdsSet;
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to get excluded users from intent", e);
         }
     }
 }
