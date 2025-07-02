@@ -21,6 +21,7 @@ import android.net.Uri
 import android.os.RemoteException
 import android.provider.DocumentsContract
 import android.util.Log
+import androidx.tracing.Trace
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
@@ -63,6 +64,15 @@ class FolderLoader(
 
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
+        try {
+            Trace.beginSection("documentsui.searchv2.FolderLoader#loadInBackground")
+            return loadInBackgroundInternal()
+        } finally {
+            Trace.endSection()
+        }
+    }
+
+    fun loadInBackgroundInternal(): DirectoryResult? {
         val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
         val folderChildrenUri =
             if (mListedDir == null) {

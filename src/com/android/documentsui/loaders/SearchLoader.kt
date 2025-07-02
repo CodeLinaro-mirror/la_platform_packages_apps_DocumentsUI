@@ -20,6 +20,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
+import android.os.Trace
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
 import android.text.TextUtils
@@ -106,6 +107,18 @@ class SearchLoader(
 
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
+        try {
+            Trace.beginSection("documentsui.searchv2.SearchLoader#loadInBackground")
+            return loadInBackgroundTraced()
+        } finally {
+            Trace.endSection()
+        }
+    }
+
+    /**
+     * The loadInBackground code run within a trace.
+     */
+    private fun loadInBackgroundTraced(): DirectoryResult? {
         val result = DirectoryResult()
         // TODO(b:378590632): If root list has one root use it to construct result.doc
         result.doc = DocumentInfo()
