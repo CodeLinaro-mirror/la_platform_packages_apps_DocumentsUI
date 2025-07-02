@@ -155,16 +155,21 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testFilesListed() throws Exception {
-        bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv");
+        bots.directory.assertDocumentsVisible("file0.log", "file1.png", "file2.csv");
     }
 
     @Test
     public void testFilesList_LiveUpdate() throws Exception {
+        // Minimize the chances of the files being invisible.
+        bots.main.switchToListMode();
+
+        // Create a file with a unique name.
         RootInfo root = mTestFilesRule.docsHelper.getRoot(ROOT_0_ID);
-        String newFileName = "mxuadkjf.txt";  // Random, unique name.
+        String newFileName = "mxuadkjf.txt";
         mTestFilesRule.docsHelper.createDocument(root, "text/plain", newFileName);
 
         bots.directory.waitForDocument(newFileName);
+        // Documents should be present, but may not necessary be visible on small screen.
         bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv", newFileName);
     }
 
@@ -172,7 +177,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testNavigate_byBreadcrumb() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
         bots.directory.waitForDocument(TestFilesRule.CHILD_DIR_1);  // wait for known content
-        bots.directory.assertDocumentsPresent(TestFilesRule.CHILD_DIR_1);
+        bots.directory.assertDocumentsVisible(TestFilesRule.CHILD_DIR_1);
 
         device.waitForIdle();
         bots.breadcrumb.assertItemsPresent(TestFilesRule.DIR_NAME_1, "TEST_ROOT_0");

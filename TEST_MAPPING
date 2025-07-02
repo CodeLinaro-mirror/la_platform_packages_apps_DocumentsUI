@@ -8,6 +8,11 @@
       "name": "DocumentsUIUnitTests"
     }
   ],
+  "documentsui-mainline-presubmit": [
+    {
+      "name": "DocumentsUIUnitTests"
+    }
+  ],
   "desktop-presubmit": [
     {
       "name": "DocumentsUIUnitTests"
