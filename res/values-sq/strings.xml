@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"E pamundur të fshihen disa dokumente"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nuk mund të ndahen më shumë se <xliff:g id="COUNT">%1$d</xliff:g> skedarë"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Veprimi nuk lejohet"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Hap me…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Nuk ka aplikacione të mbështetura të instaluara. Provo të instalosh një nga \"Dyqani i Play\"."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Kërko në \"Dyqanin e Play\""</string>
     <string name="share_via" msgid="8725082736005677161">"Ndaj nëpërmjet"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Po kopjon skedarët"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Skedarët po ngjishen"</string>
@@ -219,20 +216,16 @@
     <string name="rename_error" msgid="6700093173508118635">"Riemërtimi i dokumentit dështoi"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Nxirr"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Disa skedarë u konvertuan"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Shfaq progresin për skedarin"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Anuluar"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Shiko detajet"</string>
     <string name="copy_completed" msgid="3749037014674785400">"U kopjua"</string>
     <string name="move_completed" msgid="3981250605092729273">"U zhvendos"</string>
     <string name="delete_completed" msgid="4149401155614626199">"U fshi"</string>
     <string name="compress_completed" msgid="8808356399995313077">"U ngjesh"</string>
     <string name="extract_completed" msgid="8824595789915249972">"U nxor"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="expand_label" msgid="5683357671239615207">"Zgjero"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Palos"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Jepi aplikacionit <xliff:g id="APPNAME"><b>^1</b></xliff:g> qasje te direktoria <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> në <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"T\'i jepet aplikacionit <xliff:g id="APPNAME"><b>^1</b></xliff:g> qasje te direktoria <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"T\'i jepet aplikacionit <xliff:g id="APPNAME"><b>^1</b></xliff:g> qasje te të dhënat, duke përfshirë fotografitë dhe videot, në <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>
