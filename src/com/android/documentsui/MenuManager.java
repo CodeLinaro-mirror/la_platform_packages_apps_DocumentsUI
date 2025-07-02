@@ -467,6 +467,16 @@ public abstract class MenuManager {
          */
         boolean isArchive();
 
+        /**
+         * Returns whether the selection is a single file that can be opened by multiple opening
+         * apps.
+         *
+         * This is a necessary signal to enable "open with" on desktop devices since performing
+         * "open with" with a file that has a single opening app will automatically open that app
+         * (i.e. does not do the expected "open with" behavior).
+         */
+        boolean hasMultipleOpeningApps();
+
         // TODO: Update these to express characteristics instead of answering concrete questions,
         // since the answer to those questions is (or can be) activity specific.
         boolean canDelete();

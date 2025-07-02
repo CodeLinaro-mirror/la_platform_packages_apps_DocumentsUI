@@ -125,6 +125,7 @@ import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
+import com.android.documentsui.util.FileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -592,7 +593,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
                         (View child) -> onAccessibilityLongClick(child), mState.action));
-        mSelectionMetadata = new SelectionMetadata(mModel::getItem);
+        mSelectionMetadata = new SelectionMetadata(
+                mModel::getItem,
+                (String modelId) -> {
+                    DocumentInfo doc = mModel.getDocument(modelId);
+                    if (doc != null) {
+                        return FileUtils.countOpeningApps(doc, mActivity.getPackageManager());
+                    }
+                    return 0;
+                });
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
         DragStartListener dragStartListener = mInjector.config.dragAndDropEnabled()
