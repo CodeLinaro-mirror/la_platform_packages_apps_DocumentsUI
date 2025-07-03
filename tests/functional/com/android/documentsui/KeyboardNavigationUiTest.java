@@ -109,6 +109,15 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
     @Test
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3})
     public void testKeyboard_tabCycleInRootsList() throws Exception {
+        // Focus the root CoordinatorLayout explicitly before the test to avoid the first
+        // Tab press accidentally focus on the root CoordinatorLayout.
+        // TODO(b/417871278): remove this after removing the grey overlay.
+        onView(withId(R.id.coordinator_layout)).check((view, noViewFoundException) -> {
+            if (view != null) {
+                view.post(view::requestFocus);
+            }
+        }).check(matches(hasFocus()));
+
         // We want to explicitly check the focus inside the nav rail root list in nav rail layout,
         // otherwise, check it in the drawer (container_roots).
         final @IdRes int containerId = bots.main.isNavRailLayout() ? getRes(
