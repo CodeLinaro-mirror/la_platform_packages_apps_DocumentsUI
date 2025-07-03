@@ -194,7 +194,15 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateOpenWith(MenuItem openWith, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(openWith, selectionDetails.canOpen());
+        boolean enabled = selectionDetails.canOpen();
+        // When desktop file handling is enabled, "open with" opens ResolverActivity.
+        // Currently ResolverActivity automatically opens the app when it is the only option for the
+        // user. This breaks the expected behaviour for "open with" so we hide "open with".
+        if (isDesktopFileHandlingFlagEnabled()) {
+            enabled = enabled && selectionDetails.hasMultipleOpeningApps();
+        }
+
+        Menus.setEnabledAndVisible(openWith, enabled);
     }
 
     @Override

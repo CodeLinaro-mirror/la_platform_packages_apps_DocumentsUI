@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Non se poden eliminar algúns documentos"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Non se poden compartir máis de <xliff:g id="COUNT">%1$d</xliff:g> ficheiros"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acción non permitida"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Abrir con…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Non hai instalada ningunha aplicación compatible. Proba a instalar unha desde Play Store."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Buscar en Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Compartir a través de"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Copiando ficheiros"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Comprimindo ficheiros"</string>
@@ -219,20 +216,16 @@
     <string name="rename_error" msgid="6700093173508118635">"Non se puido cambiar o nome do documento"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Expulsar"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Convertéronse algúns ficheiros"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar o progreso do ficheiro"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Cancelada"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Ver detalles"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Copia completada"</string>
     <string name="move_completed" msgid="3981250605092729273">"Traslado completado"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Eliminación completada"</string>
     <string name="compress_completed" msgid="8808356399995313077">"Compresión completada"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extracción completada"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="expand_label" msgid="5683357671239615207">"Despregar"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Contraer"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Queres outorgar acceso a <xliff:g id="APPNAME"><b>^1</b></xliff:g> ao directorio <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> no almacenamento de <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Queres outorgar acceso a <xliff:g id="APPNAME"><b>^1</b></xliff:g> ao directorio <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Queres outorgar acceso a <xliff:g id="APPNAME"><b>^1</b></xliff:g> aos teus datos almacenados en <xliff:g id="STORAGE"><i>^2</i></xliff:g>, incluídos vídeos e fotos?"</string>
