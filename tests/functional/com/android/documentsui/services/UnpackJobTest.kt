@@ -765,15 +765,22 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     ) {
         var path = "${parentPath}${info.displayName}"
         if (!info.isDirectory) {
+            // For a file
             if (wantSizes != null) {
                 val wantSize = wantSizes.remove(path)
-                assertWithMessage("For file '%s'", path).that(info.size).isEqualTo(wantSize)
+                // Since the underlying DocumentProvider might report an incorrect size in
+                // `info.size` (b/429262410), we ignore the reported size  and we don't compare it
+                // to `wantSize`. So, we don't do:
+                // assertWithMessage("For file '%s'", path).that(info.size).isEqualTo(wantSize)
+                // We just check that the file has an entry in `wantSizes`.
+                assertWithMessage("For file '%s'", path).that(wantSize).isNotNull()
             } else {
                 Log.i(TAG, "\"$path\" to ${info.size},")
             }
             return
         }
 
+        // For a directory
         path += "/"
         if (wantSizes != null) {
             // This is a directory. We ignore the expected size specified in `wantSizes`.
