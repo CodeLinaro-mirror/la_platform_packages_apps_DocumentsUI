@@ -27,6 +27,7 @@ import com.android.documentsui.FocusManager;
 import com.android.documentsui.Injector;
 import com.android.documentsui.ModelId;
 import com.android.documentsui.SelectionHelpers;
+import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
@@ -38,6 +39,7 @@ import com.android.documentsui.sorting.SortModel;
 import com.android.documentsui.ui.TestDialogController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +105,13 @@ public class TestEnv {
                 dialogs,
                 new TestFileTypeLookup(),
                 (roots) -> {},  // not sure why, but java gets angry when I declare roots type.
-                model);
+                model,
+                new UserManagerProvider() {
+                    @Override
+                    public List<UserId> getUserIds(Context context) {
+                        return Collections.singletonList(userId);
+                    }
+                });
 
         injector.selectionMgr = selectionMgr;
         injector.focusManager = new FocusManager(features, selectionMgr, null, null, 0);

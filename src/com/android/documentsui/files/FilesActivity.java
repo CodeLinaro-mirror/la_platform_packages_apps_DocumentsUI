@@ -26,9 +26,11 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager.TaskDescription;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -38,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -61,10 +64,12 @@ import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.ShortcutsUpdater;
 import com.android.documentsui.StubProfileTabsAddons;
+import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
+import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
@@ -123,7 +128,14 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 messages,
                 DialogController.create(features, this),
                 DocumentsApplication.getFileTypeLookup(this),
-                new ShortcutsUpdater(this)::update);
+                new ShortcutsUpdater(this)::update,
+                new UserManagerProvider() {
+                    @Override
+                    @RequiresApi(Build.VERSION_CODES.S)
+                    public List<UserId> getUserIds(Context context) {
+                        return DocumentsApplication.getUserManagerState(context).getUserIds();
+                    }
+                });
 
         super.onCreate(icicle);
 
