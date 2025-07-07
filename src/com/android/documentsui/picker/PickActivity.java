@@ -21,6 +21,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
+import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -324,7 +325,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         }
 
         String packageName = Shared.getCallingPackageName(this);
-        if (android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
+        if (isMovingContentIntoPrivateSpaceEnabled()
                 && hasCrossUsersPermissions(packageName)) {
             setExcludedUsers(state, intent);
         }
