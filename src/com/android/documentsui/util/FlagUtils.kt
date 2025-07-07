@@ -17,6 +17,7 @@
 package com.android.documentsui.util
 
 import com.android.documentsui.flags.Flags
+import com.android.modules.utils.build.SdkLevel
 
 /**
  * Wraps the static flags classes to enable a single place to refactor flag usage
@@ -60,6 +61,12 @@ class FlagUtils {
         @JvmStatic
         fun isTrashFlowEnabled(): Boolean {
             return Flags.enableTrashFlowRo()
+        }
+
+        @JvmStatic
+        fun isMovingContentIntoPrivateSpaceEnabled(): Boolean {
+            return SdkLevel.isAtLeastB() &&
+                    android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
         }
     }
 }

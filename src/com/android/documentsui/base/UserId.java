@@ -18,6 +18,8 @@ package com.android.documentsui.base;
 
 import static androidx.core.util.Preconditions.checkNotNull;
 
+import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -159,7 +161,7 @@ public final class UserId {
      * Returns whether the {@link CURRENT_USER} is part of the excluded user ids or not
      */
     public boolean isExcluded(State state) {
-        return android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
+        return isMovingContentIntoPrivateSpaceEnabled()
                 && state.excludedUserIds.contains(mUserHandle.getIdentifier());
     }
 
