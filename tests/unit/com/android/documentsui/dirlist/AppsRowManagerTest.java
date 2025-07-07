@@ -57,7 +57,6 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -96,8 +95,8 @@ public class AppsRowManagerTest {
         return com.google.android.collect.Lists.newArrayList(true, false);
     }
 
-    @BeforeClass
-    public static void setUpClass() {
+    @Before
+    public void checkConfigEnabled() {
         if (isUseMaterial3FlagEnabled()) {
             // The AppsRowManager is only available on devices that have the `show_apps_row`
             // config enabled.
