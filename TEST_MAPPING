@@ -16,6 +16,14 @@
   "desktop-presubmit": [
     {
       "name": "DocumentsUIUnitTests"
+    },
+    {
+      "name": "DocumentsUIGoogleTests",
+      "options": [
+        {
+          "exclude-annotation": "androidx.test.filters.LargeTest"
+        }
+      ]
     }
   ],
   "desktop-postsubmit": [
