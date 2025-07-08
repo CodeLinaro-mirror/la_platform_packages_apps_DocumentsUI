@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -353,8 +354,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText("file");
         bots.keyboard.pressEnter();
         // Select images files only.
-        onView(withId(R.id.search_file_type_trigger)).perform(click());
-        onView(withText(R.string.chip_title_images)).inRoot(isPlatformPopup()).perform(click());
+        onView(withId(R.id.search_file_type_trigger)).perform(scrollTo()).perform(
+                new RelaxedClickAction());
+        onView(withText(R.string.chip_title_images)).inRoot(isPlatformPopup()).perform(
+                new RelaxedClickAction());
 
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
