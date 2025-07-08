@@ -26,11 +26,13 @@ import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.UserHandle;
@@ -43,6 +45,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -59,6 +62,7 @@ import com.android.documentsui.ProviderExecutor;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
+import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.MimeTypes;
@@ -118,7 +122,13 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 new MessageBuilder(this),
                 DialogController.create(features, this),
                 DocumentsApplication.getFileTypeLookup(this),
-                (Collection<RootInfo> roots) -> {
+                (Collection<RootInfo> roots) -> {},
+                new UserManagerProvider() {
+                    @Override
+                    @RequiresApi(Build.VERSION_CODES.S)
+                    public List<UserId> getUserIds(Context context) {
+                        return DocumentsApplication.getUserManagerState(context).getUserIds();
+                    }
                 });
 
         super.onCreate(icicle);
