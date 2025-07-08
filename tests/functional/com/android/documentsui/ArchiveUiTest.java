@@ -51,6 +51,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
     public void browseArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
         bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
@@ -83,6 +84,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
@@ -95,6 +97,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void openArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
@@ -107,6 +110,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("broken.zip");
         bots.directory.openDocument("broken.zip");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
@@ -115,6 +119,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
@@ -124,6 +129,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
