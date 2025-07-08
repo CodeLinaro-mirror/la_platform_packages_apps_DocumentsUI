@@ -79,7 +79,6 @@ import com.android.documentsui.sidebar.EjectRootTask;
 import com.android.documentsui.sorting.SortListFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.Snackbars;
-import com.android.modules.utils.build.SdkLevel;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -949,7 +948,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             UserId initialUser = mState.stack.getRoot().userId;
 
             if (isMovingContentIntoPrivateSpaceEnabled()) {
-                List<UserId> allowedUsers = UserId.nonExcludedUsers(mState, getUserIds());
+                List<UserId> allowedUsers = UserId.nonExcludedUsers(mState,
+                        mInjector.userManagerProvider.getUserIds(mActivity));
 
                 if (initialUser.isExcluded(mState) && !Objects.isNull(allowedUsers)
                         && !allowedUsers.isEmpty()) {
@@ -1106,13 +1106,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         @Override
         public void onLoaderReset(Loader<DirectoryResult> loader) {
             mLoaderSemaphore.release();
-        }
-
-        private List<UserId> getUserIds() {
-            if (SdkLevel.isAtLeastS()) {
-                return DocumentsApplication.getUserManagerState(mActivity).getUserIds();
-            }
-            return DocumentsApplication.getUserIdManager(mActivity).getUserIds();
         }
     }
 
