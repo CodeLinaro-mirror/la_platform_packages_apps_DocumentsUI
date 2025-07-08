@@ -108,6 +108,8 @@ public final class MenuManagerTest {
     private TestMenuItem actionModeViewInOwner;
     private TestMenuItem actionModeInspector;
     private TestMenuItem actionModeSort;
+    private TestMenuItem mActionExtractHere;
+    private TestMenuItem mActionBrowse;
 
     /* Option Menu items */
     private TestMenuItem optionSearch;
@@ -191,6 +193,8 @@ public final class MenuManagerTest {
         actionModeInspector = testMenu.findItem(R.id.action_menu_inspect);
         actionModeViewInOwner = testMenu.findItem(R.id.action_menu_view_in_owner);
         actionModeSort = testMenu.findItem(R.id.action_menu_sort);
+        mActionExtractHere = testMenu.findItem(R.id.action_menu_extract_here);
+        mActionBrowse = testMenu.findItem(R.id.action_menu_browse);
 
         // Menu actions (including overflow) when action mode is not active.
         optionSearch = testMenu.findItem(R.id.option_menu_search);
@@ -273,6 +277,43 @@ public final class MenuManagerTest {
         actionModeSelectAll.assertEnabledAndVisible();
         mActionModeDeselectAll.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
+        mActionExtractHere.assertDisabledAndInvisible();
+        mActionBrowse.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testActionMenu_OnArchive() {
+        selectionDetails.size = 1;
+        selectionDetails.containFiles = true;
+        selectionDetails.isArchive = true;
+        selectionDetails.containsFilesInArchive = false;
+        dirDetails.isInArchive = false;
+        dirDetails.canCreateDirectory = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        if (isZipNgFlagEnabled()) {
+            mActionExtractHere.assertEnabledAndVisible();
+            mActionBrowse.assertEnabledAndVisible();
+        } else {
+            mActionExtractHere.assertDisabledAndInvisible();
+            mActionBrowse.assertDisabledAndInvisible();
+        }
+
+        // On archive in read-only directory (but not a nested archive)
+        dirDetails.canCreateDirectory = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionExtractHere.assertDisabledAndInvisible();
+        if (isZipNgFlagEnabled()) {
+            mActionBrowse.assertEnabledAndVisible();
+        } else {
+            mActionBrowse.assertDisabledAndInvisible();
+        }
+
+        // On nested archive
+        selectionDetails.containsFilesInArchive = true;
+        dirDetails.isInArchive = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionExtractHere.assertDisabledAndInvisible();
+        mActionBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -289,6 +330,8 @@ public final class MenuManagerTest {
         actionModeMoveTo.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
+        mActionExtractHere.assertDisabledAndInvisible();
+        mActionBrowse.assertDisabledAndInvisible();
     }
 
     @Test
