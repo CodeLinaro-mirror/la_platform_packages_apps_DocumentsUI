@@ -41,7 +41,7 @@ class FlagUtils {
         }
 
         @JvmStatic
-        fun isSearchV2Enabled() = Flags.useSearchV2ReadOnly() && Flags.useMaterial3()
+        fun isSearchV2Enabled() = Flags.useSearchV2ReadOnly() && isUseMaterial3FlagEnabled()
 
         @JvmStatic
         fun isDesktopFileHandlingFlagEnabled(): Boolean {
