@@ -25,7 +25,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -117,15 +116,8 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void assertWindowTitle(String expected) {
-        mDevice.waitForIdle(mTimeout);
-        if (FlagUtils.isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR).check(matches(withToolbarTitle(is(expected))));
-            return;
-        }
-        // For pre-m3, the title might not be visible in the toolbar, when `show_search_bar` is
-        // true, because instead it might display the search bar for narrow screens (phones).
-        // Let's check the `header_title` instead. NOTE: header_title doesn't exist in m3.
-        onView(withId(R.id.header_title)).check(matches(withSubstring(expected)));
+        onView(TOOLBAR)
+                .check(matches(withToolbarTitle(is(expected))));
     }
 
     /**
