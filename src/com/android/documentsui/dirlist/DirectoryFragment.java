@@ -1099,7 +1099,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         final int id = item.getItemId();
         if ((isDesktopFileHandlingFlagEnabled() && id == getRes(R.id.dir_menu_open))
-                || (isZipNgFlagEnabled() && id == getRes(R.id.dir_menu_browse))) {
+                || (isZipNgFlagEnabled() && (id == getRes(R.id.dir_menu_browse) || id == getRes(
+                R.id.action_menu_browse)))) {
             // The "Open" menu item is displayed in desktop mode.
             // The "Browse" menu item is displayed for supported archives in advanced ZIP mode.
             // These menu items behave the same as a double click on the matching document which
@@ -1143,7 +1144,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // Need to plum down into handling the way we do with deleteDocuments.
             closeSelectionBar();
             return true;
-        } else if (isZipNgFlagEnabled() && id == getRes(R.id.dir_menu_extract_here)) {
+        } else if (isZipNgFlagEnabled() && (id == getRes(R.id.dir_menu_extract_here)
+                || id == getRes(R.id.action_menu_extract_here))) {
             transferDocuments(selection, mState.stack, OPERATION_UNPACK);
             closeSelectionBar();
             return true;
