@@ -30,7 +30,6 @@ import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -67,19 +66,24 @@ public class SidebarBot extends Bots.BaseBot {
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
+    private UiSelector getRootsContainerSelector() {
+        final String containerId =
+                this.inNavRailLayout() ? ":id/nav_rail_container_roots" : ":id/container_roots";
+        return new UiSelector()
+                .resourceId(mTargetPackage + containerId)
+                .childSelector(new UiSelector().resourceId(mRootListId));
+    }
+
     private UiObject findRoot(String label) throws UiObjectNotFoundException {
-        // We might need to expand drawer if not visible
+        // We might need to expand drawer if not visible.
         openDrawer();
 
-        final UiSelector rootsList =
-                new UiSelector()
-                        .resourceIdMatches(mTargetPackage + ":id/.*container_roots")
-                        .childSelector(new UiSelector().resourceId(mRootListId));
+        final UiSelector rootsList = getRootsContainerSelector();
 
-        // Wait for the first list item to appear
-        new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
+        // Wait for the first list item to appear.
+        new UiObject(rootsList).waitForExists(mTimeout);
 
-        // Now scroll around to find our item
+        // Now scroll around to find our item.
         new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
         return new UiObject(rootsList.childSelector(new UiSelector().text(label)));
     }
@@ -87,7 +91,7 @@ public class SidebarBot extends Bots.BaseBot {
     /** Open navigation root either from the Drawer or the Navigation rail. */
     public void openRoot(String label) throws UiObjectNotFoundException {
         findRoot(label).click();
-        // Close the drawer in case we select a pre-selected root already
+        // Close the drawer in case we select a pre-selected root already.
         closeDrawer();
     }
 
@@ -97,10 +101,7 @@ public class SidebarBot extends Bots.BaseBot {
      */
     public void openNavRailRoot(String label) throws UiObjectNotFoundException {
         // Use UiScrollable to scroll into the view.
-        final UiSelector rootsList =
-                new UiSelector()
-                        .resourceId(mTargetPackage + ":id/nav_rail_container_roots")
-                        .childSelector(new UiSelector().resourceId(mRootListId));
+        final UiSelector rootsList = getRootsContainerSelector();
         new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
         new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
 
@@ -115,21 +116,22 @@ public class SidebarBot extends Bots.BaseBot {
     }
 
     public void openDrawer() throws UiObjectNotFoundException {
-        // Let's check for `nav_rail_container_roots` as well as `container_roots` to avoid opening
-        // the drawer in nav rail layout.
-        final UiSelector rootsList =
-                new UiSelector()
-                        .resourceIdMatches(mTargetPackage + ":id/.*container_roots")
-                        .childSelector(new UiSelector().resourceId(mRootListId));
-
-        // We might need to expand drawer if not visible
-        if (!new UiObject(rootsList).waitForExists(mTimeout)) {
-            Log.d(TAG, "Failed to find roots list; trying to expand");
-            final UiSelector hamburger = new UiSelector().resourceId(
-                    mTargetPackage + ":id/toolbar").childSelector(
-                    new UiSelector().className("android.widget.ImageButton").clickable(true));
-            new UiObject(hamburger).click();
+        // In drawer layout we explicitly open the drawer by clicking the burger menu in the
+        // toolbar, in other layouts we do nothing because the nav sidebar is shown by default.
+        if (!this.inDrawerLayout()) {
+            return;
         }
+        final UiSelector hamburger =
+                new UiSelector()
+                        .resourceId(mTargetPackage + ":id/toolbar")
+                        .childSelector(
+                                new UiSelector()
+                                        .className("android.widget.ImageButton")
+                                        .description(mContext.getString(R.string.drawer_open))
+                                        .clickable(true));
+        new UiObject(hamburger).click();
+        // Wait for the roots to appear.
+        mDevice.findObject(getRootsContainerSelector()).waitForExists(mTimeout);
     }
 
     public void closeDrawer() {

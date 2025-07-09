@@ -81,6 +81,11 @@ public abstract class MenuManager {
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
         updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
 
+        if (isZipNgFlagEnabled()) {
+            updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
+            updateBrowse(menu.findItem(getRes(R.id.action_menu_browse)), selection);
+        }
+
         Menus.disableHiddenItems(menu);
     }
 
