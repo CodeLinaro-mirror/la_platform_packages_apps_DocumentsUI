@@ -18,7 +18,6 @@ package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -51,9 +50,7 @@ import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
-import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.actions.WaitForCheckState;
-import com.android.documentsui.actions.WaitUntilVisible;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
@@ -357,10 +354,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText("file");
         bots.keyboard.pressEnter();
         // Select images files only.
-        onView(withId(R.id.search_file_type_trigger)).perform(scrollTo()).perform(
-                new RelaxedClickAction());
-        onView(withText(R.string.chip_title_images)).inRoot(isPlatformPopup()).perform(
-                new RelaxedClickAction());
+        bots.search.clickDropdownTrigger(R.id.search_file_type_trigger);
+        bots.search.clickMenuItem(R.string.chip_title_images);
 
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
@@ -377,9 +372,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.expand();
         bots.search.setInputText("file");
         bots.keyboard.pressEnter();
-        onView(withId(R.id.search_last_modified_trigger)).perform(click());
-        onView(withText(R.string.search_last_modified_30_days)).inRoot(isPlatformPopup()).perform(
-                click());
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_30_days);
 
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
@@ -394,11 +388,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.expand();
         bots.search.setInputText("fred-dog.jpg");
         bots.keyboard.pressEnter();
-        onView(withId(R.id.search_location_trigger)).perform(click());
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
 
         // Click Everywhere, to search everywhere.
-        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
-                click());
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
 
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
@@ -412,15 +405,14 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // The test starts in TEST_ROOT_0
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
-        onView(withId(R.id.search_location_trigger)).perform(click());
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
         // Check that the text in the dropdown window.
-        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).check(
+        bots.search.findMenuItem(R.string.search_location_everywhere).check(
                 matches(isDisplayed()));
         onView(withText("TEST_ROOT_0")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
         // Click the "Everywhere" entry to hide the popup. This is needed for the bots to be able
         // to open the new root. But we also test that user choices are remembered.
-        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
-                click());
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
 
         if (bots.main.inDrawerLayout()) {
             // In the drawer layout, the button to collapse the search appears in the same position
@@ -439,13 +431,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText("-no-such-file-");
 
         // Verify that that the location still shows "Everywhere".
-        onView(withId(R.id.search_location_trigger)).check(
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(
                 matches(withText(R.string.search_location_everywhere)));
 
         // Click location trigger, and check that the root folder option is updated to Downloads.
-        onView(withId(R.id.search_location_trigger)).perform(click());
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
         // Verify the dropdown menu to be updated.
-        onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).check(
+        bots.search.findMenuItem(R.string.search_location_everywhere).check(
                 matches(isDisplayed()));
         onView(withText("Paging Root")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
     }
@@ -456,7 +448,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Starts in TEST_ROOT_0. Start search and expect last modified dropdown to be visible.
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
-        onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
+        bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
+                matches(isDisplayed()));
 
         // Move to the Recents view and expect the last modified to be gone.
         bots.roots.openRoot("Recent");
@@ -470,16 +463,16 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("TEST_ROOT_0");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
-        onView(withId(R.id.search_last_modified_trigger)).check(matches(isDisplayed()));
+        bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
+                matches(isDisplayed()));
     }
 
     @Test
     @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2LastUsedChipCopiedToFileTypeDropdown() throws Exception {
         // Click "Images" chip and wait until the chip becomes selected.
-        bots.search.findChip(R.string.chip_title_images, 500L)
-                .perform(new RelaxedClickAction())
-                .perform(new WaitForCheckState(true, 500L));
+        bots.search.clickChip(R.string.chip_title_images)
+                .perform(new WaitForCheckState(true, mTimeout));
 
         // Start search. Search text is not important.
         final String query = "irrelevant";
@@ -487,39 +480,33 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText(query);
 
         // Verify that File Type trigger shows "Images" text.
-        onView(withId(R.id.search_file_type_trigger))
-                .perform(new WaitUntilVisible(500L))
-                .check(matches(withText(R.string.chip_title_images)));
+        bots.search.findDropdownTrigger(R.id.search_file_type_trigger).check(
+                matches(withText(R.string.chip_title_images)));
 
         // Clear the search text, to go back to directory listing, and wait for chips to show.
         bots.search.clickSearchViewClearButton();
 
         // Select Documents and Audio chips, in this order.
-        bots.search.findChip(R.string.chip_title_documents, 500L)
-                .perform(new RelaxedClickAction())
-                .perform(new WaitForCheckState(true, 500L));
-        // Clicking chips moves them around. Wait for things to settle down.
-        device.waitForIdle();
-        bots.search.findChip(R.string.chip_title_audio, 500L)
-                .perform(new RelaxedClickAction())
-                .perform(new WaitForCheckState(true, 500L));
+        bots.search.clickChip(R.string.chip_title_documents)
+                .perform(new WaitForCheckState(true, mTimeout));
+        bots.search.clickChip(R.string.chip_title_audio)
+                .perform(new WaitForCheckState(true, mTimeout));
 
         bots.search.expand();
         bots.search.setInputText(query);
-        onView(withId(R.id.search_file_type_trigger)).check(
+        bots.search.findDropdownTrigger(R.id.search_file_type_trigger).check(
                 matches(withText(R.string.chip_title_audio)));
 
         // Clear the query again, to go back to chips.
         bots.search.clickSearchViewClearButton();
         // Uncheck Audio, and expect now Documents to be checked in file type dropdowns.
-        bots.search.findChip(R.string.chip_title_audio, 500L)
-                .perform(new RelaxedClickAction())
-                .perform(new WaitForCheckState(false, 500L));
+        bots.search.clickChip(R.string.chip_title_audio)
+                .perform(new WaitForCheckState(false, mTimeout));
 
         // Enter the search query again, and verify that Documents file type is selected.
         bots.search.expand();
         bots.search.setInputText(query);
-        onView(withId(R.id.search_file_type_trigger)).check(
+        bots.search.findDropdownTrigger(R.id.search_file_type_trigger).check(
                 matches(withText(R.string.chip_title_documents)));
     }
 
@@ -538,12 +525,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument("DCIM", 1);
 
         // Click on the Images search chips.
-        onView(
-                allOf(
-                        withText("Images"),
-                        isDescendantOfA(withId(R.id.search_chip_group)),
-                        isDisplayed()))
-                .perform(new RelaxedClickAction());
+        bots.search.clickChip(R.string.chip_title_images);
 
         // Ensure the selection has cleared and the "1 file selected" text is not displayed.
         device.wait(Until.findObject(By.text(TestFilesRule.FILE_NAME_2).selected(false)), mTimeout);
