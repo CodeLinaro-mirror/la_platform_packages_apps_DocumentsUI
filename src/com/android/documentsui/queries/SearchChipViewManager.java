@@ -343,8 +343,9 @@ public class SearchChipViewManager {
      * Returns the ID of the leading checked chip or null, if no chips are checked.
      */
     public Integer getLeadingMimeChipType() {
-        return !isSearchV2Enabled() || mMimeDataStack.isEmpty() ? null
-                : mMimeDataStack.getLast().getChipType();
+        int stackSize = mMimeDataStack.size();
+        return !isSearchV2Enabled() || stackSize == 0 ? null
+                : mMimeDataStack.get(stackSize - 1).getChipType();
     }
 
     private static void setChipChecked(Chip chip, boolean isChecked) {
