@@ -131,7 +131,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
         val layoutType = if (bots.main.inFixedLayout()) {
             "Fixed layout"
-        } else if (bots.main.isNavRailLayout()) {
+        } else if (bots.main.inNavRailLayout()) {
             "Nav rail layout"
         } else if (bots.main.inDrawerLayout()) {
             "Drawer layout"

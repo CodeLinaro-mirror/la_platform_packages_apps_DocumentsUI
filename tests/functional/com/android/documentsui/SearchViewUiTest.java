@@ -23,6 +23,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -420,6 +421,15 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // to open the new root. But we also test that user choices are remembered.
         onView(withText(R.string.search_location_everywhere)).inRoot(isPlatformPopup()).perform(
                 click());
+
+        if (bots.main.inDrawerLayout()) {
+            // In the drawer layout, the button to collapse the search appears in the same position
+            // as the hamburger button, the one that opens the roots list, so we have to click the
+            // collapse.
+            bots.search.clickSearchViewClearButton();
+            onView(allOf(withContentDescription("Collapse"), isDescendantOfA(withId(R.id.toolbar))))
+                    .perform(click());
+        }
 
         // Move to a different root.
         bots.roots.openRoot("Paging Root");

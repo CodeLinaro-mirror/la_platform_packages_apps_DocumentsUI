@@ -16,11 +16,14 @@
 
 package com.android.documentsui.bots;
 
+import static com.android.documentsui.util.Material3Config.getRes;
+
 import static junit.framework.Assert.assertNotNull;
 
 import android.app.UiAutomation;
 import android.content.Context;
 import android.os.SystemClock;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 
 import androidx.test.InstrumentationRegistry;
@@ -31,6 +34,9 @@ import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
+
+import com.android.documentsui.R;
+import com.android.documentsui.util.FlagUtils;
 
 /**
  * Handy collection of bots for working with Files app.
@@ -163,6 +169,36 @@ public final class Bots {
 
         protected void waitForIdle() {
             mDevice.waitForIdle(mTimeout);
+        }
+
+        /** Check if the app is running in fixed_layout. */
+        public boolean inFixedLayout() {
+            TypedValue val = new TypedValue();
+            // We alias files_activity to either fixed or drawer or nav_rail layouts based
+            // on screen dimensions. In order to determine which layout has been selected,
+            // we check the resolved value.
+            mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
+            return val.resourceId == getRes(R.layout.fixed_layout);
+        }
+
+        /** Check if the app is running in nav_rail_layout. */
+        public boolean inNavRailLayout() {
+            if (!FlagUtils.isUseMaterial3FlagEnabled()) {
+                // NavRail is only enabled for material3, so the resource `nav_rail_layout` might
+                // not
+                // exist in the apk.
+                return false;
+            }
+            TypedValue val = new TypedValue();
+            mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
+            return val.resourceId == getRes(R.layout.nav_rail_layout);
+        }
+
+        /** Check if the app is running in drawer_layout. */
+        public boolean inDrawerLayout() {
+            TypedValue val = new TypedValue();
+            mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
+            return val.resourceId == getRes(R.layout.drawer_layout);
         }
     }
 
