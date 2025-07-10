@@ -17,6 +17,7 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
@@ -24,6 +25,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -264,5 +266,19 @@ public class SearchBot extends Bots.BaseBot {
      */
     public void clickMenuItem(@StringRes int menuId) {
         findMenuItem(menuId).perform(new RelaxedClickAction());
+    }
+
+    /**
+     * Clears the search query and, if in a drawer layout, closes the search view.
+     * @throws UiObjectNotFoundException If it is unable to find the clear button.
+     */
+    public void closeSearch() throws UiObjectNotFoundException {
+        clickSearchViewClearButton();
+        if (inDrawerLayout()) {
+            // If the search is not docked, we also need to click the button that collapses
+            // the search view.
+            onView(allOf(withContentDescription("Collapse"), isDescendantOfA(withId(R.id.toolbar))))
+                    .perform(click());
+        }
     }
 }
