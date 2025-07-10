@@ -483,6 +483,17 @@ public class ActionHandlerTest {
         assertEquals(false, result);
     }
 
+    @Test
+    public void testDocumentPicked_NoApplicationFound() throws Exception {
+        mActivity.currentRoot = TestProvidersAccess.HOME;
+        mActivity.throwOnStartActivity = true;
+
+        mHandler.openDocument(TestEnv.FILE_PDF, ActionHandler.VIEW_TYPE_REGULAR,
+                ActionHandler.VIEW_TYPE_NONE);
+
+        mDialogs.assertNoAppFoundShown();
+    }
+
     // Require desktop file handling flag because when it's disabled proguard strips the
     // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
@@ -520,6 +531,17 @@ public class ActionHandlerTest {
         assertEquals(Intent.ACTION_VIEW, actual.getAction());
         assertEquals("ComponentInfo{android/com.android.internal.app.ResolverActivity}",
                 actual.getComponent().toString());
+    }
+
+    @Test
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testShowChooser_NoApplicationFound() throws Exception {
+        mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
+        mActivity.packageMgr.dontResolveActivity = true;
+
+        mHandler.showChooserForDoc(TestEnv.FILE_PDF);
+
+        mDialogs.assertNoAppFoundShown();
     }
 
     @Test

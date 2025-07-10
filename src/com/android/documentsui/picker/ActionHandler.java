@@ -387,7 +387,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
             mActivity.finish();
         } catch (SecurityException | ActivityNotFoundException e) {
             Log.e(TAG, "Caught error: " + e.getLocalizedMessage());
-            mInjector.dialogs.showNoApplicationFound();
+            mInjector.dialogs.showNoApplicationFoundToast();
         }
     }
 

@@ -52,6 +52,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -95,6 +96,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     private fun openPanel() {
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         onView(withId(R.id.job_progress_toolbar_indicator))
             .check(matches(isDisplayed()))
             .perform(click())

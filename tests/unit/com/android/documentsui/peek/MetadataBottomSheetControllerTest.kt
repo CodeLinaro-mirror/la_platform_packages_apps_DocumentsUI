@@ -27,6 +27,7 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.R
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.flags.Flags.FLAG_USE_PEEK_PREVIEW_RO
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -37,7 +38,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @SmallTest
-@RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+@RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_USE_PEEK_PREVIEW_RO)
 @RunWith(AndroidJUnit4::class)
 class MetadataBottomSheetControllerTest {
     @get:Rule
