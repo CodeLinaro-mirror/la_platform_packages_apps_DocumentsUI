@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.spy;
 
 import static java.util.Objects.requireNonNull;
@@ -239,6 +240,10 @@ public final class SearchChipViewManagerTest {
 
     @Test
     public void testChipChecked_resetScroll() {
+        // Resetting scrolling is only available on devices that has the config
+        // "move_search_chip_when_selected" enabled.
+        assumeTrue(mContext.getResources().getBoolean(R.bool.move_search_chip_when_selected));
+
         // Mock chip group's parent chain according to search_chip_row.xml.
         FrameLayout parent = spy(new FrameLayout(mContext));
         HorizontalScrollView grandparent = spy(new HorizontalScrollView(mContext));

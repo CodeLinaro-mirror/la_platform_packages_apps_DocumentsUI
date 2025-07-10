@@ -27,7 +27,6 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertFalse;
@@ -139,41 +138,19 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertWindowTitle("Images");
     }
 
-    private void filesListed() throws Exception {
+    @Test
+    public void testFilesListed() throws Exception {
         bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv");
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
-    public void testFilesListed() throws Exception {
-        filesListed();
-    }
-
-    @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testFilesListed_searchV2() throws Exception {
-        filesListed();
-    }
-
-    private void filesListed_LiveUpdates() throws Exception {
-        RootInfo root = mTestFilesRule.docsHelper.getRoot(ROOT_0_ID);
-        mTestFilesRule.docsHelper.createDocument(root, "yummers/sandwich", "Ham & Cheese.sandwich");
-
-        bots.directory.waitForDocument("Ham & Cheese.sandwich");
-        bots.directory.assertDocumentsPresent(
-                "file0.log", "file1.png", "file2.csv", "Ham & Cheese.sandwich");
-    }
-
-    @Test
-    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testFilesList_LiveUpdate() throws Exception {
-        filesListed_LiveUpdates();
-    }
+        RootInfo root = mTestFilesRule.docsHelper.getRoot(ROOT_0_ID);
+        String newFileName = "mxuadkjf.txt";  // Random, unique name.
+        mTestFilesRule.docsHelper.createDocument(root, "text/plain", newFileName);
 
-    @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testFilesList_LiveUpdate_searchV2() throws Exception {
-        filesListed_LiveUpdates();
+        bots.directory.waitForDocument(newFileName);
+        bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv", newFileName);
     }
 
     @Test
