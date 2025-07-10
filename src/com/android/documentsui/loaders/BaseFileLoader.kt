@@ -22,7 +22,6 @@ import android.database.MergeCursor
 import android.net.Uri
 import android.os.Bundle
 import android.os.CancellationSignal
-import android.os.RemoteException
 import android.os.Trace
 import android.provider.DocumentsContract.Document
 import android.util.Log
@@ -217,36 +216,21 @@ abstract class BaseFileLoader(
         if (DEBUG) {
             Log.d(TAG, "BaseFileLoader.queryLocation for ${rootInfo.userId} at $locationUri")
         }
-        val resolver = rootInfo.userId.getContentResolver(context)
-        try {
-            resolver.acquireUnstableContentProviderClient(
-                authority
-            ).use { client ->
-                if (client == null) {
-                    return null
-                }
-                try {
-                    val cursor =
-                        client.query(locationUri, null, queryArgs, signal) ?: return null
-                    return RootCursorWrapper(
-                        rootInfo.userId,
-                        authority,
-                        rootInfo.rootId,
-                        cursor,
-                        maxResults
-                    )
-                } catch (e: RemoteException) {
-                    if (DEBUG) {
-                        Log.d(TAG, "Failed to get cursor for $locationUri", e)
-                    }
-                }
+        val resolver = rootInfo.userId.getContentResolver(context) ?: return null
+        resolver.acquireUnstableContentProviderClient(
+            authority
+        ).use { client ->
+            if (client == null) {
+                return null
             }
-        } catch (e: Exception) {
-            if (DEBUG) {
-                Log.d(TAG, "Failed to get a content provider client for $locationUri", e)
-            }
+            val cursor = client.query(locationUri, null, queryArgs, signal) ?: return null
+            return RootCursorWrapper(
+                rootInfo.userId,
+                authority,
+                rootInfo.rootId,
+                cursor,
+                maxResults
+            )
         }
-
-        return null
     }
 }
