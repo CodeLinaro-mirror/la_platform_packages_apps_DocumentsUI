@@ -47,7 +47,6 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
 
-@LargeTest
 @RunWith(Suite::class)
 @SuiteClasses(
     TrampolineActivityTest.ShouldLaunchCorrectPackageTest::class,
@@ -104,6 +103,7 @@ class TrampolineActivityTest() {
         }
     }
 
+    @LargeTest
     @RunWith(Parameterized::class)
     @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class ShouldLaunchCorrectPackageTest {
@@ -245,6 +245,7 @@ class TrampolineActivityTest() {
         }
     }
 
+    @LargeTest
     @RunWith(AndroidJUnit4::class)
     @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class RedirectTest {
