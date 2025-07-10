@@ -16,25 +16,36 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 import android.content.Intent;
 import android.provider.DocumentsContract;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.picker.PickActivity;
+import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.TestFilesRule;
+
+import org.junit.Rule;
+import org.junit.Test;
 
 @LargeTest
-public class PickerPreviewAllTypeUiTest extends ActivityTest<PickActivity> {
+public class PickerPreviewAllTypeUiTest extends ActivityTestJunit4<PickActivity> {
+    @Rule
+    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
 
-    public PickerPreviewAllTypeUiTest() {
-        super(PickActivity.class);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        initTestFiles();
-    }
+    @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
+                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, TestFilesRule.CHILD_DIR_1)
+                    .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
+                    .createFileInRoot(ROOT_0_ID, "file1.png", "image/png");
 
     @Override
     protected void launchActivity() {
@@ -45,35 +56,38 @@ public class PickerPreviewAllTypeUiTest extends ActivityTest<PickActivity> {
             intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, getInitialRoot().getUri());
         }
         intent.setType("*/*");
-        setActivityIntent(intent);
-        getActivity();  // Launch the activity.
+        mActivityScenario = ActivityScenario.launch(intent);
     }
 
+    @Test
     public void testPreviewInvisible_directory_gridMode() throws Exception {
         bots.main.switchToGridMode();
-        assertTrue(bots.directory.findDocument(dirName1).isEnabled());
-        assertFalse(bots.directory.hasDocumentPreview(dirName1));
+        assertTrue(bots.directory.findDocument(TestFilesRule.DIR_NAME_1).isEnabled());
+        assertFalse(bots.directory.hasDocumentPreview(TestFilesRule.DIR_NAME_1));
     }
 
+    @Test
     public void testPreviewInvisible_directory_listMode() throws Exception {
         bots.main.switchToListMode();
-        assertTrue(bots.directory.findDocument(dirName1).isEnabled());
-        assertFalse(bots.directory.hasDocumentPreview(dirName1));
+        assertTrue(bots.directory.findDocument(TestFilesRule.DIR_NAME_1).isEnabled());
+        assertFalse(bots.directory.hasDocumentPreview(TestFilesRule.DIR_NAME_1));
     }
 
+    @Test
     public void testPreviewVisible_allType_girdMode() throws Exception {
         bots.main.switchToGridMode();
-        assertTrue(bots.directory.findDocument(fileName1).isEnabled());
-        assertTrue(bots.directory.hasDocumentPreview(fileName1));
-        assertTrue(bots.directory.findDocument(fileName2).isEnabled());
-        assertTrue(bots.directory.hasDocumentPreview(fileName2));
+        assertTrue(bots.directory.findDocument("file0.log").isEnabled());
+        assertTrue(bots.directory.hasDocumentPreview("file0.log"));
+        assertTrue(bots.directory.findDocument("file1.png").isEnabled());
+        assertTrue(bots.directory.hasDocumentPreview("file1.png"));
     }
 
+    @Test
     public void testPreviewVisible_allType_listMode() throws Exception {
         bots.main.switchToListMode();
-        assertTrue(bots.directory.findDocument(fileName1).isEnabled());
-        assertTrue(bots.directory.hasDocumentPreview(fileName1));
-        assertTrue(bots.directory.findDocument(fileName2).isEnabled());
-        assertTrue(bots.directory.hasDocumentPreview(fileName2));
+        assertTrue(bots.directory.findDocument("file0.log").isEnabled());
+        assertTrue(bots.directory.hasDocumentPreview("file0.log"));
+        assertTrue(bots.directory.findDocument("file1.png").isEnabled());
+        assertTrue(bots.directory.hasDocumentPreview("file1.png"));
     }
 }
