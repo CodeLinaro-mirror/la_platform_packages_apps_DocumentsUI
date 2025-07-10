@@ -19,6 +19,7 @@ package com.android.documentsui.bots;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -38,6 +39,7 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.By;
@@ -49,6 +51,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.RelaxedClickAction;
 import com.android.documentsui.actions.WaitUntilVisible;
 
 import org.hamcrest.Matcher;
@@ -206,12 +209,60 @@ public class SearchBot extends Bots.BaseBot {
      * Returns the view interaction for the chip with the given text, specified by the ID. Chips
      * and dropdowns are dynamically added, so we wait for the chip to become visible.
      * @param chipTextId The string ID of the chip text.
-     * @param timeoutMs How long to wait, in ms, for the chip to appear.
      * @return The view interaction corresponding to the chip with the given ID.
      */
-    public ViewInteraction findChip(@StringRes int chipTextId, long timeoutMs) {
+    public ViewInteraction findChip(@StringRes int chipTextId) {
         return onView(allOf(withText(chipTextId),
                 isDescendantOfA(withId(R.id.search_chip_group)))).perform(
-                        new WaitUntilVisible(timeoutMs)).perform(scrollTo());
+                        new WaitUntilVisible(mTimeout)).perform(scrollTo());
+    }
+
+    /**
+     * Waits for a chip to become visible, scrolls to it, and then performs a relaxed click.
+     * @param chipTextId The ID of the text associated with the chip.
+     * @return The view interaction corresponding to the chip with the given ID.
+     */
+    public ViewInteraction clickChip(@StringRes int chipTextId) {
+        return findChip(chipTextId).perform(new RelaxedClickAction());
+    }
+
+    /**
+     * Finds the dropdown trigger with the given ID. This method waits until the dropdown becomes
+     * visible, and scrolls to it so that it is fully displayed.
+     * @param dropdownId The ID of the dropdown.
+     * @return The view interaction associated with this dropdown.
+     */
+    public ViewInteraction findDropdownTrigger(@IdRes int dropdownId) {
+        return onView(withId(dropdownId)).perform(new WaitUntilVisible(mTimeout)).perform(
+                scrollTo());
+    }
+
+    /**
+     * Clicks the dropdown with the given ID. This method uses #findDropdownTrigger to make sure
+     * that the dropdown is visible and displayed.
+     * @param dropdownId The ID of the dropdown.
+     */
+    public void clickDropdownTrigger(@IdRes int dropdownId) {
+        findDropdownTrigger(dropdownId).perform(new RelaxedClickAction());
+    }
+
+    /**
+     * Finds the menu item with text with the given ID. This method waits until the tem becomes
+     * visible, and scrolls to it so that it is fully displayed.
+     * @param menuId The ID of the text shown in the menu item.
+     * @return The view interaction associated with this menu item.
+     */
+    public ViewInteraction findMenuItem(@StringRes int menuId) {
+        return onView(withText(menuId)).inRoot(isPlatformPopup()).perform(
+                new WaitUntilVisible(mTimeout)).perform(scrollTo());
+    }
+
+    /**
+     * Clicks the menu item with text with the given ID. This method uses #findMenuItem to make sure
+     * that the menu item is visible and displayed.
+     * @param menuId The ID of the text shown in the menu item.
+     */
+    public void clickMenuItem(@StringRes int menuId) {
+        findMenuItem(menuId).perform(new RelaxedClickAction());
     }
 }

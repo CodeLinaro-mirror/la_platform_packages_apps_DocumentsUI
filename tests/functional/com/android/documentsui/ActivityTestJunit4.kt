@@ -127,6 +127,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         disableScreenOffAndSleepTimeouts()
 
         setupTestingRoots()
+        ActivityTest.closeNonDocsUiWindows(context, device)
         launchActivity()
 
         val layoutType = if (bots.main.inFixedLayout()) {
