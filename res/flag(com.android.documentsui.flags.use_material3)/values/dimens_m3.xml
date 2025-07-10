@@ -309,4 +309,7 @@
     <dimen name="job_progress_item_buttons_margin_top">@dimen/space_extra_small_1</dimen>
 
     <dimen name="peek_metadata_sheet_width">320dp</dimen>
+    <dimen name="peek_metadata_bottom_sheet_half_expanded_ratio">0.5</dimen>
+    <dimen name="peek_metadata_bottom_sheet_expanded_offset">200dp</dimen>
+    <dimen name="peek_metadata_bottom_sheet_collapsed_height">80dp</dimen>
 </resources>

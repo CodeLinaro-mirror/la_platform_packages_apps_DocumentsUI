@@ -200,6 +200,13 @@ class JobPanelController(
                         context.getString(getRes(R.string.job_progress_item_completed))
                     secondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
                 }
+            } else if (jobProgress.state == Job.STATE_CANCELED) {
+                primaryStatusView.setTextAppearance(
+                    getRes(R.style.JobProgressItemStatusText_Warning)
+                )
+                primaryStatusView.text =
+                    context.getString(getRes(R.string.job_progress_item_canceled))
+                secondaryStatusView.isGone = true
             } else if (expanded && jobProgress.state == Job.STATE_SET_UP &&
                 !jobProgress.isIndeterminate) {
                 primaryStatusView.setTextAppearance(getRes(R.style.JobProgressItemStatusText))

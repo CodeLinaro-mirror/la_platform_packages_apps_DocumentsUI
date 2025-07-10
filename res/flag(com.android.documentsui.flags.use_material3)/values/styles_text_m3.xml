@@ -192,6 +192,10 @@
         <item name="android:textColor">?attr/colorError</item>
     </style>
 
+    <style name="JobProgressItemStatusText.Warning">
+        <item name="android:textColor">@color/warning</item>
+    </style>
+
     <style name="JobProgressItemActionButtonText" parent="@style/TextAppearance.DocumentsUI.LabelLarge" />
 
     <!-- Headline Small -->

@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.dirlist.GridEvenSpacingDecoration;
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
@@ -42,6 +43,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 
+@SmallTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
 public class GridEvenSpacingDecorationTest {
     @Rule
