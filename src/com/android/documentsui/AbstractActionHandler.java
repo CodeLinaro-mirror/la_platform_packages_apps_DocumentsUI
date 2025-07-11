@@ -492,7 +492,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             doc.userId.startActivityAsUser(mActivity, intent);
             return true;
         } catch (ActivityNotFoundException e) {
-            mDialogs.showNoApplicationFound();
+            if (isDesktopFileHandlingFlagEnabled()) {
+                mDialogs.showNoApplicationFoundDialog(mActivity.getSupportFragmentManager(), doc);
+            } else {
+                mDialogs.showNoApplicationFoundToast();
+            }
         }
         return false;
     }

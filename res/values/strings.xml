@@ -292,6 +292,10 @@
     <!-- Toast shown when a document is not allowed to share across users. This is a last-resort toast and not expected to be shown. [CHAR LIMIT=48] -->
     <string name="toast_action_not_allowed">Action not allowed</string>
 
+    <string name="no_application_dialog_title">Open with\u2026</string>
+    <string name="no_application_dialog_message">There are no supported apps installed. Try installing one from the Play Store.</string>
+    <string name="no_application_dialog_button">Search Play Store</string>
+
     <!-- Title of dialog when prompting user to select an app to share documents with [CHAR LIMIT=32] -->
     <string name="share_via">Share via</string>
 
@@ -437,9 +441,13 @@
         =1 {Zipping <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
         other {Zipping # files}
     }</string>
+    <!-- Accessibility label for an icon button which shows the progress of file operations when clicked. -->
+    <string name="job_progress_icon_label">Show file progress</string>
     <string name="job_progress_panel_title" translatable="false">File Progress</string>
     <string name="job_progress_item_completed" translatable="false">Completed</string>
     <string name="job_progress_item_failed" translatable="false">Failed</string>
+    <!-- Status message shown when a file operation is canceled by the user. -->
+    <string name="job_progress_item_canceled">Canceled</string>
     <!-- Label prompting the user to interact to view more details about errors/warnings encountered during a file operation. -->
     <string name="job_progress_item_see_details">See details</string>
     <string name="job_progress_item_byte_progress" translatable="false">
@@ -455,6 +463,11 @@
     <string name="compress_completed">Compressed</string>
     <!-- Status message shown when an extract file operation is completed. -->
     <string name="extract_completed">Extracted</string>
+
+    <!-- Accessibility label for a button to expand a notification. -->
+    <string name="expand_label">Expand</string>
+    <!-- Accessibility label for a button to collapse a notification. -->
+    <string name="collapse_label">Collapse</string>
 
     <!-- Text in an alert dialog asking user to grant app access to a given directory in an external storage volume -->
     <string name="open_external_dialog_request">Grant <xliff:g id="appName" example="System Settings"><b>^1</b></xliff:g>

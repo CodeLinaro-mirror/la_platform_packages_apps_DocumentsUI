@@ -44,8 +44,7 @@
     <string name="menu_copy" msgid="7404820171352314754">"Kopiuj do…"</string>
     <string name="menu_move" msgid="2310760789561129882">"Przenieś do…"</string>
     <string name="menu_compress" msgid="37539111904724188">"Skompresuj"</string>
-    <!-- no translation found for menu_zip (5734673122376258045) -->
-    <skip />
+    <string name="menu_zip" msgid="5734673122376258045">"Utwórz archiwum ZIP"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Rozpakuj do…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Wyodrębnij wszystko…"</string>
     <string name="menu_extract_here" msgid="8725302045721604762">"Rozpakuj tutaj"</string>
@@ -129,6 +128,12 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Nie można usunąć niektórych dokumentów"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nie możesz udostępnić więcej plików niż <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Niedozwolona czynność"</string>
+    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
+    <skip />
+    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
+    <skip />
+    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
+    <skip />
     <string name="share_via" msgid="8725082736005677161">"Udostępnij przez"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopiowanie plików"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Kompresuję pliki"</string>
@@ -246,12 +251,20 @@
     <string name="rename_error" msgid="6700093173508118635">"Nie udało się zmienić nazwy dokumentu"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Odłącz"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Niektóre pliki zostały przekonwertowane"</string>
+    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
+    <skip />
+    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
+    <skip />
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Zobacz szczegóły"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Skopiowano"</string>
     <string name="move_completed" msgid="3981250605092729273">"Przeniesiono"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Usunięto"</string>
     <string name="compress_completed" msgid="8808356399995313077">"Skompresowano"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Wyodrębniono"</string>
+    <!-- no translation found for expand_label (5683357671239615207) -->
+    <skip />
+    <!-- no translation found for collapse_label (4530974883269531062) -->
+    <skip />
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Zezwolić aplikacji <xliff:g id="APPNAME"><b>^1</b></xliff:g> na dostęp do katalogu <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> w pamięci masowej <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Przyznać aplikacji <xliff:g id="APPNAME"><b>^1</b></xliff:g> dostęp do katalogu <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Zezwolić aplikacji <xliff:g id="APPNAME"><b>^1</b></xliff:g> na dostęp do Twoich danych, w tym zdjęć i filmów, zapisanych w pamięci <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>

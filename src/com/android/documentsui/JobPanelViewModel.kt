@@ -21,7 +21,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.documentsui.base.SharedMinimal.DEBUG
-import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -127,15 +126,11 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
         for (jobProgress in progresses) {
             if (DEBUG) Log.d(TAG, "Received $jobProgress")
             seen.add(jobProgress.id)
-            if (jobProgress.state == Job.STATE_CANCELED) {
-                _currentJobs.remove(jobProgress.id)
-            } else {
-                _currentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) { old, new ->
-                    ProgressViewModel(new.jobProgress, old.expanded)
-                }
+            _currentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) { old, new ->
+                ProgressViewModel(new.jobProgress, old.expanded)
             }
 
-            if (jobProgress.state == Job.STATE_COMPLETED && !jobProgress.hasFailures &&
+            if (jobProgress.isFinal && !jobProgress.hasFailures &&
                 !pendingRemoves.contains(jobProgress.id)) {
                 if (!disableAutoDismiss) {
                     scope.launch {
@@ -157,6 +152,16 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
      */
     fun dismissProgress(id: String) {
         _currentJobs.remove(id)
+
+        _menuIconState.value = getMenuState()
+        _jobUpdateEvent.tryEmit(Unit)
+    }
+
+    /**
+     * Dismisses all completed progresses.
+     */
+    fun dismissCompleted() {
+        _currentJobs.entries.removeAll { (_, v) -> v.jobProgress.isFinal }
 
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)

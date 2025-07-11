@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentManager;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
+import com.android.documentsui.files.NoApplicationFragment;
 import com.android.documentsui.picker.ConfirmFragment;
 import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
@@ -44,7 +45,8 @@ public interface DialogController {
      */
     void showProgressDialog(String jobId, FileOperation operation);
 
-    void showNoApplicationFound();
+    void showNoApplicationFoundToast();
+    void showNoApplicationFoundDialog(FragmentManager fm, DocumentInfo doc);
     void showOperationUnsupported();
     void showViewInArchivesUnsupported();
     void showDocumentsClipped(int size);
@@ -150,10 +152,15 @@ public interface DialogController {
         }
 
         @Override
-        public void showNoApplicationFound() {
+        public void showNoApplicationFoundToast() {
             Snackbars.makeSnackbar(
                             mActivity, getRes(R.string.toast_no_application), Snackbar.LENGTH_LONG)
                     .show();
+        }
+
+        @Override
+        public void showNoApplicationFoundDialog(FragmentManager fm, DocumentInfo doc) {
+            NoApplicationFragment.show(fm, doc);
         }
 
         @Override

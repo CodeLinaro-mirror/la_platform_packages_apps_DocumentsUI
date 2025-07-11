@@ -21,8 +21,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
-
 import android.content.pm.ResolveInfo;
+
 import com.android.documentsui.base.RootInfo;
 
 import org.mockito.Mockito;
@@ -40,6 +40,7 @@ public abstract class TestPackageManager extends PackageManager {
 
     public Map<String, ResolveInfo> contentProviders;
     public List<ResolveInfo> queryIntentProvidersResults = new ArrayList<>();
+    public boolean dontResolveActivity;
 
     public void addStubContentProviderForRoot(RootInfo... roots) {
         for (RootInfo root : roots) {
@@ -81,12 +82,15 @@ public abstract class TestPackageManager extends PackageManager {
 
     @Override
     public ResolveInfo resolveActivity(Intent intent, int flags) {
+        if (dontResolveActivity) {
+            return null;
+        }
         ResolveInfo info = new TestResolveInfo();
         info.activityInfo = new ActivityInfo();
         info.activityInfo.packageName =
                 intent.getPackage() != null ? intent.getPackage() : "TestPackage";
         info.activityInfo.applicationInfo = new ApplicationInfo();
-        info.activityInfo.applicationInfo.packageName = intent.getPackage();
+        info.activityInfo.applicationInfo.packageName = info.activityInfo.packageName;
         info.activityInfo.name = "Fake Quick Viewer";
         return info;
     }

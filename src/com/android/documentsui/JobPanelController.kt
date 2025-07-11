@@ -136,10 +136,14 @@ class JobPanelController(
                 titleView.isSingleLine = false
                 toggleExpandButton.icon =
                     context.getDrawable(getRes(R.drawable.ic_job_progress_collapse))
+                toggleExpandButton.contentDescription =
+                    context.getString(getRes(R.string.collapse_label))
             } else {
                 titleView.isSingleLine = true
                 toggleExpandButton.icon =
                     context.getDrawable(getRes(R.drawable.ic_job_progress_expand))
+                toggleExpandButton.contentDescription =
+                    context.getString(getRes(R.string.expand_label))
             }
 
             updateProgressBar(jobProgress)
@@ -200,6 +204,13 @@ class JobPanelController(
                         context.getString(getRes(R.string.job_progress_item_completed))
                     secondaryStatusView.text = getCompletionStatusString(jobProgress.operationType)
                 }
+            } else if (jobProgress.state == Job.STATE_CANCELED) {
+                primaryStatusView.setTextAppearance(
+                    getRes(R.style.JobProgressItemStatusText_Warning)
+                )
+                primaryStatusView.text =
+                    context.getString(getRes(R.string.job_progress_item_canceled))
+                secondaryStatusView.isGone = true
             } else if (expanded && jobProgress.state == Job.STATE_SET_UP &&
                 !jobProgress.isIndeterminate) {
                 primaryStatusView.setTextAppearance(getRes(R.style.JobProgressItemStatusText))
@@ -344,6 +355,10 @@ class JobPanelController(
                 getRes(R.layout.job_progress_panel),
                 /* root= */ null
             )
+
+            panel.findViewById<Button>(R.id.job_progress_panel_dismiss_all)
+                .setOnClickListener { viewModel.dismissCompleted() }
+
             val listAdapter = ProgressListAdapter(this)
             listAdapter.submitList(ArrayList(viewModel.currentJobs.values))
             panel.findViewById<RecyclerView>(getRes(R.id.job_progress_list)).apply {

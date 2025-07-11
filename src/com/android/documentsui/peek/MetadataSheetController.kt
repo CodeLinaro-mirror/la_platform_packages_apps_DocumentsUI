@@ -16,38 +16,10 @@
 package com.android.documentsui.peek
 
 import android.content.Context
-import android.view.View
-import android.widget.FrameLayout
 import com.android.documentsui.base.DocumentInfo
-import com.google.android.material.sidesheet.SideSheetBehavior
-import com.google.android.material.sidesheet.SideSheetCallback
 
-class MetadataSheetController(
-    context: Context,
-    viewModel: PeekViewModel,
-    sheetContainer: FrameLayout,
-) {
-    private val metadataView = MetadataView(context, viewModel)
-    private val sheetBehavior = SideSheetBehavior.from(sheetContainer)
-
-    // Listening for side sheet state updates is relevant when the metadata sheet is dragged.
-    private val sheetStateListener =
-        object : SideSheetCallback() {
-            override fun onStateChanged(sideSheet: View, newState: Int) {
-                if (newState != SideSheetBehavior.STATE_EXPANDED &&
-                    newState != SideSheetBehavior.STATE_HIDDEN) {
-                    return
-                }
-                viewModel.toggleMetadataSheet(newState == SideSheetBehavior.STATE_EXPANDED)
-            }
-
-            override fun onSlide(sideSheet: View, slideOffset: Float) {}
-        }
-
-    init {
-        sheetContainer.addView(metadataView)
-        sheetBehavior.addCallback(sheetStateListener)
-    }
+abstract class MetadataSheetController(context: Context, viewModel: PeekViewModel) {
+    internal val metadataView = MetadataView(context, viewModel)
 
     fun accept(docInfo: DocumentInfo) {
         metadataView.accept(docInfo)
@@ -57,15 +29,7 @@ class MetadataSheetController(
         metadataView.clear()
     }
 
-    fun show() {
-        sheetBehavior.expand()
-    }
-
-    fun hide() {
-        sheetBehavior.hide()
-    }
-
-    fun onDestroyView() {
-        sheetBehavior.removeCallback(sheetStateListener)
-    }
+    abstract fun show()
+    abstract fun hide()
+    abstract fun onDestroyView()
 }

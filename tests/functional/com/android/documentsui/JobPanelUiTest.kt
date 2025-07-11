@@ -34,6 +34,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
@@ -51,6 +52,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -71,6 +73,7 @@ private fun withProgress(expectedProgress: Int): Matcher<View> {
 // Helper function to match views inside a certain progress item view.
 private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progress.msg))
 
+@LargeTest
 @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
@@ -93,6 +96,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     private fun openPanel() {
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         onView(withId(R.id.job_progress_toolbar_indicator))
             .check(matches(isDisplayed()))
             .perform(click())
@@ -239,23 +243,37 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withText(progress1.msg)).check(matches(isDisplayed()))
         onView(withText(progress2.msg)).check(matches(isDisplayed()))
 
-        // Cancel the first job. Only the second item should be displayed.
+        // Cancel the first job.
         progress1.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
-        onView(withText(progress1.msg)).check(doesNotExist())
+        onView(withChild(withText(progress1.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_canceled),
+                isDisplayed()
+            ))
         onView(withText(progress2.msg)).check(matches(isDisplayed()))
 
-        // Overall progress should be 0% as the first job doesn't count. We need to close the popup
+        // Overall progress should be 50% as the first job is finished. We need to close the popup
         // panel first in order to check the menu item behind.
         Espresso.pressBack()
-        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(0)))
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(50)))
         openPanel()
 
-        // Cancel the second job. The panel should disappear.
+        // Cancel the second job.
         progress2.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress2.toJobProgress()))
-        onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
-        onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
+        onView(withChild(withText(progress1.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_canceled),
+                isDisplayed()
+            ))
+        onView(withChild(withText(progress2.msg)))
+            .check(selectedDescendantsMatch(
+                withText(R.string.job_progress_item_canceled),
+                isDisplayed()
+            ))
+        Espresso.pressBack()
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(100)))
     }
 
     @Test
@@ -373,5 +391,65 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         sendProgress(arrayListOf(inProgress.toJobProgress()))
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
         onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testDismissAll() {
+        val inProgress = MutableJobProgress(
+            id = "in_progress_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_SET_UP,
+            msg = "Job in progress",
+            hasFailures = false,
+            currentBytes = 40,
+            requiredBytes = 100,
+        )
+
+        val succeeded = MutableJobProgress(
+            id = "succeeded_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_COMPLETED,
+            msg = "Job succeeded",
+            hasFailures = false,
+        )
+
+        val failed = MutableJobProgress(
+            id = "failed_job",
+            operationType = FileOperationService.OPERATION_COPY,
+            state = Job.STATE_COMPLETED,
+            msg = "Job failed",
+            hasFailures = true,
+        )
+        sendProgress(arrayListOf(
+            inProgress.toJobProgress(),
+            succeeded.toJobProgress(),
+            failed.toJobProgress(),
+        ))
+
+        // There are two jobs completed and one job at 40%, so the total progress is 80%.
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(80)))
+        onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
+
+        // Click dismiss all. Only the two completed jobs should disappear.
+        openPanel()
+        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(click())
+        onView(withText(succeeded.msg)).check(doesNotExist())
+        onView(withText(failed.msg)).check(doesNotExist())
+        onView(withText(inProgress.msg)).check(matches(isDisplayed()))
+
+        // The total progress should now change to 40% as the two completed jobs are gone.
+        Espresso.pressBack()
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
+        onView(allOf(withId(R.id.job_progress_toolbar_badge), isDisplayed())).check(doesNotExist())
+
+        // Update the in progress job to be completed.
+        inProgress.state = Job.STATE_COMPLETED
+        sendProgress(arrayListOf(inProgress.toJobProgress()))
+
+        // When all tracked jobs are completed, dismiss all should also close the panel.
+        openPanel()
+        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(click())
+        onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
+        onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }
 }
