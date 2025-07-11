@@ -36,6 +36,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.documentsui.actions.RelaxedClickAction
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
@@ -443,7 +444,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Click dismiss all. Only the two completed jobs should disappear.
         openPanel()
-        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(click())
+        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(RelaxedClickAction())
         onView(withText(succeeded.msg)).check(doesNotExist())
         onView(withText(failed.msg)).check(doesNotExist())
         onView(withText(inProgress.msg)).check(matches(isDisplayed()))
@@ -459,7 +460,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // When all tracked jobs are completed, dismiss all should also close the panel.
         openPanel()
-        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(click())
+        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(RelaxedClickAction())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }
