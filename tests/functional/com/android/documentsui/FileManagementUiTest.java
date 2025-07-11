@@ -97,7 +97,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
 
         bots.directory.waitForDocument("file1.png");
-        bots.directory.assertDocumentsPresent("file1.png");
+        bots.directory.assertDocumentsVisible("file1.png");
 
         bots.roots.openRoot(ROOT_0_ID);
         bots.directory.assertDocumentsAbsent("file1.png");
@@ -134,7 +134,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
         device.waitForIdle();
 
-        bots.directory.assertDocumentsPresent("file1.png");
+        bots.directory.assertDocumentsVisible("file1.png");
     }
 
     @Test

@@ -23,6 +23,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.os.RemoteException
+import android.os.Trace
 import android.provider.DocumentsContract.Document
 import android.util.Log
 import androidx.loader.content.AsyncTaskLoader
@@ -186,10 +187,27 @@ abstract class BaseFileLoader(
     /**
      * A function that, for the specified location rooted in the root with the given rootId
      * attempts to obtain a non-null cursor from the content provider client obtained for the
-     * given locationUri. It returns the first non-null cursor, if one can be found, or null,
-     * if it fails to query the given location for all known users.
+     * given locationUri. It returns a non-null cursor, if it can access the location given
+     * by the `locationUri`, or null, if it fails to query the given location for the current user.
      */
     fun queryLocation(
+        rootInfo: RootInfo,
+        locationUri: Uri,
+        queryArgs: Bundle?,
+        maxResults: Int,
+    ): Cursor? {
+        try {
+            Trace.beginSection("documentsui.searchv2.BaseFileLoader#queryLocation")
+            return queryLocationTraced(rootInfo, locationUri, queryArgs, maxResults)
+        } finally {
+            Trace.endSection()
+        }
+    }
+
+    /**
+     * A queryLocation code run within a trace.
+     */
+    private fun queryLocationTraced(
         rootInfo: RootInfo,
         locationUri: Uri,
         queryArgs: Bundle?,

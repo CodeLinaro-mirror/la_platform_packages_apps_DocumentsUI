@@ -36,7 +36,10 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ProtocolException;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 /**
  * Representation of a {@link UserHandle}.
  */
@@ -150,6 +153,37 @@ public final class UserId {
      */
     public boolean isManagedProfile(UserManager userManager) {
         return userManager.isManagedProfile(mUserHandle.getIdentifier());
+    }
+
+    /**
+     * Returns whether the {@link CURRENT_USER} is part of the excluded user ids or not
+     */
+    public boolean isExcluded(State state) {
+        return android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
+                && state.excludedUserIds.contains(mUserHandle.getIdentifier());
+    }
+
+    /**
+     * Returns a list of {@link UserId} on the device that are not part of
+     * {@link State#excludedUserIds}. There should be at least one non-excluded user. Otherwise no
+     * user will be excluded at all.
+     */
+    public static List<UserId> nonExcludedUsers(State state, List<UserId> allUsers) {
+        if (state.excludedUserIds.isEmpty() || allUsers == null || allUsers.isEmpty()) {
+            return allUsers;
+        }
+
+        List<UserId> filteredUsers = allUsers.stream().filter(
+                user -> !state.excludedUserIds.contains(user.getIdentifier())).collect(
+                Collectors.toList());
+
+        // SAFETY NET: If filtering resulted in an empty list, but we started with users,
+        // it means all users were excluded. In this case, we ignore the exclusion.
+        if (!allUsers.isEmpty() && filteredUsers.isEmpty()) {
+            return allUsers;
+        }
+
+        return filteredUsers;
     }
 
     /**

@@ -876,7 +876,7 @@ public class SearchViewManager implements
         return roots.filter(r -> r.isLocalOnly()
                 && r.supportsRecents() && r.userId.equals(userId)
                 && !r.isDownloads() && !r.isExternalStorage()).collect(
-                Collectors.toUnmodifiableList());
+                Collectors.toList());
     }
 
     /**

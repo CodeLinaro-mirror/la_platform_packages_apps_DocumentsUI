@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Није могуће избрисати неке документе"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Максималан број датотека за дељење је <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Радња није дозвољена"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Отворите користећи…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Није инсталирана ниједна подржана апликација. Пробајте да инсталирате неку из Play продавнице."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Претражи Play продавницу"</string>
     <string name="share_via" msgid="8725082736005677161">"Дељење преко"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Копирамо датотеке"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Датотеке се компримују"</string>
@@ -235,20 +232,16 @@
     <string name="rename_error" msgid="6700093173508118635">"Преименовање документа није успело"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Избаци"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Неке датотеке су конвертоване"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Прикажите напредак фајла"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Отказано"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Погледајте детаље"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Копирано"</string>
     <string name="move_completed" msgid="3981250605092729273">"Премештено"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Избрисано"</string>
     <string name="compress_completed" msgid="8808356399995313077">"Компримовано"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Издвојено"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="expand_label" msgid="5683357671239615207">"Проширите"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Скупите"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Желите ли да дозволите апликацији <xliff:g id="APPNAME"><b>^1</b></xliff:g> да приступа фолдеру <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> на меморијском простору <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Желите ли да дозволите апликацији <xliff:g id="APPNAME"><b>^1</b></xliff:g> да приступа фолдеру <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Желите ли да дозволите апликацији <xliff:g id="APPNAME"><b>^1</b></xliff:g> да приступа подацима, укључујући слике и видео, на меморијском простору <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>

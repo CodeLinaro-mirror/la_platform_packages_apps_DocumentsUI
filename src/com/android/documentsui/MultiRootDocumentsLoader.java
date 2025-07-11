@@ -28,6 +28,7 @@ import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileUtils;
+import android.os.Trace;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.util.Log;
@@ -124,6 +125,7 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
 
     @Override
     public DirectoryResult loadInBackground() {
+        Trace.beginSection("documentsui.searchv1.MultiRootDocumentsLoader#loadInBackground");
         try {
             synchronized (mTasks) {
                 return loadInBackgroundLocked();
@@ -131,6 +133,8 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
         } catch (InterruptedException e) {
             Log.w(TAG, "loadInBackground is interrupted: ", e);
             return null;
+        } finally {
+            Trace.endSection();
         }
     }
 
@@ -385,6 +389,16 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
 
         @Override
         public void run() {
+            try {
+                Trace.beginSection(
+                        "documentsui.searchv1.MultiRootDocumentsLoader.QueryTask#run");
+                runTraced();
+            } finally {
+                Trace.endSection();
+            }
+        }
+
+        private void runTraced() {
             if (isCancelled()) {
                 return;
             }

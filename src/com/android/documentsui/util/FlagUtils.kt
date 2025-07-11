@@ -31,7 +31,7 @@ class FlagUtils {
 
         @JvmStatic
         fun isZipNgFlagEnabled(): Boolean {
-            return Flags.zipNgRo() && Flags.useMaterial3()
+            return Flags.zipNgRo() && isUseMaterial3FlagEnabled()
         }
 
         @JvmStatic

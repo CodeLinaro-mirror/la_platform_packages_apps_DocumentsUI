@@ -87,4 +87,20 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot(ROOT_1_ID);
         bots.directory.waitForDocument("file1.log");
     }
+
+    @Test
+    public void testOpenInNewWindow_preservesFiles() throws Exception {
+        // Select Recents in the existing window and open ROOT_0 in the new window so we can
+        // distinguish the two windows by checking the title.
+        bots.roots.openRoot("Recent");
+        bots.main.assertWindowTitle("Recent");
+
+        // Open the ROOT_0 node in a new window.
+        bots.roots.rightClickRootAndClickMenuOption(ROOT_0_ID, "Open in new window");
+
+        // Check in the new window the ROOT_0 is selected and the files inside matches the original
+        // contents.
+        bots.main.assertWindowTitle(ROOT_0_ID);
+        assertDefaultContentOfTestDir0();
+    }
 }
