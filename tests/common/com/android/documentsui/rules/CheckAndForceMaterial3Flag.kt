@@ -21,6 +21,7 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.platform.test.flag.junit.IFlagsValueProvider
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.util.Material3Config
+import org.junit.Assume
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -44,7 +45,25 @@ class CheckAndForceMaterial3Flag : TestRule {
 
                 flagsValueProvider.setUp()
                 try {
-                    flagAnnotations.assumeAllRequiredFlagsMatchProvider(flagsValueProvider)
+                    for (required in flagAnnotations.mRequiredFlagValues.entries) {
+                        val flag: String? = required.key
+                        if (required.value) {
+                            Assume.assumeTrue(
+                                "Flag $flag required to be enabled, but is disabled",
+                                flagsValueProvider.getBoolean(flag),
+                            )
+                        } else {
+                            if (flag == Flags.FLAG_USE_MATERIAL3) {
+                                // For material3 we let the test continue, but we force our config
+                                // to disabled.
+                                continue
+                            }
+                            Assume.assumeFalse(
+                                "Flag $flag required to be disabled, but is enabled",
+                                flagsValueProvider.getBoolean(flag),
+                            )
+                        }
+                    }
                 } finally {
                     flagsValueProvider.tearDownBeforeTest()
                 }
@@ -52,7 +71,7 @@ class CheckAndForceMaterial3Flag : TestRule {
                 val originalFlagState = Material3Config.getInstance().forceMaterial3
 
                 // The try/finally above takes care of checking the state of the DeviceFlag, so the
-                // code only reaches here if the flag is in the desired state.
+                // code only reaches here if the flag is in the desired state (except for useMaterial3 flag).
                 if (isMaterial3 != null) {
                     // Only force if the use_material3 flag is in use (aka not-null).
                     Material3Config.setEnabledForTest(isMaterial3)

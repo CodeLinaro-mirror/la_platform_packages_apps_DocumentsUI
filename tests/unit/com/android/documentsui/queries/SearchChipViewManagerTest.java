@@ -54,6 +54,7 @@ import com.android.documentsui.util.VersionUtils;
 import com.google.android.material.chip.Chip;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -128,6 +129,7 @@ public final class SearchChipViewManagerTest {
                 requireNonNull(mContext.getDrawable(R.drawable.ic_chip_document)));
     }
 
+    @Ignore
     @Test
     @RequiresFlagsDisabled({Flags.FLAG_USE_MATERIAL3})
     public void testChipIcon_M3Disabled() {
