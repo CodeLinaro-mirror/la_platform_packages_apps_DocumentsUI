@@ -16,6 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
@@ -124,6 +125,7 @@ import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
+import com.android.documentsui.util.FileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -591,7 +593,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
                         (View child) -> onAccessibilityLongClick(child), mState.action));
-        mSelectionMetadata = new SelectionMetadata(mModel::getItem);
+        mSelectionMetadata = new SelectionMetadata(
+                mModel::getItem,
+                (String modelId) -> {
+                    DocumentInfo doc = mModel.getDocument(modelId);
+                    if (doc != null) {
+                        return FileUtils.countOpeningApps(doc, mActivity.getPackageManager());
+                    }
+                    return 0;
+                });
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
         DragStartListener dragStartListener = mInjector.config.dragAndDropEnabled()
@@ -829,6 +839,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (startUnpackingArchive(docDetails)) return true;
         }
 
+        if (isDesktopFileHandlingFlagEnabled()) {
+            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -1205,7 +1218,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            if (isDesktopFileHandlingFlagEnabled()) {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+            } else {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            }
         }
         return true;
     }

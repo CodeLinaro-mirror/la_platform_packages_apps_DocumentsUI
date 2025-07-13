@@ -8,14 +8,9 @@
       "name": "DocumentsUIUnitTests"
     }
   ],
-  "postsubmit": [
+  "documentsui-mainline-presubmit": [
     {
-      "name": "DocumentsUIGoogleTests",
-      "options": [
-        {
-          "exclude-annotation": "androidx.test.filters.LargeTest"
-        }
-      ]
+      "name": "DocumentsUIUnitTests"
     }
   ],
   "desktop-presubmit": [

@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"કેટલાક દસ્તાવેજો કાઢી નાખવામાં અસમર્થ"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>થી વધુ ફાઇલ શેર કરી શકાતી નથી"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ક્રિયાની મંજૂરી નથી"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"આની સાથે ખોલો…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"કોઈ સપોર્ટેડ ઍપ ઇન્સ્ટૉલ કરેલી નથી. Play Storeમાંથી એક ઍપ ઇન્સ્ટૉલ કરવાનો પ્રયાસ કરી જુઓ."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store પર શોધો"</string>
     <string name="share_via" msgid="8725082736005677161">"આના દ્વારા શેર કરો"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ફાઇલો કૉપિ કરી રહ્યાં છે"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ફાઇલોને સંકુચિત કરવી"</string>
@@ -219,20 +216,16 @@
     <string name="rename_error" msgid="6700093173508118635">"દસ્તાવેજનું નામ બદલવામાં નિષ્ફળ થયાં"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"બહાર કાઢો"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"કેટલીક ફાઇલો રૂપાંતરિત કરી હતી"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"ફાઇલની પ્રગતિ બતાવો"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"રદ કર્યું"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"વિગતો જુઓ"</string>
     <string name="copy_completed" msgid="3749037014674785400">"કૉપિ કરવામાં આવ્યું"</string>
     <string name="move_completed" msgid="3981250605092729273">"સ્થાન પરિવર્તિત"</string>
     <string name="delete_completed" msgid="4149401155614626199">"ડિલીટ કર્યો"</string>
     <string name="compress_completed" msgid="8808356399995313077">"નાની કરેલી"</string>
     <string name="extract_completed" msgid="8824595789915249972">"મેળવી છે"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="expand_label" msgid="5683357671239615207">"મોટું કરો"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"નાનું કરો"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> ને <xliff:g id="STORAGE"><i>^3</i></xliff:g> પર <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> નિર્દેશિકાની ઍક્સેસ આપીએ?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> ને <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> નિર્દેશિકાની ઍક્સેસ આપીએ?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> ને <xliff:g id="STORAGE"><i>^2</i></xliff:g> પર ફોટો અને વિડિઓઝ સહિત તમારા ડેટાની અ‍ૅક્સેસ આપીએ?"</string>

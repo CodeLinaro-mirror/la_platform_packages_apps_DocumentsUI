@@ -39,7 +39,7 @@ import java.util.Map;
 public abstract class TestPackageManager extends PackageManager {
 
     public Map<String, ResolveInfo> contentProviders;
-    public List<ResolveInfo> queryIntentProvidersResults = new ArrayList<>();
+    public Map<String, List<ResolveInfo>> queryIntentActivitiesResults;
     public boolean dontResolveActivity;
 
     public void addStubContentProviderForRoot(RootInfo... roots) {
@@ -58,6 +58,7 @@ public abstract class TestPackageManager extends PackageManager {
         TestPackageManager pm = Mockito.mock(
                 TestPackageManager.class, Mockito.CALLS_REAL_METHODS);
         pm.contentProviders = new HashMap<>();
+        pm.queryIntentActivitiesResults = new HashMap<>();
         return pm;
     }
 
@@ -73,10 +74,10 @@ public abstract class TestPackageManager extends PackageManager {
      */
     @Override
     public List<ResolveInfo> queryIntentActivities(Intent intent, int flags) {
-        if (queryIntentProvidersResults == null) {
-            return new ArrayList<>();
+        if (queryIntentActivitiesResults.containsKey(intent.getType())) {
+            return queryIntentActivitiesResults.get(intent.getType());
         } else {
-            return queryIntentProvidersResults;
+            return List.of();
         }
     }
 

@@ -20,6 +20,7 @@ import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentat
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 
 import android.net.Uri;
@@ -52,13 +53,13 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaDefaultAction() throws Exception {
         createArchiveInRootDir0();
         bots.roots.openRoot(ROOT_0_ID);
@@ -68,7 +69,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaContextMenu() throws Exception {
         createArchiveInRootDir0();
         bots.roots.openRoot(ROOT_0_ID);
@@ -79,13 +80,13 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -97,7 +98,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -111,7 +112,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.rightClickDocument("broken.zip");

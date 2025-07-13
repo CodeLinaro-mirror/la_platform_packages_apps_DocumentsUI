@@ -419,6 +419,7 @@ public final class MenuManagerTest {
     @Test
     public void testActionMenu_CanOpenWith() {
         selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeOpenWith.assertEnabledAndVisible();
@@ -427,6 +428,27 @@ public final class MenuManagerTest {
     @Test
     public void testActionMenu_NoOpenWith() {
         selectionDetails.canOpen = false;
+        selectionDetails.hasMultipleOpeningApps = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testActionMenu_OpenWith_SingleOpeningApp() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertEnabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testActionMenu_NoOpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeOpenWith.assertDisabledAndInvisible();
@@ -649,7 +671,10 @@ public final class MenuManagerTest {
     @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpen() {
         selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpen.assertDisabledAndInvisible();
         dirOpenWith.assertEnabledAndVisible();
     }
@@ -659,7 +684,10 @@ public final class MenuManagerTest {
     @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpenDesktop() {
         selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpen.assertEnabledAndVisible();
         dirOpenWith.assertEnabledAndVisible();
     }
@@ -668,8 +696,33 @@ public final class MenuManagerTest {
     @Test
     public void testContextMenu_OnFile_NoOpen() {
         selectionDetails.canOpen = false;
+        selectionDetails.hasMultipleOpeningApps = true;
+
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpen.assertDisabledAndInvisible();
+        dirOpenWith.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testContextMenu_OnFile_OpenWith_SingleOpeningApp() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        dirOpenWith.assertEnabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testContextMenu_OnFile_NoOpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpenWith.assertDisabledAndInvisible();
     }
 

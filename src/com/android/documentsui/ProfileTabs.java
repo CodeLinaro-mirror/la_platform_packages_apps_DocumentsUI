@@ -40,7 +40,6 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Objects;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +129,12 @@ public class ProfileTabs implements ProfileTabsAddons {
             // Update the layout according to the current root if necessary.
             // Make sure we do not invoke callback. Otherwise, it is likely to cause infinite loop.
             mTabs.removeOnTabSelectedListener(mOnTabSelectedListener);
-            mTabs.selectTab(mTabs.getTabAt(mUserIds.indexOf(currentRoot.userId)));
+
+            if (currentRoot.userId.isExcluded(mState)) {
+                mTabs.selectTab(mTabs.getTabAt(0));
+            } else {
+                mTabs.selectTab(mTabs.getTabAt(mUserIds.indexOf(currentRoot.userId)));
+            }
             mTabs.addOnTabSelectedListener(mOnTabSelectedListener);
         }
         mTabsContainer.setVisibility(shouldShow() ? View.VISIBLE : View.GONE);
@@ -204,8 +208,7 @@ public class ProfileTabs implements ProfileTabsAddons {
         // Given that mUserIds was initialized with only the current user, if getUserIds()
         // returns just the current user, we don't need to do anything on the tab layout.
         if (!userIds.equals(mUserIds)) {
-            mUserIds = new ArrayList<>();
-            mUserIds.addAll(userIds);
+            mUserIds = UserId.nonExcludedUsers(mState, userIds);
             mTabs.removeAllTabs();
             if (mUserIds.size() > 1) {
                 if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {

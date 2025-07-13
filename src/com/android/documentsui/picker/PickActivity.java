@@ -24,12 +24,16 @@ import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -71,9 +75,12 @@ import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PickActivity extends BaseActivity implements ActionHandler.Addons {
 
@@ -261,8 +268,9 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         moreApps.setPackage(null);
         if (mState.supportsCrossProfile) {
             if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
-                mState.canForwardToProfileIdMap = mUserManagerState.getCanForwardToProfileIdMap(
-                        moreApps);
+                mState.canForwardToProfileIdMap =
+                        mUserManagerState.getCanForwardToProfileIdMapForAllowedUsers(
+                                moreApps, mState);
             } else if (CrossProfileUtils.getCrossProfileResolveInfo(UserId.CURRENT_USER,
                     getPackageManager(), moreApps, getApplicationContext(),
                     mConfigStore.isPrivateSpaceInDocsUIEnabled()) != null) {
@@ -315,6 +323,11 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                     Intent.EXTRA_ALLOW_MULTIPLE, false);
         }
 
+        String packageName = Shared.getCallingPackageName(this);
+        if (android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
+                && hasCrossUsersPermissions(packageName)) {
+            setExcludedUsers(state, intent);
+        }
         if (state.action == ACTION_OPEN || state.action == ACTION_GET_CONTENT
                 || state.action == ACTION_CREATE) {
             state.openableOnly = intent.hasCategory(Intent.CATEGORY_OPENABLE);
@@ -516,5 +529,45 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     @Override
     public Injector<ActionHandler<PickActivity>> getInjector() {
         return mInjector;
+    }
+
+    private boolean hasCrossUsersPermissions(String packageName) {
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+        return packageManager.checkPermission(
+                Manifest.permission.INTERACT_ACROSS_USERS, packageName)
+                == PackageManager.PERMISSION_GRANTED
+                || packageManager.checkPermission(
+                Manifest.permission.INTERACT_ACROSS_USERS_FULL, packageName)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void setExcludedUsers(State state, Intent intent) {
+        int[] excludedUserIdsArray = intent.getIntArrayExtra(
+                DocumentsContract.EXTRA_EXCLUDED_USERS);
+        // Validate if we are not excluding all the users
+        if (excludedUserIdsArray != null && excludedUserIdsArray.length > 0) {
+            List<UserHandle> allUsers = getApplicationContext().getSystemService(
+                    UserManager.class).getAllProfiles();
+            Set<Integer> excludedIdsSet = Arrays.stream(excludedUserIdsArray)
+                    .boxed()
+                    .collect(Collectors.toSet());
+
+            // Check if the set of excluded IDs contains every available user ID.
+            boolean allUsersAreExcluded = true;
+            if (allUsers.isEmpty()) {
+                allUsersAreExcluded = false;
+            } else {
+                for (UserHandle user : allUsers) {
+                    if (!excludedIdsSet.contains(user.getIdentifier())) {
+                        allUsersAreExcluded = false;
+                        break;
+                    }
+                }
+            }
+
+            if (!allUsersAreExcluded) {
+                state.excludedUserIds = excludedIdsSet;
+            }
+        }
     }
 }

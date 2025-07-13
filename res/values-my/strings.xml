@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"အချို့စာဖိုင်များကို ဖျက်၍မရပါ"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ဖိုင် <xliff:g id="COUNT">%1$d</xliff:g> ခုထက်ပိုပြီး မျှဝေ၍မရပါ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"လုပ်ဆောင်ချက်ကို ခွင့်မပြုပါ"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"ဖွင့်မည့်အက်ပ်…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"ပံ့ပိုးထားသောအက်ပ်များ ထည့်သွင်းမထားပါ။ Google Play Store မှ ထည့်သွင်းကြည့်ပါ။"</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Store တွင် ရှာရန်"</string>
     <string name="share_via" msgid="8725082736005677161">"အောက်ပါနည်းလမ်းဖြင့် မျှဝေပါ"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ဖိုင်များကူးယူနေသည်"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ဖိုင်များကို ချုံ့နေသည်"</string>
@@ -219,20 +216,16 @@
     <string name="rename_error" msgid="6700093173508118635">"စာဖိုင်ကို အမည်ပြောင်းခြင်း မအောင်မြင်ပါ"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"ထုတ်ပါ"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"အချို့ဖိုင်များကို ပြောင်းလဲထားသည်"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"ဖိုင်အခြေအနေ ပြပါ"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"ပယ်ဖျက်လိုက်သည်"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"အသေးစိတ် ကြည့်ရန်"</string>
     <string name="copy_completed" msgid="3749037014674785400">"မိတ္တူကူးပြီးပြီ"</string>
     <string name="move_completed" msgid="3981250605092729273">"ရွှေ့ပြီးပြီ"</string>
     <string name="delete_completed" msgid="4149401155614626199">"ဖျက်ပြီးပြီ"</string>
     <string name="compress_completed" msgid="8808356399995313077">"ချုံ့ပြီးပြီ"</string>
     <string name="extract_completed" msgid="8824595789915249972">"ထုတ်ယူပြီးပြီ"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="expand_label" msgid="5683357671239615207">"ပိုပြပါ"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"လျှော့ပြပါ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> အား <xliff:g id="STORAGE"><i>^3</i></xliff:g> ရှိ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ဖိုင်လမ်းညွှန်ကို အသုံးပြုခွင့်ပေးမှာလား။"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> အား <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ဖိုင်လမ်းညွှန်ကို အသုံးပြုခွင့်ပေးမှာလား။"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> အား <xliff:g id="STORAGE"><i>^2</i></xliff:g> ရှိ ဓာတ်ပုံများနှင့် ဗီဒီယိုများအပါအဝင် သင့်ဒေတာများကို အသုံးပြုခွင့်ပေးမှာလား။"</string>

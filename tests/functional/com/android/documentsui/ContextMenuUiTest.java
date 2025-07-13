@@ -17,6 +17,8 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 
@@ -27,9 +29,12 @@ import android.platform.test.annotations.RequiresFlagsEnabled;
 
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
 import com.android.documentsui.rules.TestFilesRule;
+import com.android.documentsui.util.FileUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -77,6 +82,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @RequiresFlagsDisabled({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_onFile() throws Exception {
         menuItems.put("Share", true);
         menuItems.put("Open", isDesktopFileHandlingFlagEnabled());
@@ -91,7 +97,56 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testContextMenu_onFilePngDesktop() throws Exception {
+        RootInfo root = mDocsHelper.getRoot(ROOT_0_ID);
+        DocumentInfo doc = mDocsHelper.findFile(root.documentId, "file1.png");
+        int pngOpeningApps = FileUtils.countOpeningApps(doc, context.getPackageManager());
+
+        menuItems.put("Share", true);
+        menuItems.put("Open", isDesktopFileHandlingFlagEnabled());
+        // On desktop, "open with" is only shown when the file has multiple opening apps.
+        // Ideally we would mock this, but we can't in these functional tests.
+        menuItems.put("Open with", pngOpeningApps > 1);
+        menuItems.put("Cut", true);
+        menuItems.put("Copy", true);
+        menuItems.put("Rename", true);
+        menuItems.put("Delete", true);
+
+        bots.directory.rightClickDocument("file1.png");
+        bots.menu.assertPresentMenuItems(menuItems);
+    }
+
+    /*
+     * Repeating the OnFile test again with a CSV to test the behaviour when there are no opening
+     * apps. Obviously we cannot enforce this but this is likely on most devices.
+     *
+     * The test will still pass even if the device has 2+ opening apps for CSV, it just doesn't
+     * verify that we are hiding "open with" when it needs to be.
+     */
+    @Test
+    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testContextMenu_onFileCsvDesktop() throws Exception {
+        RootInfo root = mDocsHelper.getRoot(ROOT_0_ID);
+        DocumentInfo doc = mDocsHelper.findFile(root.documentId, "file2.csv");
+        int csvOpeningApps = FileUtils.countOpeningApps(doc, context.getPackageManager());
+
+        menuItems.put("Share", true);
+        menuItems.put("Open", isDesktopFileHandlingFlagEnabled());
+        // On desktop, "open with" is only shown when the file has multiple opening apps.
+        // Ideally we would mock this, but we can't in these functional tests.
+        menuItems.put("Open with", csvOpeningApps > 1);
+        menuItems.put("Cut", true);
+        menuItems.put("Copy", true);
+        menuItems.put("Rename", true);
+        menuItems.put("Delete", true);
+
+        bots.directory.rightClickDocument("file2.csv");
+        bots.menu.assertPresentMenuItems(menuItems);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void testContextMenu_onArchive_shouldHaveBrowseMenuItem() throws Exception {
         menuItems.clear();
         menuItems.put("Extract here", true);

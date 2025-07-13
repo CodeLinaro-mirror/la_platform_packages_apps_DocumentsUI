@@ -14,6 +14,7 @@
 
 package {
     default_applicable_licenses: ["Android-Apache-2.0"],
+    default_team: "trendy_team_documentsui",
 }
 
 java_defaults {
@@ -36,6 +37,7 @@ java_defaults {
         "guava",
         "kotlinx_coroutines_test",
         "mockito-target",
+        "microbenchmark-device-lib",
     ],
 }
 
@@ -87,7 +89,7 @@ android_library {
     ],
 
     min_sdk_version: "30",
-    target_sdk_version: "30",
+    target_sdk_version: "33",
 }
 
 android_library {
@@ -123,7 +125,7 @@ android_library {
     ],
 
     min_sdk_version: "30",
-    target_sdk_version: "30",
+    target_sdk_version: "33",
     lint: {
         baseline_filename: "lint-baseline.xml",
     },
@@ -154,5 +156,5 @@ android_test {
 
     instrumentation_for: "DocumentsUI",
     min_sdk_version: "30",
-    target_sdk_version: "30",
+    target_sdk_version: "33",
 }
