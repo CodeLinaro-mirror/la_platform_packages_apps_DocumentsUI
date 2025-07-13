@@ -264,3 +264,15 @@
   public com.google.android.material.bottomsheet.BottomSheetBehavior getSheetBehavior();
   public com.google.android.material.bottomsheet.BottomSheetBehavior$BottomSheetCallback getSheetStateListener();
 }
+
+-keep interface com.android.documentsui.UserManagerState {
+  public boolean areHiddenInQuietModeProfilesPresent();
+  public static com.android.documentsui.UserManagerState create(android.content.Context);
+  public java.util.Map getCanForwardToProfileIdMap(android.content.Intent);
+  public java.util.Map getCanForwardToProfileIdMapForAllowedUsers(android.content.Intent, com.android.documentsui.base.State);
+  public java.util.Map getUserIdToBadgeMap();
+  public java.util.Map getUserIdToLabelMap();
+  public java.util.List getUserIds();
+  public void onProfileActionStatusChange(java.lang.String, com.android.documentsui.base.UserId);
+  public void setCurrentStateIntent(android.content.Intent);
+}

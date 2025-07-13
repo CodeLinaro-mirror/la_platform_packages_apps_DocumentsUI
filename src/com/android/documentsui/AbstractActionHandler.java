@@ -20,6 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
@@ -947,13 +948,13 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             Context context = mActivity;
             UserId initialUser = mState.stack.getRoot().userId;
 
-            if (android.multiuser.Flags.enableMovingContentIntoPrivateSpace()) {
+            if (isMovingContentIntoPrivateSpaceEnabled()) {
                 List<UserId> allowedUsers = UserId.nonExcludedUsers(mState, getUserIds());
 
                 if (initialUser.isExcluded(mState) && !Objects.isNull(allowedUsers)
                         && !allowedUsers.isEmpty()) {
                     // start with the next available user. This could be any user.
-                    initialUser = allowedUsers.getFirst();
+                    initialUser = allowedUsers.get(0);
                 }
             }
 

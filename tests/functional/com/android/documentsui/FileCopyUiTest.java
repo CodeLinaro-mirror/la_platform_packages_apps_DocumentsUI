@@ -43,6 +43,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.filters.SkipScreenRecording;
 import com.android.documentsui.services.TestNotificationService;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -489,6 +490,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
     }
 
     @HugeLongTest
+    @SkipScreenRecording
     public void testRecursiveCopyDocuments_InternalStorageToDownloadsProvider()
             throws Exception {
         // Create Download folder if it doesn't exist.
