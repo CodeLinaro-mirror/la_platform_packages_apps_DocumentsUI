@@ -19,6 +19,7 @@ package com.android.documentsui.base;
 import static androidx.core.util.Preconditions.checkNotNull;
 
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
+import static com.android.documentsui.util.FlagUtils.isSupportVisibleBackgroundUserFlagEnabled;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -33,6 +34,8 @@ import android.provider.DocumentsContract;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.loader.content.CursorLoader;
+
+import com.android.modules.utils.build.SdkLevel;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -128,6 +131,13 @@ public final class UserId {
     }
 
     /**
+     * Returns a user manager instance of this user.
+     */
+    public UserManager getUserManager(Context context) {
+        return asContext(context).getSystemService(UserManager.class);
+    }
+
+    /**
      * If this target user is a managed profile, then this returns a badged copy of the given icon
      * to be able to distinguish it from the original icon.
      */
@@ -186,6 +196,38 @@ public final class UserId {
         }
 
         return filteredUsers;
+    }
+
+    /**
+     * Checks whether this user is a visible background non-profile user.
+     *
+     * @param context The Context
+     * @return true if the this user is a visible background non-profile user.
+     */
+    public boolean isVisibleBackgroundFullUser(Context context) {
+        if (!isSupportVisibleBackgroundUserFlagEnabled()) {
+            // The "supporting visible background user" feature is not supported.
+            return false;
+
+        }
+        if (!SdkLevel.isAtLeastU()) {
+            // The "visible background non-profile user" feature has been supported since U-OS.
+            return false;
+        }
+        final UserManager um = getUserManager(context);
+        // A visible background non-profile user is a user that is not a foreground user, not a
+        // profile, and is visible.
+        return !um.isUserForeground() && !um.isProfile() && um.isUserVisible();
+    }
+
+    /**
+     * Checks whether this user is a foreground user.
+     *
+     * @param context The Context
+     * @return true if this user is a foreground user.
+     */
+    public boolean isUserForeground(Context context) {
+        return getUserManager(context).isUserForeground();
     }
 
     /**

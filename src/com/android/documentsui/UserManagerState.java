@@ -23,6 +23,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFI
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
+import static com.android.documentsui.util.FlagUtils.isSupportVisibleBackgroundUserFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.Manifest;
@@ -266,6 +267,17 @@ public interface UserManagerState {
             if (userProperties.getShowInQuietMode() != UserProperties.SHOW_IN_QUIET_MODE_HIDDEN) {
                 return;
             }
+            if (isSupportVisibleBackgroundUserFlagEnabled()) {
+                if (!mUserManager.isSameProfileGroup(
+                        UserHandle.of(mCurrentUser.getIdentifier()),
+                        UserHandle.of(userId.getIdentifier()))) {
+                    // The concurrent multi-user feature allows multiple users to exist concurrently
+                    // and visibly in the system.
+                    // In this case, the process owner user should not be affected by events
+                    // from other profile groups.
+                    return;
+                }
+            }
             if (Intent.ACTION_PROFILE_UNAVAILABLE.equals(action)
                     || Intent.ACTION_PROFILE_REMOVED.equals(action)) {
                 synchronized (mUserIds) {
@@ -346,8 +358,20 @@ public interface UserManagerState {
 
             for (UserHandle handle : userProfiles) {
                 if (SdkLevel.isAtLeastV()) {
-                    if (!isProfileAllowed(handle)) {
-                        continue;
+                    if (isSupportVisibleBackgroundUserFlagEnabled()) {
+                        // UserState.getUserIds should include {@link UserId#CURRENT_USER}.
+                        // When a visible background user logged in
+                        // on a secondary display runs DocumentsUI,
+                        // UserId.CURRENT_USER  of that DocumentsUI will be set to the
+                        // UserHandle object of the visible background user.
+                        if (!UserId.of(handle).isVisibleBackgroundFullUser(mContext)
+                                && !isProfileAllowed(handle)) {
+                            continue;
+                        }
+                    } else {
+                        if (!isProfileAllowed(handle)) {
+                            continue;
+                        }
                     }
                 } else {
                     // On Android U and below, ensure the following profiles are included:
@@ -496,6 +520,13 @@ public interface UserManagerState {
             if (userId.getIdentifier() == ActivityManager.getCurrentUser()) {
                 return getEnterpriseString(PERSONAL_TAB, getRes(R.string.personal_tab));
             }
+            if (isSupportVisibleBackgroundUserFlagEnabled()) {
+                if (userId.isVisibleBackgroundFullUser(mContext)) {
+                    // If the user is a visible background user, we return the personal tab label.
+                    // This is because the visible background user is not a profile
+                    return getEnterpriseString(PERSONAL_TAB, getRes(R.string.personal_tab));
+                }
+            }
             try {
                 Context userContext =
                         mContext.createContextAsUser(
@@ -577,6 +608,13 @@ public interface UserManagerState {
         private Drawable getProfileBadge(UserId userId) {
             if (userId.getIdentifier() == ActivityManager.getCurrentUser()) {
                 return null;
+            }
+            if (isSupportVisibleBackgroundUserFlagEnabled()) {
+                if (userId.isVisibleBackgroundFullUser(mContext)) {
+                    // If the user is a visible background user, we return null
+                    // since it is not a profile user.
+                    return null;
+                }
             }
             try {
                 Context userContext =

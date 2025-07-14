@@ -68,5 +68,10 @@ class FlagUtils {
             return SdkLevel.isAtLeastB() &&
                     android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
         }
+
+        @JvmStatic
+        fun isSupportVisibleBackgroundUserFlagEnabled(): Boolean {
+            return Flags.supportVisibleBackgroundUser()
+        }
     }
 }
