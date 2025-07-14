@@ -22,6 +22,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
+import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.Manifest;
@@ -245,7 +246,7 @@ public interface UserManagerState {
                 State state) {
             synchronized (mCanForwardToProfileIdMap) {
                 if (mCanForwardToProfileIdMap.isEmpty()) {
-                    if (android.multiuser.Flags.enableMovingContentIntoPrivateSpace()) {
+                    if (isMovingContentIntoPrivateSpaceEnabled()) {
                         getCanForwardToProfileIdMapInternalForAllowedUsers(intent,
                                 UserId.nonExcludedUsers(state, getUserIds()));
                     } else {
@@ -666,7 +667,7 @@ public interface UserManagerState {
                     mCanForwardToProfileIdMap.put(
                             userId,
                             isCrossProfileAllowedToUser(
-                                    mContext, intent, userIds.getFirst(), userId));
+                                    mContext, intent, userIds.get(0), userId));
                 }
             }
         }
