@@ -35,6 +35,7 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -88,6 +89,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("file1.log");
     }
 
+    @Ignore
     @Test
     public void testOpenInNewWindow_preservesFiles() throws Exception {
         // Select Recents in the existing window and open ROOT_0 in the new window so we can

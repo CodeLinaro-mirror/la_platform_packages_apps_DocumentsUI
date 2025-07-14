@@ -11,6 +11,17 @@
   "documentsui-mainline-presubmit": [
     {
       "name": "DocumentsUIUnitTests"
+    },
+    {
+      "name": "DocumentsUIGoogleTests",
+      "options": [
+        {
+          "exclude-annotation": "androidx.test.filters.LargeTest"
+        },
+        {
+          "exclude-annotation": "com.android.documentsui.filters.HugeLongTest"
+        }
+      ]
     }
   ],
   "desktop-presubmit": [
@@ -22,6 +33,9 @@
       "options": [
         {
           "exclude-annotation": "androidx.test.filters.LargeTest"
+        },
+        {
+          "exclude-annotation": "com.android.documentsui.filters.HugeLongTest"
         }
       ]
     }

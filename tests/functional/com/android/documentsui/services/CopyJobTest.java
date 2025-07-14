@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.provider.DocumentsContract.Document;
 
+import androidx.test.filters.LargeTest;
 import androidx.test.filters.MediumTest;
 
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
@@ -143,6 +144,8 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
         runCopyDirRecursivelyTest();
     }
 
+    // This test sometimes takes >1 minute to run.
+    @LargeTest
     @Test
     public void testCopyDirRecursively_loadingInFirstCursor() throws Exception {
         mDocs.setLoadingDuration(500);

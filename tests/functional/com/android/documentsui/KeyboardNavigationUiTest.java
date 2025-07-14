@@ -120,14 +120,15 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
 
         // We want to explicitly check the focus inside the nav rail root list in nav rail layout,
         // otherwise, check it in the drawer (container_roots).
-        final @IdRes int containerId = bots.main.isNavRailLayout() ? getRes(
-                R.id.nav_rail_container_roots
-        ) : getRes(R.id.container_roots);
+        final @IdRes int containerId =
+                bots.main.inNavRailLayout()
+                        ? getRes(R.id.nav_rail_container_roots)
+                        : getRes(R.id.container_roots);
 
         if (bots.main.inDrawerLayout()) {
             // If drawer layout is used, we need to open drawer first to show all the nav roots.
             bots.roots.openDrawer();
-        } else if (bots.main.isNavRailLayout()) {
+        } else if (bots.main.inNavRailLayout()) {
             // If nav rail layout is used, the first Tab will move the focus to the burger menu
             // inside the nav rail root list.
             bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);

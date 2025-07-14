@@ -147,6 +147,7 @@ class RecyclerRootsAdapterTest {
         null,
         null,
         null,
+        null
       )
     whenever(activity.getInjector()).thenReturn(injector)
     val event = KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB)
