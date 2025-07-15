@@ -65,11 +65,6 @@ public class SearchChipViewManager {
     private static final int CHIP_MOVE_ANIMATION_DURATION = 250;
     // Defined large file as the size is larger than 10 MB.
     private static final long LARGE_FILE_SIZE_BYTES = 10000000L;
-    // Defined a week ago as now in millis.
-    private static final long A_WEEK_AGO_MILLIS =
-            LocalDate.now().minusDays(7).atStartOfDay(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli();
 
     private static final int TYPE_IMAGES = MetricConsts.TYPE_CHIP_IMAGES;
     private static final int TYPE_DOCUMENTS = MetricConsts.TYPE_CHIP_DOCS;
@@ -199,8 +194,13 @@ public class SearchChipViewManager {
                 queryArgs.putLong(DocumentsContract.QUERY_ARG_FILE_SIZE_OVER,
                         LARGE_FILE_SIZE_BYTES);
             } else if (data.getChipType() == MetricConsts.TYPE_CHIP_FROM_THIS_WEEK) {
+                // Calculate a week ago from now.
+                long aWeekAgoFromNowInMillis =
+                        LocalDate.now().minusDays(7).atStartOfDay(ZoneId.systemDefault())
+                                .toInstant()
+                                .toEpochMilli();
                 queryArgs.putLong(DocumentsContract.QUERY_ARG_LAST_MODIFIED_AFTER,
-                        A_WEEK_AGO_MILLIS);
+                        aWeekAgoFromNowInMillis);
             } else {
                 Collections.addAll(checkedMimeTypes, data.getMimeTypes());
             }
