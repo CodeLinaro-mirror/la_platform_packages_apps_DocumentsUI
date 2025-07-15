@@ -933,11 +933,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
 
             if (isSearchV2Enabled()) {
-                // SearchV2 needs to know the root, as it fine-tunes it behavior based on where
-                // search is performed. Thus before creating a loader we update the search view
-                // manager with the current root. Search view manager then is ready to act
-                // appropriately, once it gets notified about search starting.
-                mSearchMgr.setCurrentRoot(mState.stack.getRoot());
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
@@ -1042,10 +1037,35 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
 
             DocumentStack stack = mState.stack;
+
+            RootInfo root = stack.getRoot();
+
+            if (isMovingContentIntoPrivateSpaceEnabled()) {
+                List<UserId> allowedUsers = UserId.nonExcludedUsers(mState,
+                        mInjector.userManagerProvider.getUserIds(mActivity));
+
+                // If the current root's user is excluded and there are other users available
+                if (root.userId.isExcluded(mState) && !allowedUsers.isEmpty()) {
+                    UserId newUserId = allowedUsers.get(0);
+
+                    RootInfo newRoot = RootInfo.copyRootInfo(root);
+                    newRoot.userId = newUserId;
+
+                    stack.changeRoot(newRoot);
+
+                    root = newRoot;
+                }
+            }
+
+            // SearchV2 needs to know the root, as it fine-tunes it behavior based on where
+            // search is performed. Thus before creating a loader we update the search view
+            // manager with the current root. Search view manager then is ready to act
+            // appropriately, once it gets notified about search starting.
+            mSearchMgr.setCurrentRoot(root);
+
             Duration lastModifiedDelta = stack.isRecents()
                     ? Duration.ofMillis(RecentsLoader.REJECT_OLDER_THAN)
                     : null;
-            RootInfo root = stack.getRoot();
             int maxResults = (root == null || root.isRecents())
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
             QueryOptions options = new QueryOptions(
