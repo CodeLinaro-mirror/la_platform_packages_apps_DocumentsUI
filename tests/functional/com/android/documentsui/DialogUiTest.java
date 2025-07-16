@@ -91,10 +91,19 @@ public class DialogUiTest {
         mCreateDirectoryFragment = null;
     }
 
+    void openCreateDirectoryFragmentOnMainThread() {
+        InstrumentationRegistry.getInstrumentation()
+                .runOnMainSync(
+                        () -> {
+                            CreateDirectoryFragment.show(mFragmentManager);
+                            mFragmentManager.executePendingTransactions();
+                        });
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
     @Test
     public void testCreateDialogShows() throws Throwable {
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
@@ -104,8 +113,7 @@ public class DialogUiTest {
 
     @Test
     public void testCreateDialogShowsDismiss() throws Throwable {
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
@@ -121,8 +129,7 @@ public class DialogUiTest {
     @Test
     public void testCreateDialogShows_textInputEditText_shouldNotTruncateOnPortrait()
             throws Throwable {
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
@@ -154,8 +161,7 @@ public class DialogUiTest {
         mActivityTestRule.launchActivity(mFileActivityIntent);
         mFragmentManager = mActivityTestRule.getActivity().getSupportFragmentManager();
 
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
@@ -175,8 +181,7 @@ public class DialogUiTest {
         mActivityTestRule.launchActivity(mFileActivityIntent);
         mFragmentManager = mActivityTestRule.getActivity().getSupportFragmentManager();
 
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
@@ -195,8 +200,8 @@ public class DialogUiTest {
         mActivityTestRule.launchActivity(mFileActivityIntent);
         mFragmentManager = mActivityTestRule.getActivity().getSupportFragmentManager();
 
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
+
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
@@ -217,8 +222,7 @@ public class DialogUiTest {
         mActivityTestRule.launchActivity(mFileActivityIntent);
         mFragmentManager = mActivityTestRule.getActivity().getSupportFragmentManager();
 
-        mActivityTestRule.runOnUiThread(() -> CreateDirectoryFragment.show(mFragmentManager));
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        openCreateDirectoryFragmentOnMainThread();
         mCreateDirectoryFragment =
                 (CreateDirectoryFragment) mFragmentManager.findFragmentByTag(CREATE_FRAGEMENT_TAG);
 
