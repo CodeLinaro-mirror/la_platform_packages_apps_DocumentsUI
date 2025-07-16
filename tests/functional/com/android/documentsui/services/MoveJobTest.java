@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.provider.DocumentsContract.Document;
 
+import androidx.test.filters.LargeTest;
 import androidx.test.filters.MediumTest;
 
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
@@ -147,6 +148,7 @@ public class MoveJobTest extends AbstractCopyJobTest<MoveJob> {
         mDocs.assertChildCount(mSrcRoot, 0);
     }
 
+    @LargeTest
     @Test
     public void testMoveDirRecursively_loadingInFirstCursor() throws Exception {
         mDocs.setLoadingDuration(500);
