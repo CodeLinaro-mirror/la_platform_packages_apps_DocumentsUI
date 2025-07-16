@@ -94,6 +94,30 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    public void extractArchiveViaActionMenu() throws Exception {
+        createArchiveInRootDir0();
+        bots.roots.openRoot(ROOT_0_ID);
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.selectDocument("archive.zip", 1);
+        bots.main.clickActionItem("Extract here");
+        assertExtractedArchive();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    public void browseArchiveViaActionMenu() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.selectDocument("archive.zip", 1);
+        bots.main.clickActionItem("Browse");
+        bots.directory.waitForDocument("file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.openDocument("dir1");
+        bots.directory.waitForDocument("cherries.txt");
+    }
+
+    @Test
     @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void openArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
