@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasMoreThanOneChild;
+import static com.android.documentsui.conditions.HasChildCountCondition.hasNoChildren;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasOneChild;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
@@ -551,5 +552,20 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.clearSelection();
         bots.search.clickSearchViewClearButton();
         device.wait(Until.findObject(By.res(pkg + ":id/history_list")), mTimeout);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testUnhandledRootsReturnEmptyCursors() throws UiObjectNotFoundException {
+        String pkg = bots.directory.mTargetPackage;
+
+        // Use Paging Root, as it throws:
+        //     java.lang.UnsupportedOperationException: Search not supported
+        bots.roots.openRoot("Paging Root");
+        bots.search.expand();
+        bots.search.setInputText("00");
+        UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
+        directoryList.wait(hasNoChildren(), mTimeout);
+        device.wait(Until.gone(By.displayId(R.id.progressbar)), mTimeout);
     }
 }
