@@ -92,6 +92,12 @@ class SearchLoader(
                 try {
                     cursor = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
                     set(cursor)
+                } catch (e: Exception) {
+                    if (DEBUG) {
+                        Log.d(TAG, "Failed to get cursor for $searchUri", e)
+                    }
+                    cursor = emptyCursor()
+                    set(cursor)
                 } finally {
                     latch.countDown()
                 }

@@ -36,6 +36,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.documentsui.actions.RelaxedClickAction
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
@@ -138,6 +139,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
 
         openPanel()
@@ -240,6 +242,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
+
         // Overall progress should be 25%.
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(25)))
 
@@ -295,6 +299,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             msRemaining = 10000,
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         mActivityScenario!!.recreate()
 
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
@@ -380,6 +385,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
 
         sendProgress(arrayListOf(inProgress.toJobProgress()))
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
         onView(allOf(withId(R.id.job_progress_toolbar_badge), isDisplayed())).check(doesNotExist())
 
@@ -437,13 +443,15 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             failed.toJobProgress(),
         ))
 
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
+
         // There are two jobs completed and one job at 40%, so the total progress is 80%.
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(80)))
         onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
 
         // Click dismiss all. Only the two completed jobs should disappear.
         openPanel()
-        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(click())
+        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(RelaxedClickAction())
         onView(withText(succeeded.msg)).check(doesNotExist())
         onView(withText(failed.msg)).check(doesNotExist())
         onView(withText(inProgress.msg)).check(matches(isDisplayed()))
@@ -459,7 +467,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // When all tracked jobs are completed, dismiss all should also close the panel.
         openPanel()
-        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(click())
+        onView(withId(R.id.job_progress_panel_dismiss_all)).perform(RelaxedClickAction())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
     }
