@@ -139,6 +139,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
 
         openPanel()
@@ -241,6 +242,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
+
         // Overall progress should be 25%.
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(25)))
 
@@ -296,6 +299,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             msRemaining = 10000,
         )
         sendProgress(arrayListOf(progress.toJobProgress()))
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         mActivityScenario!!.recreate()
 
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
@@ -381,6 +385,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         )
 
         sendProgress(arrayListOf(inProgress.toJobProgress()))
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
         onView(allOf(withId(R.id.job_progress_toolbar_badge), isDisplayed())).check(doesNotExist())
 
@@ -437,6 +442,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             succeeded.toJobProgress(),
             failed.toJobProgress(),
         ))
+
+        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
 
         // There are two jobs completed and one job at 40%, so the total progress is 80%.
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(80)))
