@@ -26,11 +26,13 @@ import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.UserHandle;
@@ -43,6 +45,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -59,6 +62,7 @@ import com.android.documentsui.ProviderExecutor;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
+import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.MimeTypes;
@@ -76,7 +80,7 @@ import com.android.documentsui.util.CrossProfileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -118,7 +122,13 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 new MessageBuilder(this),
                 DialogController.create(features, this),
                 DocumentsApplication.getFileTypeLookup(this),
-                (Collection<RootInfo> roots) -> {
+                (Collection<RootInfo> roots) -> {},
+                new UserManagerProvider() {
+                    @Override
+                    @RequiresApi(Build.VERSION_CODES.S)
+                    public List<UserId> getUserIds(Context context) {
+                        return DocumentsApplication.getUserManagerState(context).getUserIds();
+                    }
                 });
 
         super.onCreate(icicle);
@@ -543,32 +553,36 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     }
 
     private void setExcludedUsers(State state, Intent intent) {
-        int[] excludedUserIdsArray = intent.getIntArrayExtra(
-                DocumentsContract.EXTRA_EXCLUDED_USERS);
-        // Validate if we are not excluding all the users
-        if (excludedUserIdsArray != null && excludedUserIdsArray.length > 0) {
-            List<UserHandle> allUsers = getApplicationContext().getSystemService(
-                    UserManager.class).getAllProfiles();
-            Set<Integer> excludedIdsSet = Arrays.stream(excludedUserIdsArray)
-                    .boxed()
-                    .collect(Collectors.toSet());
+        try {
+            ArrayList<UserHandle> excludedUsersArray = intent.getParcelableArrayListExtra(
+                    DocumentsContract.EXTRA_EXCLUDED_USERS, UserHandle.class);
+            // Validate if we are not excluding all the users
+            if (excludedUsersArray != null && !excludedUsersArray.isEmpty()) {
+                List<UserHandle> allUsers = getApplicationContext().getSystemService(
+                        UserManager.class).getAllProfiles();
+                Set<Integer> excludedIdsSet = excludedUsersArray.stream()
+                        .map(UserHandle::getIdentifier)
+                        .collect(Collectors.toSet());
 
-            // Check if the set of excluded IDs contains every available user ID.
-            boolean allUsersAreExcluded = true;
-            if (allUsers.isEmpty()) {
-                allUsersAreExcluded = false;
-            } else {
-                for (UserHandle user : allUsers) {
-                    if (!excludedIdsSet.contains(user.getIdentifier())) {
-                        allUsersAreExcluded = false;
-                        break;
+                // Check if the set of excluded IDs contains every available user ID.
+                boolean allUsersAreExcluded = true;
+                if (allUsers.isEmpty()) {
+                    allUsersAreExcluded = false;
+                } else {
+                    for (UserHandle user : allUsers) {
+                        if (!excludedIdsSet.contains(user.getIdentifier())) {
+                            allUsersAreExcluded = false;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!allUsersAreExcluded) {
-                state.excludedUserIds = excludedIdsSet;
+                if (!allUsersAreExcluded) {
+                    state.excludedUserIds = excludedIdsSet;
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to get excluded users from intent", e);
         }
     }
 }

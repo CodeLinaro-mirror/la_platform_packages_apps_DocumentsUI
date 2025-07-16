@@ -25,6 +25,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_menu_extract_here"
+        android:title="@string/menu_extract_here"
+        android:visible="false" />
+    <item
+        android:id="@+id/action_menu_browse"
+        android:title="@string/menu_browse"
+        android:visible="false" />
+    <item
         android:id="@+id/action_menu_open_with"
         android:title="@string/menu_open_with"
         android:showAsAction="never"

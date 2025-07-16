@@ -23,6 +23,7 @@ import static android.provider.DocumentsContract.QUERY_ARG_MIME_TYPES;
 import static android.provider.DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
 
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -517,7 +518,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testOnSearchStartingCalled() {
         mSearchViewManager.onClick(null);
         mTestEventHandler.nextReturn(true);
@@ -539,7 +540,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testMediaAndDownloadsHiddenOnSearchEverywhere() {
         RootInfo mediaRoot = spy(new RootInfo());
         mediaRoot.authority = Providers.AUTHORITY_MEDIA;

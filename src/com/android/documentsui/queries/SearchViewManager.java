@@ -562,6 +562,10 @@ public class SearchViewManager implements
         if (isSearchV2Enabled()) {
             if (mSearchOptionsController != null) {
                 if (SearchOptionsControls.DROPDOWNS == controls) {
+                    Integer mimeChipType = mChipViewManager.getLeadingMimeChipType();
+                    if (mimeChipType != null) {
+                        mSearchOptionsController.setSelectedFileType(mimeChipType);
+                    }
                     mSearchOptionsController.show(mCurrentRoot);
                 } else {
                     mSearchOptionsController.hide();

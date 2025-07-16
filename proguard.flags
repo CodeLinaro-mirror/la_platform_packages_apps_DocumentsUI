@@ -68,10 +68,12 @@
   int work_off;
 }
 -keep class com.android.documentsui.R$id {
+  int action_menu_browse;
   int action_menu_compress;
   int action_menu_copy_to;
   int action_menu_delete;
   int action_menu_deselect_all;
+  int action_menu_extract_here;
   int action_menu_extract_to;
   int action_menu_inspect;
   int action_menu_move_to;
@@ -275,4 +277,18 @@
   public java.util.List getUserIds();
   public void onProfileActionStatusChange(java.lang.String, com.android.documentsui.base.UserId);
   public void setCurrentStateIntent(android.content.Intent);
+}
+
+-keep class com.android.documentsui.Injector {
+  public <init>(com.android.documentsui.base.Features, com.android.documentsui.ActivityConfig, com.android.documentsui.ui.MessageBuilder, com.android.documentsui.ui.DialogController, com.android.documentsui.base.Lookup, java.util.function.Consumer, com.android.documentsui.Model, com.android.documentsui.UserManagerProvider);
+  com.android.documentsui.ActivityConfig config;
+  com.android.documentsui.ui.DialogController dialogs;
+  com.android.documentsui.FocusManager focusManager;
+  com.android.documentsui.picker.PickResult pickResult;
+  com.android.documentsui.queries.SearchViewManager searchManager;
+  com.android.documentsui.DocsSelectionHelper selectionMgr;
+}
+
+-keep interface com.android.documentsui.UserManagerProvider {
+  public java.util.List getUserIds(android.content.Context);
 }
