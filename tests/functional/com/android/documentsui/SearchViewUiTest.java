@@ -452,9 +452,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
-        // Move back to TEST_ROOT_0, repeat search, and expect the last modified trigger to be again
-        // visible.
-        bots.roots.openRoot("TEST_ROOT_0");
+        // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
+        bots.roots.openRoot("Downloads");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
         bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
