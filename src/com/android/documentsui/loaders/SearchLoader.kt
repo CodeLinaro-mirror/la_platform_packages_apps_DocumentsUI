@@ -91,14 +91,13 @@ class SearchLoader(
             val queryDuration = measureTime {
                 try {
                     cursor = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
-                    set(cursor)
                 } catch (e: Exception) {
                     if (DEBUG) {
                         Log.d(TAG, "Failed to get cursor for $searchUri", e)
                     }
                     cursor = emptyCursor()
-                    set(cursor)
                 } finally {
+                    set(cursor)
                     latch.countDown()
                 }
             }
