@@ -409,6 +409,8 @@
         <item quantity="one">Copied <xliff:g id="count" example="1">%1$d</xliff:g> item to clipboard.</item>
         <item quantity="other">Copied <xliff:g id="count" example="3">%1$d</xliff:g> items to clipboard.</item>
     </plurals>
+    <!-- Toast shown when an archive cannot be extracted in a read-only folder [CHAR LIMIT=96] -->
+    <string name="cannot_extract_in_read_only_folder">This archive is in a read-only location and cannot be extracted here.</string>
     <!-- Toast shown when the file operation is not supported [CHAR LIMIT=48] -->
     <string name="file_operation_rejected">File operation is not supported.</string>
     <!-- Toast shown when the file operation is not supported [CHAR LIMIT=48] -->

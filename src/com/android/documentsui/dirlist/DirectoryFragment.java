@@ -125,6 +125,7 @@ import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
+import com.android.documentsui.ui.Snackbars;
 import com.android.documentsui.util.FileUtils;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -847,10 +848,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     /**
      * If the zip_ng_ro flag is enabled, and if DocsUI is in file manager mode (i.e. not in file
-     * picker mode), and if the activated item is a supported archive, then this method starts
-     * unpacking the archive.
+     * picker mode), and if the activated item is a supported archive, and if this archive is
+     * located in a writable folder, then this method starts unpacking the archive.
      *
-     * @return whether the archive is getting unpacked.
+     * @return whether the initiating user action is considered as fully handled.
      */
     private boolean startUnpackingArchive(DocumentItemDetails docDetails) {
         if (!isZipNgFlagEnabled() || mState.action != ACTION_BROWSE) return false;
@@ -860,6 +861,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         final DocumentInfo doc = mModel.getDocument(key);
         if (doc == null || !doc.isArchive()) return false;
+
+        final DocumentInfo dir = mState.stack.peek();
+        if (!dir.isCreateSupported()) {
+            Log.e(TAG, "Cannot extract archive in read-only folder");
+            Snackbars.showError(mActivity, R.string.cannot_extract_in_read_only_folder);
+            return true;
+        }
 
         final MutableSelection<String> selected = new MutableSelection<>();
         selected.add(key);
