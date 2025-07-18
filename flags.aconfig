@@ -64,3 +64,12 @@ flag {
     bug: "409265240"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "support_visible_background_user"
+    namespace: "documentsui"
+    description: "Enables support for visible background users."
+    bug: "393987170"
+    is_fixed_read_only: true
+}
+
