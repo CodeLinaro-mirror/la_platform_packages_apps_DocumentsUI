@@ -297,7 +297,7 @@
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"इस फ़ोल्डर का इस्तेमाल नहीं किया जा सकता"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"अपनी निजता की सुरक्षा करने के लिए, कोई और फ़ोल्डर चुनें"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"नया फ़ोल्डर बनाएं"</string>
-    <string name="search_bar_hint" msgid="146031513183888721">"इस डिवाइस के बारे में खोजें"</string>
+    <string name="search_bar_hint" msgid="146031513183888721">"इस डिवाइस में खोजें"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"टेक्स्ट मिटाएं"</string>
     <string name="search_location_this_folder" msgid="6458835123175563013">"यह फ़ोल्डर"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"रूट फ़ोल्डर"</string>

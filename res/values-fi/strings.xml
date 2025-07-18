@@ -121,7 +121,7 @@
     <string name="root_type_device" msgid="1713604128005476585">"Laitteet"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"Lisää sovelluksia"</string>
     <string name="empty" msgid="5300254272613103004">"Ei kohteita"</string>
-    <string name="no_results" msgid="2371026325236359209">"Ei osumia kohteessa %1$s."</string>
+    <string name="no_results" msgid="2371026325236359209">"%1$s ei sisältänyt vastaavuuksia"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"Tiedoston avaaminen epäonnistui."</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"Arkistoissa olevia tiedostoja ei voi avata."</string>
     <string name="toast_failed_delete" msgid="3453846588205817591">"Joidenkin dokumenttien poistaminen epäonnistui."</string>
