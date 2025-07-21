@@ -18,7 +18,6 @@ package com.android.documentsui;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
-import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
@@ -63,7 +62,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaDefaultAction() throws Exception {
         createArchiveInRootDir0();
-        bots.roots.openRoot(ROOT_0_ID);
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         assertExtractedArchive();
@@ -73,7 +71,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaContextMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.roots.openRoot(ROOT_0_ID);
         bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Extract here");
@@ -97,7 +94,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaActionMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.roots.openRoot(ROOT_0_ID);
         bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Extract here");

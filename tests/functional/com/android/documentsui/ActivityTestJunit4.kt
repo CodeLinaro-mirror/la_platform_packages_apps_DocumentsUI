@@ -158,12 +158,10 @@ abstract class ActivityTestJunit4<T : Activity?> {
     protected open fun launchActivity() {
         val intent = Intent(context, FilesActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        if (this.initialRoot != null) {
+        val root = this.initialRoot
+        if (root != null) {
             intent.setAction(Intent.ACTION_VIEW)
-            intent.setDataAndType(
-                this.initialRoot!!.uri,
-                DocumentsContract.Root.MIME_TYPE_ITEM
-            )
+            intent.setDataAndType(root.uri, DocumentsContract.Root.MIME_TYPE_ITEM)
         }
         mActivityScenario = ActivityScenario.launch(intent)
     }
