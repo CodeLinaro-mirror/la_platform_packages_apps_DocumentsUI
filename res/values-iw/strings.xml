@@ -122,7 +122,7 @@
     <string name="root_type_device" msgid="1713604128005476585">"מכשירים"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"עוד אפליקציות"</string>
     <string name="empty" msgid="5300254272613103004">"אין פריטים"</string>
-    <string name="no_results" msgid="2371026325236359209">"‏אין התאמות ב%1$s"</string>
+    <string name="no_results" msgid="2371026325236359209">"‏אין התאמות %1$s"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"לא ניתן לפתוח את הקובץ"</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"לא ניתן לפתוח קבצים בארכיונים"</string>
     <string name="toast_failed_delete" msgid="3453846588205817591">"לא ניתן למחוק חלק מהמסמכים"</string>
@@ -327,7 +327,7 @@
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"לא ניתן להשתמש בתיקייה הזו"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"כדי להגן על הפרטיות שלך, עליך לבחור תיקייה אחרת"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"יצירת תיקייה חדשה"</string>
-    <string name="search_bar_hint" msgid="146031513183888721">"חיפוש המכשיר הזה"</string>
+    <string name="search_bar_hint" msgid="146031513183888721">"חיפוש במכשיר הזה"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"מחיקת הטקסט"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"תיקיית הבסיס"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"כל מקום"</string>
