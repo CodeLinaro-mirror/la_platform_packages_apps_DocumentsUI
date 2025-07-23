@@ -74,6 +74,10 @@ public final class Snackbars {
         makeSnackbar(activity, message, Snackbar.LENGTH_LONG).show();
     }
 
+    public static void showError(Activity activity, @StringRes int id) {
+        makeSnackbar(activity, getRes(id), Snackbar.LENGTH_LONG).show();
+    }
+
     public static final void showOperationRejected(Activity activity) {
         makeSnackbar(activity, getRes(R.string.file_operation_rejected), Snackbar.LENGTH_LONG)
                 .show();
