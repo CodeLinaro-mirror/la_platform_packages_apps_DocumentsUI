@@ -423,36 +423,43 @@
          during a copy. [CHAR LIMIT=48] -->
     <string name="notification_copy_files_converted_title">Some files were converted</string>
 
-    <string name="copy_in_progress" translatable="false">{count, plural,
-        =1 {Copying <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
-        other {Copying # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
+    <!-- Message informing user that files are being copied. -->
+    <string name="copy_in_progress">{count, plural,
+        =1 {Copying \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+        other {Copying # files to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
     }</string>
-    <string name="extract_in_progress" translatable="false">{count, plural,
+    <!-- Message informing user that files are being extracted from an archive. -->
+    <string name="extract_in_progress">{count, plural,
         =1 {Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
         other {Extracting # archives to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
     }</string>
-    <string name="move_in_progress" translatable="false">{count, plural,
-        =1 {Moving <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g> to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
-        other {Moving # files to <xliff:g id="directory" example="example folder">{directory}</xliff:g>}
+    <!-- Message informing user that files are being moved. -->
+    <string name="move_in_progress">{count, plural,
+        =1 {Moving \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+        other {Moving # files to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
     }</string>
-    <string name="delete_in_progress" translatable="false">{count, plural,
-        =1 {Deleting <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+    <!-- Message informing user that files are being deleted. -->
+    <string name="delete_in_progress">{count, plural,
+        =1 {Deleting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D}
         other {Deleting # files}
     }</string>
-    <string name="compress_in_progress" translatable="false">{count, plural,
-        =1 {Zipping <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+    <!-- Message informing user that files are being compressed into an archive. -->
+    <string name="compress_in_progress">{count, plural,
+        =1 {Zipping \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201C}
         other {Zipping # files}
     }</string>
     <!-- Accessibility label for an icon button which shows the progress of file operations when clicked. -->
     <string name="job_progress_icon_label">Show file progress</string>
-    <string name="job_progress_panel_title" translatable="false">File Progress</string>
-    <string name="job_progress_item_completed" translatable="false">Completed</string>
-    <string name="job_progress_item_failed" translatable="false">Failed</string>
+    <!-- Title for a pop-up window showing the progress of file operations. -->
+    <string name="job_progress_panel_title">File Progress</string>
+    <!-- Status message shown when a file operation is completed. -->
+    <string name="job_progress_item_completed">Completed</string>
     <!-- Status message shown when a file operation is canceled by the user. -->
     <string name="job_progress_item_canceled">Canceled</string>
     <!-- Label prompting the user to interact to view more details about errors/warnings encountered during a file operation. -->
     <string name="job_progress_item_see_details">See details</string>
-    <string name="job_progress_item_byte_progress" translatable="false">
+    <!-- Status message showing the current progress of a file operation in terms of bytes. -->
+    <string name="job_progress_item_byte_progress">
         <xliff:g id="currentBytes" example="2.4 MB">%1$s</xliff:g> of <xliff:g id="totalBytes" example="50 MB">%2$s</xliff:g>
     </string>
     <!-- Status message shown when a copy is completed. -->
@@ -462,9 +469,19 @@
     <!-- Status message shown when a delete is completed. -->
     <string name="delete_completed">Deleted</string>
     <!-- Status message shown when a compress file operation is completed. -->
-    <string name="compress_completed">Compressed</string>
+    <string name="compress_completed">Zipped</string>
     <!-- Status message shown when an extract file operation is completed. -->
     <string name="extract_completed">Extracted</string>
+    <!-- Status message shown when a copy fails. -->
+    <string name="copy_failed">Couldn\u2019t copy</string>
+    <!-- Status message shown when a move fails. -->
+    <string name="move_failed">Couldn\u2019t move</string>
+    <!-- Status message shown when a delete fails. -->
+    <string name="delete_failed">Couldn\u2019t delete</string>
+    <!-- Status message shown when a compress file operation fails. -->
+    <string name="compress_failed">Couldn\u2019t zip</string>
+    <!-- Status message shown when an extract file operation fails. -->
+    <string name="extract_failed">Couldn\u2019t extract</string>
 
     <!-- Accessibility label for a button to expand a notification. -->
     <string name="expand_label">Expand</string>
