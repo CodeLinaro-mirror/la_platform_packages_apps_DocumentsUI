@@ -29,6 +29,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_UN
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager;
@@ -1146,6 +1147,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // It won't end action mode if user cancels the delete.
             mActions.showDeleteDialog();
             return true;
+        } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
+            trashSelectedDocuments(selection);
+            return true;
         } else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
@@ -1282,6 +1286,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mActivity.onDocumentPicked(docs.get(0));
         }
     }
+
+    private void trashSelectedDocuments(final Selection selected) {
+        if (selected.isEmpty()) {
+            return;
+        }
+
+        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
+        List<DocumentInfo> docs = mModel.getDocuments(selected);
+        mActions.trashSelectedDocuments(docs);
+    }
+
 
     private void showChooserForDoc(final Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_OPEN);

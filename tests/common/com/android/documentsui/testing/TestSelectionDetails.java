@@ -36,6 +36,7 @@ public class TestSelectionDetails implements SelectionDetails {
     public boolean canExtract;
     public boolean canOpen;
     public boolean canViewInOwner;
+    public boolean canTrash;
 
     @Override
     public boolean containsPartialFiles() {
@@ -95,6 +96,11 @@ public class TestSelectionDetails implements SelectionDetails {
     @Override
     public boolean canViewInOwner() {
         return canViewInOwner;
+    }
+
+    @Override
+    public boolean canTrash() {
+        return canTrash;
     }
 
     @Override

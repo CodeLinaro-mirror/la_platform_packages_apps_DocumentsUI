@@ -373,6 +373,47 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
+    public void trashSelectedDocuments(List<DocumentInfo> docs) {
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
+
+        List<Uri> uris = new ArrayList<>(docs.size());
+        for (DocumentInfo doc : docs) {
+            uris.add(doc.derivedUri);
+        }
+
+        UrisSupplier srcs;
+        try {
+            srcs = UrisSupplier.create(
+                    uris,
+                    mClipStore);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to trash because we were unable to get item URIs.", e);
+            mDialogs.showFileOperationStatus(
+                    FileOperations.Callback.STATUS_FAILED,
+                    FileOperationService.OPERATION_TRASH,
+                    uris.size());
+            return;
+        }
+
+        FileOperation operation = new FileOperation.Builder()
+                .withOpType(FileOperationService.OPERATION_TRASH)
+                .withDestination(mState.stack)
+                .withSrcs(srcs)
+                .build();
+
+        FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,
+                FileOperations.createJobId());
+    }
+
+    @Override
     public void shareSelectedDocuments() {
         Metrics.logUserAction(MetricConsts.USER_ACTION_SHARE);
 

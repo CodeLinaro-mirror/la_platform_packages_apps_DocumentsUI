@@ -191,6 +191,7 @@ public class MetricConsts {
     public static final int SUBFILEOP_OBTAIN_STREAM_TYPE = 8;
     public static final int SUBFILEOP_QUICK_MOVE = 9;
     public static final int SUBFILEOP_QUICK_COPY = 10;
+    public static final int SUBFILEOP_TRASH_DOCUMENT = 11;
 
     @IntDef(flag = false, value = {
             SUBFILEOP_UNKNOWN,
@@ -203,7 +204,8 @@ public class MetricConsts {
             SUBFILEOP_DELETE_DOCUMENT,
             SUBFILEOP_OBTAIN_STREAM_TYPE,
             SUBFILEOP_QUICK_MOVE,
-            SUBFILEOP_QUICK_COPY
+            SUBFILEOP_QUICK_COPY,
+            SUBFILEOP_TRASH_DOCUMENT
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface SubFileOp {
