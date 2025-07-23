@@ -21,8 +21,8 @@ import android.app.Notification.EXTRA_PROGRESS_INDETERMINATE
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
 import android.net.Uri
-import android.platform.test.annotations.RequiresFlagsDisabled
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract.buildDocumentUri
 import android.util.Log
 import androidx.test.filters.MediumTest
@@ -30,7 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.services.FileOperationService.OPERATION_UNPACK
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -42,7 +42,7 @@ import org.junit.Test
 @MediumTest
 internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    val setFlags = OverrideFlagsRule()
 
     /** Tests with a MIME type that is not a supported archive type. */
     @Test
@@ -461,7 +461,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
 
     /** Tests with a ZIP archive containing a corrupted file that can be detected via its CRC. */
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
     fun badCrcChecked() {
         val uri = createDocument("application/zip", "archives/zip/bad-crc.zip")
         assertTreeIs(mutableMapOf("/bad-crc.zip" to 234))
@@ -507,7 +507,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_ZIP_NG_RO)
+    @DisableFlags(FLAG_ZIP_NG_RO)
     fun badCrcUnchecked() {
         val uri = createDocument("application/zip", "archives/zip/bad-crc.zip")
         assertTreeIs(mutableMapOf("/bad-crc.zip" to 234))
@@ -552,7 +552,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
 
     /** Tests with a ZIP archive containing a corrupted repository with wrong file sizes. */
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
     fun badSizesChecked() {
         val uri = createDocument("application/zip", "archives/zip/bad-sizes.zip")
         assertTreeIs(mutableMapOf("/bad-sizes.zip" to 886))
@@ -608,7 +608,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_ZIP_NG_RO)
+    @DisableFlags(FLAG_ZIP_NG_RO)
     fun badSizesUnchecked() {
         val uri = createDocument("application/zip", "archives/zip/bad-sizes.zip")
         assertTreeIs(mutableMapOf("/bad-sizes.zip" to 886))

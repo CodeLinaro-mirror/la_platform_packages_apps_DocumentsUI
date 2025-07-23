@@ -17,14 +17,14 @@
 package com.android.documentsui.queries
 
 import android.content.Context
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import android.widget.LinearLayout
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.MetricConsts
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -40,12 +40,12 @@ class TestSearchOptionsListener() : SearchOptionsListener {
     }
 }
 
-@RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+@EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY)
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class SearchOptionsControllerTest {
     @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    val setFlags = OverrideFlagsRule()
 
     lateinit var context: Context
     lateinit var controller: SearchOptionsController
