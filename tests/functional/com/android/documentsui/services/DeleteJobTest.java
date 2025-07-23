@@ -137,7 +137,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         assertEquals(Job.STATE_CREATED, progress.state);
         assertEquals(OPERATION_DELETE, progress.operationType);
         assertFalse(progress.hasFailures);
-        assertEquals("Deleting test1.txt", progress.msg);
+        assertEquals("Deleting “test1.txt”", progress.msg);
 
         job.run();
         mJobListener.waitForFinished();
@@ -146,7 +146,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(OPERATION_DELETE, progress.operationType);
         assertFalse(progress.hasFailures);
-        assertEquals("Deleting test1.txt", progress.msg);
+        assertEquals("Deleting “test1.txt”", progress.msg);
     }
 
     /**

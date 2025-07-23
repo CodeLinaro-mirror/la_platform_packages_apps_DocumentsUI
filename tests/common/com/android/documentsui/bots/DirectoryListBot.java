@@ -40,6 +40,7 @@ import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
@@ -222,21 +223,18 @@ public class DirectoryListBot extends Bots.BaseBot {
         Configurator.getInstance().setToolType(toolType);
     }
 
-    private void selectDocument(String label) throws UiObjectNotFoundException {
-        waitForDocument(label);
-        UiObject2 selectionHotspot = findSelectionHotspot(label);
-        selectionHotspot.click();
-    }
-
     /**
      * @param label The filename of the document
      * @param number Which nth document it is. The number corresponding to "n selected"
      */
     public void selectDocument(String label, int number) throws UiObjectNotFoundException {
-        selectDocument(label);
+        waitForDocument(label);
+        UiObject2 selectionHotspot = findSelectionHotspot(label);
+        selectionHotspot.click();
 
-        // wait until selection is fully done to avoid future click being registered as double
-        // clicking
+        // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
+        // also avoids a future click being registered as double clicking.
+        SystemClock.sleep((ViewConfiguration.getDoubleTapTimeout() * 3) / 2);
         assertSelection(number);
     }
 

@@ -22,6 +22,8 @@ import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 
+import static org.junit.Assert.assertNotNull;
+
 import android.net.Uri;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -65,6 +67,16 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         assertExtractedArchive();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    public void cannotExtractArchiveInReadOnlyFolder() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.openDocument("archive.zip");
+        assertNotNull("Expect an error snackbar", bots.directory.getSnackbar(
+                context.getString(R.string.cannot_extract_in_read_only_folder)));
     }
 
     @Test
