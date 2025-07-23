@@ -35,6 +35,12 @@ import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.Bots
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isVisualSignalsFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
 import java.io.IOException
 import org.junit.After
 import org.junit.Before
@@ -130,16 +136,8 @@ abstract class ActivityTestJunit4<T : Activity?> {
         ActivityTest.closeNonDocsUiWindows(context, device)
         launchActivity()
 
-        val layoutType = if (bots.main.inFixedLayout()) {
-            "Fixed layout"
-        } else if (bots.main.inNavRailLayout()) {
-            "Nav rail layout"
-        } else if (bots.main.inDrawerLayout()) {
-            "Drawer layout"
-        } else {
-            "Unknown layout (should not happen)"
-        }
-        Log.d(TAG, "Test is running with layout: $layoutType.")
+        logLayout()
+        logFeatureFlags()
 
         // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will
         // automatically open for phone devices. Espresso register click() as (x, y) MotionEvents,
@@ -202,6 +200,28 @@ abstract class ActivityTestJunit4<T : Activity?> {
             initialScreenOffTimeoutValue = null
             initialSleepTimeoutValue = null
         }
+    }
+
+    private fun logLayout() {
+        val layoutType = if (bots.main.inFixedLayout()) {
+            "Fixed layout"
+        } else if (bots.main.inNavRailLayout()) {
+            "Nav rail layout"
+        } else if (bots.main.inDrawerLayout()) {
+            "Drawer layout"
+        } else {
+            "Unknown layout (should not happen)"
+        }
+        Log.d(TAG, "Test is running with layout: $layoutType.")
+    }
+
+    private fun logFeatureFlags() {
+        Log.d(TAG, "Flag use_material3 = ${isUseMaterial3FlagEnabled()}")
+        Log.d(TAG, "Flag use_search_v2_read_only = ${isSearchV2Enabled()}")
+        Log.d(TAG, "Flag zip_ng_ro = ${isZipNgFlagEnabled()}")
+        Log.d(TAG, "Flag desktop_file_handling_ro = ${isDesktopFileHandlingFlagEnabled()}")
+        Log.d(TAG, "Flag visual_signals_ro = ${isVisualSignalsFlagEnabled()}")
+        Log.d(TAG, "Flag use_peek_preview_ro = ${isUsePeekPreviewFlagEnabled()}")
     }
 
     companion object {
