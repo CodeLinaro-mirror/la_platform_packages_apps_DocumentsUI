@@ -211,19 +211,48 @@
       <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
       <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
     </plurals>
+    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
+    <skip />
     <string name="file_operation_rejected" msgid="4301554203329008794">"ගොනු මෙහෙයුම වෙත සහාය නොදක්වයි."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ගොනු මෙහෙයුම අසාර්ථක විය."</string>
     <string name="rename_error" msgid="6700093173508118635">"ලේඛනය යළි නම් කිරීම අසාර්ථක විය"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"පිටතට ගන්න"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"සමහර ගොනු පරිවර්තනය කරන ලදී"</string>
+    <!-- no translation found for copy_in_progress (3314396340163205014) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (519951867474301835) -->
+    <skip />
+    <!-- no translation found for move_in_progress (2569791135683944801) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (9032473164450943788) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (7768916918745485546) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ගොනු ප්‍රගතිය පෙන්වන්න"</string>
+    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
+    <skip />
+    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
+    <skip />
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"අවලංගු කරන ලදි"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"විස්තර බලන්න"</string>
+    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
+    <skip />
     <string name="copy_completed" msgid="3749037014674785400">"පිටපත් කරන ලදි"</string>
     <string name="move_completed" msgid="3981250605092729273">"ගෙන යන ලදි"</string>
     <string name="delete_completed" msgid="4149401155614626199">"මකන ලදි"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"සම්පීඩිත"</string>
+    <!-- no translation found for compress_completed (6522047921428919799) -->
+    <skip />
     <string name="extract_completed" msgid="8824595789915249972">"උපුටා ගන්නා ලදි"</string>
+    <!-- no translation found for copy_failed (3700193913993844675) -->
+    <skip />
+    <!-- no translation found for move_failed (7692364307225994220) -->
+    <skip />
+    <!-- no translation found for delete_failed (2642684566325252513) -->
+    <skip />
+    <!-- no translation found for compress_failed (7397502181042157261) -->
+    <skip />
+    <!-- no translation found for extract_failed (8372397499452831323) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"දිග හරින්න"</string>
     <string name="collapse_label" msgid="4530974883269531062">"හකුළන්න"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> හට <xliff:g id="STORAGE"><i>^3</i></xliff:g> මත <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> නාමාවලිය වෙත ප්‍රවේශය දෙන්නද?"</string>
