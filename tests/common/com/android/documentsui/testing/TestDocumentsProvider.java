@@ -54,6 +54,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     private Cursor mNextChildDocuments;
     private Cursor mNextRecentDocuments;
+    private String mRuntimeMessage;
 
     // Emulates FileSystemProvider's support for search result limiting.
     private Boolean mSupportsSearchResultLimit = false;
@@ -84,6 +85,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection,
             String sortOrder) throws FileNotFoundException {
+        maybeThrowException();
         return mNextChildDocuments;
     }
 
@@ -109,6 +111,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor querySearchDocuments(@NonNull String rootId, @Nullable String[] projection,
             @NonNull Bundle queryArgs) {
+        maybeThrowException();
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);
 
         int maxResults = -1;
@@ -159,6 +162,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     @Override
     public Cursor querySearchDocuments(String rootId, String query, String[] projection) {
+        maybeThrowException();
         if (mNextChildDocuments == null) {
             return null;
         }
@@ -177,6 +181,22 @@ public class TestDocumentsProvider extends DocumentsProvider {
      */
     public void setNextChildDocumentsReturns(DocumentInfo... docs) {
         mNextChildDocuments = createDocumentsCursor(docs);
+    }
+
+    private void maybeThrowException() {
+        if (mRuntimeMessage != null) {
+            throw new RuntimeException(mRuntimeMessage);
+        }
+    }
+
+    /**
+     * Sets the runtime exception thrown in either querySearchDocuments or queryChildDocuments. If
+     * the message is set to null, no exception is thrown. A non-null message causes an exception
+     * to be thrown, interrupting a regular flow of document query.
+     * @param message The message to be used with a Runtime exception.
+     */
+    public void setThrownRuntimeMessage(String message) {
+        mRuntimeMessage = message;
     }
 
     /**
