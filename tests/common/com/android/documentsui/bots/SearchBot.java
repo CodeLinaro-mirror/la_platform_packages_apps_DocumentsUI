@@ -207,6 +207,11 @@ public class SearchBot extends Bots.BaseBot {
         return mContext.getResources().getBoolean(getRes(R.bool.show_docked_search));
     }
 
+    /** Whether or not the UI is using full bar for search view. */
+    public boolean isFullBarSearchViewEnabled() {
+        return mContext.getResources().getBoolean(getRes(R.bool.full_bar_search_view));
+    }
+
     /**
      * Returns the view interaction for the chip with the given text, specified by the ID. Chips
      * and dropdowns are dynamically added, so we wait for the chip to become visible.

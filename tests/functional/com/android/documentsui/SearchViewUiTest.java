@@ -32,6 +32,7 @@ import static com.android.documentsui.conditions.HasChildCountCondition.hasOneCh
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import android.os.RemoteException;
@@ -140,7 +141,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         assertFalse(bots.menu.hasMenuItem("Grid view"));
         assertFalse(bots.menu.hasMenuItem("List view"));
-        assertFalse(bots.menu.hasMenuItemByDesc("More options"));
+        assertEquals(!bots.search.isFullBarSearchViewEnabled(),
+                bots.menu.hasMenuItemByDesc("More options"));
     }
 
     @Test
