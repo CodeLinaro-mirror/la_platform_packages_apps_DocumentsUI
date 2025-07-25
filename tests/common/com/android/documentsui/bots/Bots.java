@@ -36,7 +36,9 @@ import android.view.View;
 
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
@@ -46,6 +48,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.DoNothingAction;
 import com.android.documentsui.util.FlagUtils;
 
 import junit.framework.AssertionFailedError;
@@ -154,6 +157,24 @@ public final class Bots {
             }
 
             return event;
+        }
+
+        /**
+         * Attempts a click, retrying if a long press occurs by mistake.
+         */
+        protected ViewAction clickAndRetryOnLongPress() {
+            return clickAndRetryOnLongPress(new DoNothingAction());
+        }
+
+        /**
+         * Attempts a click, retrying if a long press occurs by mistake. Executes the rollbackAction
+         * to undo the effect of the long press before retrying.
+         *
+         * @param rollbackAction is the action to be performed before retrying the click, if a long
+         *                       press was accidentally executed.
+         */
+        protected ViewAction clickAndRetryOnLongPress(ViewAction rollbackAction) {
+            return ViewActions.click(rollbackAction);
         }
 
         /**

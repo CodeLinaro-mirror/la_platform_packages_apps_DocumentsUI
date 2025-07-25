@@ -257,11 +257,11 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickToolbarItem(int id) {
-        onView(withId(id)).perform(click());
+        onView(withId(id)).perform(clickAndRetryOnLongPress());
     }
 
     public void clickNewFolder() {
-        onView(ACTIONBAR_OVERFLOW).perform(click());
+        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
 
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText("New folder")).perform(click());
@@ -269,9 +269,9 @@ public class UiBot extends Bots.BaseBot {
 
     public void clickActionbarOverflowItem(String label) {
         if (isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR_OVERFLOW).perform(click());
+            onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         } else {
-            onView(ACTIONBAR_OVERFLOW).perform(click());
+            onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         }
         mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
@@ -279,7 +279,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickToolbarOverflowItem(String label) {
-        onView(TOOLBAR_OVERFLOW).perform(click());
+        onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
     }
