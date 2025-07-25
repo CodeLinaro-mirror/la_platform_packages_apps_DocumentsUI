@@ -29,8 +29,9 @@ import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.app.Instrumentation;
 import android.content.ContentResolver;
@@ -56,6 +57,8 @@ import com.android.documentsui.rules.TestFilesRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.UUID;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -316,4 +319,36 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             cleanupFile(fileName, primaryRoot.title);
         }
     }
+
+    @Test
+    public void testRecentsShowsZipFiles() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+
+        String createdFileName = null;
+        try {
+            DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
+            assertNotNull(info);
+
+            // Create a zip file in "Download" folder. Since we are creating a file in the Download
+            // folder, create a unique name that has little to no chance of colliding with actual
+            // user files.
+            createdFileName = "a_zip_test_" + UUID.randomUUID() + ".zip";
+            storageDocsHelper.createDocument(info.documentId, "application/zip", createdFileName);
+            bots.directory.waitForDocument(createdFileName);
+
+            // Open Recent and wait for the newly created files to appear. We limit searches to just
+            // this week to make the test run more efficiently.
+            bots.roots.openRoot("Recent");
+
+            // Verify that just created zip file appears among recent files. It should appear on top
+            // so no scrolling.
+            assertTrue(bots.directory.findDocument(createdFileName).exists());
+        } finally {
+            if (createdFileName != null) {
+                cleanupFile(createdFileName, primaryRoot.title);
+            }
+        }
+    }
+
 }
