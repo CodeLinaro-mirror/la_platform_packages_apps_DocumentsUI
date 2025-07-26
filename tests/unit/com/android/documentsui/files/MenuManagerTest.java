@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -39,6 +40,7 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -115,6 +117,7 @@ public final class MenuManagerTest {
     private TestMenuItem mActionExtractHere;
     private TestMenuItem mActionBrowse;
     private TestMenuItem mActionModeTrash;
+    private TestMenuItem mActionModeRestoreFromTrash;
 
     /* Option Menu items */
     private TestMenuItem optionSearch;
@@ -205,6 +208,7 @@ public final class MenuManagerTest {
         mActionExtractHere = testMenu.findItem(R.id.action_menu_extract_here);
         mActionBrowse = testMenu.findItem(R.id.action_menu_browse);
         mActionModeTrash = testMenu.findItem(R.id.action_menu_move_to_trash);
+        mActionModeRestoreFromTrash = testMenu.findItem(R.id.action_menu_restore_from_trash);
 
         // Menu actions (including overflow) when action mode is not active.
         optionSearch = testMenu.findItem(R.id.option_menu_search);
@@ -1033,5 +1037,33 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
         // If the flag is disabled, the menu item will not be visible
         mActionModeTrash.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "Baklava")
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    public void testActionMenu_canRestoreFromTrash_enabled() {
+        selectionDetails.canRestore = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canRestore = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertEnabledAndVisible();
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "Baklava")
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    public void testActionMenu_canRestoreFromTrash_disabled() {
+        selectionDetails.canRestore = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canRestore = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
     }
 }
