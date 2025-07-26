@@ -211,19 +211,48 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> нерсе буферге көчүрүлдү.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> нерсе буферге көчүрүлдү.</item>
     </plurals>
+    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
+    <skip />
     <string name="file_operation_rejected" msgid="4301554203329008794">"Файл операциясы колдоого алынбайт."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Файл операциясы ишке ашкан жок."</string>
     <string name="rename_error" msgid="6700093173508118635">"Документтин аталышы өзгөртүлбөй калды"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Чыгаруу"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Айрым файлдардын форматы өзгөртүлдү"</string>
+    <!-- no translation found for copy_in_progress (3314396340163205014) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (519951867474301835) -->
+    <skip />
+    <!-- no translation found for move_in_progress (2569791135683944801) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (9032473164450943788) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (7768916918745485546) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Файлдагы операциянын аткарылышын көрсөтүү"</string>
+    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
+    <skip />
+    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
+    <skip />
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Жокко чыгарылды"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Чоо-жайын көрүү"</string>
+    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
+    <skip />
     <string name="copy_completed" msgid="3749037014674785400">"Көчүрүлдү"</string>
     <string name="move_completed" msgid="3981250605092729273">"Дарек өзгөрүлдү"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Өчүрүлдү"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"Кысылды"</string>
+    <!-- no translation found for compress_completed (6522047921428919799) -->
+    <skip />
     <string name="extract_completed" msgid="8824595789915249972">"Алынды"</string>
+    <!-- no translation found for copy_failed (3700193913993844675) -->
+    <skip />
+    <!-- no translation found for move_failed (7692364307225994220) -->
+    <skip />
+    <!-- no translation found for delete_failed (2642684566325252513) -->
+    <skip />
+    <!-- no translation found for compress_failed (7397502181042157261) -->
+    <skip />
+    <!-- no translation found for extract_failed (8372397499452831323) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"Жайып көрсөтүү"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Жыйыштыруу"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> колдонмосуна <xliff:g id="STORAGE"><i>^3</i></xliff:g> түзмөгүндөгү <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> папканы пайдалануу мүмкүнчүлүгү берилсинби?"</string>
