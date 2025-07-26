@@ -19,6 +19,7 @@ package com.android.documentsui.base;
 import static androidx.core.util.Preconditions.checkArgument;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -167,6 +168,13 @@ public class DocumentStack implements Durable, Parcelable {
             rootRecent.deriveFields();
             push(rootRecent);
         }
+
+        if (root.isTrash()) {
+            DocumentInfo trashRoot = new DocumentInfo();
+            trashRoot.userId = root.userId;
+            trashRoot.deriveFields();
+            push(trashRoot);
+        }
     }
 
     /** This will return true even when the initial location is set.
@@ -189,6 +197,18 @@ public class DocumentStack implements Durable, Parcelable {
     public boolean isRecents() {
         return mRoot != null && mRoot.isRecents() && size() == 1;
     }
+
+
+    /**
+     * @return whether the root is trash or not
+     */
+    public boolean isTrash() {
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
+        return mRoot != null && mRoot.isTrash() && size() == 1;
+    }
+
 
     /**
      * Resets this stack to the given stack. It takes the reference of {@link #mList} and

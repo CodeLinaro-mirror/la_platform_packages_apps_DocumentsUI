@@ -205,7 +205,9 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
                                         // Ignored, since we manage cursor lifecycle internally
                                     }
                                 };
-                        filteredCursor.filterHiddenFiles(mState.showHiddenFiles);
+                        if (shouldFilterHiddenFiles()) {
+                            filteredCursor.filterHiddenFiles(mState.showHiddenFiles);
+                        }
                         filteredCursor.filterMimes(mState.acceptMimes, getRejectMimes());
                         filteredCursor.filterLastModified(rejectBefore);
 
@@ -246,7 +248,7 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
         if (isDocumentsMovable()) {
             sorted = mState.sortModel.sortCursor(merged, mFileTypeMap);
         } else {
-            final Cursor notMovableMasked = new NotMovableMaskCursor(merged);
+            final Cursor notMovableMasked = getMaskCursor(merged);
             sorted = mState.sortModel.sortCursor(notMovableMasked, mFileTypeMap);
         }
 
@@ -297,6 +299,30 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
 
     protected boolean isDocumentsMovable() {
         return false;
+    }
+
+    /**
+     * Returns whether hidden files should be filtered from the results.
+     *
+     * @return {@code true} if hidden files should be filtered, {@code false} otherwise.
+     */
+    protected boolean shouldFilterHiddenFiles() {
+        return true;
+    }
+
+    /**
+     * Wraps the given cursor to mask or alter certain document properties.
+     *
+     * <p>This method uses a {@link NotMovableMaskCursor} to wrap the original cursor. This
+     * wrapper intercepts data requests and modifies the results on the fly. Specifically, it
+     * prevents documents from appearing as movable or deletable by clearing the corresponding flags
+     * in {@link android.provider.DocumentsContract.Document#COLUMN_FLAGS}.
+     *
+     * @param mergedCursor The original cursor containing the document data.
+     * @return A new cursor that masks certain document flags, making them non-movable.
+     */
+    protected Cursor getMaskCursor(Cursor mergedCursor) {
+        return new NotMovableMaskCursor(mergedCursor);
     }
 
     protected abstract QueryTask getQueryTask(String authority, List<RootInfo> rootInfos);

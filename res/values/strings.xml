@@ -273,6 +273,8 @@
 
     <!-- Title of storage root location that contains recently modified or used documents [CHAR LIMIT=24] -->
     <string name="root_recent">Recent</string>
+    <!-- Title of trash root location that contains trashed documents [CHAR LIMIT=24] -->
+    <string name="root_trash">Trash</string>
     <!-- Subtitle of storage root indicating the total free space available, in bytes [CHAR LIMIT=24] -->
     <string name="root_available_bytes"><xliff:g id="size" example="3GB">%1$s</xliff:g> free</string>
 

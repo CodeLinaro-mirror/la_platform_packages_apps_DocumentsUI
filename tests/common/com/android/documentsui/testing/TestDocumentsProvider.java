@@ -59,6 +59,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     private Cursor mNextChildDocuments;
     private Cursor mNextRecentDocuments;
+    private Cursor mNextTrashDocuments;
     private String mRuntimeMessage;
     private long mQueryDelayMs = 0;
     /**
@@ -112,6 +113,13 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor queryRecentDocuments(String rootId, String[] projection) {
         return mNextRecentDocuments;
+    }
+
+    @Nullable
+    @Override
+    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+        maybeThrowException();
+        return mNextTrashDocuments;
     }
 
     private String getStringColumn(Cursor cursor, String name) {
@@ -260,6 +268,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     public void setNextRecentDocumentsReturns(DocumentInfo... docs) {
         mNextRecentDocuments = createDocumentsCursor(docs);
+    }
+
+    /**
+     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String[])}.
+     *
+     * @param docs The documents to be returned in the cursor.
+     */
+    public void setNextTrashDocumentsReturns(DocumentInfo... docs) {
+        mNextTrashDocuments = createDocumentsCursor(docs);
     }
 
     private Cursor createDocumentsCursor(DocumentInfo... docs) {
