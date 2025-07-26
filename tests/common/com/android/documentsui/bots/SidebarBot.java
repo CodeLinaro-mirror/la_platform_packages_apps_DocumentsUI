@@ -24,6 +24,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import static org.hamcrest.Matchers.allOf;
@@ -38,6 +39,7 @@ import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -134,7 +136,8 @@ public class SidebarBot extends Bots.BaseBot {
         if (!this.inDrawerLayout()) {
             return;
         }
-        final UiSelector hamburger =
+
+        final UiSelector hamburgerSelector =
                 new UiSelector()
                         .resourceId(mTargetPackage + ":id/toolbar")
                         .childSelector(
@@ -142,9 +145,13 @@ public class SidebarBot extends Bots.BaseBot {
                                         .className("android.widget.ImageButton")
                                         .description(mContext.getString(R.string.drawer_open))
                                         .clickable(true));
-        new UiObject(hamburger).click();
-        // Wait for the roots to appear.
-        mDevice.findObject(getRootsContainerSelector()).waitForExists(mTimeout);
+        UiObject hamburgerButton = mDevice.findObject(hamburgerSelector);
+        assertTrue("Hamburger button is NOT present",
+                hamburgerButton.waitForExists(mTimeout));
+        hamburgerButton.click();
+
+        // Wait for the roots to appear and fail if it doesn't.
+        assertTrue(mDevice.findObject(getRootsContainerSelector()).waitForExists(mTimeout));
     }
 
     public void closeDrawer() {
@@ -224,7 +231,11 @@ public class SidebarBot extends Bots.BaseBot {
                         MotionEvent.ACTION_UP, point.centerX(), point.centerY());
         mAutomation.injectInputEvent(motionUp, true);
 
-        onView(withText(menuOption)).perform(new RelaxedClickAction());
+        mDevice.waitForIdle();
+
+        ViewInteraction menuItem = waitForContextMenuItemToAppear(menuOption);
+        assertNotNull("Context menu item " + menuOption + " not found", menuItem);
+        menuItem.perform(new RelaxedClickAction());
     }
 
     /**

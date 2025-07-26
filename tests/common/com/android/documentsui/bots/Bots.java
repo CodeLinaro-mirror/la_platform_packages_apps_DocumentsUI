@@ -16,6 +16,12 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertNotNull;
@@ -23,10 +29,14 @@ import static junit.framework.Assert.assertNotNull;
 import android.app.UiAutomation;
 import android.content.Context;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.test.InstrumentationRegistry;
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
@@ -38,11 +48,16 @@ import androidx.test.uiautomator.Until;
 import com.android.documentsui.R;
 import com.android.documentsui.util.FlagUtils;
 
+import junit.framework.AssertionFailedError;
+
+import org.hamcrest.Matcher;
+
 /**
  * Handy collection of bots for working with Files app.
  */
 public final class Bots {
 
+    private static final String TAG = "Bots";
     private static final int TIMEOUT = 15000;
 
     public final BreadBot breadcrumb;
@@ -169,6 +184,52 @@ public final class Bots {
 
         protected void waitForIdle() {
             mDevice.waitForIdle(mTimeout);
+        }
+
+        /**
+         * (Poll) wait up until the maximum timeout for a view to be displayed (using Espresso).
+         *
+         * @param viewMatcher describes the view to wait for.
+         * @param viewIsInPopup is true if the view is in a system popup view (eg. context menu).
+         *
+         * @return the ViewInteraction or null if it wasn't found in the time specified.
+         */
+        protected ViewInteraction waitForViewToBeDisplayed(Matcher<View> viewMatcher,
+                boolean viewIsInPopup) {
+            ViewInteraction view = null;
+            final long waitUntilTime = System.currentTimeMillis() + mTimeout;
+
+            while (System.currentTimeMillis() < waitUntilTime) {
+                try {
+                    if (viewIsInPopup) {
+                        view = onView(viewMatcher)
+                                .inRoot(isPlatformPopup()).check(matches(isDisplayed()));
+                    } else {
+                        view = onView(viewMatcher).check(matches(isDisplayed()));
+                    }
+                    break;
+                } catch (NoMatchingViewException | AssertionFailedError e) {
+                    // View not found or not displayed yet, wait and retry.
+                    SystemClock.sleep(100);
+                }
+            }
+
+            if (view == null) {
+                Log.w(TAG, viewMatcher.toString() + " did not appear within " + mTimeout + "ms");
+            }
+
+            return view;
+        }
+
+        /**
+         * (Poll) wait up until the maximum timeout for an item to be displayed in the context menu.
+         *
+         * @param popupItemName the name of the context menu item.
+         *
+         * @return the ViewInteraction for the view or null if it didn't appear.
+         */
+        protected ViewInteraction waitForContextMenuItemToAppear(String menuItemName) {
+            return waitForViewToBeDisplayed(withText(menuItemName), true);
         }
 
         /** Check if the app is running in fixed_layout. */
