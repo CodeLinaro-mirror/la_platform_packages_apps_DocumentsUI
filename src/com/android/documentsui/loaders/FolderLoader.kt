@@ -17,6 +17,7 @@ package com.android.documentsui.loaders
 
 import android.content.ContentProviderClient
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.os.RemoteException
 import android.provider.DocumentsContract
@@ -92,7 +93,17 @@ class FolderLoader(
         if (mListedDir != null && mListedDir.isInArchive) {
             result.setClient(openArchive(folderChildrenUri))
         }
-        var cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
+        var cursor: Cursor? = null
+        try {
+            cursor = queryLocation(
+                mRoot,
+                folderChildrenUri,
+                mOptions.otherQueryArgs,
+                ALL_RESULTS
+            )
+        } catch (e: Exception) {
+            result.exception = e
+        }
         if (cursor == null) {
             cursor = emptyCursor()
             result.setClient(null)

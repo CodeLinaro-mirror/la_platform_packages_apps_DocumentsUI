@@ -24,6 +24,7 @@ import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.sorting.SortModel
@@ -35,6 +36,8 @@ import java.time.Duration
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.measureTime
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -53,11 +56,11 @@ fun createQueryArgs(vararg mimeTypes: String): Bundle {
 }
 
 @RunWith(Enclosed::class)
-@SmallTest
 class SearchLoaderTest {
 
     // Collection of tests that are parametrized by query, duration, and MIME type.
     @RunWith(Parameterized::class)
+    @SmallTest
     class ParametrizedTests(private val testParams: LoaderTestParams) : BaseLoaderTest() {
         lateinit var executor: ExecutorService
         val contentLock = ContentLock()
@@ -132,7 +135,7 @@ class SearchLoaderTest {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testLoadInBackground() {
             val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
             val docs = createDocuments(testParams.fakeFileCount)
@@ -165,6 +168,7 @@ class SearchLoaderTest {
     }
 
     // Collection of plain tests that do not use parameters.
+    @SmallTest
     class PlainTests : BaseLoaderTest() {
         @get:Rule
         val checkFlags = CheckAndForceMaterial3Flag()
@@ -200,6 +204,7 @@ class SearchLoaderTest {
          * produces the expected result.
          */
         @Test
+        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testValidateMergeFilterSort() {
             val fileCount = 200
             val maxCount = fileCount / 2
@@ -254,6 +259,7 @@ class SearchLoaderTest {
         }
 
         @Test
+        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testExtraArgs() {
             environment.mockProviders.apply {
                 get(TestProvidersAccess.PICKLES.authority)!!.setNextChildDocumentsReturns(
@@ -281,6 +287,7 @@ class SearchLoaderTest {
         }
 
         @Test
+        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testShowOrHideHiddenFiles() {
             val commonSearchString = "verdant"
             val doc1 = environment.model.createFile(".test$commonSearchString")
@@ -320,6 +327,37 @@ class SearchLoaderTest {
             )
             result = showHiddenLoader.loadInBackground()!!
             assertEquals(2, result.cursor.getCount())
+        }
+
+        @Test
+        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testCompletesInPresenceOfExceptions() {
+            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
+                setThrownRuntimeMessage("Testing exception throwing")
+            }
+
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.DOWNLOADS),
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "query",
+                    QueryOptions(10, ALL_RESULTS, null, null, true, null, Bundle()),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val queryDuration = measureTime {
+                val result = loader.loadInBackground()
+                val cursor = result?.cursor
+                expect.that(cursor).isNotNull()
+                expect.that(cursor!!.count).isEqualTo(0)
+                // Expect that no cursor is still loading.
+                expect.that(cursor.extras?.getBoolean(DocumentsContract.EXTRA_LOADING)).isFalse()
+            }
+            // The no results should be due to the task terminating immediately, not because
+            // it timed out. We give it 100 milliseconds.
+            expect.that(queryDuration).isLessThan(100.milliseconds)
         }
     }
 }

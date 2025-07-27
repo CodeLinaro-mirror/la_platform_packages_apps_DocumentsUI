@@ -6,6 +6,18 @@
     },
     {
       "name": "DocumentsUIUnitTests"
+    },
+    {
+      "name": "DocumentsUIGoogleTests",
+      "keywords": ["internal"],
+      "options": [
+        {
+          "exclude-annotation": "androidx.test.filters.LargeTest"
+        },
+        {
+          "exclude-annotation": "com.android.documentsui.filters.HugeLongTest"
+        }
+      ]
     }
   ],
   "documentsui-mainline-presubmit": [

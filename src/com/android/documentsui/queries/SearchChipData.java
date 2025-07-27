@@ -17,6 +17,7 @@
 package com.android.documentsui.queries;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -33,8 +34,6 @@ public class SearchChipData {
         mChipType = chipType;
         mTitleRes = titleRes;
         mMimeTypes = mimeTypes;
-        // Keep the mimetypes sorted for easier comparison.
-        Arrays.sort(mMimeTypes);
     }
 
     public final int getTitleRes() {
@@ -60,8 +59,9 @@ public class SearchChipData {
     public boolean equals(Object o) {
         if (!(o instanceof SearchChipData)) return false;
         SearchChipData that = (SearchChipData) o;
-        return mChipType == that.mChipType && mTitleRes == that.mTitleRes && Arrays.equals(
-                mMimeTypes, that.mMimeTypes);
+        return mChipType == that.mChipType && mTitleRes == that.mTitleRes
+                && new HashSet<>(Arrays.asList(mMimeTypes)).equals(
+                        new HashSet<>(Arrays.asList(that.mMimeTypes)));
     }
 
     /**
@@ -72,6 +72,6 @@ public class SearchChipData {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(mChipType, mTitleRes, Arrays.hashCode(mMimeTypes));
+        return Objects.hash(mChipType, mTitleRes, new HashSet<>(Arrays.asList(mMimeTypes)));
     }
 }

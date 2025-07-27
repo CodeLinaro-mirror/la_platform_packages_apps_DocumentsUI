@@ -24,12 +24,15 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static junit.framework.Assert.assertTrue;
+
 import static org.hamcrest.Matchers.allOf;
 
 import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -90,8 +93,18 @@ public class SidebarBot extends Bots.BaseBot {
 
     /** Open navigation root either from the Drawer or the Navigation rail. */
     public void openRoot(String label) throws UiObjectNotFoundException {
-        findRoot(label).click();
-        // Close the drawer in case we select a pre-selected root already.
+        UiObject root = findRoot(label);
+        mDevice.waitForIdle();
+        boolean ret = root.click();
+        if (!ret) {
+            Log.d(TAG, "Trying again the click on root: " + label);
+            mDevice.waitForIdle();
+            ret = root.click();
+        }
+        assertTrue("Failed to click on root: " + label, ret);
+
+        mDevice.waitForIdle();
+        // Close the drawer in case we select a pre-selected root already
         closeDrawer();
     }
 
