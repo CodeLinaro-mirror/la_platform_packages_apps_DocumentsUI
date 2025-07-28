@@ -28,7 +28,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.picker.PickActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -37,7 +37,7 @@ import org.junit.Test;
 @LargeTest
 public class PickerPreviewAllTypeUiTest extends ActivityTestJunit4<PickActivity> {
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule =

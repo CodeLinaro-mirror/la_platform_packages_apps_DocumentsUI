@@ -17,13 +17,13 @@ package com.android.documentsui.loaders
 
 import android.content.Context
 import android.os.Bundle
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestDocumentsProvider
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
@@ -89,7 +89,7 @@ class FolderLoaderTest() {
         }
 
         @get:Rule
-        val checkFlags = CheckAndForceMaterial3Flag()
+        val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
         lateinit var mockProvider: TestDocumentsProvider
@@ -114,7 +114,7 @@ class FolderLoaderTest() {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testLoadInBackground() {
             // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
             val rootFolderInfo = DocumentInfo()
@@ -136,7 +136,7 @@ class FolderLoaderTest() {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testListRootIfNullFolder() {
             val loader =
                 FolderLoader(
@@ -156,7 +156,7 @@ class FolderLoaderTest() {
     @SmallTest
     class PlainTests : BaseLoaderTest() {
         @get:Rule
-        val checkFlags = CheckAndForceMaterial3Flag()
+        val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
         lateinit var mockProvider: TestDocumentsProvider
@@ -183,7 +183,7 @@ class FolderLoaderTest() {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testThrownExceptions() {
             val message = "Testing exception throwing"
             mockProvider.setThrownRuntimeMessage(message)

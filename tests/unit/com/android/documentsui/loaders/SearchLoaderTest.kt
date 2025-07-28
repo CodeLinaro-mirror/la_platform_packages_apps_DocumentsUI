@@ -16,7 +16,7 @@
 package com.android.documentsui.loaders
 
 import android.os.Bundle
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
@@ -26,7 +26,7 @@ import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.sorting.SortModel
 import com.android.documentsui.testing.TestFeatures
 import com.android.documentsui.testing.TestFileTypeLookup
@@ -124,7 +124,7 @@ class SearchLoaderTest {
         }
 
         @get:Rule
-        val checkFlags = CheckAndForceMaterial3Flag()
+        val setFlags = OverrideFlagsRule()
 
         @get:Rule
         val expect: Expect = Expect.create()
@@ -135,7 +135,7 @@ class SearchLoaderTest {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testLoadInBackground() {
             val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
             val docs = createDocuments(testParams.fakeFileCount)
@@ -171,7 +171,7 @@ class SearchLoaderTest {
     @SmallTest
     class PlainTests : BaseLoaderTest() {
         @get:Rule
-        val checkFlags = CheckAndForceMaterial3Flag()
+        val setFlags = OverrideFlagsRule()
 
         @get:Rule
         val expect: Expect = Expect.create()
@@ -204,7 +204,7 @@ class SearchLoaderTest {
          * produces the expected result.
          */
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testValidateMergeFilterSort() {
             val fileCount = 200
             val maxCount = fileCount / 2
@@ -259,7 +259,7 @@ class SearchLoaderTest {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testExtraArgs() {
             environment.mockProviders.apply {
                 get(TestProvidersAccess.PICKLES.authority)!!.setNextChildDocumentsReturns(
@@ -287,7 +287,7 @@ class SearchLoaderTest {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testShowOrHideHiddenFiles() {
             val commonSearchString = "verdant"
             val doc1 = environment.model.createFile(".test$commonSearchString")
@@ -330,7 +330,7 @@ class SearchLoaderTest {
         }
 
         @Test
-        @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
         fun testCompletesInPresenceOfExceptions() {
             environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
                 setThrownRuntimeMessage("Testing exception throwing")

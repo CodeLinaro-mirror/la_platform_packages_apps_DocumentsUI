@@ -23,7 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.graphics.Rect;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.EnableFlags;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.dirlist.GridEvenSpacingDecoration;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestRecyclerView;
 
 import org.junit.Before;
@@ -44,10 +44,10 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 
 @SmallTest
-@RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+@EnableFlags(FLAG_USE_MATERIAL3)
 public class GridEvenSpacingDecorationTest {
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private static final int ITEM_WIDTH = 100;
     private static final int ITEM_HEIGHT = 100;

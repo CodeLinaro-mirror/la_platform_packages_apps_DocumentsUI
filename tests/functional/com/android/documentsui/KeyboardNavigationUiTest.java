@@ -25,14 +25,14 @@ import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
 import androidx.annotation.IdRes;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.files.FilesActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Ignore;
@@ -43,7 +43,7 @@ import org.junit.Test;
 public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule().createFileInRoot(ROOT_0_ID,
@@ -107,7 +107,7 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_MATERIAL3})
     public void testKeyboard_tabCycleInRootsList() throws Exception {
         // Focus the root CoordinatorLayout explicitly before the test to avoid the first
         // Tab press accidentally focus on the root CoordinatorLayout.
