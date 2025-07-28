@@ -21,6 +21,12 @@ import static android.content.Context.RECEIVER_EXPORTED;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -37,6 +43,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.test.filters.LargeTest;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.DocumentInfo;
@@ -44,8 +51,15 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.filters.SkipScreenRecording;
+import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
 import com.android.modules.utils.build.SdkLevel;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,10 +73,11 @@ import java.util.zip.ZipInputStream;
 
 /**
  * This class test the below points
- * - Copy large number of files on the internal/external storage
+ *
+ * <p>- Copy large number of files on the internal/external storage
  */
 @LargeTest
-public class FileCopyUiTest extends ActivityTest<FilesActivity> {
+public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String TAG = "FileCopyUiTest";
 
     private static final String TARGET_FOLDER = "test_folder";
@@ -113,14 +128,10 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
     private String mDeviceLabel;
 
-    public FileCopyUiTest() {
-        super(FilesActivity.class);
-    }
+    @Rule public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    @Before
+    public void setUpTest() throws Exception {
         mFoldersToCleanup.clear();
 
         // Create DocumentsProviderHelper for using SD Card.
@@ -146,11 +157,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
         // If null or empty, use default name.
         mDeviceLabel = TextUtils.isEmpty(mDeviceLabel) ? "Internal Storage" : mDeviceLabel;
 
-        try {
-            bots.notifications.setNotificationAccess(getActivity(), true);
-        } catch (Exception e) {
-            Log.d(TAG, "Cannot set notification access. ", e);
-        }
+        setNotificationAccess(true);
 
         mOperationExecuted = false;
         mErrorReason = "No response from Notification";
@@ -178,8 +185,8 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
                 TestNotificationService.ACTION_CHANGE_EXECUTION_MODE));
     }
 
-    @Override
-    public void tearDown() throws Exception {
+    @After
+    public void tearDownTest() throws Exception {
         // Delete created files
         deleteDocuments(mDeviceLabel);
         try {
@@ -221,13 +228,18 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
         context.unregisterReceiver(mReceiver);
         mCountDownLatch = null;
-        try {
-            bots.notifications.setNotificationAccess(getActivity(), false);
-        } catch (Exception e) {
-            Log.d(TAG, "Cannot set notification access. ", e);
-        }
+        setNotificationAccess(false);
+    }
 
-        super.tearDown();
+    private void setNotificationAccess(boolean enabled) {
+        mActivityScenario.onActivity(
+                activity -> {
+                    try {
+                        bots.notifications.setNotificationAccess(activity, enabled);
+                    } catch (Exception e) {
+                        Log.d(TAG, "Cannot set notification access. ", e);
+                    }
+                });
     }
 
     private boolean createDocuments(String label, RootInfo root,
@@ -289,7 +301,7 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
     }
 
     private void loadImages(Uri root, DocumentsProviderHelper helper) throws Exception {
-        Context testContext = getInstrumentation().getContext();
+        Context testContext = InstrumentationRegistry.getInstrumentation().getContext();
         Resources res = testContext.getResources();
         try {
             int resId = res.getIdentifier(
@@ -426,7 +438,8 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
     // Copy Internal Storage -> Internal Storage //
     @HugeLongTest
-    public void ignored_testCopyDocuments_InternalStorage() throws Exception {
+    @Ignore
+    public void testCopyDocuments_InternalStorage() throws Exception {
         createDocuments(StubProvider.ROOT_0_ID, rootDir0, mDocsHelper);
         copyFiles(StubProvider.ROOT_0_ID, StubProvider.ROOT_1_ID);
 
@@ -441,9 +454,8 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
     // Copy SD Card -> Internal Storage //
     @HugeLongTest
     // TODO (b/160649487): excluded in FRC MTS release, and we should add it back later.
-    // Notice because this class inherits JUnit3 TestCase, the right way to suppress a test
-    // is by removing "test" from prefix, instead of adding @Ignore.
-    public void ignored_testCopyDocuments_FromSdCard() throws Exception {
+    @Ignore
+    public void testCopyDocuments_FromSdCard() throws Exception {
         createDocuments(mSdCardLabel, mSdCardRoot, mStorageDocsHelper);
         copyFiles(mSdCardLabel, mDeviceLabel);
 
@@ -458,9 +470,8 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
     // Copy Internal Storage -> SD Card //
     @HugeLongTest
     // TODO (b/160649487): excluded in FRC MTS release, and we should add it back later.
-    // Notice because this class inherits JUnit3 TestCase, the right way to suppress a test
-    // is by removing "test" from prefix, instead of adding @Ignore.
-    public void ignored_testCopyDocuments_ToSdCard() throws Exception {
+    @Ignore
+    public void testCopyDocuments_ToSdCard() throws Exception {
         createDocuments(mDeviceLabel, mPrimaryRoot, mStorageDocsHelper);
         copyFiles(mDeviceLabel, mSdCardLabel);
 
@@ -473,17 +484,18 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
     }
 
     @HugeLongTest
-    public void ignored_testCopyDocuments_documentsDisabled() throws Exception {
-        mDocsHelper.createDocument(rootDir0, "text/plain", fileName1);
+    @Ignore
+    public void testCopyDocuments_documentsDisabled() throws Exception {
+        mDocsHelper.createDocument(rootDir0, "text/plain", TestFilesRule.FILE_NAME_1);
         bots.roots.openRoot(StubProvider.ROOT_0_ID);
-        bots.directory.selectDocument(fileName1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         device.waitForIdle();
         bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
         bots.roots.openRoot(StubProvider.ROOT_0_ID);
         device.waitForIdle();
 
-        assertFalse(bots.directory.findDocument(fileName1).isEnabled());
+        assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
 
         // Back to FilesActivity to do tear down action if necessary
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);
@@ -491,8 +503,8 @@ public class FileCopyUiTest extends ActivityTest<FilesActivity> {
 
     @HugeLongTest
     @SkipScreenRecording
-    public void testRecursiveCopyDocuments_InternalStorageToDownloadsProvider()
-            throws Exception {
+    @Test
+    public void testRecursiveCopyDocuments_InternalStorageToDownloadsProvider() throws Exception {
         // Create Download folder if it doesn't exist.
         DocumentInfo info = mStorageDocsHelper.findFile(mPrimaryRoot.documentId, "Download");
 
