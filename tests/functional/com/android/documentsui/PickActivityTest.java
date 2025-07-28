@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
@@ -215,6 +216,7 @@ public class PickActivityTest {
         mBots.menu.hasMenuItem("Sort by...");
     }
 
+    @DesktopTest(cujs = {"b/434068578"})
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionOpenDocument_SingleFile()
@@ -255,6 +257,7 @@ public class PickActivityTest {
         assertThat(pickActivity.isFinishing()).isTrue();
     }
 
+    @DesktopTest(cujs = {"b/434068578"})
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionGetContent_MultiFiles() throws Exception {
@@ -308,6 +311,7 @@ public class PickActivityTest {
         assertThat(pickActivity.isFinishing()).isTrue();
     }
 
+    @DesktopTest(cujs = {"b/434068578"})
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ClickCancel() throws UiObjectNotFoundException {
@@ -336,6 +340,7 @@ public class PickActivityTest {
         assertThat(pickActivity.isFinishing()).isTrue();
     }
 
+    @DesktopTest(cujs = {"b/434068578"})
     @Test
     @DisableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_FlagDisabled() throws UiObjectNotFoundException {

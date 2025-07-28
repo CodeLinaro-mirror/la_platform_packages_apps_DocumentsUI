@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 import android.app.Instrumentation;
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 
@@ -176,6 +177,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv", newFileName);
     }
 
+    @DesktopTest(cujs = {"b/434068747"})
     @Test
     public void testNavigate_byBreadcrumb() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
