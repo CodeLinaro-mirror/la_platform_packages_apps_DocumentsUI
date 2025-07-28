@@ -231,17 +231,6 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         setNotificationAccess(false);
     }
 
-    private void setNotificationAccess(boolean enabled) {
-        mActivityScenario.onActivity(
-                activity -> {
-                    try {
-                        bots.notifications.setNotificationAccess(activity, enabled);
-                    } catch (Exception e) {
-                        Log.d(TAG, "Cannot set notification access. ", e);
-                    }
-                });
-    }
-
     private boolean createDocuments(String label, RootInfo root,
             DocumentsProviderHelper helper) throws Exception {
         if (TextUtils.isEmpty(label) || root == null) {

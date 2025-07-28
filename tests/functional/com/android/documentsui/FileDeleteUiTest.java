@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.test.filters.LargeTest;
 
@@ -114,17 +113,6 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         context.unregisterReceiver(mReceiver);
         mCountDownLatch = null;
         setNotificationAccess(false);
-    }
-
-    private void setNotificationAccess(boolean enabled) {
-        mActivityScenario.onActivity(
-                activity -> {
-                    try {
-                        bots.notifications.setNotificationAccess(activity, enabled);
-                    } catch (Exception e) {
-                        Log.d(TAG, "Cannot set notification access. ", e);
-                    }
-                });
     }
 
     private void initTestFiles() {
