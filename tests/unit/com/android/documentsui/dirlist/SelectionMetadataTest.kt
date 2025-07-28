@@ -16,13 +16,12 @@
 package com.android.documentsui.dirlist
 
 import android.content.pm.ResolveInfo
-import android.platform.test.annotations.RequiresFlagsEnabled
-import android.platform.test.flag.junit.CheckFlagsRule
-import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.documentsui.ModelId
 import com.android.documentsui.base.UserId
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.rules.TestModelRule
 import com.android.documentsui.testing.TestPackageManager
 import com.android.documentsui.util.FileUtils
@@ -35,13 +34,13 @@ import org.junit.runner.RunWith
 const val TestAuthority = "com.example.test"
 const val TestUserId = 0
 
-@RequiresFlagsEnabled(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
+@EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
 @RunWith(AndroidJUnit4::class)
 class SelectionMetadataTest {
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
     @get:Rule
-    val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+    val setFlags = OverrideFlagsRule()
 
     @get:Rule
     val testModelRule = TestModelRule(TestAuthority, TestUserId)

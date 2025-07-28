@@ -29,8 +29,8 @@ import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
@@ -46,7 +46,7 @@ import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.TestData;
 import com.android.documentsui.flags.Flags;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
@@ -142,7 +142,7 @@ public final class MenuManagerTest {
     private int mFilesCount;
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Before
     public void setUp() {
@@ -478,7 +478,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testActionMenu_OpenWith_SingleOpeningApp() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -488,7 +488,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testActionMenu_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -711,7 +711,7 @@ public final class MenuManagerTest {
 
     @SuppressLint("VisibleForTests")
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpen() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = true;
@@ -724,7 +724,7 @@ public final class MenuManagerTest {
 
     @SuppressLint("VisibleForTests")
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpenDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = true;
@@ -748,7 +748,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_OpenWith_SingleOpeningApp() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -759,7 +759,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;

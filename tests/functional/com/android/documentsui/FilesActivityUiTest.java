@@ -35,8 +35,8 @@ import static junit.framework.Assert.assertTrue;
 import android.app.Instrumentation;
 import android.content.ContentResolver;
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -50,7 +50,7 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -62,7 +62,7 @@ import org.junit.runner.RunWith;
 public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -79,7 +79,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     // It is special cased in a variety of ways, which is why we just want
     // to be able to click on it.
     @Test
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testClickRecent() throws Exception {
         bots.roots.openRoot("Recent");
 
@@ -94,7 +94,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testClickRecentM3() throws Exception {
         bots.roots.openRoot("Recent");
 
@@ -147,7 +147,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootClick_SetsWindowTitle() throws Exception {
         bots.roots.openRoot("Images");
         bots.main.assertWindowTitle("Images");
@@ -212,7 +212,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_UpdatesSortHeader() throws Exception {
 
         // switch to separate display modes for two separate roots. Each
@@ -237,7 +237,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_NonM3PerRootViewModeState() throws Exception {
         // Assign different view modes across "Images" and "Videos" roots.
         // Images root --> grid mode
@@ -257,7 +257,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_M3GlobalViewModeState() throws Exception {
         bots.roots.openRoot("Recent");
         bots.main.switchToGridMode();
@@ -275,7 +275,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testClearSelectionInRecentsResetsActions() throws Exception {
         // Ensure Downloads exists and get the location of the main root (e.g. "Pixel Tablet").
         DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();

@@ -36,8 +36,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import android.os.RemoteException;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.Settings;
 
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -51,7 +51,7 @@ import androidx.test.uiautomator.Until;
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
@@ -64,7 +64,7 @@ import org.junit.Test;
 public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
@@ -130,7 +130,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_USE_MATERIAL3}) // Enable when b/397315793 is fixed.
+    @DisableFlags({FLAG_USE_MATERIAL3}) // Enable when b/397315793 is fixed.
     public void testSearchView_ShouldHideOptionMenuOnExpanding() throws Exception {
         bots.search.expand();
         device.waitForIdle();
@@ -155,7 +155,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     // TODO(b/414507592): Remove once recent searches is enabled again.
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testSearchFragment_DismissedOnCloseAfterCancel() throws Exception {
         bots.search.expand();
         bots.search.setInputText("query text");
@@ -299,7 +299,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     // TODO(b/414507592): Remove once recent searches is enabled again.
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testSearchHistory_showAfterSearchViewClear() throws Exception {
         bots.search.expand();
         bots.search.setInputText("chocolate");
@@ -316,7 +316,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     // TODO(b/414507592): Remove once recent searches is enabled again.
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testSearchView_focusClearedAfterSelectingSearchHistory() throws Exception {
         String queryText = "history";
         bots.search.expand();
@@ -335,7 +335,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchDropdowns() throws Exception {
         bots.search.expand();
         bots.search.setInputText("foo");
@@ -346,7 +346,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2FileTypeDropdown() throws Exception {
         // Start search with term "file1" limiting results to images only.
         bots.search.expand();
@@ -365,7 +365,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2LastModifiedDropdown() throws Exception {
         // Start search with term "file1" limiting results modified in the last 30 days.
         bots.search.expand();
@@ -381,7 +381,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2SearchLocationDropdown() throws Exception {
         // Start search with term "fred-dog", but rather than searching locally, search everywhere.
         bots.search.expand();
@@ -399,7 +399,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2RootNameIsAdjusted() throws Exception {
         // The test starts in TEST_ROOT_0
         bots.search.expand();
@@ -435,7 +435,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2LastModifiedDropdownVisibility() throws Exception {
         // Starts in TEST_ROOT_0. Start search and expect last modified dropdown to be visible.
         bots.search.expand();
@@ -463,7 +463,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2LastUsedChipCopiedToFileTypeDropdown() throws Exception {
         // Click "Images" chip and wait until the chip becomes selected.
         bots.search.clickChip(R.string.chip_title_images)
@@ -506,8 +506,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
-    @RequiresFlagsDisabled(FLAG_USE_SEARCH_V2_READ_ONLY)
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_SEARCH_V2_READ_ONLY)
     public void testSearchView_TogglingASearchChipClearsSelection() throws Exception {
         // Get the label of the device (this will be used to navigate to the ExternalStorageProvider
         // as the custom roots added for test do not show the search chips).
@@ -528,7 +528,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(
+    @DisableFlags(
             FLAG_USE_MATERIAL3) // TODO(b/412895530): Enable for `use_material3` once fixed.
     public void testSelectionWhileSearchingHidesSearchBar() throws UiObjectNotFoundException {
         String pkg = bots.directory.mTargetPackage;
@@ -556,7 +556,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testUnhandledRootsReturnEmptyCursors() throws UiObjectNotFoundException {
         String pkg = bots.directory.mTargetPackage;
 

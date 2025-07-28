@@ -26,13 +26,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract.Document;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.MediumTest;
 
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,7 +41,7 @@ import org.junit.Test;
 public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     public CopyJobTest() {
         super(OPERATION_COPY);
@@ -53,7 +53,7 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
     public void testCopyFilesWithProgress() throws Exception {
         runCopyFilesTestWithJobProgress();
     }
@@ -64,7 +64,7 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
     public void testCopyVirtualTypedFileWithJobProgress() throws Exception {
         runCopyVirtualTypedFileTestWithJobProgress();
     }
@@ -75,7 +75,7 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
     public void testCopyVirtualNonTypedFileWithProgress() throws Exception {
         runCopyVirtualNonTypedFileTestWithJobProgress();
     }
@@ -97,7 +97,7 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
     public void testCopyWithJobProgress_BackendSideVirtualTypedFile_Fallback() throws Exception {
         mDocs.assertChildCount(mDestRoot, 0);
 
@@ -134,7 +134,7 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
     public void testCopyEmptyDirWithJobProgress() throws Exception {
         runCopyEmptyDirTestWithJobProgress();
     }

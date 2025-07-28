@@ -15,14 +15,14 @@
  */
 package com.android.documentsui
 
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.JobPanelViewModel.MenuIconState
 import com.android.documentsui.JobPanelViewModel.ProgressViewModel
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.Job
 import com.android.documentsui.testing.MutableJobProgress
@@ -44,11 +44,11 @@ private fun List<MutableJobProgress>.withExpandStates(vararg expandStates: Boole
     toJobProgressList().zip(expandStates.asList(), ::ProgressViewModel)
 
 @SmallTest
-@RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
+@EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
 class JobPanelViewModelTest {
     @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    val setFlags = OverrideFlagsRule()
 
     @Test
     fun testListModifications() {
