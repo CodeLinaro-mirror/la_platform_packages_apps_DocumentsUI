@@ -47,7 +47,8 @@
     <string name="menu_zip" msgid="5734673122376258045">"压缩"</string>
     <string name="menu_extract" msgid="8171946945982532262">"解压到…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"提取全部…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"解压缩到此处"</string>
+    <!-- no translation found for menu_extract_here (7120939831786325360) -->
+    <skip />
     <string name="menu_browse" msgid="6007716414766674967">"浏览"</string>
     <string name="menu_rename" msgid="1883113442688817554">"重命名"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"获取信息"</string>

@@ -33,7 +33,6 @@ import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -50,24 +49,28 @@ import com.android.documentsui.R;
 import com.android.documentsui.actions.RelaxedClickAction;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * A test helper class that provides support for controlling and asserting against
- * the roots list drawer.
+ * A test helper class that provides support for controlling and asserting against the roots list
+ * drawer.
  */
 public class SidebarBot extends Bots.BaseBot {
     private static final String TAG = "RootsListBot";
 
     private final String mRootListId;
     private final UiAutomation mAutomation;
+    private final UiBot mUiBot;
 
-    public SidebarBot(UiDevice device, UiAutomation automation, Context context, int timeout) {
+    public SidebarBot(
+            UiDevice device, UiAutomation automation, Context context, UiBot uiBot, int timeout) {
         super(device, context, timeout);
         mAutomation = automation;
+        mUiBot = uiBot;
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
@@ -77,6 +80,15 @@ public class SidebarBot extends Bots.BaseBot {
         return new UiSelector()
                 .resourceId(mTargetPackage + containerId)
                 .childSelector(new UiSelector().resourceId(mRootListId));
+    }
+
+    private boolean toolbarHasTitle(String title) {
+        try {
+            mUiBot.assertWindowTitle(title);
+            return true;
+        } catch (AssertionFailedError e) {
+            return false;
+        }
     }
 
     private UiObject findRoot(String label) throws UiObjectNotFoundException {
@@ -95,19 +107,11 @@ public class SidebarBot extends Bots.BaseBot {
 
     /** Open navigation root either from the Drawer or the Navigation rail. */
     public void openRoot(String label) throws UiObjectNotFoundException {
-        UiObject root = findRoot(label);
-        mDevice.waitForIdle();
-        boolean ret = root.click();
-        if (!ret) {
-            Log.d(TAG, "Trying again the click on root: " + label);
-            mDevice.waitForIdle();
-            ret = root.click();
+        if (toolbarHasTitle(label)) {
+            return;
         }
-        assertTrue("Failed to click on root: " + label, ret);
-
-        mDevice.waitForIdle();
-        // Close the drawer in case we select a pre-selected root already
-        closeDrawer();
+        assertTrue("Failed to click on root: " + label, findRoot(label).click());
+        mUiBot.assertWindowTitle(label);
     }
 
     /**

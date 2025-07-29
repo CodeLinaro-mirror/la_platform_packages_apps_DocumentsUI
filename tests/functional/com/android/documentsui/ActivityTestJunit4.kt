@@ -164,6 +164,18 @@ abstract class ActivityTestJunit4<T : Activity?> {
         mActivityScenario = ActivityScenario.launch(intent)
     }
 
+    protected fun setNotificationAccess(enabled: Boolean) {
+        mActivityScenario?.onActivity(
+            { activity ->
+                try {
+                    bots.notifications.setNotificationAccess(activity, enabled)
+                } catch (e: Exception) {
+                    Log.d(TAG, "Cannot set notification access. ", e)
+                }
+            }
+        )
+    }
+
     @Throws(IOException::class)
     private fun disableScreenOffAndSleepTimeouts() {
         initialScreenOffTimeoutValue =
