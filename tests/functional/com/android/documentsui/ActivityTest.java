@@ -207,7 +207,7 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
         device.waitForIdle();
     }
 
-    protected void initTestFiles() throws RemoteException {
+    protected void initTestFiles() throws IOException, RemoteException {
         mDocsHelper.createFolder(rootDir0, dirName1);
         mDocsHelper.createDocument(rootDir0, "text/plain", fileName1);
         mDocsHelper.createDocument(rootDir0, "image/png", fileName2);

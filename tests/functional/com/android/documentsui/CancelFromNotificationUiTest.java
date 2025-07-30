@@ -37,6 +37,7 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.services.TestNotificationService;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -48,11 +49,8 @@ import java.util.concurrent.TimeUnit;
 @LargeTest
 public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
     private static final String TAG = "CancelFromNotificationUiTest";
-
     private static final String TARGET_FILE = "stub.data";
-
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
-
     private static final int WAIT_TIME_SECONDS = 120;
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -72,9 +70,7 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
     };
 
     private CountDownLatch mCountDownLatch;
-
     private boolean mOperationExecuted;
-
     private String mErrorReason;
 
     public CancelFromNotificationUiTest() {
@@ -92,13 +88,7 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
         // Set a flag to prevent many refreshes.
         bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
         mDocsHelper.configure(null, bundle);
-
-        try {
-            bots.notifications.setNotificationAccess(getActivity(), true);
-        } catch (Exception e) {
-            Log.d(TAG, "Cannot set notification access. ", e);
-        }
-
+        bots.notifications.setNotificationAccess(getActivity(), true);
         initTestFiles();
 
         IntentFilter filter = new IntentFilter();
@@ -121,27 +111,17 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
         try {
             bots.notifications.setNotificationAccess(getActivity(), false);
         } catch (Exception e) {
-            Log.d(TAG, "Cannot set notification access. ", e);
+            Log.e(TAG, "Cannot set notification access", e);
         }
         super.tearDown();
     }
 
     @Override
-    public void initTestFiles() throws RemoteException {
-        try {
-            createStubFile();
-        } catch (Exception e) {
-            fail("Initialization failed. " + e.toString());
-        }
-    }
-
-    private void createStubFile() throws Exception {
-        Uri uri = mDocsHelper.createDocument(rootDir0, "*/*", TARGET_FILE);
-        byte[] stubByte = new byte[BUFFER_SIZE];
+    public void initTestFiles() throws IOException, RemoteException {
+        final Uri uri = mDocsHelper.createDocument(rootDir0, "*/*", TARGET_FILE);
+        final byte[] stubByte = new byte[BUFFER_SIZE];
         mDocsHelper.writeDocument(uri, stubByte);
         for (int i = 0; i < 49; i++) {
-            stubByte = null;
-            stubByte = new byte[BUFFER_SIZE];
             mDocsHelper.writeAppendDocument(uri, stubByte, stubByte.length);
         }
     }
@@ -180,13 +160,7 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
         bots.roots.openRoot(ROOT_1_ID);
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
-
-        try {
-            mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            fail("Cannot wait because of error." + e.toString());
-        }
-
+        mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
         bots.roots.openRoot(ROOT_1_ID);
@@ -235,13 +209,7 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
         bots.roots.openRoot(ROOT_1_ID);
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
-
-        try {
-            mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            fail("Cannot wait because of error." + e.toString());
-        }
-
+        mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
         bots.roots.openRoot(ROOT_1_ID);

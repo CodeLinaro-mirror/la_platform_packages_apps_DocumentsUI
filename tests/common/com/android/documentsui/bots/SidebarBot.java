@@ -33,6 +33,7 @@ import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -60,7 +61,7 @@ import java.util.List;
  * drawer.
  */
 public class SidebarBot extends Bots.BaseBot {
-    private static final String TAG = "RootsListBot";
+    private static final String TAG = "SidebarBot";
 
     private final String mRootListId;
     private final UiAutomation mAutomation;
@@ -159,20 +160,21 @@ public class SidebarBot extends Bots.BaseBot {
     }
 
     public void closeDrawer() {
-      // Espresso will try to close the drawer if it's opened
-      // But if no drawer exists (Tablet devices), we will have to catch the exception
-      // and continue on the test
-      // Why can't we do something like .exist() first?
-      // http://stackoverflow.com/questions/20807131/espresso-return-boolean-if-view-exists
-      try {
-        if (mContext.getResources().getConfiguration()
-            .getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-            onView(withId(R.id.drawer_layout)).perform(swipeRight());
-        } else {
-          onView(withId(R.id.drawer_layout)).perform(swipeLeft());
+        // Espresso will try to close the drawer if it's opened
+        // But if no drawer exists (Tablet devices), we will have to catch the exception
+        // and continue on the test
+        // Why can't we do something like .exist() first?
+        // http://stackoverflow.com/questions/20807131/espresso-return-boolean-if-view-exists
+        try {
+            if (mContext.getResources().getConfiguration()
+                    .getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                onView(withId(R.id.drawer_layout)).perform(swipeRight());
+            } else {
+                onView(withId(R.id.drawer_layout)).perform(swipeLeft());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot close drawer", e);
         }
-      } catch (Exception e) {
-      }
     }
 
     public void assertRootsPresent(String... labels) throws UiObjectNotFoundException {
