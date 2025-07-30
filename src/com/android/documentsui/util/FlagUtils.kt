@@ -31,6 +31,7 @@ class FlagUtils private constructor(
         @Volatile private var instance: FlagUtils = FlagUtils()
         private val overridableFlags = listOf(
             Flags.FLAG_DESKTOP_FILE_HANDLING_RO,
+            Flags.FLAG_DESKTOP_UX_PHASE_2_RO,
             Flags.FLAG_ENABLE_TRASH_FLOW_RO,
             Flags.FLAG_USE_MATERIAL3,
             // TODO(b/433858983): Make peek overridable once all flag evaluations use FlagUtils.
@@ -77,6 +78,15 @@ class FlagUtils private constructor(
                 Flags.FLAG_DESKTOP_FILE_HANDLING_RO,
                 Flags.desktopFileHandlingRo()
             )
+        }
+
+        @JvmStatic
+        fun isDesktopUxPhase2FlagEnabled(): Boolean {
+            val flag = getInstance().overrides.getOrDefault(
+                Flags.FLAG_DESKTOP_UX_PHASE_2_RO,
+                Flags.desktopUxPhase2Ro()
+            )
+            return flag && isUseMaterial3FlagEnabled()
         }
 
         @JvmStatic
