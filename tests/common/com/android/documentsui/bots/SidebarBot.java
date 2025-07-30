@@ -103,6 +103,10 @@ public class SidebarBot extends Bots.BaseBot {
 
         // Now scroll around to find our item.
         new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
+        // If the list is scrolled to the bottom, there may be a bottom bounce animation, which
+        // makes clicks fail. Wait for the animation to settle before returning the UI element so
+        // the caller can interact with it reliably.
+        SystemClock.sleep(500);
         return new UiObject(rootsList.childSelector(new UiSelector().text(label)));
     }
 
