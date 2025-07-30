@@ -67,7 +67,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.closeDrawer();
         menuItems = new HashMap<>();
 
-        menuItems.put("Extract here", false);
+        menuItems.put("Extract", false);
         menuItems.put("Browse", false);
         menuItems.put("Share", false);
         menuItems.put("Open", false);
@@ -149,7 +149,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void testContextMenu_onArchive_shouldHaveBrowseMenuItem() throws Exception {
         menuItems.clear();
-        menuItems.put("Extract here", true);
+        menuItems.put("Extract", true);
         menuItems.put("Browse", true);
 
         bots.directory.rightClickDocument("archive.zip");
@@ -160,7 +160,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
     public void testContextMenu_onArchive_shouldNotHaveBrowseMenuItem() throws Exception {
         menuItems.clear();
-        menuItems.put("Extract here", false);
+        menuItems.put("Extract", false);
         menuItems.put("Browse", false);
 
         bots.directory.rightClickDocument("archive.zip");
