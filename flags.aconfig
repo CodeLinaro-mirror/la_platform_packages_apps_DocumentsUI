@@ -10,6 +10,14 @@ flag {
 }
 
 flag {
+    name: "desktop_ux_phase_2_ro"
+    namespace: "documentsui"
+    description: "Desktop UX bug fixes and improvements, phase 2"
+    bug: "432658978"
+    is_fixed_read_only: true
+}
+
+flag {
     name: "use_search_v2_read_only"
     namespace: "documentsui"
     description: "Enables the next generation search functionality."
