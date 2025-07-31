@@ -84,7 +84,7 @@ public class SidebarBot extends Bots.BaseBot {
         final UiSelector rootsList = getRootsContainerSelector();
 
         // Wait for the first list item to appear.
-        new UiObject(rootsList).waitForExists(mTimeout);
+        new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
 
         // Now scroll around to find our item.
         new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
