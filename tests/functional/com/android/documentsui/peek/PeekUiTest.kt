@@ -22,6 +22,7 @@ import android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.RemoteException
+import android.platform.test.annotations.DesktopTest
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
@@ -169,6 +170,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         showAndCheckPreview("file0.log")
     }
 
+    @DesktopTest(cujs = ["b/434068614"])
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {
