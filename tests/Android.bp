@@ -38,6 +38,7 @@ java_defaults {
         "kotlinx_coroutines_test",
         "mockito-target",
         "microbenchmark-device-lib",
+        "platform-test-annotations",
     ],
 }
 

@@ -25,6 +25,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 
+import android.platform.test.annotations.DesktopTest;
 import android.view.MotionEvent;
 
 import androidx.test.filters.LargeTest;
@@ -54,6 +55,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.assertDocumentsCount(4);
     }
 
+    @DesktopTest(cujs = {"b/434065338", "b/434066029", "b/434065378"})
     @HugeLongTest
     public void testRootTapped_GoToRootFromChildDir() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);

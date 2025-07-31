@@ -76,7 +76,13 @@
     <string name="menu_move">Move to\u2026</string>
     <!-- Menu item title that compresses the selected documents to the current directory [CHAR LIMIT=28] -->
     <string name="menu_compress">Compress</string>
-    <!-- Menu item title that zips the selected documents and creates an archive in the current directory [CHAR LIMIT=28] -->
+    <!-- This string appears within the File Manager as a menu item of the context menu when one or
+    several files and/or folders are selected. The word "zip" is a verb meaning: to bundle and
+    compress the selected files in order to reduce the amount of memory and storage space required
+    to store them. The result of "zipping" the selected files is a new file (also known as a ZIP
+    archive) containing a copy of the files originally selected by the user. In this context, the
+    word "zip" has nothing to do with ZIP codes or postcodes.
+    [CHAR_LIMIT=28] -->
     <string name="menu_zip">Zip</string>
     <!-- Menu item title that extracts the selected documents [CHAR LIMIT=28] -->
     <string name="menu_extract">Extract to\u2026</string>
