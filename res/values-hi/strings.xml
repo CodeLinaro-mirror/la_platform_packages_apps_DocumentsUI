@@ -47,8 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"ज़िप"</string>
     <string name="menu_extract" msgid="8171946945982532262">"यहां निकालें…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"सभी को एक्सट्रैक्ट करें…"</string>
-    <!-- no translation found for menu_extract_here (7120939831786325360) -->
-    <skip />
+    <string name="menu_extract_here" msgid="7120939831786325360">"एक्सट्रैक्ट करें"</string>
     <string name="menu_browse" msgid="6007716414766674967">"ब्राउज़ करें"</string>
     <string name="menu_rename" msgid="1883113442688817554">"नाम बदलें"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"जानकारी पाएं"</string>
@@ -148,7 +147,7 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> फ़ाइलें कंप्रेस की जा रही हैं.</item>
     </plurals>
     <plurals name="extract_begin" formatted="false" msgid="1006380679562903749">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> फ़ाइलें निकाली जा रही हैं.</item>
+      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> फ़ाइल निकाली जा रही है.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> फ़ाइलें निकाली जा रही हैं.</item>
     </plurals>
     <plurals name="move_begin" formatted="false" msgid="1464229874265756956">

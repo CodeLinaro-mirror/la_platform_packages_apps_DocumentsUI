@@ -44,7 +44,7 @@
     <string name="menu_copy" msgid="7404820171352314754">"ចម្លងទៅ…"</string>
     <string name="menu_move" msgid="2310760789561129882">"ផ្លាស់ទីទៅ…"</string>
     <string name="menu_compress" msgid="37539111904724188">"បង្ហាប់"</string>
-    <string name="menu_zip" msgid="5734673122376258045">"លេខ​កូដ​តំបន់"</string>
+    <string name="menu_zip" msgid="5734673122376258045">"Zip"</string>
     <string name="menu_extract" msgid="8171946945982532262">"ស្រង់​ទៅ…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"ស្រង់ចេញទាំងអស់…"</string>
     <string name="menu_extract_here" msgid="7120939831786325360">"ដកស្រង់"</string>
@@ -147,8 +147,8 @@
       <item quantity="one">កំពុង​បង្ហាប់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g> ។</item>
     </plurals>
     <plurals name="extract_begin" formatted="false" msgid="1006380679562903749">
-      <item quantity="other">កំពុង​ស្រង់​ឯកសារ​ <xliff:g id="COUNT_1">%1$d</xliff:g> ។</item>
-      <item quantity="one">កំពុង​ស្រង់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g> ។</item>
+      <item quantity="other">កំពុង​ស្រង់​ឯកសារ​ <xliff:g id="COUNT_1">%1$d</xliff:g>។</item>
+      <item quantity="one">កំពុង​ស្រង់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g>។</item>
     </plurals>
     <plurals name="move_begin" formatted="false" msgid="1464229874265756956">
       <item quantity="other">កំពុង​ផ្លាស់ទី​ធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> ។</item>

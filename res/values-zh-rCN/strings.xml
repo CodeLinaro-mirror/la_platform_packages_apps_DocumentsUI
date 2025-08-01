@@ -147,8 +147,8 @@
       <item quantity="one">正在压缩 <xliff:g id="COUNT_0">%1$d</xliff:g> 个文件。</item>
     </plurals>
     <plurals name="extract_begin" formatted="false" msgid="1006380679562903749">
-      <item quantity="other">正在解压 <xliff:g id="COUNT_1">%1$d</xliff:g> 个文件。</item>
-      <item quantity="one">正在解压 <xliff:g id="COUNT_0">%1$d</xliff:g> 个文件。</item>
+      <item quantity="other">正在解压缩 <xliff:g id="COUNT_1">%1$d</xliff:g> 个文件。</item>
+      <item quantity="one">正在解压缩 <xliff:g id="COUNT_0">%1$d</xliff:g> 个文件。</item>
     </plurals>
     <plurals name="move_begin" formatted="false" msgid="1464229874265756956">
       <item quantity="other">正在移动 <xliff:g id="COUNT_1">%1$d</xliff:g> 项。</item>
