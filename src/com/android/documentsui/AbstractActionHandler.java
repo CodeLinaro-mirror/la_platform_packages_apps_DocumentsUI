@@ -82,6 +82,7 @@ import com.android.documentsui.ui.Snackbars;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -1068,10 +1069,24 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     : null;
             int maxResults = (root == null || root.isRecents())
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
-            QueryOptions options = new QueryOptions(
-                    maxResults, maxResults, lastModifiedDelta,
-                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles,
-                    mState.acceptMimes, mSearchMgr.buildQueryArgs());
+            // acceptMimes, if not null, represents restrictions on types of files loader should
+            // return. However, when listing directories, we must include the directory MIME type
+            // itself, as otherwise directories containing only directories appear empty.
+            String[] acceptMimes = null;
+            if (stack.isRecents() || mSearchMgr.isSearching()) {
+                acceptMimes = mState.acceptMimes;
+            } else if (mState.isPhotoPicking()) {
+                acceptMimes = new String[]{
+                        DocumentsContract.Document.MIME_TYPE_DIR, MimeTypes.IMAGE_MIME,
+                };
+            } else if (mState.acceptMimes != null) {
+                int mimeCount = mState.acceptMimes.length;
+                acceptMimes = Arrays.copyOf(mState.acceptMimes, mimeCount + 1);
+                acceptMimes[mimeCount - 1] = DocumentsContract.Document.MIME_TYPE_DIR;
+            }
+            QueryOptions options = new QueryOptions(maxResults, maxResults, lastModifiedDelta,
+                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles, acceptMimes,
+                    mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 if (DEBUG) {

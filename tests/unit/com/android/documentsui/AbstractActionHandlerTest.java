@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -30,6 +31,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 
@@ -64,6 +66,8 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -310,6 +314,42 @@ public class AbstractActionHandlerTest {
         String[] modelIds = mEnv.model.getModelIds();
         assertEquals(TestEnv.FILE_APK, mEnv.model.getDocument(modelIds[0]));
         assertEquals(TestEnv.FILE_GIF, mEnv.model.getDocument(modelIds[1]));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testListFolderWithAcceptedMimeTypesSetV2() throws Exception {
+        testListFolderWithAcceptedMimeTypesSetCommon();
+    }
+
+    @Test
+    @DisableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testListFolderWithAcceptedMimeTypesSetV1() throws Exception {
+        testListFolderWithAcceptedMimeTypesSetCommon();
+    }
+
+    // Common test that should pass for V1 and V2. Called with specific flags forced to the
+    // needed state.
+    private void testListFolderWithAcceptedMimeTypesSetCommon() throws Exception {
+        mEnv.state.stack.changeRoot(TestProvidersAccess.HOME);
+        // Add MIME type restrictions, which should be ignored by folder loading.
+        mEnv.state.acceptMimes = new String[]{"image/*", "audio/*"};
+        mEnv.state.stack.push(TestEnv.OtherUser.FOLDER_0);
+        mEnv.mockProviders.get(TestProvidersAccess.HOME.authority)
+                .setNextChildDocumentsReturns(TestEnv.FOLDER_1, TestEnv.FOLDER_2);
+
+        mHandler.loadDocumentsForCurrentStack();
+        CountDownLatch latch = new CountDownLatch(1);
+        mEnv.model.addUpdateListener(event -> latch.countDown());
+        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+
+        assertTrue(latch.await(1, TimeUnit.SECONDS));
+        Set<String> foundDocuments = new HashSet<>();
+        for (String modelId : mEnv.model.getModelIds()) {
+            foundDocuments.add(mEnv.model.getDocument(modelId).displayName);
+        }
+        assertEquals(Set.of(TestEnv.FOLDER_1.displayName, TestEnv.FOLDER_2.displayName),
+                foundDocuments);
     }
 
     @Test
