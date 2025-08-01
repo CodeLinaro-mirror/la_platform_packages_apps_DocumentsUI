@@ -28,6 +28,8 @@ import android.content.Context;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -42,6 +44,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -59,6 +62,9 @@ public final class IconHelperTest {
     private ThumbnailCache mThumbnailCache = new ThumbnailCache(1000);
     private TestUserManagerState mTestUserManagerState;
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
