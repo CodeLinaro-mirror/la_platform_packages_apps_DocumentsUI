@@ -47,8 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"‏כיווץ לקובץ Zip"</string>
     <string name="menu_extract" msgid="8171946945982532262">"חילוץ לתיקייה…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"חילוץ הכול…"</string>
-    <!-- no translation found for menu_extract_here (7120939831786325360) -->
-    <skip />
+    <string name="menu_extract_here" msgid="7120939831786325360">"חילוץ"</string>
     <string name="menu_browse" msgid="6007716414766674967">"עיון"</string>
     <string name="menu_rename" msgid="1883113442688817554">"שינוי שם"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"מידע על המסמך"</string>
@@ -228,19 +227,19 @@
       <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים הועתקו ללוח.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים הועתקו ללוח.</item>
     </plurals>
-    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"הארכיון הזה נמצא במיקום לקריאה בלבד ואין אפשרות לחלץ אותו לכאן."</string>
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"הארכיון הזה נמצא במיקום לקריאה בלבד ואי-אפשר לחלץ אותו לכאן."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"פעולת הקובץ אינה נתמכת."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"פעולת הקובץ נכשלה."</string>
     <string name="rename_error" msgid="6700093173508118635">"לא ניתן היה לשנות את שם המסמך"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"הוצאה"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"קבצים מסוימים הומרו"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{מתבצעת העתקה של \"<xliff:g id="FILENAME">{filename}</xliff:g>\" לתיקייה \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# קבצים מועתקים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# קבצים מועתקים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# קבצים מועתקים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{מתבצע חילוץ של הקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\" אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{מתבצע חילוץ של # ארכיונים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{מתבצע חילוץ של # ארכיונים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{מתבצע חילוץ של # ארכיונים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{הקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\" מחולץ אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# ארכיונים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# ארכיונים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# ארכיונים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{המערכת מעבירה את \"<xliff:g id="FILENAME">{filename}</xliff:g>\" אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{מתבצעת מחיקה של \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת מחיקה של # קבצים}two{מתבצעת מחיקה של שני קבצים}other{מתבצעת מחיקה של # קבצים}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{מתבצעת מחיקה של \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת מחיקה של # קבצים}two{מתבצעת מחיקה של # קבצים}other{מתבצעת מחיקה של # קבצים}}"</string>
     <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{מתבצעת דחיסה לקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת דחיסה ל-# קבצים}two{מתבצעת דחיסה ל-# קבצים}other{מתבצעת דחיסה ל-# קבצים}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"הצגת ההתקדמות בהעלאת הקובץ"</string>
-    <string name="job_progress_panel_title" msgid="1640388840961608168">"ההתקדמות בפעולת הקובץ"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"ההתקדמות בפעולה בקובץ"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"הפעולה הסתיימה"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"בוטלה"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"לפרטים"</string>
@@ -250,11 +249,11 @@
     <string name="delete_completed" msgid="4149401155614626199">"נמחק"</string>
     <string name="compress_completed" msgid="6522047921428919799">"הקובץ נדחס"</string>
     <string name="extract_completed" msgid="8824595789915249972">"הקובץ חולץ"</string>
-    <string name="copy_failed" msgid="3700193913993844675">"לא ניתן להעתיק"</string>
-    <string name="move_failed" msgid="7692364307225994220">"אי אפשר להעביר"</string>
+    <string name="copy_failed" msgid="3700193913993844675">"ההעתקה נכשלה"</string>
+    <string name="move_failed" msgid="7692364307225994220">"ההעברה נכשלה"</string>
     <string name="delete_failed" msgid="2642684566325252513">"המחיקה נכשלה"</string>
-    <string name="compress_failed" msgid="7397502181042157261">"אי אפשר לבצע דחיסה"</string>
-    <string name="extract_failed" msgid="8372397499452831323">"לא ניתן לחלץ"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"הדחיסה נכשלה"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"החילוץ נכשל"</string>
     <string name="expand_label" msgid="5683357671239615207">"הרחבה"</string>
     <string name="collapse_label" msgid="4530974883269531062">"כיווץ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"לתת לאפליקציה <xliff:g id="APPNAME"><b>^1</b></xliff:g> גישה לספרייה <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> באחסון <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
