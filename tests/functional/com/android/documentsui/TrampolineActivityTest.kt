@@ -19,6 +19,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.os.Build.VERSION_CODES
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -28,7 +29,6 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
 import com.android.documentsui.util.getPhotopickerGetContentComponentNameForType
 import com.google.common.truth.TruthJUnit.assume
 import java.util.Optional
@@ -105,6 +105,8 @@ class TrampolineActivityTest() {
 
     @LargeTest
     @RunWith(Parameterized::class)
+    // FLAG_REDIRECT_GET_CONTENT_RO cannot use @EnableFlags because the flag evaluation occurs in
+    // AndroidManifest and we cannot override the flag when it's used there.
     @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class ShouldLaunchCorrectPackageTest {
         enum class AppType {
@@ -179,7 +181,7 @@ class TrampolineActivityTest() {
         lateinit var testData: GetContentIntentData
 
         @get:Rule
-        val checkFlags = CheckAndForceMaterial3Flag()
+        val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
         @Before
         fun setUp() {
@@ -247,10 +249,12 @@ class TrampolineActivityTest() {
 
     @LargeTest
     @RunWith(AndroidJUnit4::class)
+    // FLAG_REDIRECT_GET_CONTENT_RO cannot use @EnableFlags because the flag evaluation occurs in
+    // AndroidManifest and we cannot override the flag when it's used there.
     @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class RedirectTest {
         @get:Rule
-        val checkFlags = CheckAndForceMaterial3Flag()
+        val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
         @Before
         fun setUp() {

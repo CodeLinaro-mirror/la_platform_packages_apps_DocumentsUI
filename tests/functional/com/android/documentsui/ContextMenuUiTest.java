@@ -24,15 +24,15 @@ import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEn
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.util.FileUtils;
 
@@ -46,7 +46,7 @@ import java.util.Map;
 @LargeTest
 public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -82,7 +82,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_onFile() throws Exception {
         menuItems.put("Share", true);
         menuItems.put("Open", isDesktopFileHandlingFlagEnabled());
@@ -97,7 +97,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_onFilePngDesktop() throws Exception {
         RootInfo root = mDocsHelper.getRoot(ROOT_0_ID);
         DocumentInfo doc = mDocsHelper.findFile(root.documentId, "file1.png");
@@ -125,7 +125,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
      * verify that we are hiding "open with" when it needs to be.
      */
     @Test
-    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_onFileCsvDesktop() throws Exception {
         RootInfo root = mDocsHelper.getRoot(ROOT_0_ID);
         DocumentInfo doc = mDocsHelper.findFile(root.documentId, "file2.csv");
@@ -146,7 +146,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void testContextMenu_onArchive_shouldHaveBrowseMenuItem() throws Exception {
         menuItems.clear();
         menuItems.put("Extract", true);
@@ -157,7 +157,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void testContextMenu_onArchive_shouldNotHaveBrowseMenuItem() throws Exception {
         menuItems.clear();
         menuItems.put("Extract", false);

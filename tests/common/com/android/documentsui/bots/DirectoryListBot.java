@@ -17,7 +17,6 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -287,7 +286,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         int contentDescription = isUseMaterial3FlagEnabled()
                 ? R.string.clear_selection : android.R.string.cancel;
         onView(allOf(withContentDescription(contentDescription),
-                isDescendantOfA(withId(parentId)))).perform(click());
+                isDescendantOfA(withId(parentId)))).perform(clickAndRetryOnLongPress());
     }
 
     public void pasteFilesFromClipboard() {

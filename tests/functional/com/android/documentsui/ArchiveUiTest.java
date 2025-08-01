@@ -25,14 +25,14 @@ import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 import static org.junit.Assert.assertNotNull;
 
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -43,13 +43,13 @@ import java.io.InputStream;
 @LargeTest
 public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     @Test
-    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
@@ -61,7 +61,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaDefaultAction() throws Exception {
         createArchiveInRootDir0();
         bots.directory.waitForDocument("archive.zip");
@@ -71,7 +71,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void cannotExtractArchiveInReadOnlyFolder() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
@@ -81,7 +81,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaContextMenu() throws Exception {
         createArchiveInRootDir0();
         bots.directory.waitForDocument("archive.zip");
@@ -92,7 +92,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
@@ -105,7 +105,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaActionMenu() throws Exception {
         createArchiveInRootDir0();
         bots.directory.waitForDocument("archive.zip");
@@ -116,7 +116,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaActionMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
@@ -129,7 +129,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void openArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
@@ -142,7 +142,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");
@@ -151,7 +151,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");
@@ -161,7 +161,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");

@@ -25,7 +25,7 @@ import androidx.test.filters.LargeTest;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule(/* skipCreation */ true);

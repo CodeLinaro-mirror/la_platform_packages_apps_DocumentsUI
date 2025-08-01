@@ -16,7 +16,7 @@
 package com.android.documentsui
 
 import android.content.Intent
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import android.view.MenuItem
 import android.widget.ActionMenuView
 import android.widget.FrameLayout
@@ -27,7 +27,7 @@ import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
 import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
@@ -49,12 +49,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @SmallTest
-@RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
+@EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class JobPanelControllerTest {
     @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    val setFlags = OverrideFlagsRule()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 

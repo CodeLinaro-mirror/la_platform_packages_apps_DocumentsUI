@@ -16,6 +16,9 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.useMaterial3;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -43,7 +46,7 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.queries.SearchHistoryManager;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.theme.ThemeOverlayManager;
-import com.android.documentsui.util.Material3Config;
+import com.android.documentsui.util.FlagUtils;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.collect.Lists;
@@ -168,19 +171,23 @@ public class DocumentsApplication extends Application {
     }
 
     /**
-     * Initializes configurations for Material3.
-     *
-     * <p>NOTE: It initializes even when the flag is disabled.
+     * Override the material 3 flag based on config values.
+     * This has to be very very early in the application's life for everything to see the correct
+     * value of material3 flag.
      */
-    private void initializeMaterial3Config() {
-        Material3Config.getInstance()
-                .setForceMaterial3(getResources().getBoolean(R.bool.force_material3));
+    private void setMaterial3Flag() {
+        // Material3 flag is special, since it has resources behind the flag, we can never enable
+        // it when it was disabled at build time (i.e. at build time the assets were stripped).
+        if (useMaterial3()) {
+            boolean forceMaterial3 = getResources().getBoolean(R.bool.force_material3);
+            FlagUtils.getInstance().setOverride(FLAG_USE_MATERIAL3, forceMaterial3);
+        }
     }
 
     @SuppressLint("NewApi") // OverlayManager.class is @hide
     @Override
     public void onCreate() {
-        initializeMaterial3Config();
+        setMaterial3Flag();
         super.onCreate();
         synchronized (DocumentsApplication.class) {
             if (sConfigStore == null) {

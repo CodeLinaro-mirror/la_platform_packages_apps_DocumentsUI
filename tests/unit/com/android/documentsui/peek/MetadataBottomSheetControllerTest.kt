@@ -16,7 +16,9 @@
 package com.android.documentsui.peek
 
 import android.content.Context
+import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +30,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.R
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_PEEK_PREVIEW_RO
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.junit.Assert.assertEquals
@@ -38,11 +40,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @SmallTest
-@RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_USE_PEEK_PREVIEW_RO)
+@EnableFlags(FLAG_USE_MATERIAL3)
+// TODO(b/433858983): Change to EnableFlags once peek is overridable in FlagUtils.
+@RequiresFlagsEnabled(FLAG_USE_PEEK_PREVIEW_RO)
 @RunWith(AndroidJUnit4::class)
 class MetadataBottomSheetControllerTest {
     @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    val setFlags = OverrideFlagsRule()
+
+    // TODO(b/433858983): Remove CheckFlagsRule once peek is overridable in FlagUtils.
+    @get:Rule
+    val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     private lateinit var context: Context
     private lateinit var root: CoordinatorLayout

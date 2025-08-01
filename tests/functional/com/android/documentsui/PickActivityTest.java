@@ -32,8 +32,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 
 import androidx.test.filters.LargeTest;
@@ -46,7 +46,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.bots.Bots;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.picker.PickActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.ui.TestDialogController;
@@ -88,7 +88,7 @@ public class PickActivityTest {
     }
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -216,7 +216,7 @@ public class PickActivityTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionOpenDocument_SingleFile()
             throws UiObjectNotFoundException {
 
@@ -256,7 +256,7 @@ public class PickActivityTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionGetContent_MultiFiles() throws Exception {
         // Allow multiple files to be selected.
         mIntentGetContent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -309,7 +309,7 @@ public class PickActivityTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ClickCancel() throws UiObjectNotFoundException {
         assume().that(mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button))
                 .isTrue();
@@ -337,7 +337,7 @@ public class PickActivityTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_MATERIAL3})
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_FlagDisabled() throws UiObjectNotFoundException {
         mRule.launchActivity(mIntentGetContent);
 

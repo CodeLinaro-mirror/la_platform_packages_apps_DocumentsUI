@@ -44,8 +44,12 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 import android.util.Pair;
@@ -68,7 +72,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.DocumentStackAsserts;
 import com.android.documentsui.testing.Roots;
@@ -119,7 +123,11 @@ public class ActionHandlerTest {
     @Mock private Runnable mMockCloseSelectionBar;
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    // TODO(b/433858983): Remove CheckFlagsRule once peek is overridable in FlagUtils.
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
@@ -185,7 +193,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testOpenFileFlags() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -198,7 +206,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testOpenFileFlagsDesktop() {
         mHandler.onDocumentOpened(TestEnv.FILE_GIF,
                 com.android.documentsui.files.ActionHandler.VIEW_TYPE_PREVIEW,
@@ -497,7 +505,7 @@ public class ActionHandlerTest {
     // Require desktop file handling flag because when it's disabled proguard strips the
     // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;
@@ -513,7 +521,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooser() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -522,7 +530,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooserDesktop() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
 
@@ -534,7 +542,7 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testShowChooser_NoApplicationFound() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.DOWNLOADS;
         mActivity.packageMgr.dontResolveActivity = true;
@@ -769,7 +777,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsEnabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowPeek() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
         // The inspector activity is not called.
@@ -779,6 +789,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
     @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
@@ -793,6 +804,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
     @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_DebugDisabled() throws Exception {
         mFeatures.debugSupport = false;
@@ -805,6 +817,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
     @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_DebugEnabled() throws Exception {
         mFeatures.debugSupport = true;
@@ -819,6 +832,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
     @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_OverridesRootDocumentName() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
@@ -839,6 +853,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
     @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
     public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;

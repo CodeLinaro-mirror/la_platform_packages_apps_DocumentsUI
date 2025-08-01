@@ -16,7 +16,7 @@
 package com.android.documentsui
 
 import android.content.Intent
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ProgressBar
@@ -40,7 +40,7 @@ import com.android.documentsui.actions.RelaxedClickAction
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.rules.TestFilesRule
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
@@ -81,11 +81,11 @@ private fun withProgress(expectedProgress: Int): Matcher<View> {
 private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progress.msg))
 
 @LargeTest
-@RequiresFlagsEnabled(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
+@EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    val setFlags = OverrideFlagsRule()
 
     @get:Rule
     val testFiles = TestFilesRule()
