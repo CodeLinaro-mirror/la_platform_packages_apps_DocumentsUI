@@ -44,7 +44,7 @@
     <string name="menu_copy" msgid="7404820171352314754">"คัดลอกไปยัง…"</string>
     <string name="menu_move" msgid="2310760789561129882">"ย้ายไปที่…"</string>
     <string name="menu_compress" msgid="37539111904724188">"บีบอัด"</string>
-    <string name="menu_zip" msgid="5734673122376258045">"รหัสไปรษณีย์"</string>
+    <string name="menu_zip" msgid="5734673122376258045">"สร้างไฟล์ Zip"</string>
     <string name="menu_extract" msgid="8171946945982532262">"แตกข้อมูลไปยัง…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"แตกเอกสารทั้งหมด…"</string>
     <string name="menu_extract_here" msgid="7120939831786325360">"แตกไฟล์"</string>

@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
@@ -220,9 +221,15 @@ final class ListDocumentHolder extends DocumentHolder {
     }
 
     @Override
-    public boolean inSelectRegion(MotionEvent event) {
-        return (mDoc.isDirectory() && !(mAction == State.ACTION_BROWSE)) ?
-                false : Views.isEventOver(event, itemView.getParent(), mIconLayout);
+    public int classifySelectionHotspot(MotionEvent event) {
+        if (mDoc.isDirectory() && (mAction != State.ACTION_BROWSE)) {
+            // No-op.
+
+        } else if (Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+        }
+
+        return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
     }
 
     @Override
