@@ -24,6 +24,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import static org.hamcrest.Matchers.allOf;
@@ -32,12 +33,12 @@ import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -48,24 +49,28 @@ import com.android.documentsui.R;
 import com.android.documentsui.actions.RelaxedClickAction;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * A test helper class that provides support for controlling and asserting against
- * the roots list drawer.
+ * A test helper class that provides support for controlling and asserting against the roots list
+ * drawer.
  */
 public class SidebarBot extends Bots.BaseBot {
     private static final String TAG = "RootsListBot";
 
     private final String mRootListId;
     private final UiAutomation mAutomation;
+    private final UiBot mUiBot;
 
-    public SidebarBot(UiDevice device, UiAutomation automation, Context context, int timeout) {
+    public SidebarBot(
+            UiDevice device, UiAutomation automation, Context context, UiBot uiBot, int timeout) {
         super(device, context, timeout);
         mAutomation = automation;
+        mUiBot = uiBot;
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
@@ -75,6 +80,15 @@ public class SidebarBot extends Bots.BaseBot {
         return new UiSelector()
                 .resourceId(mTargetPackage + containerId)
                 .childSelector(new UiSelector().resourceId(mRootListId));
+    }
+
+    private boolean toolbarHasTitle(String title) {
+        try {
+            mUiBot.assertWindowTitle(title);
+            return true;
+        } catch (AssertionFailedError e) {
+            return false;
+        }
     }
 
     private UiObject findRoot(String label) throws UiObjectNotFoundException {
@@ -93,19 +107,11 @@ public class SidebarBot extends Bots.BaseBot {
 
     /** Open navigation root either from the Drawer or the Navigation rail. */
     public void openRoot(String label) throws UiObjectNotFoundException {
-        UiObject root = findRoot(label);
-        mDevice.waitForIdle();
-        boolean ret = root.click();
-        if (!ret) {
-            Log.d(TAG, "Trying again the click on root: " + label);
-            mDevice.waitForIdle();
-            ret = root.click();
+        if (toolbarHasTitle(label)) {
+            return;
         }
-        assertTrue("Failed to click on root: " + label, ret);
-
-        mDevice.waitForIdle();
-        // Close the drawer in case we select a pre-selected root already
-        closeDrawer();
+        assertTrue("Failed to click on root: " + label, findRoot(label).click());
+        mUiBot.assertWindowTitle(label);
     }
 
     /**
@@ -134,7 +140,8 @@ public class SidebarBot extends Bots.BaseBot {
         if (!this.inDrawerLayout()) {
             return;
         }
-        final UiSelector hamburger =
+
+        final UiSelector hamburgerSelector =
                 new UiSelector()
                         .resourceId(mTargetPackage + ":id/toolbar")
                         .childSelector(
@@ -142,9 +149,13 @@ public class SidebarBot extends Bots.BaseBot {
                                         .className("android.widget.ImageButton")
                                         .description(mContext.getString(R.string.drawer_open))
                                         .clickable(true));
-        new UiObject(hamburger).click();
-        // Wait for the roots to appear.
-        mDevice.findObject(getRootsContainerSelector()).waitForExists(mTimeout);
+        UiObject hamburgerButton = mDevice.findObject(hamburgerSelector);
+        assertTrue("Hamburger button is NOT present",
+                hamburgerButton.waitForExists(mTimeout));
+        hamburgerButton.click();
+
+        // Wait for the roots to appear and fail if it doesn't.
+        assertTrue(mDevice.findObject(getRootsContainerSelector()).waitForExists(mTimeout));
     }
 
     public void closeDrawer() {
@@ -224,7 +235,11 @@ public class SidebarBot extends Bots.BaseBot {
                         MotionEvent.ACTION_UP, point.centerX(), point.centerY());
         mAutomation.injectInputEvent(motionUp, true);
 
-        onView(withText(menuOption)).perform(new RelaxedClickAction());
+        mDevice.waitForIdle();
+
+        ViewInteraction menuItem = waitForContextMenuItemToAppear(menuOption);
+        assertNotNull("Context menu item " + menuOption + " not found", menuItem);
+        menuItem.perform(new RelaxedClickAction());
     }
 
     /**

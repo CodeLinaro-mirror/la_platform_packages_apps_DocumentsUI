@@ -47,7 +47,8 @@
     <string name="menu_zip" msgid="5734673122376258045">"‏ضغط المستندات بتنسيق ZIP"</string>
     <string name="menu_extract" msgid="8171946945982532262">"الاستخراج إلى…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"استخراج الكل…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"الاستخراج هنا"</string>
+    <!-- no translation found for menu_extract_here (7120939831786325360) -->
+    <skip />
     <string name="menu_browse" msgid="6007716414766674967">"تصفُّح"</string>
     <string name="menu_rename" msgid="1883113442688817554">"إعادة تسمية"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"الحصول على المعلومات"</string>
@@ -275,19 +276,48 @@
       <item quantity="other">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملف إلى الحافظة.</item>
       <item quantity="one">تم نسخ ملف واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>) إلى الحافظة.</item>
     </plurals>
+    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
+    <skip />
     <string name="file_operation_rejected" msgid="4301554203329008794">"معالجة الملف غير متوافقة."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"تعذّرت معالجة الملف."</string>
     <string name="rename_error" msgid="6700093173508118635">"تعذّرت إعادة تسمية المستند."</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"إخراج"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"تم تحويل بعض الملفات"</string>
+    <!-- no translation found for copy_in_progress (3314396340163205014) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (519951867474301835) -->
+    <skip />
+    <!-- no translation found for move_in_progress (2569791135683944801) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (9032473164450943788) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (7768916918745485546) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"عرض مستوى تقدُّم عمليات الملف"</string>
+    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
+    <skip />
+    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
+    <skip />
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"تم الإلغاء"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"عرض التفاصيل"</string>
+    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
+    <skip />
     <string name="copy_completed" msgid="3749037014674785400">"تم النسخ"</string>
     <string name="move_completed" msgid="3981250605092729273">"تم النقل"</string>
     <string name="delete_completed" msgid="4149401155614626199">"تم الحذف"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"تم ضغط الملف"</string>
+    <!-- no translation found for compress_completed (6522047921428919799) -->
+    <skip />
     <string name="extract_completed" msgid="8824595789915249972">"تم استخراج الملف"</string>
+    <!-- no translation found for copy_failed (3700193913993844675) -->
+    <skip />
+    <!-- no translation found for move_failed (7692364307225994220) -->
+    <skip />
+    <!-- no translation found for delete_failed (2642684566325252513) -->
+    <skip />
+    <!-- no translation found for compress_failed (7397502181042157261) -->
+    <skip />
+    <!-- no translation found for extract_failed (8372397499452831323) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"توسيع"</string>
     <string name="collapse_label" msgid="4530974883269531062">"تصغير"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"هل تريد منح التطبيق <xliff:g id="APPNAME"><b>^1</b></xliff:g> الإذن بالوصول إلى الدليل <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> على <xliff:g id="STORAGE"><i>^3</i></xliff:g>؟"</string>

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("ktlint:standard:filename")
+
 package com.android.documentsui.util
 
 import android.util.Log
@@ -327,46 +329,8 @@ private fun initializeIdMapping() {
   )
 }
 
-interface Config {
-  /**
-   * Material3 is only fully enabled if the config forceMaterial3 is true AND the flag use_material3
-   * is enabled.
-   */
-  var forceMaterial3: Boolean?
-}
-
-class Material3ConfigImpl() : Config {
-  override var forceMaterial3: Boolean? = null
-    set(value) {
-      if (field != null && field != value) {
-        Log.w(
-            TAG,
-            "forceMaterial3 already set ($field) but overriding to $value. " +
-                    "This could result in unstable behaviour."
-        )
-      }
-
-      field = value
-      if (DEBUG) {
-        Log.d(
-          TAG,
-          "forceMaterial3 initializing with $value use_material3: ${
-            isUseMaterial3FlagEnabled()
-          }",
-        )
-      }
-    }
-}
-
 abstract class Material3Config private constructor() {
   companion object {
-    private val _instance: Config by lazy { Material3ConfigImpl() }
-
-    @JvmStatic
-    fun getInstance(): Config {
-      return _instance
-    }
-
     /**
      * Convert the resource ID from non-Material3 to Material3 version if the Material3 is enabled,
      * otherwise it returns the given ID as is.
@@ -374,7 +338,6 @@ abstract class Material3Config private constructor() {
     @JvmStatic
     @AnyRes
     fun getRes(@AnyRes originalResourceId: Int): Int {
-      // NOTE: isUseMaterial3FlagEnabled() already checks for the config forceMaterial3.
       if (!isUseMaterial3FlagEnabled()) {
         return originalResourceId
       }
@@ -404,13 +367,6 @@ abstract class Material3Config private constructor() {
     fun overrideMappingForTest(overrides: Map<Int, Int>) {
       initialized = true
       idMapping = overrides
-    }
-
-    @JvmStatic
-    fun setEnabledForTest(enabled: Boolean?) {
-      getInstance().forceMaterial3 = enabled
-      // Force the mapping to be re-initialized.
-      initialized = false
     }
   }
 }

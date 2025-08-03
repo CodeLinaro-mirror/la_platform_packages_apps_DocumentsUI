@@ -29,8 +29,8 @@ import static java.util.Objects.requireNonNull;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +48,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.flags.Flags;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.util.VersionUtils;
 
 import com.google.android.material.chip.Chip;
@@ -81,7 +81,7 @@ public final class SearchChipViewManagerTest {
     private LinearLayout mChipGroup;
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Before
     public void setUp() {
@@ -104,7 +104,7 @@ public final class SearchChipViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_MATERIAL3})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testChipIcon() {
         mSearchChipViewManager.initChipSets(
                 new String[] {"image/*", "audio/*", "video/*", "text/*"});
@@ -129,7 +129,7 @@ public final class SearchChipViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_MATERIAL3})
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testChipIcon_M3Disabled() {
         mSearchChipViewManager.initChipSets(
                 new String[] {"image/*", "audio/*", "video/*", "text/*"});

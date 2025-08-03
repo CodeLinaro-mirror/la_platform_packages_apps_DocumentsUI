@@ -25,7 +25,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -115,14 +114,14 @@ public class UiBot extends Bots.BaseBot {
 
     public void assertWindowTitle(String expected) {
         mDevice.waitForIdle(mTimeout);
-        if (isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR).check(matches(withToolbarTitle(is(expected))));
+        if (!isUseMaterial3FlagEnabled() && expected.equals("Recent")) {
+            // When m3 is off and `show_search_bar` is on, the toolbar on the "recent files" screen
+            // on phones contains a search bar instead of a title, so let's check the `header_title`
+            // instead. NOTE: header_title doesn't exist in m3.
+            onView(withId(R.id.header_title)).check(matches(withText("Recent files")));
             return;
         }
-        // For pre-m3, the title might not be visible in the toolbar, when `show_search_bar` is
-        // true, because instead it might display the search bar for narrow screens (phones).
-        // Let's check the `header_title` instead. NOTE: header_title doesn't exist in m3.
-        onView(withId(R.id.header_title)).check(matches(withSubstring(expected)));
+        onView(TOOLBAR).check(matches(withToolbarTitle(is(expected))));
     }
 
     /**
@@ -257,11 +256,11 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickToolbarItem(int id) {
-        onView(withId(id)).perform(click());
+        onView(withId(id)).perform(clickAndRetryOnLongPress());
     }
 
     public void clickNewFolder() {
-        onView(ACTIONBAR_OVERFLOW).perform(click());
+        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
 
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText("New folder")).perform(click());
@@ -269,9 +268,9 @@ public class UiBot extends Bots.BaseBot {
 
     public void clickActionbarOverflowItem(String label) {
         if (isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR_OVERFLOW).perform(click());
+            onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         } else {
-            onView(ACTIONBAR_OVERFLOW).perform(click());
+            onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         }
         mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
@@ -279,7 +278,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickToolbarOverflowItem(String label) {
-        onView(TOOLBAR_OVERFLOW).perform(click());
+        onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
     }

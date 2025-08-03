@@ -164,19 +164,26 @@ abstract class ActivityTestJunit4<T : Activity?> {
         mActivityScenario = ActivityScenario.launch(intent)
     }
 
+    protected fun setNotificationAccess(enabled: Boolean) {
+        mActivityScenario?.onActivity(
+            { activity ->
+                try {
+                    bots.notifications.setNotificationAccess(activity, enabled)
+                } catch (e: Exception) {
+                    Log.d(TAG, "Cannot set notification access. ", e)
+                }
+            }
+        )
+    }
+
     @Throws(IOException::class)
     private fun disableScreenOffAndSleepTimeouts() {
-        initialScreenOffTimeoutValue = device!!.executeShellCommand(
-            "settings get system screen_off_timeout"
-        )
-        initialSleepTimeoutValue = device!!.executeShellCommand(
-            "settings get secure sleep_timeout"
-        )
-        Log.w(
-            TAG,
-            """initialScreenOffTimeoutValue = '$initialScreenOffTimeoutValue'
-                |initialSleepTimeoutValue = '$initialSleepTimeoutValue'""".trimMargin()
-        )
+        initialScreenOffTimeoutValue =
+            device!!.executeShellCommand("settings get system screen_off_timeout").trimEnd()
+        initialSleepTimeoutValue =
+            device!!.executeShellCommand("settings get secure sleep_timeout").trimEnd()
+        Log.d(TAG, "initialScreenOffTimeoutValue = $initialScreenOffTimeoutValue")
+        Log.d(TAG, "initialSleepTimeoutValue = $initialSleepTimeoutValue")
         device!!.executeShellCommand("settings put system screen_off_timeout -1")
         device!!.executeShellCommand("settings put secure sleep_timeout -1")
     }
@@ -216,12 +223,15 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     private fun logFeatureFlags() {
-        Log.d(TAG, "Flag use_material3 = ${isUseMaterial3FlagEnabled()}")
-        Log.d(TAG, "Flag use_search_v2_read_only = ${isSearchV2Enabled()}")
-        Log.d(TAG, "Flag zip_ng_ro = ${isZipNgFlagEnabled()}")
-        Log.d(TAG, "Flag desktop_file_handling_ro = ${isDesktopFileHandlingFlagEnabled()}")
-        Log.d(TAG, "Flag visual_signals_ro = ${isVisualSignalsFlagEnabled()}")
-        Log.d(TAG, "Flag use_peek_preview_ro = ${isUsePeekPreviewFlagEnabled()}")
+        Log.d(TAG, "Flag isUseMaterial3FlagEnabled() = ${isUseMaterial3FlagEnabled()}")
+        Log.d(
+            TAG,
+            "Flag isDesktopFileHandlingFlagEnabled() = ${isDesktopFileHandlingFlagEnabled()}"
+        )
+        Log.d(TAG, "Flag isSearchV2Enabled() = ${isSearchV2Enabled()}")
+        Log.d(TAG, "Flag isUsePeekPreviewFlagEnabled() = ${isUsePeekPreviewFlagEnabled()}")
+        Log.d(TAG, "Flag isVisualSignalsFlagEnabled() = ${isVisualSignalsFlagEnabled()}")
+        Log.d(TAG, "Flag isZipNgFlagEnabled() = ${isZipNgFlagEnabled()}")
     }
 
     companion object {

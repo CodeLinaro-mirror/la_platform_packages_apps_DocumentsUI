@@ -47,7 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"സിപ്പ് ചെയ്യുക"</string>
     <string name="menu_extract" msgid="8171946945982532262">"എക്സ്ട്രാക്റ്റുചെയ്യുക…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"എക്‌സ്ട്രാക്റ്റ് ചെയ്യൂ…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"ഇവിടെ എക്സ്‌ട്രാക്റ്റുചെയ്യൂ"</string>
+    <string name="menu_extract_here" msgid="7120939831786325360">"എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യുക"</string>
     <string name="menu_browse" msgid="6007716414766674967">"ബ്രൗസ് ചെയ്യുക"</string>
     <string name="menu_rename" msgid="1883113442688817554">"പേര് മാറ്റുക"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"വിവരങ്ങൾ നേടുക"</string>
@@ -211,19 +211,33 @@
       <item quantity="other">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ പകർത്തി.</item>
       <item quantity="one">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_0">%1$d</xliff:g> ഇനം പകർത്തി.</item>
     </plurals>
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ഈ ആർക്കൈവ് വായന മാത്രമുള്ള ലൊക്കേഷനിലാണ്, ഇവിടെ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്യാനാകില്ല."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ഫയൽ പ്രവർത്തനത്തിന് പിന്തുണയില്ല."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ഫയൽ പ്രവർത്തനം പരാജയപ്പെട്ടു."</string>
     <string name="rename_error" msgid="6700093173508118635">"ഡോക്യുമെന്റിന്റെ പേരുമാറ്റുന്നത് പരാജയപ്പെട്ടു"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"ഒഴിവാക്കുക"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"ചില ഫയലുകൾ പരിവർത്തനം ചെയ്യപ്പെട്ടു"</string>
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” പകർത്തുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ പകർത്തുന്നു}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ആർക്കൈവുകൾ എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യുന്നു}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” നീക്കുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ നീക്കുന്നു}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ഇല്ലാതാക്കുന്നു}other{# ഫയലുകൾ ഇല്ലാതാക്കുന്നു}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ സിപ്പ് ചെയ്യുന്നു}other{# ഫയലുകൾ സിപ്പ് ചെയ്യുന്നു}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ഫയലിന്റെ പുരോഗതി കാണിക്കുക"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"ഫയലിന്റെ പുരോഗതി"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"പൂർത്തിയായി"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"റദ്ദാക്കി"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"വിശദാംശങ്ങൾ കാണുക"</string>
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="TOTALBYTES">%2$s</xliff:g>-ൽ <xliff:g id="CURRENTBYTES">%1$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"പകർത്തി"</string>
     <string name="move_completed" msgid="3981250605092729273">"നീക്കി"</string>
     <string name="delete_completed" msgid="4149401155614626199">"ഇല്ലാതാക്കി"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"കംപ്രസ് ചെയ്‌തു"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"സിപ്പ് ചെയ്തു"</string>
     <string name="extract_completed" msgid="8824595789915249972">"എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്തു"</string>
+    <string name="copy_failed" msgid="3700193913993844675">"പകർത്താനായില്ല"</string>
+    <string name="move_failed" msgid="7692364307225994220">"നീക്കാനായില്ല"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"ഇല്ലാതാക്കാനായില്ല"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"സിപ്പ് ചെയ്യാനായില്ല"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യാനായില്ല"</string>
     <string name="expand_label" msgid="5683357671239615207">"വികസിപ്പിക്കുക"</string>
     <string name="collapse_label" msgid="4530974883269531062">"ചുരുക്കുക"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="STORAGE"><i>^3</i></xliff:g> സ്റ്റോറേജിലെ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> എന്ന ഡയറക്റ്ററിയിലേക്ക് <xliff:g id="APPNAME"><b>^1</b></xliff:g> ആപ്പിന് ആക്സസ് അനുവദിക്കണോ?"</string>
