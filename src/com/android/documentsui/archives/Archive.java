@@ -35,6 +35,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -353,7 +354,7 @@ public abstract class Archive implements Closeable {
         row.add(Document.COLUMN_FLAGS, flags);
     }
 
-    static String getMimeTypeForEntry(ArchiveEntry entry) {
+    public static @NonNull String getMimeTypeForEntry(@NonNull ArchiveEntry entry) {
         if (entry.isDirectory()) {
             return Document.MIME_TYPE_DIR;
         }

@@ -82,6 +82,11 @@
         <item name="cornerSize">@dimen/list_item_thumbnail_corner_radius</item>
     </style>
 
+    <style name="SnackbarStyle" parent="Widget.Material3.Snackbar">
+        <item name="android:maxWidth">@dimen/snackbar_max_width</item>
+        <item name="android:layout_margin">16dp</item>
+    </style>
+
     <style name="SnackbarButtonStyleM3" parent="@style/Widget.AppCompat.Button.Borderless">
         <item name="android:textColor">?android:colorPrimary</item>
     </style>
