@@ -19,6 +19,8 @@ package com.android.documentsui;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 
+import android.platform.test.annotations.DesktopTest;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
@@ -59,6 +61,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
         device.pressBack();
     }
 
+    @DesktopTest(cujs = {"b/434066211"})
     @Test
     @HugeLongTest
     public void testDefaultRoots() throws Exception {

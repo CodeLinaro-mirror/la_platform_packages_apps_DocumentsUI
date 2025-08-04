@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.graphics.Rect;
+import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.EnableFlags;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,6 +79,7 @@ public class GridEvenSpacingDecorationTest {
         mGridEvenSpacingDecoration = new GridEvenSpacingDecoration();
     }
 
+    @DesktopTest(cujs = {"b/434068789", "b/434068180", "b/434068480"})
     @Test
     public void testPerfectFit_noRecViewPadding_noItemMargins() {
         // ITEM_COUNT items per row.
@@ -96,6 +98,7 @@ public class GridEvenSpacingDecorationTest {
         }
     }
 
+    @DesktopTest(cujs = {"b/434068789", "b/434068180", "b/434068480"})
     @Test
     public void testPerfectFit_recViewPadding_itemMargins() {
         // ITEM_COUNT items per row.
@@ -123,6 +126,7 @@ public class GridEvenSpacingDecorationTest {
         }
     }
 
+    @DesktopTest(cujs = {"b/434068789", "b/434068180", "b/434068480"})
     @Test
     public void testExtraSpace_SpaceLessThanOneItem() {
         // ITEM_COUNT items per row.
@@ -154,6 +158,7 @@ public class GridEvenSpacingDecorationTest {
         }
     }
 
+    @DesktopTest(cujs = {"b/434068789", "b/434068180", "b/434068480"})
     @Test
     public void testExtraSpace_SpaceMoreThanOneItem() {
         // ITEM_COUNT+1 items per row.
@@ -186,6 +191,7 @@ public class GridEvenSpacingDecorationTest {
         }
     }
 
+    @DesktopTest(cujs = {"b/434068789", "b/434068180", "b/434068480"})
     @Test
     public void perfectFit_testMultipleRows() {
         // ITEM_COUNT-1 items per row.
@@ -215,6 +221,7 @@ public class GridEvenSpacingDecorationTest {
         }
     }
 
+    @DesktopTest(cujs = {"b/434068789", "b/434068180", "b/434068480"})
     @Test
     public void testExtraSpace_testMultipleRows() {
         // ITEM_COUNT-1 items per row.

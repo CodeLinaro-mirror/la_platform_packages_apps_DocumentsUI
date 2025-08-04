@@ -21,6 +21,7 @@ import android.content.Intent
 import android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT
 import android.content.res.Resources
 import android.graphics.Rect
+import android.platform.test.annotations.DesktopTest
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import android.view.Display
@@ -90,6 +91,7 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
     )
   }
 
+  @DesktopTest(cujs = ["b/434065814", "b/434065378"])
   @Test
   fun testNavRailRootsNavigation() {
     bots.main.assertWindowTitle(StubProvider.ROOT_0_ID)

@@ -129,7 +129,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void openArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
@@ -161,7 +162,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");
