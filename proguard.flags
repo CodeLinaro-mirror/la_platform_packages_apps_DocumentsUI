@@ -330,7 +330,8 @@
   public void openDrawer(int);
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }
-
+-keep class com.android.documentsui.base.ShortcutInfo { *; }
+-keep class com.android.documentsui.base.SidebarEntryItemInfo { *; }
 -keep class android.provider.Flags {
   public static boolean enableDocumentsTrashApi();
 }
