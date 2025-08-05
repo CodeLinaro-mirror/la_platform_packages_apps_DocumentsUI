@@ -29,6 +29,7 @@ import static java.util.Objects.requireNonNull;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
@@ -238,6 +239,7 @@ public final class SearchChipViewManagerTest {
         assertThat(View.VISIBLE).isEqualTo(mirror.getVisibility());
     }
 
+    @DesktopTest(cujs = {"b/434068218"})
     @Test
     public void testChipChecked_resetScroll() {
         // Resetting scrolling is only available on devices that has the config

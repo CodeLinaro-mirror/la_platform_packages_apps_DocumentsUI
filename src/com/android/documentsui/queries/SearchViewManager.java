@@ -879,7 +879,7 @@ public class SearchViewManager implements
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
         return roots.filter(r -> r.isLocalOnly()
                 && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isDownloads() && !r.isExternalStorage()).collect(
+                && !r.isExternalStorage()).collect(
                 Collectors.toList());
     }
 

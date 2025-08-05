@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.platform.test.annotations.DesktopTest;
 import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
@@ -103,6 +104,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.assertDocumentsAbsent("file1.png");
     }
 
+    @DesktopTest(cujs = {"b/434068359"})
     @HugeLongTest
     @Test
     public void testKeyboard_CopyDocument() throws Exception {

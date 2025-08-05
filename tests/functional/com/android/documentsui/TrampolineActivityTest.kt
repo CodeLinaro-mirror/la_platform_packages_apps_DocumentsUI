@@ -89,8 +89,7 @@ class TrampolineActivityTest() {
 
             val taskIds = mutableSetOf<String>()
             while (matcher.find()) {
-                val taskId = matcher.group("taskId")
-                taskIds.add(taskId)
+                taskIds.add(matcher.group("taskId")!!)
             }
 
             return taskIds

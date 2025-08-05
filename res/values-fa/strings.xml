@@ -47,8 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"فایل فشرده"</string>
     <string name="menu_extract" msgid="8171946945982532262">"استخراج در…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"استخراج همه…"</string>
-    <!-- no translation found for menu_extract_here (7120939831786325360) -->
-    <skip />
+    <string name="menu_extract_here" msgid="7120939831786325360">"استخراج"</string>
     <string name="menu_browse" msgid="6007716414766674967">"مرور کردن"</string>
     <string name="menu_rename" msgid="1883113442688817554">"تغییر نام"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"دریافت اطلاعات"</string>
@@ -212,48 +211,33 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
     </plurals>
-    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
-    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"این بایگانی در مکانی فقط خواندنی است و نمی‌توان آن را در اینجا استخراج کرد."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"عملکرد فایل پشتیبانی نمی‌شود."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"عملکرد فایل ناموفق بود."</string>
     <string name="rename_error" msgid="6700093173508118635">"نام سند تغییر نکرد"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"بیرون راندن"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"بعضی از فایل‌ها تبدیل شدند"</string>
-    <!-- no translation found for copy_in_progress (3314396340163205014) -->
-    <skip />
-    <!-- no translation found for extract_in_progress (519951867474301835) -->
-    <skip />
-    <!-- no translation found for move_in_progress (2569791135683944801) -->
-    <skip />
-    <!-- no translation found for delete_in_progress (9032473164450943788) -->
-    <skip />
-    <!-- no translation found for compress_in_progress (7768916918745485546) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{درحال کپی کردن «<xliff:g id="FILENAME">{filename}</xliff:g>» در «<xliff:g id="DIRECTORY_0">{directory}</xliff:g>»}one{درحال کپی کردن # فایل در «<xliff:g id="DIRECTORY_1">{directory}</xliff:g>»}other{درحال کپی کردن # فایل در «<xliff:g id="DIRECTORY_1">{directory}</xliff:g>»}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{درحال استخراج «<xliff:g id="FILENAME">{filename}</xliff:g>» در «<xliff:g id="DIRECTORY_0">{directory}</xliff:g>»}one{درحال استخراج # بایگانی در «<xliff:g id="DIRECTORY_1">{directory}</xliff:g>»}other{درحال استخراج # بایگانی در «<xliff:g id="DIRECTORY_1">{directory}</xliff:g>»}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{درحال انتقال «<xliff:g id="FILENAME">{filename}</xliff:g>» به «<xliff:g id="DIRECTORY_0">{directory}</xliff:g>»}one{درحال انتقال # فایل به «<xliff:g id="DIRECTORY_1">{directory}</xliff:g>»}other{درحال انتقال # فایل به «<xliff:g id="DIRECTORY_1">{directory}</xliff:g>»}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{درحال حذف «<xliff:g id="FILENAME">{filename}</xliff:g>»}one{درحال حذف # فایل}other{درحال حذف # فایل}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{درحال فشرده‌سازی «<xliff:g id="FILENAME">{filename}</xliff:g>»}one{درحال فشرده‌سازی # فایل}other{درحال فشرده‌سازی # فایل}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"نمایش پیشرفت فایل"</string>
-    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
-    <skip />
-    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
-    <skip />
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"جریان فایل"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"کامل شد"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"لغو شد"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"دیدن جزئیات"</string>
-    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
-    <skip />
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"‏‫‎<xliff:g id="CURRENTBYTES">%1$s</xliff:g> از ‎<xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"کپی شد"</string>
     <string name="move_completed" msgid="3981250605092729273">"منتقل شد"</string>
     <string name="delete_completed" msgid="4149401155614626199">"حذف شد"</string>
-    <!-- no translation found for compress_completed (6522047921428919799) -->
-    <skip />
+    <string name="compress_completed" msgid="6522047921428919799">"فشرده‌شده"</string>
     <string name="extract_completed" msgid="8824595789915249972">"استخراج شد"</string>
-    <!-- no translation found for copy_failed (3700193913993844675) -->
-    <skip />
-    <!-- no translation found for move_failed (7692364307225994220) -->
-    <skip />
-    <!-- no translation found for delete_failed (2642684566325252513) -->
-    <skip />
-    <!-- no translation found for compress_failed (7397502181042157261) -->
-    <skip />
-    <!-- no translation found for extract_failed (8372397499452831323) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"کپی نشد"</string>
+    <string name="move_failed" msgid="7692364307225994220">"انتقال داده نشد"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"حذف نشد"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"امکان فشرده‌سازی وجود ندارد"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"استخراج نشد"</string>
     <string name="expand_label" msgid="5683357671239615207">"ازهم باز کردن"</string>
     <string name="collapse_label" msgid="4530974883269531062">"جمع کردن"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"به <xliff:g id="APPNAME"><b>^1</b></xliff:g> اجازه داده شود به فهرست راهنمای <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> در <xliff:g id="STORAGE"><i>^3</i></xliff:g> دسترسی داشته باشد؟"</string>
