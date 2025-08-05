@@ -247,7 +247,7 @@
     <string name="copy_completed" msgid="3749037014674785400">"Copié"</string>
     <string name="move_completed" msgid="3981250605092729273">"Déplacé"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Supprimé"</string>
-    <string name="compress_completed" msgid="6522047921428919799">"Compressé"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"Compression"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extrait"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Copie des données impossible"</string>
     <string name="move_failed" msgid="7692364307225994220">"Déplacement impossible"</string>

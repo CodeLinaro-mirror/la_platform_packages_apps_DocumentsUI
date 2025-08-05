@@ -21,6 +21,9 @@ import static com.android.documentsui.flags.Flags.FLAG_SUPPORT_VISIBLE_BACKGROUN
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -124,7 +127,7 @@ public final class IconHelperTest {
      */
     @Test
     @RequiresFlagsEnabled({FLAG_SUPPORT_VISIBLE_BACKGROUND_USER})
-    public void testShouldShowBadge_returnFalse_onVisibleBackgroundUser() {
+    public void testShouldShowBadge_returnFalse_onVisibleBackgroundUser() throws Exception {
         // This is a test to verify the functionality of visible background non-profile users.
         // The feature for visible background non-profile users has been supported since U-OS.
         if (!SdkLevel.isAtLeastU()) return;
@@ -135,15 +138,17 @@ public final class IconHelperTest {
         when(mockUserManager.isProfile()).thenReturn(false);
         when(mockUserManager.isUserVisible()).thenReturn(true);
 
+        when(mockContext.createPackageContextAsUser(anyString(), anyInt(), any(UserHandle.class)))
+                .thenReturn(mockContext);
         when(mockContext.getSystemServiceName(UserManager.class)).thenReturn("mockUserManager");
         when(mockContext.getSystemService(UserManager.class)).thenReturn(mockUserManager);
         when(mockContext.getResources()).thenReturn(mContext.getResources());
 
         UserId visibleBackgroundUser = UserId.of(102);
         TestUserManagerState testUserManagerState = new TestUserManagerState();
-        testUserManagerState.userIds = Lists.newArrayList(visibleBackgroundUser);
+        testUserManagerState.userIds = Lists.newArrayList(mSystemUser, visibleBackgroundUser);
 
-        mIconHelper = new IconHelper(mockContext, State.MODE_LIST, /* maybeShowBadge= */ false,
+        mIconHelper = new IconHelper(mockContext, State.MODE_LIST, /* maybeShowBadge= */ true,
                 mThumbnailCache, mManagedUser, testUserManagerState, mTestConfigStore);
         assertThat(mIconHelper.shouldShowBadge(visibleBackgroundUser.getIdentifier())).isFalse();
     }
