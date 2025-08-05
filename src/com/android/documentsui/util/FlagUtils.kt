@@ -40,6 +40,7 @@ class FlagUtils private constructor(
             Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
             Flags.FLAG_VISUAL_SIGNALS_RO,
             Flags.FLAG_ZIP_NG_RO,
+            Flags.FLAG_HOME_SCREEN_FILES,
         )
 
         @JvmStatic
@@ -122,6 +123,15 @@ class FlagUtils private constructor(
         @JvmStatic
         fun isSupportVisibleBackgroundUserFlagEnabled(): Boolean {
             return Flags.supportVisibleBackgroundUser()
+        }
+
+        @JvmStatic
+        fun isHomeScreenFilesFlagEnabled(): Boolean {
+            val flag = getInstance().overrides.getOrDefault(
+                Flags.FLAG_HOME_SCREEN_FILES,
+                Flags.homeScreenFiles()
+            )
+            return flag && isUseMaterial3FlagEnabled()
         }
     }
 
