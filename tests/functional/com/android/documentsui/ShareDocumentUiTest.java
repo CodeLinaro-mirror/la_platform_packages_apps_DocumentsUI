@@ -25,7 +25,7 @@ import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.filters.MediumTest;
+import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
@@ -38,7 +38,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@MediumTest
+@LargeTest
 public class ShareDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String TEST_FILE_NAME = "amazingchair.pdf";
 

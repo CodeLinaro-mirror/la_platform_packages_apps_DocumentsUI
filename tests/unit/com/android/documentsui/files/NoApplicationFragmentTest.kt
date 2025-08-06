@@ -26,7 +26,6 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Suite
 
-@SmallTest
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
     NoApplicationFragmentTest.UnitTests::class,
@@ -34,6 +33,7 @@ import org.junit.runners.Suite
 )
 class NoApplicationFragmentTest() {
 
+    @SmallTest
     @RunWith(AndroidJUnit4::class)
     class UnitTests {
         @Test
@@ -46,6 +46,7 @@ class NoApplicationFragmentTest() {
         }
     }
 
+    @SmallTest
     @RunWith(Parameterized::class)
     class TestFileTypes {
         companion object {
