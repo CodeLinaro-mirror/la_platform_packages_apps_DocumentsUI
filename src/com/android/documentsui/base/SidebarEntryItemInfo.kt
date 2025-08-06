@@ -16,6 +16,8 @@
 
 package com.android.documentsui.base
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 
 /**
@@ -27,4 +29,7 @@ interface SidebarEntryItemInfo {
     val documentId: String?
     val uri: Uri?
     val title: String?
+
+    // For sidebar item appearance/view
+    fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable?
 }

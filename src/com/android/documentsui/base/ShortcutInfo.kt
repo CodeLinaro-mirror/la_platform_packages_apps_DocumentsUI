@@ -15,6 +15,8 @@
  */
 package com.android.documentsui.base
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.DocumentsContract
 import java.util.Objects
@@ -28,6 +30,11 @@ class ShortcutInfo(
     override var documentId: String? = null
     override val uri: Uri?
         get() = DocumentsContract.buildDocumentUri(root.authority, documentId)
+
+    override fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable? {
+        // TODO: b/439694430 - implement this view related method
+        return null
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other == null) {

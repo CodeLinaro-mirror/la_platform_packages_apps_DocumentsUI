@@ -327,10 +327,15 @@
   public void openDrawer(int);
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }
+
+-keep class com.android.documentsui.base.RootInfo { *; }
+
 -keep class com.android.documentsui.base.ShortcutInfo { *; }
 -keep class com.android.documentsui.base.SidebarEntryItemInfo { *; }
 -keep class android.provider.Flags {
   public static boolean enableDocumentsTrashApi();
 }
+-keep class com.android.documentsui.sidebar.BaseSidebarEntryItem { *; }
+-keep class com.android.documentsui.sidebar.ShortcutItem { *; }
 # TODO(lucmult): Remove this when this class is used.
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }

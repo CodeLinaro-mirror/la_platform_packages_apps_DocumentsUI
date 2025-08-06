@@ -67,6 +67,7 @@ class RecyclerRootsAdapter(
     override fun onBindViewHolder(holder: RootItemViewHolder, position: Int) {
         val item = mItems[position]
         item.bindView(holder.itemView)
+        // TODO: b/439694430 - implement `isShortcut()` check in here
         holder.itemView.setTag(getRes(R.id.item_position_tag), if (item.isRoot) position else null)
         holder.itemView.setOnDragListener(if (item.isRoot) mDragListener else null)
 

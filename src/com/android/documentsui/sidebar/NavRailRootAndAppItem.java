@@ -43,11 +43,16 @@ public class NavRailRootAndAppItem extends RootAndAppItem {
     @Override
     public String toString() {
         return "NavRailRootAndAppItem{"
-                + "id=" + stringId
-                + ", userId=" + userId
-                + ", root=" + root
-                + ", resolveInfo=" + resolveInfo
-                + ", docInfo=" + docInfo
+                + "id="
+                + stringId
+                + ", userId="
+                + userId
+                + ", root="
+                + root
+                + ", resolveInfo="
+                + resolveInfo
+                + ", docInfo="
+                + getDocInfo()
                 + "}";
     }
 }
