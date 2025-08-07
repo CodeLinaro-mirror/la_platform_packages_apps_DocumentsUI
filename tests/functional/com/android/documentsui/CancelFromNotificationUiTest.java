@@ -22,36 +22,68 @@ import static com.android.documentsui.StubProvider.EXTRA_SIZE;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.util.Log;
 
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
 
-import java.io.IOException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
-* This class tests the below points.
-* - Cancel copying or moving file before starting it.
-* - Cancel during copying or moving file.
-*/
+ * This class tests the below points.
+ *
+ * <p>- Cancel copying or moving file before starting it.
+ *
+ * <p>- Cancel during copying or moving file.
+ */
 @LargeTest
-public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
+public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String TAG = "CancelFromNotificationUiTest";
     private static final String TARGET_FILE = "stub.data";
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
     private static final int WAIT_TIME_SECONDS = 120;
+
+    @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                // TestFilesRule setup will change the storage size to 100MB.
+                                // So, reset the storage size again to 500MB.
+                                Bundle bundle = new Bundle();
+                                bundle.putLong(EXTRA_SIZE, 500L);
+                                // Set a flag to prevent many refreshes.
+                                bundle.putBoolean(
+                                        StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
+                                docsHelper.configure(null, bundle);
+                                final RootInfo root = docsHelper.getRoot(StubProvider.ROOT_0_ID);
+                                final Uri uri = docsHelper.createDocument(root, "*/*", TARGET_FILE);
+                                final byte[] stubByte = new byte[BUFFER_SIZE];
+                                docsHelper.writeDocument(uri, stubByte);
+                                for (int i = 0; i < 49; i++) {
+                                    docsHelper.writeAppendDocument(uri, stubByte, stubByte.length);
+                                }
+                            });
 
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -73,23 +105,9 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
     private boolean mOperationExecuted;
     private String mErrorReason;
 
-    public CancelFromNotificationUiTest() {
-        super(FilesActivity.class);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // super.setUp() method will change the storage size to 100MB.
-        // So, reset the storage size again to 500MB.
-        Bundle bundle = new Bundle();
-        bundle.putLong(EXTRA_SIZE, 500L);
-        // Set a flag to prevent many refreshes.
-        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
-        mDocsHelper.configure(null, bundle);
-        bots.notifications.setNotificationAccess(getActivity(), true);
-        initTestFiles();
+    @Before
+    public void setUpTest() throws Exception {
+        setNotificationAccess(true);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(TestNotificationService.ACTION_OPERATION_RESULT);
@@ -102,31 +120,19 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
         mCountDownLatch = new CountDownLatch(1);
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        mCountDownLatch.countDown();
-        mCountDownLatch = null;
+    @After
+    public void tearDownTest() throws Exception {
+        if (mCountDownLatch != null) {
+            mCountDownLatch.countDown();
+            mCountDownLatch = null;
+        }
 
         context.unregisterReceiver(mReceiver);
-        try {
-            bots.notifications.setNotificationAccess(getActivity(), false);
-        } catch (Exception e) {
-            Log.e(TAG, "Cannot set notification access", e);
-        }
-        super.tearDown();
-    }
-
-    @Override
-    public void initTestFiles() throws IOException, RemoteException {
-        final Uri uri = mDocsHelper.createDocument(rootDir0, "*/*", TARGET_FILE);
-        final byte[] stubByte = new byte[BUFFER_SIZE];
-        mDocsHelper.writeDocument(uri, stubByte);
-        for (int i = 0; i < 49; i++) {
-            mDocsHelper.writeAppendDocument(uri, stubByte, stubByte.length);
-        }
+        setNotificationAccess(false);
     }
 
     @HugeLongTest
+    @Test
     public void testCopyDocument_Cancel() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);
 
@@ -146,6 +152,7 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
     }
 
     @HugeLongTest
+    @Test
     public void testCopyDocument_CancelFromNotification() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);
         bots.directory.findDocument(TARGET_FILE);
@@ -173,6 +180,7 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
     }
 
     @HugeLongTest
+    @Test
     public void testMoveDocument_Cancel() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);
 
@@ -192,10 +200,9 @@ public class CancelFromNotificationUiTest extends ActivityTest<FilesActivity> {
     }
 
     @HugeLongTest
-    // (TODO: b/156756197) : Deflake tests
-    // Notice because this class inherits JUnit3 TestCase, the right way to suppress a test
-    // is by removing "test" from prefix, instead of adding @Ignore.
-    public void ignored_testMoveDocument_CancelFromNotification() throws Exception {
+    @Ignore("(TODO: b/156756197) : Deflake tests")
+    @Test
+    public void testMoveDocument_CancelFromNotification() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
