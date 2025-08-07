@@ -38,7 +38,7 @@
         android:id="@+id/breadcrumb_text"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:maxWidth="275dp"
+        android:maxWidth="@dimen/breadcrumb_item_max_width"
         android:gravity="center_vertical"
         android:maxLines="1"
         android:ellipsize="end"
