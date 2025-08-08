@@ -211,48 +211,33 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> आयटम क्लिपबोर्डवर कॉपी केले.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> आयटम क्लिपबोर्डवर कॉपी केला.</item>
     </plurals>
-    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
-    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"हे संग्रहण रीड-ओन्ली स्थानावर आहे आणि ते इथे एक्स्ट्रॅक्ट केले जाऊ शकत नाही."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"फाइल ऑपरेशनला सपोर्ट नाही."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"फाइल ऑपरेशन अयशस्वी झाले."</string>
     <string name="rename_error" msgid="6700093173508118635">"दस्तऐवज पुनर्नामित करण्‍यात अयशस्वी झाले"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"बाहेर काढा"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"काही फाइल रूपांतरित केल्या होत्या"</string>
-    <!-- no translation found for copy_in_progress (3314396340163205014) -->
-    <skip />
-    <!-- no translation found for extract_in_progress (519951867474301835) -->
-    <skip />
-    <!-- no translation found for move_in_progress (2569791135683944801) -->
-    <skip />
-    <!-- no translation found for delete_in_progress (9032473164450943788) -->
-    <skip />
-    <!-- no translation found for compress_in_progress (7768916918745485546) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मध्ये “<xliff:g id="FILENAME">{filename}</xliff:g>” कॉपी करत आहे}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मध्ये # फाइल कॉपी करत आहे}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मध्ये “<xliff:g id="FILENAME">{filename}</xliff:g>” एक्स्ट्रॅक्ट करत आहे}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मध्ये # संग्रहणे एक्स्ट्रॅक्ट करत आहे}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मध्ये “<xliff:g id="FILENAME">{filename}</xliff:g>” हलवत आहे}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मध्ये # फाइल हलवत आहे}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” हटवत आहे}other{# फाइल हटवत आहे}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ झिप करत आहे}other{# फाइल झिप करत आहे}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"फाइलची प्रगती दाखवा"</string>
-    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
-    <skip />
-    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
-    <skip />
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"फाइलची प्रगती"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"पूर्ण झाले"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"रद्द केले आहे"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"तपशील पहा"</string>
-    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
-    <skip />
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="TOTALBYTES">%2$s</xliff:g> पैकी <xliff:g id="CURRENTBYTES">%1$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"कॉपी केले"</string>
     <string name="move_completed" msgid="3981250605092729273">"हलवले"</string>
     <string name="delete_completed" msgid="4149401155614626199">"हटवले"</string>
-    <!-- no translation found for compress_completed (6522047921428919799) -->
-    <skip />
+    <string name="compress_completed" msgid="6522047921428919799">"झिप केली आहे"</string>
     <string name="extract_completed" msgid="8824595789915249972">"काढले"</string>
-    <!-- no translation found for copy_failed (3700193913993844675) -->
-    <skip />
-    <!-- no translation found for move_failed (7692364307225994220) -->
-    <skip />
-    <!-- no translation found for delete_failed (2642684566325252513) -->
-    <skip />
-    <!-- no translation found for compress_failed (7397502181042157261) -->
-    <skip />
-    <!-- no translation found for extract_failed (8372397499452831323) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"कॉपी करता आली नाही"</string>
+    <string name="move_failed" msgid="7692364307225994220">"हलवता आली नाही"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"हटवता आली नाही"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"झिप करता आली नाही"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"एक्स्ट्रॅक्ट करता आली नाही"</string>
     <string name="expand_label" msgid="5683357671239615207">"विस्तार करा"</string>
     <string name="collapse_label" msgid="4530974883269531062">"कोलॅप्स करा"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="STORAGE"><i>^3</i></xliff:g> वर <xliff:g id="APPNAME"><b>^1</b></xliff:g> ला <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> निर्देशिकेवर प्रवेशाची मंजूरी द्यायची?"</string>

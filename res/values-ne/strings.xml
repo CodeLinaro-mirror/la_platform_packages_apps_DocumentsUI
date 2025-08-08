@@ -211,48 +211,33 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> वटा फाइल क्लिपबोर्डमा कपी गरिए।</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> फाइल क्लिपबोर्डमा कपी गरियो।</item>
     </plurals>
-    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
-    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"यो अभिलेख पढ्न मात्र मिल्ने लोकेसनमा छ र यसलाई यहाँ एक्स्ट्र्याक्ट गर्न सकिँदैन।"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"फाइल सम्बन्धी कार्य समर्थित छैन।"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"फाइल सम्बन्धी कार्य असफल भयो।"</string>
     <string name="rename_error" msgid="6700093173508118635">"कागजातको पुनःनामाकरण गर्न सकिएन"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"निकाल्नुहोस्"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"केही फाइलहरू रूपान्तरण गरिएका छन्"</string>
-    <!-- no translation found for copy_in_progress (3314396340163205014) -->
-    <skip />
-    <!-- no translation found for extract_in_progress (519951867474301835) -->
-    <skip />
-    <!-- no translation found for move_in_progress (2569791135683944801) -->
-    <skip />
-    <!-- no translation found for delete_in_progress (9032473164450943788) -->
-    <skip />
-    <!-- no translation found for compress_in_progress (7768916918745485546) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” कपी गरेर “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मा पेस्ट गरिँदै छ}other{# वटा फाइल कपी गरेर “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मा पेस्ट गरिँदै छन्}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मा एक्स्ट्र्याक्ट गरिँदै छ}other{# वटा अभिलेख “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मा एक्स्ट्र्याक्ट गरिँदै छन्}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” सारेर “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मा लगिँदै छ}other{# वटा फाइल सारेर “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मा लगिँदै छन्}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” मेटाइँदै छ}other{# वटा फाइल मेटाइँदै छन्}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ जिप गरिँदै छ}other{# वटा फाइल जिप गरिँदै छन्}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"फाइलको प्रोग्रेस देखाउनुहोस्"</string>
-    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
-    <skip />
-    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
-    <skip />
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"फाइलसम्बन्धी कारबाहीको प्रोग्रेस"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"पूरा भयो"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"रद्द गरिएको छ"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"विवरणहरू हेर्नुहोस्"</string>
-    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
-    <skip />
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="TOTALBYTES">%2$s</xliff:g> मध्ये <xliff:g id="CURRENTBYTES">%1$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"कपी गरियो"</string>
     <string name="move_completed" msgid="3981250605092729273">"सारियो"</string>
     <string name="delete_completed" msgid="4149401155614626199">"मेटाइयो"</string>
-    <!-- no translation found for compress_completed (6522047921428919799) -->
-    <skip />
+    <string name="compress_completed" msgid="6522047921428919799">"जिप गरियो"</string>
     <string name="extract_completed" msgid="8824595789915249972">"एक्स्ट्र्याक्ट गरियो"</string>
-    <!-- no translation found for copy_failed (3700193913993844675) -->
-    <skip />
-    <!-- no translation found for move_failed (7692364307225994220) -->
-    <skip />
-    <!-- no translation found for delete_failed (2642684566325252513) -->
-    <skip />
-    <!-- no translation found for compress_failed (7397502181042157261) -->
-    <skip />
-    <!-- no translation found for extract_failed (8372397499452831323) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"कपी गर्न सकिएन"</string>
+    <string name="move_failed" msgid="7692364307225994220">"सार्न सकिएन"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"मेटाउन सकिएन"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"जिप गर्न सकिएन"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"एक्स्ट्र्याक्ट गर्न सकिएन"</string>
     <string name="expand_label" msgid="5683357671239615207">"एक्स्पान्ड गर्नुहोस्"</string>
     <string name="collapse_label" msgid="4530974883269531062">"कोल्याप्स गर्नुहोस्"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> लाई <xliff:g id="STORAGE"><i>^3</i></xliff:g> मा रहेको <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> निर्देशिकामाथि पहुँच राख्न दिने हो?"</string>

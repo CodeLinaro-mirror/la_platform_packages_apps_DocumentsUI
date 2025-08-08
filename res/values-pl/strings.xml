@@ -47,8 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"Utwórz archiwum ZIP"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Rozpakuj do…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Wyodrębnij wszystko…"</string>
-    <!-- no translation found for menu_extract_here (7120939831786325360) -->
-    <skip />
+    <string name="menu_extract_here" msgid="7120939831786325360">"Wyodrębnij"</string>
     <string name="menu_browse" msgid="6007716414766674967">"Przeglądaj"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Zmień nazwę"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Zobacz informacje"</string>
@@ -251,7 +250,7 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"Odłącz"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Niektóre pliki zostały przekonwertowane"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Kopiuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Kopiuję # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Kopiuję # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Kopiuję # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Wyodrębniam plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Wyodrębniam # archiwa do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Wyodrębniam # archiwów do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Wyodrębniam # archiwów do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Wyodrębniam plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Wyodrębniam # archiwa do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Wyodrębniam # archiwów do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Wyodrębniam # archiwum do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Przenoszę plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Przenoszę # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Przenoszę # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Przenoszę # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Usuwam plik „<xliff:g id="FILENAME">{filename}</xliff:g>”}few{Usuwam # pliki}many{Usuwam # plików}other{Usuwam # pliku}}"</string>
     <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Kompresuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>”}few{Kompresuję # pliki}many{Kompresuję # plików}other{Kompresuję # pliku}}"</string>

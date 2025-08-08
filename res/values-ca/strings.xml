@@ -47,8 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"Comprimeix"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Extreu a…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Extreu-ho tot…"</string>
-    <!-- no translation found for menu_extract_here (7120939831786325360) -->
-    <skip />
+    <string name="menu_extract_here" msgid="7120939831786325360">"Extreu"</string>
     <string name="menu_browse" msgid="6007716414766674967">"Navega"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Canvia el nom"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Obtén informació"</string>
@@ -228,48 +227,33 @@
       <item quantity="other">S\'han copiat <xliff:g id="COUNT_1">%1$d</xliff:g> elements al porta-retalls.</item>
       <item quantity="one">S\'ha copiat <xliff:g id="COUNT_0">%1$d</xliff:g> element al porta-retalls.</item>
     </plurals>
-    <!-- no translation found for cannot_extract_in_read_only_folder (8234900543730064252) -->
-    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Aquest arxiu es troba en una ubicació només de lectura i no es pot extreure aquí."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"L\'operació del fitxer no s\'admet."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Hi ha hagut un error en l\'operació del fitxer."</string>
     <string name="rename_error" msgid="6700093173508118635">"No s\'ha pogut canviar el nom del document"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Expulsa"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"S\'han convertit alguns fitxers"</string>
-    <!-- no translation found for copy_in_progress (3314396340163205014) -->
-    <skip />
-    <!-- no translation found for extract_in_progress (519951867474301835) -->
-    <skip />
-    <!-- no translation found for move_in_progress (2569791135683944801) -->
-    <skip />
-    <!-- no translation found for delete_in_progress (9032473164450943788) -->
-    <skip />
-    <!-- no translation found for compress_in_progress (7768916918745485546) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{S\'està copiant <xliff:g id="FILENAME">{filename}</xliff:g> a <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}many{S\'estan copiant # de fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{S\'estan copiant # fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{S\'està extraient <xliff:g id="FILENAME">{filename}</xliff:g> a <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}many{S\'estan extraient # d\'arxius a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{S\'estan extraient # arxius a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{S\'està movent <xliff:g id="FILENAME">{filename}</xliff:g> a <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}many{S\'estan movent # de fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{S\'estan movent # fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{S\'està suprimint <xliff:g id="FILENAME">{filename}</xliff:g>}many{S\'estan suprimint # de fitxers}other{S\'estan suprimint # fitxers}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{S\'està comprimint <xliff:g id="FILENAME">{filename}</xliff:g>}many{S\'estan comprimint # de fitxers}other{S\'estan comprimint # fitxers}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostra el progrés del fitxer"</string>
-    <!-- no translation found for job_progress_panel_title (1640388840961608168) -->
-    <skip />
-    <!-- no translation found for job_progress_item_completed (3933347715328014840) -->
-    <skip />
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"Progrés del fitxer"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"Completat"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Cancel·lada"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Mostra els detalls"</string>
-    <!-- no translation found for job_progress_item_byte_progress (5457665342067136443) -->
-    <skip />
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g> de <xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"S\'ha copiat"</string>
     <string name="move_completed" msgid="3981250605092729273">"S\'ha mogut"</string>
     <string name="delete_completed" msgid="4149401155614626199">"S\'ha suprimit"</string>
-    <!-- no translation found for compress_completed (6522047921428919799) -->
-    <skip />
+    <string name="compress_completed" msgid="6522047921428919799">"S\'ha comprimit"</string>
     <string name="extract_completed" msgid="8824595789915249972">"S\'ha extret"</string>
-    <!-- no translation found for copy_failed (3700193913993844675) -->
-    <skip />
-    <!-- no translation found for move_failed (7692364307225994220) -->
-    <skip />
-    <!-- no translation found for delete_failed (2642684566325252513) -->
-    <skip />
-    <!-- no translation found for compress_failed (7397502181042157261) -->
-    <skip />
-    <!-- no translation found for extract_failed (8372397499452831323) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"No s\'ha pogut copiar"</string>
+    <string name="move_failed" msgid="7692364307225994220">"No s\'ha pogut moure"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"No s\'ha pogut suprimir"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"No s\'ha pogut comprimir"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"No s\'ha pogut extreure"</string>
     <string name="expand_label" msgid="5683357671239615207">"Desplega"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Replega"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Vols que l\'aplicació <xliff:g id="APPNAME"><b>^1</b></xliff:g> tingui accés al directori <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> de <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
