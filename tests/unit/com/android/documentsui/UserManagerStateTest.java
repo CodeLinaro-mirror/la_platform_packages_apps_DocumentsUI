@@ -20,7 +20,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_TAB;
-import static com.android.documentsui.util.FlagUtils.isSupportVisibleBackgroundUserFlagEnabled;
+import static com.android.documentsui.flags.Flags.FLAG_SUPPORT_VISIBLE_BACKGROUND_USER;
 
 import static com.google.common.truth.Truth.assertWithMessage;
 
@@ -45,6 +45,9 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.util.ArraySet;
 
 import androidx.test.filters.SdkSuppress;
@@ -59,6 +62,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -122,6 +126,9 @@ public class UserManagerStateTest {
     private final PackageManager mMockPackageManager = mock(PackageManager.class);
     private final DevicePolicyManager mDevicePolicyManager = mock(DevicePolicyManager.class);
     private UserManagerState mUserManagerState;
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
     public void setup() throws Exception {
@@ -291,8 +298,8 @@ public class UserManagerStateTest {
      * visible background user.
      */
     @Test
+    @RequiresFlagsEnabled({FLAG_SUPPORT_VISIBLE_BACKGROUND_USER})
     public void testGetUserIds_onlyVisibleBackgroundUser_returnsVisibleBackgroundUser() {
-        assumeTrue(isSupportVisibleBackgroundUserFlagEnabled());
         // This is a test to verify the functionality of visible background non-profile users.
         // The feature for visible background non-profile users has been supported since U-OS.
         if (!SdkLevel.isAtLeastU()) return;
@@ -800,8 +807,8 @@ public class UserManagerStateTest {
      * when the intent action is ACTION_PROFILE_AVAILABLE for a visible background user.
      */
     @Test
+    @RequiresFlagsEnabled({FLAG_SUPPORT_VISIBLE_BACKGROUND_USER})
     public void testOnProfileStatusChange_visibleBackgroundUserNotAffected() {
-        assumeTrue(isSupportVisibleBackgroundUserFlagEnabled());
         // This is a test to verify the functionality of visible background non-profile users.
         // The feature for visible background non-profile users has been supported since U-OS.
         if (!SdkLevel.isAtLeastU()) return;
@@ -899,8 +906,8 @@ public class UserManagerStateTest {
      * when the display owner user is the visible background user.
      */
     @Test
+    @RequiresFlagsEnabled({FLAG_SUPPORT_VISIBLE_BACKGROUND_USER})
     public void testGetUserIdToLabelMap_visibleBackgroundUser_PostV() {
-        assumeTrue(isSupportVisibleBackgroundUserFlagEnabled());
         assumeTrue(SdkLevel.isAtLeastV());
 
         initializeUserManagerState(UserId.of(mVisibleBackgroundUser),
@@ -986,8 +993,8 @@ public class UserManagerStateTest {
      * for the visible background user.
      */
     @Test
+    @RequiresFlagsEnabled({FLAG_SUPPORT_VISIBLE_BACKGROUND_USER})
     public void testGetUserIdToBadgeMap_visibleBackgroundUser_PostV() {
-        assumeTrue(isSupportVisibleBackgroundUserFlagEnabled());
         assumeTrue(SdkLevel.isAtLeastV());
 
         initializeUserManagerState(UserId.of(mVisibleBackgroundUser),

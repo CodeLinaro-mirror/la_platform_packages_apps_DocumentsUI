@@ -217,7 +217,7 @@
     <string name="rename_error" msgid="6700093173508118635">"Документот не успеа да се преименува"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Извади"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Некои датотеки се конвертирани"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Се копира „<xliff:g id="FILENAME">{filename}</xliff:g>“ на „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Се копираат # датотека на „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Се копираат # датотеки на „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Се копира „<xliff:g id="FILENAME">{filename}</xliff:g>“ во „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Се копираат # датотека во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Се копираат # датотеки во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Се отпакува „<xliff:g id="FILENAME">{filename}</xliff:g>“ во „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Се отпакуваат # архива во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Се отпакуваат # архиви во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Се преместува „<xliff:g id="FILENAME">{filename}</xliff:g>“ во „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Се преместуваат # датотека во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Се преместуваат # датотеки во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Се брише „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Се бришат # датотека}other{Се бришат # датотеки}}"</string>
@@ -234,10 +234,10 @@
     <string name="compress_completed" msgid="6522047921428919799">"Компримирано"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Извлечено"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Не можеше да се копира"</string>
-    <string name="move_failed" msgid="7692364307225994220">"Не можеше да се премести"</string>
-    <string name="delete_failed" msgid="2642684566325252513">"Не можеше да се избришат"</string>
+    <string name="move_failed" msgid="7692364307225994220">"Преместувањето не успеа"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"Бришењето не успеа"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Не можеше да се компримира"</string>
-    <string name="extract_failed" msgid="8372397499452831323">"Не можеше да се отпакува"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"Отпакувањето не успеа"</string>
     <string name="expand_label" msgid="5683357671239615207">"Прошири"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Собери"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Да се овозможи пристап на <xliff:g id="APPNAME"><b>^1</b></xliff:g> до директориумот <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> на <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>

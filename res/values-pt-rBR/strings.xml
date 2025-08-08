@@ -47,8 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"Compactar"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Extrair para…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Extrair tudo…"</string>
-    <!-- no translation found for menu_extract_here (7120939831786325360) -->
-    <skip />
+    <string name="menu_extract_here" msgid="7120939831786325360">"Extrair"</string>
     <string name="menu_browse" msgid="6007716414766674967">"Procurar"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Renomear"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Ver informações"</string>
@@ -235,13 +234,13 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"Ejetar"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Alguns arquivos foram convertidos"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Copiando <xliff:g id="FILENAME">{filename}</xliff:g> para <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Copiando # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Copiando # de arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Copiando # arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Extraindo <xliff:g id="FILENAME">{filename}</xliff:g> para <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Extraindo # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Extraindo # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Extraindo # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Extraindo <xliff:g id="FILENAME">{filename}</xliff:g> para <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Extraindo # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Extraindo # de arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Extraindo # arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Transferindo <xliff:g id="FILENAME">{filename}</xliff:g> para <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Transferindo # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Transferindo # de arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Transferindo # arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Excluindo <xliff:g id="FILENAME">{filename}</xliff:g>}one{Excluindo # arquivo}many{Excluindo # de arquivos}other{Excluindo # arquivos}}"</string>
     <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Compactando \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Compactando # arquivo}many{Compactando # de arquivos}other{Compactando # arquivos}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar progresso do arquivo"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progresso do arquivo"</string>
-    <string name="job_progress_item_completed" msgid="3933347715328014840">"Concluído"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"Concluída"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Cancelada"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Ver detalhes"</string>
     <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g> de <xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
