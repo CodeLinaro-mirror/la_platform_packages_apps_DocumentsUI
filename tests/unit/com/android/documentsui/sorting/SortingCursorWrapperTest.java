@@ -27,6 +27,7 @@ import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
+import android.util.Log;
 
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
@@ -42,6 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +53,8 @@ import java.util.Set;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class SortingCursorWrapperTest {
+    private static final boolean ENABLE_MANUAL_BENCHMARKS = false;
+
     private static final int ITEM_COUNT = 10;
     private static final String AUTHORITY = "test_authority";
 
@@ -466,7 +470,7 @@ public class SortingCursorWrapperTest {
 
     @Test
     public void testSort_type_descending_with_directories() {
-        dotestSort_type_descending_with_directories(new String[] {
+        do_testSort_type_descending_with_directories(new String[] {
                 // ID,     MimeType
                 "file___T, text/plain",
                 "doc____H, text/html",
@@ -475,8 +479,7 @@ public class SortingCursorWrapperTest {
                 "folder_F, vnd.android.document/directory",
         });
 
-        /* TODO(b/437258483): fix the sorting algorithm.
-        dotestSort_type_descending_with_directories(new String[] {
+        do_testSort_type_descending_with_directories(new String[] {
                 // ID,     MimeType
                 "image__J, image/jpeg",
                 "file___T, text/plain",
@@ -484,7 +487,6 @@ public class SortingCursorWrapperTest {
                 "doc____H, text/html",
                 "folder_F, vnd.android.document/directory",
         });
-        */
     }
 
     // This unit test captures the sort-some-data essence of the SortDocumentUiTest
@@ -499,7 +501,7 @@ public class SortingCursorWrapperTest {
     //
     // If not, and different permutations of the same input can result in different outputs, then
     // the SortDocumentUiTest will be flaky.
-    private void dotestSort_type_descending_with_directories(String[] testData) {
+    private void do_testSort_type_descending_with_directories(String[] testData) {
         TestFileTypeLookup lookup = new TestFileTypeLookup();
         lookup.fileTypes.put(Document.MIME_TYPE_DIR, "Folder");
         lookup.fileTypes.put("image/jpeg", "JPG image");
@@ -543,6 +545,72 @@ public class SortingCursorWrapperTest {
         String expected = String.join(" ", expectedIds);
         String actual = String.join(" ", actualIds);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void manualBenchmarkSort_type_descending_with_directories() {
+        // Disabled by default, but enable (by changing the ENABLE_MANUAL_BENCHMARKS constant's
+        // value) to Log a crude measure of how long the SortingCursorWrapper constructor takes to
+        // run (on some synthetic data). This can be useful knowledge when changing the
+        // SortingCursorWrapper sorting algorithm.
+        if (!ENABLE_MANUAL_BENCHMARKS) {
+            return;
+        }
+
+        TestFileTypeLookup lookup = new TestFileTypeLookup();
+        lookup.fileTypes.put(Document.MIME_TYPE_DIR, "Folder");
+        lookup.fileTypes.put("image/jpeg", "JPG image");
+        lookup.fileTypes.put("image/png", "PNG image");
+        lookup.fileTypes.put("text/html", "HTML document");
+        lookup.fileTypes.put("text/plain", "TXT document");
+
+        // Create 5000 directories and 5000 non-directories.
+        Random rand = new Random(123456);
+        MatrixCursor c = new MatrixCursor(COLUMNS);
+        for (int i = 0; i < 10000; ++i) {
+            String mimeType = "";
+            switch (rand.nextInt() & 7) {
+                case 0:
+                    mimeType = "image/jpeg";
+                    break;
+                case 1:
+                    mimeType = "image/png";
+                    break;
+                case 2:
+                    mimeType = "text/html";
+                    break;
+                case 3:
+                    mimeType = "text/plain";
+                    break;
+                default:
+                    mimeType = Document.MIME_TYPE_DIR;
+                    break;
+            }
+
+            MatrixCursor.RowBuilder row = c.newRow();
+            row.add(RootCursorWrapper.COLUMN_AUTHORITY, AUTHORITY);
+            row.add(Document.COLUMN_DOCUMENT_ID, "ID" + i);
+            row.add(Document.COLUMN_MIME_TYPE, mimeType);
+        }
+
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_FILE_TYPE,
+                SortDimension.SORT_DIRECTION_DESCENDING);
+
+        long[] timeTakenMillis = new long[5];
+        for (int i = 0; i < timeTakenMillis.length; ++i) {
+            long t0 = System.currentTimeMillis();
+            new SortingCursorWrapper(
+                    c, sortModel.getDimensionById(sortModel.getSortedDimensionId()), lookup);
+            long t1 = System.currentTimeMillis();
+            timeTakenMillis[i] = t1 - t0;
+        }
+
+        Arrays.sort(timeTakenMillis);
+        for (int i = 0; i < timeTakenMillis.length; ++i) {
+            Log.d("SortingCursorWrapperTest",
+                    "manualBenchmarkSort_type_descending_with_directories" + timeTakenMillis[i]);
+        }
     }
 
     private void populateTypeMap() {
