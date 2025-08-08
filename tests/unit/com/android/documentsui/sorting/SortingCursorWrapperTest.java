@@ -464,6 +464,87 @@ public class SortingCursorWrapperTest {
         }
     }
 
+    @Test
+    public void testSort_type_descending_with_directories() {
+        dotestSort_type_descending_with_directories(new String[] {
+                // ID,     MimeType
+                "file___T, text/plain",
+                "doc____H, text/html",
+                "image__J, image/jpeg",
+                "dir____F, vnd.android.document/directory",
+                "folder_F, vnd.android.document/directory",
+        });
+
+        /* TODO(b/437258483): fix the sorting algorithm.
+        dotestSort_type_descending_with_directories(new String[] {
+                // ID,     MimeType
+                "image__J, image/jpeg",
+                "file___T, text/plain",
+                "dir____F, vnd.android.document/directory",
+                "doc____H, text/html",
+                "folder_F, vnd.android.document/directory",
+        });
+        */
+    }
+
+    // This unit test captures the sort-some-data essence of the SortDocumentUiTest
+    // testSortByType_Descending_gridMode functional test, without all of the UI machinery.
+    //
+    // "Functional" is in the "integration test, involving UI, running on hardware" sense. It's not
+    // in the "pure, no side effects" sense.
+    //
+    // testData (the input) should hold the same 5 elements on each call, although they may be
+    // permuted differently. The after-sorting output should be identical regardless of the
+    // before-sorting input.
+    //
+    // If not, and different permutations of the same input can result in different outputs, then
+    // the SortDocumentUiTest will be flaky.
+    private void dotestSort_type_descending_with_directories(String[] testData) {
+        TestFileTypeLookup lookup = new TestFileTypeLookup();
+        lookup.fileTypes.put(Document.MIME_TYPE_DIR, "Folder");
+        lookup.fileTypes.put("image/jpeg", "JPG image");
+        lookup.fileTypes.put("text/html", "HTML document");
+        lookup.fileTypes.put("text/plain", "TXT document");
+
+        MatrixCursor c = new MatrixCursor(COLUMNS);
+        for (int i = 0; i < testData.length; ++i) {
+            String[] fields = testData[i].split(",\\s+");
+            MatrixCursor.RowBuilder row = c.newRow();
+            row.add(RootCursorWrapper.COLUMN_AUTHORITY, AUTHORITY);
+            row.add(Document.COLUMN_DOCUMENT_ID, fields[0]);
+            row.add(Document.COLUMN_MIME_TYPE, fields[1]);
+        }
+
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_FILE_TYPE,
+                SortDimension.SORT_DIRECTION_DESCENDING);
+
+        final Cursor cursor = new SortingCursorWrapper(
+                c, sortModel.getDimensionById(sortModel.getSortedDimensionId()), lookup);
+
+        String[] expectedIds = new String[]{
+            // Directories (mapped to "Folder") should sort before non-directories, even with
+            // SORT_DIRECTION_DESCENDING, and ties are broken in *ascending* ID order.
+            "dir____F", // "Folder"
+            "folder_F", // "Folder"
+            "file___T", // "TXT document"
+            "image__J", // "JPG image"
+            "doc____H", // "HTML document"
+        };
+
+        assertEquals(expectedIds.length, cursor.getCount());
+
+        String[] actualIds = new String[expectedIds.length];
+        for (int i = 0; i < actualIds.length; ++i) {
+            cursor.moveToPosition(i);
+            actualIds[i] = DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID);
+        }
+
+        String expected = String.join(" ", expectedIds);
+        String actual = String.join(" ", actualIds);
+        assertEquals(expected, actual);
+    }
+
     private void populateTypeMap() {
         for (int i = 0; i < ITEM_COUNT; ++i) {
             fileTypeLookup.fileTypes.put(MIMES[i], TYPES[i]);
