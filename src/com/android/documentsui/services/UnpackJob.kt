@@ -374,7 +374,8 @@ class UnpackJob(
             archive!!.getInputStream(entry).use { inputStream ->
                 mSignal.throwIfCanceled()
                 // Create output file.
-                val fileUri = createFile(dirUri, fileName)
+                val mimeType = ReadableArchive.getMimeTypeForEntry(entry)
+                val fileUri = createFile(dirUri, fileName, mimeType)
                 try {
                     copyFile(inputStream, fileUri)
                 } catch (t: Throwable) {
@@ -388,10 +389,10 @@ class UnpackJob(
         }
     }
 
-    private fun createFile(parent: Uri, name: String): Uri {
+    private fun createFile(parent: Uri, name: String, mimeType: String): Uri {
         try {
             Trace.beginSection("UnpackJob#createFile")
-            val uri = DocumentsContract.createDocument(resolver, parent, "", name)!!
+            val uri = DocumentsContract.createDocument(resolver, parent, mimeType, name)!!
             if (VERBOSE) Log.v(TAG, "Created file $uri")
             return uri
         } finally {
