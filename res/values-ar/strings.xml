@@ -134,7 +134,7 @@
     <string name="share_via" msgid="8725082736005677161">"مشاركة عبر"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"جارٍ نسخ الملفات"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ضغط الملفات"</string>
-    <string name="extract_notification_title" msgid="5067393961754430469">"جارٍ استخلاص الملفات"</string>
+    <string name="extract_notification_title" msgid="5067393961754430469">"جارٍ استخراج الملفات"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"جارٍ نقل الملفات"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"جارٍ حذف الملفات"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"المدة المتبقية: <xliff:g id="DURATION">%s</xliff:g>"</string>
@@ -155,12 +155,12 @@
       <item quantity="one">جارٍ ضغط ملف واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>).</item>
     </plurals>
     <plurals name="extract_begin" formatted="false" msgid="1006380679562903749">
-      <item quantity="zero">جارٍ فك ضغط <xliff:g id="COUNT_1">%1$d</xliff:g> ملف.</item>
-      <item quantity="two">جارٍ فك ضغط ملفين (<xliff:g id="COUNT_1">%1$d</xliff:g>).</item>
-      <item quantity="few">جارٍ فك ضغط <xliff:g id="COUNT_1">%1$d</xliff:g> ملفات.</item>
-      <item quantity="many">جارٍ فك ضغط <xliff:g id="COUNT_1">%1$d</xliff:g> ملفًا.</item>
-      <item quantity="other">جارٍ فك ضغط <xliff:g id="COUNT_1">%1$d</xliff:g> ملف.</item>
-      <item quantity="one">جارٍ فك ضغط ملف واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>).</item>
+      <item quantity="zero">جارٍ استخراج <xliff:g id="COUNT_1">%1$d</xliff:g> ملف.</item>
+      <item quantity="two">جارٍ استخراج ملفين (<xliff:g id="COUNT_1">%1$d</xliff:g>).</item>
+      <item quantity="few">جارٍ استخراج <xliff:g id="COUNT_1">%1$d</xliff:g> ملفات.</item>
+      <item quantity="many">جارٍ استخراج <xliff:g id="COUNT_1">%1$d</xliff:g> ملفًا.</item>
+      <item quantity="other">جارٍ استخراج <xliff:g id="COUNT_1">%1$d</xliff:g> ملف.</item>
+      <item quantity="one">جارٍ استخراج ملف واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>).</item>
     </plurals>
     <plurals name="move_begin" formatted="false" msgid="1464229874265756956">
       <item quantity="zero">جارٍ نقل <xliff:g id="COUNT_1">%1$d</xliff:g> ملف.</item>
