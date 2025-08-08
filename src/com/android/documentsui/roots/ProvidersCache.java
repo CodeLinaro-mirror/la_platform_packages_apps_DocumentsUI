@@ -23,6 +23,7 @@ import static androidx.core.util.Preconditions.checkNotNull;
 import static com.android.documentsui.base.Providers.TRASH_ROOT_ID;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
@@ -35,6 +36,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
+import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -51,6 +53,7 @@ import android.util.Log;
 import androidx.annotation.GuardedBy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.documentsui.DocumentsApplication;
@@ -124,6 +127,8 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     private Multimap<UserAuthority, RootInfo> mRoots = ArrayListMultimap.create();
     @GuardedBy("mLock")
     private HashSet<UserAuthority> mStoppedAuthorities = new HashSet<>();
+    @GuardedBy("mLock")
+    private Collection<ShortcutResourceValues> mShortcutResources = new ArrayList<>();
     private final Semaphore mMultiProviderUpdateTaskSemaphore = new Semaphore(1);
 
     @GuardedBy("mObservedAuthoritiesDetails")
@@ -255,6 +260,24 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
             assert (recentRoot.availableBytes == -1);
         }
 
+        if (isHomeScreenFilesFlagEnabled()) {
+            try {
+                synchronized (mLock) {
+                    // Resources don't change, so only compute this the first time.
+                    // TODO: b/446566923 - add a boolean value to check if resources have been
+                    //  loaded or not so that the method does not have to be called every time if
+                    //  shortcut resources are actually empty.
+                    if (mShortcutResources.isEmpty()) {
+                        mShortcutResources = getShortcutResources();
+                    }
+                }
+            } catch (Exception e) {
+                // There should be no errors from trying to read the resources,
+                // but catch just in case.
+                Log.w(TAG, "Unable to properly get the resource values. " + e);
+            }
+        }
+
         new MultiProviderUpdateTask(forceRefreshAll, null, callback).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -273,6 +296,44 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         if (info != null) {
             updatePackageAsync(userId, info.packageName);
         }
+    }
+
+    /**
+     * Retrieves all the available shortcut resource values.
+     */
+    @VisibleForTesting
+    public Collection<ShortcutResourceValues> getShortcutResources() {
+        List<ShortcutResourceValues> shortcutResources = new ArrayList<>();
+        // Get values from the RRO.
+        List<String> authorities = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_authorities));
+        List<String> rootIds = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_root_ids));
+        List<String> parentDocIds = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
+        List<String> folderTitles = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_titles));
+        TypedArray shortcutIcons =
+                mContext.getResources().obtainTypedArray(R.array.shortcut_icons);
+
+        int shortcutArraySize = authorities.size();
+        if (shortcutArraySize != rootIds.size() || shortcutArraySize != parentDocIds.size()
+                || shortcutArraySize != folderTitles.size()
+                || shortcutArraySize != shortcutIcons.length()) {
+            // Early return an empty list if there is a mismatch in size.
+            return shortcutResources;
+        }
+
+        for (int i = 0; i < shortcutArraySize; i++) {
+            ShortcutResourceValues shortcutResource = new ShortcutResourceValues(
+                    authorities.get(i),
+                    rootIds.get(i),
+                    parentDocIds.get(i),
+                    folderTitles.get(i),
+                    shortcutIcons.getResourceId(i, ShortcutResourceValues.INVALID_ICON_REF));
+            shortcutResources.add(shortcutResource);
+        }
+        return shortcutResources;
     }
 
     void setBootCompletedResult(PendingResult result) {

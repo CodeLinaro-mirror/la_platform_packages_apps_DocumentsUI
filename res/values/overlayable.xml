@@ -63,6 +63,7 @@
             <item type="drawable" name="ic_eject"/>
             <item type="drawable" name="ic_root_download"/>
             <item type="drawable" name="ic_root_smartphone"/>
+            <item type="drawable" name="ic_root_homescreen"/>
             <item type="drawable" name="ic_sd_storage"/>
             <!-- When force_material3 is true, overriding "root_list_selector" won't work. -->
             <item type="drawable" name="root_list_selector"/>
@@ -92,6 +93,14 @@
             <item type="string" name="trusted_quick_viewer_package"/>
             <item type="string" name="local_search_provider"/>
             <!-- END STRING CONFIG -->
+
+            <!-- START SHORTCUT ARRAY -->
+            <item type="array" name="shortcut_authorities"/>
+            <item type="array" name="shortcut_root_ids"/>
+            <item type="array" name="shortcut_parent_doc_ids"/>
+            <item type="array" name="shortcut_titles"/>
+            <item type="array" name="shortcut_icons"/>
+            <!-- END SHORTCUT ARRAY -->
 
         </policy>
         <!-- END VENDOR CUSTOMIZATION -->

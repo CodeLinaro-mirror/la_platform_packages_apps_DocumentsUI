@@ -63,6 +63,7 @@
   int ic_eject;
   int ic_menu_copy;
   int ic_root_download;
+  int ic_root_homescreen;
   int ic_sd_storage;
   int root_list_selector;
   int work_off;
@@ -217,6 +218,13 @@
 -keep class com.android.documentsui.R$style {
   int DocumentsDefaultTheme;
   int DocumentsTheme;
+}
+-keep class com.android.documentsui.R$array {
+  int shortcut_authorities;
+  int shortcut_root_ids;
+  int shortcut_parent_doc_ids;
+  int shortcut_titles;
+  int shortcut_icons;
 }
 
 # Keep Apache Commons Compress classes
