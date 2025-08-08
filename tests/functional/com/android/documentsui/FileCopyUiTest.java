@@ -427,7 +427,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // Copy Internal Storage -> Internal Storage //
     @HugeLongTest
-    @Ignore
+    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_InternalStorage() throws Exception {
         createDocuments(StubProvider.ROOT_0_ID, rootDir0, mDocsHelper);
         copyFiles(StubProvider.ROOT_0_ID, StubProvider.ROOT_1_ID);
@@ -442,8 +442,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // Copy SD Card -> Internal Storage //
     @HugeLongTest
-    // TODO (b/160649487): excluded in FRC MTS release, and we should add it back later.
-    @Ignore
+    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_FromSdCard() throws Exception {
         createDocuments(mSdCardLabel, mSdCardRoot, mStorageDocsHelper);
         copyFiles(mSdCardLabel, mDeviceLabel);
@@ -458,8 +457,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // Copy Internal Storage -> SD Card //
     @HugeLongTest
-    // TODO (b/160649487): excluded in FRC MTS release, and we should add it back later.
-    @Ignore
+    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_ToSdCard() throws Exception {
         createDocuments(mDeviceLabel, mPrimaryRoot, mStorageDocsHelper);
         copyFiles(mDeviceLabel, mSdCardLabel);
@@ -473,7 +471,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @HugeLongTest
-    @Ignore
+    @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_documentsDisabled() throws Exception {
         mDocsHelper.createDocument(rootDir0, "text/plain", TestFilesRule.FILE_NAME_1);
         bots.roots.openRoot(StubProvider.ROOT_0_ID);

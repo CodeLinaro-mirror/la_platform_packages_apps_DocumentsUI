@@ -212,7 +212,7 @@ public class DialogUiTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("TODO(b/437236527): re-enable")
     public void testCreateDirectoryFragmentShows_textInputEditText_shouldNotTruncateOnLandscape()
             throws Throwable {
         switchOrientation(mActivityTestRule.getActivity());
