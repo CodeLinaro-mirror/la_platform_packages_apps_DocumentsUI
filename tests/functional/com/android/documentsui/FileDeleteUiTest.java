@@ -33,12 +33,15 @@ import android.os.Bundle;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -81,6 +84,10 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         }
     };
 
+    @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule().createTestFiles(this::initTestFiles);
+
     private CountDownLatch mCountDownLatch;
 
     private boolean mOperationExecuted;
@@ -89,13 +96,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() throws Exception {
-        // Set a flag to prevent many refreshes.
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
-        mDocsHelper.configure(null, bundle);
-
         setNotificationAccess(true);
-        initTestFiles();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(TestNotificationService.ACTION_OPERATION_RESULT);
@@ -115,15 +116,12 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         setNotificationAccess(false);
     }
 
-    private void initTestFiles() {
-        try {
-            createStubFiles();
-        } catch (Exception e) {
-            fail("Initialization failed");
-        }
-    }
-
-    private void createStubFiles() throws Exception {
+    private void initTestFiles(DocumentsProviderHelper docsHelper) throws Exception {
+        // Set a flag to prevent many refreshes.
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
+        docsHelper.configure(null, bundle);
+        final RootInfo root = docsHelper.getRoot(StubProvider.ROOT_0_ID);
         final ThreadPoolExecutor exec = new ThreadPoolExecutor(
                 5, 5, 1000L, TimeUnit.MILLISECONDS,
                         new ArrayBlockingQueue<Runnable>(100, true));
@@ -132,17 +130,18 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
             if (exec.getQueue().size() >= 80) {
                 Thread.sleep(50);
             }
-            exec.submit(new Runnable() {
-                @Override
-                public void run() {
-                    Uri uri = mDocsHelper.createDocument(rootDir0, "text/plain", fileName);
-                    try {
-                        mDocsHelper.writeDocument(uri, new byte[1]);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-            });
+            exec.submit(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Uri uri = docsHelper.createDocument(root, "text/plain", fileName);
+                            try {
+                                docsHelper.writeDocument(uri, new byte[1]);
+                            } catch (Exception e) {
+                                // ignore
+                            }
+                        }
+                    });
             mCopyFileList.add(fileName);
         }
         exec.shutdown();

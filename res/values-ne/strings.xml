@@ -49,7 +49,7 @@
     <string name="menu_extract_all" msgid="7335680068521252718">"सबै एक्स्ट्रयाक्ट गर्नुहोस्…"</string>
     <string name="menu_extract_here" msgid="7120939831786325360">"एक्स्ट्रयाक्ट गर्नुहोस्"</string>
     <string name="menu_browse" msgid="6007716414766674967">"ब्राउज गर्नुहोस्"</string>
-    <string name="menu_rename" msgid="1883113442688817554">"पुनःनामाकरण गर्नुहोस्"</string>
+    <string name="menu_rename" msgid="1883113442688817554">"नाम बदल्नुहोस्"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"जानकारी प्राप्त गर्नुहोस्"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"लुकाइएका फाइलहरू देखाउनुहोस्"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"लुकाइएका फाइलहरू नदेखाउनु…"</string>
@@ -97,8 +97,8 @@
     <string name="save_error" msgid="8631128801982095782">"कागजातलाई सुरक्षित गर्न सकिएन"</string>
     <string name="create_error" msgid="3092144450044861994">"फोल्डर सिर्जना गर्न सकिएन"</string>
     <string name="query_error" msgid="6625421453613879336">"यस समय सामग्री लोड गर्न सकिँदैन"</string>
-    <string name="quiet_mode_error_title" msgid="554319751414657910">"कामसम्बन्धी एपहरू पज गरिएका छन्"</string>
-    <string name="quiet_mode_button" msgid="8051436551926677305">"कामसम्बन्धी एपहरू अन गर्नुहोस्"</string>
+    <string name="quiet_mode_error_title" msgid="554319751414657910">"वर्क एपहरू पज गरिएका छन्"</string>
+    <string name="quiet_mode_button" msgid="8051436551926677305">"वर्क एपहरू अन गर्नुहोस्"</string>
     <string name="profile_quiet_mode_error_title" msgid="7126962749634841843">"<xliff:g id="PROFILE">%1$s</xliff:g> एपहरू पज गरिएका छन्"</string>
     <string name="profile_quiet_mode_button" msgid="6791235010992920102">"<xliff:g id="PROFILE">%1$s</xliff:g> एपहरू अन गर्नुहोस्"</string>
     <string name="cant_select_work_files_error_title" msgid="6688716319549644354">"कार्यालयका फाइलहरू चयन गर्न मिल्दैन"</string>
