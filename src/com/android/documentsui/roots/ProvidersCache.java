@@ -63,6 +63,7 @@ import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.LookupApplicationName;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.modules.utils.build.SdkLevel;
@@ -126,6 +127,8 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     @GuardedBy("mLock")
     private Multimap<UserAuthority, RootInfo> mRoots = ArrayListMultimap.create();
     @GuardedBy("mLock")
+    private Multimap<UserId, ShortcutInfo> mShortcuts = ArrayListMultimap.create();
+    @GuardedBy("mLock")
     private HashSet<UserAuthority> mStoppedAuthorities = new HashSet<>();
     @GuardedBy("mLock")
     private Collection<ShortcutResourceValues> mShortcutResources = new ArrayList<>();
@@ -136,6 +139,26 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
 
     public ProvidersCache(Context context) {
         mContext = context;
+    }
+
+    /**
+     * Used for testing - sets the mRoots and mShortcutResources to unit test other methods.
+     * @param roots - the document provider roots.
+     * @param shortcutResources - the shortcut resources.
+     */
+    @VisibleForTesting
+    public void setRootsAndShortcutResources(
+            List<RootInfo> roots,
+            Collection<ShortcutResourceValues> shortcutResources) {
+        synchronized (mLock) {
+            mRoots.clear();
+            mShortcutResources.clear();
+            for (RootInfo root : roots) {
+                UserAuthority userAuthority = new UserAuthority(root.userId, root.authority);
+                mRoots.put(userAuthority, root);
+            }
+            mShortcutResources = shortcutResources;
+        }
     }
 
     /**
@@ -580,6 +603,51 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     public RootInfo getDefaultRootBlocking(State state) {
         RootInfo root = ProvidersAccess.getDefaultRoot(getRootsBlocking(), state);
         return root != null ? root : createOrGetRecentsRoot(UserId.CURRENT_USER);
+    }
+
+    /**
+     * Loads all the shortcuts that were provided by the RRO.
+     * @return a list of all the shortcuts
+     */
+    public Collection<ShortcutInfo> loadShortcutsForUser(UserId userId) {
+        synchronized (mLock) {
+            Collection<ShortcutInfo> shortcuts = new ArrayList<>();
+            for (ShortcutResourceValues shortcutRes : mShortcutResources) {
+                final ShortcutInfo shortcut = generateShortcut(userId, shortcutRes);
+                if (shortcut != null) {
+                    shortcuts.add(shortcut);
+                }
+            }
+            mShortcuts.replaceValues(userId, shortcuts);
+            return shortcuts;
+        }
+    }
+
+
+    @GuardedBy("mLock")
+    private @Nullable ShortcutInfo generateShortcut(
+            UserId userId, ShortcutResourceValues shortcutRes) {
+        UserAuthority userAuthority = new UserAuthority(userId, shortcutRes.getAuthority());
+        // Get the documents provider root of the parent to verify the shortcut can be created.
+        RootInfo parentRoot = mRoots.get(userAuthority)
+                .stream()
+                .filter(root -> Objects.equals(root.rootId, shortcutRes.getRootId()))
+                .findFirst()
+                .orElse(null);
+        if (parentRoot == null) {
+            Log.w(TAG, "Cannot create shortcut root folder " + shortcutRes.getFolderTitle()
+                    + ". The parent DocumentsProvider root not found.");
+            return null;
+        }
+
+        // Creates the shortcut info instance. Leave out the URI and the document ID for now.
+        // These will be set later.
+        return new ShortcutInfo(
+            shortcutRes.getIconReference() != ShortcutResourceValues.INVALID_ICON_REF
+                ? shortcutRes.getIconReference() : parentRoot.derivedIcon,
+            shortcutRes.getFolderTitle(),
+            parentRoot,
+            shortcutRes.getParentDocumentId());
     }
 
     public void logCache() {

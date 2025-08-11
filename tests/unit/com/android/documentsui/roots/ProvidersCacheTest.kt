@@ -22,6 +22,9 @@ import android.content.res.TypedArray
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.R
+import com.android.documentsui.base.RootInfo
+import com.android.documentsui.base.ShortcutInfo
+import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.OverrideFlagsRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -49,6 +52,10 @@ class ProvidersCacheTest {
 
     @Mock private lateinit var iconTypedArray: TypedArray
     private val ICON_DEFAULT_RES_ID: Int = 10
+    private val TEST_AUTHORITY: String = "test_authority"
+    private val TEST_ROOT: String = "test_root"
+    private val TEST_PARENT_DOCID: String = "test_parent_document_id"
+    private val TEST_TITLE: String = "test_title"
 
     @Before
     fun setUp() {
@@ -144,5 +151,126 @@ class ProvidersCacheTest {
         val expected: List<ShortcutResourceValues> = listOf()
 
         assertEquals(expected, providers.getShortcutResources())
+    }
+
+    @Test
+    fun testLoadShortcutsForUserSuccess() {
+        val docsProviderRoot: RootInfo =
+            RootInfo().apply {
+                userId = UserId.DEFAULT_USER
+                authority = TEST_AUTHORITY
+                rootId = TEST_ROOT
+            }
+        val roots: List<RootInfo?>? = listOf(docsProviderRoot)
+
+        val shortcutResources: Collection<ShortcutResourceValues> =
+            listOf(
+                ShortcutResourceValues(
+                    TEST_AUTHORITY,
+                    TEST_ROOT,
+                    TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    ICON_DEFAULT_RES_ID,
+                )
+            )
+        // Set the mRoots and shortcut resources for the test.
+        providers.setRootsAndShortcutResources(roots, shortcutResources)
+
+        val expected: Collection<ShortcutInfo> =
+            listOf(
+                ShortcutInfo(
+                    R.drawable.ic_root_homescreen,
+                    TEST_TITLE,
+                    docsProviderRoot,
+                    TEST_PARENT_DOCID,
+                )
+            )
+        assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
+    }
+
+    @Test
+    fun testLoadShortcutsForMultipleUsersSuccess() {
+        val docsProviderRoot1: RootInfo =
+            RootInfo().apply {
+                userId = UserId.DEFAULT_USER
+                authority = TEST_AUTHORITY
+                rootId = TEST_ROOT
+            }
+        val docsProviderRoot2: RootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = TEST_AUTHORITY
+                rootId = TEST_ROOT
+            }
+        val roots: List<RootInfo?>? = listOf(docsProviderRoot1, docsProviderRoot2)
+
+        // This shortcut resource should have a different authority/rootId so that the
+        // parent documents provider root cannot be matched.
+        val shortcutResources: Collection<ShortcutResourceValues> =
+            listOf(
+                ShortcutResourceValues(
+                    TEST_AUTHORITY,
+                    TEST_ROOT,
+                    TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    ICON_DEFAULT_RES_ID,
+                )
+            )
+        // Set the mRoots and shortcut resources for the test.
+        providers.setRootsAndShortcutResources(roots, shortcutResources)
+
+        val expected1: Collection<ShortcutInfo> =
+            listOf(
+                ShortcutInfo(
+                    R.drawable.ic_root_homescreen,
+                    TEST_TITLE,
+                    docsProviderRoot1,
+                    TEST_PARENT_DOCID,
+                )
+            )
+        assertEquals(expected1, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
+
+        val expected2: Collection<ShortcutInfo> =
+            listOf(
+                ShortcutInfo(
+                    R.drawable.ic_root_homescreen,
+                    TEST_TITLE,
+                    docsProviderRoot2,
+                    TEST_PARENT_DOCID,
+                )
+            )
+        assertEquals(expected2, providers.loadShortcutsForUser(UserId.of(100)))
+    }
+
+    @Test
+    fun testLoadShortcutsForUserNoMatchingDocsProviderRoot() {
+        val docsProviderRoot: RootInfo =
+            RootInfo().apply {
+                userId = UserId.DEFAULT_USER
+                authority = TEST_AUTHORITY
+                rootId = TEST_ROOT
+            }
+        val roots: List<RootInfo?>? = listOf(docsProviderRoot)
+
+        // This shortcut resource should have a different authority/rootId so that the
+        // parent documents provider root cannot be matched.
+        val shortcutResources: Collection<ShortcutResourceValues> =
+            listOf(
+                ShortcutResourceValues(
+                    "diff authority",
+                    "diff root",
+                    TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    ICON_DEFAULT_RES_ID,
+                )
+            )
+
+        // Set the mRoots and shortcut resources for the test.
+        providers.setRootsAndShortcutResources(roots, shortcutResources)
+
+        val expected: Collection<ShortcutInfo> = listOf()
+        // Load the shortcuts, should expect empty collection due to no matching parent
+        // documents provider root.
+        assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
     }
 }

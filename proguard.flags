@@ -347,3 +347,5 @@
 -keep class com.android.documentsui.sidebar.ShortcutItem { *; }
 # TODO(lucmult): Remove this when this class is used.
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
+
+-keep class com.android.documentsui.roots.ProvidersCache { *; }
