@@ -36,6 +36,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.CancellationSignal;
 import android.os.DeadObjectException;
@@ -48,7 +49,6 @@ import android.util.Log;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import androidx.annotation.PluralsRes;
 
 import com.android.documentsui.Metrics;
 import com.android.documentsui.OperationDialogFragment;
@@ -66,6 +66,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -340,7 +341,7 @@ abstract public class Job implements Runnable {
         return mProgressBuilder.build();
     }
 
-    Notification getFailureNotification(@PluralsRes int titleId, @DrawableRes int icon) {
+    Notification getFailureNotification(@NonNull String contentTitle, @DrawableRes int icon) {
         final Intent navigateIntent = buildNavigateIntent(INTENT_TAG_FAILURE);
         navigateIntent.putExtra(EXTRA_DIALOG_TYPE, OperationDialogFragment.DIALOG_TYPE_FAILURE);
         navigateIntent.putExtra(EXTRA_OPERATION_TYPE, operationType);
@@ -359,9 +360,7 @@ abstract public class Job implements Runnable {
 
         final Notification.Builder errorBuilder =
                 createNotificationBuilder()
-                        .setContentTitle(
-                                service.getResources()
-                                        .getQuantityString(titleId, failureCount, failureCount))
+                        .setContentTitle(contentTitle)
                         .setContentText(
                                 service.getString(getRes(R.string.notification_touch_for_details)))
                         .setContentIntent(
@@ -407,6 +406,29 @@ abstract public class Job implements Runnable {
                         | PendingIntent.FLAG_MUTABLE));
 
         return progressBuilder;
+    }
+
+    /**
+     * Gets a formatted failure message from a string resource.
+     *
+     * @param stringId   The resource ID of the string to format.
+     * @param formatArgs The map of arguments to use for formatting.
+     * @return The formatted failure message.
+     */
+    String getFailureContentTitle(int stringId, @NonNull Map<String, Object> formatArgs) {
+        formatArgs.put("count", failureCount);
+        return new MessageFormat(service.getString(getRes(stringId)), Locale.getDefault()).format(
+                formatArgs);
+    }
+
+    /**
+     * Gets a formatted failure message from a string resource.
+     *
+     * @param stringId The resource ID of the string to format.
+     * @return The formatted failure message
+     */
+    final String getFailureContentTitle(int stringId) {
+        return getFailureContentTitle(stringId, new HashMap<>());
     }
 
     Notification.Builder createNotificationBuilder() {
