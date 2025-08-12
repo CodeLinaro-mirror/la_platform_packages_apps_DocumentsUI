@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -136,7 +138,7 @@ public class DialogUiTest {
         final TextInputEditText inputView =
                 mCreateDirectoryFragment.getDialog().findViewById(android.R.id.text1);
 
-        assertTrue(inputView.getHeight() > getInputTextHeight(inputView));
+        assertThat(inputView.getHeight()).isGreaterThan(getInputTextHeight(inputView));
     }
 
     @Test
@@ -168,8 +170,7 @@ public class DialogUiTest {
         final TextInputEditText inputView =
                 mCreateDirectoryFragment.getDialog().getWindow().findViewById(android.R.id.text1);
 
-        assertTrue(inputView.getHeight() > getInputTextHeight(inputView));
-
+        assertThat(inputView.getHeight()).isGreaterThan(getInputTextHeight(inputView));
     }
 
     @Test
@@ -188,7 +189,7 @@ public class DialogUiTest {
         final TextInputEditText inputView =
                 mCreateDirectoryFragment.getDialog().getWindow().findViewById(android.R.id.text1);
 
-        assertTrue(inputView.getHeight() > getInputTextHeight(inputView));
+        assertThat(inputView.getHeight()).isGreaterThan(getInputTextHeight(inputView));
     }
 
     @Test
@@ -208,7 +209,7 @@ public class DialogUiTest {
         final TextInputEditText inputView =
                 mCreateDirectoryFragment.getDialog().getWindow().findViewById(android.R.id.text1);
 
-        assertTrue(inputView.getHeight() > getInputTextHeight(inputView));
+        assertThat(inputView.getHeight()).isGreaterThan(getInputTextHeight(inputView));
     }
 
     @Test
