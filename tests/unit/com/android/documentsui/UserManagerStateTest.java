@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static android.multiuser.Flags.FLAG_ENABLE_MOVING_CONTENT_INTO_PRIVATE_SPACE;
+
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLID_COLORED;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.DevicePolicyResources.Strings.PERSONAL_TAB;
@@ -54,6 +56,7 @@ import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
+import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.testing.UserManagers;
 import com.android.documentsui.util.VersionUtils;
@@ -1007,6 +1010,62 @@ public class UserManagerStateTest {
 
         assertWithMessage("There should be no badge present for personal user")
                 .that(userIdToBadgeMap.get(UserId.of(mVisibleBackgroundUser))).isNull();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_MOVING_CONTENT_INTO_PRIVATE_SPACE})
+    public void testGetCanForwardToProfileIdMap_emptyExcludedUserList() {
+        assumeTrue(SdkLevel.isAtLeastB());
+        UserId currentUser = UserId.of(mSystemUser);
+        initializeUserManagerState(
+                currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
+        final List<ResolveInfo> mMockResolveInfoList =
+                Lists.newArrayList(mMockInfoPrimaryUser, mMockInfoManagedUser);
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                any(Intent.class), anyInt(), eq(mSystemUser)))
+                .thenReturn(mMockResolveInfoList);
+
+        State state = new State();
+        state.excludedUserIds = new java.util.HashSet<>();
+
+        Map<UserId, Boolean> expectedCanForwardToProfileIdMap = new HashMap<>();
+        expectedCanForwardToProfileIdMap.put(UserId.of(mManagedUser), true);
+        expectedCanForwardToProfileIdMap.put(UserId.of(mPrivateUser), true);
+        expectedCanForwardToProfileIdMap.put(UserId.of(mSystemUser), true);
+
+        assertWithMessage("getCanForwardToProfileIdMapForAllowedUsers returns incorrect mappings")
+                .that(
+                        mUserManagerState.getCanForwardToProfileIdMapForAllowedUsers(
+                                mMockIntent, state))
+                .isEqualTo(expectedCanForwardToProfileIdMap);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_MOVING_CONTENT_INTO_PRIVATE_SPACE})
+    public void testGetCanForwardToProfileIdMap_privateProfileExcluded_shouldUseNextUser() {
+        assumeTrue(SdkLevel.isAtLeastB());
+        UserId currentUser = UserId.of(mPrivateUser);
+        initializeUserManagerState(
+                currentUser, Lists.newArrayList(mSystemUser, mManagedUser, mPrivateUser));
+        final List<ResolveInfo> mMockResolveInfoList =
+                Lists.newArrayList(mMockInfoPrimaryUser, mMockInfoManagedUser);
+        when(mMockPackageManager.queryIntentActivitiesAsUser(
+                any(Intent.class), anyInt(), eq(mSystemUser)))
+                .thenReturn(mMockResolveInfoList);
+
+        State state = new State();
+        state.excludedUserIds = new java.util.HashSet<>();
+        state.excludedUserIds.add(currentUser.getIdentifier());
+
+        Map<UserId, Boolean> expectedCanForwardToProfileIdMap = new HashMap<>();
+        expectedCanForwardToProfileIdMap.put(UserId.of(mManagedUser), true);
+        expectedCanForwardToProfileIdMap.put(UserId.of(mSystemUser), true);
+
+        assertWithMessage("getCanForwardToProfileIdMapForAllowedUsers returns incorrect mappings")
+                .that(
+                        mUserManagerState.getCanForwardToProfileIdMapForAllowedUsers(
+                                mMockIntent, state))
+                .isEqualTo(expectedCanForwardToProfileIdMap);
     }
 
     private void initializeUserManagerState(UserId current, List<UserHandle> usersOnDevice) {
