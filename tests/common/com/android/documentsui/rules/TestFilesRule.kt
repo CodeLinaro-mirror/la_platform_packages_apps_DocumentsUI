@@ -30,6 +30,12 @@ import org.junit.rules.ExternalResource
  * When `skipCreation` is false, this essentially falls back to providing a `docsHelper`.
  */
 class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResource() {
+    // Only needed so that the file creation function could throw.
+    interface CreateFilesFunction {
+        @Throws(Exception::class)
+        fun apply(helper: DocumentsProviderHelper)
+    }
+
     lateinit var docsHelper: DocumentsProviderHelper
 
     // A map of the URIs that are created, used to keep track of names of items that are created
@@ -64,6 +70,18 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
         } else {
             deferredOperations.forEach { it() }
         }
+    }
+
+    /**
+     * Run file/folder create operations encapsulated in a provided function. Technically this lets
+     * running any DocumentsProviderHelper functions, but should only be used to create files. Use
+     * if dynamically generated files are required to be created.
+     */
+    fun createTestFiles(createTestFiles: CreateFilesFunction): TestFilesRule {
+        deferredOperations.add {
+            createTestFiles.apply(docsHelper)
+        }
+        return this
     }
 
     /** Create a folder in `root`. */
