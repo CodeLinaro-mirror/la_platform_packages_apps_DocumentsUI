@@ -420,6 +420,14 @@
         <item quantity="one">Copied <xliff:g id="count" example="1">%1$d</xliff:g> item to clipboard.</item>
         <item quantity="other">Copied <xliff:g id="count" example="3">%1$d</xliff:g> items to clipboard.</item>
     </plurals>
+    <!-- This string appears within the Android File Manager as an informative label next to the
+    name of the folder being browsed when this folder is a "read-only" folder. "Read-only" means
+    that no item can be added, removed or renamed in this folder. [CHAR_LIMIT=28] -->
+    <string name="read_only_label">Read-only</string>
+    <!-- This string appears within the Android File Manager as an informative tooltip message when
+    the user hovers the mouse pointer over the "read-only" label of a read-only folder. "Read-only"
+    means that no item can be added, removed or renamed in this folder. [CHAR_LIMIT=96] -->
+    <string name="read_only_explanation">You can view these files but some actions aren\u2019t supported</string>
     <!-- Toast shown when an archive cannot be extracted in a read-only folder [CHAR LIMIT=96] -->
     <string name="cannot_extract_in_read_only_folder">This archive is in a read-only location and cannot be extracted here.</string>
     <!-- Toast shown when the file operation is not supported [CHAR LIMIT=48] -->
