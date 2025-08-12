@@ -322,7 +322,7 @@
     <string name="search_bar_hint" msgid="146031513183888721">"이 기기 검색"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"텍스트 삭제"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"루트 폴더"</string>
-    <string name="search_location_everywhere" msgid="747799487494833887">"모든 지역"</string>
+    <string name="search_location_everywhere" msgid="747799487494833887">"모든 위치"</string>
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"전체 기간"</string>
     <string name="search_last_modified_1_day" msgid="7775353928859139915">"오늘"</string>
     <string name="search_last_modified_2_days" msgid="7885735119033678756">"어제"</string>
