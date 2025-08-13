@@ -27,9 +27,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsProvider;
+import android.util.Log;
 
 import com.android.documentsui.base.DocumentInfo;
 
@@ -40,6 +42,8 @@ import java.io.FileNotFoundException;
  * or exposed through AndroidManifest, but only used locally.
  */
 public class TestDocumentsProvider extends DocumentsProvider {
+
+    private static final String TAG = "TestDocumentsProvider";
 
     private String[] DOCUMENTS_PROJECTION = new String[] {
             Document.COLUMN_DOCUMENT_ID,
@@ -55,12 +59,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
     private Cursor mNextChildDocuments;
     private Cursor mNextRecentDocuments;
     private String mRuntimeMessage;
+    private long mQueryDelayMs = 0;
+    private final String mAuthority;
 
     // Emulates FileSystemProvider's support for search result limiting.
     private Boolean mSupportsSearchResultLimit = false;
     private static final int DEFAULT_MAX_RESULTS = 23;  /* FileSystemProvider.DEFAULT_MAX_RESULTS */
 
     public TestDocumentsProvider(Context context, String authority) {
+        mAuthority = authority;
         ProviderInfo info = new ProviderInfo();
         info.authority = authority;
         attachInfoForTesting(context, info);
@@ -112,6 +119,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     public Cursor querySearchDocuments(@NonNull String rootId, @Nullable String[] projection,
             @NonNull Bundle queryArgs) {
         maybeThrowException();
+        maybeDelayQueryResults();
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);
 
         int maxResults = -1;
@@ -157,12 +165,14 @@ public class TestDocumentsProvider extends DocumentsProvider {
                                 getLongColumn(mNextChildDocuments, Document.COLUMN_ICON));
             }
         }
+        Log.d(TAG, "Delivering " + cursor.getCount() + " results");
         return cursor;
     }
 
     @Override
     public Cursor querySearchDocuments(String rootId, String query, String[] projection) {
         maybeThrowException();
+        maybeDelayQueryResults();
         if (mNextChildDocuments == null) {
             return null;
         }
@@ -187,6 +197,25 @@ public class TestDocumentsProvider extends DocumentsProvider {
         if (mRuntimeMessage != null) {
             throw new RuntimeException(mRuntimeMessage);
         }
+    }
+
+    /**
+     * Sets the artificial delay added before this provider returns its results. Setting the delay
+     * to a non-positive number causes the results to be returned immediately.
+     */
+    public void setQueryDelay(long queryDelayMs) {
+        Log.d(TAG, "Setting delay " + queryDelayMs + "ms on " + mAuthority);
+        mQueryDelayMs = queryDelayMs;
+    }
+
+    private void maybeDelayQueryResults() {
+        if (mQueryDelayMs <= 0) {
+            Log.d(TAG, "Immediate delivery of results for " + mAuthority);
+            return;
+        }
+        Log.d(TAG, "Delaying query results by " + mQueryDelayMs + "ms for " + mAuthority);
+        SystemClock.sleep(mQueryDelayMs);
+        Log.d(TAG, "Delay of " + mQueryDelayMs + "ms for " + mAuthority + " done");
     }
 
     /**
