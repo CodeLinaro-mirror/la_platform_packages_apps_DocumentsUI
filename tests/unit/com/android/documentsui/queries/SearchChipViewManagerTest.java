@@ -41,7 +41,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.SmallTest;
+import androidx.test.filters.MediumTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.documentsui.IconUtils;
@@ -64,7 +64,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 @RunWith(AndroidJUnit4.class)
-@SmallTest
+@MediumTest
 public final class SearchChipViewManagerTest {
 
     private static final String LARGE_FILES_CHIP_MIME_TYPE = "";

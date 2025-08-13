@@ -18,6 +18,7 @@ package com.android.documentsui.util
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.testing.TestPackageManager
 import org.junit.Assert.assertEquals
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 
+@SmallTest
 @RunWith(AndroidJUnit4::class)
 class FileUtilsTest {
     val testPackageManager: TestPackageManager = TestPackageManager.create()
