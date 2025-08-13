@@ -165,22 +165,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Valmistellaan…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Valmistellaan…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohteen kopiointi epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohteen kopiointi epäonnistui.</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> tiedoston pakkaus epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> tiedoston pakkaus epäonnistui.</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohteen siirtäminen epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohteen siirtäminen epäonnistui.</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohteen poistaminen epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohteen poistaminen epäonnistui.</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tarkastele tietoja napauttamalla."</string>
     <string name="close" msgid="905969391788869975">"Sulje"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">

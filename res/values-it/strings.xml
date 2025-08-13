@@ -137,7 +137,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Estrazione dei file"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Spostamento di file"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Eliminazione dei file"</string>
-    <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> rimanenti"</string>
+    <string name="copy_remaining" msgid="5390517377265177727">"Ancora <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="many">Copia di <xliff:g id="COUNT_1">%1$d</xliff:g> di elementi in corso.</item>
       <item quantity="other">Copia di <xliff:g id="COUNT_1">%1$d</xliff:g> elementi in corso.</item>
@@ -170,26 +170,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Preparazione…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Preparazione…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="many">Impossibile copiare <xliff:g id="COUNT_1">%1$d</xliff:g> di elementi</item>
-      <item quantity="other">Impossibile copiare <xliff:g id="COUNT_1">%1$d</xliff:g> elementi</item>
-      <item quantity="one">Impossibile copiare <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="many">Impossibile comprimere <xliff:g id="COUNT_1">%1$d</xliff:g> di file</item>
-      <item quantity="other">Impossibile comprimere <xliff:g id="COUNT_1">%1$d</xliff:g> file</item>
-      <item quantity="one">Impossibile comprimere <xliff:g id="COUNT_0">%1$d</xliff:g> file</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="many">Impossibile spostare <xliff:g id="COUNT_1">%1$d</xliff:g> di elementi</item>
-      <item quantity="other">Impossibile spostare <xliff:g id="COUNT_1">%1$d</xliff:g> elementi</item>
-      <item quantity="one">Impossibile spostare <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="many">Impossibile eliminare <xliff:g id="COUNT_1">%1$d</xliff:g> di elementi</item>
-      <item quantity="other">Impossibile eliminare <xliff:g id="COUNT_1">%1$d</xliff:g> elementi</item>
-      <item quantity="one">Impossibile eliminare <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tocca per vedere i dettagli"</string>
     <string name="close" msgid="905969391788869975">"Chiudi"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
