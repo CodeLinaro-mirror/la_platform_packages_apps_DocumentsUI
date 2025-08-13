@@ -32,6 +32,7 @@ import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
@@ -44,8 +45,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
 
-    @Rule
-    public final TestFilesRule mTestFilesRule = new TestFilesRule();
+    @Rule public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     void assertDefaultContentOfTestDir0() throws UiObjectNotFoundException {
         bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
@@ -99,6 +99,22 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Open the ROOT_0 node in a new window.
         bots.roots.rightClickRootAndClickMenuOption(ROOT_0_ID, "Open in new window");
+
+        // Check in the new window the ROOT_0 is selected and the files inside matches the original
+        // contents.
+        bots.main.assertWindowTitle(ROOT_0_ID);
+        assertDefaultContentOfTestDir0();
+    }
+
+    @Test
+    public void testOpenInNewWindow_preservesFiles_espresso() throws Exception {
+        // Select Recents in the existing window and open ROOT_0 in the new window so we can
+        // distinguish the two windows by checking the title.
+        EspressoBotsKt.openRoot(context, "Recent");
+        bots.main.assertWindowTitle("Recent");
+
+        // Open the ROOT_0 node in a new window.
+        EspressoBotsKt.rightClickRootAndClickMenuOption(context, ROOT_0_ID, "Open in new window");
 
         // Check in the new window the ROOT_0 is selected and the files inside matches the original
         // contents.
