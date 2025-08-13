@@ -366,6 +366,11 @@
         =1 {Couldn\u2019t compress <xliff:g id="count" example="1">{count}</xliff:g> item}
         other {Couldn\u2019t compress <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
+    <!-- Title of the extract error notification [CHAR LIMIT=48] -->
+    <string name="extract_error_notification_title">{count, plural,
+        =1 {Couldn\u2019t extract <xliff:g id="count" example="1">{count}</xliff:g> item}
+        other {Couldn\u2019t extract <xliff:g id="count" example="2">{count}</xliff:g> items}
+    }</string>
     <!-- Title of the move error notification [CHAR LIMIT=48] -->
     <string name="move_error_notification_title">{count, plural,
         =1 {Couldn\u2019t move <xliff:g id="count" example="1">{count}</xliff:g> item}
