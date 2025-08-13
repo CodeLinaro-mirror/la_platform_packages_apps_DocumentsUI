@@ -83,6 +83,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @After
     public void tearDownTest() {
         // manually close activity to avoid SearchFragment show when Activity close. ref b/142840883
+        Assert.assertNotNull(device);
         device.waitForIdle();
         device.pressBack();
         device.pressBack();
@@ -568,5 +569,22 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
         directoryList.wait(hasNoChildren(), mTimeout);
         device.wait(Until.gone(By.displayId(R.id.progressbar)), mTimeout);
+    }
+
+    @Test
+    public void testEmptyQueryShowsDirectoryListing() throws UiObjectNotFoundException {
+        // Assert that we are in the correct location.
+        bots.breadcrumb.assertItemsPresent(ROOT_0_ID);
+        // Check the default content.
+        assertDefaultContentOfTestDir0();
+        // Open search, make sure query input field has focus.
+        bots.search.expand();
+        bots.search.assertInputFocused(true);
+        // Check that the content of the current directory has not changed.
+        assertDefaultContentOfTestDir0();
+        // Enter an empty query.
+        bots.search.setInputText("");
+        // Check that the content of the current directory has not changed.
+        assertDefaultContentOfTestDir0();
     }
 }
