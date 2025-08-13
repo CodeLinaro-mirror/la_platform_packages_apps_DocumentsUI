@@ -383,8 +383,28 @@ class SearchLoaderTest {
             // the thread that runs the loader.
             val barrier = CyclicBarrier(2)
             var result: DirectoryResult? = null
-            val firstPassWaitMs = 200L
-            val passDelta = 100L
+            val firstPassWaitMs = 500L
+            val passDeltaMs = 200L
+            // bufferMs is to allow some processing time between the time the results are
+            // released by a document provider vs the time they make it to onLoadFinished method.
+            val bufferMs = 100L
+
+            // Wait times for the above firstPassWaitMs and passDeltaMs are going to be:
+            //  DOWNLOADS: 300ms
+            //  PICKLES:   700ms
+            //  HOME:      900ms
+            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
+                setQueryDelay(firstPassWaitMs - passDeltaMs)
+                setNextChildDocumentsReturns(doc1)
+            }
+            environment.mockProviders[TestProvidersAccess.PICKLES.authority]?.apply {
+                setQueryDelay(firstPassWaitMs + passDeltaMs)
+                setNextChildDocumentsReturns(doc2)
+            }
+            environment.mockProviders[TestProvidersAccess.HOME.authority]?.apply {
+                setQueryDelay(firstPassWaitMs + 2 * passDeltaMs)
+                setNextChildDocumentsReturns(doc3)
+            }
 
             val loaderCallbacks: LoaderManager.LoaderCallbacks<DirectoryResult> =
                 object : LoaderManager.LoaderCallbacks<DirectoryResult> {
@@ -430,29 +450,16 @@ class SearchLoaderTest {
                     }
                 }
 
-            // Downloads delivers 100ms before the deadline.
-            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
-                setQueryDelay(firstPassWaitMs - passDelta)
-                setNextChildDocumentsReturns(doc1)
-            }
-            // The second root delivers results 100ms after the deadline.
-            environment.mockProviders[TestProvidersAccess.PICKLES.authority]?.apply {
-                setQueryDelay(firstPassWaitMs + passDelta)
-                setNextChildDocumentsReturns(doc2)
-            }
-            // The third root delivers results 200ms after the deadline.
-            environment.mockProviders[TestProvidersAccess.HOME.authority]?.apply {
-                setQueryDelay(firstPassWaitMs + 2 * passDelta)
-                setNextChildDocumentsReturns(doc3)
-            }
             activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
             // Wait for the Downloads result.
             val firstPassDuration = measureTime {
                 barrier.await()
             }
             expect.that(getFileCount(result)).isEqualTo(1)
-            // Expect first results to be no more than firstPassWait + small overhead.
-            expect.that(firstPassDuration.inWholeMilliseconds).isLessThan(firstPassWaitMs + 10)
+            // Expect first results to be no more than firstPassWaitMs + bufferMs overhead.
+            expect.that(
+                firstPassDuration.inWholeMilliseconds
+            ).isLessThan(firstPassWaitMs + bufferMs)
 
             // Now wait for the PICKLES result.
             val secondPassDuration = measureTime {
@@ -461,15 +468,15 @@ class SearchLoaderTest {
             // Expect that both the old and the new results are returned.
             expect.that(getFileCount(result)).isEqualTo(2)
             // The second task must not be reset by the first task completing its search.
-            // Thus we expect it to take extra passDelta + small overhead.
-            expect.that(secondPassDuration.inWholeMilliseconds).isLessThan(passDelta + 10)
+            // Thus we expect it to take extra passDeltaMs + bufferMs overhead.
+            expect.that(secondPassDuration.inWholeMilliseconds).isLessThan(passDeltaMs + bufferMs)
 
-            // Finally, wait for HOME. Again, just passDelta + small overhead.
+            // Finally, wait for HOME. Again, wait passDeltaMs + bufferMs.
             val thirdPassDuration = measureTime {
                 barrier.await()
             }
             expect.that(getFileCount(result)).isEqualTo(3)
-            expect.that(thirdPassDuration.inWholeMilliseconds).isLessThan(passDelta + 10)
+            expect.that(thirdPassDuration.inWholeMilliseconds).isLessThan(passDeltaMs + bufferMs)
         }
     }
 }
