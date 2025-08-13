@@ -44,7 +44,7 @@
     <string name="menu_copy" msgid="7404820171352314754">"Kopioi kohteeseen…"</string>
     <string name="menu_move" msgid="2310760789561129882">"Siirrä kohteeseen…"</string>
     <string name="menu_compress" msgid="37539111904724188">"Pakkaa"</string>
-    <string name="menu_zip" msgid="5734673122376258045">"Postinumero"</string>
+    <string name="menu_zip" msgid="5734673122376258045">"ZIP"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Pura kohteeseen…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Pura kaikki…"</string>
     <string name="menu_extract_here" msgid="7120939831786325360">"Pura"</string>

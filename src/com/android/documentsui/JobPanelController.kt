@@ -236,7 +236,8 @@ class JobPanelController(
                     context.getString(getRes(R.string.delete_completed))
                 FileOperationService.OPERATION_COMPRESS ->
                     context.getString(getRes(R.string.compress_completed))
-                FileOperationService.OPERATION_EXTRACT ->
+                FileOperationService.OPERATION_EXTRACT,
+                FileOperationService.OPERATION_UNPACK ->
                     context.getString(getRes(R.string.extract_completed))
                 else -> ""
             }
@@ -252,7 +253,8 @@ class JobPanelController(
                     context.getString(getRes(R.string.delete_failed))
                 FileOperationService.OPERATION_COMPRESS ->
                     context.getString(getRes(R.string.compress_failed))
-                FileOperationService.OPERATION_EXTRACT ->
+                FileOperationService.OPERATION_EXTRACT,
+                FileOperationService.OPERATION_UNPACK ->
                     context.getString(getRes(R.string.extract_failed))
                 else -> ""
             }

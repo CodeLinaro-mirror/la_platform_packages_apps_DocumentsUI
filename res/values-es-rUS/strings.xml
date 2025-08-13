@@ -137,7 +137,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Extrayendo archivos"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Trasladando archivos"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Borrando los archivos"</string>
-    <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> restantes"</string>
+    <string name="copy_remaining" msgid="5390517377265177727">"Tiempo restante: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="many">Copiando <xliff:g id="COUNT_1">%1$d</xliff:g> de elementos.</item>
       <item quantity="other">Copiando <xliff:g id="COUNT_1">%1$d</xliff:g> elementos.</item>

@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -71,6 +72,10 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     private final ConfigStore mConfigStore;
     private boolean mIsActionModeActivated = false;
     @ColorRes private int mDefaultStatusBarColorResId;
+
+    // The offset of the app bar layout, it can only be 0 or negative, 0 means it's fully expanded,
+    // negative value means it's collapsed.
+    private int mCurrentVerticalOffset = 0;
 
     public NavigationViewManager(
             BaseActivity activity,
@@ -179,6 +184,46 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
                         view.getWidth() - marginEnd, view.getHeight(), radius);
             }
         };
+
+        // In CollapsingToolbarLayout, when the file list is scrolled up, the content inside
+        // CollapsingToolbarLayout will be collapsed (i.e. to be pushed up out of the screen
+        // boundary). Now if we use Shift + Tab to move the focus from the top app bar, the
+        // content inside CollapsingToolbarLayout will be focused but not visible because the
+        // layout is collapsed, in this case we need to expand the AppBarLayout (which is the
+        // parent of CollapsingToolbarLayout because the collapse/expand happens on this level)
+        // to make the focused view visible.
+        if (isUseMaterial3FlagEnabled() && mCollapsingBarLayout != null) {
+            View collapsingContent = mCollapsingBarLayout.findViewById(R.id.collapsing_content);
+            collapsingContent.getViewTreeObserver()
+                    .addOnGlobalFocusChangeListener(
+                            (oldFocus, newFocus) -> {
+                                onChildViewFocused(collapsingContent, newFocus);
+                            });
+        }
+    }
+
+    /** Called when a child view of the parent view is focused. */
+    public void onChildViewFocused(View parentView, View childView) {
+        // Only expand when the child view get focused and the layout is in collapsed
+        // state (offset < 0).
+        if (mCurrentVerticalOffset < 0 && childView != null
+                && isDescendantOf(parentView, childView)) {
+            // app_bar is the parent of CollapsingToolbarLayout, expand happens on this level.
+            AppBarLayout appBarLayout = mActivity.findViewById(R.id.app_bar);
+            appBarLayout.setExpanded(true, true);
+        }
+    }
+
+    /** Returns true if the child view is a descendant of the parent view. */
+    private boolean isDescendantOf(View parent, View child) {
+        ViewParent current = child.getParent();
+        while (current != null) {
+            if (current == parent) {
+                return true;
+            }
+            current = current.getParent();
+        }
+        return false;
     }
 
     private ProfileTabs getProfileTabs(View tabLayoutContainer, UserIdManager userIdManager,
@@ -196,6 +241,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             return;
         }
 
+        mCurrentVerticalOffset = offset;
         // For S+ Only. Change toolbar color dynamically based on scroll offset.
         // Usually this can be done in xml using app:contentScrim and app:statusBarScrim, however
         // in our case since we also put directory_header.xml inside the CollapsingToolbarLayout,
