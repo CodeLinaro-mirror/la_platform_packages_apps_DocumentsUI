@@ -26,24 +26,27 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Suite
 
-@SmallTest
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
-    NoApplicationFragmentTest.UnitTests::class, NoApplicationFragmentTest.TestFileTypes::class
+    NoApplicationFragmentTest.UnitTests::class,
+    NoApplicationFragmentTest.TestFileTypes::class
 )
 class NoApplicationFragmentTest() {
 
+    @SmallTest
     @RunWith(AndroidJUnit4::class)
     class UnitTests {
         @Test
         fun testCreateExtensionEncoding() {
             val intent = NoApplicationFragment.createIntent("c++")
             assertEquals(
-                "https://play.google.com/store/search?q=c%2B%2B&c=apps", intent.data.toString()
+                "https://play.google.com/store/search?q=c%2B%2B&c=apps",
+                intent.data.toString()
             )
         }
     }
 
+    @SmallTest
     @RunWith(Parameterized::class)
     class TestFileTypes {
         companion object {
@@ -55,27 +58,32 @@ class NoApplicationFragmentTest() {
                     "application/octet-stream",
                     "bin",
                     "https://play.google.com/store/search?q=bin&c=apps"
-                ), arrayOf(
+                ),
+                arrayOf(
                     "file.bin",
                     "application/octet-stream",
                     "bin",
                     "https://play.google.com/store/search?q=bin&c=apps"
-                ), arrayOf(
+                ),
+                arrayOf(
                     "test.txt",
                     "text/plain",
                     "txt",
                     "https://play.google.com/store/search?q=txt&c=apps"
-                ), arrayOf(
+                ),
+                arrayOf(
                     "archive.tar.gz",
                     "application/gzip",
                     "gz",
                     "https://play.google.com/store/search?q=gz&c=apps"
-                ), arrayOf(
+                ),
+                arrayOf(
                     "doc.pdf",
                     "application/pdf",
                     "pdf",
                     "https://play.google.com/store/search?q=pdf&c=apps"
-                ), arrayOf(
+                ),
+                arrayOf(
                     "obscure.ttml",
                     "application/ttml+xml",
                     "ttml",

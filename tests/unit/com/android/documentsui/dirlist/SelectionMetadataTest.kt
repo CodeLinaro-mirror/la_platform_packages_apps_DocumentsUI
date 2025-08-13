@@ -18,6 +18,7 @@ package com.android.documentsui.dirlist
 import android.content.pm.ResolveInfo
 import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.android.documentsui.ModelId
 import com.android.documentsui.base.UserId
 import com.android.documentsui.flags.Flags
@@ -34,6 +35,7 @@ import org.junit.runner.RunWith
 const val TestAuthority = "com.example.test"
 const val TestUserId = 0
 
+@SmallTest
 @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
 @RunWith(AndroidJUnit4::class)
 class SelectionMetadataTest {
