@@ -375,16 +375,53 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void assertOrder(String[] dirs, String[] files) throws UiObjectNotFoundException {
-        for (int i = 0; i < dirs.length - 1; ++i) {
-            assertOrder(dirs[i], dirs[i + 1]);
+        int remaining = mTimeout;
+        if (remaining < 0) {
+            remaining = 0;
+        }
+        // 1048576 is (1 << 20), a power of two close to one million. The value is basically
+        // arbitrary. We just want our sleeps to start as a small fraction of the default timeout,
+        // but double in length each iteration.
+        int retryTimeout = remaining / 1048576;
+        if ((retryTimeout < 1) && (remaining != 0)) {
+            retryTimeout = 1;
         }
 
-        if (dirs.length > 0 && files.length > 0) {
-            assertOrder(dirs[dirs.length - 1], files[0]);
-        }
+        // Check that the bounding boxes for the (dirs ++ files) UI items are ordered. Use
+        // exponential backoff in case we have to wait (without explicit synchronization) for a
+        // worker thread to sort things (and having that trigger UI changes).
+        //
+        // Loop invariants:
+        //  • (0 <= retryTimeout) and (retryTimeout <= remaining)
+        //  • (0 < retryTimeout) unless (0 == remaining), in which case (0 == retryTimeout)
+        //  • remaining decreases on each complete (no return or fail) iteration
+        while (true) {
+            try {
+                for (int i = 0; i < dirs.length - 1; ++i) {
+                    checkOrder(dirs[i], dirs[i + 1]);
+                }
 
-        for (int i = 0; i < files.length - 1; ++i) {
-            assertOrder(files[i], files[i + 1]);
+                if (dirs.length > 0 && files.length > 0) {
+                    checkOrder(dirs[dirs.length - 1], files[0]);
+                }
+
+                for (int i = 0; i < files.length - 1; ++i) {
+                    checkOrder(files[i], files[i + 1]);
+                }
+
+                return;
+            } catch (NotInOrderException nioe) {
+                if (remaining <= 0) {
+                    fail(nioe.getMessage());
+                }
+                SystemClock.sleep(retryTimeout);
+
+                remaining -= retryTimeout;
+                retryTimeout *= 2;
+                if ((retryTimeout > remaining) || (retryTimeout <= 0)) {
+                    retryTimeout = remaining;
+                }
+            }
         }
     }
 
@@ -406,8 +443,8 @@ public class DirectoryListBot extends Bots.BaseBot {
         mAutomation.injectInputEvent(motionUp, true);
     }
 
-    private void assertOrder(String first, String second) throws UiObjectNotFoundException {
-
+    private void checkOrder(String first, String second) throws NotInOrderException,
+            UiObjectNotFoundException {
         final UiObject firstObj = findDocument(first);
         final UiObject secondObj = findDocument(second);
 
@@ -415,15 +452,20 @@ public class DirectoryListBot extends Bots.BaseBot {
         final Rect firstBound = firstObj.getVisibleBounds();
         final Rect secondBound = secondObj.getVisibleBounds();
         if (layoutDirection == View.LAYOUT_DIRECTION_LTR) {
-            assertTrue(
-                    "\"" + first + "\" is not located above or to the left of \"" + second
-                            + "\" in LTR",
-                    firstBound.bottom < secondBound.top || firstBound.right < secondBound.left);
+            if (firstBound.bottom < secondBound.top || firstBound.right < secondBound.left) {
+                return;
+            }
         } else {
-            assertTrue(
-                    "\"" + first + "\" is not located above or to the right of \"" + second +
-                            "\" in RTL",
-                    firstBound.bottom < secondBound.top || firstBound.left > secondBound.right);
+            if (firstBound.bottom < secondBound.top || firstBound.left > secondBound.right) {
+                return;
+            }
+        }
+        throw new NotInOrderException(first + " is not located before " + second);
+    }
+
+    private static class NotInOrderException extends Exception {
+        NotInOrderException(String m) {
+            super(m);
         }
     }
 }
