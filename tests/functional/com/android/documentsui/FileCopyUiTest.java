@@ -94,7 +94,9 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (TestNotificationService.ACTION_OPERATION_RESULT.equals(action)) {
+            if (TestNotificationService.ACTION_PONG.equals(action)) {
+                sRendezvousCountDownLatch.countDown();
+            } else if (TestNotificationService.ACTION_OPERATION_RESULT.equals(action)) {
                 mOperationExecuted = intent.getBooleanExtra(
                         TestNotificationService.EXTRA_RESULT, false);
                 if (!mOperationExecuted) {
@@ -107,6 +109,8 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
             }
         }
     };
+
+    private static CountDownLatch sRendezvousCountDownLatch = new CountDownLatch(1);
 
     private CountDownLatch mCountDownLatch;
 
@@ -180,7 +184,11 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(TestNotificationService.ACTION_OPERATION_RESULT);
+        filter.addAction(TestNotificationService.ACTION_PONG);
         context.registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
+        if (!TestNotificationService.rendezvous(context, sRendezvousCountDownLatch)) {
+            fail("TestNotificationService.rendezvous failed");
+        }
         context.sendBroadcast(new Intent(
                 TestNotificationService.ACTION_CHANGE_EXECUTION_MODE));
     }
