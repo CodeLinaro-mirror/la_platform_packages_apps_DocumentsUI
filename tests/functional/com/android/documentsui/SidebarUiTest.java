@@ -39,8 +39,16 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @LargeTest
+@RunWith(TestRunner.class)
+@ParameterizeSyntheticTargets({
+    SyntheticTarget.NO_OVERRIDE,
+    SyntheticTarget.STAGING,
+    SyntheticTarget.PROD,
+    SyntheticTarget.MAINLINE,
+})
 public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
