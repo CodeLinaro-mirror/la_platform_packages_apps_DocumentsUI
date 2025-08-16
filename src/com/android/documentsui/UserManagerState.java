@@ -248,8 +248,7 @@ public interface UserManagerState {
             synchronized (mCanForwardToProfileIdMap) {
                 if (mCanForwardToProfileIdMap.isEmpty()) {
                     if (isMovingContentIntoPrivateSpaceEnabled()) {
-                        getCanForwardToProfileIdMapInternalForAllowedUsers(intent,
-                                UserId.nonExcludedUsers(state, getUserIds()));
+                        getCanForwardToProfileIdMapInternalForAllowedUsers(intent, state);
                     } else {
                         getCanForwardToProfileIdMapInternal(intent);
                     }
@@ -698,14 +697,25 @@ public interface UserManagerState {
          *     CrossProfileForwardActivity checking.
          */
         private void getCanForwardToProfileIdMapInternalForAllowedUsers(Intent intent,
-                List<UserId> userIds) {
+                State state) {
+            List<UserId> userIds = UserId.nonExcludedUsers(state, getUserIds());
+            if (userIds.isEmpty()) {
+                return;
+            }
+            UserId currentUser = mCurrentUser;
+
+            // if the current user is excluded, we build the map using the next available user,
+            // since we treat that as the current user in AbstractActionHandler#onCreateLoader
+            if (mCurrentUser.isExcluded(state)) {
+                currentUser = userIds.get(0);
+            }
             synchronized (mCanForwardToProfileIdMap) {
                 mCanForwardToProfileIdMap.clear();
                 for (UserId userId : userIds) {
                     mCanForwardToProfileIdMap.put(
                             userId,
                             isCrossProfileAllowedToUser(
-                                    mContext, intent, userIds.get(0), userId));
+                                    mContext, intent, currentUser, userId));
                 }
             }
         }

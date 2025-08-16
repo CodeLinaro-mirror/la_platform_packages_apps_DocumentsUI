@@ -165,22 +165,11 @@
     <string name="move_preparing" msgid="6504239656430530761">"Preparing..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Preparing..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="other">Couldn’t copy <xliff:g id="COUNT_1">%1$d</xliff:g> items</item>
-      <item quantity="one">Couldn’t copy <xliff:g id="COUNT_0">%1$d</xliff:g> item</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="other">Couldn’t compress <xliff:g id="COUNT_1">%1$d</xliff:g> files</item>
-      <item quantity="one">Couldn’t compress <xliff:g id="COUNT_0">%1$d</xliff:g> file</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="other">Couldn’t move <xliff:g id="COUNT_1">%1$d</xliff:g> items</item>
-      <item quantity="one">Couldn’t move <xliff:g id="COUNT_0">%1$d</xliff:g> item</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="other">Couldn’t delete <xliff:g id="COUNT_1">%1$d</xliff:g> items</item>
-      <item quantity="one">Couldn’t delete <xliff:g id="COUNT_0">%1$d</xliff:g> item</item>
-    </plurals>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Couldn’t copy <xliff:g id="COUNT_0">{count}</xliff:g> item}other{Couldn’t copy <xliff:g id="COUNT_1">{count}</xliff:g> items}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Couldn’t compress <xliff:g id="COUNT_0">{count}</xliff:g> item}other{Couldn’t compress <xliff:g id="COUNT_1">{count}</xliff:g> items}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Couldn’t extract <xliff:g id="COUNT_0">{count}</xliff:g> item}other{Couldn’t extract <xliff:g id="COUNT_1">{count}</xliff:g> items}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Couldn’t move <xliff:g id="COUNT_0">{count}</xliff:g> item}other{Couldn’t move <xliff:g id="COUNT_1">{count}</xliff:g> items}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Couldn’t delete <xliff:g id="COUNT_0">{count}</xliff:g> item}other{Couldn’t delete <xliff:g id="COUNT_1">{count}</xliff:g> items}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tap to view details"</string>
     <string name="close" msgid="905969391788869975">"Close"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
