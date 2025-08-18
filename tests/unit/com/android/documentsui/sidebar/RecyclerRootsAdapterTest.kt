@@ -31,6 +31,7 @@ import com.android.documentsui.R
 import com.android.documentsui.base.Features
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
+import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.common.truth.Expect
 import kotlin.jvm.java
@@ -70,7 +71,7 @@ class RecyclerRootsAdapterTest {
     }
 
     @Test
-    fun testOnBindViewHolder() {
+    fun testOnBindViewHolderRootItem() {
         val mockItem = mock(RootItem::class.java)
         items.add(mockItem)
         val viewHolder = adapter.onCreateViewHolder(parent, 0)
@@ -78,6 +79,23 @@ class RecyclerRootsAdapterTest {
         adapter.onBindViewHolder(viewHolder, 0)
 
         verify(mockItem).bindView(viewHolder.itemView)
+        expect.that(viewHolder.itemView.getTag(R.id.item_position_tag)).isEqualTo(0)
+    }
+
+    // TODO: b/447240163 - Figure out how to use a mock item rather than a spy item for
+    //  ShortcutItem tests.
+    @Test
+    fun testOnBindViewHolderShortcutItem() {
+        val shortcutInfo = TestProvidersAccess.HOME_SCREEN_SHORTCUT
+        val mockAction = mock(ActionHandler::class.java)
+        val shortcutItem = ShortcutItem(shortcutInfo, mockAction, "", false)
+        val spyItem = spy(shortcutItem)
+        items.add(spyItem)
+        val viewHolder = adapter.onCreateViewHolder(parent, 0)
+
+        adapter.onBindViewHolder(viewHolder, 0)
+
+        verify(spyItem).bindView(viewHolder.itemView)
         expect.that(viewHolder.itemView.getTag(R.id.item_position_tag)).isEqualTo(0)
     }
 
