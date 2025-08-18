@@ -205,6 +205,10 @@
       <item quantity="other">Αντιγράφηκαν <xliff:g id="COUNT_1">%1$d</xliff:g> στοιχεία στο πρόχειρο.</item>
       <item quantity="one">Αντιγράφηκε <xliff:g id="COUNT_0">%1$d</xliff:g> στοιχείο στο πρόχειρο.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Το αρχείο βρίσκεται σε μια τοποθεσία μόνο για ανάγνωση και δεν είναι δυνατή η εξαγωγή του εδώ."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Η λειτουργία αρχείου δεν υποστηρίζεται."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Η λειτουργία αρχείου απέτυχε."</string>

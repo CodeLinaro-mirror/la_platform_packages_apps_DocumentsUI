@@ -205,6 +205,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> Elemente wurden in die Zwischenablage kopiert.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> Element wurde in die Zwischenablage kopiert.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Dieses Archiv befindet sich an einem schreibgeschützten Speicherort und kann hier nicht extrahiert werden."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Dateioperation wird nicht unterstützt."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Dateioperation fehlgeschlagen."</string>

@@ -137,7 +137,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Extraindo arquivos"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Movendo arquivos"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Excluindo arquivos"</string>
-    <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> restantes"</string>
+    <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> restante"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">Copiando <xliff:g id="COUNT_1">%1$d</xliff:g> item</item>
       <item quantity="many">Copiando <xliff:g id="COUNT_1">%1$d</xliff:g> itens</item>
@@ -217,6 +217,10 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> itens copiados para a área de transferência</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> itens copiados para a área de transferência</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Esse arquivo está em um local somente leitura e não pode ser extraído aqui."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"A operação do arquivo não é compatível."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Falha na operação do arquivo."</string>

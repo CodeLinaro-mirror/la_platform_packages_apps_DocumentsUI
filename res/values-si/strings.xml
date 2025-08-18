@@ -205,6 +205,10 @@
       <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
       <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"මෙම ලේඛනාගාරය කියවීමට පමණක් හැකි ස්ථානයක ඇති අතර මෙතැනින් උපුටා ගත නොහැක."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ගොනු මෙහෙයුම වෙත සහාය නොදක්වයි."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ගොනු මෙහෙයුම අසාර්ථක විය."</string>

@@ -205,6 +205,10 @@
       <item quantity="other">Het <xliff:g id="COUNT_1">%1$d</xliff:g> items na knipbord gekopieer.</item>
       <item quantity="one">Het <xliff:g id="COUNT_0">%1$d</xliff:g> item na knipbord gekopieer.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Hierdie argief is in ’n slegs-lees-ligging en kan nie hier onttrek word nie."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Lêerbewerking word nie gesteun nie."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Lêerbewerking het misluk."</string>

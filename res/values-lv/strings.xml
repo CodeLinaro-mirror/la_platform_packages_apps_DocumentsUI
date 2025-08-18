@@ -217,6 +217,10 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> vienums ir kopēts starpliktuvē.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> vienumi ir kopēti starpliktuvē.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Šis arhīvs atrodas tikai lasāmā vietā, un to nevar izgūt šeit."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Darbība ar failu netiek atbalstīta."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Darbība ar failu neizdevās."</string>
