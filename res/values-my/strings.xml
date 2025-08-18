@@ -205,6 +205,10 @@
       <item quantity="other">ဖိုင် <xliff:g id="COUNT_1">%1$d</xliff:g> ဖိုင်ကို ကလစ်ဘုတ်သို့ ကူးယူထားသည်။</item>
       <item quantity="one">ဖိုင် <xliff:g id="COUNT_0">%1$d</xliff:g> ဖိုင်ကို ကလစ်ဘုတ်သို့ ကူးယူထားသည်။</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ဤမှတ်တမ်းသည် ဖတ်ရန်သီးသန့် နေရာဖြစ်ပြီး ဤနေရာတွင် ထုတ်ယူ၍မရပါ။"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ဖိုင်ပြင်ဆင် ဆောင်ရွက်ခြင်းကို ပံ့ပိုးမထားပါ။"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ဖိုင်ပြင်ဆင် ဆောင်ရွက်ခြင်း မအောင်မြင်ပါ။"</string>

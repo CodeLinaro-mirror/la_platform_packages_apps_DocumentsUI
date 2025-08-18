@@ -205,6 +205,10 @@
       <item quantity="one">Nakopya ang <xliff:g id="COUNT_1">%1$d</xliff:g> item sa clipboard.</item>
       <item quantity="other">Nakopya ang <xliff:g id="COUNT_1">%1$d</xliff:g> na item sa clipboard.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Nasa read-only na lokasyon ang archive na ito at hindi ito mae-extract dito."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Hindi sinusuportahan ang operation sa file."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Hindi naisagawa ang operation sa file."</string>

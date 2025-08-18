@@ -205,6 +205,10 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਕਲਿੱਪਬੋਰਡ \'ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ।</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਕਲਿੱਪਬੋਰਡ \'ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ।</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ਇਹ ਪੁਰਾਲੇਖ ਸਿਰਫ਼-ਪੜ੍ਹਨ ਲਈ ਟਿਕਾਣੇ \'ਤੇ ਹੈ ਅਤੇ ਇੱਥੇ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ।"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ਫ਼ਾਈਲ ਕਾਰਵਾਈ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ।"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ਫ਼ਾਈਲ ਕਾਰਵਾਈ ਅਸਫਲ ਰਹੀ।"</string>

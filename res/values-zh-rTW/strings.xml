@@ -205,6 +205,10 @@
       <item quantity="other">已將 <xliff:g id="COUNT_1">%1$d</xliff:g> 個項目複製到剪貼簿。</item>
       <item quantity="one">已將 <xliff:g id="COUNT_0">%1$d</xliff:g> 個項目複製到剪貼簿。</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"這個封存檔位於唯讀位置，因此無法在這裡解壓縮。"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"不支援的檔案操作。"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"檔案操作失敗。"</string>
