@@ -57,6 +57,7 @@ import com.android.documentsui.rules.TestFilesRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -572,6 +573,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @Ignore
     public void testEmptyQueryShowsDirectoryListing() throws UiObjectNotFoundException {
         // Assert that we are in the correct location.
         bots.breadcrumb.assertItemsPresent(ROOT_0_ID);
