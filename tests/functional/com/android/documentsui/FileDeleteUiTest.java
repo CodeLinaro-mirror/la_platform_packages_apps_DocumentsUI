@@ -41,6 +41,7 @@ import com.android.documentsui.services.TestNotificationService;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -147,9 +148,9 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         exec.shutdown();
     }
 
-    // TODO(b/437215252): deflake
     @HugeLongTest
     @Test
+    @Ignore("TODO(b/437215252): deflake")
     public void testDeleteAllDocument() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);
         bots.main.clickToolbarOverflowItem(
