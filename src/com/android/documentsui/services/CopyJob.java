@@ -334,8 +334,7 @@ class CopyJob extends ResolvedResourcesJob {
         }
 
         if (!available) {
-            failureCount = mResolvedDocs.size();
-            failedDocs.addAll(mResolvedDocs);
+            onFileFailed(mResolvedDocs);
         }
 
         return available;
