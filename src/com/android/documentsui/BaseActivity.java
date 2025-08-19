@@ -879,7 +879,7 @@ public abstract class BaseActivity
     }
 
     /**
-     * Reload documnets by current stack in certain situation.
+     * Reload documents by current stack in certain situation.
      */
     public void reloadDocumentsIfNeeded() {
         if (isInRecents() || mSearchManager.isSearching()) {
