@@ -18,14 +18,16 @@ package com.android.documentsui.archives;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 public class ArchiveId {
     private final static char DELIMITER = '#';
 
-    public final Uri mArchiveUri;
+    public final @NonNull Uri mArchiveUri;
     public final int mAccessMode;
     public final String mPath;
 
-    public ArchiveId(Uri archiveUri, int accessMode, String path) {
+    public ArchiveId(@NonNull Uri archiveUri, int accessMode, String path) {
         assert(archiveUri.toString().indexOf(DELIMITER) == -1);
         assert(!path.isEmpty());
 

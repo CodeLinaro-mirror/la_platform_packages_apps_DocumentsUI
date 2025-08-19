@@ -65,6 +65,7 @@ import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -291,17 +292,34 @@ abstract public class Job implements Runnable {
         return service.getContentResolver();
     }
 
+    @SuppressWarnings("NonAtomicVolatileUpdate")
     void onFileFailed(DocumentInfo file) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
         failureCount++;
         failedDocs.add(file);
     }
 
+    @SuppressWarnings("NonAtomicVolatileUpdate")
+    void onFileFailed(@NonNull Collection<? extends DocumentInfo> files) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
+        failureCount += files.size();
+        failedDocs.addAll(files);
+    }
+
+    @SuppressWarnings("NonAtomicVolatileUpdate")
     void onResolveFailed(Uri uri) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
         failureCount++;
         failedUris.add(uri);
     }
 
+    @SuppressWarnings("NonAtomicVolatileUpdate")
     void onPathFailed(@NonNull String path) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
         failureCount++;
         failedPaths.add(path);
     }
