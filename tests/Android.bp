@@ -137,6 +137,7 @@ android_library {
     target_sdk_version: "33",
     lint: {
         baseline_filename: "lint-baseline.xml",
+        enabled: false,
     },
 }
 

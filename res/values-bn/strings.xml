@@ -205,6 +205,10 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম ক্লিপবোর্ডে কপি করা হয়েছে।</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম ক্লিপবোর্ডে কপি করা হয়েছে।</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"এই আর্কাইভটি শুধু পড়া যায় এমন লোকেশনে রয়েছে, তাই এখানে এক্সট্র্যাক্ট করা যাবে না।"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ফাইল ক্রিয়াকলাপটি সমর্থিত নয়৷"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ফাইল ক্রিয়াকলাপটি করা যায়নি।"</string>

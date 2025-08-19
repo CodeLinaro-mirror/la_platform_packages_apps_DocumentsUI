@@ -200,6 +200,10 @@
       <item quantity="other">Copied <xliff:g id="COUNT_1">%1$d</xliff:g> items to clipboard.</item>
       <item quantity="one">Copied <xliff:g id="COUNT_0">%1$d</xliff:g> item to clipboard.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"This archive is in a read-only location and cannot be extracted here."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"File operation is not supported."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"File operation failed."</string>

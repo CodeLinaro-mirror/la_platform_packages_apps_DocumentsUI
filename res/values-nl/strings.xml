@@ -205,6 +205,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> items gekopieerd naar klembord.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> item gekopieerd naar klembord.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Dit archief bevindt zich op een locatie die alleen-lezen is en kan hier niet worden uitgepakt."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Bestandsbewerking wordt niet ondersteund."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Bestandsbewerking mislukt."</string>
@@ -317,7 +321,7 @@
     <string name="search_bar_clear" msgid="2072000748823434188">"Tekst wissen"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Hoofdmap"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Overal"</string>
-    <string name="search_last_modified_any_time" msgid="6027501367865939696">"Altijd"</string>
+    <string name="search_last_modified_any_time" msgid="6027501367865939696">"Op elk moment"</string>
     <string name="search_last_modified_1_day" msgid="7775353928859139915">"Vandaag"</string>
     <string name="search_last_modified_2_days" msgid="7885735119033678756">"Gisteren"</string>
     <string name="search_last_modified_7_days" msgid="7634290601544418836">"Vorige week"</string>

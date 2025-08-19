@@ -205,6 +205,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> елемента са копирани в буферната памет.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> елемент е копиран в буферната памет.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Този архив е в местоположение само за четене и не може да бъде извлечен тук."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Файловата операция не се поддържа."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Файловата операция не бе успешна."</string>

@@ -205,6 +205,10 @@
       <item quantity="other">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ പകർത്തി.</item>
       <item quantity="one">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_0">%1$d</xliff:g> ഇനം പകർത്തി.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ഈ ആർക്കൈവ് വായന മാത്രമുള്ള ലൊക്കേഷനിലാണ്, ഇവിടെ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്യാനാകില്ല."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ഫയൽ പ്രവർത്തനത്തിന് പിന്തുണയില്ല."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ഫയൽ പ്രവർത്തനം പരാജയപ്പെട്ടു."</string>

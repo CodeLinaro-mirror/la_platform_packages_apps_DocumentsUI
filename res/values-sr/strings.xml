@@ -170,16 +170,11 @@
     <string name="move_preparing" msgid="6504239656430530761">"Припрема се..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Припрема се..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Копирање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Копирање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Копирање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Копирање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Компримовање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Компримовање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Компримовање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Компримовање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Издвајање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Издвајање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Издвајање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Издвајање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Премештање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Брисање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Брисање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Брисање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Брисање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Додирните да бисте прегледали детаље"</string>
     <string name="close" msgid="905969391788869975">"Затвори"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -217,6 +212,10 @@
       <item quantity="few">Копирали сте <xliff:g id="COUNT_1">%1$d</xliff:g> ставке у меморију.</item>
       <item quantity="other">Копирали сте <xliff:g id="COUNT_1">%1$d</xliff:g> ставки у меморију.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ова архива је на локацији само за читање и не може да се издвоји овде."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Радња са датотеком није подржана."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Радња са датотеком није успела."</string>

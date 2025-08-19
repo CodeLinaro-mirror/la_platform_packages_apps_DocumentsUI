@@ -217,6 +217,10 @@
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> stavke kopirane su u međuspremnik.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> stavki kopirano je u međuspremnik.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ova je arhiva na lokaciji samo za čitanje i ne može se izdvojiti ovdje."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Radnja datoteke nije podržana."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Radnja datoteke nije uspjela."</string>
