@@ -257,10 +257,10 @@
     <!-- Main margin is set by main_container_padding_start for the menu button, here is for
     the space between the button the text/title. -->
     <dimen name="search_bar_text_margin_start_m3">@dimen/space_extra_small_6</dimen>
-    <dimen name="job_progress_toolbar_indicator_size">24dp</dimen>
+    <dimen name="job_progress_toolbar_indicator_size">20dp</dimen>
     <dimen name="job_progress_toolbar_badge_outline_width">1dp</dimen>
     <!-- Includes outline. -->
-    <dimen name="job_progress_toolbar_badge_diameter">10dp</dimen>
+    <dimen name="job_progress_toolbar_badge_diameter">8dp</dimen>
     <!-- The main margin is controlled above on paddingStart, zeroing toolbar_content_insets to
          avoid pushing the title or button further. -->
     <dimen name="toolbar_content_inset_start">0dp</dimen>
