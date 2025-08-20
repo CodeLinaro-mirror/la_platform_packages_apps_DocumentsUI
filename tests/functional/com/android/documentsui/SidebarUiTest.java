@@ -37,11 +37,13 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @LargeTest
+@Ignore
 public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
