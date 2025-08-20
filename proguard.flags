@@ -32,10 +32,10 @@
 # TODO(b/339312616): Remove after a more permanent fix is available
 # On modifying or adding new test run the following command to generate new keep rules and replace
 # the once listed below with the newly generated keep rules:
-# java -cp prebuilts/r8/r8.jar com.android.tools.r8.tracereferences.TraceReferences \
-# --lib out/soong/.intermediates/frameworks/base/framework/android_common/<some_hash>/combined/framework.jar \
-# --source out/target/product/panther/testcases/DocumentsUIGoogleTests/arm64/DocumentsUIGoogleTests.apk \
-# --target  out/soong/.intermediates/vendor/unbundled_google/packages/DocumentsUIGoogle/DocumentsUIGoogle/android_common/<some_hash>/javac/DocumentsUIGoogle.jar \
+# $ java -cp prebuilts/r8/r8.jar com.android.tools.r8.tracereferences.TraceReferences \
+# --lib out/soong/.intermediates/frameworks/base/framework/android_common/combined/framework.jar  \
+# --source $OUT/testcases/DocumentsUIGoogleTests/x86_64/DocumentsUIGoogleTests.apk \
+# --target out/soong/.intermediates/vendor/unbundled_google/packages/DocumentsUIGoogle/DocumentsUIGoogleInternal/android_common/turbine-combined/DocumentsUIGoogleInternal.jar \
 # --keep-rules \
 # --output /tmp/keep.txt
 
@@ -150,20 +150,23 @@
   int mixed_context_menu;
 }
 -keep class com.android.documentsui.R$plurals {
-  int copy_error_notification_title;
   int elements_dragged;
 }
 -keep class com.android.documentsui.R$string {
   int cant_select_work_files_error_message;
   int cant_select_work_files_error_title;
   int clear_selection;
+  int compress_error_notification_title;
+  int copy_error_notification_title;
   int copy_notification_title;
   int copy_preparing;
   int copy_remaining;
   int debug_content_uri;
   int default_root_uri;
+  int delete_error_notification_title;
   int directory_items;
   int empty;
+  int extract_error_notification_title;
   int menu_copy;
   int menu_move;
   int menu_rename;
@@ -191,6 +194,7 @@
   int metadata_iso_format;
   int metadata_iso_speed_ratings;
   int metadata_shutter_speed;
+  int move_error_notification_title;
   int name_conflict;
   int no_results;
   int personal_tab;
@@ -199,9 +203,9 @@
   int quiet_mode_error_title;
   int rename_error;
   int search_bar_hint;
-  int share_via;
   int search_last_modified_30_days;
   int search_location_everywhere;
+  int share_via;
   int sort_dimension_date;
   int sort_dimension_file_type;
   int sort_dimension_name;
@@ -292,4 +296,19 @@
 
 -keep interface com.android.documentsui.UserManagerProvider {
   public java.util.List getUserIds(android.content.Context);
+}
+-keep interface androidx.drawerlayout.widget.DrawerLayout$DrawerListener {
+}
+-keep class androidx.drawerlayout.widget.DrawerLayout$SimpleDrawerListener {
+  public <init>();
+  public void onDrawerClosed(android.view.View);
+  public void onDrawerStateChanged(int);
+}
+-keep class androidx.drawerlayout.widget.DrawerLayout {
+  public void addDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
+  public void closeDrawer(int);
+  public boolean isDrawerOpen(int);
+  public boolean isDrawerVisible(int);
+  public void openDrawer(int);
+  public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }

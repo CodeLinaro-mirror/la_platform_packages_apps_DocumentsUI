@@ -237,11 +237,11 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
+        mCurrentVerticalOffset = offset;
         if (!VersionUtils.isAtLeastS()) {
             return;
         }
 
-        mCurrentVerticalOffset = offset;
         // For S+ Only. Change toolbar color dynamically based on scroll offset.
         // Usually this can be done in xml using app:contentScrim and app:statusBarScrim, however
         // in our case since we also put directory_header.xml inside the CollapsingToolbarLayout,

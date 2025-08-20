@@ -200,7 +200,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     }
 
     @HugeLongTest
-    @Ignore("(TODO: b/156756197) : Deflake tests")
+    @Ignore("TODO(b/437236527): deflake and re-enable")
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);

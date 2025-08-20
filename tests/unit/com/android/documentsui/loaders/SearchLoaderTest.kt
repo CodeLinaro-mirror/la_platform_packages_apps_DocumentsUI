@@ -18,6 +18,8 @@ package com.android.documentsui.loaders
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
@@ -34,10 +36,13 @@ import com.android.documentsui.testing.TestProvidersAccess
 import com.google.common.truth.Expect
 import java.time.Duration
 import java.util.Locale
+import java.util.UUID
+import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.measureTime
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -183,6 +188,13 @@ class SearchLoaderTest {
         @Before
         fun setUpTest() {
             executor = Executors.newSingleThreadExecutor()
+        }
+
+        @After
+        fun tearDownTest() {
+            for (provider in environment.mockProviders) {
+                provider.value.setQueryDelay(0)
+            }
         }
 
         fun generateDocuments(
@@ -358,6 +370,113 @@ class SearchLoaderTest {
             // The no results should be due to the task terminating immediately, not because
             // it timed out. We give it 100 milliseconds.
             expect.that(queryDuration).isLessThan(100.milliseconds)
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testDeliversFastAndSlowResults() {
+            val commonSearchString = UUID.randomUUID().toString()
+            val doc1 = environment.model.createFile("downloads$commonSearchString")
+            val doc2 = environment.model.createFile("pickles$commonSearchString")
+            val doc3 = environment.model.createFile("home$commonSearchString")
+            // The barrier awaits for 2 callers. One from the test thread and one from
+            // the thread that runs the loader.
+            val barrier = CyclicBarrier(2)
+            var result: DirectoryResult? = null
+            val firstPassWaitMs = 500L
+            val passDeltaMs = 200L
+            // bufferMs is to allow some processing time between the time the results are
+            // released by a document provider vs the time they make it to onLoadFinished method.
+            val bufferMs = 100L
+
+            // Wait times for the above firstPassWaitMs and passDeltaMs are going to be:
+            //  DOWNLOADS: 300ms
+            //  PICKLES:   700ms
+            //  HOME:      900ms
+            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
+                setQueryDelay(firstPassWaitMs - passDeltaMs)
+                setNextChildDocumentsReturns(doc1)
+            }
+            environment.mockProviders[TestProvidersAccess.PICKLES.authority]?.apply {
+                setQueryDelay(firstPassWaitMs + passDeltaMs)
+                setNextChildDocumentsReturns(doc2)
+            }
+            environment.mockProviders[TestProvidersAccess.HOME.authority]?.apply {
+                setQueryDelay(firstPassWaitMs + 2 * passDeltaMs)
+                setNextChildDocumentsReturns(doc3)
+            }
+
+            val loaderCallbacks: LoaderManager.LoaderCallbacks<DirectoryResult> =
+                object : LoaderManager.LoaderCallbacks<DirectoryResult> {
+
+                    override fun onCreateLoader(
+                        id: Int,
+                        args: Bundle?
+                    ): Loader<DirectoryResult?> {
+                        return SearchLoader(
+                            activity,
+                            listOf(
+                                TestProvidersAccess.DOWNLOADS,
+                                TestProvidersAccess.PICKLES,
+                                TestProvidersAccess.HOME,
+                            ),
+                            TestFileTypeLookup(),
+                            contentObserver,
+                            commonSearchString,
+                            QueryOptions(
+                                10,
+                                ALL_RESULTS,
+                                null,
+                                Duration.ofMillis(firstPassWaitMs),
+                                false,
+                                null,
+                                Bundle()
+                            ),
+                            environment.state.sortModel,
+                            Executors.newFixedThreadPool(3)
+                        )
+                    }
+
+                    override fun onLoadFinished(
+                        loader: Loader<DirectoryResult>,
+                        data: DirectoryResult?
+                    ) {
+                        result = data
+                        barrier.await()
+                    }
+
+                    override fun onLoaderReset(loader: Loader<DirectoryResult>) {
+                        loader.reset()
+                    }
+                }
+
+            activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
+            // Wait for the Downloads result.
+            val firstPassDuration = measureTime {
+                barrier.await()
+            }
+            expect.that(getFileCount(result)).isEqualTo(1)
+            // Expect first results to be no more than firstPassWaitMs + bufferMs overhead.
+            expect.that(
+                firstPassDuration.inWholeMilliseconds
+            ).isLessThan(firstPassWaitMs + bufferMs)
+
+            // Now wait for the PICKLES result.
+            val secondPassDuration = measureTime {
+                barrier.await()
+            }
+            // Expect that both the old and the new results are returned.
+            expect.that(getFileCount(result)).isEqualTo(2)
+            // The second task must not be reset by the first task completing its search.
+            // Thus we expect it to take extra passDeltaMs + bufferMs overhead.
+            expect.that(secondPassDuration.inWholeMilliseconds).isLessThan(passDeltaMs + bufferMs)
+
+            // Finally, wait for HOME. Again, wait passDeltaMs + bufferMs.
+            val thirdPassDuration = measureTime {
+                barrier.await()
+            }
+            expect.that(getFileCount(result)).isEqualTo(3)
+            expect.that(thirdPassDuration.inWholeMilliseconds).isLessThan(passDeltaMs + bufferMs)
         }
     }
 }

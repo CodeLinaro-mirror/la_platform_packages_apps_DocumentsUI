@@ -27,6 +27,7 @@ java_defaults {
 
     static_libs: [
         "androidx.test.core",
+        "androidx.test.espresso.contrib",
         "androidx.test.espresso.core",
         "androidx.test.ext.truth",
         "androidx.test.rules",
@@ -59,6 +60,7 @@ android_library {
 
     static_libs: [
         "androidx.legacy_legacy-support-v4",
+        "androidx.test.espresso.contrib",
         "androidx.test.espresso.core",
         "androidx.test.rules",
         "androidx.test.uiautomator_uiautomator",
