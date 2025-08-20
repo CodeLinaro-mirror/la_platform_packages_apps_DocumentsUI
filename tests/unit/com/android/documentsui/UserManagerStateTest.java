@@ -237,8 +237,6 @@ public class UserManagerStateTest {
                 .thenReturn(mMockContext);
         when(mMockContext.createPackageContextAsUser(PACKAGE_NAME, 0, mPrimaryUser))
                 .thenReturn(mMockContext);
-
-        when(mMockUserManager.isSameProfileGroup(mSystemUser, mPrivateUser)).thenReturn(true);
     }
 
     @Test
