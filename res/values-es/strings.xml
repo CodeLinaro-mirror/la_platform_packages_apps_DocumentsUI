@@ -129,7 +129,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"No se pueden compartir más de <xliff:g id="COUNT">%1$d</xliff:g> archivos"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acción no permitida"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Abrir con…"</string>
-    <string name="no_application_dialog_message" msgid="5444094365658346573">"No hay aplicaciones compatibles instaladas. Prueba a instalar una desde Play Store."</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"No hay apps compatibles instaladas. Prueba a instalar una desde Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buscar en Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Compartir a través de"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Copiando archivos"</string>
@@ -170,26 +170,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Preparando..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Preparando..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> de <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="many">No se han podido copiar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="other">No se han podido copiar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="one">No se ha podido copiar <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="many">No se han podido comprimir <xliff:g id="COUNT_1">%1$d</xliff:g> archivos</item>
-      <item quantity="other">No se han podido comprimir <xliff:g id="COUNT_1">%1$d</xliff:g> archivos</item>
-      <item quantity="one">No se ha podido comprimir <xliff:g id="COUNT_0">%1$d</xliff:g> archivo</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="many">No se han podido mover <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="other">No se han podido mover <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="one">No se ha podido mover <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="many">No se han podido eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="other">No se han podido eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="one">No se ha podido eliminar <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Toca la notificación para ver detalles"</string>
     <string name="close" msgid="905969391788869975">"Cerrar"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">

@@ -170,26 +170,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Preparando…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Preparando…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="many">No se pudieron copiar <xliff:g id="COUNT_1">%1$d</xliff:g> de elementos</item>
-      <item quantity="other">No se pudieron copiar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="one">No se pudo copiar <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="many">No se pudieron comprimir <xliff:g id="COUNT_1">%1$d</xliff:g> de archivos</item>
-      <item quantity="other">No se pudieron comprimir <xliff:g id="COUNT_1">%1$d</xliff:g> archivos</item>
-      <item quantity="one">No se pudo comprimir <xliff:g id="COUNT_0">%1$d</xliff:g> archivo</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="many">No se pudieron mover <xliff:g id="COUNT_1">%1$d</xliff:g> de elementos</item>
-      <item quantity="other">No se pudieron mover <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="one">No se pudo mover <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="many">No se pudieron borrar <xliff:g id="COUNT_1">%1$d</xliff:g> de elementos</item>
-      <item quantity="other">No se pudieron borrar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
-      <item quantity="one">No se pudo borrar <xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Presiona para ver los detalles"</string>
     <string name="close" msgid="905969391788869975">"Cerrar"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -345,7 +335,7 @@
     <string name="search_bar_clear" msgid="2072000748823434188">"Borrar texto"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Carpeta raíz"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"En todas partes"</string>
-    <string name="search_last_modified_any_time" msgid="6027501367865939696">"En cualquier momento"</string>
+    <string name="search_last_modified_any_time" msgid="6027501367865939696">"De cualquier fecha"</string>
     <string name="search_last_modified_1_day" msgid="7775353928859139915">"Hoy"</string>
     <string name="search_last_modified_2_days" msgid="7885735119033678756">"Ayer"</string>
     <string name="search_last_modified_7_days" msgid="7634290601544418836">"La semana pasada"</string>

@@ -135,8 +135,10 @@ import com.google.common.base.Objects;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Display the documents inside a single directory.
@@ -224,6 +226,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private Handler mHandler;
     private Runnable mProviderTestRunnable;
+
+    // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
+    // all getActivity() to this method so we can't override it in the unit test.
+    protected BaseActivity getBaseActivity() {
+        return (BaseActivity) getActivity();
+    }
 
     // Note, we use !null to indicate that selection was restored (from rotation).
     // So don't fiddle with this field unless you've got the bigger picture in mind.
@@ -447,7 +455,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mHandler = new Handler(Looper.getMainLooper());
-        mActivity = (BaseActivity) getActivity();
+        mActivity = getBaseActivity();
         mRootView =
                 (AnimationView)
                         inflater.inflate(getRes(R.layout.fragment_directory), container, false);
@@ -769,7 +777,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             View v,
             ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        final MenuInflater inflater = getActivity().getMenuInflater();
+        final MenuInflater inflater = getBaseActivity().getMenuInflater();
 
         final String modelId = getModelId(v);
         if (modelId == null) {
@@ -968,8 +976,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private int getAppBarLayoutHeight() {
-        View appBarLayout = getActivity().findViewById(getRes(R.id.app_bar));
-        View collapsingBar = getActivity().findViewById(getRes(R.id.collapsing_toolbar));
+        View appBarLayout = getBaseActivity().findViewById(getRes(R.id.app_bar));
+        View collapsingBar = getBaseActivity().findViewById(getRes(R.id.collapsing_toolbar));
         return collapsingBar == null ? 0 : appBarLayout.getHeight();
     }
 
@@ -978,10 +986,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // but also includes the breadcrumb and the divider, so we need to use the total height
         // for their parent container.
         if (isUseMaterial3FlagEnabled()) {
-            View bottomSection = getActivity().findViewById(getRes(R.id.bottom_container));
+            View bottomSection = getBaseActivity().findViewById(getRes(R.id.bottom_container));
             return bottomSection == null ? 0 : bottomSection.getHeight();
         }
-        View containerSave = getActivity().findViewById(getRes(R.id.container_save));
+        View containerSave = getBaseActivity().findViewById(getRes(R.id.container_save));
         return containerSave == null ? 0 : containerSave.getHeight();
     }
 
@@ -1441,7 +1449,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mClipper.copyFromClipboard(
                 mState.stack,
                 mInjector.dialogs::showFileOperationStatus);
-        getActivity().invalidateOptionsMenu();
+        getBaseActivity().invalidateOptionsMenu();
     }
 
     public void pasteIntoFolder() {
@@ -1461,7 +1469,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 destination,
                 mState.stack,
                 mInjector.dialogs::showFileOperationStatus);
-        getActivity().invalidateOptionsMenu();
+        getBaseActivity().invalidateOptionsMenu();
     }
 
     private void setupDragAndDropOnDocumentView(View view, Cursor cursor) {
@@ -1662,11 +1670,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             updateLayout(mState.derivedMode);
 
             // Update the selection to remove any disappeared IDs.
-            Iterator<String> selectionIter = mSelectionMgr.getSelection().iterator();
-            while (selectionIter.hasNext()) {
-                if (!mAdapter.getStableIds().contains(selectionIter.next())) {
-                    selectionIter.remove();
+            List<String> disappearedIds = new ArrayList<>();
+            Set<String> modelIds = new HashSet<>(mAdapter.getStableIds());
+            for (String key : mSelectionMgr.getSelection()) {
+                if (!modelIds.contains(key)) {
+                    disappearedIds.add(key);
                 }
+            }
+            // setItemsSelected will notify the observers so they can react to the selection change
+            // (e.g. SelectionBarController can update its "X selected" title).
+            if (!disappearedIds.isEmpty()) {
+                // Deselect ids in batch to avoid multiple onSelectionChanged() calls.
+                mSelectionMgr.setItemsSelected(disappearedIds, false);
             }
 
             mAdapter.notifyDataSetChanged();

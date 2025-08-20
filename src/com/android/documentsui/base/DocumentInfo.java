@@ -408,15 +408,27 @@ public class DocumentInfo implements Durable, Parcelable {
     }
 
     /**
-     * Missing or null values are returned as 0.
+     * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns 0 if the
+     * cursor is null or the column is missing.
      */
     public static int getCursorInt(Cursor cursor, String columnName) {
+        return getCursorInt(cursor, columnName, 0);
+    }
+
+    /**
+     * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns
+     * {@code returnIfMissingOrNull} if the cursor is null or the column is missing.
+     *
+     * @param returnIfMissingOrNull The value to return if the cursor is null or the column is
+     *                              missing.
+     */
+    public static int getCursorInt(Cursor cursor, String columnName, int returnIfMissingOrNull) {
         if (cursor == null) {
-            return 0;
+            return returnIfMissingOrNull;
         }
 
         final int index = cursor.getColumnIndex(columnName);
-        return (index != -1) ? cursor.getInt(index) : 0;
+        return (index != -1) ? cursor.getInt(index) : returnIfMissingOrNull;
     }
 
     public static FileNotFoundException asFileNotFoundException(Throwable t)

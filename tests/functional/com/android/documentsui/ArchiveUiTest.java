@@ -66,7 +66,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         createArchiveInRootDir0();
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
-        assertNotNull("Expect a snackbar", bots.directory.getSnackbar("Extracting 1 file."));
         assertExtractedArchive();
     }
 
@@ -87,7 +86,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Extract");
-        assertNotNull("Expect a snackbar", bots.directory.getSnackbar("Extracting 1 file."));
         assertExtractedArchive();
     }
 
@@ -111,7 +109,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Extract");
-        assertNotNull("Expect a snackbar", bots.directory.getSnackbar("Extracting 1 file."));
         assertExtractedArchive();
     }
 

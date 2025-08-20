@@ -165,22 +165,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Valmistellaan…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Valmistellaan…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohteen kopiointi epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohteen kopiointi epäonnistui.</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> tiedoston pakkaus epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> tiedoston pakkaus epäonnistui.</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohteen siirtäminen epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohteen siirtäminen epäonnistui.</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohteen poistaminen epäonnistui.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohteen poistaminen epäonnistui.</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tarkastele tietoja napauttamalla."</string>
     <string name="close" msgid="905969391788869975">"Sulje"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -323,7 +317,7 @@
     <string name="search_bar_clear" msgid="2072000748823434188">"Tyhjennä teksti"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Juurikansio"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Kaikkialla"</string>
-    <string name="search_last_modified_any_time" msgid="6027501367865939696">"Kaikki"</string>
+    <string name="search_last_modified_any_time" msgid="6027501367865939696">"Milloin tahansa"</string>
     <string name="search_last_modified_1_day" msgid="7775353928859139915">"Tämä päivä"</string>
     <string name="search_last_modified_2_days" msgid="7885735119033678756">"Eilinen"</string>
     <string name="search_last_modified_7_days" msgid="7634290601544418836">"Viime viikko"</string>

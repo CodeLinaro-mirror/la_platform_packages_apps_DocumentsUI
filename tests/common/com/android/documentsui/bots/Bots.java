@@ -22,15 +22,12 @@ import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static com.android.documentsui.util.Material3Config.getRes;
-
 import static junit.framework.Assert.assertNotNull;
 
 import android.app.UiAutomation;
 import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -47,17 +44,14 @@ import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
-import com.android.documentsui.R;
 import com.android.documentsui.actions.DoNothingAction;
-import com.android.documentsui.util.FlagUtils;
+import com.android.documentsui.utils.LayoutUtilsKt;
 
 import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Matcher;
 
-/**
- * Handy collection of bots for working with Files app.
- */
+/** Handy collection of bots for working with Files app. */
 public final class Bots {
 
     private static final String TAG = "Bots";
@@ -183,7 +177,7 @@ public final class Bots {
         protected void assertHasFocus(String resourceName) {
             UiObject2 candidate = mDevice.findObject(By.res(resourceName));
             assertNotNull("Expected " + resourceName + " to have focus, but it didn't.",
-                candidate.findObject(By.focused(true)));
+                    candidate.findObject(By.focused(true)));
         }
 
         protected UiObject2 find(BySelector selector) {
@@ -255,33 +249,17 @@ public final class Bots {
 
         /** Check if the app is running in fixed_layout. */
         public boolean inFixedLayout() {
-            TypedValue val = new TypedValue();
-            // We alias files_activity to either fixed or drawer or nav_rail layouts based
-            // on screen dimensions. In order to determine which layout has been selected,
-            // we check the resolved value.
-            mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
-            return val.resourceId == getRes(R.layout.fixed_layout);
+            return LayoutUtilsKt.inFixedLayout(mContext);
         }
 
         /** Check if the app is running in nav_rail_layout. */
         public boolean inNavRailLayout() {
-            if (!FlagUtils.isUseMaterial3FlagEnabled()) {
-                // NavRail is only enabled for material3, so the resource `nav_rail_layout` might
-                // not
-                // exist in the apk.
-                return false;
-            }
-            TypedValue val = new TypedValue();
-            mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
-            return val.resourceId == getRes(R.layout.nav_rail_layout);
+            return LayoutUtilsKt.inNavRailLayout(mContext);
         }
 
         /** Check if the app is running in drawer_layout. */
         public boolean inDrawerLayout() {
-            TypedValue val = new TypedValue();
-            mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
-            return val.resourceId == getRes(R.layout.drawer_layout);
+            return LayoutUtilsKt.inDrawerLayout(mContext);
         }
     }
-
 }
