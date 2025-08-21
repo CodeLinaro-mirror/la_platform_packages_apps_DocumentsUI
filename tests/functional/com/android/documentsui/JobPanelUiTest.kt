@@ -52,10 +52,8 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
-import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -108,18 +106,6 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(matches(isDisplayed()))
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
-    }
-
-    @Before
-    fun disableAutoDismiss() {
-        // The auto dismiss behaviour will cause some tests to flake depending on how fast the test
-        // is run, so just disable it.
-        JobPanelViewModel.disableAutoDismiss = true
-    }
-
-    @After
-    fun reenableAutoDismiss() {
-        JobPanelViewModel.disableAutoDismiss = false
     }
 
     @Test
