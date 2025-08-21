@@ -224,10 +224,8 @@
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> elementi so bili kopirani v odložišče.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementov je bilo kopiranih v odložišče.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Samo za branje"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Te datoteke si lahko ogledate, vendar nekatera dejanja niso podprta"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ta arhivska datoteka je na lokaciji, ki je samo za branje, zato je ni mogoče ekstrahirati tukaj."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Datotečno opravilo ni podprto."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Datotečno opravilo ni uspelo."</string>
