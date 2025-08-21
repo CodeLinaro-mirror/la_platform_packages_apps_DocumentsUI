@@ -205,6 +205,10 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"این بایگانی در مکانی فقط خواندنی است و نمی‌توان آن را در اینجا استخراج کرد."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"عملکرد فایل پشتیبانی نمی‌شود."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"عملکرد فایل ناموفق بود."</string>

@@ -229,6 +229,10 @@
       <item quantity="many">Скопировано <xliff:g id="COUNT_1">%1$d</xliff:g> файлов</item>
       <item quantity="other">Скопировано <xliff:g id="COUNT_1">%1$d</xliff:g> файла</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"В этой папке архив доступен только для чтения. Его нельзя извлечь здесь."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Файловая операция не поддерживается"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Не удалось выполнить операцию"</string>

@@ -247,7 +247,7 @@
         <item name="android:minHeight">0dp</item>
         <item name="android:paddingHorizontal">6dp</item>
         <item name="android:paddingVertical">1dp</item>
-        <item name="backgroundTint">?attr/colorSurfaceBright</item>
+        <item name="backgroundTint">?attr/colorSurfaceContainerHighest</item>
         <item name="icon">@drawable/ic_job_progress_expand</item>
         <item name="iconSize">16dp</item>
         <item name="iconTint">?attr/colorOnSurface</item>

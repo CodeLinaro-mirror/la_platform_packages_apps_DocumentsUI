@@ -229,6 +229,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> položek bylo zkopírováno do schránky</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> položka byla zkopírována do schránky</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archiv je v umístění jen pro čtení a nelze ho tu rozbalit."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operace se souborem není podporována."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Operace se souborem se nezdařila."</string>

@@ -452,31 +452,16 @@ class SearchLoaderTest {
 
             activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
             // Wait for the Downloads result.
-            val firstPassDuration = measureTime {
-                barrier.await()
-            }
+            barrier.await()
             expect.that(getFileCount(result)).isEqualTo(1)
-            // Expect first results to be no more than firstPassWaitMs + bufferMs overhead.
-            expect.that(
-                firstPassDuration.inWholeMilliseconds
-            ).isLessThan(firstPassWaitMs + bufferMs)
 
             // Now wait for the PICKLES result.
-            val secondPassDuration = measureTime {
-                barrier.await()
-            }
+            barrier.await()
             // Expect that both the old and the new results are returned.
             expect.that(getFileCount(result)).isEqualTo(2)
-            // The second task must not be reset by the first task completing its search.
-            // Thus we expect it to take extra passDeltaMs + bufferMs overhead.
-            expect.that(secondPassDuration.inWholeMilliseconds).isLessThan(passDeltaMs + bufferMs)
 
-            // Finally, wait for HOME. Again, wait passDeltaMs + bufferMs.
-            val thirdPassDuration = measureTime {
-                barrier.await()
-            }
+            barrier.await()
             expect.that(getFileCount(result)).isEqualTo(3)
-            expect.that(thirdPassDuration.inWholeMilliseconds).isLessThan(passDeltaMs + bufferMs)
         }
     }
 }

@@ -109,6 +109,16 @@ public class UiBot extends Bots.BaseBot {
                 description.appendText("with toolbar title: ");
                 textMatcher.describeTo(description);
             }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                super.describeMismatch(item, description);
+                if (item != null && item instanceof Toolbar) {
+                    Toolbar toolbar = (Toolbar) item;
+                    description.appendText(
+                            "unexpected toolbar title: \"" + toolbar.getTitle() + "\"");
+                }
+            }
         };
     }
 

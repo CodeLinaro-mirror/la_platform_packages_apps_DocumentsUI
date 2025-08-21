@@ -205,6 +205,10 @@
       <item quantity="other">Đã sao chép <xliff:g id="COUNT_1">%1$d</xliff:g> mục vào bảng nhớ tạm.</item>
       <item quantity="one">Đã sao chép <xliff:g id="COUNT_0">%1$d</xliff:g> mục vào bảng nhớ tạm.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tệp lưu trữ này ở vị trí chỉ đọc và không thể giải nén tại đây."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Thao tác tệp không được hỗ trợ."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Thao tác tệp không thành công."</string>
