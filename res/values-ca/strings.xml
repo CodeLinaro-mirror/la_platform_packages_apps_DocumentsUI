@@ -217,6 +217,10 @@
       <item quantity="other">S\'han copiat <xliff:g id="COUNT_1">%1$d</xliff:g> elements al porta-retalls.</item>
       <item quantity="one">S\'ha copiat <xliff:g id="COUNT_0">%1$d</xliff:g> element al porta-retalls.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Aquest arxiu es troba en una ubicació només de lectura i no es pot extreure aquí."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"L\'operació del fitxer no s\'admet."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Hi ha hagut un error en l\'operació del fitxer."</string>

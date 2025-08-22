@@ -205,6 +205,10 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> element blev kopieret til udklipsholderen.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementer blev kopieret til udklipsholderen.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Dette arkiv er placeret på en skrivebeskyttet lokation og kan ikke udpakkes her."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Filhandlingen understøttes ikke."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Filhandlingen mislykkedes."</string>

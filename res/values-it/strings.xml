@@ -217,6 +217,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementi copiati negli appunti.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elemento copiato negli appunti.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Questo archivio si trova in una posizione di sola lettura e non può essere estratto qui."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operazione sul file non supportata."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Operazione sul file non riuscita."</string>

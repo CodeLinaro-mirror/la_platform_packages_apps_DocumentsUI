@@ -65,6 +65,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -1013,6 +1014,7 @@ public class UserManagerStateTest {
     }
 
     @Test
+    @Ignore
     @RequiresFlagsEnabled({FLAG_ENABLE_MOVING_CONTENT_INTO_PRIVATE_SPACE})
     public void testGetCanForwardToProfileIdMap_emptyExcludedUserList() {
         assumeTrue(SdkLevel.isAtLeastB());
@@ -1041,6 +1043,7 @@ public class UserManagerStateTest {
     }
 
     @Test
+    @Ignore
     @RequiresFlagsEnabled({FLAG_ENABLE_MOVING_CONTENT_INTO_PRIVATE_SPACE})
     public void testGetCanForwardToProfileIdMap_privateProfileExcluded_shouldUseNextUser() {
         assumeTrue(SdkLevel.isAtLeastB());

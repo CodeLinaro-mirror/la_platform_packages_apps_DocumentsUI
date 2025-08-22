@@ -217,6 +217,10 @@
       <item quantity="other">Se han copiado <xliff:g id="COUNT_1">%1$d</xliff:g> elementos al portapapeles.</item>
       <item quantity="one">Se ha copiado <xliff:g id="COUNT_0">%1$d</xliff:g> elemento al portapapeles.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Este archivo está en una ubicación de solo lectura y no se puede extraer aquí."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"No se admite esta operación en el archivo."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"No se puede hacer la operación en el archivo."</string>

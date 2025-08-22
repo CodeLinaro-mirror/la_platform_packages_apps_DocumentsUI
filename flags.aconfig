@@ -85,6 +85,6 @@ flag {
     name: "home_screen_files"
     namespace: "documentsui"
     description: "Enables the home screen folder and its files."
-    bug: "TODO"
+    bug: "438288106"
     is_fixed_read_only: true
 }

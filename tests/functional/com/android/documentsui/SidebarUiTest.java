@@ -39,6 +39,7 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @LargeTest
 public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {

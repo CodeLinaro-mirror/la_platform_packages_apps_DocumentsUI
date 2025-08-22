@@ -16,8 +16,12 @@
 
 package com.android.documentsui;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.res.Resources;
@@ -38,6 +42,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
@@ -354,11 +359,11 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
             mToolbar.setTitle(null);
-            mSearchBarView.setVisibility(View.VISIBLE);
+            mSearchBarView.setVisibility(VISIBLE);
             return;
         }
 
-        mSearchBarView.setVisibility(View.GONE);
+        mSearchBarView.setVisibility(GONE);
         String title =
                 mState.stack.size() <= 1 ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
@@ -380,6 +385,15 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     }
 
     private void updateToolbar() {
+        // Hide or show the "Read-only" label.
+        if (isZipNgFlagEnabled()) {
+            final View label = mToolbar.findViewById(getRes(R.id.read_only_label));
+            if (label != null) {
+                final DocumentInfo dir = mActivity.getCurrentDirectory();
+                label.setVisibility(dir != null && dir.isInArchive() ? VISIBLE : GONE);
+            }
+        }
+
         if (mCollapsingBarLayout == null) {
             // Tablet mode does not use CollapsingBarLayout
             // (res/layout-sw720dp/directory_app_bar.xml or res/layout/fixed_layout.xml)

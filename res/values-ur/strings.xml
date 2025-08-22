@@ -205,6 +205,10 @@
       <item quantity="other">کلپ بورڈ پر <xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز کاپی کئے گئے۔</item>
       <item quantity="one">کلپ بورڈ پر <xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم کاپی کیا گیا۔</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"یہ آرکائیو صرف پڑھنے کی جگہ پر ہے اور اسے یہاں نہیں نکالا جا سکتا۔"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"فائل کارروائی تعاون یافتہ نہیں ہے۔"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"فائل کارروائی ناکام ہو گئی۔"</string>

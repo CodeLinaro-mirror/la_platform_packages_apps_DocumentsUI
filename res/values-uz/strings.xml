@@ -205,6 +205,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ta elementdan vaqtinchalik xotiraga nusxa olindi.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ta elementdan vaqtinchalik xotiraga nusxa olindi.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Bu arxiv faqat oʻqish mumkin jildda joylashgani sababli uni shu yerga chiqarish imkonsiz."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Fayl amallari ishlamayapti."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Fayl amallarini bajarib bo‘lmadi."</string>
