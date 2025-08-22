@@ -16,7 +16,9 @@
 package com.android.documentsui
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.app.UiAutomation
+import android.app.WindowConfiguration
 import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
@@ -161,7 +163,17 @@ abstract class ActivityTestJunit4<T : Activity?> {
             intent.setAction(Intent.ACTION_VIEW)
             intent.setDataAndType(root.uri, DocumentsContract.Root.MIME_TYPE_ITEM)
         }
-        mActivityScenario = ActivityScenario.launch(intent)
+
+        // If the TestRunner is running tests with different screen sizes, we need to launch the
+        // activity in fullscreen mode so that the activity takes up the full device screen.
+        if (System.getProperty("documentsui_fullscreen") != null) {
+            Log.d(TAG, "using launchWindowingMode=FULLSCREEN")
+            val options = ActivityOptions.makeBasic()
+            options.setLaunchWindowingMode(WindowConfiguration.WINDOWING_MODE_FULLSCREEN)
+            mActivityScenario = ActivityScenario.launch(intent, options.toBundle())
+        } else {
+            mActivityScenario = ActivityScenario.launch(intent)
+        }
     }
 
     protected fun setNotificationAccess(enabled: Boolean) {
