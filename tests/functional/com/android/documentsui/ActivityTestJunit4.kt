@@ -22,7 +22,6 @@ import android.app.WindowConfiguration
 import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
-import android.platform.test.microbenchmark.Functional
 import android.provider.DocumentsContract
 import android.util.Log
 import android.view.KeyEvent
@@ -54,7 +53,7 @@ import org.junit.runner.RunWith
  * - Creates and gives access to test root directories and test files
  * - Cleans up the test environment
  */
-@RunWith(Functional::class)
+@RunWith(TestRunner::class)
 abstract class ActivityTestJunit4<T : Activity?> {
     lateinit var bots: Bots
 

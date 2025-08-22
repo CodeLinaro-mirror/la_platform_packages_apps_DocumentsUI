@@ -123,6 +123,18 @@ annotation class ParameterizeScreenSizes(vararg val value: ScreenSize)
  * $ atest DocumentsUIGoogleTests -- \
  *     --test-arg com.android.tradefed.testtype.AndroidJUnitTest:instrumentation-arg:documentsui_disable_parameterization:=true
  * ```
+ *
+ * <p>The screen size parameterization can be forced with:
+ * ```
+ * $ atest DocumentsUIGoogleTests -- \
+ *     --test-arg com.android.tradefed.testtype.AndroidJUnitTest:instrumentation-arg:documentsui_force_screen_size_parameterization:=true
+ * ```
+ *
+ * <p>The flag parameterization can be forced with:
+ * ```
+ * $ atest DocumentsUIGoogleTests -- \
+ *     --test-arg com.android.tradefed.testtype.AndroidJUnitTest:instrumentation-arg:documentsui_force_flag_parameterization:=true
+ * ```
  */
 class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
     companion object {
@@ -137,6 +149,13 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
 
             val syntheticTargets = getSyntheticTargets(klass)
             val screenSizes = getScreenSizes(klass)
+            if (
+                syntheticTargets == listOf(SyntheticTarget.NO_OVERRIDE) &&
+                    screenSizes == listOf(ScreenSize.NO_OVERRIDE)
+            ) {
+                return listOf(object : Functional(klass) {})
+            }
+
             return syntheticTargets.flatMap { syntheticTarget ->
                 screenSizes.map { screenSize ->
                     createParameterizedRunner(klass, syntheticTarget, screenSize)
@@ -198,6 +217,11 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
          * class.
          */
         private fun getScreenSizes(klass: Class<*>): List<ScreenSize> {
+            val args = InstrumentationRegistry.getArguments()
+            if (args.getString("documentsui_force_screen_size_parameterization") == "true") {
+                return listOf(ScreenSize.PHONE, ScreenSize.TABLET, ScreenSize.DESKTOP)
+            }
+
             val pm = InstrumentationRegistry.getInstrumentation().context.packageManager
             if (!pm.hasSystemFeature(PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT)) {
                 return listOf(ScreenSize.NO_OVERRIDE)
@@ -222,6 +246,15 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
          * the test class.
          */
         private fun getSyntheticTargets(klass: Class<*>): List<SyntheticTarget> {
+            val args = InstrumentationRegistry.getArguments()
+            if (args.getString("documentsui_force_flag_parameterization") == "true") {
+                return listOf(
+                    SyntheticTarget.STAGING,
+                    SyntheticTarget.PROD,
+                    SyntheticTarget.MAINLINE,
+                )
+            }
+
             val syntheticTargetsAnnotation =
                 klass.getAnnotation(ParameterizeSyntheticTargets::class.java)
 
