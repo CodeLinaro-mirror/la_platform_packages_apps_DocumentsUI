@@ -165,16 +165,11 @@
     <string name="move_preparing" msgid="6504239656430530761">"ପ୍ରସ୍ତୁତ କରାଯାଉଛି…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"ପ୍ରସ୍ତୁତ କରାଯାଉଛି…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ଆଇଟମକୁ କପି କରାଯାଇପାରିଲା ନାହିଁ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ଆଇଟମକୁ କପି କରାଯାଇପାରିଲା ନାହିଁ}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ଆଇଟମକୁ କମ୍ପ୍ରେସ କରାଯାଇପାରିଲା ନାହିଁ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ଆଇଟମକୁ କମ୍ପ୍ରେସ କରାଯାଇପାରିଲା ନାହିଁ}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ଆଇଟମକୁ ଏକ୍ସଟ୍ରାକ୍ଟ କରାଯାଇପାରିଲା ନାହିଁ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ଆଇଟମକୁ ଏକ୍ସଟ୍ରାକ୍ଟ କରାଯାଇପାରିଲା ନାହିଁ}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ଆଇଟମକୁ ମୁଭ କରାଯାଇପାରିଲା ନାହିଁ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ଆଇଟମକୁ ମୁଭ କରାଯାଇପାରିଲା ନାହିଁ}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ଆଇଟମକୁ ଡିଲିଟ କରାଯାଇପାରିଲା ନାହିଁ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ଆଇଟମକୁ ଡିଲିଟ କରାଯାଇପାରିଲା ନାହିଁ}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"ବିବରଣୀ ଦେଖିବା ପାଇଁ ଟାପ୍‍ କରନ୍ତୁ"</string>
     <string name="close" msgid="905969391788869975">"ବନ୍ଦ କରନ୍ତୁ"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -205,10 +200,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ଆଇଟମ କ୍ଲିପବୋର୍ଡକୁ କପି କରାଗଲା</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ଆଇଟମ କ୍ଲିପବୋର୍ଡକୁ କପି କରାଗଲା</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"କେବଳ-ପଢ଼ିବା ପାଇଁ"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"ଆପଣ ଏହି ଫାଇଲଗୁଡ଼ିକୁ ଭ୍ୟୁ କରିପାରିବେ କିନ୍ତୁ କିଛି କାର୍ଯ୍ୟ ସପୋର୍ଟ କରୁନାହିଁ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ଏହି ଆର୍କାଇଭ କେବଳ-ପଢ଼ିବା ଲୋକେସନରେ ଅଛି ଏବଂ ଏହାକୁ ଏଠାରୁ ଏକ୍ସଟ୍ରାକ୍ଟ କରାଯାଇପାରିବ ନାହିଁ।"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ଫାଇଲ୍‍ ଅପରେସନ୍‍ ସପୋର୍ଟ କଲାନାହିଁ।"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ଫାଇଲ୍ ଅପରେସନ୍‍ କରାଯାଇପାରିଲା ନାହିଁ"</string>

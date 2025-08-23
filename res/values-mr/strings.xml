@@ -200,10 +200,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> आयटम क्लिपबोर्डवर कॉपी केले.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> आयटम क्लिपबोर्डवर कॉपी केला.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"रीड-ओन्ली"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"तुम्ही या फाइल पाहू शकता, पण काही कृतींना सपोर्ट नाही"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"हे संग्रहण रीड-ओन्ली स्थानावर आहे आणि ते इथे एक्स्ट्रॅक्ट केले जाऊ शकत नाही."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"फाइल ऑपरेशनला सपोर्ट नाही."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"फाइल ऑपरेशन अयशस्वी झाले."</string>

@@ -185,16 +185,11 @@
     <string name="move_preparing" msgid="6504239656430530761">"جارٍ التحضير..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"جارٍ التحضير..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{تعذَّر نسخ عنصر واحد (<xliff:g id="COUNT_0">{count}</xliff:g>)}zero{تعذّر نسخ <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}two{تعذّر نسخ عنصرين (<xliff:g id="COUNT_1">{count}</xliff:g>)}few{تعذّر نسخ <xliff:g id="COUNT_1">{count}</xliff:g> عناصر}many{تعذّر نسخ <xliff:g id="COUNT_1">{count}</xliff:g> عنصرًا}other{تعذّر نسخ <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{تعذَّر ضغط عنصر واحد (<xliff:g id="COUNT_0">{count}</xliff:g>)}zero{تعذَّر ضغط <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}two{تعذَّر ضغط عنصرين (<xliff:g id="COUNT_1">{count}</xliff:g>)}few{تعذَّر ضغط <xliff:g id="COUNT_1">{count}</xliff:g> عناصر}many{تعذَّر ضغط <xliff:g id="COUNT_1">{count}</xliff:g> عنصرًا}other{تعذَّر ضغط <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{تعذّر استخراج عنصر واحد (<xliff:g id="COUNT_0">{count}</xliff:g>)}zero{تعذّر استخراج <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}two{تعذّر استخراج عنصرين (<xliff:g id="COUNT_1">{count}</xliff:g>)}few{تعذّر استخراج <xliff:g id="COUNT_1">{count}</xliff:g> عناصر}many{تعذّر استخراج <xliff:g id="COUNT_1">{count}</xliff:g> عنصرًا}other{تعذّر استخراج <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{تعذّر نقل عنصر واحد (<xliff:g id="COUNT_0">{count}</xliff:g>)}zero{تعذّر نقل <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}two{تعذّر نقل عنصرين (<xliff:g id="COUNT_1">{count}</xliff:g>)}few{تعذّر نقل <xliff:g id="COUNT_1">{count}</xliff:g> عناصر}many{تعذّر نقل <xliff:g id="COUNT_1">{count}</xliff:g> عنصرًا}other{تعذّر نقل <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{تعذر حذف عنصر واحد (<xliff:g id="COUNT_0">{count}</xliff:g>)}zero{تعذر حذف <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}two{تعذر حذف عنصرين (<xliff:g id="COUNT_1">{count}</xliff:g>)}few{تعذر حذف <xliff:g id="COUNT_1">{count}</xliff:g> عناصر}many{تعذر حذف <xliff:g id="COUNT_1">{count}</xliff:g> عنصرًا}other{تعذر حذف <xliff:g id="COUNT_1">{count}</xliff:g> عنصر}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"انقر لعرض التفاصيل."</string>
     <string name="close" msgid="905969391788869975">"إغلاق"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -253,10 +248,8 @@
       <item quantity="other">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملف إلى الحافظة.</item>
       <item quantity="one">تم نسخ ملف واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>) إلى الحافظة.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"للقراءة فقط"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"يمكنك الاطّلاع على هذه الملفات، ولكن بعض الإجراءات غير متاحة"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"هذا الأرشيف مخزّن في مكان متاح للقراءة فقط ولا يمكن استخراجه هنا."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"معالجة الملف غير متوافقة."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"تعذّرت معالجة الملف."</string>

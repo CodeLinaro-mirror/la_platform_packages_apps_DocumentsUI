@@ -175,16 +175,11 @@
     <string name="move_preparing" msgid="6504239656430530761">"Підготовка…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Підготовка…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> з <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Не вдалося скопіювати <xliff:g id="COUNT_0">{count}</xliff:g> об’єкт}one{Не вдалося скопіювати <xliff:g id="COUNT_1">{count}</xliff:g> об’єкт}few{Не вдалося скопіювати <xliff:g id="COUNT_1">{count}</xliff:g> об’єкти}many{Не вдалося скопіювати <xliff:g id="COUNT_1">{count}</xliff:g> об’єктів}other{Не вдалося скопіювати <xliff:g id="COUNT_1">{count}</xliff:g> об’єкта}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Не вдалося стиснути <xliff:g id="COUNT_0">{count}</xliff:g> об’єкт}one{Не вдалося стиснути <xliff:g id="COUNT_1">{count}</xliff:g> об’єкт}few{Не вдалося стиснути <xliff:g id="COUNT_1">{count}</xliff:g> об’єкти}many{Не вдалося стиснути <xliff:g id="COUNT_1">{count}</xliff:g> об’єктів}other{Не вдалося стиснути <xliff:g id="COUNT_1">{count}</xliff:g> об’єкта}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Не вдалося розпакувати <xliff:g id="COUNT_0">{count}</xliff:g> об’єкт}one{Не вдалося розпакувати <xliff:g id="COUNT_1">{count}</xliff:g> об’єкт}few{Не вдалося розпакувати <xliff:g id="COUNT_1">{count}</xliff:g> об’єкти}many{Не вдалося розпакувати <xliff:g id="COUNT_1">{count}</xliff:g> об’єктів}other{Не вдалося розпакувати <xliff:g id="COUNT_1">{count}</xliff:g> об’єкта}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Не вдалося перемістити <xliff:g id="COUNT_0">{count}</xliff:g> об’єкт}one{Не вдалося перемістити <xliff:g id="COUNT_1">{count}</xliff:g> об’єкт}few{Не вдалося перемістити <xliff:g id="COUNT_1">{count}</xliff:g> об’єкти}many{Не вдалося перемістити <xliff:g id="COUNT_1">{count}</xliff:g> об’єктів}other{Не вдалося перемістити <xliff:g id="COUNT_1">{count}</xliff:g> об’єкта}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Не вдалося видалити <xliff:g id="COUNT_0">{count}</xliff:g> об’єкт}one{Не вдалося видалити <xliff:g id="COUNT_1">{count}</xliff:g> об’єкт}few{Не вдалося видалити <xliff:g id="COUNT_1">{count}</xliff:g> об’єкти}many{Не вдалося видалити <xliff:g id="COUNT_1">{count}</xliff:g> об’єктів}other{Не вдалося видалити <xliff:g id="COUNT_1">{count}</xliff:g> об’єкта}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Торкніться, щоб переглянути деталі"</string>
     <string name="close" msgid="905969391788869975">"Закрити"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">

@@ -267,9 +267,9 @@ public interface UserManagerState {
                 return;
             }
             if (isSupportVisibleBackgroundUserFlagEnabled()) {
-                if (!mUserManager.isSameProfileGroup(
-                        UserHandle.of(mCurrentUser.getIdentifier()),
-                        UserHandle.of(userId.getIdentifier()))) {
+                UserId parent = getProfileParentOrSelf(userId);
+                UserId currParent = getProfileParentOrSelf(mCurrentUser);
+                if (!parent.equals(currParent)) {
                     // The concurrent multi-user feature allows multiple users to exist concurrently
                     // and visibly in the system.
                     // In this case, the process owner user should not be affected by events
@@ -335,6 +335,19 @@ public interface UserManagerState {
                 }
             }
             return false;
+        }
+
+        /**
+        * Gets the profile parent of the given user if the user is a profile.
+        * If not a profile, just return the user.
+        */
+        private UserId getProfileParentOrSelf(UserId user) {
+            UserHandle parent = mUserManager.getProfileParent(user.getUserHandle());
+            if (parent != null) {
+                return UserId.of(parent);
+            }
+
+            return user;
         }
 
         private List<UserId> getUserIdsInternal() {

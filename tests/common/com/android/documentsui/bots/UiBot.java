@@ -354,7 +354,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /** Clicks the OK button on a dialog. */
-    public void clickDialogOkButton(boolean closeSoftKeyboard) {
+    public void clickDialogOkButton(boolean closeSoftKeyboard) throws UiObjectNotFoundException {
         // On dialogs with no text input, a soft keyboard doesn't show up at all and attempting to
         // close it causes failures. Let's be intentional about the closure only on dialogs which
         // have text input.
@@ -363,12 +363,16 @@ public class UiBot extends Bots.BaseBot {
             // before trying to click on any dialog button
             Espresso.closeSoftKeyboard();
         }
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
-        okButton.click();
+
+        final UiObject2 button = mDevice.wait(Until.findObject(By.res("android:id/button1")),
+                mTimeout);
+        if (button == null) throw new UiObjectNotFoundException("Cannot find an 'OK' button");
+        button.click();
     }
 
     /** Clicks the Cancel button on a dialog. */
-    public void clickDialogCancelButton(boolean closeSoftKeyboard) {
+    public void clickDialogCancelButton(boolean closeSoftKeyboard)
+            throws UiObjectNotFoundException {
         // On dialogs with no text input, a soft keyboard doesn't show up at all and attempting to
         // close it causes failures. Let's be intentional about the closure only on dialogs which
         // have text input.
@@ -377,8 +381,11 @@ public class UiBot extends Bots.BaseBot {
             // before trying to click on any dialog button
             Espresso.closeSoftKeyboard();
         }
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button2"));
-        okButton.click();
+
+        final UiObject2 button = mDevice.wait(Until.findObject(By.res("android:id/button2")),
+                mTimeout);
+        if (button == null) throw new UiObjectNotFoundException("Cannot find a 'Cancel' button");
+        button.click();
     }
 
     public UiObject findMenuLabelWithName(String label) {
