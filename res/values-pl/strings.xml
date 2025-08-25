@@ -224,10 +224,8 @@
       <item quantity="other">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementu do schowka.</item>
       <item quantity="one">Skopiowano <xliff:g id="COUNT_0">%1$d</xliff:g> element do schowka.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Tylko do odczytu"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Możesz wyświetlać te pliki, ale niektóre działania są nieobsługiwane"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"To archiwum jest w lokalizacji tylko do odczytu i nie można go tutaj wyodrębnić."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operacja na pliku nie jest obsługiwana."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Nie udało się wykonać operacji na pliku."</string>

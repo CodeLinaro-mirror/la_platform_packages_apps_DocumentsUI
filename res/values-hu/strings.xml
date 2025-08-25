@@ -200,10 +200,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elem a vágólapra másolva.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elem a vágólapra másolva.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Csak olvasás"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Megtekintheti ezeket a fájlokat, de egyes műveletek nem támogatottak"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ez az archívum csak írásvédett helyen található, ezért nem bontható ki itt."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Ez a fájlművelet nem támogatott."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"A fájlművelet sikertelen volt."</string>

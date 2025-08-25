@@ -200,10 +200,8 @@
       <item quantity="other">ສຳເນົາໄຟລ໌ <xliff:g id="COUNT_1">%1$d</xliff:g> ໄຟລ໌ໃສ່ຄລິບບອດແລ້ວ.</item>
       <item quantity="one">Copied <xliff:g id="COUNT_0">%1$d</xliff:g> item to clipboard.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"ອ່ານຢ່າງດຽວ"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"ທ່ານສາມາດເບິ່ງໄຟລ໌ເຫຼົ່ານີ້ໄດ້ ແຕ່ລະບົບບໍ່ຮອງຮັບຄຳສັ່ງບາງຢ່າງ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ໄຟລ໌ທີ່ເກັບໄວ້ໃນແຟ້ມນີ້ຢູ່ໃນສະຖານທີ່ແບບອ່ານຢ່າງດຽວ ແລະ ບໍ່ສາມາດແຕກໄຟລ໌ຢູ່ບ່ອນນີ້ໄດ້."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ບໍ່ຮອງຮັບການເຮັດວຽກຂອງໄຟລ໌."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ການເຮັດວຽກຂອງໄຟລ໌ບໍ່ສຳເລັດ."</string>

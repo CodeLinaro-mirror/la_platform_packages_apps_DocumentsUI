@@ -212,10 +212,8 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments ont été copiés dans le presse-papiers.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments ont été copiés dans le presse-papiers.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Lecture seule"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Vous pouvez consulter ces fichiers, mais certaines actions ne sont pas prises en charge"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Cette archive se trouve dans un emplacement en lecture seule et ne peut pas être extraite ici."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Opération relative au fichier non acceptée."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"L\'opération relative au fichier a échoué."</string>
