@@ -80,6 +80,7 @@ public abstract class MenuManager {
         updateInspect(menu.findItem(getRes(R.id.action_menu_inspect)), selection);
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
         updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+        updateMoveToTrash(menu.findItem(getRes(R.id.action_menu_move_to_trash)), selection);
 
         if (isZipNgFlagEnabled()) {
             updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
@@ -435,6 +436,10 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(it, false);
     }
 
+    protected void updateMoveToTrash(MenuItem moveToTrash, SelectionDetails selectionDetails) {
+        Menus.setEnabledAndVisible(moveToTrash, false);
+    }
+
     protected abstract void updateSelectAll(MenuItem selectAll);
 
     protected abstract void updateSelectAll(MenuItem selectAll, SelectionDetails selectionDetails);
@@ -495,6 +500,11 @@ public abstract class MenuManager {
         boolean canOpen();
 
         boolean canViewInOwner();
+
+        /**
+         * Check whether to show the trash option on the selection
+         */
+        boolean canTrash();
     }
 
     public static class DirectoryDetails {

@@ -111,6 +111,9 @@ public interface DialogController {
                 case FileOperationService.OPERATION_DELETE:
                     Snackbars.showDelete(mActivity, docCount);
                     break;
+                case FileOperationService.OPERATION_TRASH:
+                    Snackbars.showTrash(mActivity, docCount);
+                    break;
                 default:
                     throw new UnsupportedOperationException("Unsupported Operation: " + opType);
             }

@@ -245,6 +245,7 @@ public class DocumentInfo implements Durable, Parcelable {
                 + ", isPartial=" + isPartial()
                 + ", isVirtual=" + isVirtual()
                 + ", isDeleteSupported=" + isDeleteSupported()
+                + ", isTrashSupported=" + isTrashSupported()
                 + ", isCreateSupported=" + isCreateSupported()
                 + ", isMoveSupported=" + isMoveSupported()
                 + ", isRenameSupported=" + isRenameSupported()
@@ -261,6 +262,11 @@ public class DocumentInfo implements Durable, Parcelable {
     public boolean isDeleteSupported() {
         return (flags & Document.FLAG_SUPPORTS_DELETE) != 0;
     }
+
+    public boolean isTrashSupported() {
+        return (flags & Document.FLAG_SUPPORTS_TRASH) != 0;
+    }
+
 
     public boolean isMetadataSupported() {
         return (flags & Document.FLAG_SUPPORTS_METADATA) != 0;

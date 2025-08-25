@@ -750,6 +750,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         throw new UnsupportedOperationException("Share not supported!");
     }
 
+    @Override
+    public void trashSelectedDocuments(List<DocumentInfo> docs) {
+        throw new UnsupportedOperationException("Trash document not supported!");
+    }
+
     protected final void loadDocument(Uri uri, UserId userId, LoadDocStackCallback callback) {
         new LoadDocStackTask(
                 mActivity,

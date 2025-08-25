@@ -59,7 +59,6 @@ import com.android.documentsui.rules.TestFilesRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -576,8 +575,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         device.wait(Until.gone(By.displayId(R.id.progressbar)), mTimeout);
     }
 
+    /**
+     * Checks that we do not start searching until a non-null, not empty query is entered. This test
+     * is limited to Search V2, as V1 shows a view with past search queries that hides the directory
+     * listing. So while both searches behave in the same way, we can reliably verify it only in V2.
+     */
     @Test
-    @Ignore
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testEmptyQueryShowsDirectoryListing() throws UiObjectNotFoundException {
         // Assert that we are in the correct location.
         bots.breadcrumb.assertItemsPresent(ROOT_0_ID);
