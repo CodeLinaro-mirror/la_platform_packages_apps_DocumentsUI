@@ -168,6 +168,11 @@ public interface ActionHandler {
      */
     void deleteSelectedDocuments(List<DocumentInfo> docs, DocumentInfo srcParent);
 
+    /**
+     * Trash the selected document(s)
+     */
+    void trashSelectedDocuments(List<DocumentInfo> docs);
+
     void shareSelectedDocuments();
 
     /**
