@@ -81,7 +81,7 @@ public class SearchBot extends Bots.BaseBot {
      * @return Whether or not the search icon (magnifying glass) is present and enabled.
      */
     public UiObject2 getSearchIcon() {
-        String resId = mTargetPackage + (showsDockedSearch() ? ":id/docked_search_bar"
+        String resId = mTargetPackage + (showsDockedSearch() ? ":id/docked_search_toolbar"
                 : ":id/option_menu_search");
         return find(By.res(resId));
     }
