@@ -200,10 +200,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> artikuj u kopjuan në kujtesën e fragmenteve.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> artikull u kopjua në kujtesën e fragmenteve.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Vetëm për lexim"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Mund t\'i shikosh këta skedarë, por disa veprime nuk mbështeten"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ky arkiv është në një vendndodhje vetëm për lexim dhe nuk mund të nxirret këtu."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Veprimi i skedarit nuk mbështetet."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Veprimi i skedarit dështoi."</string>

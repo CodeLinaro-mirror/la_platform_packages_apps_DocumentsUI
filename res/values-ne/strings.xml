@@ -200,10 +200,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> वटा फाइल क्लिपबोर्डमा कपी गरिए।</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> फाइल क्लिपबोर्डमा कपी गरियो।</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"पढ्न मात्र मिल्ने"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"तपाईं यी फाइलहरू हेर्न सक्नुहुन्छ तर यिनमा केही कारबाहीहरू गर्न मिल्दैनन्"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"यो अभिलेख पढ्न मात्र मिल्ने लोकेसनमा छ र यसलाई यहाँ एक्स्ट्र्याक्ट गर्न सकिँदैन।"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"फाइल सम्बन्धी कार्य समर्थित छैन।"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"फाइल सम्बन्धी कार्य असफल भयो।"</string>

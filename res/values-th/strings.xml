@@ -200,10 +200,8 @@
       <item quantity="other">คัดลอกไปยังคลิปบอร์ดแล้ว <xliff:g id="COUNT_1">%1$d</xliff:g> รายการ</item>
       <item quantity="one">คัดลอกไปยังคลิปบอร์ดแล้ว <xliff:g id="COUNT_0">%1$d</xliff:g> รายการ</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"อ่านอย่างเดียว"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"คุณจะดูไฟล์เหล่านี้ได้ แต่ระบบไม่รองรับการดำเนินการบางอย่าง"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ไฟล์เก็บถาวรนี้อยู่ในตำแหน่งแบบอ่านอย่างเดียวและจะแตกไฟล์ที่นี่ไม่ได้"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ไม่รองรับการดำเนินการกับไฟล์"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"การดำเนินการกับไฟล์ล้มเหลว"</string>
