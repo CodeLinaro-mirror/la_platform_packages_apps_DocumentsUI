@@ -41,7 +41,10 @@ import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
 
-// TODO: Stop extending CopyJob.
+/**
+ * CompressJob creates a new ZIP archive and zips the selected items into this archive.
+ * It performs most of its work by delegating it to its base CopyJob class.
+ */
 final class CompressJob extends CopyJob {
 
     private static final String TAG = "CompressJob";
@@ -50,11 +53,8 @@ final class CompressJob extends CopyJob {
     private Uri mArchiveUri;
 
     /**
-     * Moves files to a destination identified by {@code destination}.
-     * Performs most work by delegating to CopyJob, then deleting
-     * a file after it has been copied.
-     *
-     * @see @link {@link Job} constructor for most param descriptions.
+     * Zips items to a new ZIP archive which will be created in the folder identified by
+     * {@code destination}.
      */
     CompressJob(Context service, Listener listener, String id, DocumentStack destination,
             UrisSupplier srcs, Messenger messenger, Features features) {
@@ -148,35 +148,15 @@ final class CompressJob extends CopyJob {
         super.finish();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Only check space for moves across authorities. For now we don't know if the doc in
-     * {@link #mSrcs} is in the same root of destination, and if it's optimized move in the same
-     * root it should succeed regardless of free space, but it's for sure a failure if there is no
-     * enough free space if docs are moved from another authority.
-     */
     @Override
     boolean checkSpace() {
-        // We're unable to say how much space the archive will take, so assume
-        // it will fit.
+        // We're unable to determine how much space the archive will take, so we assume it will fit.
         return true;
-    }
-
-    void processDocument(DocumentInfo src, DocumentInfo dest) throws ResourceException {
-        byteCopyDocument(src, dest);
     }
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("CompressJob")
-                .append("{")
-                .append("id=" + id)
-                .append(", uris=" + mResourceUris)
-                .append(", docs=" + mResolvedDocs)
-                .append(", destination=" + stack)
-                .append("}")
-                .toString();
+        return "CompressJob {id=" + id + ", uris=" + mResourceUris + ", docs=" + mResolvedDocs
+                + ", destination=" + stack + "}";
     }
 }
