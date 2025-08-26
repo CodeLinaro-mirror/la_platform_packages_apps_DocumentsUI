@@ -144,7 +144,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument(fileName);
         bots.directory.selectDocument(fileName, 1);
 
-        bots.main.clickToolbarItem(R.id.action_menu_delete);
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
