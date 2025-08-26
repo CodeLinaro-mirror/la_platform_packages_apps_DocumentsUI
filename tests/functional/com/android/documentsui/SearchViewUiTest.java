@@ -42,6 +42,7 @@ import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.Settings;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
@@ -590,10 +591,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Open search, make sure query input field has focus.
         bots.search.expand();
         bots.search.assertInputFocused(true);
+        // Try to hide the virtual keyboard; on small devices it can hide some files.
+        Espresso.closeSoftKeyboard();
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
         // Enter an empty query.
         bots.search.setInputText("");
+        Espresso.closeSoftKeyboard();
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
     }
