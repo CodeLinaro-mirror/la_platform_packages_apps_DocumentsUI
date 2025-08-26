@@ -200,10 +200,8 @@
       <item quantity="other">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలు కాపీ చేయబడ్డాయి.</item>
       <item quantity="one">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_0">%1$d</xliff:g> అంశం కాపీ చేయబడింది.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"చదవడానికి మాత్రమే"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"మీరు ఈ ఫైళ్లను చూడవచ్చు, కానీ కొన్ని చర్యలకు సపోర్ట్ లేదు"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ఈ ఆర్కైవ్, రీడ్-ఓన్లీ లొకేషన్‌లో ఉంది, దాన్ని ఇక్కడ ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడదు."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ఫైల్ చర్యకు మద్దతు లేదు."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ఫైల్ చర్య విఫలమైంది."</string>

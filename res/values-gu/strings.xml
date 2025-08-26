@@ -200,10 +200,8 @@
       <item quantity="one">ક્લિપબોર્ડ પર <xliff:g id="COUNT_1">%1$d</xliff:g> આઇટમોની કૉપિ કરી.</item>
       <item quantity="other">ક્લિપબોર્ડ પર <xliff:g id="COUNT_1">%1$d</xliff:g> આઇટમોની કૉપિ કરી.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"ફક્ત વાંચવા માટે"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"તમે આ ફાઇલો જોઈ શકો છો પણ અમુક ઍક્શન સપોર્ટેડ નથી"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"આ આર્કાઇવ ફક્ત વાંચવા માટેના લોકેશનમાં છે અને તેથી તેને અહીં એક્સટ્રેક્ટ કરી શકાતું નથી."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ફાઇલ ઑપરેશન સમર્થિત નથી."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ફાઇલ ઑપરેશન નિષ્ફળ થયું."</string>

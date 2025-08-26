@@ -200,10 +200,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> файл буферге көшірілді.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> файл буферге көшірілді.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Тек оқу үшін"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Бұл файлдарды көруге болады, бірақ кейбір әрекеттерге қолдау көрсетілмейді."</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Бұл мұрағат тек оқуға арналған орында және оны осы жерде шығарып алу мүмкін емес."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Файл операциясына қолдау көрсетілмейді."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Файл операциясы орындалмады."</string>
