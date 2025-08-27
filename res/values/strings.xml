@@ -489,7 +489,7 @@
     }</string>
     <!-- Message informing user that files are being compressed into an archive. -->
     <string name="compress_in_progress">{count, plural,
-        =1 {Zipping \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201C}
+        =1 {Zipping \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D}
         other {Zipping # files}
     }</string>
     <!-- Accessibility label for an icon button which shows the progress of file operations when clicked. -->

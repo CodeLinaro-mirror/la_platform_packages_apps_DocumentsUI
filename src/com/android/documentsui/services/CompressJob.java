@@ -18,6 +18,8 @@ package com.android.documentsui.services;
 
 import static android.content.ContentResolver.wrap;
 
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COMPRESS;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -28,7 +30,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Messenger;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
 import android.provider.DocumentsContract;
 import android.util.Log;
 
@@ -40,9 +41,10 @@ import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
 
-import java.io.FileNotFoundException;
-
-// TODO: Stop extending CopyJob.
+/**
+ * CompressJob creates a new ZIP archive and zips the selected items into this archive.
+ * It performs most of its work by delegating it to its base CopyJob class.
+ */
 final class CompressJob extends CopyJob {
 
     private static final String TAG = "CompressJob";
@@ -51,11 +53,8 @@ final class CompressJob extends CopyJob {
     private Uri mArchiveUri;
 
     /**
-     * Moves files to a destination identified by {@code destination}.
-     * Performs most work by delegating to CopyJob, then deleting
-     * a file after it has been copied.
-     *
-     * @see @link {@link Job} constructor for most param descriptions.
+     * Zips items to a new ZIP archive which will be created in the folder identified by
+     * {@code destination}.
      */
     CompressJob(Context service, Listener listener, String id, DocumentStack destination,
             UrisSupplier srcs, Messenger messenger, Features features) {
@@ -99,10 +98,6 @@ final class CompressJob extends CopyJob {
             return false;
         }
 
-        final ContentResolver resolver = appContext.getContentResolver();
-
-        // TODO: Move this to DocumentsProvider.
-
         String displayName;
         if (mResolvedDocs.size() == 1) {
             displayName = mResolvedDocs.get(0).displayName + NEW_ARCHIVE_EXTENSION;
@@ -113,78 +108,55 @@ final class CompressJob extends CopyJob {
         }
 
         try {
-            mArchiveUri = DocumentsContract.createDocument(
-                    resolver, mDstInfo.derivedUri, "application/zip", displayName);
-        } catch (Exception e) {
-            mArchiveUri = null;
-        }
+            final ContentResolver resolver = appContext.getContentResolver();
+            mArchiveUri = DocumentsContract.createDocument(resolver, mDstInfo.derivedUri,
+                    "application/zip", displayName);
+            if (DEBUG) Log.d(TAG, "Created archive " + redact(mArchiveUri));
 
-        try {
-            mDstInfo = DocumentInfo.fromUri(resolver, ArchivesProvider.buildUriForArchive(
-                    mArchiveUri, ParcelFileDescriptor.MODE_WRITE_ONLY), UserId.DEFAULT_USER);
+            mDstInfo = DocumentInfo.fromUri(resolver,
+                    ArchivesProvider.buildUriForArchive(mArchiveUri,
+                            ParcelFileDescriptor.MODE_WRITE_ONLY), UserId.DEFAULT_USER);
             ArchivesProvider.acquireArchive(getClient(mDstInfo), mDstInfo.derivedUri);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "Cannot create document info", e);
-            failureCount = mResourceUris.getItemCount();
-            return false;
-        } catch (RemoteException e) {
-            Log.e(TAG, "Cannot acquire archive", e);
-            failureCount = mResourceUris.getItemCount();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot create archive '" + redact(displayName) + "' in " + redact(mDstInfo),
+                    e);
+            onFileFailed(mResolvedDocs);
             return false;
         }
-
-        return true;
     }
 
     @Override
     void finish() {
-        try {
-            ArchivesProvider.releaseArchive(getClient(mDstInfo), mDstInfo.derivedUri);
-        } catch (RemoteException e) {
-            Log.e(TAG, "Cannot release archive", e);
+        if (mDstInfo != null) {
+            try {
+                ArchivesProvider.releaseArchive(getClient(mDstInfo), mDstInfo.derivedUri);
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot release archive " + redact(mDstInfo), e);
+            }
         }
 
         // Remove the archive file in case of an error.
-        try {
-            if (!isFinished() || isCanceled()) {
+        if (mArchiveUri != null && (!isFinished() || isCanceled())) {
+            try {
                 DocumentsContract.deleteDocument(wrap(getClient(mArchiveUri)), mArchiveUri);
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot remove partial archive " + redact(mArchiveUri), e);
             }
-        } catch (RemoteException | FileNotFoundException e) {
-            Log.w(TAG, "Cannot clean up after compress error: " + mDstInfo.toString(), e);
         }
 
         super.finish();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Only check space for moves across authorities. For now we don't know if the doc in
-     * {@link #mSrcs} is in the same root of destination, and if it's optimized move in the same
-     * root it should succeed regardless of free space, but it's for sure a failure if there is no
-     * enough free space if docs are moved from another authority.
-     */
     @Override
     boolean checkSpace() {
-        // We're unable to say how much space the archive will take, so assume
-        // it will fit.
+        // We're unable to determine how much space the archive will take, so we assume it will fit.
         return true;
-    }
-
-    void processDocument(DocumentInfo src, DocumentInfo dest) throws ResourceException {
-        byteCopyDocument(src, dest);
     }
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("CompressJob")
-                .append("{")
-                .append("id=" + id)
-                .append(", uris=" + mResourceUris)
-                .append(", docs=" + mResolvedDocs)
-                .append(", destination=" + stack)
-                .append("}")
-                .toString();
+        return "CompressJob {id=" + id + ", uris=" + mResourceUris + ", docs=" + mResolvedDocs
+                + ", destination=" + stack + "}";
     }
 }
