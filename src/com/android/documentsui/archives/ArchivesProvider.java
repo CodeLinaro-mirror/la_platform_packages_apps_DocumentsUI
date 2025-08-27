@@ -95,7 +95,7 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public Cursor queryChildDocuments(String documentId, @Nullable String[] projection,
+    public Cursor queryChildDocuments(@NonNull String documentId, @Nullable String[] projection,
             @Nullable String sortOrder)
             throws FileNotFoundException {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
@@ -140,7 +140,7 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public String getDocumentType(String documentId) throws FileNotFoundException {
+    public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         if (archiveId.mPath.equals("/")) {
             return Document.MIME_TYPE_DIR;
@@ -183,7 +183,7 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public Cursor queryDocument(String documentId, @Nullable String[] projection)
+    public Cursor queryDocument(@NonNull String documentId, @Nullable String[] projection)
             throws FileNotFoundException {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         if (archiveId.mPath.equals("/")) {
@@ -286,7 +286,7 @@ public class ArchivesProvider extends DocumentsProvider {
     /**
      * The archive won't close until all clients release it.
      */
-    private void acquireArchive(String documentId) {
+    private void acquireArchive(@NonNull String documentId) {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         synchronized (mArchives) {
             final Key key = Key.fromArchiveId(archiveId);
@@ -305,7 +305,7 @@ public class ArchivesProvider extends DocumentsProvider {
     /**
      * If all clients release the archive, then it will be closed.
      */
-    private void releaseArchive(String documentId) {
+    private void releaseArchive(@NonNull String documentId) {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         final Key key = Key.fromArchiveId(archiveId);
         synchronized (mArchives) {
@@ -318,7 +318,7 @@ public class ArchivesProvider extends DocumentsProvider {
         }
     }
 
-    private Loader getLoaderOrThrow(String documentId) {
+    private Loader getLoaderOrThrow(@NonNull String documentId) {
         final ArchiveId id = ArchiveId.fromDocumentId(documentId);
         final Key key = Key.fromArchiveId(id);
         synchronized (mArchives) {
