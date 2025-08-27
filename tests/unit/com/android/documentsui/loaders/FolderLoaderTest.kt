@@ -18,8 +18,11 @@ package com.android.documentsui.loaders
 import android.content.Context
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
+import com.android.documentsui.DirectoryResult
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
@@ -28,7 +31,9 @@ import com.android.documentsui.testing.TestDocumentsProvider
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
+import java.util.concurrent.CountDownLatch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -201,6 +206,85 @@ class FolderLoaderTest() {
             val result = loader.loadInBackground()
             assertEquals(0, result?.cursor?.count)
             assertEquals(message, result?.exception?.message)
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testCancelWhileLoading() {
+            val doc1 = environment.model.createFile("downloads-file.txt")
+            val doc2 = environment.model.createFile("pickles-file-1.txt")
+            val doc3 = environment.model.createFile("pickles-file-2.txt")
+            var result: DirectoryResult? = null
+
+            // The latch that is released once the downloads provider starts its query.
+            val downloadsStartedLoading = CountDownLatch(1)
+
+            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
+                // Setting the latch that will be unlocked once the Downloads provider start
+                // loading.
+                setQueryDelayLatch(downloadsStartedLoading)
+                // Setting the delay that ensures that the downloads provider still is loading
+                // while we trigger a new loader creation and thus cancellation of the old one.
+                setQueryDelay(500L)
+                setNextChildDocumentsReturns(doc1)
+            }
+            environment.mockProviders[TestProvidersAccess.PICKLES.authority]?.apply {
+                setNextChildDocumentsReturns(doc2, doc3)
+            }
+            // This latch is released once the results are delivered to the loader.
+            val resultsDelivered = CountDownLatch(1)
+
+            val loaderCallbacks: LoaderManager.LoaderCallbacks<DirectoryResult> =
+                object : LoaderManager.LoaderCallbacks<DirectoryResult> {
+                    var runCount = 0
+
+                    override fun onCreateLoader(id: Int, args: Bundle?): Loader<DirectoryResult?> {
+                        val rootInfo =
+                            if (++runCount == 1) {
+                                TestProvidersAccess.DOWNLOADS
+                            } else {
+                                TestProvidersAccess.PICKLES
+                            }
+                        val rootFolderInfo = DocumentInfo()
+                        rootFolderInfo.authority = rootInfo.authority
+                        rootFolderInfo.userId = rootInfo.userId
+
+                        return FolderLoader(
+                            activity,
+                            TestFileTypeLookup(),
+                            contentLock,
+                            rootInfo,
+                            rootFolderInfo,
+                            queryOptions,
+                            environment.state.sortModel,
+                        )
+                    }
+
+                    override fun onLoadFinished(
+                        loader: Loader<DirectoryResult>,
+                        data: DirectoryResult?,
+                    ) {
+                        result = data
+                        resultsDelivered.countDown()
+                    }
+
+                    override fun onLoaderReset(loader: Loader<DirectoryResult>) {
+                        loader.reset()
+                    }
+                }
+
+            // Effectively calls `onCreateLoader` and then runs it by calling `startLoading()`.
+            activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
+            downloadsStartedLoading.await()
+            // Effectively calls `onCreateLoader` the second time, causing the first loader to
+            // be cancelled. Then runs the new loader by calling `startLoading()`.
+            activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
+            resultsDelivered.await()
+            // We use the fact that pickles returns 2 returns to verify we only got pickles results.
+            assertNotNull(result)
+            assertEquals(2, getFileCount(result))
+            val resultSet = getDocuments(result).map { it.displayName }.toSet()
+            assertEquals(setOf(doc2.displayName, doc3.displayName), resultSet)
         }
     }
 }
