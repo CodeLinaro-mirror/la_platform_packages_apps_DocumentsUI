@@ -15,10 +15,10 @@
  */
 package com.android.documentsui
 
+import android.app.Activity
+import android.graphics.Rect
 import android.util.DisplayMetrics
 import android.util.TypedValue
-import android.view.WindowManager
-import org.junit.Assume
 
 class TestUtils {
     companion object {
@@ -30,24 +30,16 @@ class TestUtils {
             return TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_DIP, px, metrics)
         }
 
-        /**
-         * Checks that the size of the window fulfills the given predicate. If the conditions are
-         * not met, throws an AssumptionViolatedException, which causes the test to be halted and
-         * ignored.
-         */
-        fun assumeWindowSizeFulfills(
-            windowMgr: WindowManager,
-            message: String,
-            predicate: (Float, Float) -> Boolean,
-        ) {
-            val windowMetrics = windowMgr.currentWindowMetrics
+        /** Returns the bounds of the activity window in device independent pixels (dp). */
+        fun getActivityBounds(activity: Activity): Rect {
+            val windowMetrics = activity.windowManager.currentWindowMetrics
             val bounds = windowMetrics.bounds
-            val windowWidthDp = bounds.width() / windowMetrics.density
-            val windowHeightDp = bounds.height() / windowMetrics.density
-            Assume.assumeTrue(
-                "Skipping test: window size ${windowWidthDp}dp x ${windowHeightDp}dp " + message,
-                predicate(windowWidthDp, windowHeightDp),
-            )
+            val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
+            val density = displayMetrics.density
+
+            val windowWidthDp = bounds.width() / density
+            val windowHeightDp = bounds.height() / density
+            return Rect(0, 0, windowWidthDp.toInt(), windowHeightDp.toInt())
         }
     }
 }
