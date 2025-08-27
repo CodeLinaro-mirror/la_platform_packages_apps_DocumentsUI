@@ -38,6 +38,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import android.graphics.Rect;
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -60,6 +61,7 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -619,13 +621,16 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testSearchViewExpandedOnSmallScreen() {
+    public void testSearchViewCollapsedOnSmallScreen() {
         assertNotNull(mActivityScenario);
         mActivityScenario.onActivity(activity -> {
             assertNotNull(activity);
-            TestUtils.Companion.assumeWindowSizeFulfills(activity.getWindowManager(),
-                    "is larger than 900dp x 600dp", (windowWidthDp, windowHeightDp) ->
-                            windowWidthDp < 900 && windowHeightDp < 600);
+            Rect bounds = TestUtils.Companion.getActivityBounds(activity);
+            Assume.assumeTrue(
+                    "Skipping test: window size " + bounds.width() + "dp x " + bounds.height()
+                            + "dp  is larger than 900dp x 600dp",
+                    bounds.width() < 900.0 && bounds.height() < 600.0
+            );
         });
 
         String pkg = bots.directory.mTargetPackage;
@@ -639,9 +644,12 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         assertNotNull(mActivityScenario);
         mActivityScenario.onActivity(activity -> {
             assertNotNull(activity);
-            TestUtils.Companion.assumeWindowSizeFulfills(activity.getWindowManager(),
-                    "is smaller than 1000dp x 700dp", (windowWidthDp, windowHeightDp) ->
-                            windowWidthDp >= 1000 && windowHeightDp >= 700);
+            Rect bounds = TestUtils.Companion.getActivityBounds(activity);
+            Assume.assumeTrue(
+                    "Skipping test: window size " + bounds.width() + "dp x " + bounds.height()
+                            + "dp  is smaller than 1000dp x 700dp",
+                    bounds.width() >= 1000.0 && bounds.height() >= 700.0
+            );
         });
 
         String pkg = bots.directory.mTargetPackage;
