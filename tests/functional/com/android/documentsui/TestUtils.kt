@@ -17,6 +17,8 @@ package com.android.documentsui
 
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import android.view.WindowManager
+import org.junit.Assume
 
 class TestUtils {
     companion object {
@@ -26,6 +28,26 @@ class TestUtils {
 
         fun pxToDp(px: Float, metrics: DisplayMetrics): Float {
             return TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_DIP, px, metrics)
+        }
+
+        /**
+         * Checks that the size of the window fulfills the given predicate. If the conditions are
+         * not met, throws an AssumptionViolatedException, which causes the test to be halted and
+         * ignored.
+         */
+        fun assumeWindowSizeFulfills(
+            windowMgr: WindowManager,
+            message: String,
+            predicate: (Float, Float) -> Boolean,
+        ) {
+            val windowMetrics = windowMgr.currentWindowMetrics
+            val bounds = windowMetrics.bounds
+            val windowWidthDp = bounds.width() / windowMetrics.density
+            val windowHeightDp = bounds.height() / windowMetrics.density
+            Assume.assumeTrue(
+                "Skipping test: window size ${windowWidthDp}dp x ${windowHeightDp}dp " + message,
+                predicate(windowWidthDp, windowHeightDp),
+            )
         }
     }
 }

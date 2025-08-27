@@ -36,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
@@ -614,5 +615,38 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         String deviceLabel = getDeviceLabel();
         bots.roots.openRoot(deviceLabel);
         assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchViewExpandedOnSmallScreen() {
+        assertNotNull(mActivityScenario);
+        mActivityScenario.onActivity(activity -> {
+            assertNotNull(activity);
+            TestUtils.Companion.assumeWindowSizeFulfills(activity.getWindowManager(),
+                    "is larger than 900dp x 600dp", (windowWidthDp, windowHeightDp) ->
+                            windowWidthDp < 900 && windowHeightDp < 600);
+        });
+
+        String pkg = bots.directory.mTargetPackage;
+        UiObject2 searchBar = device.findObject(By.res(pkg + ":id/search_bar"));
+        assertNull(searchBar);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchViewExpandedOnLargeScreen() {
+        assertNotNull(mActivityScenario);
+        mActivityScenario.onActivity(activity -> {
+            assertNotNull(activity);
+            TestUtils.Companion.assumeWindowSizeFulfills(activity.getWindowManager(),
+                    "is smaller than 1000dp x 700dp", (windowWidthDp, windowHeightDp) ->
+                            windowWidthDp >= 1000 && windowHeightDp >= 700);
+        });
+
+        String pkg = bots.directory.mTargetPackage;
+        UiObject2 searchBar = device.findObject(By.res(pkg + ":id/docked_search_text"));
+        assertNotNull(searchBar);
+        assertTrue(searchBar.isEnabled());
     }
 }
