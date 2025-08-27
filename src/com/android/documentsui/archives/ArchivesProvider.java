@@ -36,6 +36,7 @@ import android.provider.DocumentsProvider;
 import android.util.Log;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.documentsui.R;
@@ -247,7 +248,7 @@ public class ArchivesProvider extends DocumentsProvider {
      * @see ParcelFileDescriptor#MODE_READ
      * @see ParcelFileDescriptor#MODE_WRITE
      */
-    public static Uri buildUriForArchive(Uri externalUri, int accessMode) {
+    public static Uri buildUriForArchive(@NonNull Uri externalUri, int accessMode) {
         return DocumentsContract.buildDocumentUri(AUTHORITY,
                 new ArchiveId(externalUri, accessMode, "/").toDocumentId());
     }

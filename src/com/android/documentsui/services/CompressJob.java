@@ -18,6 +18,8 @@ package com.android.documentsui.services;
 
 import static android.content.ContentResolver.wrap;
 
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COMPRESS;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -28,7 +30,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Messenger;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
 import android.provider.DocumentsContract;
 import android.util.Log;
 
@@ -39,8 +40,6 @@ import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
-
-import java.io.FileNotFoundException;
 
 // TODO: Stop extending CopyJob.
 final class CompressJob extends CopyJob {
@@ -99,10 +98,6 @@ final class CompressJob extends CopyJob {
             return false;
         }
 
-        final ContentResolver resolver = appContext.getContentResolver();
-
-        // TODO: Move this to DocumentsProvider.
-
         String displayName;
         if (mResolvedDocs.size() == 1) {
             displayName = mResolvedDocs.get(0).displayName + NEW_ARCHIVE_EXTENSION;
@@ -113,44 +108,41 @@ final class CompressJob extends CopyJob {
         }
 
         try {
-            mArchiveUri = DocumentsContract.createDocument(
-                    resolver, mDstInfo.derivedUri, "application/zip", displayName);
-        } catch (Exception e) {
-            mArchiveUri = null;
-        }
+            final ContentResolver resolver = appContext.getContentResolver();
+            mArchiveUri = DocumentsContract.createDocument(resolver, mDstInfo.derivedUri,
+                    "application/zip", displayName);
+            if (DEBUG) Log.d(TAG, "Created archive " + redact(mArchiveUri));
 
-        try {
-            mDstInfo = DocumentInfo.fromUri(resolver, ArchivesProvider.buildUriForArchive(
-                    mArchiveUri, ParcelFileDescriptor.MODE_WRITE_ONLY), UserId.DEFAULT_USER);
+            mDstInfo = DocumentInfo.fromUri(resolver,
+                    ArchivesProvider.buildUriForArchive(mArchiveUri,
+                            ParcelFileDescriptor.MODE_WRITE_ONLY), UserId.DEFAULT_USER);
             ArchivesProvider.acquireArchive(getClient(mDstInfo), mDstInfo.derivedUri);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "Cannot create document info", e);
-            failureCount = mResourceUris.getItemCount();
-            return false;
-        } catch (RemoteException e) {
-            Log.e(TAG, "Cannot acquire archive", e);
-            failureCount = mResourceUris.getItemCount();
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot create archive '" + redact(displayName) + "' in " + redact(mDstInfo),
+                    e);
+            onFileFailed(mResolvedDocs);
             return false;
         }
-
-        return true;
     }
 
     @Override
     void finish() {
-        try {
-            ArchivesProvider.releaseArchive(getClient(mDstInfo), mDstInfo.derivedUri);
-        } catch (RemoteException e) {
-            Log.e(TAG, "Cannot release archive", e);
+        if (mDstInfo != null) {
+            try {
+                ArchivesProvider.releaseArchive(getClient(mDstInfo), mDstInfo.derivedUri);
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot release archive " + redact(mDstInfo), e);
+            }
         }
 
         // Remove the archive file in case of an error.
-        try {
-            if (!isFinished() || isCanceled()) {
+        if (mArchiveUri != null && (!isFinished() || isCanceled())) {
+            try {
                 DocumentsContract.deleteDocument(wrap(getClient(mArchiveUri)), mArchiveUri);
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot remove partial archive " + redact(mArchiveUri), e);
             }
-        } catch (RemoteException | FileNotFoundException e) {
-            Log.w(TAG, "Cannot clean up after compress error: " + mDstInfo.toString(), e);
         }
 
         super.finish();
