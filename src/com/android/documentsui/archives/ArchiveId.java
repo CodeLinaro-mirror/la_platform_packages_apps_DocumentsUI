@@ -25,9 +25,9 @@ public class ArchiveId {
 
     public final @NonNull Uri mArchiveUri;
     public final int mAccessMode;
-    public final String mPath;
+    public final @NonNull String mPath;
 
-    public ArchiveId(@NonNull Uri archiveUri, int accessMode, String path) {
+    public ArchiveId(@NonNull Uri archiveUri, int accessMode, @NonNull String path) {
         assert(archiveUri.toString().indexOf(DELIMITER) == -1);
         assert(!path.isEmpty());
 
@@ -36,7 +36,7 @@ public class ArchiveId {
         mPath = path;
     }
 
-    static public ArchiveId fromDocumentId(String documentId) {
+    public static ArchiveId fromDocumentId(@NonNull String documentId) {
         final int delimiterPosition = documentId.indexOf(DELIMITER);
         assert(delimiterPosition != -1);
 
