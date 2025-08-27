@@ -26,6 +26,7 @@ import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
+import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -43,6 +44,7 @@ import android.platform.test.annotations.EnableFlags;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
@@ -353,4 +355,28 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
     }
 
+    @Test
+    @EnableFlags(FLAG_SINGLE_CLICK_TO_SELECT)
+    public void testSingleClickToSelect_enabled() throws Exception {
+        doTestSingleClickToSelect(true);
+    }
+
+    @Test
+    @DisableFlags(FLAG_SINGLE_CLICK_TO_SELECT)
+    public void testSingleClickToSelect_disabled() throws Exception {
+        doTestSingleClickToSelect(false);
+    }
+
+    private void doTestSingleClickToSelect(boolean flagEnabled) throws Exception {
+        final String label = TestFilesRule.DIR_NAME_1;
+        UiObject2 ancestorObject = bots.directory.findItemAndSelectionHotspot(label)[0];
+        UiObject2 labelObject = ancestorObject.findObject(By.text(label));
+        labelObject.click();
+
+        if (flagEnabled) {
+            bots.directory.assertSelection(1);
+        } else {
+            bots.directory.assertNoSelection();
+        }
+    }
 }
