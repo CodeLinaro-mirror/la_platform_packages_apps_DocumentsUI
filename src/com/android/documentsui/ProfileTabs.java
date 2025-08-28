@@ -40,6 +40,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Objects;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -208,7 +209,8 @@ public class ProfileTabs implements ProfileTabsAddons {
         // Given that mUserIds was initialized with only the current user, if getUserIds()
         // returns just the current user, we don't need to do anything on the tab layout.
         if (!userIds.equals(mUserIds)) {
-            mUserIds = UserId.nonExcludedUsers(mState, userIds);
+            mUserIds = new ArrayList<>();
+            mUserIds.addAll(UserId.nonExcludedUsers(mState, userIds));
             mTabs.removeAllTabs();
             if (mUserIds.size() > 1) {
                 if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
