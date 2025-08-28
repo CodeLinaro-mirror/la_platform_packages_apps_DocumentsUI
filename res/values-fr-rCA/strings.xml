@@ -170,16 +170,11 @@
     <string name="move_preparing" msgid="6504239656430530761">"Préparation en cours…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Préparation en cours…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> sur <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Impossible de copier <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Impossible de compresser <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Impossible d\'extraire <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible d\'extraire <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible d\'extraire <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible d\'extraire <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Impossible de déplacer <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Impossible de supprimer <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Touchez pour afficher les détails"</string>
     <string name="close" msgid="905969391788869975">"Fermer"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -217,10 +212,8 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> d\'éléments copiés dans le presse-papiers.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> éléments copiés dans le presse-papiers.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Lecture seule"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Vous pouvez voir ces fichiers, mais certaines actions ne sont pas prises en charge"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Cette archive se trouve dans un emplacement en lecture seule et ne peut pas être extraite ici."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Opération relative au fichier non prise en charge"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Échec de l\'opération relative au fichier."</string>

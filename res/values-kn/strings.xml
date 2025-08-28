@@ -200,10 +200,8 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>ಐಟಂಗಳನ್ನು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲು ಮಾಡಲಾಗಿದೆ.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>ಐಟಂಗಳನ್ನು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲು ಮಾಡಲಾಗಿದೆ.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"ಓದಲು-ಮಾತ್ರ"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"ನೀವು ಈ ಫೈಲ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಬಹುದು, ಆದರೆ ಕೆಲವು ಆ್ಯಕ್ಷನ್‌ಗಳು ಬೆಂಬಲಿತವಾಗಿಲ್ಲ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ಈ ಆರ್ಕೈವ್ ಓದಲು-ಮಾತ್ರ ಸ್ಥಳದಲ್ಲಿದೆ ಮತ್ತು ಇಲ್ಲಿ ಎಕ್ಸ್‌ಟ್ರ್ಯಾಕ್ಟ್ ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ಫೈಲ್ ಕಾರ್ಯಾಚರಣೆಗೆ ಬೆಂಬಲವಿಲ್ಲ."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ಫೈಲ್ ಕಾರ್ಯಾಚರಣೆ ವಿಫಲವಾಗಿದೆ."</string>
