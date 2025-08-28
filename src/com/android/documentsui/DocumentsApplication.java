@@ -35,6 +35,7 @@ import android.os.UserHandle;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -95,7 +96,7 @@ public class DocumentsApplication extends Application {
         return app.mThumbnailCache;
     }
 
-    public static ContentProviderClient acquireUnstableProviderOrThrow(
+    public static @NonNull ContentProviderClient acquireUnstableProviderOrThrow(
             ContentResolver resolver, String authority) throws RemoteException {
         final ContentProviderClient client = resolver.acquireUnstableContentProviderClient(
                 authority);

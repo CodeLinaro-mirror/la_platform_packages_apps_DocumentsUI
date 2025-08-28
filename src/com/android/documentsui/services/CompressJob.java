@@ -16,8 +16,6 @@
 
 package com.android.documentsui.services;
 
-import static android.content.ContentResolver.wrap;
-
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COMPRESS;
@@ -25,6 +23,7 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
 import android.app.Notification.Builder;
+import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
@@ -33,6 +32,8 @@ import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.R;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
@@ -40,6 +41,8 @@ import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
+
+import java.io.IOException;
 
 /**
  * CompressJob creates a new ZIP archive and zips the selected items into this archive.
@@ -50,7 +53,8 @@ final class CompressJob extends CopyJob {
     private static final String TAG = "CompressJob";
     private static final String NEW_ARCHIVE_EXTENSION = ".zip";
 
-    private Uri mArchiveUri;
+    private @Nullable Uri mArchiveUri;
+    private @Nullable ContentProviderClient mClient;
 
     /**
      * Zips items to a new ZIP archive which will be created in the folder identified by
@@ -111,12 +115,15 @@ final class CompressJob extends CopyJob {
             final ContentResolver resolver = appContext.getContentResolver();
             mArchiveUri = DocumentsContract.createDocument(resolver, mDstInfo.derivedUri,
                     "application/zip", displayName);
+            if (mArchiveUri == null) throw new IOException();
             if (DEBUG) Log.d(TAG, "Created archive " + redact(mArchiveUri));
 
             mDstInfo = DocumentInfo.fromUri(resolver,
                     ArchivesProvider.buildUriForArchive(mArchiveUri,
                             ParcelFileDescriptor.MODE_WRITE_ONLY), UserId.DEFAULT_USER);
-            ArchivesProvider.acquireArchive(getClient(mDstInfo), mDstInfo.derivedUri);
+            final ContentProviderClient client = getClient(mDstInfo);
+            ArchivesProvider.acquireArchive(client, mDstInfo.derivedUri);
+            mClient = client;
             return true;
         } catch (Exception e) {
             Log.e(TAG, "Cannot create archive '" + redact(displayName) + "' in " + redact(mDstInfo),
@@ -128,18 +135,18 @@ final class CompressJob extends CopyJob {
 
     @Override
     void finish() {
-        if (mDstInfo != null) {
+        if (mClient != null) {
             try {
-                ArchivesProvider.releaseArchive(getClient(mDstInfo), mDstInfo.derivedUri);
+                ArchivesProvider.releaseArchive(mClient, mDstInfo.derivedUri);
             } catch (Exception e) {
                 Log.e(TAG, "Cannot release archive " + redact(mDstInfo), e);
             }
         }
 
         // Remove the archive file in case of an error.
-        if (mArchiveUri != null && (!isFinished() || isCanceled())) {
+        if ((!isFinished() || isCanceled()) && mArchiveUri != null) {
             try {
-                DocumentsContract.deleteDocument(wrap(getClient(mArchiveUri)), mArchiveUri);
+                DocumentsContract.deleteDocument(appContext.getContentResolver(), mArchiveUri);
             } catch (Exception e) {
                 Log.e(TAG, "Cannot remove partial archive " + redact(mArchiveUri), e);
             }
