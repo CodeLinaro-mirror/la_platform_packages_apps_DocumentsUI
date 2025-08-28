@@ -37,6 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"സംരക്ഷിക്കുക"</string>
     <string name="menu_share" msgid="4307140947108068356">"പങ്കിടുക"</string>
     <string name="menu_delete" msgid="1022254131543256626">"ഇല്ലാതാക്കുക"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"ശാശ്വതമായി ഇല്ലാതാക്കുക"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"ട്രാഷിലേക്ക് നീക്കുക"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"എല്ലാം തിരഞ്ഞെടുക്കുക"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"തിരഞ്ഞെടുത്തതെല്ലാം മാറ്റുക"</string>
     <string name="menu_select" msgid="1366061076507142387">"തിരഞ്ഞെടുക്കുക"</string>
@@ -137,6 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"ഫയലുകൾ എക്‌സ്ട്രാക്‌റ്റുചെയ്യുക"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ഫയലുകൾ നീക്കുന്നു"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ഫയലുകൾ ഇല്ലാതാക്കുന്നു"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"ഫയലുകൾ ട്രാഷ് ചെയ്യുന്നു"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> ശേഷിക്കുന്നു"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ ‌പകർത്തുന്നു.</item>
@@ -158,18 +161,22 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ ‌ഇല്ലാതാക്കുന്നു.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ഇനം ‌ഇല്ലാതാക്കുന്നു.</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം ട്രാഷിലേക്ക് നീക്കുന്നു}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ ട്രാഷിലേക്ക് നീക്കുന്നു}}"</string>
     <string name="undo" msgid="2902438994196400565">"പഴയപടിയാക്കുക"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"തയ്യാറെടുക്കുന്നു..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"തയ്യാറെടുക്കുന്നു..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"തയ്യാറെടുക്കുന്നു..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"തയ്യാറെടുക്കുന്നു..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"തയ്യാറെടുക്കുന്നു..."</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"തയ്യാറെടുക്കുന്നു..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം പകർത്താനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ പകർത്താനായില്ല}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം കംപ്രസ് ചെയ്യാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ കംപ്രസ് ചെയ്യാനായില്ല}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം എക്‌സ്ട്രാക്‌റ്റ് ചെയ്യാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ എക്‌സ്ട്രാക്‌റ്റ് ചെയ്യാനായില്ല}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം നീക്കാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ നീക്കാനായില്ല}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം ഇല്ലാതാക്കാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ ഇല്ലാതാക്കാനായില്ല}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം ട്രാഷിലേക്ക് നീക്കാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ ട്രാഷിലേക്ക് നീക്കാനായില്ല}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"വിശദാംശങ്ങൾ കാണുന്നതിന് ടാപ്പുചെയ്യുക"</string>
     <string name="close" msgid="905969391788869975">"അവസാനിപ്പിക്കുക"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -212,7 +219,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ആർക്കൈവുകൾ എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യുന്നു}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” നീക്കുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ നീക്കുന്നു}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ഇല്ലാതാക്കുന്നു}other{# ഫയലുകൾ ഇല്ലാതാക്കുന്നു}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ സിപ്പ് ചെയ്യുന്നു}other{# ഫയലുകൾ സിപ്പ് ചെയ്യുന്നു}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ട്രാഷിലേക്ക് നീക്കുന്നു}other{# ഫയലുകൾ ട്രാഷിലേക്ക് നീക്കുന്നു}}"</string>
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ഫയലിന്റെ പുരോഗതി കാണിക്കുക"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ഫയലിന്റെ പുരോഗതി"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"പൂർത്തിയായി"</string>
