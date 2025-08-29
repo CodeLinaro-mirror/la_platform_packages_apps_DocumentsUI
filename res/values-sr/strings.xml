@@ -37,6 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"Сачувај"</string>
     <string name="menu_share" msgid="4307140947108068356">"Дели"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Избриши"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Трајно избриши"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Премести у отпад"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Изабери све"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Поништи избор свих ставки"</string>
     <string name="menu_select" msgid="1366061076507142387">"Изабери"</string>
@@ -137,6 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Датотеке се издвајају"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Премештамо датотеке"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Бришемо датотеке"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Фајлови се премештају у отпад"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Још <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">Копира се <xliff:g id="COUNT_1">%1$d</xliff:g> ставка.</item>
@@ -163,18 +166,22 @@
       <item quantity="few">Бришу се <xliff:g id="COUNT_1">%1$d</xliff:g> ставке.</item>
       <item quantity="other">Брише се <xliff:g id="COUNT_1">%1$d</xliff:g> ставки.</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ставка се премешта у отпад}one{<xliff:g id="COUNT_1">{count}</xliff:g> ставка се премешта у отпад}few{<xliff:g id="COUNT_1">{count}</xliff:g> ставке се премештају у отпад}other{<xliff:g id="COUNT_1">{count}</xliff:g> ставки се премешта у отпад}}"</string>
     <string name="undo" msgid="2902438994196400565">"Опозови"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Припрема се..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Припрема се..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Припрема се..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"Припрема се..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Припрема се..."</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Припрема се..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Копирање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Копирање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Копирање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Копирање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Компримовање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Компримовање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Компримовање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Компримовање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Издвајање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Издвајање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Издвајање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Издвајање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Премештање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Брисање <xliff:g id="COUNT_0">{count}</xliff:g> ставке није успело}one{Брисање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}few{Брисање <xliff:g id="COUNT_1">{count}</xliff:g> ставке није успело}other{Брисање <xliff:g id="COUNT_1">{count}</xliff:g> ставки није успело}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Премештање <xliff:g id="COUNT_0">{count}</xliff:g> ставке у отпад није успело}one{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставке у отпад није успело}few{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставке у отпад није успело}other{Премештање <xliff:g id="COUNT_1">{count}</xliff:g> ставки у отпад није успело}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Додирните да бисте прегледали детаље"</string>
     <string name="close" msgid="905969391788869975">"Затвори"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -224,7 +231,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Издваја се <xliff:g id="FILENAME">{filename}</xliff:g> у <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Издваја се # архива у <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}few{Издвајају се # архиве у <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Издваја се # архива у <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Премешта се <xliff:g id="FILENAME">{filename}</xliff:g> у <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Премешта се # фајл у <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}few{Премештају се # фајла у <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Премешта се # фајлова у <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Брише се <xliff:g id="FILENAME">{filename}</xliff:g>}one{Брише се # фајл}few{Бришу се # фајла}other{Брише се # фајлова}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Зипује се <xliff:g id="FILENAME">{filename}</xliff:g>}one{Зипује се # фајл}few{Зипују се # фајла}other{Зипује се # фајлова}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Фајл <xliff:g id="FILENAME">{filename}</xliff:g> се премешта у отпад}one{# фајл се премешта у отпад}few{# фајла се премештају у отпад}other{# фајлова се премешта у отпад}}"</string>
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Прикажите напредак фајла"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Напредак фајла"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Завршено"</string>

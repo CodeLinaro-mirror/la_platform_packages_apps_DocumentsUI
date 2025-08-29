@@ -37,6 +37,10 @@
     <string name="menu_save" msgid="5195367497138965168">"Сохранить"</string>
     <string name="menu_share" msgid="4307140947108068356">"Поделиться"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Удалить"</string>
+    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
+    <skip />
+    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"Выбрать все"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Отменить выбор"</string>
     <string name="menu_select" msgid="1366061076507142387">"Выбрать"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Извлечение файлов"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Перемещение файлов"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Удаление файлов"</string>
+    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"Осталось: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">Копирование <xliff:g id="COUNT_1">%1$d</xliff:g> файла…</item>
@@ -168,18 +174,26 @@
       <item quantity="many">Удаление <xliff:g id="COUNT_1">%1$d</xliff:g> файлов…</item>
       <item quantity="other">Удаление <xliff:g id="COUNT_1">%1$d</xliff:g> файла…</item>
     </plurals>
+    <!-- no translation found for trashing (4643112474465979863) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Отменить"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Подготовка…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Подготовка…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Подготовка…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Подготовка…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Подготовка…"</string>
+    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> из <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Не удалось скопировать <xliff:g id="COUNT_0">{count}</xliff:g> объект}one{Не удалось скопировать <xliff:g id="COUNT_1">{count}</xliff:g> объект}few{Не удалось скопировать <xliff:g id="COUNT_1">{count}</xliff:g> объекта}many{Не удалось скопировать <xliff:g id="COUNT_1">{count}</xliff:g> объектов}other{Не удалось скопировать <xliff:g id="COUNT_1">{count}</xliff:g> объекта}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Не удалось сжать <xliff:g id="COUNT_0">{count}</xliff:g> объект}one{Не удалось сжать <xliff:g id="COUNT_1">{count}</xliff:g> объект}few{Не удалось сжать <xliff:g id="COUNT_1">{count}</xliff:g> объекта}many{Не удалось сжать <xliff:g id="COUNT_1">{count}</xliff:g> объектов}other{Не удалось сжать <xliff:g id="COUNT_1">{count}</xliff:g> объекта}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Не удалось извлечь <xliff:g id="COUNT_0">{count}</xliff:g> объект}one{Не удалось извлечь <xliff:g id="COUNT_1">{count}</xliff:g> объект}few{Не удалось извлечь <xliff:g id="COUNT_1">{count}</xliff:g> объекта}many{Не удалось извлечь <xliff:g id="COUNT_1">{count}</xliff:g> объектов}other{Не удалось извлечь <xliff:g id="COUNT_1">{count}</xliff:g> объекта}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Не удалось переместить <xliff:g id="COUNT_0">{count}</xliff:g> объект}one{Не удалось переместить <xliff:g id="COUNT_1">{count}</xliff:g> объект}few{Не удалось переместить <xliff:g id="COUNT_1">{count}</xliff:g> объекта}many{Не удалось переместить <xliff:g id="COUNT_1">{count}</xliff:g> объектов}other{Не удалось переместить <xliff:g id="COUNT_1">{count}</xliff:g> объекта}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Не удалось удалить <xliff:g id="COUNT_0">{count}</xliff:g> объект}one{Не удалось удалить <xliff:g id="COUNT_1">{count}</xliff:g> объект}few{Не удалось удалить <xliff:g id="COUNT_1">{count}</xliff:g> объекта}many{Не удалось удалить <xliff:g id="COUNT_1">{count}</xliff:g> объектов}other{Не удалось удалить <xliff:g id="COUNT_1">{count}</xliff:g> объекта}}"</string>
+    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Нажмите, чтобы узнать подробности"</string>
     <string name="close" msgid="905969391788869975">"Закрыть"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -236,7 +250,10 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Извлечение файла \"<xliff:g id="FILENAME">{filename}</xliff:g>\" в папку \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"…}one{Извлечение # архива в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}few{Извлечение # архивов в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}many{Извлечение # архивов в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}other{Извлечение # архива в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Перемещение файла \"<xliff:g id="FILENAME">{filename}</xliff:g>\" в папку \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"…}one{Перемещение # файла в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}few{Перемещение # файлов в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}many{Перемещение # файлов в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}other{Перемещение # файла в папку \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"…}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Удаление файла \"<xliff:g id="FILENAME">{filename}</xliff:g>\"…}one{Удаление # файла…}few{Удаление # файлов…}many{Удаление # файлов…}other{Удаление # файла…}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Архивирование файла \"<xliff:g id="FILENAME">{filename}</xliff:g>\"…}one{Архивирование # файла…}few{Архивирование # файлов…}many{Архивирование # файлов…}other{Архивирование # файла…}}"</string>
+    <!-- no translation found for trash_in_progress (6889113199087672853) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Показать прогресс"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Прогресс"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Завершено"</string>
