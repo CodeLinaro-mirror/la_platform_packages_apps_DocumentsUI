@@ -118,6 +118,9 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isTrashFlowEnabled(): Boolean {
+            if (!SdkLevel.isAtLeastB()) {
+                return false
+            }
             // If API flag is not enabled, then trash flow will be disabled
             if (!enableDocumentsTrashApi()) {
                 return false

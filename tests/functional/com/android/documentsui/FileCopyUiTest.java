@@ -53,7 +53,6 @@ import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.filters.SkipScreenRecording;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
-import com.android.documentsui.util.FlagUtils;
 import com.android.modules.utils.build.SdkLevel;
 
 import org.junit.After;
@@ -286,11 +285,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument(targetFolder, 1);
         device.waitForIdle();
 
-        if (FlagUtils.isTrashFlowEnabled()) {
-            bots.main.clickActionItem("Delete permanently");
-        } else {
-            bots.main.clickToolbarItem(R.id.action_menu_delete);
-        }
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 

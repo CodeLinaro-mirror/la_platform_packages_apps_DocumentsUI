@@ -163,7 +163,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
                 context.getResources().getString(R.string.menu_select_all));
         device.waitForIdle();
 
-        bots.main.clickToolbarItem(R.id.action_menu_delete);
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
