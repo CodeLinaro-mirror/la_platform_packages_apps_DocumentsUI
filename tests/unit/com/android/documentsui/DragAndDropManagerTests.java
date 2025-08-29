@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.PersistableBundle;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.provider.DocumentsContract;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
@@ -40,6 +41,7 @@ import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.DragAndDropManager.RuntimeDragAndDropManager;
 import com.android.documentsui.DragAndDropManager.State;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
@@ -629,6 +631,161 @@ public class DragAndDropManagerTests {
 
         assertEquals(DragAndDropManager.STATE_COPY, state);
         assertStateUpdated(DragAndDropManager.STATE_COPY);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testUpdateStateForShortcut_UpdatesToCopyDiffRoot() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
+        docInfo.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        docInfo.flags |= DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE;
+        final @State int state = mManager.updateState(
+                mUpdateShadowView, TestProvidersAccess.TEST_SHORTCUT, docInfo);
+
+        assertEquals(DragAndDropManager.STATE_COPY, state);
+        assertStateUpdated(DragAndDropManager.STATE_COPY);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testUpdateStateForShortcut_UpdatesToCopySameRoot() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.PEPPER,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
+        mManager.onKeyEvent(event);
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
+        docInfo.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        docInfo.flags |= DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE;
+
+        final @State int state = mManager.updateState(
+                mUpdateShadowView, TestProvidersAccess.TEST_SHORTCUT, docInfo);
+
+        assertEquals(DragAndDropManager.STATE_COPY, state);
+        assertStateUpdated(DragAndDropManager.STATE_COPY);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testUpdateStateForShortcut_UpdatesToMoveDiffRoot() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
+        mManager.onKeyEvent(event);
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
+        docInfo.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        docInfo.flags |= DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE;
+
+        final @State int state = mManager.updateState(
+                mUpdateShadowView, TestProvidersAccess.TEST_SHORTCUT, docInfo);
+
+        assertEquals(DragAndDropManager.STATE_MOVE, state);
+        assertStateUpdated(DragAndDropManager.STATE_MOVE);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testUpdateStateForShortcut_UpdatesToMoveSameRoot() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.PEPPER,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
+        docInfo.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        docInfo.flags |= DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE;
+
+        final @State int state = mManager.updateState(
+                mUpdateShadowView, TestProvidersAccess.TEST_SHORTCUT, docInfo);
+
+        assertEquals(DragAndDropManager.STATE_MOVE, state);
+        assertStateUpdated(DragAndDropManager.STATE_MOVE);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testUpdateStateForShortcut_UpdatesToStateNotAllowed_ShortcutDoesNotSupportCreate() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
+        docInfo.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        docInfo.flags |= DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE;
+
+        // LIVE_IMAGES_SHORTCUT does not support create.
+        final @State int state = mManager.updateState(
+                mUpdateShadowView, TestProvidersAccess.LIVE_IMAGES_SHORTCUT, docInfo);
+
+        assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
+        assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testUpdateStateForShortcut_UpdatesToStateNotAllowed_DocsDoesNotSupportCreate() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
+        docInfo.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+
+        final @State int state = mManager.updateState(
+                mUpdateShadowView, TestProvidersAccess.TEST_SHORTCUT, docInfo);
+
+        assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
+        assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
     }
 
     @Test

@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 
 import android.net.Uri;
 import android.util.Log;
@@ -33,6 +34,7 @@ import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.Model;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Events;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 
 import java.util.ArrayList;
@@ -134,7 +136,14 @@ interface DragStartListener {
                 invalidDest.add(parent.derivedUri);
             }
 
-            mDragAndDropManager.startDrag(view, srcs, mState.stack.getRoot(), invalidDest,
+            SidebarEntryItemInfo itemInfo;
+            if (isHomeScreenFilesFlagEnabled() && mState.shortcut != null) {
+                itemInfo = mState.shortcut;
+            } else {
+                itemInfo = mState.stack.getRoot();
+            }
+
+            mDragAndDropManager.startDrag(view, srcs, itemInfo, invalidDest,
                     mSelectionDetails, mIconHelper, parent);
 
             return true;

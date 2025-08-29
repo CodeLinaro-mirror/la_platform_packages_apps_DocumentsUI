@@ -88,7 +88,7 @@ class DragHost extends AbstractDragHost {
         }
 
         final BaseSidebarEntryItem sidebarItem = (BaseSidebarEntryItem) item;
-        if (mDragAndDropManager.updateState(v, sidebarItem.getItemInfo().getRoot(), null)
+        if (mDragAndDropManager.updateState(v, sidebarItem.getItemInfo(), null)
                 == DragAndDropManager.STATE_UNKNOWN) {
             SidebarEntryItemInfo itemInfo = sidebarItem.getItemInfo();
             mActions.getDocument(
@@ -107,7 +107,7 @@ class DragHost extends AbstractDragHost {
             Log.e(TAG, "Destination DocumentInfo is null. Defaulting to unknown.");
         } else {
             sidebarItem.setDocInfo(destDoc);
-            mDragAndDropManager.updateState(v, sidebarItem.getItemInfo().getRoot(), destDoc);
+            mDragAndDropManager.updateState(v, sidebarItem.getItemInfo(), destDoc);
         }
     }
 }
