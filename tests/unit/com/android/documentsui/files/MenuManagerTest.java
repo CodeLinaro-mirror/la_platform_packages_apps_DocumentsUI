@@ -30,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -39,6 +40,7 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -1009,6 +1011,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "Baklava")
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     public void testActionMenu_canTrash_enabled() {
@@ -1022,6 +1025,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "Baklava")
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @DisableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     public void testActionMenu_canTrash_disabled() {

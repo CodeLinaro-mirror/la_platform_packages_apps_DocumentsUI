@@ -73,13 +73,18 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule()
-                    .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
-                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, TestFilesRule.CHILD_DIR_1)
-                    .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
-                    .createFileInRoot(ROOT_0_ID, "file1.png", "image/png")
-                    .createFileInRoot(ROOT_0_ID, "file2.csv", "text/csv")
-                    .createFileInRoot(ROOT_0_ID, "anotherFile0.log", "text/plain")
-                    .createFileInRoot(ROOT_0_ID, "poodles.text", "text/plain");
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                final Uri dir1 =
+                                        docsHelper.createFolder(root, TestFilesRule.DIR_NAME_1);
+                                docsHelper.createFolder(dir1, TestFilesRule.CHILD_DIR_1);
+                                docsHelper.createDocument(root, "text/plain", "file0.log");
+                                docsHelper.createDocument(root, "image/png", "file1.png");
+                                docsHelper.createDocument(root, "text/csv", "file2.csv");
+                                docsHelper.createDocument(root, "text/plain", "anotherFile0.log");
+                                docsHelper.createDocument(root, "text/plain", "poodles.text");
+                            });
 
     // Recents is a strange meta root that gathers entries from other providers.
     // It is special cased in a variety of ways, which is why we just want
@@ -144,7 +149,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument(fileName);
         bots.directory.selectDocument(fileName, 1);
 
-        bots.main.clickToolbarItem(R.id.action_menu_delete);
+        bots.main.clickDelete();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 

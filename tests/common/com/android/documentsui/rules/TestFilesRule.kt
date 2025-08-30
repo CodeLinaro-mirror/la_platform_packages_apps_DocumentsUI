@@ -74,44 +74,11 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
 
     /**
      * Run file/folder create operations encapsulated in a provided function. Technically this lets
-     * running any DocumentsProviderHelper functions, but should only be used to create files. Use
-     * if dynamically generated files are required to be created.
+     * running any DocumentsProviderHelper functions, but should only be used to create files.
      */
     fun createTestFiles(createTestFiles: CreateFilesFunction): TestFilesRule {
         deferredOperations.add {
             createTestFiles.apply(docsHelper)
-        }
-        return this
-    }
-
-    /** Create a folder in `root`. */
-    fun createFolderInRoot(root: String, folderName: String): TestFilesRule {
-        deferredOperations.add {
-            val rootInfo = docsHelper.getRoot(root)
-            val uri = docsHelper.createFolder(rootInfo, folderName)
-            require(!createdUris.containsKey(folderName)) { "$folderName has already been created" }
-            createdUris[folderName] = uri
-        }
-        return this
-    }
-
-    /** Creates a folder in `root` with `parentName`. The `parentName` must be already created. */
-    fun createFolderWithParent(parentName: String, folderName: String): TestFilesRule {
-        deferredOperations.add {
-            val parentUri = createdUris[parentName]
-            requireNotNull(parentUri) { "Parent folder $parentName not initialized" }
-            val uri = docsHelper.createFolder(parentUri, folderName)
-            createdUris[folderName] = uri
-        }
-        return this
-    }
-
-    /** Creates a file in `root` with the specified `fileName` and `mimeType`. */
-    fun createFileInRoot(root: String, fileName: String, mimeType: String): TestFilesRule {
-        deferredOperations.add {
-            val rootInfo = docsHelper.getRoot(root)
-            val uri = docsHelper.createDocument(rootInfo, mimeType, fileName)
-            createdUris[fileName] = uri
         }
         return this
     }

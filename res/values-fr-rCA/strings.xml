@@ -37,6 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"Enregistrer"</string>
     <string name="menu_share" msgid="4307140947108068356">"Partager"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Supprimer"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Supprimer définitivement"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Déplacer vers la corbeille"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Tout sélectionner"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Tout désélectionner"</string>
     <string name="menu_select" msgid="1366061076507142387">"Sélectionner"</string>
@@ -137,6 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Extraction des fichiers"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Déplacement des fichiers"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Suppression des fichiers"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Fichiers à la corbeille"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Temps restant : <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">Copie de <xliff:g id="COUNT_1">%1$d</xliff:g> élément en cours…</item>
@@ -163,18 +166,22 @@
       <item quantity="many">Suppression de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
       <item quantity="other">Suppression de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Mise à la corbeille de <xliff:g id="COUNT_0">{count}</xliff:g> élément en cours…}one{Mise à la corbeille de <xliff:g id="COUNT_1">{count}</xliff:g> élément en cours…}many{Mise à la corbeille de <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments en cours…}other{Mise à la corbeille de <xliff:g id="COUNT_1">{count}</xliff:g> éléments en cours…}}"</string>
     <string name="undo" msgid="2902438994196400565">"Annuler"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Préparation en cours…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Préparation en cours…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Préparation en cours…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Préparation en cours…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Préparation en cours…"</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Préparation en cours…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> sur <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Impossible de copier <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Impossible de compresser <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Impossible d\'extraire <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible d\'extraire <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible d\'extraire <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible d\'extraire <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Impossible de déplacer <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Impossible de supprimer <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Impossible de mettre <xliff:g id="COUNT_0">{count}</xliff:g> élément à la corbeille}one{Impossible de mettre <xliff:g id="COUNT_1">{count}</xliff:g> élément à la corbeille}many{Impossible de mettre <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments à la corbeille}other{Impossible de mettre <xliff:g id="COUNT_1">{count}</xliff:g> éléments à la corbeille}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Touchez pour afficher les détails"</string>
     <string name="close" msgid="905969391788869975">"Fermer"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -224,7 +231,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Extraction de « <xliff:g id="FILENAME">{filename}</xliff:g> » vers « <xliff:g id="DIRECTORY_0">{directory}</xliff:g> » en cours…}one{Extraction de # archive vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}many{Extraction de # d\'archives vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}other{Extraction de # archives vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Déplacement de « <xliff:g id="FILENAME">{filename}</xliff:g> » vers « <xliff:g id="DIRECTORY_0">{directory}</xliff:g> » en cours…}one{Déplacement de # fichier vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}many{Déplacement de # de fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}other{Déplacement de # fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Suppression de « <xliff:g id="FILENAME">{filename}</xliff:g> » en cours…}one{Suppression de # fichier}many{Suppression de # de fichiers}other{Suppression de # fichiers}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Compression de « <xliff:g id="FILENAME">{filename}</xliff:g> » en cours…}one{Compression de # fichier en cours…}many{Compression de # de fichiers en cours…}other{Compression de # fichiers en cours…}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Mise à la corbeille de <xliff:g id="FILENAME">{filename}</xliff:g> en cours…}one{Mise à la corbeille de # fichier en cours…}many{Mise à la corbeille de # de fichiers en cours…}other{Mise à la corbeille de # fichiers en cours…}}"</string>
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Afficher la progression du fichier"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progression du fichier"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Terminé"</string>
