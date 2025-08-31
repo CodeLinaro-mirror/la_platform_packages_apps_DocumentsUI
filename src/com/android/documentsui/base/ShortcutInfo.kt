@@ -27,7 +27,7 @@ import java.util.Objects
 
 class ShortcutInfo(
     val icon: Int,
-    override val title: String,
+    override var title: String?,
     override val root: RootInfo,
     val parentDirDocumentId: String,
 ) : SidebarEntryItemInfo {

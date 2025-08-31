@@ -79,7 +79,7 @@ class GetShortcutUriTask(
                     wrap(client),
                     parentDocUri,
                     DocumentsContract.Document.MIME_TYPE_DIR,
-                    shortcut.title,
+                    shortcut.title!!,
                 )
             if (folderUri != null) {
                 Log.i(TAG, "Successfully created folder " + folderUri)
