@@ -16,6 +16,7 @@
 
 package com.android.documentsui.util
 
+import android.provider.Flags.enableDocumentsTrashApi
 import android.util.Log
 import com.android.documentsui.flags.Flags
 import com.android.modules.utils.build.SdkLevel
@@ -108,6 +109,10 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isTrashFlowEnabled(): Boolean {
+            // If API flag is not enabled, then trash flow will be disabled
+            if (!enableDocumentsTrashApi()) {
+                return false
+            }
             return getInstance().overrides.getOrDefault(
                 Flags.FLAG_ENABLE_TRASH_FLOW_RO,
                 Flags.enableTrashFlowRo()

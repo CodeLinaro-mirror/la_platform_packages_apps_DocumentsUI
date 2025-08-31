@@ -20,6 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
@@ -66,6 +67,9 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     /** Number of archives. */
     private int mArchiveCount = 0;
+
+    /** Number of trash. */
+    private int mNoTrashCount = 0;
 
     private boolean mSupportsSettings = false;
 
@@ -127,6 +131,9 @@ public class SelectionMetadata extends SelectionObserver<String>
         if ((docFlags & FLAG_CAN_DELETE) == 0) {
             mNoDeleteCount += delta;
         }
+        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_TRASH) == 0) {
+            mNoTrashCount += delta;
+        }
         if ((docFlags & Document.FLAG_SUPPORTS_RENAME) == 0) {
             mNoRenameCount += delta;
         }
@@ -149,6 +156,7 @@ public class SelectionMetadata extends SelectionObserver<String>
         mPartialCount = 0;
         mWritableDirectoryCount = 0;
         mNoDeleteCount = 0;
+        mNoTrashCount = 0;
         mNoRenameCount = 0;
         mInArchiveCount = 0;
         mArchiveCount = 0;
@@ -200,6 +208,12 @@ public class SelectionMetadata extends SelectionObserver<String>
     public boolean canDelete() {
         return size() > 0 && mNoDeleteCount == 0;
     }
+
+    @Override
+    public boolean canTrash() {
+        return size() > 0 && mNoTrashCount == 0;
+    }
+
 
     @Override
     public boolean canExtract() {

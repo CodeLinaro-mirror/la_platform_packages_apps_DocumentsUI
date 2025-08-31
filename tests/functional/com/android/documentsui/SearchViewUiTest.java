@@ -34,6 +34,8 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
@@ -57,7 +59,6 @@ import com.android.documentsui.rules.TestFilesRule;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -72,6 +73,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // UI timeout to wait for elements to appear, set to 5 seconds.
     private final int mTimeout = 5000;
+
+    private String getDeviceLabel() {
+        return Settings.Global.getString(context.getContentResolver(), Settings.Global.DEVICE_NAME);
+    }
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException, RemoteException {
@@ -513,9 +518,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchView_TogglingASearchChipClearsSelection() throws Exception {
         // Get the label of the device (this will be used to navigate to the ExternalStorageProvider
         // as the custom roots added for test do not show the search chips).
-        String deviceLabel =
-                Settings.Global.getString(
-                        context.getContentResolver(), Settings.Global.DEVICE_NAME);
+        String deviceLabel = getDeviceLabel();
 
         // Open the root and select the DCIM folder for selection.
         bots.roots.openRoot(deviceLabel);
@@ -540,7 +543,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
         directoryList.wait(hasMoreThanOneChild(), mTimeout);
 
-        // Click the search icon and wait until the only result is the file that was searced for.
+        // Click the search icon and wait until the only result is the file that was searched for.
         bots.search.expand();
         bots.search.setInputText(TestFilesRule.FILE_NAME_1);
         directoryList.wait(hasOneChild(), mTimeout);
@@ -572,8 +575,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         device.wait(Until.gone(By.displayId(R.id.progressbar)), mTimeout);
     }
 
+    /**
+     * Checks that we do not start searching until a non-null, not empty query is entered. This test
+     * is limited to Search V2, as V1 shows a view with past search queries that hides the directory
+     * listing. So while both searches behave in the same way, we can reliably verify it only in V2.
+     */
     @Test
-    @Ignore
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testEmptyQueryShowsDirectoryListing() throws UiObjectNotFoundException {
         // Assert that we are in the correct location.
         bots.breadcrumb.assertItemsPresent(ROOT_0_ID);
@@ -588,5 +596,19 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText("");
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchVisibleInSearchableRootsOnly() throws UiObjectNotFoundException {
+        // Starting in ROOT_ID_0, which is searchable.
+        assertNotNull("Icon should be visible in ROOT_0_ID", bots.search.getSearchIcon());
+        // Broken root cannot be searched.
+        bots.roots.openRoot("Broken Root Doc");
+        assertNull("Icon should not be visible ini Broken Root Doc", bots.search.getSearchIcon());
+        // Device root should be searchable.
+        String deviceLabel = getDeviceLabel();
+        bots.roots.openRoot(deviceLabel);
+        assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
     }
 }
