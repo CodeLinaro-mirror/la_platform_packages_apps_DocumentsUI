@@ -37,5 +37,8 @@
     <dimen name="picker_saver_padding_bottom">0dp</dimen>
 
     <dimen name="snackbar_max_width">840dp</dimen>
+
+    <dimen name="pick_dialog_window_margin_horizontal">@dimen/space_medium_5</dimen>
+    <dimen name="pick_dialog_window_margin_vertical">@dimen/space_medium_1</dimen>
 </resources>
 
