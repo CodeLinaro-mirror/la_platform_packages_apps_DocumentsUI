@@ -43,6 +43,7 @@ import android.net.Uri;
 import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.provider.DocumentsContract;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
@@ -52,6 +53,7 @@ import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
@@ -66,6 +68,7 @@ import com.android.documentsui.sidebar.RootsFragment;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -392,29 +395,21 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
     }
 
-    private DocumentsProviderHelper setUpShortcuts() throws Exception {
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-
-        // Mock the resource values for shortcuts
-        ShortcutResourceValues resource = new ShortcutResourceValues(
-                primaryRoot.authority,
-                primaryRoot.rootId,
-                primaryRoot.documentId,
-                SHORTCUT_ID,
-                R.drawable.ic_root_homescreen
-        );
-
+    private void setUpShortcuts(List<ShortcutResourceValues> resources) {
         // Reset and refresh the shortcut resources
         ProvidersCache providers = getProvidersCache(context);
-        providers.setShortcutResources(List.of(resource));
-        providers.updateAsync(false, null);
-        return storageDocsHelper;
+        providers.setShortcutResources(resources);
+        Collection<RootInfo> roots = providers.getRootsBlocking();
+        Collection<ShortcutInfo> shortcuts = providers.loadShortcutsForUser(userId);
+
+        mActivityScenario.onActivity(activity -> {
+            RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
+            fragment.loadFinished(roots, shortcuts, activity, activity.mState);
+        });
     }
 
     private void cleanUpShortcutFolder(DocumentsProviderHelper docsHelper,
-            String parentDocId, String shortcutTitle) {
+        String parentDocId, String shortcutTitle) {
         try {
             // Delete the folder just in case it exists
             DocumentInfo shortcutDoc =
@@ -430,15 +425,19 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testClickShortcutFolderPreExisting() throws Exception {
-        // Set up the shortcut resources and pre create the shortcut folder.
-        DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        // Set up the shortcut resources and pre create the shortcut folder.
+        ShortcutResourceValues resource = new ShortcutResourceValues(
+                primaryRoot.authority,
+                primaryRoot.rootId,
+                primaryRoot.documentId,
+                SHORTCUT_ID,
+                R.drawable.ic_root_homescreen
+        );
         cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
         storageDocsHelper.createFolder(primaryRoot.documentId, SHORTCUT_ID);
-        mActivityScenario.onActivity(activity -> {
-            RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
-            fragment.reloadRootsAndShortcuts();
-        });
+        setUpShortcuts(List.of(resource));
 
         EspressoBotsKt.openRoot(context, SHORTCUT_ID);
         bots.main.assertSearchBarGone();
@@ -461,14 +460,20 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testClickShortcutFolderNotExisting() throws Exception {
-        DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        // Set up the shortcut resources.
+        ShortcutResourceValues resource = new ShortcutResourceValues(
+                primaryRoot.authority,
+                primaryRoot.rootId,
+                primaryRoot.documentId,
+                SHORTCUT_ID,
+                R.drawable.ic_root_homescreen
+        );
+        setUpShortcuts(List.of(resource));
+        // Ensure that the shortcut folder is yet to exist.
         cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
         storageDocsHelper.assertDoesNotExist(primaryRoot.documentId, SHORTCUT_ID);
-        mActivityScenario.onActivity(activity -> {
-            RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
-            fragment.reloadRootsAndShortcuts();
-        });
 
         EspressoBotsKt.openRoot(context, SHORTCUT_ID);
         bots.main.assertSearchBarGone();
@@ -488,4 +493,82 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
     }
 
+    private String getOrCreateFolderDocId(DocumentsProviderHelper docsHelper, String parentDocId,
+            String folderName) throws Exception {
+        DocumentInfo info = docsHelper.findDocument(parentDocId, folderName);
+        if (info == null) {
+            Uri folderUri = docsHelper.createFolder(parentDocId, folderName);
+            return DocumentsContract.getDocumentId(folderUri);
+        } else {
+            return info.documentId;
+        }
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testNavigateOnShortcutToParentFolderByBreadcrumb() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        String folder1Id =
+                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder 1");
+        String folder2Id =
+                getOrCreateFolderDocId(storageDocsHelper, folder1Id, "Folder 2");
+        // Set up the shortcut resources and pre create the shortcut folder.
+        // Mock the resource values for shortcuts
+        List<ShortcutResourceValues> resources = List.of(
+                new ShortcutResourceValues(
+                        primaryRoot.authority,
+                        primaryRoot.rootId,
+                        folder2Id,
+                        "Folder 3",
+                        R.drawable.ic_root_smartphone));
+        setUpShortcuts(resources);
+
+        bots.roots.openRoot("Folder 3");
+        bots.main.assertWindowTitle("Folder 3");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
+
+        bots.breadcrumb.clickItem("Folder 2");
+        bots.main.assertWindowTitle("Folder 2");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2");
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testBreadcrumbItemsUpdatedSwitchBetweenShortcuts() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        String folder1Id =
+                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder 1");
+        String folder2Id =
+                getOrCreateFolderDocId(storageDocsHelper, folder1Id, "Folder 2");
+        String folderAId =
+                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder A");
+        String folderBId =
+                getOrCreateFolderDocId(storageDocsHelper, folderAId, "Folder B");
+        // Set up the shortcut resources and pre create the shortcut folder.
+        // Mock the resource values for shortcuts
+        List<ShortcutResourceValues> resources = List.of(
+                new ShortcutResourceValues(
+                        primaryRoot.authority,
+                        primaryRoot.rootId,
+                        folderBId,
+                        "Folder C",
+                        R.drawable.ic_root_homescreen),
+                new ShortcutResourceValues(
+                        primaryRoot.authority,
+                        primaryRoot.rootId,
+                        folder2Id,
+                        "Folder 3",
+                R.drawable.ic_root_smartphone));
+        setUpShortcuts(resources);
+
+        bots.roots.openRoot("Folder 3");
+        bots.main.assertWindowTitle("Folder 3");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
+
+        bots.roots.openRoot("Folder C");
+        bots.main.assertWindowTitle("Folder C");
+        bots.breadcrumb.assertItemsPresent("Folder A", "Folder B", "Folder C");
+    }
 }
