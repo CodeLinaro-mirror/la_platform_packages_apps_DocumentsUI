@@ -956,6 +956,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                         && !allowedUsers.isEmpty()) {
                     // start with the next available user. This could be any user.
                     initialUser = allowedUsers.get(0);
+
+                    RootInfo newRoot = RootInfo.copyRootInfo(mState.stack.getRoot());
+                    newRoot.userId = initialUser;
+                    mState.stack.changeRoot(newRoot);
                 }
             }
 
