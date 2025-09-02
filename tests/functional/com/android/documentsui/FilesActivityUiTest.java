@@ -524,13 +524,67 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                         R.drawable.ic_root_smartphone));
         setUpShortcuts(resources);
 
-        bots.roots.openRoot("Folder 3");
+        EspressoBotsKt.openRoot(context, "Folder 3");
         bots.main.assertWindowTitle("Folder 3");
         bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
+        bots.roots.assertItemSelected("Folder 3");
 
         bots.breadcrumb.clickItem("Folder 2");
         bots.main.assertWindowTitle("Folder 2");
         bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2");
+        // Shortcut item no longer selected after clicking on the parent folder in the breadcrumb
+        bots.roots.assertItemSelected(primaryRoot.title);
+        bots.roots.assertItemNotSelected("Folder 3");
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testNavigateOnShortcutToChildFolderSelectionRemains() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        String folder1Id =
+                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder 1");
+        String folder2Id =
+                getOrCreateFolderDocId(storageDocsHelper, folder1Id, "Folder 2");
+        String folder3Id =
+                getOrCreateFolderDocId(storageDocsHelper, folder2Id, "Folder 3");
+        getOrCreateFolderDocId(storageDocsHelper, folder3Id, "Folder 4");
+        // Set up the shortcut resources and pre create the shortcut folder.
+        // Mock the resource values for shortcuts
+        List<ShortcutResourceValues> resources = List.of(
+                new ShortcutResourceValues(
+                        primaryRoot.authority,
+                        primaryRoot.rootId,
+                        folder1Id,
+                        "Folder 2",
+                        R.drawable.ic_root_smartphone));
+        setUpShortcuts(resources);
+
+        // We will have a chain of folders like so: storage -> 1 -> 2 (shortcut) -> 3 -> 4
+        EspressoBotsKt.openRoot(context, "Folder 2");
+        bots.main.assertWindowTitle("Folder 2");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2");
+        bots.roots.assertItemSelected("Folder 2");
+
+        // Open "Folder 3" from directory list, sidebar selection should remain on Folder 2.
+        bots.directory.openDocument("Folder 3");
+        bots.main.assertWindowTitle("Folder 3");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
+        bots.roots.assertItemSelected("Folder 2");
+
+        // Open "Folder 4" from directory list, sidebar selection should remain on Folder 2.
+        bots.directory.openDocument("Folder 4");
+        bots.main.assertWindowTitle("Folder 4");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3", "Folder 4");
+        bots.roots.assertItemSelected("Folder 2");
+
+        // Open "Folder 3" from breadcrumb bar, sidebar selection should remain on Folder 2.
+        bots.breadcrumb.clickItem("Folder 3");
+        bots.main.assertWindowTitle("Folder 3");
+        bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
+        // Shortcut item no longer selected after clicking on the parent folder in the breadcrumb
+        bots.roots.assertItemSelected("Folder 2");
+        bots.roots.assertItemNotSelected(primaryRoot.title);
     }
 
     @Test
@@ -563,11 +617,11 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                 R.drawable.ic_root_smartphone));
         setUpShortcuts(resources);
 
-        bots.roots.openRoot("Folder 3");
+        EspressoBotsKt.openRoot(context, "Folder 3");
         bots.main.assertWindowTitle("Folder 3");
         bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
 
-        bots.roots.openRoot("Folder C");
+        EspressoBotsKt.openRoot(context, "Folder C");
         bots.main.assertWindowTitle("Folder C");
         bots.breadcrumb.assertItemsPresent("Folder A", "Folder B", "Folder C");
     }
