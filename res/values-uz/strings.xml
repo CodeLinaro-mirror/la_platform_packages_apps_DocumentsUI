@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> fayli <xliff:g id="DIRECTORY_0">{directory}</xliff:g> jildiga olinmoqda}other{# ta fayl <xliff:g id="DIRECTORY_1">{directory}</xliff:g> jildiga olinmoqda}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” fayli oʻchirilmoqda}other{# ta fayl oʻchirilmoqda}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> fayli chiqitdonga tashlanmoqda}other{# ta fayl chiqitdonga tashlanmoqda}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” fayli arxivlanmoqda}other{# ta fayl arxivlanmoqda}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Fayl rivojini chiqarish"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Fayl qayta ishlanmoqda"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Bajarildi"</string>

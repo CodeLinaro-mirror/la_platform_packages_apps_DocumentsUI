@@ -244,8 +244,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Perkeliamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ į katalogą „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Perkeliamas # failas į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}few{Perkeliami # failai į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}many{Perkeliama # failo į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Perkeliama # failų į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Ištrinamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Ištrinamas # failas}few{Ištrinami # failai}many{Ištrinama # failo}other{Ištrinama # failų}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{„<xliff:g id="FILENAME">{filename}</xliff:g>“ perkeliamas į šiukšliadėžę}one{# failas perkeliamas į šiukšlinę}few{# failai perkeliami į šiukšlinę}many{# failo perkeliama į šiukšlinę}other{# failų perkeliama į šiukšlinę}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Glaudinamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Glaudinamas # failas}few{Glaudinami # failai}many{Glaudinama # failo}other{Glaudinama # failų}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Rodyti failo eigą"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Failo eiga"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Užbaigta"</string>

@@ -37,10 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"שמירה"</string>
     <string name="menu_share" msgid="4307140947108068356">"שיתוף"</string>
     <string name="menu_delete" msgid="1022254131543256626">"מחיקה"</string>
-    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
-    <skip />
-    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
-    <skip />
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"מחיקה לתמיד"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"העברה לאשפה"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"בחירת הכול"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"ביטול הבחירה של הכול"</string>
     <string name="menu_select" msgid="1366061076507142387">"בחירה"</string>
@@ -141,8 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"המערכת מחלצת קבצים"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"בתהליך העברת קבצים"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"מחיקת קבצים"</string>
-    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
-    <skip />
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"הקבצים מועברים לאשפה"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> נותרו"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">מתבצעת העתקה של <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים.</item>
@@ -169,26 +166,22 @@
       <item quantity="two">מתבצעת מחיקה של <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים.</item>
       <item quantity="other">מתבצעת מחיקה של <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים.</item>
     </plurals>
-    <!-- no translation found for trashing (4643112474465979863) -->
-    <skip />
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{מתבצעת העברה של פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>) לאשפה}one{מתבצעת העברה של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים לאשפה}two{מתבצעת העברה של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים לאשפה}other{מתבצעת העברה של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים לאשפה}}"</string>
     <string name="undo" msgid="2902438994196400565">"ביטול"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"בהכנה…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"בהכנה…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"בהכנה…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"בהכנה…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"בהכנה…"</string>
-    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
-    <skip />
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"בהכנה…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"‫<xliff:g id="COUNT_0">%1$d</xliff:g> מתוך <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{לא הצלחנו להעתיק פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו להעתיק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו להעתיק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו להעתיק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{לא הצלחנו לדחוס את הנתונים של פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו לדחוס את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו לדחוס את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו לדחוס את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{לא הצלחנו לחלץ את הנתונים של פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו לחלץ את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו לחלץ את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו לחלץ את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{לא הצלחנו להעביר פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{לא הצלחנו למחוק פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו למחוק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו למחוק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו למחוק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
-    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
-    <skip />
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{לא הצלחנו להעביר פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>) לאשפה}one{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים לאשפה}two{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים לאשפה}other{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים לאשפה}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"יש ללחוץ להצגת הפרטים"</string>
     <string name="close" msgid="905969391788869975">"סגירה"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -238,10 +231,8 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{הקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\" מחולץ אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# ארכיונים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# ארכיונים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# ארכיונים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{המערכת מעבירה את \"<xliff:g id="FILENAME">{filename}</xliff:g>\" אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{מתבצעת מחיקה של \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת מחיקה של # קבצים}two{מתבצעת מחיקה של # קבצים}other{מתבצעת מחיקה של # קבצים}}"</string>
-    <!-- no translation found for trash_in_progress (6889113199087672853) -->
-    <skip />
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{מתבצעת העברה לאשפה של <xliff:g id="FILENAME">{filename}</xliff:g>}one{מתבצעת העברה של # קבצים לאשפה}two{מתבצעת העברה של # קבצים לאשפה}other{מתבצעת העברה של # קבצים לאשפה}}"</string>
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{מתבצעת דחיסה לקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת דחיסה ל-# קבצים}two{מתבצעת דחיסה ל-# קבצים}other{מתבצעת דחיסה ל-# קבצים}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"הצגת ההתקדמות בהעלאת הקובץ"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ההתקדמות בפעולה בקובץ"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"הפעולה הסתיימה"</string>
