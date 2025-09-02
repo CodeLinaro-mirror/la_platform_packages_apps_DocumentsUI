@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ಅನ್ನು “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” ಗೆ ಮೂವ್ ಮಾಡಲಾಗುತ್ತಿದೆ}one{# ಫೈಲ್‌ಗಳನ್ನು “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ಗೆ ಮೂವ್ ಮಾಡಲಾಗುತ್ತಿದೆ}other{# ಫೈಲ್‌ಗಳನ್ನು “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ಗೆ ಮೂವ್ ಮಾಡಲಾಗುತ್ತಿದೆ}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ಅನ್ನು ಅಳಿಸಲಾಗುತ್ತಿದೆ}one{# ಫೈಲ್‌ಗಳನ್ನು ಅಳಿಸಲಾಗುತ್ತಿದೆ}other{# ಫೈಲ್‌ಗಳನ್ನು ಅಳಿಸಲಾಗುತ್ತಿದೆ}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ಅನ್ನು ಟ್ರ್ಯಾಶ್‌ಗೆ ಸರಿಸಲಾಗುತ್ತಿದೆ}one{# ಫೈಲ್‌ಗಳನ್ನು ಟ್ರ್ಯಾಶ್‌ಗೆ ಸರಿಸಲಾಗುತ್ತಿದೆ}other{# ಫೈಲ್‌ಗಳನ್ನು ಟ್ರ್ಯಾಶ್‌ಗೆ ಸರಿಸಲಾಗುತ್ತಿದೆ}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ಅನ್ನು ಜಿಪ್ ಮಾಡಲಾಗುತ್ತಿದೆ}one{# ಫೈಲ್‌ಗಳನ್ನು ಜಿಪ್ ಮಾಡಲಾಗುತ್ತಿದೆ}other{# ಫೈಲ್‌ಗಳನ್ನು ಜಿಪ್ ಮಾಡಲಾಗುತ್ತಿದೆ}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ಫೈಲ್ ಪ್ರಗತಿಯನ್ನು ತೋರಿಸಿ"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ಫೈಲ್ ಪ್ರಗತಿ"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"ಪೂರ್ಣಗೊಂಡಿದೆ"</string>
