@@ -43,7 +43,7 @@ class FlagUtils private constructor(
                 Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
                 Flags.FLAG_VISUAL_SIGNALS_RO,
                 Flags.FLAG_ZIP_NG_RO,
-                Flags.FLAG_HOME_SCREEN_FILES,
+                Flags.FLAG_HOME_SCREEN_FILES_RO,
             )
 
         @JvmStatic
@@ -144,10 +144,10 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isHomeScreenFilesFlagEnabled(): Boolean {
-            val flag = getInstance().overrides.getOrDefault(
-                Flags.FLAG_HOME_SCREEN_FILES,
-                Flags.homeScreenFiles()
-            )
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.homeScreenFilesRo())
             return flag && isUseMaterial3FlagEnabled()
         }
     }
