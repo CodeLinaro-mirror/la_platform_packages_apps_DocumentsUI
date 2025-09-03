@@ -492,11 +492,26 @@
         <item quantity="other">These files weren\u2019t copied: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
 
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be copied.  [CHAR_LIMIT=48] -->
+    <string name="copy_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t copied: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t copied: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
+
     <!-- Contents of the compressing failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="compress_failure_alert_content">
         <item quantity="one">This file wasn\u2019t compressed: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
         <item quantity="other">These files weren\u2019t compressed: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be zipped, i.e. bundled together and compressed into a ZIP
+         archive.  [CHAR_LIMIT=48] -->
+    <string name="compress_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t zipped: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t zipped: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
 
     <!-- Contents of the extracting failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="extract_failure_alert_content">
@@ -504,11 +519,25 @@
         <item quantity="other">These files weren\u2019t extracted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
 
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be extracted from an archive.  [CHAR_LIMIT=48] -->
+    <string name="extract_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t extracted: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t extracted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
+
     <!-- Contents of the moving failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="move_failure_alert_content">
         <item quantity="one">This file wasn\u2019t moved: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
         <item quantity="other">These files weren\u2019t moved: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be moved from one folder to another.  [CHAR_LIMIT=48] -->
+    <string name="move_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t moved: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t moved: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
 
     <!-- Contents of the deleting failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="delete_failure_alert_content">
@@ -516,11 +545,25 @@
         <item quantity="other">These files weren\u2019t deleted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
 
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be deleted.  [CHAR_LIMIT=48] -->
+    <string name="delete_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t deleted: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t deleted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
+
     <!-- Contents of the copying warning dialog due to converted files. [CHAR LIMIT=64] -->
     <plurals name="copy_converted_warning_content">
         <item quantity="one">This file was converted to another format: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
         <item quantity="other">These files were converted to another format: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
+
+    <!-- Warning message shown by the Android File Manager when one or more
+         files were converted to another format.  [CHAR_LIMIT=48] -->
+    <string name="copy_converted_warning_content">{count, plural,
+        =1 {This file was converted to another format: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files were converted to another format: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
 
     <!-- Toast shown when a user copies files to clipboard. -->
     <plurals name="clipboard_files_clipped">
