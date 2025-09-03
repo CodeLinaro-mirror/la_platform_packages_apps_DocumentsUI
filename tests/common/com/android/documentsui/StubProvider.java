@@ -39,6 +39,8 @@ import android.provider.DocumentsProvider;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import java.io.File;
@@ -292,20 +294,72 @@ public class StubProvider extends DocumentsProvider {
         String fileDocumentId = getDocumentIdForFile(file);
         mStorage.remove(fileDocumentId);
 
-        StubDocument trashedFileDocument = StubDocument.createRegularDocument(file,
-                Document.MIME_TYPE_DIR, parentStubDocument);
-        mStorage.put(trashedFileDocument.documentId, trashedFileDocument);
+        String mimeType = "text/plain";
+        if (file.isDirectory()) {
+            mimeType = Document.MIME_TYPE_DIR;
+        }
+
+        StubDocument stubDocument = StubDocument.createRegularDocument(file,
+                mimeType, parentStubDocument);
+        mStorage.put(stubDocument.documentId, stubDocument);
 
         if (file.isDirectory()) {
             File[] filesInDirectory = file.listFiles();
             if (filesInDirectory != null) {
                 for (File subFile : filesInDirectory) {
-                    processFilesRecursively(subFile, trashedFileDocument);
+                    processFilesRecursively(subFile, stubDocument);
                 }
             }
         }
 
-        return trashedFileDocument;
+        return stubDocument;
+    }
+
+    @Nullable
+    @Override
+    public String restoreDocumentFromTrash(@NonNull String documentId,
+            @Nullable String targetParentDocumentId) throws FileNotFoundException {
+        final StubDocument document = mStorage.get(documentId);
+        if (document == null) {
+            throw new FileNotFoundException("Document not found: " + documentId);
+        }
+
+        final File originalFile = document.file;
+        if (!originalFile.exists()) {
+            throw new FileNotFoundException("File does not exist: " + originalFile.getPath());
+        }
+
+        StubDocument rootDocument = document.rootInfo.document;
+
+        final File rootFile = rootDocument.file;
+
+        if (!originalFile.getPath().startsWith(rootFile.getPath())) {
+            throw new FileNotFoundException(
+                    "File does not exist in the expected root: " + rootDocument.documentId);
+        }
+
+        String targetParentPath = null;
+        if (targetParentDocumentId != null) {
+            final StubDocument targetParentDocument = mStorage.get(targetParentDocumentId);
+            if (targetParentDocument == null) {
+                throw new FileNotFoundException("Document not found: " + targetParentDocumentId);
+            }
+            targetParentPath = targetParentDocument.file.getPath();
+        }
+
+        String restoredPath = RestoreDocumentHelper.INSTANCE.restoreFileFromTrash(rootFile,
+                originalFile.getPath(), targetParentPath);
+
+        mStorage.remove(documentId);
+
+        File[] filesInDirectory = rootFile.listFiles();
+        if (filesInDirectory != null) {
+            for (File subFile : filesInDirectory) {
+                processFilesRecursively(subFile, rootDocument);
+            }
+        }
+
+        return restoredPath;
     }
 
     @Override

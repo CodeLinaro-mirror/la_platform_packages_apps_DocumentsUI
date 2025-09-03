@@ -94,6 +94,19 @@ public final class Snackbars {
         makeSnackbar(activity, message, Snackbar.LENGTH_LONG).show();
     }
 
+    /**
+     * Show Restore snackbar
+     */
+    public static void showRestore(Activity activity, int docCount) {
+        Map<String, Object> formatArgs = new HashMap<>();
+        formatArgs.put("count", docCount);
+
+        String message = new MessageFormat(
+                activity.getString(getRes(R.string.restoring_from_trash)),
+                Locale.getDefault()).format(formatArgs);
+        makeSnackbar(activity, message, Snackbar.LENGTH_LONG).show();
+    }
+
     public static final void showOperationRejected(Activity activity) {
         makeSnackbar(activity, getRes(R.string.file_operation_rejected), Snackbar.LENGTH_LONG)
                 .show();

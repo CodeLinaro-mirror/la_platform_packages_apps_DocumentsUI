@@ -22,6 +22,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_CO
 import static com.android.documentsui.services.FileOperationService.OPERATION_COPY;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_EXTRACT;
+import static com.android.documentsui.services.FileOperationService.OPERATION_RESTORE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_TRASH;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
@@ -269,6 +270,9 @@ public abstract class FileOperation implements Parcelable {
                 case OPERATION_TRASH:
                     return new TrashJob(service, listener, id, getDestination(), getSrc(),
                             features);
+                case OPERATION_RESTORE:
+                    return new RestoreJob(service, listener, id, getDestination(),
+                            getSrc(), features);
                 default:
                     throw new UnsupportedOperationException("Unsupported op type: " + getOpType());
             }
@@ -347,6 +351,7 @@ public abstract class FileOperation implements Parcelable {
                 case OPERATION_COMPRESS:
                     return new CompressOperation(mSrcs, mDestination);
                 case OPERATION_TRASH:
+                case OPERATION_RESTORE:
                 case OPERATION_MOVE:
                 case OPERATION_DELETE:
                     return new MoveDeleteOperation(mOpType, mSrcs, mDestination, mSrcParent);

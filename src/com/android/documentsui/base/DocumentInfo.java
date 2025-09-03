@@ -18,6 +18,7 @@ package com.android.documentsui.base;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -246,6 +247,7 @@ public class DocumentInfo implements Durable, Parcelable {
                 + ", isVirtual=" + isVirtual()
                 + ", isDeleteSupported=" + isDeleteSupported()
                 + ", isTrashSupported=" + isTrashSupported()
+                + ", isRestoreSupported=" + isRestoreSupported()
                 + ", isCreateSupported=" + isCreateSupported()
                 + ", isMoveSupported=" + isMoveSupported()
                 + ", isRenameSupported=" + isRenameSupported()
@@ -263,10 +265,25 @@ public class DocumentInfo implements Durable, Parcelable {
         return (flags & Document.FLAG_SUPPORTS_DELETE) != 0;
     }
 
+    /**
+     * Returns {@code true} if this document supports being trashed.
+     */
     public boolean isTrashSupported() {
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
         return (flags & Document.FLAG_SUPPORTS_TRASH) != 0;
     }
 
+    /**
+     * Returns {@code true} if this document supports being restored.
+     */
+    public boolean isRestoreSupported() {
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
+        return (flags & Document.FLAG_SUPPORTS_RESTORE) != 0;
+    }
 
     public boolean isMetadataSupported() {
         return (flags & Document.FLAG_SUPPORTS_METADATA) != 0;

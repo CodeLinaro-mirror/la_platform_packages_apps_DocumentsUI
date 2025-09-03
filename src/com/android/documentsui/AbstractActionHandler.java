@@ -756,6 +756,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         throw new UnsupportedOperationException("Trash document not supported!");
     }
 
+    @Override
+    public void restoreSelectedDocumentsFromTrash(List<DocumentInfo> docs) {
+        throw new UnsupportedOperationException("Restore document not supported!");
+    }
+
     protected final void loadDocument(Uri uri, UserId userId, LoadDocStackCallback callback) {
         new LoadDocStackTask(
                 mActivity,
