@@ -618,6 +618,11 @@
     <!-- File name of an archive file created when compressing files, without the file extension (.zip). -->
     <string name="new_archive_file_name">archive<xliff:g id="extension" example=".zip">%s</xliff:g></string>
 
+    <!-- This string is used by the File Manager as the file name for the created ZIP archive when
+    two or more item are zipped (i.e. bundled and compressed) together. In this context, the word
+    "Archive" is a noun as in "An archive", and not a verb. [CHAR_LIMIT=28] -->
+    <string name="new_archive_file_name_2">Archive</string>
+
     <!-- Dialog text shown when confirming if they want to overwrite a file -->
     <string name="overwrite_file_confirmation_message">Overwrite <xliff:g id="name" example="foobar.txt">%1$s</xliff:g>?</string>
 
