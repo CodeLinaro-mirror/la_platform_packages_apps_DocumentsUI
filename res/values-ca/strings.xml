@@ -232,8 +232,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{S\'està movent <xliff:g id="FILENAME">{filename}</xliff:g> a <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}many{S\'estan movent # de fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{S\'estan movent # fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{S\'està suprimint <xliff:g id="FILENAME">{filename}</xliff:g>}many{S\'estan suprimint # de fitxers}other{S\'estan suprimint # fitxers}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{S\'està enviant <xliff:g id="FILENAME">{filename}</xliff:g> a la paperera}many{S\'estan enviant # de fitxers a la paperera}other{S\'estan enviant # fitxers a la paperera}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{S\'està comprimint <xliff:g id="FILENAME">{filename}</xliff:g>}many{S\'estan comprimint # de fitxers}other{S\'estan comprimint # fitxers}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostra el progrés del fitxer"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progrés del fitxer"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Completat"</string>
@@ -297,6 +296,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"No es pot mostrar el contingut"</string>
     <string name="sign_in" msgid="6253762676723505592">"Inicia la sessió"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"fitxer<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Vols sobreescriure <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Continua en segon pla"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
