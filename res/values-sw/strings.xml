@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Inahamishia “<xliff:g id="FILENAME">{filename}</xliff:g>” kwenye “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Inahamishia faili # kwenye “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Inafuta “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Inafuta faili #}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Inaweka <xliff:g id="FILENAME">{filename}</xliff:g> kwenye tupio}other{Inaweka faili # kwenye tupio}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Inabana “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Inabana faili #}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Onyesha hatua za faili"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Hatua za Faili"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Imekamilika"</string>

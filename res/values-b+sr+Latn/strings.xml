@@ -232,8 +232,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Premešta se <xliff:g id="FILENAME">{filename}</xliff:g> u <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Premešta se # fajl u <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}few{Premeštaju se # fajla u <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Premešta se # fajlova u <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Briše se <xliff:g id="FILENAME">{filename}</xliff:g>}one{Briše se # fajl}few{Brišu se # fajla}other{Briše se # fajlova}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Fajl <xliff:g id="FILENAME">{filename}</xliff:g> se premešta u otpad}one{# fajl se premešta u otpad}few{# fajla se premeštaju u otpad}other{# fajlova se premešta u otpad}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Zipuje se <xliff:g id="FILENAME">{filename}</xliff:g>}one{Zipuje se # fajl}few{Zipuju se # fajla}other{Zipuje se # fajlova}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Prikažite napredak fajla"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Napredak fajla"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Završeno"</string>

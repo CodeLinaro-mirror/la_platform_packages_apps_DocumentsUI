@@ -37,10 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"Desa"</string>
     <string name="menu_share" msgid="4307140947108068356">"Comparteix"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Suprimeix"</string>
-    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
-    <skip />
-    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
-    <skip />
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Suprimeix permanentment"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Mou a la paperera"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Selecciona-ho tot"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Desselecciona-ho tot"</string>
     <string name="menu_select" msgid="1366061076507142387">"Selecciona"</string>
@@ -141,8 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Extraient els fitxers"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"S\'estan movent fitxers"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Suprimint els fitxers"</string>
-    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
-    <skip />
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"S\'estan enviant fitxers a la paperera"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Temps restant: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="many">S\'estan copiant <xliff:g id="COUNT_1">%1$d</xliff:g> elements.</item>
@@ -169,26 +166,22 @@
       <item quantity="other">S\'estan suprimint <xliff:g id="COUNT_1">%1$d</xliff:g> elements.</item>
       <item quantity="one">S\'està suprimint <xliff:g id="COUNT_0">%1$d</xliff:g> element.</item>
     </plurals>
-    <!-- no translation found for trashing (4643112474465979863) -->
-    <skip />
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{S\'està enviant <xliff:g id="COUNT_0">{count}</xliff:g> element a la paperera}many{S\'estan enviant <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements a la paperera}other{S\'estan enviant <xliff:g id="COUNT_1">{count}</xliff:g> elements a la paperera}}"</string>
     <string name="undo" msgid="2902438994196400565">"Desfés"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"S\'està preparant..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"S\'està preparant..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"S\'està preparant..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"S\'està preparant..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"S\'està preparant..."</string>
-    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
-    <skip />
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"S\'està preparant..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{No s\'ha pogut copiar <xliff:g id="COUNT_0">{count}</xliff:g> element}many{No s\'han pogut copiar <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements}other{No s\'han pogut copiar <xliff:g id="COUNT_1">{count}</xliff:g> elements}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{No s\'ha pogut comprimir <xliff:g id="COUNT_0">{count}</xliff:g> element}many{No s\'han pogut comprimir <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements}other{No s\'han pogut comprimir <xliff:g id="COUNT_1">{count}</xliff:g> elements}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{No s\'ha pogut extreure <xliff:g id="COUNT_0">{count}</xliff:g> element}many{No s\'han pogut extreure <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements}other{No s\'han pogut extreure <xliff:g id="COUNT_1">{count}</xliff:g> elements}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{No s\'ha pogut moure <xliff:g id="COUNT_0">{count}</xliff:g> element}many{No s\'han pogut moure <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements}other{No s\'han pogut moure <xliff:g id="COUNT_1">{count}</xliff:g> elements}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{No s\'ha pogut suprimir <xliff:g id="COUNT_0">{count}</xliff:g> element}many{No s\'han pogut suprimir <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements}other{No s\'han pogut suprimir <xliff:g id="COUNT_1">{count}</xliff:g> elements}}"</string>
-    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
-    <skip />
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{No s\'ha pogut moure <xliff:g id="COUNT_0">{count}</xliff:g> element a la paperera}many{No s\'han pogut moure <xliff:g id="COUNT_1">{count}</xliff:g> d\'elements a la paperera}other{No s\'han pogut moure <xliff:g id="COUNT_1">{count}</xliff:g> elements a la paperera}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Toca per veure\'n els detalls"</string>
     <string name="close" msgid="905969391788869975">"Tanca"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -238,8 +231,7 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{S\'està extraient <xliff:g id="FILENAME">{filename}</xliff:g> a <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}many{S\'estan extraient # d\'arxius a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{S\'estan extraient # arxius a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{S\'està movent <xliff:g id="FILENAME">{filename}</xliff:g> a <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}many{S\'estan movent # de fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{S\'estan movent # fitxers a <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{S\'està suprimint <xliff:g id="FILENAME">{filename}</xliff:g>}many{S\'estan suprimint # de fitxers}other{S\'estan suprimint # fitxers}}"</string>
-    <!-- no translation found for trash_in_progress (6889113199087672853) -->
-    <skip />
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{S\'està enviant <xliff:g id="FILENAME">{filename}</xliff:g> a la paperera}many{S\'estan enviant # de fitxers a la paperera}other{S\'estan enviant # fitxers a la paperera}}"</string>
     <!-- no translation found for compress_in_progress (6585173688835909381) -->
     <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostra el progrés del fitxer"</string>

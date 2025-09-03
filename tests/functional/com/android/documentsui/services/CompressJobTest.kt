@@ -16,13 +16,19 @@
 package com.android.documentsui.services
 
 import android.net.Uri
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract.Document.MIME_TYPE_DIR
 import android.provider.DocumentsContract.buildDocumentUri
 import android.util.Log
 import androidx.test.filters.MediumTest
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO
 import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.services.CompressJob.getArchiveName
 import com.android.documentsui.services.FileOperationService.OPERATION_COMPRESS
+import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import org.junit.Rule
@@ -34,6 +40,76 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
     @get:Rule val setFlags = OverrideFlagsRule()
 
     private data class Entry(val size: Long, val mimeType: String)
+
+    /* Tests CompressJob.getArchiveName(). */
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO)
+    fun archiveName() {
+        assertThat(getArchiveName("Test", false)).isEqualTo("Test.zip")
+        assertThat(getArchiveName("Test.", false)).isEqualTo("Test..zip")
+        assertThat(getArchiveName("Test.a", false)).isEqualTo("Test.zip")
+        assertThat(getArchiveName("Test.a.b.c", false)).isEqualTo("Test.a.b.zip")
+        assertThat(getArchiveName("Test.txt", false)).isEqualTo("Test.zip")
+        assertThat(getArchiveName("Test.TooLongToBeAnExtension", false))
+            .isEqualTo("Test.TooLongToBeAnExtension.zip")
+        assertThat(getArchiveName("Test....txt", false)).isEqualTo("Test....zip")
+        assertThat(getArchiveName("Test...", false)).isEqualTo("Test....zip")
+        assertThat(getArchiveName(".Test", false)).isEqualTo(".Test.zip")
+        assertThat(getArchiveName(".Test.", false)).isEqualTo(".Test..zip")
+        assertThat(getArchiveName(".Test.txt", false)).isEqualTo(".Test.zip")
+        assertThat(getArchiveName("...", false)).isEqualTo("....zip")
+        assertThat(getArchiveName("...Test", false)).isEqualTo("...zip")
+
+        assertThat(getArchiveName("Test", true)).isEqualTo("Test.zip")
+        assertThat(getArchiveName("Test.", true)).isEqualTo("Test..zip")
+        assertThat(getArchiveName("Test.a", true)).isEqualTo("Test.a.zip")
+        assertThat(getArchiveName("Test.a.b.c", true)).isEqualTo("Test.a.b.c.zip")
+        assertThat(getArchiveName("Test.txt", true)).isEqualTo("Test.txt.zip")
+        assertThat(getArchiveName("Test.ToLongToBeAnExtension", true))
+            .isEqualTo("Test.ToLongToBeAnExtension.zip")
+        assertThat(getArchiveName("Test....txt", true)).isEqualTo("Test....txt.zip")
+        assertThat(getArchiveName("Test...", true)).isEqualTo("Test....zip")
+        assertThat(getArchiveName(".Test", true)).isEqualTo(".Test.zip")
+        assertThat(getArchiveName(".Test.", true)).isEqualTo(".Test..zip")
+        assertThat(getArchiveName(".Test.txt", true)).isEqualTo(".Test.txt.zip")
+        assertThat(getArchiveName("...", true)).isEqualTo("....zip")
+        assertThat(getArchiveName("...Test", true)).isEqualTo("...Test.zip")
+    }
+
+    /* Tests CompressJob.getArchiveName(). */
+    @Test
+    @DisableFlags(FLAG_ZIP_NG_RO)
+    fun archiveNameOld() {
+        assertThat(getArchiveName("Test", false)).isEqualTo("Test.zip")
+        assertThat(getArchiveName("Test.", false)).isEqualTo("Test..zip")
+        assertThat(getArchiveName("Test.a", false)).isEqualTo("Test.a.zip")
+        assertThat(getArchiveName("Test.a.b.c", false)).isEqualTo("Test.a.b.c.zip")
+        assertThat(getArchiveName("Test.txt", false)).isEqualTo("Test.txt.zip")
+        assertThat(getArchiveName("Test.ToLongToBeAnExtension", false))
+            .isEqualTo("Test.ToLongToBeAnExtension.zip")
+        assertThat(getArchiveName("Test....txt", false)).isEqualTo("Test....txt.zip")
+        assertThat(getArchiveName("Test...", false)).isEqualTo("Test....zip")
+        assertThat(getArchiveName(".Test", false)).isEqualTo(".Test.zip")
+        assertThat(getArchiveName(".Test.", false)).isEqualTo(".Test..zip")
+        assertThat(getArchiveName(".Test.txt", false)).isEqualTo(".Test.txt.zip")
+        assertThat(getArchiveName("...", false)).isEqualTo("....zip")
+        assertThat(getArchiveName("...Test", false)).isEqualTo("...Test.zip")
+
+        assertThat(getArchiveName("Test", true)).isEqualTo("Test.zip")
+        assertThat(getArchiveName("Test.", true)).isEqualTo("Test..zip")
+        assertThat(getArchiveName("Test.a", true)).isEqualTo("Test.a.zip")
+        assertThat(getArchiveName("Test.a.b.c", true)).isEqualTo("Test.a.b.c.zip")
+        assertThat(getArchiveName("Test.txt", true)).isEqualTo("Test.txt.zip")
+        assertThat(getArchiveName("Test.ToLongToBeAnExtension", true))
+            .isEqualTo("Test.ToLongToBeAnExtension.zip")
+        assertThat(getArchiveName("Test....txt", true)).isEqualTo("Test....txt.zip")
+        assertThat(getArchiveName("Test...", true)).isEqualTo("Test....zip")
+        assertThat(getArchiveName(".Test", true)).isEqualTo(".Test.zip")
+        assertThat(getArchiveName(".Test.", true)).isEqualTo(".Test..zip")
+        assertThat(getArchiveName(".Test.txt", true)).isEqualTo(".Test.txt.zip")
+        assertThat(getArchiveName("...", true)).isEqualTo("....zip")
+        assertThat(getArchiveName("...Test", true)).isEqualTo("...Test.zip")
+    }
 
     /** Tests zipping one file. */
     @Test
@@ -70,7 +146,45 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
             assertThat(destination!!.peek().displayName).isEqualTo("TEST_ROOT_0")
         }
 
-        assertTreeIs(mutableMapOf("/Test.txt" to textEntry(14), "/Test.txt.zip" to zipEntry(146)))
+        val archivePath = if (isZipNgFlagEnabled()) "/Test.zip" else "/Test.txt.zip"
+        assertTreeIs(mutableMapOf("/Test.txt" to textEntry(14), archivePath to zipEntry(146)))
+    }
+
+    /** Tests zipping one folder. */
+    @Test
+    fun zipOneFolder() {
+        val uri = mDocs.createDocument(mSrcRoot, MIME_TYPE_DIR, "Test.a")
+
+        assertTreeIs(mutableMapOf("/Test.a" to dirEntry))
+
+        val job = createJob(listOf(uri))
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_COMPRESS)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_CREATED)
+            assertThat(hasFailures).isFalse()
+            assertThat(currentBytes).isEqualTo(-1)
+            assertThat(requiredBytes).isEqualTo(-1)
+            assertThat(msRemaining).isLessThan(0)
+        }
+
+        job.run()
+        mJobListener.assertFinished()
+
+        with(job.getJobProgress()) {
+            assertThat(operationType).isEqualTo(OPERATION_COMPRESS)
+            assertThat(id).isEqualTo(job.id)
+            assertThat(state).isEqualTo(Job.STATE_COMPLETED)
+            assertThat(hasFailures).isFalse()
+            assertThat(msg).isEqualTo("Zipping “Test.a”")
+            assertThat(currentBytes).isEqualTo(-1)
+            assertThat(requiredBytes).isEqualTo(-1)
+            assertThat(msRemaining).isLessThan(0)
+            assertThat(destination!!.peek().displayName).isEqualTo("TEST_ROOT_0")
+        }
+
+        assertTreeIs(mutableMapOf("/Test.a" to dirEntry, "/Test.a.zip" to zipEntry(130)))
     }
 
     /** Tests zipping two files. */
@@ -111,11 +225,12 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
             assertThat(destination!!.peek().displayName).isEqualTo("TEST_ROOT_0")
         }
 
+        val archivePath = if (isZipNgFlagEnabled()) "/Archive.zip" else "/archive.zip"
         assertTreeIs(
             mutableMapOf(
                 "/Test1.txt" to textEntry(14),
                 "/Test2.txt" to textEntry(19),
-                "/archive.zip" to zipEntry(279),
+                archivePath to zipEntry(279),
             )
         )
     }
@@ -130,12 +245,14 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
         mDocs.writeDocument(uri2, FRUITY_BYTES)
 
         mDocs.createDocument(mSrcRoot, "application/zip", "archive.zip")
+        mDocs.createDocument(mSrcRoot, "application/zip", "Archive.zip")
 
         assertTreeIs(
             mutableMapOf(
                 "/Test1.txt" to textEntry(14),
                 "/Test2.txt" to textEntry(19),
                 "/archive.zip" to zipEntry(0),
+                "/Archive.zip" to zipEntry(0),
             )
         )
 
@@ -176,6 +293,7 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
                 "/Test1.txt" to textEntry(14),
                 "/Test2.txt" to textEntry(19),
                 "/archive.zip" to zipEntry(0),
+                "/Archive.zip" to zipEntry(0),
             )
         )
     }
