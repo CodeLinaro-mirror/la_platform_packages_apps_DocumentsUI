@@ -82,11 +82,6 @@ final class CompressJob extends CopyJob {
     }
 
     @Override
-    public Notification getProgressNotification() {
-        return getProgressNotification(getRes(R.string.copy_remaining));
-    }
-
-    @Override
     public Notification getFailureNotification() {
         return getFailureNotification(
                 getFailureContentTitle(getRes(R.string.compress_error_notification_title)),
