@@ -21,12 +21,9 @@ import android.util.Log
 import com.android.documentsui.flags.Flags
 import com.android.modules.utils.build.SdkLevel
 
-/**
- * Wrap aconfig generated flags to allow us to override flags in tests.
- */
-class FlagUtils private constructor(
-    private val overrides: MutableMap<String, Boolean> = mutableMapOf()
-) {
+/** Wrap aconfig generated flags to allow us to override flags in tests. */
+class FlagUtils
+private constructor(private val overrides: MutableMap<String, Boolean> = mutableMapOf()) {
     companion object {
         private const val TAG = "FlagUtils"
         @Volatile private var instance: FlagUtils = FlagUtils()
@@ -69,27 +66,26 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isSearchV2Enabled(): Boolean {
-            val flag = getInstance().overrides.getOrDefault(
-                Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
-                Flags.useSearchV2ReadOnly()
-            )
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.useSearchV2ReadOnly())
             return flag && isUseMaterial3FlagEnabled()
         }
 
         @JvmStatic
         fun isDesktopFileHandlingFlagEnabled(): Boolean {
-            return getInstance().overrides.getOrDefault(
-                Flags.FLAG_DESKTOP_FILE_HANDLING_RO,
-                Flags.desktopFileHandlingRo()
-            )
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.desktopFileHandlingRo())
         }
 
         @JvmStatic
         fun isDesktopUxPhase2FlagEnabled(): Boolean {
-            val flag = getInstance().overrides.getOrDefault(
-                Flags.FLAG_DESKTOP_UX_PHASE_2_RO,
-                Flags.desktopUxPhase2Ro()
-            )
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_DESKTOP_UX_PHASE_2_RO, Flags.desktopUxPhase2Ro())
             return flag && isUseMaterial3FlagEnabled()
         }
 
@@ -102,10 +98,10 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isVisualSignalsFlagEnabled(): Boolean {
-            val flag = getInstance().overrides.getOrDefault(
-                Flags.FLAG_VISUAL_SIGNALS_RO,
-                Flags.visualSignalsRo()
-            )
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_VISUAL_SIGNALS_RO, Flags.visualSignalsRo())
             return flag && isUseMaterial3FlagEnabled()
         }
 
@@ -118,23 +114,30 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isTrashFlowEnabled(): Boolean {
-            if (!SdkLevel.isAtLeastB()) {
+            // Check if the platform SDK is newer than Android Baklava (SDK 36).
+            // The Trash feature relies on DocumentsContract APIs introduced in the
+            // Android release after Baklava.
+            // This specific Trash feature is NOT backward compatible with platforms
+            // at or below Baklava because the required APIs are missing.
+            // This check ensures the feature is only considered enabled on
+            // supported platform versions, preventing runtime errors if the module
+            // runs on an older base OS.
+            if (!VersionUtils.isGreaterThanB()) {
                 return false
             }
             // If API flag is not enabled, then trash flow will be disabled
             if (!enableDocumentsTrashApi()) {
                 return false
             }
-            return getInstance().overrides.getOrDefault(
-                Flags.FLAG_ENABLE_TRASH_FLOW_RO,
-                Flags.enableTrashFlowRo()
-            )
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.enableTrashFlowRo())
         }
 
         @JvmStatic
         fun isMovingContentIntoPrivateSpaceEnabled(): Boolean {
             return SdkLevel.isAtLeastB() &&
-                    android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
+                android.multiuser.Flags.enableMovingContentIntoPrivateSpace()
         }
 
         @JvmStatic
