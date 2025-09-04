@@ -179,6 +179,17 @@ public class DocumentsProviderHelper {
         waitForWrite();
     }
 
+    /** Delete a single document, do nothing if it does not exist. */
+    public boolean deleteDocumentIfExists(Uri documentUri) {
+        try {
+            DocumentsContract.deleteDocument(wrap(mClient), documentUri);
+            return true;
+        } catch (FileNotFoundException e) {
+            Log.w(TAG, "Could not delete document: " + documentUri, e);
+            return false;
+        }
+    }
+
     public void waitForWrite() throws RemoteException {
         mClient.call("waitForWrite", null, null);
     }
