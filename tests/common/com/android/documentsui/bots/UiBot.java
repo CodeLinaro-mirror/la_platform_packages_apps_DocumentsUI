@@ -57,6 +57,8 @@ import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
@@ -76,8 +78,10 @@ public class UiBot extends Bots.BaseBot {
             isAssignableFrom(Toolbar.class),
             withId(R.id.toolbar));
     @SuppressWarnings("unchecked")
-    private static final Matcher<View> ACTIONBAR = allOf(
-            withClassName(endsWith("ActionBarContextView")));
+    private static final Matcher<View> ACTIONBAR =
+            isUseMaterial3FlagEnabled()
+                    ? allOf(isAssignableFrom(MaterialToolbar.class), withId(R.id.selection_bar))
+                    : allOf(withClassName(endsWith("ActionBarContextView")));
     @SuppressWarnings("unchecked")
     private static final Matcher<View> TEXT_ENTRY = allOf(
             withClassName(endsWith("EditText")));
@@ -270,19 +274,8 @@ public class UiBot extends Bots.BaseBot {
         onView(withId(id)).perform(clickAndRetryOnLongPress());
     }
 
-    public void clickNewFolder() {
-        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-
-        // Click the item by label, since Espresso doesn't support lookup by id on overflow.
-        onView(withText("New folder")).perform(click());
-    }
-
     public void clickActionbarOverflowItem(String label) {
-        if (isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-        } else {
-            onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-        }
+        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
@@ -295,7 +288,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public boolean waitForActionModeBarToAppear() {
-        String actionModeId = isUseMaterial3FlagEnabled() ? "toolbar" : "action_mode_bar";
+        String actionModeId = isUseMaterial3FlagEnabled() ? "selection_bar" : "action_mode_bar";
         UiObject2 bar =
                 mDevice.wait(
                         Until.findObject(By.res(mTargetPackage + ":id/" + actionModeId)), mTimeout);
