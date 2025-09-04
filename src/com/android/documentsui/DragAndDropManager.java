@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -25,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Trace;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.View;
@@ -156,7 +158,7 @@ public interface DragAndDropManager {
      * @return true if target accepts this drop; false otherwise
      */
     boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-            FileOperations.Callback callback);
+            ActionHandler actions, FileOperations.Callback callback);
 
     /**
      * Called when drag and drop ended.
@@ -178,6 +180,7 @@ public interface DragAndDropManager {
 
     class RuntimeDragAndDropManager implements DragAndDropManager {
         private static final String SRC_ROOT_KEY = "dragAndDropMgr:srcRoot";
+        private static final String TAG = "DragAndDropManager";
 
         private final Context mContext;
         private final DocumentClipper mClipper;
@@ -409,7 +412,7 @@ public interface DragAndDropManager {
 
         @Override
         public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
-                ActionHandler action, FileOperations.Callback callback, List<Uri> invalidDest) {
+                ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest) {
             final Uri rootDocUri = DocumentsContract.buildDocumentUri(
                     itemInfo.getRoot().authority, itemInfo.getDocumentId());
 
@@ -420,14 +423,14 @@ public interface DragAndDropManager {
             // Calculate the op type now just in case user releases Ctrl key while we're obtaining
             // root document in the background.
             final @OpType int opType = calculateOpType(clipData, itemInfo.getRoot().getUri());
-            action.getDocument(
+            actions.getDocument(
                     itemInfo.getRoot().authority,
                     itemInfo.getDocumentId(),
                     itemInfo.getRoot().userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     (DocumentInfo doc) -> {
                         dropOnRootDocument(clipData, localState, itemInfo.getRoot(), doc,
-                                opType, callback);
+                                opType, actions, callback);
                     });
 
             return true;
@@ -439,6 +442,7 @@ public interface DragAndDropManager {
                 RootInfo destRoot,
                 @Nullable DocumentInfo destRootDoc,
                 @OpType int opType,
+                ActionHandler actions,
                 FileOperations.Callback callback) {
             if (destRootDoc == null) {
                 callback.onOperationResult(
@@ -451,13 +455,14 @@ public interface DragAndDropManager {
                         localState,
                         new DocumentStack(destRoot, destRootDoc),
                         opType,
+                        actions,
                         callback);
             }
         }
 
         @Override
         public boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-                FileOperations.Callback callback) {
+                ActionHandler actions, FileOperations.Callback callback) {
 
             if (!canCopyTo(dstStack)) {
                 return false;
@@ -468,12 +473,25 @@ public interface DragAndDropManager {
                     localState,
                     dstStack,
                     calculateOpType(clipData, dstStack.getRoot().getUri()),
+                    actions,
                     callback);
             return true;
         }
 
         private void dropChecked(ClipData clipData, Object localState, DocumentStack dstStack,
-                @OpType int opType, FileOperations.Callback callback) {
+                @OpType int opType, ActionHandler actions, FileOperations.Callback callback) {
+
+            // System-defined shortcuts should be protected against the file move operation.
+            if (isHomeScreenFilesFlagEnabled() && opType == FileOperationService.OPERATION_MOVE) {
+                List<Uri> uris = new ArrayList<>();
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    uris.add(clipData.getItemAt(i).getUri());
+                }
+                if (actions.blockOperationForShortcuts(uris, dstStack.getRoot().userId)) {
+                    Log.e(TAG, "Failed to move because a protected folder is selected.");
+                    return;
+                }
+            }
 
             // Recognize multi-window drag and drop based on the fact that localState is not
             // carried between processes. It will stop working when the localsState behavior

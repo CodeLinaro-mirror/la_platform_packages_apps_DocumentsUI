@@ -25,6 +25,7 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.when;
 
 import android.content.Intent;
@@ -65,8 +66,10 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -557,5 +560,48 @@ public class AbstractActionHandlerTest {
         mActivity.refreshCurrentRootAndDirectory.assertCalled();
         DocumentStackAsserts.assertEqualsTo(mEnv.state.stack, TestProvidersAccess.HOME,
                 Arrays.asList(TestEnv.FOLDER_1, TestEnv.FOLDER_2));
+    }
+
+    @Test
+    public void testBlockOperationForShortcutsReturnsTrue() {
+        List<Uri> uris = new ArrayList<>(List.of(
+                TestProvidersAccess.TEST_SHORTCUT.getUri(),
+                TestProvidersAccess.HOME.getUri(),
+                TestProvidersAccess.EXTERNALSTORAGE.getUri()
+        ));
+        assertTrue(mHandler.blockOperationForShortcuts(uris, TestProvidersAccess.USER_ID));
+    }
+
+    @Test
+    public void testBlockOperationForShortcutsReturnsFalse() {
+        List<Uri> uris = new ArrayList<>(List.of(
+                TestProvidersAccess.HOME.getUri(),
+                TestProvidersAccess.EXTERNALSTORAGE.getUri(),
+                TestProvidersAccess.IMAGE.getUri()
+        ));
+        assertFalse(mHandler.blockOperationForShortcuts(uris, TestProvidersAccess.USER_ID));
+    }
+
+    @Test
+    public void testBlockOperationForShortcutsReturnsTrueForOtherUser() {
+        List<Uri> uris = new ArrayList<>(List.of(
+                TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri(),
+                TestProvidersAccess.HOME.getUri(),
+                TestProvidersAccess.EXTERNALSTORAGE.getUri()
+        ));
+        assertTrue(mHandler.blockOperationForShortcuts(
+                uris, TestProvidersAccess.OtherUser.USER_ID));
+    }
+
+    @Test
+    public void testBlockOperationForShortcutsReturnsFalseForOtherUser() {
+        // The home screen uri is not included as a shortcut for OtherUser
+        List<Uri> uris = new ArrayList<>(List.of(
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getUri(),
+                TestProvidersAccess.HOME.getUri(),
+                TestProvidersAccess.EXTERNALSTORAGE.getUri()
+        ));
+        assertFalse(mHandler.blockOperationForShortcuts(
+                uris, TestProvidersAccess.OtherUser.USER_ID));
     }
 }

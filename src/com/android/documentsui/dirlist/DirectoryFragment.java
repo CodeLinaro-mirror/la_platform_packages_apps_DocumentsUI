@@ -26,6 +26,7 @@ import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -1256,6 +1257,19 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (mModel.hasDocuments(selection, DocumentFilters.NOT_MOVABLE)) {
                 mInjector.dialogs.showOperationUnsupported();
                 return true;
+            }
+            if (isHomeScreenFilesFlagEnabled()) {
+                // Block the operation if one of the selected documents is a shortcut folder.
+                List<Uri> uris = new ArrayList<>();
+                UserId userId = null;
+                for (DocumentInfo doc : mModel.getDocuments(selection)) {
+                    uris.add(doc.getDocumentUri());
+                    userId = doc.userId;
+                }
+                if (mActions.blockOperationForShortcuts(uris, userId)) {
+                    Log.e(TAG, "Unable to move because a protected folder is selected.");
+                    return true;
+                }
             }
             // Exit selection mode first, so we avoid deselecting deleted documents.
             closeSelectionBar();

@@ -252,6 +252,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         public static final RootInfo IMAGE;
         public static final RootInfo PICKLES;
         public static final RootInfo MTP_ROOT;
+        public static final ShortcutInfo LIVE_IMAGES_SHORTCUT;
 
         static {
             UserId userId = OtherUser.USER_ID;
@@ -300,6 +301,14 @@ public class TestProvidersAccess implements ProvidersAccess {
             MTP_ROOT.flags = Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_IS_CHILD;
+
+            LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
+                LIVE_IMAGES_ICON_RES_ID,
+                "Live images",
+                IMAGE,
+                "something/to/image:"
+            );
+            LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
         }
     }
 
@@ -379,6 +388,8 @@ public class TestProvidersAccess implements ProvidersAccess {
         add(LOCAL_SEARCH);
         add(HOME_SCREEN_SHORTCUT);
         add(TEST_SHORTCUT);
+        add(LIVE_IMAGES_SHORTCUT);
+        add(OtherUser.LIVE_IMAGES_SHORTCUT);
     }
 
     private void add(RootInfo root) {
@@ -428,6 +439,11 @@ public class TestProvidersAccess implements ProvidersAccess {
     @Override
     public Collection<RootInfo> getRootsForAuthorityBlocking(UserId userId, String authority) {
         return roots.get(authority);
+    }
+
+    @Override
+    public Collection<ShortcutInfo> getShortcutsForUser(UserId userId) {
+        return shortcuts.get(userId);
     }
 
     @Override

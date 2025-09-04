@@ -794,6 +794,21 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
+    public boolean blockOperationForShortcuts(Collection<Uri> uris, UserId userId) {
+        Collection<ShortcutInfo> shortcuts = mProviders.getShortcutsForUser(userId);
+        for (ShortcutInfo shortcut : shortcuts) {
+            // Prevent special folders (i.e. system-defined shortcuts) from getting deleted.
+            for (Uri uri : uris) {
+                if (uri.equals(shortcut.getUri())) {
+                    mDialogs.showOperationUnsupported();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void trashSelectedDocuments() {
         throw new UnsupportedOperationException("Trash document not supported!");
     }

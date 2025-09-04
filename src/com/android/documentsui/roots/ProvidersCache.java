@@ -629,6 +629,13 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         }
     }
 
+    @Override
+    public Collection<ShortcutInfo> getShortcutsForUser(UserId userId) {
+        synchronized (mLock) {
+            return mShortcuts.get(userId);
+        }
+    }
+
 
     @GuardedBy("mLock")
     private @Nullable ShortcutInfo generateShortcut(
