@@ -47,6 +47,10 @@
         android:title="@string/menu_move_to_trash"
         android:showAsAction="always" />
     <item
+        android:id="@+id/action_menu_restore_from_trash"
+        android:title="@string/menu_restore_from_trash"
+        android:showAsAction="never" />
+    <item
         android:id="@+id/action_menu_delete"
         android:icon="@drawable/ic_menu_delete"
         android:title="@string/menu_permanently_delete"

@@ -1150,7 +1150,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
             trashSelectedDocuments(selection);
             return true;
-        } else if (id == getRes(R.id.action_menu_copy_to)) {
+        } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
+            restoreDocumentsFromTrash(selection);
+            return true;
+        }  else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
@@ -1297,6 +1300,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mActions.trashSelectedDocuments(docs);
     }
 
+    private void restoreDocumentsFromTrash(final Selection selected) {
+        if (selected.isEmpty()) {
+            return;
+        }
+
+        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
+        List<DocumentInfo> docs = mModel.getDocuments(selected);
+        mActions.restoreSelectedDocumentsFromTrash(docs);
+    }
 
     private void showChooserForDoc(final Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_OPEN);

@@ -66,6 +66,8 @@
     <string name="menu_permanently_delete">Delete permanently</string>
     <!-- Menu item title that trashes the selected documents [CHAR LIMIT=28] -->
     <string name="menu_move_to_trash">Move to trash</string>
+    <!-- Menu item title that restores the selected trashed documents [CHAR LIMIT=28] -->
+    <string name="menu_restore_from_trash">Restore</string>
     <!-- Menu item title that selects all documents in the current directory [CHAR LIMIT=28] -->
     <string name="menu_select_all">Select all</string>
     <!-- Menu item title that deselects all documents in the current directory [CHAR LIMIT=28] -->
@@ -273,6 +275,8 @@
 
     <!-- Title of storage root location that contains recently modified or used documents [CHAR LIMIT=24] -->
     <string name="root_recent">Recent</string>
+    <!-- Title of trash root location that contains trashed documents [CHAR LIMIT=24] -->
+    <string name="root_trash">Trash</string>
     <!-- Subtitle of storage root indicating the total free space available, in bytes [CHAR LIMIT=24] -->
     <string name="root_available_bytes"><xliff:g id="size" example="3GB">%1$s</xliff:g> free</string>
 
@@ -321,6 +325,8 @@
     <string name="delete_notification_title">Deleting files</string>
     <!-- Title of the move to trash notification [CHAR LIMIT=24] -->
     <string name="move_to_trash_notification_title">Trashing files</string>
+    <!-- Title of the restore from trash notification [CHAR LIMIT=24] -->
+    <string name="restore_from_trash_notification_title">Restoring files</string>
     <!-- Text shown on the copy notification to indicate remaining time, in minutes [CHAR LIMIT=24] -->
     <string name="copy_remaining"><xliff:g id="duration" example="3 minutes">%s</xliff:g> left</string>
     <!-- Toast shown when a file copy is kicked off -->
@@ -353,6 +359,11 @@
         =1 {Trashing <xliff:g id="count" example="1">{count}</xliff:g> item}
         other {Trashing <xliff:g id="count" example="3">{count}</xliff:g> items}
     }</string>
+    <!-- Text shown when files are restoring from trash -->
+    <string name="restoring_from_trash">{count, plural,
+        =1 {Restoring <xliff:g id="count" example="1">{count}</xliff:g> item}
+        other {Restoring <xliff:g id="count" example="3">{count}</xliff:g> items}
+    }</string>
     <!-- Text shown for the undo button -->
     <string name="undo">Undo</string>
     <!-- Text shown on the notification while DocumentsUI performs setup in preparation for copying files [CHAR LIMIT=32] -->
@@ -367,10 +378,14 @@
     <string name="delete_preparing">Preparing...</string>
     <!-- Text shown on the notification while DocumentsUI performs setup in preparation for trashing files [CHAR LIMIT=32] -->
     <string name="move_to_trash_preparing">Preparing...</string>
+    <!-- Text shown on the notification while DocumentsUI performs setup in preparation for restoring files from trash [CHAR LIMIT=32] -->
+    <string name="restore_from_trash_preparing">Preparing...</string>
     <!-- Text progress shown on the notification while DocumentsUI is deleting files. -->
     <string name="delete_progress"><xliff:g id="count" example="3">%1$d</xliff:g> / <xliff:g id="totalCount" example="5">%2$d</xliff:g></string>
-    <!-- Text progress shown on the notification while DocumentsUI is trashing files. -->
+    <!-- Text progress shown on the notification while DocumentsUI is trashing files from trash. -->
     <string name="move_to_trash_progress"><xliff:g id="count" example="3">%1$d</xliff:g> / <xliff:g id="totalCount" example="5">%2$d</xliff:g></string>
+    <!-- Text progress shown on the notification while DocumentsUI is restoring files. -->
+    <string name="restore_from_trash_progress"><xliff:g id="count" example="3">%1$d</xliff:g> / <xliff:g id="totalCount" example="5">%2$d</xliff:g></string>
     <!-- Title of the copy error notification [CHAR LIMIT=48] -->
     <string name="copy_error_notification_title">{count, plural,
         =1 {Couldn\u2019t copy <xliff:g id="count" example="1">{count}</xliff:g> item}
@@ -400,6 +415,11 @@
     <string name="move_to_trash_error_notification_title">{count, plural,
         =1 {Couldn\u2019t trash <xliff:g id="count" example="1">{count}</xliff:g> item}
         other {Couldn\u2019t trash <xliff:g id="count" example="2">{count}</xliff:g> items}
+    }</string>
+    <!-- Title of the restore from trash error notification [CHAR LIMIT=48] -->
+    <string name="restore_from_trash_error_notification_title">{count, plural,
+        =1 {Couldn\u2019t restore <xliff:g id="count" example="1">{count}</xliff:g> item}
+        other {Couldn\u2019t restore <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
     <!-- Second line for notifications saying that more information will be shown after touching [CHAR LIMIT=48] -->
     <string name="notification_touch_for_details">Tap to view details</string>
@@ -486,6 +506,10 @@
     <string name="trash_in_progress">{count, plural,
         =1 {Trashing <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
         other {Trashing # files}
+    }</string>
+    <string name="restore_in_progress">{count, plural,
+        =1 {Restoring <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        other {Restoring # files}
     }</string>
     <!-- Message informing user that files are being compressed into an archive. -->
     <string name="compress_in_progress">{count, plural,
