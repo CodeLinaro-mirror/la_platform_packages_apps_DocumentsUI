@@ -232,8 +232,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Se mută <xliff:g id="FILENAME">{filename}</xliff:g> în <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Se mută # fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Se mută # de fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Se șterge <xliff:g id="FILENAME">{filename}</xliff:g>}few{Se șterg # fișiere}other{Se șterg # de fișiere}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Se mută <xliff:g id="FILENAME">{filename}</xliff:g> în coșul de gunoi}few{Se mută # fișiere în coșul de gunoi}other{Se mută # de fișiere în coșul de gunoi}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Se arhivează <xliff:g id="FILENAME">{filename}</xliff:g>}few{Se arhivează # fișiere}other{Se arhivează # de fișiere}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Afișează progresul fișierului"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progresul fișierului"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Finalizat"</string>
@@ -297,6 +296,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Nu se poate afișa conținutul"</string>
     <string name="sign_in" msgid="6253762676723505592">"Conectează-te"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arhivă<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Suprascrii <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Continuă în fundal"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

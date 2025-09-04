@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Skuif tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Skuif tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Vee tans “<xliff:g id="FILENAME">{filename}</xliff:g>” uit}other{Vee tans # lêers uit}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Skuif tans <xliff:g id="FILENAME">{filename}</xliff:g> na asblik}other{Skuif tans # lêers na asblik}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Rits tans “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Rits tans # lêers}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Wys lêervordering"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Lêervordering"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Voltooi"</string>
@@ -280,6 +279,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Kan nie inhoud wys nie"</string>
     <string name="sign_in" msgid="6253762676723505592">"Meld aan"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"argief<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Skryf oor <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Gaan op die agtergrond voort"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

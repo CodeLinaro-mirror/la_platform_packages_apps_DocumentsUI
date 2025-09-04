@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” सारेर “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मा लगिँदै छ}other{# वटा फाइल सारेर “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मा लगिँदै छन्}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” मेटाइँदै छ}other{# वटा फाइल मेटाइँदै छन्}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ट्र्यासमा सारिँदै छ}other{# वटा फाइल ट्र्यासमा सारिँदै छन्}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ जिप गरिँदै छ}other{# वटा फाइल जिप गरिँदै छन्}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"फाइलको प्रोग्रेस देखाउनुहोस्"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"फाइलसम्बन्धी कारबाहीको प्रोग्रेस"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"पूरा भयो"</string>
@@ -280,6 +279,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"सामग्रीहरू देखाउन मिल्दैन"</string>
     <string name="sign_in" msgid="6253762676723505592">"साइन इन गर्नुहोस्"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"अभिलेख राख्नुहोस्<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g> को अधिलेखन गर्ने हो?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"पृष्ठभूमिमा जारी राख्नुहोस्"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
