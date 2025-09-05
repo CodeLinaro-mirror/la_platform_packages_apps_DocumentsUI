@@ -525,7 +525,7 @@
          files are being extracted from an archive.  [CHAR_LIMIT=48] -->
     <string name="extract_in_progress">{count, plural,
         =1 {Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
-        other {Extracting # archives to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+        other {Extracting # files to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
