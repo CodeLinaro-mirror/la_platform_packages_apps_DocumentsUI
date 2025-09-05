@@ -37,7 +37,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Suite
 import org.junit.runners.Suite.SuiteClasses
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.notNull
 import org.mockito.Mock
 import org.mockito.Mockito.eq
 import org.mockito.Mockito.`when` as whenever
@@ -46,7 +46,7 @@ import org.mockito.MockitoAnnotations
 @RunWith(Suite::class)
 @SuiteClasses(
     MessageBuilderTest.GenerateDeleteMessage::class,
-    MessageBuilderTest.GenerateListMessage::class
+    MessageBuilderTest.GenerateListMessage::class,
 )
 open class MessageBuilderTest() {
     companion object {
@@ -57,11 +57,9 @@ open class MessageBuilderTest() {
     class GenerateDeleteMessage() {
         private lateinit var messageBuilder: MessageBuilder
 
-        @Mock
-        private lateinit var resources: Resources
+        @Mock private lateinit var resources: Resources
 
-        @Mock
-        private lateinit var context: Context
+        @Mock private lateinit var context: Context
 
         @Before
         fun setUp() {
@@ -71,23 +69,14 @@ open class MessageBuilderTest() {
         }
 
         private fun assertDeleteMessage(docInfo: DocumentInfo, resId: Int) {
-            whenever(
-                resources.getString(
-                    eq(resId),
-                    eq(docInfo.displayName)
-                )
-            ).thenReturn(EXPECTED_MESSAGE)
+            whenever(resources.getString(eq(resId), eq(docInfo.displayName)))
+                .thenReturn(EXPECTED_MESSAGE)
             assertEquals(messageBuilder.generateDeleteMessage(listOf(docInfo)), EXPECTED_MESSAGE)
         }
 
         private fun assertQuantityDeleteMessage(docInfos: List<DocumentInfo>, resId: Int) {
-            whenever(
-                resources.getQuantityString(
-                    eq(resId),
-                    eq(docInfos.size),
-                    eq(docInfos.size)
-                )
-            ).thenReturn(EXPECTED_MESSAGE)
+            whenever(resources.getQuantityString(eq(resId), eq(docInfos.size), eq(docInfos.size)))
+                .thenReturn(EXPECTED_MESSAGE)
             assertEquals(messageBuilder.generateDeleteMessage(docInfos), EXPECTED_MESSAGE)
         }
 
@@ -95,7 +84,7 @@ open class MessageBuilderTest() {
         fun testGenerateDeleteMessage_singleFile() {
             assertDeleteMessage(
                 createFile("Test doc"),
-                R.string.delete_filename_confirmation_message
+                R.string.delete_filename_confirmation_message,
             )
         }
 
@@ -103,7 +92,7 @@ open class MessageBuilderTest() {
         fun testGenerateDeleteMessage_singleDirectory() {
             assertDeleteMessage(
                 createDirectory("Test doc"),
-                R.string.delete_foldername_confirmation_message
+                R.string.delete_foldername_confirmation_message,
             )
         }
 
@@ -111,18 +100,15 @@ open class MessageBuilderTest() {
         fun testGenerateDeleteMessage_multipleFiles() {
             assertQuantityDeleteMessage(
                 listOf(createFile("File 1"), createFile("File 2")),
-                R.plurals.delete_files_confirmation_message
+                R.plurals.delete_files_confirmation_message,
             )
         }
 
         @Test
         fun testGenerateDeleteMessage_multipleDirectories() {
             assertQuantityDeleteMessage(
-                listOf(
-                    createDirectory("Directory 1"),
-                    createDirectory("Directory 2")
-                ),
-                R.plurals.delete_folders_confirmation_message
+                listOf(createDirectory("Directory 1"), createDirectory("Directory 2")),
+                R.plurals.delete_folders_confirmation_message,
             )
         }
 
@@ -130,7 +116,7 @@ open class MessageBuilderTest() {
         fun testGenerateDeleteMessage_mixedFilesAndDirectories() {
             assertQuantityDeleteMessage(
                 listOf(createFile("File 1"), createDirectory("Directory 1")),
-                R.plurals.delete_items_confirmation_message
+                R.plurals.delete_items_confirmation_message,
             )
         }
     }
@@ -140,11 +126,9 @@ open class MessageBuilderTest() {
     class GenerateListMessage() {
         private lateinit var messageBuilder: MessageBuilder
 
-        @Mock
-        private lateinit var resources: Resources
+        @Mock private lateinit var resources: Resources
 
-        @Mock
-        private lateinit var context: Context
+        @Mock private lateinit var context: Context
 
         @Before
         fun setUp() {
@@ -156,7 +140,7 @@ open class MessageBuilderTest() {
         data class ListMessageData(
             val dialogType: Int,
             val opType: Int = OPERATION_UNKNOWN,
-            val resId: Int
+            val resId: Int,
         )
 
         companion object {
@@ -196,27 +180,22 @@ open class MessageBuilderTest() {
                 )
         }
 
-        @Parameterized.Parameter(0)
-        lateinit var testData: ListMessageData
+        @Parameterized.Parameter(0) lateinit var testData: ListMessageData
 
         @Test
         fun testGenerateListMessage() {
-            whenever(
-                resources.getQuantityString(
-                    eq(testData.resId),
-                    eq(2),
-                    anyString(),
-                )
-            ).thenReturn(EXPECTED_MESSAGE)
+            whenever(resources.getQuantityString(eq(testData.resId), eq(3), notNull()))
+                .thenReturn(EXPECTED_MESSAGE)
+
             assertEquals(
+                EXPECTED_MESSAGE,
                 messageBuilder.generateListMessage(
                     testData.dialogType,
                     testData.opType,
                     listOf(createFile("File 1")),
                     listOf(Uri.parse("content://random-uri")),
-                    listOf("/a/path")
+                    listOf("/a/path"),
                 ),
-                EXPECTED_MESSAGE
             )
         }
     }

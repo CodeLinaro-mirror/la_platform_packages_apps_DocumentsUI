@@ -132,8 +132,10 @@ public class MessageBuilder {
 
         final StringBuilder list = new StringBuilder("<p>");
         final BidiFormatter bdf = BidiFormatter.getInstance();
+        int count = 0;
 
         if (docs != null) {
+            count += docs.size();
             for (DocumentInfo doc : docs) {
                 list.append("&#8226; ");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(doc.displayName)));
@@ -142,6 +144,7 @@ public class MessageBuilder {
         }
 
         if (uris != null) {
+            count += uris.size();
             for (Uri uri : uris) {
                 list.append("&#8226; ");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(uri.toSafeString())));
@@ -150,6 +153,7 @@ public class MessageBuilder {
         }
 
         if (paths != null) {
+            count += paths.size();
             for (String path : paths) {
                 list.append("&#8226; ");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(new File(path).getName())));
@@ -159,8 +163,7 @@ public class MessageBuilder {
 
         list.append("</p>");
 
-        final int totalItems = docs.size() + (uris != null ? uris.size() : 0);
-        return mContext.getResources().getQuantityString(resourceId, totalItems, list.toString());
+        return mContext.getResources().getQuantityString(resourceId, count, list);
     }
 
     /**
