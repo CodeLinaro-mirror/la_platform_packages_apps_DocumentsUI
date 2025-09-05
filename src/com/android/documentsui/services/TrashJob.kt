@@ -76,7 +76,7 @@ class TrashJob(
 
     override fun getFailureNotification(): Notification {
         return getFailureNotification(
-            getFailureContentTitle(R.string.move_to_trash_error_notification_title),
+            getFailureContentTitle(R.string.trash_error_2),
             R.drawable.ic_menu_delete,
         )
     }

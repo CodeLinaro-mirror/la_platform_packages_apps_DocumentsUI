@@ -370,15 +370,15 @@
     <!-- Progress message shown by the Android File Manager when one or more
          files are being moved to the trash bin.  -->
     <string name="trashing">{count, plural,
-        =1 {Trashing <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Trashing <xliff:g id="count" example="3">{count}</xliff:g> items}
+        =1 {Trashing # file}
+        other {Trashing # files}
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
          files are being restored from the trash bin. -->
     <string name="restoring_from_trash">{count, plural,
-        =1 {Restoring <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Restoring <xliff:g id="count" example="3">{count}</xliff:g> items}
+        =1 {Restoring # file}
+        other {Restoring # files}
     }</string>
 
     <!-- Text shown for the undo button -->
@@ -434,16 +434,18 @@
         other {Couldn\u2019t delete <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
 
-    <!-- Title of the trash file error notification [CHAR LIMIT=48] -->
-    <string name="move_to_trash_error_notification_title">{count, plural,
-        =1 {Couldn\u2019t trash <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Couldn\u2019t trash <xliff:g id="count" example="2">{count}</xliff:g> items}
+    <!-- Error message shown by the Android File Manager when one or more files failed to be moved
+         to the trash bin.  [CHAR_LIMIT=48] -->
+    <string name="trash_error_2">{count, plural,
+        =1 {Couldn\u2019t trash # file}
+        other {Couldn\u2019t trash # files}
     }</string>
 
-    <!-- Title of the restore from trash error notification [CHAR LIMIT=48] -->
-    <string name="restore_from_trash_error_notification_title">{count, plural,
-        =1 {Couldn\u2019t restore <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Couldn\u2019t restore <xliff:g id="count" example="2">{count}</xliff:g> items}
+    <!-- Error message shown by the Android File Manager when one or more files failed to be
+         restored from the trash bin.  [CHAR_LIMIT=48] -->
+    <string name="restore_error_2">{count, plural,
+        =1 {Couldn\u2019t restore # file}
+        other {Couldn\u2019t restore # files}
     }</string>
 
     <!-- Second line for notifications saying that more information will be shown after touching [CHAR LIMIT=48] -->
@@ -545,14 +547,14 @@
     <!-- Progress message shown by the Android File Manager when one or more
          files are being moved to the trash bin.  [CHAR_LIMIT=48] -->
     <string name="trash_in_progress">{count, plural,
-        =1 {Trashing <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        =1 {Trashing \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D}
         other {Trashing # files}
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
          files are being restored from the trash bin.  [CHAR_LIMIT=48] -->
     <string name="restore_in_progress">{count, plural,
-        =1 {Restoring <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        =1 {Restoring \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D}
         other {Restoring # files}
     }</string>
 

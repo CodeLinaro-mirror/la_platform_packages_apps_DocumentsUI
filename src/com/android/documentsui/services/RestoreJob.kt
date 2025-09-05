@@ -86,7 +86,7 @@ class RestoreJob(
 
     override fun getFailureNotification(): Notification {
         return getFailureNotification(
-            getFailureContentTitle(R.string.restore_from_trash_error_notification_title),
+            getFailureContentTitle(R.string.restore_error_2),
             R.drawable.ic_menu_restore_from_trash,
         )
     }
