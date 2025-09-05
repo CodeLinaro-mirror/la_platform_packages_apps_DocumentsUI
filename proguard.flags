@@ -235,6 +235,8 @@
 
 -keep class com.android.documentsui.util.FlagUtils { *; }
 
+-keep class com.android.documentsui.util.VersionUtils { *; }
+
 # The SideSheetBehavior state is not directly accessed from DocumentsUI, but is used in tests
 -keep class com.google.android.material.sidesheet.SideSheetBehavior {
   public int getState();
