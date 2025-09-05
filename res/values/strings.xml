@@ -319,6 +319,10 @@
     <!-- Title of the compress notification [CHAR LIMIT=24] -->
     <string name="compress_notification_title">Compressing files</string>
 
+    <!-- Title of the notification indicating that files are getting zipped (i.e. compressed and
+         bundled into a ZIP archive.) [CHAR LIMIT=24] -->
+    <string name="zip_notification_title">Zipping files</string>
+
     <!-- Title of the extract notification [CHAR LIMIT=24] -->
     <string name="extract_notification_title">Extracting files</string>
 
@@ -416,10 +420,18 @@
         other {Couldn\u2019t compress <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
 
-    <!-- Title of the extract error notification [CHAR LIMIT=48] -->
-    <string name="extract_error_notification_title">{count, plural,
-        =1 {Couldn\u2019t extract <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Couldn\u2019t extract <xliff:g id="count" example="2">{count}</xliff:g> items}
+    <!-- Error message shown by the Android File Manager when one or more files failed to be zipped,
+         i.e. bundled together and compressed into a ZIP archive.  [CHAR_LIMIT=48] -->
+    <string name="compress_error_2">{count, plural,
+        =1 {Couldn\u2019t zip # file}
+        other {Couldn\u2019t zip # files}
+    }</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files failed to be
+         extracted from an archive.  [CHAR_LIMIT=48] -->
+    <string name="extract_error_2">{count, plural,
+        =1 {Couldn\u2019t extract # file}
+        other {Couldn\u2019t extract # files}
     }</string>
 
     <!-- Title of the move error notification [CHAR LIMIT=48] -->
