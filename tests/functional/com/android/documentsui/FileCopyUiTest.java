@@ -400,7 +400,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot(sourceRoot);
         bots.directory.selectDocument(TARGET_FOLDER, 1);
         device.waitForIdle();
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_copy));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
         bots.roots.openRoot(targetRoot);
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
@@ -485,7 +485,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot(StubProvider.ROOT_0_ID);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         device.waitForIdle();
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_copy));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
         bots.roots.openRoot(StubProvider.ROOT_0_ID);
         device.waitForIdle();
@@ -533,7 +533,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         device.waitForIdle();
 
         // Click copy button.
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_copy));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
 
         // Downloads folder is automatically opened, so just open the folder defined
