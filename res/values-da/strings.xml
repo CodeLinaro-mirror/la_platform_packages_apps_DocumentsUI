@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Flytter \"<xliff:g id="FILENAME">{filename}</xliff:g>\" til \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{Flytter # fil til \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Flytter # filer til \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Sletter \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Sletter # fil}other{Sletter # filer}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Flytter <xliff:g id="FILENAME">{filename}</xliff:g> til papirkurven}one{Flytter # fil til papirkurven}other{Flytter # filer til papirkurven}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Komprimerer \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Komprimerer # fil}other{Komprimerer # filer}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Vis status for fil"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Status for fil"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Udført"</string>
@@ -280,6 +279,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Der kan ikke vises indhold"</string>
     <string name="sign_in" msgid="6253762676723505592">"Log ind"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arkiv<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Vil du overskrive <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Fortsæt i baggrunden"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

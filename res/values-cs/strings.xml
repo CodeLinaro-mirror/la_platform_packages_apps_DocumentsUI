@@ -244,8 +244,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Přesouvání souboru <xliff:g id="FILENAME">{filename}</xliff:g> do složky <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Přesouvání # souborů do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Přesouvání # souboru do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Přesouvání # souborů do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Mazání souboru <xliff:g id="FILENAME">{filename}</xliff:g>}few{Mazání # souborů}many{Mazání # souboru}other{Mazání # souborů}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Přesouvání souboru <xliff:g id="FILENAME">{filename}</xliff:g> do koše}few{Přesouvání # souborů do koše}many{Přesouvání # souboru do koše}other{Přesouvání # souborů do koše}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Komprimování souboru <xliff:g id="FILENAME">{filename}</xliff:g>}few{Komprimování # souborů}many{Komprimování # souboru}other{Komprimování # souborů}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Zobrazit průběh zpracování souboru"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Průběh"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Dokončeno"</string>
@@ -314,6 +313,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Obsah nelze zobrazit"</string>
     <string name="sign_in" msgid="6253762676723505592">"Přihlásit se"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archiv<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Přepsat soubor <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Pokračovat na pozadí"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

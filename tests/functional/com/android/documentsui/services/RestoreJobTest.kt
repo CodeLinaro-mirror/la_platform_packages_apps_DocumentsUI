@@ -20,7 +20,6 @@ import android.app.Notification.CATEGORY_ERROR
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
 import android.net.Uri
-import android.os.Build
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
@@ -28,12 +27,13 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract.buildDocumentUri
 import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import androidx.test.filters.MediumTest
-import androidx.test.filters.SdkSuppress
 import com.android.documentsui.TrashDocumentHelper
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.services.FileOperationService.OPERATION_RESTORE
+import com.android.documentsui.util.VersionUtils
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 
@@ -52,12 +52,24 @@ import org.junit.Test
  * directories (<parent_1>, <parent_2>) inside ".trash-storage" are then removed.
  */
 @MediumTest
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "Baklava")
 @RequiresFlagsEnabled(FLAG_ENABLE_DOCUMENTS_TRASH_API)
 internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
     @get:Rule val setFlags = OverrideFlagsRule()
 
     @get:Rule val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
+
+    override fun setUp() {
+        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
+        // The Trash feature under test relies on DocumentsContract APIs introduced in the
+        // Android release after Baklava (SDK 36).
+        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
+        // older Android base builds to verify backward compatibility. However, this specific
+        // Trash feature lacks backward compatibility with platforms at or below Baklava.
+        // This assumption prevents failures when the test runs on an older base OS
+        // without the necessary APIs.
+        assumeTrue(VersionUtils.isGreaterThanB())
+        super.setUp()
+    }
 
     /**
      * Tests the restoration of a single file. Verifies that the file is moved to its original path

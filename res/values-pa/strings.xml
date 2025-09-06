@@ -220,8 +220,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ਫ਼ਾਈਲ ਨਾਲ ਸੰਬੰਧਿਤ ਪ੍ਰਗਤੀ ਦਿਖਾਓ"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ਫ਼ਾਈਲ ਦੀ ਪ੍ਰਗਤੀ"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"ਪੂਰਾ ਹੋਇਆ"</string>
@@ -280,6 +279,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"ਸਮੱਗਰੀਆਂ ਪ੍ਰਦਰਸ਼ਿਤ ਨਹੀਂ ਕੀਤੀਆਂ ਜਾ ਸਕਦੀਆਂ"</string>
     <string name="sign_in" msgid="6253762676723505592">"ਸਾਈਨ-ਇਨ ਕਰੋ"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"ਪੁਰਾਲੇਖ<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g> ਉੱਤੇ ਲਿਖੀਏ?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"ਬੈਕਗ੍ਰਾਊਂਡ ਵਿੱਚ ਜਾਰੀ ਰੱਖੋ"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

@@ -279,6 +279,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"ഉള്ളടക്കം പ്രദർശിപ്പിക്കാൻ കഴിയില്ല"</string>
     <string name="sign_in" msgid="6253762676723505592">"സൈൻ ഇൻ ചെയ്യുക"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"ആർക്കൈവ്<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g> മാറ്റിയെഴുതണോ?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"പശ്ചാത്തലത്തിൽ തുടരുക"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

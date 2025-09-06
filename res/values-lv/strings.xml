@@ -232,8 +232,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Fails “<xliff:g id="FILENAME">{filename}</xliff:g>” tiek pārvietots uz mapi “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”.}zero{Notiek # failu pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}one{Notiek # faila pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}other{Notiek # failu pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Fails “<xliff:g id="FILENAME">{filename}</xliff:g>” tiek dzēsts.}zero{Tiek dzēsti # faili.}one{Tiek dzēsts # fails.}other{Tiek dzēsti # faili.}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” pārvietošana uz atkritni…}zero{Notiek # failu pārvietošana uz atkritni…}one{Notiek # faila pārvietošana uz atkritni…}other{Notiek # failu pārvietošana uz atkritni…}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” arhivēšana…}zero{Notiek # failu arhivēšana…}one{Notiek # faila arhivēšana…}other{Notiek # failu arhivēšana…}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Rādīt faila darbību norisi"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Faila darbības norise"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Pabeigts"</string>
@@ -297,6 +296,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Nevar parādīt saturu."</string>
     <string name="sign_in" msgid="6253762676723505592">"Pierakstīties"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arhivs<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Vai pārrakstīt failu <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Turpināt izpildi fonā"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
