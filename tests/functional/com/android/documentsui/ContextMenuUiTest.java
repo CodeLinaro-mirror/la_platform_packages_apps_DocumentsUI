@@ -24,6 +24,7 @@ import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEn
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 
@@ -51,14 +52,19 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule()
-                    .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
-                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, "ChildDir1")
-                    .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
-                    .createFileInRoot(ROOT_0_ID, "file1.png", "image/png")
-                    .createFileInRoot(ROOT_0_ID, "file2.csv", "text/csv")
-                    .createFileInRoot(ROOT_0_ID, "archive.zip", "application/zip")
-                    .createFileInRoot(ROOT_0_ID, "anotherFile0.log", "text/plain")
-                    .createFileInRoot(ROOT_0_ID, "poodles.text", "text/plain");
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                final Uri dir1 =
+                                        docsHelper.createFolder(root, TestFilesRule.DIR_NAME_1);
+                                docsHelper.createFolder(dir1, "ChildDir1");
+                                docsHelper.createDocument(root, "text/plain", "file0.log");
+                                docsHelper.createDocument(root, "image/png", "file1.png");
+                                docsHelper.createDocument(root, "text/csv", "file2.csv");
+                                docsHelper.createDocument(root, "application/zip", "archive.zip");
+                                docsHelper.createDocument(root, "text/plain", "anotherFile0.log");
+                                docsHelper.createDocument(root, "text/plain", "poodles.text");
+                            });
 
     private Map<String, Boolean> menuItems;
 

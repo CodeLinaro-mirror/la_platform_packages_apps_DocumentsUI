@@ -65,6 +65,7 @@ import java.io.FileNotFoundException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -125,6 +126,7 @@ abstract public class Job implements Runnable {
 
     final CancellationSignal mSignal = new CancellationSignal();
 
+    /** Map of URIs to cached clients. */
     private final Map<String, ContentProviderClient> mClients = new HashMap<>();
     private final Features mFeatures;
 
@@ -229,7 +231,11 @@ abstract public class Job implements Runnable {
         return Uri.parse(String.format("data,%s-%s", tag, id));
     }
 
-    ContentProviderClient getClient(Uri uri) throws RemoteException {
+    /**
+     * Gets or creates a ContentProviderClient for the given URI. The returned object is cached
+     * by this Job and will be closed by Job.cleanup().
+     */
+    @NonNull ContentProviderClient getClient(Uri uri) throws RemoteException {
         ContentProviderClient client = mClients.get(uri.getAuthority());
         if (client == null) {
             // Acquire content providers.
@@ -240,14 +246,22 @@ abstract public class Job implements Runnable {
             mClients.put(uri.getAuthority(), client);
         }
 
-        assert(client != null);
+        assert client != null;
         return client;
     }
 
-    ContentProviderClient getClient(DocumentInfo doc) throws RemoteException {
+    /**
+     * Gets or creates a ContentProviderClient for the given document. The returned object is
+     * cached by this Job and will be closed by Job.cleanup().
+     */
+    @NonNull ContentProviderClient getClient(DocumentInfo doc) throws RemoteException {
         return getClient(doc.derivedUri);
     }
 
+    /**
+     * Closes and releases the ContentProviderClient that was previously created and cached for
+     * the given URI. Does nothing if there is no such ContentProviderClient.
+     */
     void releaseClient(Uri uri) {
         ContentProviderClient client = mClients.get(uri.getAuthority());
         if (client != null) {
@@ -256,10 +270,15 @@ abstract public class Job implements Runnable {
         }
     }
 
+    /**
+     * Closes and releases the ContentProviderClient that was previously created and cached for
+     * the given document. Does nothing if there is no such ContentProviderClient.
+     */
     void releaseClient(DocumentInfo doc) {
         releaseClient(doc.derivedUri);
     }
 
+    /** Closes and releases all the ContentProviderClient objects currently cached by this Job. */
     final void cleanup() {
         for (ContentProviderClient client : mClients.values()) {
             FileUtils.closeQuietly(client);
@@ -291,17 +310,34 @@ abstract public class Job implements Runnable {
         return service.getContentResolver();
     }
 
+    @SuppressWarnings("NonAtomicVolatileUpdate")
     void onFileFailed(DocumentInfo file) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
         failureCount++;
         failedDocs.add(file);
     }
 
+    @SuppressWarnings("NonAtomicVolatileUpdate")
+    void onFileFailed(@NonNull Collection<? extends DocumentInfo> files) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
+        failureCount += files.size();
+        failedDocs.addAll(files);
+    }
+
+    @SuppressWarnings("NonAtomicVolatileUpdate")
     void onResolveFailed(Uri uri) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
         failureCount++;
         failedUris.add(uri);
     }
 
+    @SuppressWarnings("NonAtomicVolatileUpdate")
     void onPathFailed(@NonNull String path) {
+        // Non-atomic operation is Ok since failureCount is only modified in one thread.
+        // noinspection NonAtomicOperationOnVolatileField
         failureCount++;
         failedPaths.add(path);
     }

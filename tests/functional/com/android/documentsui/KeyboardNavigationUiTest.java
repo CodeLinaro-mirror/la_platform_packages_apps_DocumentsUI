@@ -31,6 +31,7 @@ import android.view.KeyEvent;
 import androidx.annotation.IdRes;
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
@@ -46,8 +47,13 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
-    public final TestFilesRule mTestFilesRule = new TestFilesRule().createFileInRoot(ROOT_0_ID,
-            "files1.png", "image/png");
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                docsHelper.createDocument(root, "image/png", "files1.png");
+                            });
 
     // Tests that pressing tab switches focus between the roots and directory listings.
     @Ignore

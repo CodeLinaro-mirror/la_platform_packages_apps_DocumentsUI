@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibilit
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertEquals;
@@ -323,7 +324,11 @@ public class UiBot extends Bots.BaseBot {
         if (!waitForActionModeBarToAppear()) {
             throw new UiObjectNotFoundException("ActionMode bar not found");
         }
-        clickToolbarItem(R.id.action_menu_delete);
+        if (isTrashFlowEnabled()) {
+            clickActionItem("Delete permanently");
+        } else {
+            clickToolbarItem(R.id.action_menu_delete);
+        }
         mDevice.waitForIdle();
     }
 

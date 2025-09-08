@@ -36,12 +36,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import android.graphics.Rect;
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.Settings;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
@@ -58,6 +61,7 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -590,10 +594,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Open search, make sure query input field has focus.
         bots.search.expand();
         bots.search.assertInputFocused(true);
+        // Try to hide the virtual keyboard; on small devices it can hide some files.
+        Espresso.closeSoftKeyboard();
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
         // Enter an empty query.
         bots.search.setInputText("");
+        Espresso.closeSoftKeyboard();
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
     }
@@ -610,5 +617,44 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         String deviceLabel = getDeviceLabel();
         bots.roots.openRoot(deviceLabel);
         assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchViewCollapsedOnSmallScreen() {
+        assertNotNull(mActivityScenario);
+        mActivityScenario.onActivity(activity -> {
+            assertNotNull(activity);
+            Rect bounds = TestUtils.Companion.getActivityBounds(activity);
+            Assume.assumeTrue(
+                    "Skipping test: window size " + bounds.width() + "dp x " + bounds.height()
+                            + "dp  is larger than 900dp x 600dp",
+                    bounds.width() < 900.0 && bounds.height() < 600.0
+            );
+        });
+
+        String pkg = bots.directory.mTargetPackage;
+        UiObject2 searchBar = device.findObject(By.res(pkg + ":id/search_bar"));
+        assertNull(searchBar);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchViewExpandedOnLargeScreen() {
+        assertNotNull(mActivityScenario);
+        mActivityScenario.onActivity(activity -> {
+            assertNotNull(activity);
+            Rect bounds = TestUtils.Companion.getActivityBounds(activity);
+            Assume.assumeTrue(
+                    "Skipping test: window size " + bounds.width() + "dp x " + bounds.height()
+                            + "dp  is smaller than 1000dp x 700dp",
+                    bounds.width() >= 1000.0 && bounds.height() >= 700.0
+            );
+        });
+
+        String pkg = bots.directory.mTargetPackage;
+        UiObject2 searchBar = device.findObject(By.res(pkg + ":id/docked_search_text"));
+        assertNotNull(searchBar);
+        assertTrue(searchBar.isEnabled());
     }
 }

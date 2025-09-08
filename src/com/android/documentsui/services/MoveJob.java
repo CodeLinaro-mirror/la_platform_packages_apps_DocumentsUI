@@ -19,6 +19,7 @@ package com.android.documentsui.services;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -107,18 +108,20 @@ final class MoveJob extends CopyJob {
 
     @Override
     public boolean setUp() {
+        if (!super.setUp()) return false;
+
         if (mSrcParentUri != null) {
             try {
                 mSrcParent = DocumentInfo.fromUri(appContext.getContentResolver(), mSrcParentUri,
                         UserId.DEFAULT_USER);
-            } catch (FileNotFoundException e) {
-                Log.e(TAG, "Failed to create srcParent.", e);
-                failureCount = mResourceUris.getItemCount();
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot resolve parent URI " + redact(mSrcParentUri), e);
+                onFileFailed(mResolvedDocs);
                 return false;
             }
         }
 
-        return super.setUp();
+        return true;
     }
 
     /**
@@ -137,8 +140,8 @@ final class MoveJob extends CopyJob {
                 if (src.isDirectory()) {
                     try {
                         size += calculateFileSizesRecursively(getClient(src), src.derivedUri);
-                    } catch (RemoteException|ResourceException e) {
-                        Log.w(TAG, "Failed to obtain client for %s" + src.derivedUri + ".", e);
+                    } catch (Exception e) {
+                        Log.w(TAG, "Cannot get size of " + redact(src), e);
 
                         // Failed to calculate size, but move may still succeed.
                         return true;
@@ -194,7 +197,7 @@ final class MoveJob extends CopyJob {
         byteCopyDocument(src, dest);
 
         // Remove the source document.
-        if(!isCanceled()) {
+        if (!isCanceled()) {
             deleteDocument(src, srcParent);
         }
     }

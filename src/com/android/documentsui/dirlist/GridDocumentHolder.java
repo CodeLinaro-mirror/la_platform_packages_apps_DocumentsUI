@@ -21,6 +21,7 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFI
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -45,6 +46,7 @@ import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.Events;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
@@ -235,6 +237,9 @@ final class GridDocumentHolder extends DocumentHolder {
 
         } else if (Views.isEventOver(event, itemView.getParent(), mSelectionCircle)) {
             return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+
+        } else if (Events.isMousyEvent(event) && isSingleClickToSelectEnabled()) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO;
         }
 
         return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;

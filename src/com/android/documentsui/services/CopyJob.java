@@ -22,6 +22,7 @@ import static android.provider.DocumentsContract.buildDocumentUri;
 import static android.provider.DocumentsContract.findDocumentPath;
 import static android.provider.DocumentsContract.getDocumentId;
 import static android.provider.DocumentsContract.isChildDocument;
+import static android.text.TextUtils.isEmpty;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_CONVERTED;
 import static com.android.documentsui.base.DocumentInfo.getCursorLong;
@@ -334,8 +335,7 @@ class CopyJob extends ResolvedResourcesJob {
         }
 
         if (!available) {
-            failureCount = mResolvedDocs.size();
-            failedDocs.addAll(mResolvedDocs);
+            onFileFailed(mResolvedDocs);
         }
 
         return available;
@@ -455,8 +455,8 @@ class CopyJob extends ResolvedResourcesJob {
                 dstMimeType = streamTypes[0];
                 final String extension = MimeTypeMap.getSingleton().
                         getExtensionFromMimeType(dstMimeType);
-                dstDisplayName = src.displayName +
-                        (extension != null ? "." + extension : src.displayName);
+                dstDisplayName = isEmpty(extension) ? src.displayName
+                        : src.displayName + "." + extension;
             } else {
                 Metrics.logFileOperationFailure(
                         appContext, MetricConsts.SUBFILEOP_OBTAIN_STREAM_TYPE, src.derivedUri);
