@@ -39,6 +39,8 @@
     <string name="menu_delete" msgid="1022254131543256626">"Șterge"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"Șterge definitiv"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Mută în Coșul de gunoi"</string>
+    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"Selectează-le pe toate"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Deselectează tot"</string>
     <string name="menu_select" msgid="1366061076507142387">"Selectează"</string>
@@ -118,6 +120,8 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Acțiunea nu este permisă"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Pentru a afla mai multe, contactează administratorul IT"</string>
     <string name="root_recent" msgid="1080156975424341623">"Recente"</string>
+    <!-- no translation found for root_trash (1869929519939073178) -->
+    <skip />
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> spațiu liber"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Servicii de stocare"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Comenzi rapide"</string>
@@ -140,6 +144,8 @@
     <string name="move_notification_title" msgid="3173424987049347605">"Se mută fișierele"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Se șterg fișierele"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Mutarea fișierelor în coșul de gunoi"</string>
+    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"Timp rămas: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="few">Se copiază <xliff:g id="COUNT_1">%1$d</xliff:g> articole.</item>
@@ -167,6 +173,8 @@
       <item quantity="one">Se șterge <xliff:g id="COUNT_0">%1$d</xliff:g> articol.</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Se mută <xliff:g id="COUNT_0">{count}</xliff:g> element în coșul de gunoi}few{Se mută <xliff:g id="COUNT_1">{count}</xliff:g> elemente în coșul de gunoi}other{Se mută <xliff:g id="COUNT_1">{count}</xliff:g> de elemente în coșul de gunoi}}"</string>
+    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Anulează"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Se pregătește..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Se pregătește..."</string>
@@ -174,14 +182,20 @@
     <string name="move_preparing" msgid="6504239656430530761">"Se pregătește..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Se pregătește..."</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"Se pregătește..."</string>
+    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Nu s-a putut copia <xliff:g id="COUNT_0">{count}</xliff:g> element}few{Nu s-au putut copia <xliff:g id="COUNT_1">{count}</xliff:g> elemente}other{Nu s-au putut copia <xliff:g id="COUNT_1">{count}</xliff:g> de elemente}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nu s-a putut comprima <xliff:g id="COUNT_0">{count}</xliff:g> element}few{Nu s-au putut comprima <xliff:g id="COUNT_1">{count}</xliff:g> elemente}other{Nu s-au putut comprima <xliff:g id="COUNT_1">{count}</xliff:g> de elemente}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Nu s-a putut extrage <xliff:g id="COUNT_0">{count}</xliff:g> element}few{Nu s-au putut extrage <xliff:g id="COUNT_1">{count}</xliff:g> elemente}other{Nu s-au putut extrage <xliff:g id="COUNT_1">{count}</xliff:g> de elemente}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Nu s-a putut muta <xliff:g id="COUNT_0">{count}</xliff:g> element}few{Nu s-au putut muta <xliff:g id="COUNT_1">{count}</xliff:g> elemente}other{Nu s-au putut muta <xliff:g id="COUNT_1">{count}</xliff:g> de elemente}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nu s-a putut șterge <xliff:g id="COUNT_0">{count}</xliff:g> element}few{Nu s-au putut șterge <xliff:g id="COUNT_1">{count}</xliff:g> elemente}other{Nu s-au putut șterge <xliff:g id="COUNT_1">{count}</xliff:g> de elemente}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Nu s-a putut muta în coșul de gunoi <xliff:g id="COUNT_0">{count}</xliff:g> element}few{Nu s-au putut muta în coșul de gunoi <xliff:g id="COUNT_1">{count}</xliff:g> elemente}other{Nu s-au putut muta în coșul de gunoi <xliff:g id="COUNT_1">{count}</xliff:g> de elemente}}"</string>
+    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Atinge pentru a vedea detaliile"</string>
     <string name="close" msgid="905969391788869975">"Închide"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -232,6 +246,8 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Se mută <xliff:g id="FILENAME">{filename}</xliff:g> în <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Se mută # fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Se mută # de fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Se șterge <xliff:g id="FILENAME">{filename}</xliff:g>}few{Se șterg # fișiere}other{Se șterg # de fișiere}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Se mută <xliff:g id="FILENAME">{filename}</xliff:g> în coșul de gunoi}few{Se mută # fișiere în coșul de gunoi}other{Se mută # de fișiere în coșul de gunoi}}"</string>
+    <!-- no translation found for restore_in_progress (6756221866797865046) -->
+    <skip />
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Se arhivează <xliff:g id="FILENAME">{filename}</xliff:g>}few{Se arhivează # fișiere}other{Se arhivează # de fișiere}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Afișează progresul fișierului"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progresul fișierului"</string>
