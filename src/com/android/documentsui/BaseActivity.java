@@ -53,7 +53,6 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
@@ -66,9 +65,6 @@ import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.breadcrumbs.BreadcrumbController;
-import com.android.documentsui.breadcrumbs.BreadcrumbModel;
-import com.android.documentsui.breadcrumbs.BreadcrumbView;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
@@ -234,19 +230,6 @@ public abstract class BaseActivity
         assert (profileTabsContainer != null);
 
         mNavigator = getNavigationViewManager(breadcrumb, profileTabsContainer);
-        if (isSearchV2Enabled()) {
-            View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
-            if (breadcrumbView2 != null) {
-                BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
-                BreadcrumbController breadcrumbController = new BreadcrumbController(
-                        this, model, (BreadcrumbView) breadcrumbView2);
-                breadcrumbController.setClickConsumer(index -> {
-                    mNavigator.onNavigationItemSelected(index);
-                });
-                mNavigator.setBreadcrumbController(breadcrumbController);
-            }
-        }
-
         AppBarLayout appBarLayout = findViewById(getRes(R.id.app_bar));
         if (appBarLayout != null) {
             appBarLayout.addOnOffsetChangedListener(mNavigator);
