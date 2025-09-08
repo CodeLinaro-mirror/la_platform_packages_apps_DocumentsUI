@@ -451,6 +451,8 @@ public class RootsFragment extends Fragment {
 
             if (root.isExternalStorageHome()) {
                 // No-op.
+            } else if (root.isFiles()) {
+                // Never show this if MediaDocumentsProvider is serving it, it's for Recents only.
             } else if (hideMediaRoots
                     && (root.isImages() || root.isVideos()
                     || root.isDocuments()
