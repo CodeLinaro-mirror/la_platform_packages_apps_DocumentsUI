@@ -69,6 +69,7 @@ import com.android.documentsui.Injector;
 import com.android.documentsui.Injector.Injected;
 import com.android.documentsui.ItemDragListener;
 import com.android.documentsui.R;
+import com.android.documentsui.TimeoutTask;
 import com.android.documentsui.UserManagerState;
 import com.android.documentsui.UserPackage;
 import com.android.documentsui.base.BooleanConsumer;
@@ -950,6 +951,20 @@ public class RootsFragment extends Fragment {
             return true;
         } else if (id == getRes(R.id.root_menu_settings)) {
             mActionHandler.openSettings(sidebarItem.getItemInfo().getRoot());
+            return true;
+        } else if (id == getRes(R.id.root_menu_inspect)) {
+            if (!isHomeScreenFilesFlagEnabled()
+                    || !(sidebarItem instanceof ShortcutItem)) {
+                return false;
+            }
+            ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
+            mActionHandler.getDocument(
+                    shortcut.getRoot().authority,
+                    shortcut.getDocumentId(),
+                    shortcut.getRoot().userId,
+                    TimeoutTask.DEFAULT_TIMEOUT,
+                    mActionHandler::showPreview
+            );
             return true;
         }
         if (DEBUG) {

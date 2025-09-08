@@ -300,11 +300,13 @@ public abstract class MenuManager {
         MenuItem pasteInto = menu.findItem(getRes(R.id.root_menu_paste_into_folder));
         MenuItem openInNewWindow = menu.findItem(getRes(R.id.root_menu_open_in_new_window));
         MenuItem settings = menu.findItem(getRes(R.id.root_menu_settings));
+        MenuItem getInfo = menu.findItem(getRes(R.id.root_menu_inspect));
 
         updateEject(eject, itemInfo);
         updatePasteInto(pasteInto, itemInfo, docInfo);
         updateOpenInNewWindow(openInNewWindow, itemInfo);
         updateSettings(settings, itemInfo);
+        updateInspect(getInfo, itemInfo);
     }
 
     public abstract void updateKeyboardShortcutsMenu(
@@ -403,6 +405,14 @@ public abstract class MenuManager {
      * This method is called for action mode, when a selection exists.
      */
     protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
+        Menus.setEnabledAndVisible(inspect, false);
+    }
+
+    /**
+     * This method is called during a sidebar context menu click with a reference to the
+     * item's information.
+     */
+    protected void updateInspect(MenuItem inspect, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(inspect, false);
     }
 

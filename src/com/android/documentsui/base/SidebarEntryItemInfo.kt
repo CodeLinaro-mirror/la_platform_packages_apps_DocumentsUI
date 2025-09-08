@@ -82,5 +82,6 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
     fun supportsCreate(): Boolean
     fun supportsEject(): Boolean
     fun isEjecting(): Boolean
+    fun supportsInspect(): Boolean
     fun hasSettings(): Boolean
 }

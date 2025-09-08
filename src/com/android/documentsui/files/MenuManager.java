@@ -342,6 +342,15 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         Menus.setEnabledAndVisible(inspect, visible);
     }
 
+    /**
+     * This method is called during a sidebar context menu click with a reference to the
+     * item's information.
+     */
+    @Override
+    protected void updateInspect(MenuItem inspect, SidebarEntryItemInfo itemInfo) {
+        Menus.setEnabledAndVisible(inspect, itemInfo.supportsInspect());
+    }
+
     @Override
     protected void updateViewInOwner(MenuItem view, SelectionDetails selectionDetails) {
         if (selectionDetails.canViewInOwner() &&

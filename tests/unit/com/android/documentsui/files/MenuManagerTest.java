@@ -62,6 +62,7 @@ import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuInflater;
 import com.android.documentsui.testing.TestMenuItem;
+import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.util.VersionUtils;
@@ -104,6 +105,7 @@ public final class MenuManagerTest {
     private TestMenuItem rootOpenInNewWindow;
     private TestMenuItem rootPasteIntoFolder;
     private TestMenuItem rootSettings;
+    private TestMenuItem mRootInspector;
 
     /* Action Mode menu items */
     private TestMenuItem actionModeOpen;
@@ -199,6 +201,7 @@ public final class MenuManagerTest {
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
         rootPasteIntoFolder = testMenu.findItem(R.id.root_menu_paste_into_folder);
         rootSettings = testMenu.findItem(R.id.root_menu_settings);
+        mRootInspector = testMenu.findItem(R.id.root_menu_inspect);
 
         // Menu actions (including overflow) when action mode *is* active.
         actionModeOpenWith = testMenu.findItem(R.id.action_menu_open_with);
@@ -1040,6 +1043,13 @@ public final class MenuManagerTest {
     }
 
     @Test
+    public void testRootContextMenu_InspectDisabled() {
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
+
+        mRootInspector.assertDisabledAndInvisible();
+    }
+
+    @Test
     @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
     public void testShortcutContextMenu_ShortcutSupportsCreate() {
         mTestShortcutInfo.getRoot().flags = Root.FLAG_SUPPORTS_CREATE;
@@ -1099,6 +1109,16 @@ public final class MenuManagerTest {
         mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_InspectEnabled() {
+        ShortcutInfo homeScreenShortcut =
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT.copyShortcutInfo();
+        mgr.updateSidebarItemContextMenu(testMenu, homeScreenShortcut, testDocInfo);
+
+        mRootInspector.assertEnabledAndVisible();
     }
 
     @Test
