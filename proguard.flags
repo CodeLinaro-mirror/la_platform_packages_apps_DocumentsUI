@@ -79,6 +79,7 @@
   int action_menu_move_to;
   int action_menu_open_with;
   int action_menu_rename;
+  int action_menu_restore_from_trash;
   int action_menu_select;
   int action_menu_select_all;
   int action_menu_share;
@@ -299,6 +300,11 @@
 -keep interface com.android.documentsui.UserManagerProvider {
   public java.util.List getUserIds(android.content.Context);
 }
+
+-keep class com.android.documentsui.files.ActionHandler {
+  public void restoreSelectedDocumentsFromTrash(java.util.List);
+}
+
 -keep interface androidx.drawerlayout.widget.DrawerLayout$DrawerListener {
 }
 -keep class androidx.drawerlayout.widget.DrawerLayout$SimpleDrawerListener {
@@ -313,4 +319,8 @@
   public boolean isDrawerVisible(int);
   public void openDrawer(int);
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
+}
+
+-keep class android.provider.Flags {
+  public static boolean enableDocumentsTrashApi();
 }

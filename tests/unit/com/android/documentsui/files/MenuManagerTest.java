@@ -31,6 +31,7 @@ import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -40,6 +41,7 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -1028,6 +1030,7 @@ public final class MenuManagerTest {
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canTrash_enabled() {
         assumeTrashApiIsAvailable();
         selectionDetails.canTrash = false;
@@ -1042,6 +1045,7 @@ public final class MenuManagerTest {
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @DisableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canTrash_disabled() {
         assumeTrashApiIsAvailable();
         selectionDetails.canTrash = false;
@@ -1057,6 +1061,7 @@ public final class MenuManagerTest {
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canRestoreFromTrash_enabled() {
         assumeTrashApiIsAvailable();
         selectionDetails.canRestore = false;
@@ -1071,6 +1076,7 @@ public final class MenuManagerTest {
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canRestoreFromTrash_disabled() {
         assumeTrashApiIsAvailable();
         selectionDetails.canRestore = false;
