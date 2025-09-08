@@ -1546,6 +1546,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
         List<DocumentInfo> docs = mModel.getDocuments(selected);
+
+        // Block the file operation if the selected document is a shortcut folder.
+        if (isHomeScreenFilesFlagEnabled() && mActions.blockOperationForShortcuts(
+                List.of(docs.get(0).derivedUri), docs.get(0).userId)) {
+            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+            return;
+        }
         RenameDocumentFragment.show(getChildFragmentManager(), docs.get(0));
     }
 

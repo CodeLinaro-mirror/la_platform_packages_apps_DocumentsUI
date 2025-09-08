@@ -18,6 +18,7 @@ package com.android.documentsui
 
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
+import androidx.test.uiautomator.UiObjectNotFoundException
 import com.android.documentsui.base.Providers
 import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
 import com.android.documentsui.base.UserId
@@ -151,5 +152,28 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 context!!.resources.getString(R.string.file_operation_rejected)
             )
         )
+    }
+
+    @Test
+    @EnableFlags(FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3)
+    @Throws(java.lang.Exception::class)
+    fun testRenameOnShortcutFolder() {
+        val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
+        openRoot(context!!, primaryRoot!!.title)
+        bots.directory.selectDocument(SHORTCUT_ID, 1)
+        clickRename()
+
+        assertNotNull(
+            bots.directory.getSnackbar(context!!.getString(R.string.file_operation_rejected))
+        )
+    }
+
+    @Throws(UiObjectNotFoundException::class)
+    private fun clickRename() {
+        if (!bots.main.waitForActionModeBarToAppear()) {
+            throw UiObjectNotFoundException("ActionMode bar not found")
+        }
+        bots.main.clickActionbarOverflowItem("Rename")
+        device!!.waitForIdle()
     }
 }
