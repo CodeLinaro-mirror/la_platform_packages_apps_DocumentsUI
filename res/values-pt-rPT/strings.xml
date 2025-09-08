@@ -39,6 +39,8 @@
     <string name="menu_delete" msgid="1022254131543256626">"Eliminar"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"Eliminar definitivamente"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Mover para o lixo"</string>
+    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"Selecionar tudo"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Desmarcar tudo"</string>
     <string name="menu_select" msgid="1366061076507142387">"Selecionar"</string>
@@ -118,6 +120,8 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Esta ação não é permitida"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Para saber mais, contacte o administrador de TI."</string>
     <string name="root_recent" msgid="1080156975424341623">"Recentes"</string>
+    <!-- no translation found for root_trash (1869929519939073178) -->
+    <skip />
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> de espaço livre"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Serv. de armazenamento"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Atalhos"</string>
@@ -140,6 +144,8 @@
     <string name="move_notification_title" msgid="3173424987049347605">"A mover ficheiros"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"A eliminar ficheiros"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"A mover fic. para o lixo"</string>
+    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"Faltam <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="many">A copiar <xliff:g id="COUNT_1">%1$d</xliff:g> itens…</item>
@@ -167,6 +173,8 @@
       <item quantity="one">A eliminar <xliff:g id="COUNT_0">%1$d</xliff:g> item…</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{A mover <xliff:g id="COUNT_0">{count}</xliff:g> item para o lixo}many{A mover <xliff:g id="COUNT_1">{count}</xliff:g> itens para o lixo}other{A mover <xliff:g id="COUNT_1">{count}</xliff:g> itens para o lixo}}"</string>
+    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Anular"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"A preparar…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"A preparar…"</string>
@@ -174,14 +182,20 @@
     <string name="move_preparing" msgid="6504239656430530761">"A preparar…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"A preparar…"</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"A preparar…"</string>
+    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Não foi possível copiar <xliff:g id="COUNT_0">{count}</xliff:g> item}many{Não foi possível copiar <xliff:g id="COUNT_1">{count}</xliff:g> itens}other{Não foi possível copiar <xliff:g id="COUNT_1">{count}</xliff:g> itens}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Não foi possível comprimir <xliff:g id="COUNT_0">{count}</xliff:g> item}many{Não foi possível comprimir <xliff:g id="COUNT_1">{count}</xliff:g> itens}other{Não foi possível comprimir <xliff:g id="COUNT_1">{count}</xliff:g> itens}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Não foi possível extrair <xliff:g id="COUNT_0">{count}</xliff:g> item}many{Não foi possível extrair <xliff:g id="COUNT_1">{count}</xliff:g> itens}other{Não foi possível extrair <xliff:g id="COUNT_1">{count}</xliff:g> itens}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Não foi possível mover <xliff:g id="COUNT_0">{count}</xliff:g> item}many{Não foi possível mover <xliff:g id="COUNT_1">{count}</xliff:g> itens}other{Não foi possível mover <xliff:g id="COUNT_1">{count}</xliff:g> itens}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Não foi possível eliminar <xliff:g id="COUNT_0">{count}</xliff:g> item}many{Não foi possível eliminar <xliff:g id="COUNT_1">{count}</xliff:g> itens}other{Não foi possível eliminar <xliff:g id="COUNT_1">{count}</xliff:g> itens}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Não foi possível mover <xliff:g id="COUNT_0">{count}</xliff:g> item para o lixo}many{Não foi possível mover <xliff:g id="COUNT_1">{count}</xliff:g> itens para o lixo}other{Não foi possível mover <xliff:g id="COUNT_1">{count}</xliff:g> itens para o lixo}}"</string>
+    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tocar para ver detalhes"</string>
     <string name="close" msgid="905969391788869975">"Fechar"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -232,6 +246,8 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{A mover \"<xliff:g id="FILENAME">{filename}</xliff:g>\" para \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}many{A mover # ficheiros para \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{A mover # ficheiros para \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{A eliminar \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}many{A eliminar # ficheiros}other{A eliminar # ficheiros}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{A mover <xliff:g id="FILENAME">{filename}</xliff:g> para o lixo}many{A mover # ficheiros para o lixo}other{A mover # ficheiros para o lixo}}"</string>
+    <!-- no translation found for restore_in_progress (6756221866797865046) -->
+    <skip />
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{A comprimir \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}many{A comprimir # ficheiros}other{A comprimir # ficheiros}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar progresso do ficheiro"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progresso do ficheiro"</string>

@@ -39,6 +39,8 @@
     <string name="menu_delete" msgid="1022254131543256626">"Xóa"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"Xoá vĩnh viễn"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Chuyển vào thùng rác"</string>
+    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"Chọn tất cả"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Bỏ chọn tất cả"</string>
     <string name="menu_select" msgid="1366061076507142387">"Chọn"</string>
@@ -118,6 +120,8 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Quản trị viên CNTT không cho phép thực hiện thao tác này"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Để tìm hiểu thêm, hãy liên hệ với quản trị viên CNTT của bạn"</string>
     <string name="root_recent" msgid="1080156975424341623">"Gần đây"</string>
+    <!-- no translation found for root_trash (1869929519939073178) -->
+    <skip />
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> còn trống"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Dịch vụ lưu trữ"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Phím tắt"</string>
@@ -140,6 +144,8 @@
     <string name="move_notification_title" msgid="3173424987049347605">"Đang di chuyển tệp"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Đang xóa tệp"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Đang chuyển tệp vào thùng rác"</string>
+    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"Còn lại <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other">Đang sao chép <xliff:g id="COUNT_1">%1$d</xliff:g> mục.</item>
@@ -162,6 +168,8 @@
       <item quantity="one">Đang xóa <xliff:g id="COUNT_0">%1$d</xliff:g> mục.</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Đang chuyển <xliff:g id="COUNT_0">{count}</xliff:g> mục vào thùng rác}other{Đang chuyển <xliff:g id="COUNT_1">{count}</xliff:g> mục vào thùng rác}}"</string>
+    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Hủy"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Đang chuẩn bị…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Đang chuẩn bị…"</string>
@@ -169,14 +177,20 @@
     <string name="move_preparing" msgid="6504239656430530761">"Đang chuẩn bị…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Đang chuẩn bị…"</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"Đang chuẩn bị…"</string>
+    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Không sao chép được <xliff:g id="COUNT_0">{count}</xliff:g> mục}other{Không sao chép được <xliff:g id="COUNT_1">{count}</xliff:g> mục}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Không nén được <xliff:g id="COUNT_0">{count}</xliff:g> mục}other{Không nén được <xliff:g id="COUNT_1">{count}</xliff:g> mục}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Không trích xuất được <xliff:g id="COUNT_0">{count}</xliff:g> mục}other{Không trích xuất được <xliff:g id="COUNT_1">{count}</xliff:g> mục}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Không di chuyển được <xliff:g id="COUNT_0">{count}</xliff:g> mục}other{Không di chuyển được <xliff:g id="COUNT_1">{count}</xliff:g> mục}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Không xoá được <xliff:g id="COUNT_0">{count}</xliff:g> mục}other{Không xoá được <xliff:g id="COUNT_1">{count}</xliff:g> mục}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Không chuyển được <xliff:g id="COUNT_0">{count}</xliff:g> mục vào thùng rác}other{Không chuyển được <xliff:g id="COUNT_1">{count}</xliff:g> mục vào thùng rác}}"</string>
+    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Nhấn để xem chi tiết"</string>
     <string name="close" msgid="905969391788869975">"Đóng"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -220,6 +234,8 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Đang di chuyển \"<xliff:g id="FILENAME">{filename}</xliff:g>\" sang \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}other{Đang di chuyển # tệp sang <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Đang xoá \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}other{Đang xoá # tệp}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Đang chuyển <xliff:g id="FILENAME">{filename}</xliff:g> vào thùng rác}other{Đang chuyển # tệp vào thùng rác}}"</string>
+    <!-- no translation found for restore_in_progress (6756221866797865046) -->
+    <skip />
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Đang nén \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}other{Đang nén # tệp}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Hiện tiến trình thao tác với tệp"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Tiến trình thao tác với tệp"</string>
