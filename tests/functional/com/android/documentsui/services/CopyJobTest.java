@@ -70,6 +70,51 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
+    public void testCopyVirtualFile_noExtensionForMimeType() throws Exception {
+        mDocs.assertChildCount(mDestRoot, 0);
+
+        // Create a virtual file with a streamable mime type that has no known extension.
+        final String displayName = "no-extension-file";
+        final String mimeTypeWithNoExtension = "application/x-funky-town";
+        Uri testFile = mDocs.createDocumentWithFlags(
+                mSrcRoot.documentId, "virtual/mime-type", displayName,
+                Document.FLAG_VIRTUAL_DOCUMENT, mimeTypeWithNoExtension);
+
+        createJob(newArrayList(testFile)).run();
+        waitForJobFinished();
+
+        mDocs.assertChildCount(mDestRoot, 1);
+        // The display name should be unchanged because there's no extension to add.
+        mDocs.assertHasFile(mDestRoot, displayName);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void testCopyVirtualFile_noExtensionForMimeType_withJobProgress() throws Exception {
+        mDocs.assertChildCount(mDestRoot, 0);
+
+        // Create a virtual file with a streamable mime type that has no known extension.
+        final String displayName = "no-extension-file";
+        final String mimeTypeWithNoExtension = "application/x-funky-town";
+        Uri testFile = mDocs.createDocumentWithFlags(
+                mSrcRoot.documentId, "virtual/mime-type", displayName,
+                Document.FLAG_VIRTUAL_DOCUMENT, mimeTypeWithNoExtension);
+
+        CopyJob job = createJob(newArrayList(testFile));
+        job.run();
+        waitForJobFinished();
+
+        mDocs.assertChildCount(mDestRoot, 1);
+        // The display name should be unchanged because there's no extension to add.
+        mDocs.assertHasFile(mDestRoot, displayName);
+
+        JobProgress progress = job.getJobProgress();
+        assertEquals(Job.STATE_COMPLETED, progress.state);
+        assertEquals(OPERATION_COPY, progress.operationType);
+        assertFalse(progress.hasFailures);
+    }
+
+    @Test
     public void testCopyVirtualNonTypedFile() throws Exception {
         runCopyVirtualNonTypedFileTest();
     }
