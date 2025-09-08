@@ -18,12 +18,15 @@ package com.android.documentsui.sidebar
 
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import com.android.documentsui.ActionHandler
 import com.android.documentsui.IconUtils
+import com.android.documentsui.MenuManager
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.SidebarEntryItemInfo
@@ -139,4 +142,13 @@ abstract class BaseSidebarEntryItem(
     }
 
     abstract override fun isDropTarget(): Boolean
+
+    public override fun createContextMenu(
+        menu: Menu,
+        inflater: MenuInflater,
+        menuManager: MenuManager,
+    ) {
+        inflater.inflate(getRes(R.menu.root_context_menu), menu)
+        menuManager.updateSidebarItemContextMenu(menu, itemInfo, docInfo)
+    }
 }

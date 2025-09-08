@@ -433,6 +433,11 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
         return (flags & Root.FLAG_SUPPORTS_EJECT) != 0;
     }
 
+    @Override
+    public boolean isEjecting() {
+        return ejecting;
+    }
+
     public boolean isAdvanced() {
         return (flags & Root.FLAG_ADVANCED) != 0;
     }

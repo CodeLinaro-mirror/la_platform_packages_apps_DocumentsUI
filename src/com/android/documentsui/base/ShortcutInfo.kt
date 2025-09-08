@@ -101,6 +101,18 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         return root.supportsCreate()
     }
 
+    override fun supportsEject(): Boolean {
+        return false
+    }
+
+    override fun isEjecting(): Boolean {
+        return false
+    }
+
+    override fun hasSettings(): Boolean {
+        return root.hasSettings()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

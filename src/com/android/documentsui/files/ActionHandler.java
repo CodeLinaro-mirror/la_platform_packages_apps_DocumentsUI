@@ -68,6 +68,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.ClipStore;
@@ -188,13 +189,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
-    public void pasteIntoFolder(RootInfo root) {
+    public void pasteIntoFolder(SidebarEntryItemInfo itemInfo) {
         this.getDocument(
-                root.authority,
-                root.documentId,
-                root.userId,
+                itemInfo.getRoot().authority,
+                itemInfo.getDocumentId(),
+                itemInfo.getRoot().userId,
                 TimeoutTask.DEFAULT_TIMEOUT,
-                (DocumentInfo doc) -> pasteIntoFolder(root, doc));
+                (DocumentInfo doc) -> pasteIntoFolder(itemInfo.getRoot(), doc));
     }
 
     private void pasteIntoFolder(RootInfo root, @Nullable DocumentInfo doc) {

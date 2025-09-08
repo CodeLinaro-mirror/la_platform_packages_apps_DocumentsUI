@@ -252,17 +252,16 @@ public class RootsFragment extends Fragment {
         Item item = mListHandler.getItemFromViewUnder(x, y);
 
         // If a read-only root, no need to see if top level is writable (it's not)
-        if (!(item instanceof RootItem) || !((RootItem) item).root.supportsCreate()) {
+        if (!(item instanceof BaseSidebarEntryItem)
+                || !((BaseSidebarEntryItem) item).getItemInfo().supportsCreate()) {
             return false;
         }
 
-        final RootItem rootItem = (RootItem) item;
-        getRootDocument(
-                rootItem,
-                (DocumentInfo doc) -> {
-                    rootItem.setDocInfo(doc);
-                    callback.run();
-                });
+        final BaseSidebarEntryItem sidebarItem = (BaseSidebarEntryItem) item;
+        getSidebarItemDocument(sidebarItem, (DocumentInfo doc) -> {
+                sidebarItem.setDocInfo(doc);
+                callback.run();
+        });
         return true;
     }
 
@@ -919,24 +918,38 @@ public class RootsFragment extends Fragment {
         if (item == null) {
             return false;
         }
-        final RootItem rootItem = (RootItem) item;
+        final BaseSidebarEntryItem sidebarItem = (BaseSidebarEntryItem) item;
         final int id = menuItem.getItemId();
         if (id == getRes(R.id.root_menu_eject_root)) {
+            // This option should be hidden for shortcuts.
             View itemView = mListHandler.getItemViewForContextMenu(menuItem.getMenuInfo());
             if (itemView == null) {
                 return false;
             }
             final View ejectIcon = itemView.findViewById(getRes(R.id.action_icon));
-            ejectClicked(ejectIcon, rootItem.root, mActionHandler);
+            ejectClicked(ejectIcon, sidebarItem.getItemInfo().getRoot(), mActionHandler);
             return true;
         } else if (id == getRes(R.id.root_menu_open_in_new_window)) {
-            mActionHandler.openInNewWindow(new DocumentStack(rootItem.root));
+            if (sidebarItem instanceof RootItem) {
+                mActionHandler.openInNewWindow(
+                        new DocumentStack(sidebarItem.getItemInfo().getRoot()));
+            } else if (isHomeScreenFilesFlagEnabled() && sidebarItem instanceof ShortcutItem) {
+                ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
+                getBaseActivity().buildStackToParentShortcutFolder(shortcut,
+                    (@Nullable DocumentStack stack) -> {
+                        if (stack != null) {
+                            stack.push(sidebarItem.getDocInfo());
+                            mActionHandler.openInNewWindow(stack);
+                        }
+                    });
+                return true;
+            }
             return true;
         } else if (id == getRes(R.id.root_menu_paste_into_folder)) {
-            mActionHandler.pasteIntoFolder(rootItem.root);
+            mActionHandler.pasteIntoFolder(sidebarItem.getItemInfo());
             return true;
         } else if (id == getRes(R.id.root_menu_settings)) {
-            mActionHandler.openSettings(rootItem.root);
+            mActionHandler.openSettings(sidebarItem.getItemInfo().getRoot());
             return true;
         }
         if (DEBUG) {
@@ -945,14 +958,15 @@ public class RootsFragment extends Fragment {
         return false;
     }
 
-    private void getRootDocument(RootItem rootItem, RootUpdater updater) {
+    private void getSidebarItemDocument(BaseSidebarEntryItem sidebarItem, RootUpdater updater) {
         // We need to start a GetDocumentTask so we can know whether items can be directly
         // pasted into root
         mActionHandler.getDocument(
-                rootItem.root.authority, rootItem.root.documentId, rootItem.root.userId,
-                CONTEXT_MENU_ITEM_TIMEOUT, (DocumentInfo doc) -> {
-                    updater.updateDocInfoForRoot(doc);
-                });
+                sidebarItem.getItemInfo().getRoot().authority,
+                sidebarItem.getItemInfo().getDocumentId(),
+                sidebarItem.getItemInfo().getRoot().userId,
+                CONTEXT_MENU_ITEM_TIMEOUT,
+                updater::updateDocInfoForRoot);
     }
 
     private Item getItem(View v) {

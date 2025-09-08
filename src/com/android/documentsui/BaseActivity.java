@@ -99,6 +99,7 @@ import com.google.android.material.color.DynamicColors;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -826,35 +827,45 @@ public abstract class BaseActivity
         mState.sortModel.setDimensionVisibility(
                 SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
 
-        mInjector.actions.loadDocument(shortcut.getParentDirectoryUri(), shortcut.getRoot().userId,
-            (@Nullable DocumentStack stack) -> {
-                if (stack != null) {
-                    // Create the shortcut folder if it does not exist yet, then open this
-                    // shortcut folder.
-                    mInjector.actions.getShortcutDocument(
-                        shortcut,
-                        TimeoutTask.DEFAULT_TIMEOUT,
-                        uri -> {
-                            shortcut.setDocumentId(DocumentsContract.getDocumentId(uri));
-                            new GetDocumentTask(
-                                shortcut.getRoot().authority,
-                                shortcut.getDocumentId(),
-                                shortcut.getRoot().userId,
-                                this,
+        buildStackToParentShortcutFolder(
+                shortcut,
+                (@Nullable DocumentStack stack) -> {
+                    if (stack != null) {
+                        // TODO: b/446566923 - remove the getShortcutDocument() method since we will
+                        //  eagerly load all the shortcuts. Remove and fix the tests in
+                        //  FilesActivityUiTest as well that depends on this change.
+                        // Create the shortcut folder if it does not exist yet, then open this
+                        // shortcut folder.
+                        mInjector.actions.getShortcutDocument(
+                                shortcut,
                                 TimeoutTask.DEFAULT_TIMEOUT,
-                                mDocs,
-                                doc -> {
-                                    // Reset the stack and store the shortcut reference.
-                                    mState.stack.reset(stack);
-                                    mState.shortcut = shortcut;
-                                    mInjector.actions.openRootDocument(doc);
-                                }
-                            ).execute();
-                        });
-                }
-            });
+                                uri -> {
+                                    shortcut.setDocumentId(DocumentsContract.getDocumentId(uri));
+                                    new GetDocumentTask(
+                                        shortcut.getRoot().authority,
+                                        shortcut.getDocumentId(),
+                                        shortcut.getRoot().userId,
+                                        this,
+                                        TimeoutTask.DEFAULT_TIMEOUT,
+                                        mDocs,
+                                        doc -> {
+                                            // Reset the stack and store the shortcut reference.
+                                            mState.stack.reset(stack);
+                                            mState.shortcut = shortcut;
+                                            mInjector.actions.openRootDocument(doc);
+                                        }
+                                    ).execute();
+                                });
+                    }
+        });
         expandAppBar();
         updateHeaderTitle();
+    }
+
+    public void buildStackToParentShortcutFolder(ShortcutInfo shortcut,
+            LoadDocStackTask.LoadDocStackCallback callback) {
+        mInjector.actions.loadDocument(
+                shortcut.getParentDirectoryUri(), shortcut.getRoot().userId, callback);
     }
 
     protected ProfileTabsAddons getProfileTabsAddon() {

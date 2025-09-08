@@ -32,6 +32,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.services.JobProgress;
 
@@ -130,7 +131,11 @@ public interface ActionHandler {
 
     void openInNewWindow(DocumentStack path);
 
-    void pasteIntoFolder(RootInfo root);
+    /**
+     * Pastes the selected items into a sidebar item entry.
+     * @param itemInfo - the destination sidebar item entry
+     */
+    void pasteIntoFolder(SidebarEntryItemInfo itemInfo);
 
     void selectAllFiles();
 

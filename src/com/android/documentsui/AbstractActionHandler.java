@@ -63,6 +63,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
@@ -243,8 +244,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void getShortcutDocument(ShortcutInfo shortcut, int timeout,
-            Consumer<Uri> callback) {
+    public void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback) {
         Context context = mActivity.getApplicationContext();
         ContentResolver resolver = shortcut.getRoot().userId.getContentResolver(context);
 
@@ -354,7 +354,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void pasteIntoFolder(RootInfo root) {
+    public void pasteIntoFolder(SidebarEntryItemInfo itemInfo) {
         throw new UnsupportedOperationException("Can't paste into folder.");
     }
 
