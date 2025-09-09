@@ -27,12 +27,14 @@ import android.text.TextUtils
 import android.util.Log
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
+import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.sorting.SortModel
+import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
@@ -72,43 +74,66 @@ class SearchLoader(
     private val sortModel: SortModel,
     private val executorService: ExecutorService,
 ) : BaseFileLoader(context, mimeTypeLookup) {
+    // In this class, "local search" is treated as "semantic search"
+    // to make its behavior, such as failure handling, more explicit.
+    private val semanticSearchProvider: Uri by lazy {
+        val providerString =
+            runCatching { context.getString(R.string.local_search_provider) }.getOrNull()
+
+        if (isUseLocalSearchProviderEnabled() && !providerString.isNullOrEmpty()) {
+            Uri.parse(providerString)
+        } else {
+            Uri.EMPTY
+        }
+    }
 
     /**
-     * Helper class that runs query on a single user for the given parameter. This class implements
-     * an abstract future so that if the task is completed, we can retrieve the cursor via the get
-     * method.
+     * Helper class that runs query on a single user for the given parameter, until the first
+     * queried URI is successful. This class implements an abstract future so that if the task is
+     * completed, we can retrieve the cursor via the get method.
      */
     inner class SearchTask(
         private val rootInfo: RootInfo,
-        private val searchUri: Uri,
+        private val searchUris: List<Uri>,
         private val queryArgs: Bundle,
         internal val index: Int,
         private val latch: CountDownLatch,
     ) : Runnable {
         internal var cursor: Cursor? = null
         internal val taskId: String
-            get() = searchUri.toString()
+            get() = searchUris.joinToString()
 
-        override fun run() {
+        private fun tryQuery(searchUri: Uri): Cursor? {
+            var result: Cursor? = null
             val queryDuration = measureTime {
                 try {
-                    cursor = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
-                    // Content observer must be set only once. This is why we are setting it
-                    // on each retrieved cursor, rather than on the merged cursor.
-                    // TODO(b:388130971): Content change should only force requery (#comment3).
-                    cursor?.registerContentObserver(observer)
+                    result = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
                 } catch (e: Exception) {
                     if (DEBUG) {
                         Log.d(TAG, "Failed to get cursor for $searchUri", e)
                     }
-                } finally {
-                    onTaskCompleted(this)
-                    latch.countDown()
                 }
             }
             if (DEBUG) {
                 Log.d(TAG, "Query on $searchUri took $queryDuration")
             }
+            return result
+        }
+
+        override fun run() {
+            for (searchUri in searchUris) {
+                val result = tryQuery(searchUri)
+                if (result != null) {
+                    cursor = result
+                    break
+                }
+            }
+            // Content observer must be set only once. This is why we are setting it
+            // on each retrieved cursor, rather than on the merged cursor.
+            // TODO(b:388130971): Content change should only force requery (#comment3).
+            cursor?.registerContentObserver(observer)
+            onTaskCompleted(this)
+            latch.countDown()
         }
     }
 
@@ -266,14 +291,59 @@ class SearchLoader(
         maybeRefreshContent(searchTask.taskId)
     }
 
-    private fun createContentProviderQuery(rootInfo: RootInfo) =
-        if (TextUtils.isEmpty(query) && options.otherQueryArgs.isEmpty) {
-            // NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus
-            // we only create the recents URI if both the query and other args are empty.
-            DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId)
-        } else {
-            DocumentsContract.buildSearchDocumentsUri(rootInfo.authority, rootInfo.rootId, query)
+    /**
+     * Determines if the query is for recent or search.
+     *
+     * NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus we only
+     * create the recents URI if both the query and other args are empty.
+     */
+    private fun isRecentQuery(): Boolean =
+        TextUtils.isEmpty(query) && options.otherQueryArgs.isEmpty
+
+    /** Gets semantic search URI if applicable, or null otherwise. */
+    private fun maybeGetSemanticSearchUri(rootInfo: RootInfo): Uri? {
+        if (
+            isRecentQuery() ||
+                !isUseLocalSearchProviderEnabled() ||
+                !rootInfo.isLocalOnly ||
+                semanticSearchProvider == Uri.EMPTY
+        ) {
+            return null
         }
+        return rootToSearchUri(semanticSearchProvider, query)
+    }
+
+    private fun buildSearchDocumentsUri(rootInfo: RootInfo): Uri =
+        DocumentsContract.buildSearchDocumentsUri(rootInfo.authority, rootInfo.rootId, query)
+
+    private fun createContentProviderQuery(rootInfo: RootInfo): List<Uri> {
+        val semanticSearchUri = maybeGetSemanticSearchUri(rootInfo)
+
+        if (isRecentQuery()) {
+            return listOf(
+                DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId)
+            )
+        } else if (semanticSearchUri != null) {
+            return listOf(semanticSearchUri, buildSearchDocumentsUri(rootInfo))
+        } else {
+            return listOf(buildSearchDocumentsUri(rootInfo))
+        }
+    }
+
+    /** Validates if the given URI is a root URI and converts it to a search URI. */
+    private fun rootToSearchUri(rootUri: Uri, query: String?): Uri? {
+        if (DocumentsContract.isRootUri(context, rootUri)) {
+            val rootId = DocumentsContract.getRootId(rootUri)
+            return DocumentsContract.buildSearchDocumentsUri(rootUri.authority, rootId, query)
+        } else {
+            Log.w(
+                TAG,
+                "The provided URI is not a valid root URI: $rootUri, " +
+                    "falling back to regular search.",
+            )
+            return null
+        }
+    }
 
     private fun createQueryArgs(
         rootSupportsSearchResultLimiting: Boolean,
@@ -305,16 +375,14 @@ class SearchLoader(
                 break
             }
             // Create a task that will set the cursor, once query call completes.
-            val rootSearchUri = createContentProviderQuery(rootInfo)
+            val searchUris = createContentProviderQuery(rootInfo)
             val queryArgs =
                 createQueryArgs(rootInfo.supportsSearchResultLimit(), rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
             if (DEBUG) {
-                Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")
+                Log.d(TAG, "Querying $searchUris with args $queryArgs")
             }
-            searchTaskList.add(
-                SearchTask(rootInfo, rootSearchUri, queryArgs, index, countDownLatch)
-            )
+            searchTaskList.add(SearchTask(rootInfo, searchUris, queryArgs, index, countDownLatch))
         }
     }
 

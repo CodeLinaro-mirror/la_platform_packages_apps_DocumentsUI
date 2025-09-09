@@ -90,6 +90,7 @@
             <item type="string" name="local_summary_provider" />
             <item type="string" name="preferred_root_package"/>
             <item type="string" name="trusted_quick_viewer_package"/>
+            <item type="string" name="local_search_provider"/>
             <!-- END STRING CONFIG -->
 
         </policy>

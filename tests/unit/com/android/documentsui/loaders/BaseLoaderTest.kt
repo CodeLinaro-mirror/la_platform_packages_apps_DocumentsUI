@@ -109,6 +109,8 @@ open class BaseLoaderTest {
         activity = TestActivity.create(environment)
         activity.activityManager = ActivityManagers.create(false)
         activity.userManager = UserManagers.create()
+
+        environment.providers.configurePm(activity.packageMgr)
     }
 
     /**

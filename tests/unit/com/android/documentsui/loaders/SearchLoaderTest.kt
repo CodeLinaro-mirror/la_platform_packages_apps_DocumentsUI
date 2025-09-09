@@ -26,6 +26,8 @@ import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.base.RootInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -33,6 +35,7 @@ import com.android.documentsui.sorting.SortModel
 import com.android.documentsui.testing.TestFeatures
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
+import com.android.documentsui.util.FlagUtils
 import com.google.common.truth.Expect
 import java.time.Duration
 import java.util.Locale
@@ -58,6 +61,16 @@ fun createQueryArgs(vararg mimeTypes: String): Bundle {
     val args = Bundle()
     args.putStringArray(DocumentsContract.QUERY_ARG_MIME_TYPES, arrayOf(*mimeTypes))
     return args
+}
+
+data class SemanticSearchProviderTestParams(
+    val testName: String,
+    val flagEnabled: Boolean,
+    val resourceUri: String,
+    val semanticSearchError: Boolean,
+    val expectedDisplayName: String,
+) {
+    override fun toString(): String = testName
 }
 
 @RunWith(Enclosed::class)
@@ -173,6 +186,133 @@ class SearchLoaderTest {
                 )
             val directoryResult = loader.loadInBackground()
             expect.that(getFileCount(directoryResult)).isEqualTo(testParams.expectedCount)
+        }
+    }
+
+    // Collection of semantic search provider tests.
+    @RunWith(Parameterized::class)
+    @SmallTest
+    class SemanticSearchProviderTests(private val testParams: SemanticSearchProviderTestParams) :
+        BaseLoaderTest() {
+        @get:Rule val setFlags = OverrideFlagsRule()
+
+        @get:Rule val expect: Expect = Expect.create()
+
+        lateinit var executor: ExecutorService
+        val contentLock = ContentLock()
+        val contentObserver = LockingContentObserver(contentLock) {}
+
+        companion object {
+            private val SEMANTIC_SEARCH_PROVIDER: RootInfo = TestProvidersAccess.LOCAL_SEARCH
+
+            @JvmStatic
+            @Parameters(name = "{0}")
+            fun data(): Collection<SemanticSearchProviderTestParams> =
+                listOf(
+                    SemanticSearchProviderTestParams(
+                        testName = "happy_path_should_use_semantic_search_provider",
+                        flagEnabled = true,
+                        resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
+                        semanticSearchError = false,
+                        expectedDisplayName = "found-me-on-semantic-search",
+                    ),
+                    SemanticSearchProviderTestParams(
+                        testName = "flag_disabled_should_fall_back_to_default",
+                        flagEnabled = false,
+                        resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
+                        semanticSearchError = false,
+                        expectedDisplayName = "found-me-on-downloads",
+                    ),
+                    SemanticSearchProviderTestParams(
+                        testName = "resource_missing_should_fall_back_to_default",
+                        flagEnabled = true,
+                        resourceUri = "",
+                        semanticSearchError = false,
+                        expectedDisplayName = "found-me-on-downloads",
+                    ),
+                    SemanticSearchProviderTestParams(
+                        testName = "malformed_uri_should_fall_back_to_default",
+                        flagEnabled = true,
+                        resourceUri = "this-is-not-a-valid-uri",
+                        semanticSearchError = false,
+                        expectedDisplayName = "found-me-on-downloads",
+                    ),
+                    SemanticSearchProviderTestParams(
+                        testName = "semantic_search_fails_should_fall_back_to_default",
+                        flagEnabled = true,
+                        resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
+                        semanticSearchError = true,
+                        expectedDisplayName = "found-me-on-downloads",
+                    ),
+                )
+        }
+
+        @Before
+        fun setUpTest() {
+            executor = Executors.newSingleThreadExecutor()
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testSemanticSearchProvider() {
+            // OverrideFlagsRule will restore the flag to its original state after the test.
+            FlagUtils.getInstance()
+                .setOverride(FLAG_USE_LOCAL_SEARCH_PROVIDER, testParams.flagEnabled)
+            activity.resources.setLocalSearchProvider(testParams.resourceUri)
+
+            // Setup a document to be returned by the SEMANTIC_SEARCH provider when it is used,
+            // or an error if it should fail.
+            if (testParams.semanticSearchError) {
+                environment.mockProviders[SEMANTIC_SEARCH_PROVIDER.authority]
+                    ?.setThrownRuntimeMessage("Semantic search failed!")
+            } else {
+                val semanticSearchDoc = environment.model.createFile("found-me-on-semantic-search")
+                environment.mockProviders[SEMANTIC_SEARCH_PROVIDER.authority]
+                    ?.setNextChildDocumentsReturns(semanticSearchDoc)
+            }
+            // Setup a document to be returned by the DOWNLOADS provider which acts as the fallback
+            // result when the LOCAL_SEARCH provider is unused.
+            val downloadedDoc = environment.model.createFile("found-me-on-downloads")
+            environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
+                setNextChildDocumentsReturns(downloadedDoc)
+            }
+
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.DOWNLOADS),
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    // To bypass DocumentsContract.matchSearchQueryArguments(...) validation
+                    // in TestDocumentsProvider and default recent URI behavior in SearchLoader
+                    // the query is intentionaly empty while the extra args bundle is populated.
+                    // TODO(b/436750342): Find a cleaner solution.
+                    "",
+                    QueryOptions(
+                        maxResults = 10,
+                        maxResultsPerRoot = ALL_RESULTS,
+                        maxLastModifiedDelta = null,
+                        maxQueryTime = null,
+                        showHidden = false,
+                        acceptableMimeTypes = null,
+                        otherQueryArgs =
+                            Bundle().apply {
+                                // Other than EXTRA_URI, other query options are not relevant for
+                                // this test.
+                                putParcelable(
+                                    DocumentsContract.EXTRA_URI,
+                                    TestProvidersAccess.DOWNLOADS.uri,
+                                )
+                            },
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(getFileCount(result)).isEqualTo(1)
+            expect
+                .that(getDocuments(result)[0].displayName)
+                .isEqualTo(testParams.expectedDisplayName)
         }
     }
 
