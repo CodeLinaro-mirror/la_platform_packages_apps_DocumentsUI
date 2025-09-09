@@ -27,6 +27,7 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -60,6 +61,7 @@ import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
@@ -73,6 +75,7 @@ import com.android.documentsui.loaders.SearchLoader;
 import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.GetDocumentTask;
+import com.android.documentsui.roots.GetShortcutUriTask;
 import com.android.documentsui.roots.LoadFirstRootTask;
 import com.android.documentsui.roots.LoadRootTask;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -230,6 +233,23 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
+    public void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback) {
+        Context context = mActivity.getApplicationContext();
+        ContentResolver resolver = shortcut.getRoot().userId.getContentResolver(context);
+
+        // Create the shortcut folder and get its URI first if it doesn't exist. Then call
+        // and execute the next task to open the shortcut folder.
+        GetShortcutUriTask task = new GetShortcutUriTask(
+                shortcut,
+                resolver,
+                mActivity,
+                timeout,
+                callback);
+
+        task.executeOnExecutor(mExecutors.lookup(shortcut.getRoot().authority));
+    }
+
+    @Override
     public void refreshDocument(DocumentInfo doc, BooleanConsumer callback) {
         RefreshTask task = new RefreshTask(
                 mInjector.features,
@@ -300,6 +320,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public void openRoot(ResolveInfo app, UserId userId) {
         throw new UnsupportedOperationException("Can't open an app.");
+    }
+
+    @Override
+    public void openShortcut(ShortcutInfo shortcut) {
+        throw new UnsupportedOperationException("Can't open shortcut.");
     }
 
     @Override
@@ -764,7 +789,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         throw new UnsupportedOperationException("Restore document not supported!");
     }
 
-    protected final void loadDocument(Uri uri, UserId userId, LoadDocStackCallback callback) {
+    @Override
+    public final void loadDocument(Uri uri, UserId userId, LoadDocStackCallback callback) {
         new LoadDocStackTask(
                 mActivity,
                 mProviders,
@@ -1207,6 +1233,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         void refreshCurrentRootAndDirectory(@AnimationType int anim);
 
         void onRootPicked(RootInfo root);
+
+        /**
+         * Handles the actions required when a shortcut entry is picked on the sidebar.
+         * This includes ensuring that the folder exists, and rebuilding to the correct
+         * document stack.
+         */
+        void onShortcutPicked(ShortcutInfo shortcut);
+
 
         // TODO: Move this to PickAddons as multi-document picking is exclusive to that activity.
         void onDocumentsPicked(List<DocumentInfo> docs);

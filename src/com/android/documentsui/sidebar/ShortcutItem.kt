@@ -103,8 +103,7 @@ open class ShortcutItem(
     }
 
     override fun open() {
-        // TODO: b/441193752 - implement this view related method
-        return
+        actionHandler?.openShortcut(shortcut)
     }
 
     override fun dropOn(event: DragEvent?): Boolean {

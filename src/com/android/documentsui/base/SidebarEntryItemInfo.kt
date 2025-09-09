@@ -53,6 +53,7 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
         const val TYPE_ROOT_OTHER: Int = 14
         const val TYPE_SHORTCUT_OTHER: Int = 15
     }
+
     @IntDef(
         TYPE_UNSET,
         TYPE_RECENTS,

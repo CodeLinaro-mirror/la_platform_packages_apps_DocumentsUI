@@ -142,21 +142,27 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     }
 
     /**
-     * Used for testing - sets the mRoots and mShortcutResources to unit test other methods.
+     * Used for testing - sets the mRoots to unit test other methods.
      * @param roots - the document provider roots.
-     * @param shortcutResources - the shortcut resources.
      */
     @VisibleForTesting
-    public void setRootsAndShortcutResources(
-            List<RootInfo> roots,
-            Collection<ShortcutResourceValues> shortcutResources) {
+    public void setRoots(List<RootInfo> roots) {
         synchronized (mLock) {
             mRoots.clear();
-            mShortcutResources.clear();
             for (RootInfo root : roots) {
                 UserAuthority userAuthority = new UserAuthority(root.userId, root.authority);
                 mRoots.put(userAuthority, root);
             }
+        }
+    }
+
+    /**
+     * Used for testing - sets the mRoots and mShortcutResources to unit test other methods.
+     * @param shortcutResources - the shortcut resources.
+     */
+    @VisibleForTesting
+    public void setShortcutResources(Collection<ShortcutResourceValues> shortcutResources) {
+        synchronized (mLock) {
             mShortcutResources = shortcutResources;
         }
     }

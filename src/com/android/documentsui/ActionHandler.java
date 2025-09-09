@@ -30,6 +30,7 @@ import com.android.documentsui.base.BooleanConsumer;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.UserId;
 
 import java.lang.annotation.Retention;
@@ -79,6 +80,14 @@ public interface ActionHandler {
             Consumer<DocumentInfo> callback);
 
     /**
+     * Attempts to create the shortcut folder first if it doesn't exist. Once finished, it will
+     * call GetDocumentTask to get the shortcut's document and open DocumentsUI to this document.
+     * If the task times out, callback will be called with null Uri. Supply
+     * {@link TimeoutTask#DEFAULT_TIMEOUT} if you don't want to the task to ever time out.
+     */
+    void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback);
+
+    /**
      * Attempts to refresh the given DocumentInfo, which should be at the top of the state stack.
      * Returns a boolean answer to the callback, given by {@link ContentProvider#refresh}.
      */
@@ -96,6 +105,11 @@ public interface ActionHandler {
     void showAppDetails(ResolveInfo info, UserId userId);
 
     void openRoot(RootInfo root);
+
+    /**
+     * Opens the contents of a shortcut (through a sidebar entry click).
+     */
+    void openShortcut(ShortcutInfo shortcut);
 
     void openRoot(ResolveInfo app, UserId userId);
 
@@ -211,4 +225,12 @@ public interface ActionHandler {
      * @return this
      */
     <T extends ActionHandler> T reset(ContentLock contentLock);
+
+    /**
+     * Runs `LoadDocStackTask` to fetch the DocumentStack of the provided document.
+     * @param uri - The URI of the document
+     * @param userId - User ID of the current user
+     * @param callback - Callback sequence after the document stack task has finished executing
+     */
+    void loadDocument(Uri uri, UserId userId, LoadDocStackTask.LoadDocStackCallback callback);
 }

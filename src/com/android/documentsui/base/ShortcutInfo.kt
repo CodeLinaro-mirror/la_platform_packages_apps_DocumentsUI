@@ -79,6 +79,13 @@ class ShortcutInfo(
         }
     }
 
+    /**
+     * Gets the URI of the parent directory. The parent directory may not be a real root directory.
+     */
+    fun getParentDirectoryUri(): Uri {
+        return DocumentsContract.buildDocumentUri(root.authority, parentDirDocumentId)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

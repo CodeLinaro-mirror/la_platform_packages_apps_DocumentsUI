@@ -174,7 +174,8 @@ class ProvidersCacheTest {
                 )
             )
         // Set the mRoots and shortcut resources for the test.
-        providers.setRootsAndShortcutResources(roots, shortcutResources)
+        providers.setRoots(roots)
+        providers.setShortcutResources(shortcutResources)
 
         val expected: Collection<ShortcutInfo> =
             listOf(
@@ -217,7 +218,8 @@ class ProvidersCacheTest {
                 )
             )
         // Set the mRoots and shortcut resources for the test.
-        providers.setRootsAndShortcutResources(roots, shortcutResources)
+        providers.setRoots(roots)
+        providers.setShortcutResources(shortcutResources)
 
         val expected1: Collection<ShortcutInfo> =
             listOf(
@@ -266,7 +268,8 @@ class ProvidersCacheTest {
             )
 
         // Set the mRoots and shortcut resources for the test.
-        providers.setRootsAndShortcutResources(roots, shortcutResources)
+        providers.setRoots(roots)
+        providers.setShortcutResources(shortcutResources)
 
         val expected: Collection<ShortcutInfo> = listOf()
         // Load the shortcuts, should expect empty collection due to no matching parent
