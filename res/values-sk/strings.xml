@@ -37,6 +37,10 @@
     <string name="menu_save" msgid="5195367497138965168">"Uložiť"</string>
     <string name="menu_share" msgid="4307140947108068356">"Zdieľať"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Odstrániť"</string>
+    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
+    <skip />
+    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"Vybrať všetko"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Zrušiť výber všetkého"</string>
     <string name="menu_select" msgid="1366061076507142387">"Vybrať"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Extrahujú sa súbory"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Presúvajú sa súbory"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Odstraňujú sa súbory"</string>
+    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"Zostáva: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="few">Kopírujú sa <xliff:g id="COUNT_1">%1$d</xliff:g> položky.</item>
@@ -168,18 +174,26 @@
       <item quantity="other">Odstraňuje sa <xliff:g id="COUNT_1">%1$d</xliff:g> položiek.</item>
       <item quantity="one">Odstraňujte sa <xliff:g id="COUNT_0">%1$d</xliff:g> položka.</item>
     </plurals>
+    <!-- no translation found for trashing (4643112474465979863) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Späť"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Pripravuje sa…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Pripravuje sa…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Pripravuje sa…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Pripravuje sa…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Pripravuje sa…"</string>
+    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Nepodarilo sa skopírovať <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodarilo sa skopírovať <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Couldn’t copy <xliff:g id="COUNT_1">{count}</xliff:g> items}other{Nepodarilo sa skopírovať <xliff:g id="COUNT_1">{count}</xliff:g> položiek}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nepodarilo sa skomprimovať <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodarilo skomprimovať <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Couldn’t compress <xliff:g id="COUNT_1">{count}</xliff:g> items}other{Nepodarilo skomprimovať <xliff:g id="COUNT_1">{count}</xliff:g> položiek}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Nepodarilo sa extrahovať <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodarilo sa extrahovať <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Couldn’t extract <xliff:g id="COUNT_1">{count}</xliff:g> items}other{Nepodarilo sa extrahovať <xliff:g id="COUNT_1">{count}</xliff:g> položiek}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Nepodarilo sa presunúť <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodarilo sa presunúť <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Couldn’t move <xliff:g id="COUNT_1">{count}</xliff:g> items}other{Nepodarilo sa presunúť <xliff:g id="COUNT_1">{count}</xliff:g> položiek}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nepodarilo sa odstrániť <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodarilo sa odstrániť <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Couldn’t delete <xliff:g id="COUNT_1">{count}</xliff:g> items}other{Nepodarilo sa odstrániť <xliff:g id="COUNT_1">{count}</xliff:g> položiek}}"</string>
+    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Klepnutím zobrazíte podrobnosti"</string>
     <string name="close" msgid="905969391788869975">"Zavrieť"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -224,10 +238,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> položiek bolo skopírovaných do schránky.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> položka bola skopírovaná do schránky.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Iba na čítanie"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Tieto súbory si môžete zobraziť, ale niektoré akcie nie sú podporované"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archív je v umiestnení iba na čítanie a nedá sa tu extrahovať."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Súborová operácia nie je podporovaná."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Súborová operácia sa nedá vykonať."</string>
@@ -238,7 +250,10 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> sa extrahuje do adresára <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{# archívy sa extrahujú do adresára <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Extracting # archives to “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{# archívov sa extrahuje do adresára <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> sa presúva do adresára <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{# súbory sa presúvajú do adresára <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Moving # files to “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{# súborov sa presúva do adresára <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Odstraňuje sa súbor <xliff:g id="FILENAME">{filename}</xliff:g>}few{Odstraňujú sa # súbory}many{Deleting # files}other{Odstraňuje sa # súborov}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Komprimuje sa súbor <xliff:g id="FILENAME">{filename}</xliff:g>}few{Komprimujú sa # súbory}many{Zipping # files}other{Komprimuje sa # súborov}}"</string>
+    <!-- no translation found for trash_in_progress (6889113199087672853) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Zobrazovať priebeh operácií súboru"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Priebeh operácií so súborom"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Dokončené"</string>

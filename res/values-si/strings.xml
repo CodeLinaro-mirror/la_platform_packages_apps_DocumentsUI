@@ -37,6 +37,10 @@
     <string name="menu_save" msgid="5195367497138965168">"සුරකින්න"</string>
     <string name="menu_share" msgid="4307140947108068356">"බෙදාගන්න"</string>
     <string name="menu_delete" msgid="1022254131543256626">"මකන්න"</string>
+    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
+    <skip />
+    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"සියල්ල තෝරන්න"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"සියල්ල නොතෝරන්න"</string>
     <string name="menu_select" msgid="1366061076507142387">"තෝරන්න"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"ගොනු උද්ධෘත කරමින්"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ගොනු ගෙන යාම"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ගොනු මකමින්"</string>
+    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> ඉතිරියි"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පිටපත් කරමින්</item>
@@ -158,18 +164,26 @@
       <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් මකමින්.</item>
       <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් මකමින්.</item>
     </plurals>
+    <!-- no translation found for trashing (4643112474465979863) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"අස් කරන්න"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"සූදානම් කරමින්…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"සූදානම් කරමින්…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"සූදානම් කරමින්…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"සූදානම් කරමින්…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"සූදානම් කරමින්…"</string>
+    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{අයිතම <xliff:g id="COUNT_0">{count}</xliff:g>ක් පිටපත් කළ නොහැකි විය}one{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් පිටපත් කළ නොහැකි විය}other{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් පිටපත් කළ නොහැකි විය}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{අයිතම <xliff:g id="COUNT_0">{count}</xliff:g>ක් සම්පීඩනය කිරීමට නොහැකි විය}one{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් සම්පීඩනය කළ නොහැකි විය}other{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් සම්පීඩනය කළ නොහැකි විය}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{අයිතම <xliff:g id="COUNT_0">{count}</xliff:g>ක් උපුටා ගැනීමට නොහැකි විය}one{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් උපුටා ගැනීමට නොහැකි විය}other{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් උපුටා ගැනීමට නොහැකි විය}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{අයිතම <xliff:g id="COUNT_0">{count}</xliff:g>ක් චලනය කිරීමට නොහැකි විය}one{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් චලනය කිරීමට නොහැකි විය}other{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g>ක් චලනය කිරීමට නොහැකි විය}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{අයිතම <xliff:g id="COUNT_0">{count}</xliff:g>ක් මැකිය නොහැකි විය}one{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g> මැකීමට නොහැකි විය}other{අයිතම <xliff:g id="COUNT_1">{count}</xliff:g> මැකීමට නොහැකි විය}}"</string>
+    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"විස්තර බැලීමට තට්ටු කරන්න"</string>
     <string name="close" msgid="905969391788869975">"වසන්න"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -200,10 +214,8 @@
       <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
       <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"(කියවීම-පමණි)"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"ඔබට මෙම ගොනු බැලීමට හැකි නමුත් සමහර ක්‍රියා සඳහා සහය නොදක්වයි"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"මෙම ලේඛනාගාරය කියවීමට පමණක් හැකි ස්ථානයක ඇති අතර මෙතැනින් උපුටා ගත නොහැක."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ගොනු මෙහෙයුම වෙත සහාය නොදක්වයි."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ගොනු මෙහෙයුම අසාර්ථක විය."</string>
@@ -214,7 +226,10 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” වෙත “<xliff:g id="FILENAME">{filename}</xliff:g>” උපුටා ගනිමින්}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” වෙත ලේඛනාගාර #ක් උපුටා ගනිමින්}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” වෙත ලේඛනාගාර #ක් උපුටා ගනිමින්}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” වෙත “<xliff:g id="FILENAME">{filename}</xliff:g>” ගෙන යමින්}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” වෙත ගොනු #ක් ගෙන යමින්}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” වෙත ගොනු #ක් ගෙන යමින්}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” මකමින්}one{ගොනු #ක් මකමින්}other{ගොනු #ක් මකමින්}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ සිප් කරමින්}one{ගොනු # සිප් කරමින්}other{ගොනු # සිප් කරමින්}}"</string>
+    <!-- no translation found for trash_in_progress (6889113199087672853) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ගොනු ප්‍රගතිය පෙන්වන්න"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ගොනු ප්‍රගතිය"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"සම්පූර්ණයි"</string>

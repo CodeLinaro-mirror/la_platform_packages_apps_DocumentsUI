@@ -30,19 +30,21 @@ class FlagUtils private constructor(
     companion object {
         private const val TAG = "FlagUtils"
         @Volatile private var instance: FlagUtils = FlagUtils()
-        private val overridableFlags = listOf(
-            Flags.FLAG_DESKTOP_FILE_HANDLING_RO,
-            Flags.FLAG_DESKTOP_UX_PHASE_2_RO,
-            Flags.FLAG_ENABLE_TRASH_FLOW_RO,
-            Flags.FLAG_USE_MATERIAL3,
-            // TODO(b/433858983): Make peek overridable once all flag evaluations use FlagUtils.
-            // Tests need to use RequiresFlagsEnabled and CheckFlagsRule until then.
-            // Flags.FLAG_USE_PEEK_PREVIEW_RO,
-            Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
-            Flags.FLAG_VISUAL_SIGNALS_RO,
-            Flags.FLAG_ZIP_NG_RO,
-            Flags.FLAG_HOME_SCREEN_FILES,
-        )
+        private val overridableFlags =
+            listOf(
+                Flags.FLAG_DESKTOP_FILE_HANDLING_RO,
+                Flags.FLAG_DESKTOP_UX_PHASE_2_RO,
+                Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+                Flags.FLAG_SINGLE_CLICK_TO_SELECT,
+                Flags.FLAG_USE_MATERIAL3,
+                // TODO(b/433858983): Make peek overridable once all flag evaluations use FlagUtils.
+                // Tests need to use RequiresFlagsEnabled and CheckFlagsRule until then.
+                // Flags.FLAG_USE_PEEK_PREVIEW_RO,
+                Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+                Flags.FLAG_VISUAL_SIGNALS_RO,
+                Flags.FLAG_ZIP_NG_RO,
+                Flags.FLAG_HOME_SCREEN_FILES,
+            )
 
         @JvmStatic
         fun getInstance(): FlagUtils {
@@ -92,6 +94,13 @@ class FlagUtils private constructor(
         }
 
         @JvmStatic
+        fun isSingleClickToSelectEnabled(): Boolean {
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_SINGLE_CLICK_TO_SELECT, Flags.singleClickToSelect())
+        }
+
+        @JvmStatic
         fun isVisualSignalsFlagEnabled(): Boolean {
             val flag = getInstance().overrides.getOrDefault(
                 Flags.FLAG_VISUAL_SIGNALS_RO,
@@ -109,6 +118,9 @@ class FlagUtils private constructor(
 
         @JvmStatic
         fun isTrashFlowEnabled(): Boolean {
+            if (!SdkLevel.isAtLeastB()) {
+                return false
+            }
             // If API flag is not enabled, then trash flow will be disabled
             if (!enableDocumentsTrashApi()) {
                 return false

@@ -37,6 +37,10 @@
     <string name="menu_save" msgid="5195367497138965168">"सेभ गर्नुहोस्"</string>
     <string name="menu_share" msgid="4307140947108068356">"सेयर गर्नुहोस्"</string>
     <string name="menu_delete" msgid="1022254131543256626">"मेट्नुहोस्"</string>
+    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
+    <skip />
+    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"सबैलाई चयन गर्नुहोस्"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"सबै चयन रद्द गर्नुहोस्"</string>
     <string name="menu_select" msgid="1366061076507142387">"चयन गर्नुहोस्"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"फाइलहरू एक्स्ट्र्याक्ट गर्दै"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"फाइलहरूलाई सार्दै"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"फाइलहरूलाई मेट्दै"</string>
+    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> बाँकी छ"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> वस्तुहरूलाई प्रतिलिपि गर्दै।</item>
@@ -158,18 +164,26 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> वस्तुहरू मेटाउँदै।</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> वस्तु मेटाउँदै।</item>
     </plurals>
+    <!-- no translation found for trashing (4643112474465979863) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"अन्डू गर्नुहोस्"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"तयार पार्दै..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"तयार पार्दै..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"तयार पार्दै..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"तयार पार्दै..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"तयार पार्दै..."</string>
+    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> वस्तु कपी गर्न सकिएन}other{<xliff:g id="COUNT_1">{count}</xliff:g> वटा वस्तु कपी गर्न सकिएन}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> वस्तु कम्प्रेस गर्न सकिएन}other{<xliff:g id="COUNT_1">{count}</xliff:g> वटा वस्तु कम्प्रेस गर्न सकिएन}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> वस्तु एक्स्ट्र्याक्ट गर्न सकिएन}other{<xliff:g id="COUNT_1">{count}</xliff:g> वटा वस्तु एक्स्ट्र्याक्ट गर्न सकिएन}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> वस्तु सार्न सकिएन}other{<xliff:g id="COUNT_1">{count}</xliff:g> वटा वस्तु सार्न सकिएन}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> वस्तु मेटाउन सकिएन}other{<xliff:g id="COUNT_1">{count}</xliff:g> वटा वस्तु मेटाउन सकिएन}}"</string>
+    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"विवरणहरू हेर्न ट्याप गर्नुहोस्"</string>
     <string name="close" msgid="905969391788869975">"बन्द गर्नुहोस्"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -200,10 +214,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> वटा फाइल क्लिपबोर्डमा कपी गरिए।</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> फाइल क्लिपबोर्डमा कपी गरियो।</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"पढ्न मात्र मिल्ने"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"तपाईं यी फाइलहरू हेर्न सक्नुहुन्छ तर यिनमा केही कारबाहीहरू गर्न मिल्दैनन्"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"यो अभिलेख पढ्न मात्र मिल्ने लोकेसनमा छ र यसलाई यहाँ एक्स्ट्र्याक्ट गर्न सकिँदैन।"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"फाइल सम्बन्धी कार्य समर्थित छैन।"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"फाइल सम्बन्धी कार्य असफल भयो।"</string>
@@ -214,7 +226,10 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मा एक्स्ट्र्याक्ट गरिँदै छ}other{# वटा अभिलेख “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मा एक्स्ट्र्याक्ट गरिँदै छन्}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” सारेर “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” मा लगिँदै छ}other{# वटा फाइल सारेर “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” मा लगिँदै छन्}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” मेटाइँदै छ}other{# वटा फाइल मेटाइँदै छन्}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ जिप गरिँदै छ}other{# वटा फाइल जिप गरिँदै छन्}}"</string>
+    <!-- no translation found for trash_in_progress (6889113199087672853) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"फाइलको प्रोग्रेस देखाउनुहोस्"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"फाइलसम्बन्धी कारबाहीको प्रोग्रेस"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"पूरा भयो"</string>

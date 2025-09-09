@@ -37,6 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"Guardar"</string>
     <string name="menu_share" msgid="4307140947108068356">"Compartir"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Borrar"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Borrar definitivamente"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Mover a la papelera"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Seleccionar todo"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Anular la selección de todo"</string>
     <string name="menu_select" msgid="1366061076507142387">"Seleccionar"</string>
@@ -137,6 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Extrayendo archivos"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Trasladando archivos"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Borrando los archivos"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Enviando archivos a la papelera"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Tiempo restante: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="many">Copiando <xliff:g id="COUNT_1">%1$d</xliff:g> de elementos.</item>
@@ -163,18 +166,22 @@
       <item quantity="other">Borrando <xliff:g id="COUNT_1">%1$d</xliff:g> elementos.</item>
       <item quantity="one">Borrando <xliff:g id="COUNT_0">%1$d</xliff:g> elemento.</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Moviendo <xliff:g id="COUNT_0">{count}</xliff:g> elemento a la papelera}many{Enviando <xliff:g id="COUNT_1">{count}</xliff:g> de elementos a la papelera}other{Enviando <xliff:g id="COUNT_1">{count}</xliff:g> elementos a la papelera}}"</string>
     <string name="undo" msgid="2902438994196400565">"Deshacer"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Preparando…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Preparando…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Preparando…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Preparando…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Preparando…"</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Preparando…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{No se pudo copiar <xliff:g id="COUNT_0">{count}</xliff:g> elemento}many{No se pudieron copiar <xliff:g id="COUNT_1">{count}</xliff:g> de elementos}other{No se pudieron copiar <xliff:g id="COUNT_1">{count}</xliff:g> elementos}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{No se pudo comprimir <xliff:g id="COUNT_0">{count}</xliff:g> elemento}many{No se pudieron comprimir <xliff:g id="COUNT_1">{count}</xliff:g> de elementos}other{No se pudieron comprimir <xliff:g id="COUNT_1">{count}</xliff:g> elementos}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{No se pudo extraer <xliff:g id="COUNT_0">{count}</xliff:g> elemento}many{No se pudieron extraer <xliff:g id="COUNT_1">{count}</xliff:g> de elementos}other{No se pudieron extraer <xliff:g id="COUNT_1">{count}</xliff:g> elementos}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{No se pudo mover <xliff:g id="COUNT_0">{count}</xliff:g> elemento}many{No se pudieron mover <xliff:g id="COUNT_1">{count}</xliff:g> de elementos}other{No se pudieron mover <xliff:g id="COUNT_1">{count}</xliff:g> elementos}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{No se pudo borrar <xliff:g id="COUNT_0">{count}</xliff:g> elemento}many{No se pudieron borrar <xliff:g id="COUNT_1">{count}</xliff:g> de elementos}other{No se pudieron borrar <xliff:g id="COUNT_1">{count}</xliff:g> elementos}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{No se pudo mover <xliff:g id="COUNT_0">{count}</xliff:g> elemento a la papelera}many{No se pudieron mover <xliff:g id="COUNT_1">{count}</xliff:g> de elementos a la papelera}other{No se pudieron mover <xliff:g id="COUNT_1">{count}</xliff:g> elementos a la papelera}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Presiona para ver los detalles"</string>
     <string name="close" msgid="905969391788869975">"Cerrar"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -212,10 +219,8 @@
       <item quantity="other">Se copiaron <xliff:g id="COUNT_1">%1$d</xliff:g> elementos al portapapeles.</item>
       <item quantity="one">Se copió <xliff:g id="COUNT_0">%1$d</xliff:g> elemento al portapapeles.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Solo lectura"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Puedes ver estos archivos, pero no se admiten algunas acciones"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Este archivo se encuentra en una ubicación de solo lectura y no se puede extraer aquí."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"No se admite esta operación en el archivo."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"No se pudo realizar la operación en el archivo."</string>
@@ -226,7 +231,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Extrayendo \"<xliff:g id="FILENAME">{filename}</xliff:g>\" en \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}many{Extrayendo # de archivos a \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Extrayendo # archivos a \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Moviendo \"<xliff:g id="FILENAME">{filename}</xliff:g>\" a \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}many{Moviendo # de archivos a \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Moviendo # archivos a \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Borrando \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}many{Borrando # de archivos}other{Borrando # archivos}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Comprimiendo \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}many{Comprimiendo # de archivos}other{Comprimiendo # archivos}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Moviendo <xliff:g id="FILENAME">{filename}</xliff:g> a la papelera}many{Moviendo # de archivos a la papelera}other{Moviendo # archivos a la papelera}}"</string>
+    <!-- no translation found for compress_in_progress (6585173688835909381) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar progreso del archivo"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progreso del archivo"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Completado"</string>

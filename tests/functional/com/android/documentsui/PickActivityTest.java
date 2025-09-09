@@ -44,6 +44,7 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.Bots;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.picker.PickActivity;
@@ -94,8 +95,14 @@ public class PickActivityTest {
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule()
-                    .createFileInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1, "text/plain")
-                    .createFileInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_2, "image/png");
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                docsHelper.createDocument(
+                                        root, "text/plain", TestFilesRule.FILE_NAME_1);
+                                docsHelper.createDocument(
+                                        root, "image/png", TestFilesRule.FILE_NAME_2);
+                            });
 
     @Rule
     public final ActivityTestRule<PickActivity> mRule =

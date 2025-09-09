@@ -19,6 +19,8 @@ import android.content.ContentProviderClient
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.CancellationSignal
+import android.os.OperationCanceledException
 import android.os.RemoteException
 import android.provider.DocumentsContract
 import android.util.Log
@@ -74,6 +76,12 @@ class FolderLoader(
     }
 
     fun loadInBackgroundInternal(): DirectoryResult? {
+        synchronized(this) {
+            if (isLoadInBackgroundCanceled) {
+                throw OperationCanceledException()
+            }
+            cancelNotifier = CancellationSignal()
+        }
         val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
         val folderChildrenUri =
             if (mListedDir == null) {
@@ -103,6 +111,8 @@ class FolderLoader(
             )
         } catch (e: Exception) {
             result.exception = e
+        } finally {
+            synchronized(this) { cancelNotifier = null }
         }
         if (cursor == null) {
             cursor = emptyCursor()
