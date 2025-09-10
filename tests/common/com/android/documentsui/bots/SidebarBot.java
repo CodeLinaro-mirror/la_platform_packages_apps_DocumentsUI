@@ -20,14 +20,10 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-
-import static org.hamcrest.Matchers.allOf;
 
 import android.app.UiAutomation;
 import android.content.Context;
@@ -65,6 +61,21 @@ public class SidebarBot extends Bots.BaseBot {
     private final UiAutomation mAutomation;
     private final UiBot mUiBot;
 
+    /**
+     * Root list exists in both drawer and navigation rail. With this enum the
+     * consumer can decide which container to use to find the root list:
+     *  FOLLOW_LAYOUT: use nav rail in navigation rail layout, otherwise use drawer.
+     *  FORCE_DRAWER: always use drawer, in fixed layout it uses the fixed navigation side bar, in
+     *          drawer layout and navigation rail layout, it uses the drawer.
+     *  FORCE_NAV_RAIL: use nav rail in navigation rail layout, navigation rail layout has both the
+     *            nav rail and the drawer, this will force it to use the nav rail.
+     */
+    private enum RootListContainerType {
+        FOLLOW_LAYOUT,
+        FORCE_DRAWER,
+        FORCE_NAV_RAIL
+    }
+
     public SidebarBot(
             UiDevice device, UiAutomation automation, Context context, UiBot uiBot, int timeout) {
         super(device, context, timeout);
@@ -73,9 +84,21 @@ public class SidebarBot extends Bots.BaseBot {
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
-    private UiSelector getRootsContainerSelector() {
-        final String containerId =
-                this.inNavRailLayout() ? ":id/nav_rail_container_roots" : ":id/container_roots";
+    private UiSelector getRootsContainerSelector(RootListContainerType containerType) {
+        String containerId;
+        switch (containerType) {
+            case FORCE_DRAWER:
+                containerId = ":id/container_roots";
+                break;
+            case FORCE_NAV_RAIL:
+                containerId = ":id/nav_rail_container_roots";
+                break;
+            default:
+                containerId =
+                        this.inNavRailLayout()
+                                ? ":id/nav_rail_container_roots"
+                                : ":id/container_roots";
+        }
         return new UiSelector()
                 .resourceId(mTargetPackage + containerId)
                 .childSelector(new UiSelector().resourceId(mRootListId));
@@ -90,11 +113,12 @@ public class SidebarBot extends Bots.BaseBot {
         }
     }
 
-    private UiObject findRoot(String label) throws UiObjectNotFoundException {
+    private UiObject findRoot(String label, RootListContainerType containerType)
+            throws UiObjectNotFoundException {
         // We might need to expand drawer if not visible.
         openDrawer();
 
-        final UiSelector rootsList = getRootsContainerSelector();
+        final UiSelector rootsList = getRootsContainerSelector(containerType);
 
         // Wait for the first list item to appear.
         new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
@@ -113,7 +137,22 @@ public class SidebarBot extends Bots.BaseBot {
         if (toolbarHasTitle(label)) {
             return;
         }
-        assertTrue("Failed to click on root: " + label, findRoot(label).click());
+        assertTrue(
+                "Failed to click on root: " + label,
+                findRoot(label, RootListContainerType.FOLLOW_LAYOUT).click());
+        mUiBot.assertWindowTitle(label);
+    }
+
+    /** Use openRoot above for general usage, which caters both the navigation rail and the drawer,
+     * only use openDrawerRoot if you want to open root explicitly from the drawer even if it's in
+     * navigation rail layout. */
+    public void openDrawerRoot(String label) throws UiObjectNotFoundException {
+        if (toolbarHasTitle(label)) {
+            return;
+        }
+        assertTrue(
+                "Failed to click on drawer root: " + label,
+                findRoot(label, RootListContainerType.FORCE_DRAWER).click());
         mUiBot.assertWindowTitle(label);
     }
 
@@ -122,14 +161,13 @@ public class SidebarBot extends Bots.BaseBot {
      * only use openNavRailRoot if you want to open root explicitly from the navigation rail.
      */
     public void openNavRailRoot(String label) throws UiObjectNotFoundException {
-        // Use UiScrollable to scroll into the view.
-        final UiSelector rootsList = getRootsContainerSelector();
-        new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
-        new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
-
-        // Use Espresso to click.
-        onView(allOf(withText(label), isDescendantOfA(withId(R.id.nav_rail_container_roots))))
-                .perform(click());
+        if (toolbarHasTitle(label)) {
+            return;
+        }
+        assertTrue(
+                "Failed to click on nav rail root: " + label,
+                findRoot(label, RootListContainerType.FORCE_NAV_RAIL).click());
+        mUiBot.assertWindowTitle(label);
     }
 
     /** Open navigation drawer from the burger menu button within the navigation rail layout. */
@@ -137,6 +175,10 @@ public class SidebarBot extends Bots.BaseBot {
         onView(withId(R.id.nav_rail_burger_menu)).perform(click());
     }
 
+    /**
+     * Drawer can be open for both drawer layout and navigation rail layout, but this method only
+     * opens drawer for the drawer layout.
+     */
     public void openDrawer() throws UiObjectNotFoundException {
         // In drawer layout we explicitly open the drawer by clicking the burger menu in the
         // toolbar, in other layouts we do nothing because the nav sidebar is shown by default.
@@ -158,7 +200,9 @@ public class SidebarBot extends Bots.BaseBot {
         hamburgerButton.click();
 
         // Wait for the roots to appear and fail if it doesn't.
-        assertTrue(mDevice.findObject(getRootsContainerSelector()).waitForExists(mTimeout));
+        assertTrue(
+                mDevice.findObject(getRootsContainerSelector(RootListContainerType.FORCE_DRAWER))
+                        .waitForExists(mTimeout));
     }
 
     public void closeDrawer() {
@@ -182,7 +226,7 @@ public class SidebarBot extends Bots.BaseBot {
     public void assertRootsPresent(String... labels) throws UiObjectNotFoundException {
         List<String> missing = new ArrayList<>();
         for (String label : labels) {
-            if (!findRoot(label).exists()) {
+            if (!findRoot(label, RootListContainerType.FOLLOW_LAYOUT).exists()) {
                 missing.add(label);
             }
         }
@@ -195,7 +239,7 @@ public class SidebarBot extends Bots.BaseBot {
     public void assertRootsAbsent(String... labels) throws UiObjectNotFoundException {
         List<String> unexpected = new ArrayList<>();
         for (String label : labels) {
-            if (findRoot(label).exists()) {
+            if (findRoot(label, RootListContainerType.FOLLOW_LAYOUT).exists()) {
                 unexpected.add(label);
             }
         }
@@ -211,7 +255,7 @@ public class SidebarBot extends Bots.BaseBot {
     /** Right clicks a root with `label` and then clicks the `menuOption`. */
     public void rightClickRootAndClickMenuOption(String rootLabel, String menuOption)
             throws UiObjectNotFoundException {
-        Rect point = findRoot(rootLabel).getVisibleBounds();
+        Rect point = findRoot(rootLabel, RootListContainerType.FOLLOW_LAYOUT).getVisibleBounds();
 
         // The RootsFragment listens to right clicks in the GenericMotionListener. This is to allow
         // for a left and right click to be used interchangeably. This means to mock this behaviour,
