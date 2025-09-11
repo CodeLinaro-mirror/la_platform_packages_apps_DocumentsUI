@@ -170,6 +170,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =
                     new SelectionBarController(
+                            findViewById(getRes(R.id.toolbar)),
                             findViewById(getRes(R.id.selection_bar)),
                             mInjector.menuManager,
                             mInjector.selectionMgr);

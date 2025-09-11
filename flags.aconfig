@@ -82,7 +82,7 @@ flag {
 }
 
 flag {
-    name: "home_screen_files"
+    name: "home_screen_files_ro"
     namespace: "documentsui"
     description: "Enables the home screen folder and its files."
     bug: "438288106"

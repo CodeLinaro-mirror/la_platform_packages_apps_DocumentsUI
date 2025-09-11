@@ -233,7 +233,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     protected void updateCopyTo(MenuItem copyTo, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(copyTo, !selectionDetails.containsPartialFiles()
-                && !selectionDetails.canExtract());
+                && !selectionDetails.canExtract() && !selectionDetails.canRestore());
     }
 
     @Override
@@ -306,7 +306,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateShare(MenuItem share, SelectionDetails selectionDetails) {
         boolean enabled = !selectionDetails.containsDirectories()
                 && !selectionDetails.containsPartialFiles()
-                && !selectionDetails.canExtract();
+                && !selectionDetails.canExtract()
+                && !selectionDetails.canRestore();
         Menus.setEnabledAndVisible(share, enabled);
     }
 
@@ -368,6 +369,13 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateMoveToTrash(MenuItem moveToTrash, SelectionDetails selectionDetails) {
         final boolean visible = selectionDetails.canTrash() && isTrashFlowEnabled();
         Menus.setEnabledAndVisible(moveToTrash, visible);
+    }
+
+    @Override
+    protected void updateRestoreFromTrash(MenuItem restoreFromTrash,
+            SelectionDetails selectionDetails) {
+        final boolean visible = selectionDetails.canRestore() && isTrashFlowEnabled();
+        Menus.setEnabledAndVisible(restoreFromTrash, visible);
     }
 
 }

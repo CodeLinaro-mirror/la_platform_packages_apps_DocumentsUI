@@ -152,6 +152,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =
                     new SelectionBarController(
+                            findViewById(getRes(R.id.toolbar)),
                             findViewById(getRes(R.id.selection_bar)),
                             mInjector.menuManager,
                             mInjector.selectionMgr);

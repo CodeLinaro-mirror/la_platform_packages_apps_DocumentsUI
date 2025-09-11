@@ -34,7 +34,6 @@ import com.android.documentsui.ActionHandler
 import com.android.documentsui.ActionModeController
 import com.android.documentsui.BaseActivity
 import com.android.documentsui.DirectoryResult
-import com.android.documentsui.DocsSelectionHelper
 import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
 import com.android.documentsui.ProfileTabsController
@@ -87,6 +86,7 @@ class DirectoryFragmentTest {
         injector.selectionBarController =
             SelectionBarController(
                 MaterialToolbar(context),
+                MaterialToolbar(context),
                 injector.menuManager,
                 injector.selectionMgr,
             )
@@ -129,16 +129,14 @@ class DirectoryFragmentTest {
         assertThat(injector.selectionMgr.selection).hasSize(2)
 
         // Add an observer to the selection manager.
-        class FakeObserver(
-            private val selectionMgr: DocsSelectionHelper,
-        ) : SelectionTracker.SelectionObserver<String>() {
-            var selections = MutableSelection<String>()
+        val observer =
+            object : SelectionTracker.SelectionObserver<String>() {
+                var selections = MutableSelection<String>()
 
-            override fun onSelectionChanged() {
-                selectionMgr.copySelection(selections)
+                override fun onSelectionChanged() {
+                    injector.selectionMgr.copySelection(selections)
+                }
             }
-        }
-        val observer = FakeObserver(injector.selectionMgr)
         injector.selectionMgr.addObserver(observer)
 
         // model.update() will trigger a updateLayout() call in ModelUpdateListener, which then

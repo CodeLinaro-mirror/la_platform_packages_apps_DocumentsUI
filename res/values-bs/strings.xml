@@ -37,10 +37,8 @@
     <string name="menu_save" msgid="5195367497138965168">"Sačuvaj"</string>
     <string name="menu_share" msgid="4307140947108068356">"Dijeli"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Izbriši"</string>
-    <!-- no translation found for menu_permanently_delete (1177349666644056627) -->
-    <skip />
-    <!-- no translation found for menu_move_to_trash (1809017212900920775) -->
-    <skip />
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Izbriši trajno"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Premjesti u otpad"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Odaberi sve"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Poništi sve odabire"</string>
     <string name="menu_select" msgid="1366061076507142387">"Odaberi"</string>
@@ -141,8 +139,7 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Izdvajanje fajlova"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Premještanje fajlova"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Brisanje fajlova"</string>
-    <!-- no translation found for move_to_trash_notification_title (6134372996525273852) -->
-    <skip />
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Premještanje fajlova u otpad"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Još <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">Kopira se <xliff:g id="COUNT_1">%1$d</xliff:g> stavka.</item>
@@ -169,26 +166,22 @@
       <item quantity="few">Brišu se <xliff:g id="COUNT_1">%1$d</xliff:g> stavke.</item>
       <item quantity="other">Briše se <xliff:g id="COUNT_1">%1$d</xliff:g> stavki.</item>
     </plurals>
-    <!-- no translation found for trashing (4643112474465979863) -->
-    <skip />
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Premještanje <xliff:g id="COUNT_0">{count}</xliff:g> stavke u otpad}one{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke u otpad}few{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke u otpad}other{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki u otpad}}"</string>
     <string name="undo" msgid="2902438994196400565">"Opozovi radnju"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Pripremanje…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Pripremanje…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Pripremanje…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Pripremanje…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Pripremanje…"</string>
-    <!-- no translation found for move_to_trash_preparing (6180195603212537441) -->
-    <skip />
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Pripremanje…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for move_to_trash_progress (7117416860391196406) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Kopiranje <xliff:g id="COUNT_0">{count}</xliff:g> stavke nije uspjelo}one{Kopiranje <xliff:g id="COUNT_1">{count}</xliff:g> stavke nije uspjelo}few{Kopiranje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}other{Kopiranje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Kompresija <xliff:g id="COUNT_0">{count}</xliff:g> stavke nije uspjela}one{Kompresija <xliff:g id="COUNT_1">{count}</xliff:g> stavke nije uspjela}few{Kompresija <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjela}other{Kompresija <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjela}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Izdvajanje <xliff:g id="COUNT_0">{count}</xliff:g> stavke nije uspjelo}one{Izdvajanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke nije uspjelo}few{Izdvajanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}other{Izdvajanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Premještanje <xliff:g id="COUNT_0">{count}</xliff:g> stavke nije uspjelo}one{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke nije uspjelo}few{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}other{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Brisanje <xliff:g id="COUNT_0">{count}</xliff:g> stavke nije uspjelo}one{Brisanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke nije uspjelo}few{Brisanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}other{Brisanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki nije uspjelo}}"</string>
-    <!-- no translation found for move_to_trash_error_notification_title (2766270864756812690) -->
-    <skip />
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Premještanje <xliff:g id="COUNT_0">{count}</xliff:g> stavke u otpad nije uspjelo}one{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke u otpad nije uspjelo}few{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavke u otpad nije uspjelo}other{Premještanje <xliff:g id="COUNT_1">{count}</xliff:g> stavki u otpad nije uspjelo}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Dodirnite za prikaz detalja"</string>
     <string name="close" msgid="905969391788869975">"Zatvori"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -238,10 +231,8 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Izdvajanje fajla \"<xliff:g id="FILENAME">{filename}</xliff:g>\" u folder \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{Izdvajanje # arhive u folder \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}few{Izdvajanje # arhive u folder \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Izdvajanje # arhiva u folder \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Premještanje fajla \"<xliff:g id="FILENAME">{filename}</xliff:g>\" u folder \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{Premještanje # fajla u folder \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}few{Premještanje # fajla u folder \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Premještanje # fajlova u folder \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Brisanje fajla \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Brisanje # fajla}few{Brisanje # fajla}other{Brisanje # fajlova}}"</string>
-    <!-- no translation found for trash_in_progress (6889113199087672853) -->
-    <skip />
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Premještanje fajla <xliff:g id="FILENAME">{filename}</xliff:g> u otpad}one{Premještanje # fajla u otpad}few{Premještanje # fajla u otpad}other{Premještanje # fajlova u otpad}}"</string>
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Kreiranje ZIP fajla \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Kreiranje # ZIP fajla}few{Kreiranje # ZIP fajla}other{Kreiranje # ZIP fajlova}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Prikaz napretka fajla"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Napredak fajlova"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Završeno"</string>
@@ -305,6 +296,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Nije moguće prikazati sadržaje"</string>
     <string name="sign_in" msgid="6253762676723505592">"Prijava"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arhiva<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Želite li prepisati fajl <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Nastavi u pozadini"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

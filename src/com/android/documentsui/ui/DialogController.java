@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.ui;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
@@ -88,7 +89,7 @@ public interface DialogController {
                 return;
             }
 
-            if (shouldShowProgressDialogForOperation(opType)) {
+            if (isDesktopUxPhase2FlagEnabled() || shouldShowProgressDialogForOperation(opType)) {
                 // The operation has a progress dialog created, so do not show a snackbar
                 // for operation start, as it would duplicate the UI.
                 return;
@@ -113,6 +114,9 @@ public interface DialogController {
                     break;
                 case FileOperationService.OPERATION_TRASH:
                     Snackbars.showTrash(mActivity, docCount);
+                    break;
+                case FileOperationService.OPERATION_RESTORE:
+                    Snackbars.showRestore(mActivity, docCount);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unsupported Operation: " + opType);

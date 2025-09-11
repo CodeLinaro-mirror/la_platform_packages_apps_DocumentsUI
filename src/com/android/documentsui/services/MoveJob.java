@@ -88,11 +88,6 @@ final class MoveJob extends CopyJob {
     }
 
     @Override
-    public Notification getProgressNotification() {
-        return getProgressNotification(getRes(R.string.copy_remaining));
-    }
-
-    @Override
     public Notification getFailureNotification() {
         return getFailureNotification(
                 getFailureContentTitle(getRes(R.string.move_error_notification_title)),
