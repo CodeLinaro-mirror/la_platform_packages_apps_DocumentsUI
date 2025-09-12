@@ -166,6 +166,7 @@
   int default_root_uri;
   int directory_items;
   int empty;
+  int local_summary_provider;
   int menu_copy;
   int menu_move;
   int menu_rename;
@@ -331,3 +332,5 @@
 -keep class android.provider.Flags {
   public static boolean enableDocumentsTrashApi();
 }
+# TODO(lucmult): Remove this when this class is used.
+-keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
