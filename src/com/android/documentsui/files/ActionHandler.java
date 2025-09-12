@@ -422,6 +422,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             uris.add(doc.derivedUri);
         }
 
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to delete because a protected folder is selected.");
+            return;
+        }
+
         UrisSupplier srcs;
         try {
             srcs = UrisSupplier.create(
@@ -469,6 +475,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         List<Uri> uris = new ArrayList<>(docs.size());
         for (DocumentInfo doc : docs) {
             uris.add(doc.derivedUri);
+        }
+
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to trash because a protected folder is selected.");
+            return;
         }
 
         UrisSupplier srcs;

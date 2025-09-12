@@ -16,6 +16,7 @@
 
 package com.android.documentsui
 
+import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import android.view.KeyEvent
@@ -25,6 +26,7 @@ import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
 import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.flags.Flags.FLAG_ENABLE_TRASH_FLOW_RO
 import com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.roots.ShortcutResourceValues
@@ -192,6 +194,55 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         device!!.waitForIdle()
 
         bots.menu.clickMenuItem(context!!.resources.getString(R.string.menu_cut_to_clipboard))
+        device!!.waitForIdle()
+
+        assertNotNull(
+            bots.directory.getSnackbar(
+                context!!.resources.getString(R.string.file_operation_rejected)
+            )
+        )
+        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+    }
+
+    @Test
+    @EnableFlags(FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_ENABLE_TRASH_FLOW_RO)
+    fun testDeleteDocumentBlocked() {
+        val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
+        openRoot(context!!, primaryRoot!!.title)
+
+        bots.directory.findDocument(SHORTCUT_ID)
+        device!!.waitForIdle()
+
+        bots.directory.selectDocument(SHORTCUT_ID, 1)
+        device!!.waitForIdle()
+
+        bots.main.clickDelete()
+        bots.main.clickDialogOkButton(false)
+        device!!.waitForIdle()
+
+        assertNotNull(
+            bots.directory.getSnackbar(
+                context!!.resources.getString(R.string.file_operation_rejected)
+            )
+        )
+        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+    }
+
+    @Test
+    @EnableFlags(FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3, FLAG_ENABLE_TRASH_FLOW_RO)
+    fun testTrashDocumentBlocked() {
+        val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
+        openRoot(context!!, primaryRoot!!.title)
+
+        bots.directory.findDocument(SHORTCUT_ID)
+        device!!.waitForIdle()
+
+        bots.directory.selectDocument(SHORTCUT_ID, 1)
+        device!!.waitForIdle()
+
+        bots.main.clickDelete()
+        bots.main.clickDialogOkButton(false)
         device!!.waitForIdle()
 
         assertNotNull(
