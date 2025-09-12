@@ -83,6 +83,7 @@ public class FileOperationService extends Service implements Job.Listener {
             OPERATION_DELETE,
             OPERATION_UNPACK,
             OPERATION_TRASH,
+            OPERATION_RESTORE,
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface OpType {}
@@ -93,7 +94,10 @@ public class FileOperationService extends Service implements Job.Listener {
     public static final int OPERATION_MOVE = 4;
     public static final int OPERATION_DELETE = 5;
     public static final int OPERATION_UNPACK = 6;
+    /** Operation to move files to trash. */
     public static final int OPERATION_TRASH = 7;
+    /** Operation to restore files from trash. */
+    public static final int OPERATION_RESTORE = 8;
 
     @IntDef({
             MESSAGE_PROGRESS,
@@ -335,6 +339,7 @@ public class FileOperationService extends Service implements Job.Listener {
             case OPERATION_MOVE:
             case OPERATION_UNPACK:
             case OPERATION_TRASH:
+            case OPERATION_RESTORE:
                 return executor;
             case OPERATION_DELETE:
                 return deletionExecutor;

@@ -232,8 +232,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Moviendo \"<xliff:g id="FILENAME">{filename}</xliff:g>\" a \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}many{Moviendo # de archivos a \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Moviendo # archivos a \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Borrando \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}many{Borrando # de archivos}other{Borrando # archivos}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Moviendo <xliff:g id="FILENAME">{filename}</xliff:g> a la papelera}many{Moviendo # de archivos a la papelera}other{Moviendo # archivos a la papelera}}"</string>
-    <!-- no translation found for compress_in_progress (6585173688835909381) -->
-    <skip />
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Comprimiendo “<xliff:g id="FILENAME">{filename}</xliff:g>”}many{Comprimiendo # de archivos}other{Comprimiendo # archivos}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar progreso del archivo"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progreso del archivo"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Completado"</string>
@@ -297,6 +296,8 @@
     <string name="cant_display_content" msgid="8633226333229417237">"No se puede mostrar el contenido"</string>
     <string name="sign_in" msgid="6253762676723505592">"Acceder"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archivo<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
+    <skip />
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"¿Deseas sobrescribir <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Continuar en segundo plano"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

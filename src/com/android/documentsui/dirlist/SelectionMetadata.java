@@ -68,8 +68,11 @@ public class SelectionMetadata extends SelectionObserver<String>
     /** Number of archives. */
     private int mArchiveCount = 0;
 
-    /** Number of trash. */
-    private int mNoTrashCount = 0;
+    /** Number of files that do not support trash. */
+    private int mUnsupportedTrashCount = 0;
+
+    /** Number of files that do not support restore from trash. */
+    private int mUnsupportedRestoreCount = 0;
 
     private boolean mSupportsSettings = false;
 
@@ -132,7 +135,10 @@ public class SelectionMetadata extends SelectionObserver<String>
             mNoDeleteCount += delta;
         }
         if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_TRASH) == 0) {
-            mNoTrashCount += delta;
+            mUnsupportedTrashCount += delta;
+        }
+        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_RESTORE) == 0) {
+            mUnsupportedRestoreCount += delta;
         }
         if ((docFlags & Document.FLAG_SUPPORTS_RENAME) == 0) {
             mNoRenameCount += delta;
@@ -156,10 +162,11 @@ public class SelectionMetadata extends SelectionObserver<String>
         mPartialCount = 0;
         mWritableDirectoryCount = 0;
         mNoDeleteCount = 0;
-        mNoTrashCount = 0;
+        mUnsupportedTrashCount = 0;
         mNoRenameCount = 0;
         mInArchiveCount = 0;
         mArchiveCount = 0;
+        mUnsupportedRestoreCount = 0;
     }
 
     @Override
@@ -211,9 +218,19 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     @Override
     public boolean canTrash() {
-        return size() > 0 && mNoTrashCount == 0;
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
+        return size() > 0 && mUnsupportedTrashCount == 0;
     }
 
+    @Override
+    public boolean canRestore() {
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
+        return size() > 0 && mUnsupportedRestoreCount == 0;
+    }
 
     @Override
     public boolean canExtract() {
@@ -239,6 +256,6 @@ public class SelectionMetadata extends SelectionObserver<String>
     public boolean canOpen() {
         return mFileCount == 1 && mDirectoryCount == 0 && mPartialCount == 0
                 && (mArchiveCount == 0 || !isZipNgFlagEnabled())
-                && (mInArchiveCount == 0 || isZipNgFlagEnabled());
+                && (mInArchiveCount == 0 || isZipNgFlagEnabled()) && mUnsupportedRestoreCount == 0;
     }
 }

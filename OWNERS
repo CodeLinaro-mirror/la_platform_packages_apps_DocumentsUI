@@ -7,5 +7,6 @@ include platform/frameworks/base:/core/java/android/os/storage/OWNERS
 alexbn@google.com
 austinct@google.com
 benreich@google.com
+erfanio@google.com
 lucmult@google.com
 wenbojie@google.com

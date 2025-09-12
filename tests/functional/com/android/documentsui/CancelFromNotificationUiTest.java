@@ -150,7 +150,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_copy));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);
@@ -169,7 +169,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_copy));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
 
         bots.roots.openRoot(ROOT_1_ID);
@@ -198,7 +198,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_move));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_move));
         device.waitForIdle();
 
         bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ false);
@@ -218,7 +218,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
-        bots.main.clickToolbarOverflowItem(context.getResources().getString(R.string.menu_move));
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_move));
         device.waitForIdle();
 
         bots.roots.openRoot(ROOT_1_ID);

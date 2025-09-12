@@ -19,6 +19,7 @@ package com.android.documentsui.services;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COMPRESS;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
@@ -32,6 +33,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.documentsui.R;
@@ -51,7 +53,7 @@ import java.io.IOException;
 final class CompressJob extends CopyJob {
 
     private static final String TAG = "CompressJob";
-    private static final String NEW_ARCHIVE_EXTENSION = ".zip";
+    private static final String ZIP_EXTENSION = ".zip";
 
     private @Nullable Uri mArchiveUri;
     private @Nullable ContentProviderClient mClient;
@@ -80,11 +82,6 @@ final class CompressJob extends CopyJob {
     }
 
     @Override
-    public Notification getProgressNotification() {
-        return getProgressNotification(getRes(R.string.copy_remaining));
-    }
-
-    @Override
     public Notification getFailureNotification() {
         return getFailureNotification(
                 getFailureContentTitle(getRes(R.string.compress_error_notification_title)),
@@ -102,13 +99,12 @@ final class CompressJob extends CopyJob {
             return false;
         }
 
-        String displayName;
+        final String displayName;
         if (mResolvedDocs.size() == 1) {
-            displayName = mResolvedDocs.get(0).displayName + NEW_ARCHIVE_EXTENSION;
+            final DocumentInfo doc = mResolvedDocs.get(0);
+            displayName = getArchiveName(doc.displayName, doc.isDirectory());
         } else {
-            displayName =
-                    service.getString(
-                            getRes(R.string.new_archive_file_name), NEW_ARCHIVE_EXTENSION);
+            displayName = getGenericArchiveName();
         }
 
         try {
@@ -131,6 +127,35 @@ final class CompressJob extends CopyJob {
             onFileFailed(mResolvedDocs);
             return false;
         }
+    }
+
+    /** Generates a suitable archive name when zipping several items together. */
+    public @NonNull String getGenericArchiveName() {
+        if (isZipNgFlagEnabled()) {
+            return service.getString(getRes(R.string.new_archive_file_name_2)) + ZIP_EXTENSION;
+        } else {
+            return service.getString(getRes(R.string.new_archive_file_name), ZIP_EXTENSION);
+        }
+    }
+
+    /** Generates a suitable archive name when zipping a single item with the given name. */
+    public static @NonNull String getArchiveName(@NonNull String name, boolean isDir) {
+        if (!isDir && isZipNgFlagEnabled()) {
+            // Find the last dot in `name`.
+            final int i = name.lastIndexOf('.');
+            if (i > 0) {
+                // There is a last dot, and it is not the first character of `name`.
+                // Compute the candidate extension length (excluding its leading dot).
+                final int n = name.length() - i - 1;
+                // Consider an extension as valid if it is between 1 and 10 characters long.
+                if (1 <= n && n <= 10) {
+                    // Found a valid filename extension. Drop this extension.
+                    name = name.substring(0, i);
+                }
+            }
+        }
+
+        return name + ZIP_EXTENSION;
     }
 
     @Override

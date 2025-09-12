@@ -150,15 +150,12 @@ class CopyJob extends ResolvedResourcesJob {
         return getSetupNotification(service.getString(getRes(R.string.copy_preparing)));
     }
 
-    Notification getProgressNotification(@StringRes int msgId) {
+    @Override
+    public Notification getProgressNotification() {
+        final @StringRes int msgId = getRes(R.string.copy_remaining);
         mProgressTracker.update(mProgressBuilder, (remainingTime) -> service.getString(msgId,
                 FormatUtils.formatDuration(remainingTime)));
         return mProgressBuilder.build();
-    }
-
-    @Override
-    public Notification getProgressNotification() {
-        return getProgressNotification(getRes(R.string.copy_remaining));
     }
 
     @Override
