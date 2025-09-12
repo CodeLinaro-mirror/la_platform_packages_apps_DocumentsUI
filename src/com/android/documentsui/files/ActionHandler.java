@@ -314,6 +314,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        if (isHomeScreenFilesFlagEnabled()) {
+            List<DocumentInfo> docs = mModel.getDocuments(selection);
+            if (docs == null || docs.isEmpty()) {
+                mDialogs.showOperationUnsupported();
+                return;
+            }
+
+            List<Uri> uris = new ArrayList<>();
+            for (DocumentInfo doc : docs) {
+                uris.add(doc.derivedUri);
+            }
+
+            if (blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+                Log.e(TAG, "Failed to cut because a protected folder is selected.");
+                return;
+            }
+        }
+
         mSelectionMgr.clearSelection();
 
         mClipper.clipDocumentsForCut(mModel::getItemUri, selection, mState.stack.peek());

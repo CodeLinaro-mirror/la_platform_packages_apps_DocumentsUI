@@ -18,6 +18,7 @@ package com.android.documentsui
 
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
+import android.view.KeyEvent
 import androidx.test.uiautomator.UiObjectNotFoundException
 import com.android.documentsui.base.Providers
 import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
@@ -175,5 +176,48 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         }
         bots.main.clickActionbarOverflowItem("Rename")
         device!!.waitForIdle()
+    }
+
+    @Test
+    @EnableFlags(FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3)
+    @Throws(Exception::class)
+    fun testCutDocumentBlocked() {
+        val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
+        openRoot(context!!, primaryRoot!!.title)
+
+        bots.directory.findDocument(SHORTCUT_ID)
+        device!!.waitForIdle()
+
+        bots.directory.rightClickDocument(SHORTCUT_ID)
+        device!!.waitForIdle()
+
+        bots.menu.clickMenuItem(context!!.resources.getString(R.string.menu_cut_to_clipboard))
+        device!!.waitForIdle()
+
+        assertNotNull(
+            bots.directory.getSnackbar(
+                context!!.resources.getString(R.string.file_operation_rejected)
+            )
+        )
+        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+    }
+
+    @Test
+    @EnableFlags(FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3)
+    @Throws(java.lang.Exception::class)
+    fun testKeyboardCutDocumentShortcutFolderSelected() {
+        val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
+        openRoot(context!!, primaryRoot!!.title)
+
+        bots.directory.selectDocument(SHORTCUT_ID, 1)
+        device!!.waitForIdle()
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_X, KeyEvent.META_CTRL_ON)
+
+        device!!.waitForIdle()
+
+        assertNotNull(
+            bots.directory.getSnackbar(context!!.getString(R.string.file_operation_rejected))
+        )
+        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
     }
 }
