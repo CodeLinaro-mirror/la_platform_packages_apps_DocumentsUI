@@ -20,6 +20,7 @@ import android.app.Notification.CATEGORY_ERROR
 import android.app.Notification.EXTRA_TEXT
 import android.app.Notification.EXTRA_TITLE
 import android.net.Uri
+import android.os.Build
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
@@ -27,6 +28,7 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract.buildDocumentUri
 import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import com.android.documentsui.TrashDocumentHelper
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags
@@ -41,6 +43,7 @@ import org.junit.Test
 /** Tests TrashJob. */
 @MediumTest
 @RequiresFlagsEnabled(FLAG_ENABLE_DOCUMENTS_TRASH_API)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
 internal class TrashJobTest : AbstractJobTest<TrashJob>() {
     @get:Rule val setFlags = OverrideFlagsRule()
 

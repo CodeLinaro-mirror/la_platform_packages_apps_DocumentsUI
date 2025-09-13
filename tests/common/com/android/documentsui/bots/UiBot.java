@@ -78,11 +78,6 @@ public class UiBot extends Bots.BaseBot {
             isAssignableFrom(Toolbar.class),
             withId(R.id.toolbar));
     @SuppressWarnings("unchecked")
-    private static final Matcher<View> ACTIONBAR =
-            isUseMaterial3FlagEnabled()
-                    ? allOf(isAssignableFrom(MaterialToolbar.class), withId(R.id.selection_bar))
-                    : allOf(withClassName(endsWith("ActionBarContextView")));
-    @SuppressWarnings("unchecked")
     private static final Matcher<View> TEXT_ENTRY = allOf(
             withClassName(endsWith("EditText")));
     @SuppressWarnings("unchecked")
@@ -90,9 +85,6 @@ public class UiBot extends Bots.BaseBot {
             withClassName(endsWith("OverflowMenuButton")),
             ViewMatchers.isDescendantOfA(TOOLBAR));
     @SuppressWarnings("unchecked")
-    private static final Matcher<View> ACTIONBAR_OVERFLOW = allOf(
-            withClassName(endsWith("OverflowMenuButton")),
-            ViewMatchers.isDescendantOfA(ACTIONBAR));
 
     public static String targetPackageName;
 
@@ -274,8 +266,18 @@ public class UiBot extends Bots.BaseBot {
         onView(withId(id)).perform(clickAndRetryOnLongPress());
     }
 
+    private Matcher<View> getActionbarOverflow() {
+        final Matcher<View> actionBar =
+                isUseMaterial3FlagEnabled()
+                        ? allOf(isAssignableFrom(MaterialToolbar.class), withId(R.id.selection_bar))
+                        : allOf(withClassName(endsWith("ActionBarContextView")));
+        return allOf(
+                withClassName(endsWith("OverflowMenuButton")),
+                ViewMatchers.isDescendantOfA(actionBar));
+    }
+
     public void clickActionbarOverflowItem(String label) {
-        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
+        onView(getActionbarOverflow()).perform(clickAndRetryOnLongPress());
         mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());

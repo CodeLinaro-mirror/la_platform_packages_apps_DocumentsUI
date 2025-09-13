@@ -16,12 +16,14 @@
 
 package com.android.documentsui
 
+import android.os.Build
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.provider.Flags
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import com.android.documentsui.base.State
 import com.android.documentsui.base.UserId
 import com.android.documentsui.loaders.TrashFileLoader
@@ -47,6 +49,7 @@ import org.mockito.Mockito.`when` as whenever
 @RunWith(Parameterized::class)
 @MediumTest
 @RequiresFlagsEnabled(Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
 internal class TrashFileLoaderTest {
     private lateinit var mEnv: TestEnv
     private lateinit var mActivity: TestActivity

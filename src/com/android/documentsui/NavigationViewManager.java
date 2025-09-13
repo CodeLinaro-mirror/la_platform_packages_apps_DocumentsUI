@@ -20,7 +20,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -47,7 +46,6 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.breadcrumbs.BreadcrumbController;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -69,7 +67,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     private final State mState;
     private final NavigationViewManager.Environment mEnv;
     private final Breadcrumb mBreadcrumb;
-    @Nullable private BreadcrumbController mBreadcrumbController;
     private final ProfileTabs mProfileTabs;
     private final View mSearchBarView;
     private final CollapsingToolbarLayout mCollapsingBarLayout;
@@ -210,27 +207,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
     }
 
-    /**
-     * Sets the breadcrumb controller. This controller is an alternative, that should replace
-     * the HorizontalBreadcrumb. For pre-material 3 documentsUI this is not a functioning component.
-     */
-    public void setBreadcrumbController(BreadcrumbController controller) {
-        if (isSearchV2Enabled()) {
-            this.mBreadcrumbController = controller;
-        }
-    }
-
-    /**
-     * Updates model held by the breadcrumb controller if it is enabled.
-     */
-    private void updateBreadcrumbs() {
-        if (isSearchV2Enabled()) {
-            if (mBreadcrumbController != null) {
-                mBreadcrumbController.getModel().setFromStack(mState.stack);
-            }
-        }
-    }
-
     /** Called when a child view of the parent view is focused. */
     public void onChildViewFocused(View parentView, View childView) {
         // Only expand when the child view get focused and the layout is in collapsed
@@ -362,7 +338,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
-            updateBreadcrumbs();
             return;
         }
 
@@ -383,7 +358,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
-            updateBreadcrumbs();
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(VISIBLE);
             return;
@@ -395,7 +369,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
-        updateBreadcrumbs();
         mBreadcrumb.postUpdate();
     }
 
