@@ -39,6 +39,8 @@
     <string name="menu_delete" msgid="1022254131543256626">"ਮਿਟਾਓ"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"ਪੱਕੇ ਤੌਰ \'ਤੇ ਮਿਟਾਓ"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ਰੱਦੀ ਵਿੱਚ ਲਿਜਾਓ"</string>
+    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
+    <skip />
     <string name="menu_select_all" msgid="7600576812185570403">"ਸਭ ਚੁਣੋ"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"ਸਭ ਅਣ-ਚੁਣਿਆ ਕਰੋ"</string>
     <string name="menu_select" msgid="1366061076507142387">"ਚੁਣੋ"</string>
@@ -118,6 +120,8 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"ਇਸ ਕਾਰਵਾਈ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਹੈ"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"ਹੋਰ ਜਾਣਨ ਲਈ, ਆਪਣੇ ਆਈ.ਟੀ. ਪ੍ਰਸ਼ਾਸਕ ਨਾਲ ਸੰਪਰਕ ਕਰੋ"</string>
     <string name="root_recent" msgid="1080156975424341623">"ਹਾਲੀਆ"</string>
+    <!-- no translation found for root_trash (1869929519939073178) -->
+    <skip />
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> ਖਾਲੀ"</string>
     <string name="root_type_service" msgid="6521366147466512289">"ਸਟੋਰੇਜ ਸੇਵਾਵਾਂ"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"ਸ਼ਾਰਟਕੱਟ"</string>
@@ -140,6 +144,8 @@
     <string name="move_notification_title" msgid="3173424987049347605">"ਫ਼ਾਈਲਾਂ ਤਬਦੀਲ ਕਰ ਰਿਹਾ ਹੈ"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ਫ਼ਾਈਲਾਂ ਮਿਟਾ ਰਿਹਾ ਹੈ"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"ਫ਼ਾਈਲਾਂ ਰੱਦੀ ਵਿੱਚ ਭੇਜੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ"</string>
+    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
+    <skip />
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> ਬਾਕੀ"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਕਾਪੀ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।</item>
@@ -162,6 +168,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ।</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
+    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"ਅਣਕੀਤਾ ਕਰੋ"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"ਤਿਆਰ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"ਤਿਆਰ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ..."</string>
@@ -169,14 +177,20 @@
     <string name="move_preparing" msgid="6504239656430530761">"ਤਿਆਰ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"ਤਿਆਰ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ..."</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"ਤਿਆਰ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ..."</string>
+    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
+    <skip />
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
+    <skip />
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਨਪੀੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਨਪੀੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਨਪੀੜਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਲਿਜਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਲਿਜਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਲਿਜਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਨਹੀਂ ਲਿਜਾਇਆ ਜਾ ਸਕਿਆ}one{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਨਹੀਂ ਲਿਜਾਇਆ ਜਾ ਸਕਿਆ}other{<xliff:g id="COUNT_1">{count}</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਨਹੀਂ ਲਿਜਾਇਆ ਜਾ ਸਕਿਆ}}"</string>
+    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"ਵੇਰਵਿਆਂ ਨੂੰ ਦੇਖਣ ਲਈ ਟੈਪ ਕਰੋ"</string>
     <string name="close" msgid="905969391788869975">"ਬੰਦ ਕਰੋ"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -220,6 +234,8 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
+    <!-- no translation found for restore_in_progress (6756221866797865046) -->
+    <skip />
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ਫ਼ਾਈਲ ਨਾਲ ਸੰਬੰਧਿਤ ਪ੍ਰਗਤੀ ਦਿਖਾਓ"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ਫ਼ਾਈਲ ਦੀ ਪ੍ਰਗਤੀ"</string>
