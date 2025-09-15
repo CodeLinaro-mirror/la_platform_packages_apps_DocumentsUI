@@ -158,17 +158,14 @@
   int cant_select_work_files_error_message;
   int cant_select_work_files_error_title;
   int clear_selection;
-  int compress_error_notification_title;
   int copy_error_notification_title;
   int copy_notification_title;
   int copy_preparing;
   int copy_remaining;
   int debug_content_uri;
   int default_root_uri;
-  int delete_error_notification_title;
   int directory_items;
   int empty;
-  int extract_error_notification_title;
   int menu_copy;
   int menu_move;
   int menu_rename;
@@ -196,7 +193,6 @@
   int metadata_iso_format;
   int metadata_iso_speed_ratings;
   int metadata_shutter_speed;
-  int move_error_notification_title;
   int name_conflict;
   int no_results;
   int personal_tab;
