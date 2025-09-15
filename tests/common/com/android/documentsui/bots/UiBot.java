@@ -39,6 +39,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -418,5 +419,40 @@ public class UiBot extends Bots.BaseBot {
                 .descriptionContains("More options");
         // TODO: use the system string ? android.R.string.action_menu_overflow_description
         return mDevice.findObject(selector);
+    }
+
+    /**
+     * Hides hidden files if the current settings is to show hidden files.
+     */
+    public void hideHiddenFilesIfNeeded() throws Exception {
+        openOverflowMenu();
+        UiObject2 hideHiddenFilesMenu = mDevice.findObject(
+                By.text(mContext.getResources().getString(
+                        R.string.menu_hide_hidden_files)));
+        if (hideHiddenFilesMenu != null) {
+            hideHiddenFilesMenu.click();
+            mDevice.waitForIdle();
+        } else {
+            // Close the menu popup via ESC key.
+            mDevice.pressKeyCode(KeyEvent.KEYCODE_ESCAPE);
+        }
+    }
+
+    /**
+     * Click the toolbar menu to show hidden files.
+     */
+    public void showHiddenFiles() {
+        clickToolbarOverflowItem(
+                mContext.getResources().getString(R.string.menu_show_hidden_files));
+        mDevice.waitForIdle();
+    }
+
+    /**
+     * Click the toolbar menu to hide hidden files.
+     */
+    public void hideHiddenFiles() {
+        clickToolbarOverflowItem(
+                mContext.getResources().getString(R.string.menu_hide_hidden_files));
+        mDevice.waitForIdle();
     }
 }
