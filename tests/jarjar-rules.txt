@@ -8,7 +8,6 @@ rule android.support.annotation.** docsui.@0
 zap androidx.activity.**
 zap androidx.annotation.**
 zap androidx.appcompat.**
-zap androidx.arch.core.**
 zap androidx.autofill.**
 zap androidx.benchmark.**
 zap androidx.cardview.**
@@ -27,7 +26,6 @@ zap androidx.fragment.**
 zap androidx.graphics.**
 zap androidx.inspection.**
 zap androidx.interpolator.**
-zap androidx.lifecycle.**
 zap androidx.loader.**
 zap androidx.navigationevent.**
 zap androidx.preference.**
