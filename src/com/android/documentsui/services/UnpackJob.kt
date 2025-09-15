@@ -70,16 +70,17 @@ class UnpackJob(
     id: String,
     destination: DocumentStack,
     srcs: UrisSupplier,
-    features: Features
-) : ResolvedResourcesJob(
-    service,
-    listener,
-    id,
-    FileOperationService.OPERATION_UNPACK,
-    destination,
-    srcs,
-    features
-) {
+    features: Features,
+) :
+    ResolvedResourcesJob(
+        service,
+        listener,
+        id,
+        FileOperationService.OPERATION_UNPACK,
+        destination,
+        srcs,
+        features,
+    ) {
     private val dirPathToUri: MutableMap<String, Uri> = mutableMapOf()
     private val tracker = ProgressTracker()
     private val dstInfo: DocumentInfo = destination.peek()
@@ -90,7 +91,7 @@ class UnpackJob(
             service.getString(getRes(R.string.extract_notification_title)),
             getRes(R.drawable.ic_menu_extract),
             service.getString(android.R.string.cancel),
-            getRes(R.drawable.ic_cab_cancel)
+            getRes(R.drawable.ic_cab_cancel),
         )
     }
 
@@ -124,7 +125,7 @@ class UnpackJob(
             if (remainingTime > 0) {
                 service.getString(
                     getRes(R.string.copy_remaining),
-                    FormatUtils.formatDuration(remainingTime)
+                    FormatUtils.formatDuration(remainingTime),
                 )
             } else {
                 null
@@ -148,15 +149,16 @@ class UnpackJob(
     override fun getFailureNotification(): Notification {
         return getFailureNotification(
             getFailureContentTitle(getRes(R.string.extract_error_notification_title)),
-            getRes(R.drawable.ic_menu_extract)
+            getRes(R.drawable.ic_menu_extract),
         )
     }
 
     /** This method is called on a different thread than the thread running the extraction. */
     public override fun getJobProgress(): JobProgress {
-        val args: MutableMap<String, Any> = mutableMapOf(
-            "directory" to BidiFormatter.getInstance().unicodeWrap(dstInfo.displayName)
-        )
+        val args: MutableMap<String, Any> =
+            mutableMapOf(
+                "directory" to BidiFormatter.getInstance().unicodeWrap(dstInfo.displayName)
+            )
 
         val message = getProgressMessage(R.string.extract_in_progress, args)
 
@@ -179,7 +181,7 @@ class UnpackJob(
             stack,
             bytesCopied,
             bytesRequired,
-            timeEstimate
+            timeEstimate,
         )
     }
 
@@ -222,17 +224,18 @@ class UnpackJob(
             // Create the extraction directory with the same base name as the archive.
             // This lets the destination document provider deal with name collisions, if necessary.
             val dirName = Files.getNameWithoutExtension(archiveInfo.displayName)
-            val dirUri = DocumentsContract.createDocument(
-                resolver,
-                dstInfo.derivedUri,
-                MIME_TYPE_DIR,
-                dirName
-            )
+            val dirUri =
+                DocumentsContract.createDocument(
+                    resolver,
+                    dstInfo.derivedUri,
+                    MIME_TYPE_DIR,
+                    dirName,
+                )
 
             if (dirUri == null) {
                 throw IOException(
                     "Cannot create extraction dir ${redact(dirName)}" +
-                            " in ${redact(dstInfo.derivedUri)}"
+                        " in ${redact(dstInfo.derivedUri)}"
                 )
             }
 
@@ -253,14 +256,15 @@ class UnpackJob(
         mSignal.throwIfCanceled()
 
         // Open the archive.
-        archive = ReadableArchive.createForParcelFileDescriptor(
-            appContext,
-            resolver.openFileDescriptor(archiveInfo.derivedUri, "r", null),
-            archiveInfo.derivedUri,
-            archiveInfo.mimeType,
-            ParcelFileDescriptor.MODE_READ_ONLY,
-            null
-        )
+        archive =
+            ReadableArchive.createForParcelFileDescriptor(
+                appContext,
+                resolver.openFileDescriptor(archiveInfo.derivedUri, "r", null),
+                archiveInfo.derivedUri,
+                archiveInfo.mimeType,
+                ParcelFileDescriptor.MODE_READ_ONLY,
+                null,
+            )
 
         mSignal.throwIfCanceled()
 
@@ -281,9 +285,7 @@ class UnpackJob(
 
             while (dirs.add(path.toString())) {
                 path = path.getParentFile()!!
-                synchronized(tracker) {
-                    tracker.dirsRequired++
-                }
+                synchronized(tracker) { tracker.dirsRequired++ }
             }
         }
     }
@@ -292,9 +294,7 @@ class UnpackJob(
         try {
             Trace.beginSection("UnpackJob#start")
 
-            synchronized(tracker) {
-                tracker.addPoint()
-            }
+            synchronized(tracker) { tracker.addPoint() }
 
             try {
                 // Create all the directories first, to ensure that no directory will be renamed
@@ -351,9 +351,7 @@ class UnpackJob(
             throw e
         } catch (t: Throwable) {
             Log.e(TAG, "Cannot extract ${redact(path)} from ${redact(archiveInfo.derivedUri)}", t)
-            synchronized(tracker) {
-                tracker.filesRequired--
-            }
+            synchronized(tracker) { tracker.filesRequired-- }
             onPathFailed(path.toString())
         }
 
@@ -483,7 +481,7 @@ class UnpackJob(
         }
     }
 
-    /** Checks whether the destination directory has enough free space.  */
+    /** Checks whether the destination directory has enough free space. */
     private fun checkFreeSpace() {
         try {
             Trace.beginSection("UnpackJob#checkFreeSpace")
@@ -498,9 +496,9 @@ class UnpackJob(
             }
 
             // Query root info again instead of using stack.root because the numbers may be stale.
-            root = DocumentsApplication.getProvidersCache(appContext).getRootOneshot(
-                root.userId, root.authority, root.rootId, true
-            )
+            root =
+                DocumentsApplication.getProvidersCache(appContext)
+                    .getRootOneshot(root.userId, root.authority, root.rootId, true)
 
             if (root == null || root.availableBytes < 0) {
                 Log.w(TAG, "Root $root does not provide its free space amount")
@@ -512,8 +510,8 @@ class UnpackJob(
             if (bytesRequired > root.availableBytes) {
                 throw IOException(
                     "Not enough free space in ${redact(dstInfo.derivedUri)}: " +
-                            "Need $bytesRequired bytes, " +
-                            "but only got ${root.availableBytes} bytes of free space"
+                        "Need $bytesRequired bytes, " +
+                        "but only got ${root.availableBytes} bytes of free space"
                 )
             }
         } finally {
@@ -577,15 +575,16 @@ class UnpackJob(
         }
 
         override fun toString(): String {
-            return "Progress %.0f%%, %,d/%,d dirs, %,d/%,d files, %,d/%,d bytes".format(
-                progress * 100,
-                dirsCreated,
-                dirsRequired,
-                filesCopied,
-                filesRequired,
-                bytesCopied,
-                bytesRequired
-            )
+            return "Progress %.0f%%, %,d/%,d dirs, %,d/%,d files, %,d/%,d bytes"
+                .format(
+                    progress * 100,
+                    dirsCreated,
+                    dirsRequired,
+                    filesCopied,
+                    filesRequired,
+                    bytesCopied,
+                    bytesRequired,
+                )
         }
 
         companion object {
@@ -594,11 +593,10 @@ class UnpackJob(
              * directories, create the given number of files and write the given number of bytes.
              * The unit of measure of the returned value is the time taken to write one byte.
              *
-             * The constants used in this formula have been empirically determined to
-             * approximate a smooth progress tracking with a test device. The time taken to
-             * create an empty file and open it for writing matches the time taken to transfer
-             * 2.9e6 bytes. The time taken to create a directory matches the time taken to
-             * transfer 2.0e7 bytes.
+             * The constants used in this formula have been empirically determined to approximate a
+             * smooth progress tracking with a test device. The time taken to create an empty file
+             * and open it for writing matches the time taken to transfer 2.9e6 bytes. The time
+             * taken to create a directory matches the time taken to transfer 2.0e7 bytes.
              */
             private fun getLinear(dirs: Int, files: Int, bytes: Long): Double {
                 return bytes.toDouble() + 2.9e6 * files + 2.0e7 * dirs

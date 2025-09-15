@@ -38,25 +38,25 @@ class TrashJob(
     id: String?,
     stack: DocumentStack?,
     srcs: UrisSupplier?,
-    features: Features?
-) : ResolvedResourcesJob(
-    service,
-    listener,
-    id,
-    FileOperationService.OPERATION_TRASH,
-    stack,
-    srcs,
-    features
-) {
-    @Volatile
-    private var mDocsProcessed = 0
+    features: Features?,
+) :
+    ResolvedResourcesJob(
+        service,
+        listener,
+        id,
+        FileOperationService.OPERATION_TRASH,
+        stack,
+        srcs,
+        features,
+    ) {
+    @Volatile private var mDocsProcessed = 0
 
     override fun createProgressBuilder(): Notification.Builder {
         return super.createProgressBuilder(
             service.getString(R.string.move_to_trash_notification_title),
             R.drawable.ic_menu_delete,
             service.getString(android.R.string.cancel),
-            R.drawable.ic_cab_cancel
+            R.drawable.ic_cab_cancel,
         )
     }
 
@@ -67,9 +67,7 @@ class TrashJob(
     override fun getProgressNotification(): Notification {
         mProgressBuilder.setProgress(mResourceUris.itemCount, mDocsProcessed, false)
         val format = service.getString(R.string.move_to_trash_progress)
-        mProgressBuilder.setSubText(
-            String.format(format, mDocsProcessed, mResourceUris.itemCount)
-        )
+        mProgressBuilder.setSubText(String.format(format, mDocsProcessed, mResourceUris.itemCount))
 
         mProgressBuilder.setContentText(null)
 
@@ -79,7 +77,7 @@ class TrashJob(
     override fun getFailureNotification(): Notification {
         return getFailureNotification(
             getFailureContentTitle(R.string.move_to_trash_error_notification_title),
-            R.drawable.ic_menu_delete
+            R.drawable.ic_menu_delete,
         )
     }
 
@@ -93,7 +91,7 @@ class TrashJob(
             operationType,
             state,
             getProgressMessage(R.string.trash_in_progress),
-            hasFailures()
+            hasFailures(),
         )
     }
 
@@ -108,7 +106,7 @@ class TrashJob(
                 Metrics.logFileOperationFailure(
                     appContext,
                     MetricConsts.SUBFILEOP_TRASH_DOCUMENT,
-                    doc.derivedUri
+                    doc.derivedUri,
                 )
                 Log.e(TAG, "Failed to trash document @ " + doc.derivedUri, e)
                 onFileFailed(doc)
@@ -143,7 +141,7 @@ class TrashJob(
             throw ResourceException(
                 "Failed to trash file %s due to an exception.",
                 doc.derivedUri,
-                e
+                e,
             )
         }
     }
