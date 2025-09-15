@@ -63,11 +63,17 @@ class ExternalStorageProviderTestFilesRule(private val skipCreation: Boolean = f
         }
     }
 
-    public fun createRandomFile(mimeType: String): String {
+    @JvmOverloads
+    public fun createRandomFile(mimeType: String, parentDirectory: String? = null): String {
         val randomFileName = System.currentTimeMillis().toString()
         val root = docsHelper.getRoot(Providers.ROOT_ID_DEVICE)
 
-        val testFolder = docsHelper.findFile(root.documentId, TEMPORARY_FILES_DIR_NAME)
+        val testFolder =
+            if (parentDirectory == null) {
+                docsHelper.findFile(root.documentId, TEMPORARY_FILES_DIR_NAME)
+            } else {
+                docsHelper.findFile(root.documentId, parentDirectory)
+            }
 
         Assert.assertNotNull("Could not find temporary folder to create random file", testFolder)
         docsHelper.createDocument(testFolder!!.derivedUri, mimeType, randomFileName)

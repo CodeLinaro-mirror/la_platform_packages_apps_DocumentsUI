@@ -1411,9 +1411,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         final DocumentInfo parent = mActivity.getCurrentDirectory();
+        Uri parentUri = parent == null ? null : parent.derivedUri;
+
+        // If the user is in the "Recent" view, there is no meaningful parent URI, but the
+        // FileOperationService can successfully deal with this for move operations. This is only
+        // enabled for Search v2 as using the old loaders masks out flags like FLAG_SUPPORTS_DELETE
+        // for the "Recent" view.
+        if (isSearchV2Enabled() && (mode == FileOperationService.OPERATION_MOVE
+                && mState.stack.isRecents())) {
+            parentUri = null;
+        }
+
         final FileOperation operation = new FileOperation.Builder()
                 .withOpType(mode)
-                .withSrcParent(parent == null ? null : parent.derivedUri)
+                .withSrcParent(parentUri)
                 .withSrcs(srcs)
                 .build();
 
