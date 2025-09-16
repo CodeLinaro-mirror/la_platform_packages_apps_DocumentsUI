@@ -39,8 +39,7 @@
     <string name="menu_delete" msgid="1022254131543256626">"Избриши"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"Избриши трајно"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Премести во корпата"</string>
-    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
-    <skip />
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Врати"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Избери ги сите"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Поништи го изборот на сите"</string>
     <string name="menu_select" msgid="1366061076507142387">"Избери"</string>
@@ -120,8 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Дејството не е дозволено"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"За да дознаете повеќе, контактирајте со IT-администраторот"</string>
     <string name="root_recent" msgid="1080156975424341623">"Неодамнешни"</string>
-    <!-- no translation found for root_trash (1869929519939073178) -->
-    <skip />
+    <string name="root_trash" msgid="1869929519939073178">"Корпа"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> слободен простор"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Услуги на складирање"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Кратенки"</string>
@@ -144,8 +142,7 @@
     <string name="move_notification_title" msgid="3173424987049347605">"Датотеките се премест."</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Датотеките се бришат"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Датотеките одат во корпа"</string>
-    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
-    <skip />
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Се враќаат датотеките"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Уште <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="one">Се копира <xliff:g id="COUNT_1">%1$d</xliff:g> ставка.</item>
@@ -168,8 +165,7 @@
       <item quantity="other">Се бришат <xliff:g id="COUNT_1">%1$d</xliff:g> ставки.</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ставка се преместува во корпата}one{<xliff:g id="COUNT_1">{count}</xliff:g> ставка се преместуваат во корпата}other{<xliff:g id="COUNT_1">{count}</xliff:g> ставки се преместуваат во корпата}}"</string>
-    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
-    <skip />
+    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{Се враќа <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Се враќаат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Се враќаат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="undo" msgid="2902438994196400565">"Врати"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Се подготвува…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Се подготвува…"</string>
@@ -177,20 +173,17 @@
     <string name="move_preparing" msgid="6504239656430530761">"Се подготвува…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Се подготвува…"</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"Се подготвува…"</string>
-    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
-    <skip />
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Се подготвува…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
-    <skip />
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Не можеше да се копира <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Не можеше да се копираат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Не можеше да се копираат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Не можеше да се компримира <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Не можеше да се компримираат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Не можеше да се компримираат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Не можеше да се отпакува <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Не можеше да се отпакуваат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Не можеше да се отпакуваат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Не можеше да се премести <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Не можеше да се преместат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Не можеше да се преместат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Не можеше да се избрише <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Не можеше да се избришат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Не можеше да се избришат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Не можеше да се премести <xliff:g id="COUNT_0">{count}</xliff:g> ставка во корпата}one{Не можеше да се преместат <xliff:g id="COUNT_1">{count}</xliff:g> ставка во корпата}other{Не можеше да се преместат <xliff:g id="COUNT_1">{count}</xliff:g> ставки во корпата}}"</string>
-    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
-    <skip />
+    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{Не можеше да се врати <xliff:g id="COUNT_0">{count}</xliff:g> ставка}one{Не можеше да се вратат <xliff:g id="COUNT_1">{count}</xliff:g> ставка}other{Не можеше да се вратат <xliff:g id="COUNT_1">{count}</xliff:g> ставки}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Допрете за приказ на деталите"</string>
     <string name="close" msgid="905969391788869975">"Затвори"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -234,8 +227,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Се преместува „<xliff:g id="FILENAME">{filename}</xliff:g>“ во „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Се преместуваат # датотека во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Се преместуваат # датотеки во „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Се брише „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Се бришат # датотека}other{Се бришат # датотеки}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Датотеката <xliff:g id="FILENAME">{filename}</xliff:g> се преместува во корпата}one{# датотека се преместуваат во корпата}other{# датотеки се преместуваат во корпата}}"</string>
-    <!-- no translation found for restore_in_progress (6756221866797865046) -->
-    <skip />
+    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{Се враќа <xliff:g id="FILENAME">{filename}</xliff:g>}one{Се враќаат # датотека}other{Се враќаат # датотеки}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Се компримира „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Се компримираат # датотека}other{Се компримираат # датотеки}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Прикажи го напредокот на датотеката"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Напредок на датотеката"</string>
@@ -295,8 +287,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Не може да се прикаже содржината"</string>
     <string name="sign_in" msgid="6253762676723505592">"Најавете се"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"архива<xliff:g id="EXTENSION">%s</xliff:g>"</string>
-    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
-    <skip />
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Архивирај"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Да се презапише <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Продолжи во заднина"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

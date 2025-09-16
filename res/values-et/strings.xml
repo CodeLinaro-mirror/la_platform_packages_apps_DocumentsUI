@@ -39,8 +39,7 @@
     <string name="menu_delete" msgid="1022254131543256626">"Kustuta"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"Kustuta jäädavalt"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Teisalda prügikasti"</string>
-    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
-    <skip />
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Taasta"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Vali kõik"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Tühista kõik"</string>
     <string name="menu_select" msgid="1366061076507142387">"Vali"</string>
@@ -120,8 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"See toiming ei ole lubatud"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Lisateabe saamiseks võtke ühendust IT-administraatoriga."</string>
     <string name="root_recent" msgid="1080156975424341623">"Hiljutised"</string>
-    <!-- no translation found for root_trash (1869929519939073178) -->
-    <skip />
+    <string name="root_trash" msgid="1869929519939073178">"Prügikast"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> on vaba"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Salvestusruumi teenused"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Otseteed"</string>
@@ -144,8 +142,7 @@
     <string name="move_notification_title" msgid="3173424987049347605">"Failide teisaldamine"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Failide kustutamine"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Prügikasti teisaldamine"</string>
-    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
-    <skip />
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Failide taastamine"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> on jäänud"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other">Kopeeritakse <xliff:g id="COUNT_1">%1$d</xliff:g> üksust.</item>
@@ -168,8 +165,7 @@
       <item quantity="one">Kustutatakse <xliff:g id="COUNT_0">%1$d</xliff:g> üksus.</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust teisaldatakse prügikasti}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust teisaldatakse prügikasti}}"</string>
-    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
-    <skip />
+    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksuse taastamine}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksuse taastamine}}"</string>
     <string name="undo" msgid="2902438994196400565">"Võta tagasi"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Ettevalmistamine …"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Ettevalmistamine …"</string>
@@ -177,20 +173,17 @@
     <string name="move_preparing" msgid="6504239656430530761">"Ettevalmistamine …"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Ettevalmistamine …"</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"Ettevalmistamine…"</string>
-    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
-    <skip />
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Ettevalmistamine…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
-    <skip />
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei saanud kopeerida.}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei saanud kopeerida.}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei saanud tihendada.}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei saanud tihendada.}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei saanud ekstraktida.}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei saanud ekstraktida.}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei saanud teisaldada.}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei saanud teisaldada.}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei saanud kustutada.}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei saanud kustutada.}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei õnnestunud prügikasti teisaldada}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei õnnestunud prügikasti teisaldada}}"</string>
-    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
-    <skip />
+    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> üksust ei saanud taastada}other{<xliff:g id="COUNT_1">{count}</xliff:g> üksust ei saanud taastada}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Puudutage üksikasjade vaatamiseks"</string>
     <string name="close" msgid="905969391788869975">"Sule"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -234,8 +227,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Faili „<xliff:g id="FILENAME">{filename}</xliff:g> teisaldamine kausta „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”.}other{# faili teisaldamine kausta „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Faili „<xliff:g id="FILENAME">{filename}</xliff:g>” kustutamine.}other{# faili kustutamine.}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Faili <xliff:g id="FILENAME">{filename}</xliff:g> teisaldatakse prügikasti}other{# faili teisaldatakse prügikasti}}"</string>
-    <!-- no translation found for restore_in_progress (6756221866797865046) -->
-    <skip />
+    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{Faili <xliff:g id="FILENAME">{filename}</xliff:g> taastamine}other{# faili taastamine}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Faili „<xliff:g id="FILENAME">{filename}</xliff:g>“ pakkimine}other{# faili pakkimine}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Kuva faili edenemine"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Failitoimingute edenemine"</string>
@@ -295,8 +287,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Sisu ei saa kuvada"</string>
     <string name="sign_in" msgid="6253762676723505592">"Logi sisse"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arhiiv<xliff:g id="EXTENSION">%s</xliff:g>"</string>
-    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
-    <skip />
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Arhiiv"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Kas kirjutada üle üksus <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Jätka taustal"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
