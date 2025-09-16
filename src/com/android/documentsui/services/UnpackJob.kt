@@ -148,7 +148,7 @@ class UnpackJob(
 
     override fun getFailureNotification(): Notification {
         return getFailureNotification(
-            getFailureContentTitle(getRes(R.string.extract_error_notification_title)),
+            getFailureContentTitle(getRes(R.string.extract_error_2)),
             getRes(R.drawable.ic_menu_extract),
         )
     }

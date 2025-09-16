@@ -716,7 +716,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         with(job.getFailureNotification()) {
             assertThat(category).isEqualTo(CATEGORY_ERROR)
             with(extras) {
-                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t extract 4 items")
+                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t extract 4 files")
                 assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details")
             }
         }
