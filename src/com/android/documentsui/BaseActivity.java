@@ -580,7 +580,7 @@ public abstract class BaseActivity
         return state;
     }
 
-    private void setContainer() {
+    protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
