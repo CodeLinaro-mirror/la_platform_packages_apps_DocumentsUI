@@ -42,8 +42,7 @@ import org.junit.Test
 /** Tests UnpackJob. */
 @MediumTest
 internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     private data class Entry(val size: Long, val mimeType: String)
 
@@ -326,12 +325,13 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         job.run()
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(4)
-        assertThat(job.failedPaths).containsExactly(
-            "/Encrypted AES-128.txt",
-            "/Encrypted AES-192.txt",
-            "/Encrypted AES-256.txt",
-            "/Encrypted ZipCrypto.txt"
-        )
+        assertThat(job.failedPaths)
+            .containsExactly(
+                "/Encrypted AES-128.txt",
+                "/Encrypted AES-192.txt",
+                "/Encrypted AES-256.txt",
+                "/Encrypted ZipCrypto.txt",
+            )
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)
@@ -360,12 +360,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     fun collisionForExtractionFolder() {
         val uri = createDocument("application/zip", "archives/zip/hello.zip")
         mDocs.createFolder(mSrcRoot, "hello")
-        assertTreeIs(
-            mutableMapOf(
-                "/hello.zip" to zipEntry(806),
-                "/hello" to dirEntry,
-            )
-        )
+        assertTreeIs(mutableMapOf("/hello.zip" to zipEntry(806), "/hello" to dirEntry))
 
         val job = createJob(uri)
 
@@ -396,12 +391,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
             assertThat(requiredBytes).isEqualTo(110)
         }
 
-        assertTreeIs(
-            mutableMapOf(
-                "/hello.zip" to zipEntry(806),
-                "/hello" to dirEntry,
-            )
-        )
+        assertTreeIs(mutableMapOf("/hello.zip" to zipEntry(806), "/hello" to dirEntry))
     }
 
     /** Tests with a ZIP archive containing colliding entries. */
@@ -429,14 +419,15 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         // As a consequence, UnpackJob fails to extract some files from the archive.
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(6)
-        assertThat(job.failedPaths).containsExactly(
-            "/pet/cat",
-            "/pet",
-            "/pet/cat/fish",
-            "/pet/cat",
-            "/pet",
-            "/pet/cat/fish"
-        )
+        assertThat(job.failedPaths)
+            .containsExactly(
+                "/pet/cat",
+                "/pet",
+                "/pet/cat/fish",
+                "/pet/cat",
+                "/pet",
+                "/pet/cat/fish",
+            )
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)
@@ -501,12 +492,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         }
 
         // The partially extracted file with a bad CRC should have been removed.
-        assertTreeIs(
-            mutableMapOf(
-                "/bad-crc.zip" to zipEntry(234),
-                "/bad-crc" to dirEntry,
-            )
-        )
+        assertTreeIs(mutableMapOf("/bad-crc.zip" to zipEntry(234), "/bad-crc" to dirEntry))
     }
 
     @Test
@@ -577,15 +563,8 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
         // The files with incorrect sizes should be detected.
         mJobListener.assertFailed()
         mJobListener.assertFailureCount(7)
-        assertThat(job.failedPaths).containsExactly(
-            "/0.txt",
-            "/1.txt",
-            "/2.txt",
-            "/4.txt",
-            "/5.txt",
-            "/6.txt",
-            "/7.txt"
-        )
+        assertThat(job.failedPaths)
+            .containsExactly("/0.txt", "/1.txt", "/2.txt", "/4.txt", "/5.txt", "/6.txt", "/7.txt")
 
         with(job.getJobProgress()) {
             assertThat(operationType).isEqualTo(OPERATION_UNPACK)
@@ -703,12 +682,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
             }
         }
 
-        assertTreeIs(
-            mutableMapOf(
-                "/empty.zip" to zipEntry(22),
-                "/empty" to dirEntry,
-            )
-        )
+        assertTreeIs(mutableMapOf("/empty.zip" to zipEntry(22), "/empty" to dirEntry))
     }
 
     /** Tests the various system notifications with a partially encrypted ZIP archive. */
@@ -764,7 +738,7 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     private fun assertTreeIs(
         wantEntries: MutableMap<String, Entry>?,
         parentPath: String,
-        info: DocumentInfo
+        info: DocumentInfo,
     ) {
         val path = "$parentPath/${info.displayName}"
 
@@ -774,7 +748,8 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
                 throw AssertionError("Found unexpected file '$path'")
             }
 
-            assertWithMessage("For file '%s'", path).that(info.mimeType)
+            assertWithMessage("For file '%s'", path)
+                .that(info.mimeType)
                 .isEqualTo(wantEntry.mimeType)
 
             // Since the underlying DocumentProvider might report an incorrect size in
@@ -807,7 +782,9 @@ internal class UnpackJobTest : AbstractJobTest<UnpackJob>() {
     companion object {
         private const val TAG = "UnpackJobTest"
         private val dirEntry = Entry(-1, MIME_TYPE_DIR)
+
         private fun textEntry(size: Long) = Entry(size, "text/plain")
+
         private fun zipEntry(size: Long) = Entry(size, "application/zip")
     }
 }
