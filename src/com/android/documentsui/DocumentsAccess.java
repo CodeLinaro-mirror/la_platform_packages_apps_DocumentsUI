@@ -33,7 +33,6 @@ import androidx.annotation.Nullable;
 
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
-import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 
@@ -47,7 +46,10 @@ import java.util.List;
  */
 public interface DocumentsAccess {
 
-    @Nullable DocumentInfo getRootDocument(RootInfo root);
+    /**
+     * Returns the document info if available for the specified authority, document id and user id.
+     */
+    @Nullable DocumentInfo getDocument(String authority, String documentId, UserId userId);
     @Nullable DocumentInfo getDocument(Uri uri, UserId userId);
     @Nullable DocumentInfo getArchiveDocument(Uri uri, UserId userId);
 
@@ -79,9 +81,8 @@ public interface DocumentsAccess {
 
         @Override
         @Nullable
-        public DocumentInfo getRootDocument(RootInfo root) {
-            return getDocument(DocumentsContract.buildDocumentUri(root.authority, root.documentId),
-                    root.userId);
+        public DocumentInfo getDocument(String authority, String documentId, UserId userId) {
+            return getDocument(DocumentsContract.buildDocumentUri(authority, documentId), userId);
         }
 
         @Override

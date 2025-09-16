@@ -170,8 +170,10 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void pasteIntoFolder(RootInfo root) {
-        this.getRootDocument(
-                root,
+        this.getDocument(
+                root.authority,
+                root.documentId,
+                root.userId,
                 TimeoutTask.DEFAULT_TIMEOUT,
                 (DocumentInfo doc) -> pasteIntoFolder(root, doc));
     }

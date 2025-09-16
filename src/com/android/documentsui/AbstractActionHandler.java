@@ -72,7 +72,7 @@ import com.android.documentsui.loaders.QueryOptions;
 import com.android.documentsui.loaders.SearchLoader;
 import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.queries.SearchViewManager;
-import com.android.documentsui.roots.GetRootDocumentTask;
+import com.android.documentsui.roots.GetDocumentTask;
 import com.android.documentsui.roots.LoadFirstRootTask;
 import com.android.documentsui.roots.LoadRootTask;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -215,15 +215,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void getRootDocument(RootInfo root, int timeout, Consumer<DocumentInfo> callback) {
-        GetRootDocumentTask task = new GetRootDocumentTask(
-                root,
+    public void getDocument(String authority, String documentId, UserId userId, int timeout,
+            Consumer<DocumentInfo> callback) {
+        GetDocumentTask task = new GetDocumentTask(
+                authority,
+                documentId,
+                userId,
                 mActivity,
                 timeout,
                 mDocs,
                 callback);
 
-        task.executeOnExecutor(mExecutors.lookup(root.authority));
+        task.executeOnExecutor(mExecutors.lookup(authority));
     }
 
     @Override

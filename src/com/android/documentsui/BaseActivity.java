@@ -659,8 +659,8 @@ public abstract class BaseActivity
         if (mProviders.isRecentsRoot(root)) {
             refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
         } else {
-            mInjector.actions.getRootDocument(
-                    root,
+            mInjector.actions.getDocument(
+                    root.authority, root.documentId, root.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     doc -> mInjector.actions.openRootDocument(doc));
         }

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -121,7 +122,9 @@ final class RootsMonitor<T extends Activity & CommonAddons> {
             final RootInfo defaultRoot = mProviders.getDefaultRootBlocking(mState);
             assert (defaultRoot != null);
             if (!defaultRoot.isRecents()) {
-                mDefaultRootDocument = mDocs.getRootDocument(defaultRoot);
+                mDefaultRootDocument = mDocs.getDocument(defaultRoot.authority,
+                    defaultRoot.documentId,
+                    defaultRoot.userId);
             }
             return defaultRoot;
         }
