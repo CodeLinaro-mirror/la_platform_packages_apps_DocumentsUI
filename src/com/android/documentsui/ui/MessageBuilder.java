@@ -17,9 +17,11 @@ package com.android.documentsui.ui;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_CONVERTED;
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_FAILURE;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
+import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.text.BidiFormatter;
 import android.text.Html;
@@ -35,6 +37,8 @@ import com.android.documentsui.services.FileOperationService.OpType;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class MessageBuilder {
 
@@ -55,8 +59,7 @@ public class MessageBuilder {
         }
 
         if (docs.size() == 1) {
-            // Deleteing 1 file xor 1 folder in cwd
-
+            // Deleting 1 file xor 1 folder in cwd
             // Address b/28772371, where including user strings in message can result in
             // broken bidirectional support.
             String displayName = BidiFormatter.getInstance().unicodeWrap(docs.get(0).displayName);
@@ -70,25 +73,16 @@ public class MessageBuilder {
                                     displayName);
         } else if (dirsCount == 0) {
             // Deleting only files in cwd
-            message =
-                    Shared.getQuantityString(
-                            mContext,
-                            getRes(R.plurals.delete_files_confirmation_message),
-                            docs.size());
+            message = getQuantityString(getRes(R.plurals.delete_files_confirmation_message),
+                    docs.size());
         } else if (dirsCount == docs.size()) {
             // Deleting only folders in cwd
-            message =
-                    Shared.getQuantityString(
-                            mContext,
-                            getRes(R.plurals.delete_folders_confirmation_message),
-                            docs.size());
+            message = getQuantityString(getRes(R.plurals.delete_folders_confirmation_message),
+                    docs.size());
         } else {
             // Deleting mixed items (files and folders) in cwd
-            message =
-                    Shared.getQuantityString(
-                            mContext,
-                            getRes(R.plurals.delete_items_confirmation_message),
-                            docs.size());
+            message = getQuantityString(getRes(R.plurals.delete_items_confirmation_message),
+                    docs.size());
         }
         return message;
     }
@@ -96,30 +90,42 @@ public class MessageBuilder {
     public String generateListMessage(
             @DialogType int dialogType, @OpType int operationType, List<DocumentInfo> docs,
             List<Uri> uris, List<String> paths) {
-        int resourceId;
+        final int resourceId;
 
         switch (dialogType) {
             case DIALOG_TYPE_CONVERTED:
-                resourceId = getRes(R.plurals.copy_converted_warning_content);
+                resourceId = getRes(isZipNgFlagEnabled()
+                        ? R.string.copy_converted_warning_content
+                        : R.plurals.copy_converted_warning_content);
                 break;
 
             case DIALOG_TYPE_FAILURE:
                 switch (operationType) {
                     case FileOperationService.OPERATION_COPY:
-                        resourceId = getRes(R.plurals.copy_failure_alert_content);
+                        resourceId = getRes(isZipNgFlagEnabled()
+                                ? R.string.copy_failure_alert_content
+                                : R.plurals.copy_failure_alert_content);
                         break;
                     case FileOperationService.OPERATION_COMPRESS:
-                        resourceId = getRes(R.plurals.compress_failure_alert_content);
+                        resourceId = getRes(isZipNgFlagEnabled()
+                                ? R.string.compress_failure_alert_content
+                                : R.plurals.compress_failure_alert_content);
                         break;
                     case FileOperationService.OPERATION_EXTRACT:
                     case FileOperationService.OPERATION_UNPACK:
-                        resourceId = getRes(R.plurals.extract_failure_alert_content);
+                        resourceId = getRes(isZipNgFlagEnabled()
+                                ? R.string.extract_failure_alert_content
+                                : R.plurals.extract_failure_alert_content);
                         break;
                     case FileOperationService.OPERATION_DELETE:
-                        resourceId = getRes(R.plurals.delete_failure_alert_content);
+                        resourceId = getRes(isZipNgFlagEnabled()
+                                ? R.string.delete_failure_alert_content
+                                : R.plurals.delete_failure_alert_content);
                         break;
                     case FileOperationService.OPERATION_MOVE:
-                        resourceId = getRes(R.plurals.move_failure_alert_content);
+                        resourceId = getRes(isZipNgFlagEnabled()
+                                ? R.string.move_failure_alert_content
+                                : R.plurals.move_failure_alert_content);
                         break;
                     default:
                         throw new UnsupportedOperationException();
@@ -147,7 +153,7 @@ public class MessageBuilder {
             count += uris.size();
             for (Uri uri : uris) {
                 list.append("&#8226; ");
-                list.append(Html.escapeHtml(bdf.unicodeWrap(uri.toSafeString())));
+                list.append(Html.escapeHtml(bdf.unicodeWrap(uri.toString())));
                 list.append("<br>");
             }
         }
@@ -162,6 +168,11 @@ public class MessageBuilder {
         }
 
         list.append("</p>");
+
+        if (isZipNgFlagEnabled()) {
+            return new MessageFormat(mContext.getResources().getString(resourceId),
+                    Locale.getDefault()).format(Map.of("count", count, "list", list));
+        }
 
         return mContext.getResources().getQuantityString(resourceId, count, list);
     }
