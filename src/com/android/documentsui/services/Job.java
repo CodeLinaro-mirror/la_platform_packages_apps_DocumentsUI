@@ -19,6 +19,7 @@ package com.android.documentsui.services;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.DocumentsApplication.acquireUnstableProviderOrThrow;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.EXTRA_CANCEL;
 import static com.android.documentsui.services.FileOperationService.EXTRA_DIALOG_TYPE;
 import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED_DOCS;
@@ -354,20 +355,23 @@ abstract public class Job implements Runnable {
             throws ResourceException {
         try {
             if (parent != null && doc.isRemoveSupported()) {
-                DocumentsContract.removeDocument(wrap(getClient(doc)), doc.derivedUri,
-                        parent.derivedUri);
+                if (!DocumentsContract.removeDocument(wrap(getClient(doc)), doc.derivedUri,
+                        parent.derivedUri)) {
+                    throw new ResourceException(
+                            "Cannot remove " + redact(doc) + " from " + redact(parent));
+                }
             } else if (doc.isDeleteSupported()) {
-                DocumentsContract.deleteDocument(wrap(getClient(doc)), doc.derivedUri);
+                if (!DocumentsContract.deleteDocument(wrap(getClient(doc)), doc.derivedUri)) {
+                    throw new ResourceException("Cannot delete " + redact(doc));
+                }
             } else {
-                throw new ResourceException("Unable to delete source document. "
-                        + "File is not deletable or removable: %s.", doc.derivedUri);
+                throw new ResourceException("Not deletable nor removable: " + redact(doc));
             }
         } catch (FileNotFoundException | RemoteException | RuntimeException e) {
             if (e instanceof DeadObjectException) {
                 releaseClient(doc);
             }
-            throw new ResourceException("Failed to delete file %s due to an exception.",
-                    doc.derivedUri, e);
+            throw new ResourceException("Cannot delete " + redact(doc), e);
         }
     }
 
