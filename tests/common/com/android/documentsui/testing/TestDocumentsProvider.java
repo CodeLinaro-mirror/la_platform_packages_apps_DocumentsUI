@@ -36,6 +36,8 @@ import android.util.Log;
 import com.android.documentsui.base.DocumentInfo;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -57,11 +59,46 @@ public class TestDocumentsProvider extends DocumentsProvider {
             Document.COLUMN_ICON
     };
 
+    /** Faked result for {@link #queryChildDocuments(String, String[], String)}. */
     private Cursor mNextChildDocuments;
+
+    /** Faked result for {@link #queryRecentDocuments(String, String[])}. */
     private Cursor mNextRecentDocuments;
+
+    /** Faked result for {@link #queryTrashDocuments(String[])}. */
     private Cursor mNextTrashDocuments;
+
+    /** Runtime exception thrown in either querySearchDocuments() or queryChildDocuments(). */
     private String mRuntimeMessage;
+
+    /** Artificial delay added before this provider returns its results, 0 means no delay. */
     private long mQueryDelayMs = 0;
+
+    /** Maps from document ID to a summary, that will be used when querying for summaries. */
+    private final Map<String, String> mNextSummaries = new HashMap<>();
+
+    /** The last query args passed to {@link #queryChildDocuments()}. */
+    private @Nullable Bundle mLastQueryArgs = null;
+
+    /** Sets the summaries that should be emulated. */
+    public void setDocumentSummaries(Map<String, String> summaries) {
+        mNextSummaries.clear();
+        mNextSummaries.putAll(summaries);
+    }
+
+    public String getAuthority() {
+        return mAuthority;
+    }
+
+    @Nullable
+    public Bundle getLastQueryArgs() {
+        return mLastQueryArgs;
+    }
+
+    public void setLastQueryArgs(@Nullable Bundle lastQueryArgs) {
+        mLastQueryArgs = lastQueryArgs;
+    }
+
     /**
      * A latch that will be decremented when a query is about to be delayed. This allows tests to
      * synchronize with the start of the delay.
@@ -93,7 +130,27 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
-        return null;
+        maybeThrowException();
+        maybeDelayQueryResults();
+
+        if (projection == null) {
+            projection = new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY};
+        }
+        final MatrixCursor result = new MatrixCursor(projection);
+
+        // This provider might be used to check for the existence of a doc.
+        // If it doesn't exist in the test model, we should return an empty cursor.
+        if (!mNextSummaries.containsKey(documentId)) {
+            Log.d(TAG, "queryDocument(): document not found: " + documentId);
+            return result;
+        }
+
+        final MatrixCursor.RowBuilder row = result.newRow();
+        row.add(Document.COLUMN_DOCUMENT_ID, documentId);
+        row.add(Document.COLUMN_SUMMARY, mNextSummaries.getOrDefault(documentId, null));
+
+        Log.d(TAG, "queryDocument(): document found: " + documentId);
+        return result;
     }
 
     @Override
@@ -102,6 +159,14 @@ public class TestDocumentsProvider extends DocumentsProvider {
         maybeThrowException();
         maybeDelayQueryResults();
         return mNextChildDocuments;
+    }
+
+    @Override
+    public Cursor queryChildDocuments(
+            String parentDocumentId, String[] projection, Bundle queryArgs)
+            throws FileNotFoundException {
+        mLastQueryArgs = queryArgs;
+        return queryChildDocuments(parentDocumentId, projection, (String) null);
     }
 
     @Override
@@ -288,7 +353,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
                     .add(Document.COLUMN_DISPLAY_NAME, doc.displayName)
                     .add(Document.COLUMN_LAST_MODIFIED, doc.lastModified)
                     .add(Document.COLUMN_FLAGS, doc.flags)
-                    .add(Document.COLUMN_SUMMARY, doc.summary)
+                    .add(
+                            Document.COLUMN_SUMMARY,
+                            mNextSummaries.getOrDefault(doc.documentId, doc.summary))
                     .add(Document.COLUMN_SIZE, doc.size)
                     .add(Document.COLUMN_ICON, doc.icon);
         }
