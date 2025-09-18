@@ -138,6 +138,8 @@
     <string name="share_via" msgid="8725082736005677161">"Ulashish"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Fayllar nusxalanmoqda"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Fayllar arxivlanmoqda"</string>
+    <!-- no translation found for zip_notification_title (2858653527172763548) -->
+    <skip />
     <string name="extract_notification_title" msgid="5067393961754430469">"Arxivdan chiqarilmoqda"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Ko‘chirib o‘tkazilmoqda"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Fayllar o‘chirilmoqda"</string>
@@ -164,8 +166,10 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ta element o‘chirib tashlanmoqda.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ta element o‘chirib tashlanmoqda.</item>
     </plurals>
-    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta element chiqitdonga tashlanmoqda}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta element chiqitdonga tashlanmoqda}}"</string>
-    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt tiklanmoqda}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt tiklanmoqda}}"</string>
+    <!-- no translation found for trashing (1363875848930103999) -->
+    <skip />
+    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Bekor qilish"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Tayyorlanmoqda…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Tayyorlanmoqda…"</string>
@@ -178,38 +182,61 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt nusxalanmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt nusxalanmadi}}"</string>
+    <!-- no translation found for copy_error_2 (2553643062672015237) -->
+    <skip />
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt arxivlanmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt arxivlanmadi}}"</string>
-    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt arxivdan chiqarilmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt arxivdan chiqarilmadi}}"</string>
+    <!-- no translation found for compress_error_2 (7035005747251809554) -->
+    <skip />
+    <!-- no translation found for extract_error_2 (6428683221773394140) -->
+    <skip />
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt boshqa joyga olinmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt boshqa joyga olinmadi}}"</string>
+    <!-- no translation found for move_error_2 (8089293906168239907) -->
+    <skip />
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt oʻchirilmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt oʻchirilmadi}}"</string>
-    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta element chiqitdonga tashalmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta element chiqitdonga tashlanmadi}}"</string>
-    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ta obyekt tiklanmadi}other{<xliff:g id="COUNT_1">{count}</xliff:g> ta obyekt tiklanmadi}}"</string>
+    <!-- no translation found for delete_error_2 (5368270399330057918) -->
+    <skip />
+    <!-- no translation found for trash_error_2 (5039906473394301366) -->
+    <skip />
+    <!-- no translation found for restore_error_2 (3095191316757396713) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Batafsil axborot olish uchun bosing"</string>
     <string name="close" msgid="905969391788869975">"Yopish"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">Quyidagi fayllardan nusxa olinmadi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Quyidagi fayldan nusxa olinmadi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Quyidagi fayllar arxivlanmadi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Quyidagi fayl arxivlanmadi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Quyidagi fayllar arxivdan chiqarilmadi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Quyidagi fayl arxivdan chiqarilmadi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Quyidagi fayllar ko‘chirilmadi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Quyidagi fayl ko‘chirilmadi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Quyidagi fayllar o‘chirib tashlanmadi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Quyidagi fayl o‘chirib tashlanmadi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Quyidagi fayllar boshqa formatga o‘girilgan: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Quyidagi fayl boshqa formatga o‘girilgan: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ta elementdan vaqtinchalik xotiraga nusxa olindi.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ta elementdan vaqtinchalik xotiraga nusxa olindi.</item>
@@ -223,11 +250,14 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"Chiqarish"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Bir nechta fayllar o‘girildi"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> fayli <xliff:g id="DIRECTORY_0">{directory}</xliff:g> jildiga nusxalanmoqda}other{# ta fayl <xliff:g id="DIRECTORY_1">{directory}</xliff:g> jildiga nusxalanmoqda}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> arxivi <xliff:g id="DIRECTORY_0">{directory}</xliff:g> jildiga chiqarilmoqda}other{# ta arxiv “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” jildiga chiqarilmoqda}}"</string>
+    <!-- no translation found for extract_in_progress (8395914945005887951) -->
+    <skip />
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> fayli <xliff:g id="DIRECTORY_0">{directory}</xliff:g> jildiga olinmoqda}other{# ta fayl <xliff:g id="DIRECTORY_1">{directory}</xliff:g> jildiga olinmoqda}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” fayli oʻchirilmoqda}other{# ta fayl oʻchirilmoqda}}"</string>
-    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> fayli chiqitdonga tashlanmoqda}other{# ta fayl chiqitdonga tashlanmoqda}}"</string>
-    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> fayli tiklanmoqda}other{# ta fayl tiklanmoqda}}"</string>
+    <!-- no translation found for trash_in_progress (148010238243445101) -->
+    <skip />
+    <!-- no translation found for restore_in_progress (77264930309492659) -->
+    <skip />
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” fayli arxivlanmoqda}other{# ta fayl arxivlanmoqda}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Fayl rivojini chiqarish"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Fayl qayta ishlanmoqda"</string>
