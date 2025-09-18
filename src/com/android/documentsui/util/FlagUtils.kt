@@ -41,6 +41,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_VISUAL_SIGNALS_RO,
                 Flags.FLAG_ZIP_NG_RO,
                 Flags.FLAG_HOME_SCREEN_FILES_RO,
+                Flags.FLAG_USE_FILE_SUMMARY,
             )
 
         @JvmStatic
@@ -152,6 +153,13 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                     .overrides
                     .getOrDefault(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.homeScreenFilesRo())
             return flag && isUseMaterial3FlagEnabled()
+        }
+
+        @JvmStatic
+        fun isUseFileSummaryEnabled(): Boolean {
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_USE_FILE_SUMMARY, Flags.useFileSummary())
         }
     }
 

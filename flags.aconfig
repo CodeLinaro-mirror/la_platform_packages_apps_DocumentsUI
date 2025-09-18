@@ -96,3 +96,11 @@ flag {
     bug: "389814214"
     is_fixed_read_only: true
 }
+
+flag {
+ name: "use_file_summary"
+ namespace: "documentsui"
+ description: "Enables displaying the file summary for local files in the directory list."
+ bug: "436732697"
+ is_fixed_read_only: true
+}
