@@ -36,18 +36,20 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 public class ResourcesProvider extends DocumentsProvider {
 
     public static final String AUTHORITY = "com.android.documentsui.archives.resourcesprovider";
 
-    private static final String[] DEFAULT_ROOT_PROJECTION = new String[]{
-            Root.COLUMN_ROOT_ID, Root.COLUMN_FLAGS, Root.COLUMN_TITLE, Root.COLUMN_DOCUMENT_ID
-    };
-    private static final String[] DEFAULT_DOCUMENT_PROJECTION = new String[]{
-            Document.COLUMN_DOCUMENT_ID, Document.COLUMN_MIME_TYPE, Document.COLUMN_DISPLAY_NAME,
-            Document.COLUMN_LAST_MODIFIED, Document.COLUMN_FLAGS, Document.COLUMN_SIZE,
-    };
+    private static final String[] DEFAULT_ROOT_PROJECTION =
+            new String[] {
+                Root.COLUMN_ROOT_ID, Root.COLUMN_FLAGS, Root.COLUMN_TITLE, Root.COLUMN_DOCUMENT_ID
+            };
+    private static final String[] DEFAULT_DOCUMENT_PROJECTION =
+            new String[] {
+                Document.COLUMN_DOCUMENT_ID, Document.COLUMN_MIME_TYPE,
+                        Document.COLUMN_DISPLAY_NAME,
+                Document.COLUMN_LAST_MODIFIED, Document.COLUMN_FLAGS, Document.COLUMN_SIZE,
+            };
 
     private static final Map<String, Integer> RESOURCES = new HashMap<>();
 
@@ -76,8 +78,8 @@ public class ResourcesProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryRoots(String[] projection) throws FileNotFoundException {
-        final MatrixCursor result = new MatrixCursor(projection != null ? projection
-                : DEFAULT_ROOT_PROJECTION);
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_ROOT_PROJECTION);
         final RowBuilder row = result.newRow();
         row.add(Root.COLUMN_ROOT_ID, "root-id");
         row.add(Root.COLUMN_FLAGS, 0);
@@ -89,8 +91,8 @@ public class ResourcesProvider extends DocumentsProvider {
     @Override
     public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
-        final MatrixCursor result = new MatrixCursor(projection != null ? projection
-                : DEFAULT_DOCUMENT_PROJECTION);
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
         if ("root-document-id".equals(documentId)) {
             final RowBuilder row = result.newRow();
             row.add(Document.COLUMN_DOCUMENT_ID, "root-document-id");
@@ -113,8 +115,8 @@ public class ResourcesProvider extends DocumentsProvider {
             throw new FileNotFoundException();
         }
 
-        final MatrixCursor result = new MatrixCursor(projection != null ? projection
-                : DEFAULT_DOCUMENT_PROJECTION);
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
         for (String documentId : RESOURCES.keySet()) {
             includeDocument(result, documentId);
         }
