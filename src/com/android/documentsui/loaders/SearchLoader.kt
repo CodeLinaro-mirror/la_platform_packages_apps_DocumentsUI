@@ -46,22 +46,21 @@ import kotlin.time.measureTime
 private data class QueryResult(var cursor: Cursor? = null)
 
 /**
- * A specialization of the BaseFileLoader that searches the set of specified roots. To search
- * the roots you must provider:
+ * A specialization of the BaseFileLoader that searches the set of specified roots. To search the
+ * roots you must provider:
+ * - The current application context
+ * - A content lock for which a locking content observer is built
+ * - A list of user IDs, on whose behalf we query content provider clients.
+ * - A list of RootInfo objects representing searched roots
+ * - A query used to search for matching files.
+ * - Query options such as maximum number of results, last modified time delta, etc.
+ * - a lookup from file extension to file type
+ * - The model capable of sorting results
+ * - An executor for running searches across multiple roots in parallel
  *
- *  - The current application context
- *  - A content lock for which a locking content observer is built
- *  - A list of user IDs, on whose behalf we query content provider clients.
- *  - A list of RootInfo objects representing searched roots
- *  - A query used to search for matching files.
- *  - Query options such as maximum number of results, last modified time delta, etc.
- *  - a lookup from file extension to file type
- *  - The model capable of sorting results
- *  - An executor for running searches across multiple roots in parallel
- *
- *  SearchLoader requires that either a query is not null and not empty or that QueryOptions
- *  specify a last modified time restriction. This is to prevent searching for every file
- *  across every specified root.
+ * SearchLoader requires that either a query is not null and not empty or that QueryOptions specify
+ * a last modified time restriction. This is to prevent searching for every file across every
+ * specified root.
  */
 class SearchLoader(
     context: Context,
@@ -87,7 +86,8 @@ class SearchLoader(
         private val latch: CountDownLatch,
     ) : Runnable {
         internal var cursor: Cursor? = null
-        internal val taskId: String get() = searchUri.toString()
+        internal val taskId: String
+            get() = searchUri.toString()
 
         override fun run() {
             val queryDuration = measureTime {
@@ -136,7 +136,7 @@ class SearchLoader(
 
     /**
      * Forces content fresh if the first pass has been done. This method is called by each search
-     * tasks  that complete. If the call is made after the first pass, it triggers onContentChanged
+     * tasks that complete. If the call is made after the first pass, it triggers onContentChanged
      * call, which results in re-run for loadInBackground. This re-run tries to create not yet
      * created search tasks, and runs them on the provided executor. For already running, but not
      * yet completed tasks the code just waits for them to be completed.
@@ -151,9 +151,9 @@ class SearchLoader(
     }
 
     /**
-     * Runs search for the first time. The code creates a new list of search tasks, schedules
-     * them to be run on the executor and gives tasks up to maxQueryTime (if set) to complete
-     * the first run.
+     * Runs search for the first time. The code creates a new list of search tasks, schedules them
+     * to be run on the executor and gives tasks up to maxQueryTime (if set) to complete the first
+     * run.
      */
     @Throws(InterruptedException::class)
     private fun firstPassRun(rejectBeforeTimestamp: Long) {
@@ -186,19 +186,14 @@ class SearchLoader(
             if (DEBUG) {
                 Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
             }
-            countDownLatch.await(
-                options.maxQueryTime!!.toMillis(),
-                TimeUnit.MILLISECONDS
-            )
+            countDownLatch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
         }
         if (DEBUG) {
             Log.d(TAG, "Waiting for results is done")
         }
     }
 
-    /**
-     * The loadInBackground code run within a trace.
-     */
+    /** The loadInBackground code run within a trace. */
     private fun loadInBackgroundTraced(): DirectoryResult? {
         val rejectBeforeTimestamp = options.getRejectBeforeTimestamp()
         val result = DirectoryResult()
@@ -244,17 +239,13 @@ class SearchLoader(
         }
 
         // Assign the cursor, after adding filtering and sorting, to the results.
-        val cursorExtras = Bundle().apply {
-            putBoolean(DocumentsContract.EXTRA_LOADING, !allDone)
-        }
-        val mergedCursor = toSingleCursor(cursorList).apply {
-            setExtras(cursorExtras)
-        }
+        val cursorExtras = Bundle().apply { putBoolean(DocumentsContract.EXTRA_LOADING, !allDone) }
+        val mergedCursor = toSingleCursor(cursorList).apply { setExtras(cursorExtras) }
         val filteringCursor = FilteringCursorWrapper(mergedCursor)
         filteringCursor.filterHiddenFiles(options.showHidden)
         filteringCursor.filterMimes(
             options.acceptableMimeTypes,
-            if (TextUtils.isEmpty(query)) arrayOf(Document.MIME_TYPE_DIR) else null
+            if (TextUtils.isEmpty(query)) arrayOf(Document.MIME_TYPE_DIR) else null,
         )
         if (rejectBeforeTimestamp > 0L) {
             filteringCursor.filterLastModified(rejectBeforeTimestamp)
@@ -266,9 +257,9 @@ class SearchLoader(
     }
 
     /**
-     * Notifies this loader that a task running on an executor thread has been completed.
-     * Search tasks update different queryResults, so no locks are used in this method.
-     * For every completed task we check if we need to refresh the content.
+     * Notifies this loader that a task running on an executor thread has been completed. Search
+     * tasks update different queryResults, so no locks are used in this method. For every completed
+     * task we check if we need to refresh the content.
      */
     private fun onTaskCompleted(searchTask: SearchTask) {
         queryResults[searchTask.index] = QueryResult(searchTask.cursor)
@@ -279,28 +270,21 @@ class SearchLoader(
         if (TextUtils.isEmpty(query) && options.otherQueryArgs.isEmpty) {
             // NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus
             // we only create the recents URI if both the query and other args are empty.
-            DocumentsContract.buildRecentDocumentsUri(
-                rootInfo.authority,
-                rootInfo.rootId
-            )
+            DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId)
         } else {
-            DocumentsContract.buildSearchDocumentsUri(
-                rootInfo.authority,
-                rootInfo.rootId,
-                query,
-            )
+            DocumentsContract.buildSearchDocumentsUri(rootInfo.authority, rootInfo.rootId, query)
         }
 
     private fun createQueryArgs(
         rootSupportsSearchResultLimiting: Boolean,
-        rejectBeforeTimestamp: Long
+        rejectBeforeTimestamp: Long,
     ): Bundle {
         val queryArgs = Bundle()
         sortModel.addQuerySortArgs(queryArgs)
         if (rejectBeforeTimestamp > 0L) {
             queryArgs.putLong(
                 DocumentsContract.QUERY_ARG_LAST_MODIFIED_AFTER,
-                rejectBeforeTimestamp
+                rejectBeforeTimestamp,
             )
         }
         if (!TextUtils.isEmpty(query)) {
@@ -313,13 +297,8 @@ class SearchLoader(
         return queryArgs
     }
 
-    /**
-     * Helper function that sets the list of search tasks for the given countdown latch.
-     */
-    private fun createSearchTaskList(
-        rejectBeforeTimestamp: Long,
-        countDownLatch: CountDownLatch,
-    ) {
+    /** Helper function that sets the list of search tasks for the given countdown latch. */
+    private fun createSearchTaskList(rejectBeforeTimestamp: Long, countDownLatch: CountDownLatch) {
         searchTaskList.clear()
         for ((index, rootInfo) in rootInfoList.withIndex()) {
             if (isLoadInBackgroundCanceled) {
@@ -334,13 +313,7 @@ class SearchLoader(
                 Log.d(TAG, "Query $rootSearchUri and queryArgs $queryArgs")
             }
             searchTaskList.add(
-                SearchTask(
-                    rootInfo,
-                    rootSearchUri,
-                    queryArgs,
-                    index,
-                    countDownLatch
-                )
+                SearchTask(rootInfo, rootSearchUri, queryArgs, index, countDownLatch)
             )
         }
     }

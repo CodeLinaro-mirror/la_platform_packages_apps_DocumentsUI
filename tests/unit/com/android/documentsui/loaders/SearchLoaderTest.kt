@@ -74,65 +74,67 @@ class SearchLoaderTest {
         companion object {
             @JvmStatic
             @Parameters(name = "with parameters {0}")
-            fun data() = listOf(
-                // Specifying ALL_RESULTS as the limit should return as many results as the root allows,
-                // for TestDocumentsProvider this is 23 (to match FileSystemProvider's legacy default),
-                // which our TOTAL_FILE_COUNT is well below (so expect all files to be returned).
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "sample",
-                    null,
-                    ALL_RESULTS,
-                    Bundle(),
-                    TOTAL_FILE_COUNT
-                ),
-                // Specifying a positive, non-zero search result limit should work.
-                LoaderTestParams(TOTAL_FILE_COUNT, "sample", null, 2, Bundle(), 2),
-                // Specifying a zero search results limit should return zero files.
-                LoaderTestParams(TOTAL_FILE_COUNT, "sample", null, 0, Bundle(), 0),
-                LoaderTestParams(TOTAL_FILE_COUNT, "txt", null, ALL_RESULTS, Bundle(), 2),
-                LoaderTestParams(TOTAL_FILE_COUNT, "foozig", null, ALL_RESULTS, Bundle(), 0),
-                // The first file is at NOW, the second at NOW - 1h; expect 2.
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "sample",
-                    Duration.ofMinutes(60 + 1),
-                    ALL_RESULTS,
-                    Bundle(),
-                    2
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "sample",
-                    null,
-                    ALL_RESULTS,
-                    createQueryArgs("image/*"),
-                    2
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "sample",
-                    null,
-                    ALL_RESULTS,
-                    createQueryArgs("image/*", "video/*"),
-                    6
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "sample",
-                    null,
-                    ALL_RESULTS,
-                    createQueryArgs("application/pdf"),
-                    0
-                ),
-            )
+            fun data() =
+                listOf(
+                    // Specifying ALL_RESULTS as the limit should return as many results as the root
+                    // allows,
+                    // for TestDocumentsProvider this is 23 (to match FileSystemProvider's legacy
+                    // default),
+                    // which our TOTAL_FILE_COUNT is well below (so expect all files to be
+                    // returned).
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "sample",
+                        null,
+                        ALL_RESULTS,
+                        Bundle(),
+                        TOTAL_FILE_COUNT,
+                    ),
+                    // Specifying a positive, non-zero search result limit should work.
+                    LoaderTestParams(TOTAL_FILE_COUNT, "sample", null, 2, Bundle(), 2),
+                    // Specifying a zero search results limit should return zero files.
+                    LoaderTestParams(TOTAL_FILE_COUNT, "sample", null, 0, Bundle(), 0),
+                    LoaderTestParams(TOTAL_FILE_COUNT, "txt", null, ALL_RESULTS, Bundle(), 2),
+                    LoaderTestParams(TOTAL_FILE_COUNT, "foozig", null, ALL_RESULTS, Bundle(), 0),
+                    // The first file is at NOW, the second at NOW - 1h; expect 2.
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "sample",
+                        Duration.ofMinutes(60 + 1),
+                        ALL_RESULTS,
+                        Bundle(),
+                        2,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "sample",
+                        null,
+                        ALL_RESULTS,
+                        createQueryArgs("image/*"),
+                        2,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "sample",
+                        null,
+                        ALL_RESULTS,
+                        createQueryArgs("image/*", "video/*"),
+                        6,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "sample",
+                        null,
+                        ALL_RESULTS,
+                        createQueryArgs("application/pdf"),
+                        0,
+                    ),
+                )
         }
 
-        @get:Rule
-        val setFlags = OverrideFlagsRule()
+        @get:Rule val setFlags = OverrideFlagsRule()
 
-        @get:Rule
-        val expect: Expect = Expect.create()
+        @get:Rule val expect: Expect = Expect.create()
 
         @Before
         fun setUpTest() {
@@ -145,28 +147,30 @@ class SearchLoaderTest {
             val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
             val docs = createDocuments(testParams.fakeFileCount)
             mockProvider!!.setNextChildDocumentsReturns(*docs)
-            val queryOptions = QueryOptions(
-                testParams.fakeFileCount + 1,
-                testParams.maxResultsPerRoot,
-                testParams.lastModifiedDelta,
-                null,
-                true,
-                arrayOf("*/*"),
-                testParams.otherArgs,
-            )
+            val queryOptions =
+                QueryOptions(
+                    testParams.fakeFileCount + 1,
+                    testParams.maxResultsPerRoot,
+                    testParams.lastModifiedDelta,
+                    null,
+                    true,
+                    arrayOf("*/*"),
+                    testParams.otherArgs,
+                )
 
             val rootInfoList = listOf(TestProvidersAccess.DOWNLOADS)
 
-            val loader = SearchLoader(
-                activity,
-                rootInfoList,
-                TestFileTypeLookup(),
-                contentObserver,
-                testParams.query,
-                queryOptions,
-                environment.state.sortModel,
-                executor,
-            )
+            val loader =
+                SearchLoader(
+                    activity,
+                    rootInfoList,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    testParams.query,
+                    queryOptions,
+                    environment.state.sortModel,
+                    executor,
+                )
             val directoryResult = loader.loadInBackground()
             expect.that(getFileCount(directoryResult)).isEqualTo(testParams.expectedCount)
         }
@@ -175,11 +179,9 @@ class SearchLoaderTest {
     // Collection of plain tests that do not use parameters.
     @SmallTest
     class PlainTests : BaseLoaderTest() {
-        @get:Rule
-        val setFlags = OverrideFlagsRule()
+        @get:Rule val setFlags = OverrideFlagsRule()
 
-        @get:Rule
-        val expect: Expect = Expect.create()
+        @get:Rule val expect: Expect = Expect.create()
 
         lateinit var executor: ExecutorService
         val contentLock = ContentLock()
@@ -200,7 +202,7 @@ class SearchLoaderTest {
         fun generateDocuments(
             count: Int,
             suffixOffset: Int,
-            extensions: Array<String>
+            extensions: Array<String>,
         ): Array<DocumentInfo> {
             return Array(count) { i ->
                 val suffix = String.format(Locale.US, "%05d", 2 * i + suffixOffset)
@@ -210,9 +212,9 @@ class SearchLoaderTest {
         }
 
         /**
-         * Checks that the merging, filtering and sorting of results works correctly. We set up
-         * two providers: home and pickles storage. They get files with names that have a zipper
-         * like pattern, when sorted. Here we are checking if merging two cursors, with filtering
+         * Checks that the merging, filtering and sorting of results works correctly. We set up two
+         * providers: home and pickles storage. They get files with names that have a zipper like
+         * pattern, when sorted. Here we are checking if merging two cursors, with filtering
          * produces the expected result.
          */
         @Test
@@ -236,24 +238,25 @@ class SearchLoaderTest {
             // Setup the sort model so that results are sorted by their name.
             val sortModel = SortModel.createModel()
             sortModel.setDefaultDimension(SortModel.SORT_DIMENSION_ID_TITLE)
-            val loader = SearchLoader(
-                activity,
-                listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
-                TestFileTypeLookup(),
-                contentObserver,
-                "document-",
-                QueryOptions(
-                    maxCount,
-                    ALL_RESULTS,
-                    null,
-                    null,
-                    false,
-                    arrayOf("image/png"),
-                    Bundle()
-                ),
-                sortModel,
-                executor,
-            )
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document-",
+                    QueryOptions(
+                        maxCount,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    sortModel,
+                    executor,
+                )
             val result = loader.loadInBackground()
             expect.that(result?.cursor?.getCount()).isEqualTo(maxCount)
             // We expect a perfect mix of documents from PICKLES and HOME. Pickles has odd indices
@@ -261,13 +264,15 @@ class SearchLoaderTest {
             // leaving us with 0, 4, 8, ..., from PICKLES and 1, 5, 9, ... from HOME.
             val model = Model(TestFeatures())
             model.update(result)
-            val names = model.modelIds.map {
-                model.getDocument(it)!!.displayName
-            }
-            expect.that(names).isEqualTo((0..maxCount - 1).map {
-                val index = String.format(Locale.US, "%05d", 4 * (it / 2) + (it % 2))
-                "document-$index.png"
-            })
+            val names = model.modelIds.map { model.getDocument(it)!!.displayName }
+            expect
+                .that(names)
+                .isEqualTo(
+                    (0..maxCount - 1).map {
+                        val index = String.format(Locale.US, "%05d", 4 * (it / 2) + (it % 2))
+                        "document-$index.png"
+                    }
+                )
         }
 
         @Test
@@ -278,16 +283,25 @@ class SearchLoaderTest {
                     *generateDocuments(2, 1, arrayOf("png", "avi"))
                 )
             }
-            val loader = SearchLoader(
-                activity,
-                listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
-                TestFileTypeLookup(),
-                contentObserver,
-                "document",
-                QueryOptions(10, ALL_RESULTS, null, null, false, arrayOf("image/png"), Bundle()),
-                environment.state.sortModel,
-                executor,
-            )
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
             val result = loader.loadInBackground()
             expect.that(result!!.cursor).isNotNull()
             val extras = result.cursor.extras
@@ -307,36 +321,35 @@ class SearchLoaderTest {
             doc1.documentId = ".test"
             doc2.documentId = "parent_folder/.hidden_folder/test"
             environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]?.apply {
-                setNextChildDocumentsReturns(
-                    doc1,
-                    doc2
-                )
+                setNextChildDocumentsReturns(doc1, doc2)
             }
 
-            val hideHiddenLoader = SearchLoader(
-                activity,
-                listOf(TestProvidersAccess.DOWNLOADS),
-                TestFileTypeLookup(),
-                contentObserver,
-                commonSearchString,
-                QueryOptions(10, ALL_RESULTS, null, null, false, null, Bundle()),
-                environment.state.sortModel,
-                executor,
-            )
+            val hideHiddenLoader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.DOWNLOADS),
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    commonSearchString,
+                    QueryOptions(10, ALL_RESULTS, null, null, false, null, Bundle()),
+                    environment.state.sortModel,
+                    executor,
+                )
 
             var result: DirectoryResult = hideHiddenLoader.loadInBackground()!!
             assertEquals(0, result.cursor.getCount())
 
-            val showHiddenLoader = SearchLoader(
-                activity,
-                listOf(TestProvidersAccess.DOWNLOADS),
-                TestFileTypeLookup(),
-                contentObserver,
-                commonSearchString,
-                QueryOptions(10, ALL_RESULTS, null, null, true, null, Bundle()),
-                environment.state.sortModel,
-                executor,
-            )
+            val showHiddenLoader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.DOWNLOADS),
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    commonSearchString,
+                    QueryOptions(10, ALL_RESULTS, null, null, true, null, Bundle()),
+                    environment.state.sortModel,
+                    executor,
+                )
             result = showHiddenLoader.loadInBackground()!!
             assertEquals(2, result.cursor.getCount())
         }
@@ -409,10 +422,7 @@ class SearchLoaderTest {
             val loaderCallbacks: LoaderManager.LoaderCallbacks<DirectoryResult> =
                 object : LoaderManager.LoaderCallbacks<DirectoryResult> {
 
-                    override fun onCreateLoader(
-                        id: Int,
-                        args: Bundle?
-                    ): Loader<DirectoryResult?> {
+                    override fun onCreateLoader(id: Int, args: Bundle?): Loader<DirectoryResult?> {
                         return SearchLoader(
                             activity,
                             listOf(
@@ -430,16 +440,16 @@ class SearchLoaderTest {
                                 Duration.ofMillis(firstPassWaitMs),
                                 false,
                                 null,
-                                Bundle()
+                                Bundle(),
                             ),
                             environment.state.sortModel,
-                            Executors.newFixedThreadPool(3)
+                            Executors.newFixedThreadPool(3),
                         )
                     }
 
                     override fun onLoadFinished(
                         loader: Loader<DirectoryResult>,
-                        data: DirectoryResult?
+                        data: DirectoryResult?,
                     ) {
                         result = data
                         barrier.await()
