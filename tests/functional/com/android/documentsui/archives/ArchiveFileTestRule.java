@@ -64,14 +64,21 @@ public class ArchiveFileTestRule extends TestName {
         mMethodName = description.getMethodName();
 
         try {
-            mTemporaryPath = Files.createTempDirectory(
-                    InstrumentationRegistry.getInstrumentation()
-                            .getTargetContext().getCacheDir().toPath(),
-                    mClassName);
+            mTemporaryPath =
+                    Files.createTempDirectory(
+                            InstrumentationRegistry.getInstrumentation()
+                                    .getTargetContext()
+                                    .getCacheDir()
+                                    .toPath(),
+                            mClassName);
         } catch (IOException e) {
-            Log.e(TAG, String.format(Locale.ENGLISH,
-                    "It can't create temporary directory in the staring of %s.%s.",
-                    mClassName, mMethodName));
+            Log.e(
+                    TAG,
+                    String.format(
+                            Locale.ENGLISH,
+                            "It can't create temporary directory in the staring of %s.%s.",
+                            mClassName,
+                            mMethodName));
         }
     }
 
@@ -108,9 +115,9 @@ public class ArchiveFileTestRule extends TestName {
     }
 
     /**
-     * To dump asset path file as temporary file. There are some problems to get the file
-     * descriptor from the asset files in instrumentation context. It's null pointer. It needs to
-     * dump to temporary file in the target context of the instrumentation.
+     * To dump asset path file as temporary file. There are some problems to get the file descriptor
+     * from the asset files in instrumentation context. It's null pointer. It needs to dump to
+     * temporary file in the target context of the instrumentation.
      *
      * @param assetPath assetPath in test context
      * @param suffix the suffix of the temporary file name
@@ -119,8 +126,11 @@ public class ArchiveFileTestRule extends TestName {
     public Path dumpAssetFile(String assetPath, String suffix) throws IOException {
         Path destinationPath = generateFile(suffix);
 
-        try (InputStream inputStream = InstrumentationRegistry.getInstrumentation()
-                .getContext().getAssets().open(assetPath)) {
+        try (InputStream inputStream =
+                InstrumentationRegistry.getInstrumentation()
+                        .getContext()
+                        .getAssets()
+                        .open(assetPath)) {
             Files.copy(inputStream, destinationPath, StandardCopyOption.REPLACE_EXISTING);
         }
 
@@ -128,9 +138,9 @@ public class ArchiveFileTestRule extends TestName {
     }
 
     /**
-     * To dump asset path file as temporary file. There are some problems to get the file
-     * descriptor from the asset files in instrumentation context. It's null pointer. It needs to
-     * dump to temporary file in the target context of the instrumentation.
+     * To dump asset path file as temporary file. There are some problems to get the file descriptor
+     * from the asset files in instrumentation context. It's null pointer. It needs to dump to
+     * temporary file in the target context of the instrumentation.
      *
      * @param assetPath assetPath in test context
      * @param suffix the suffix of the temporary file name
@@ -139,8 +149,8 @@ public class ArchiveFileTestRule extends TestName {
     public ParcelFileDescriptor openAssetFile(String assetPath, String suffix) throws IOException {
         Path destinationPath = dumpAssetFile(assetPath, suffix);
 
-        ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor
-                .open(destinationPath.toFile(), MODE_READ_ONLY);
+        ParcelFileDescriptor parcelFileDescriptor =
+                ParcelFileDescriptor.open(destinationPath.toFile(), MODE_READ_ONLY);
 
         mParcelFileDescriptors.add(parcelFileDescriptor);
         return parcelFileDescriptor;
