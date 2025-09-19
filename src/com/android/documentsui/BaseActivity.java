@@ -580,7 +580,7 @@ public abstract class BaseActivity
         return state;
     }
 
-    private void setContainer() {
+    protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
@@ -659,8 +659,8 @@ public abstract class BaseActivity
         if (mProviders.isRecentsRoot(root)) {
             refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
         } else {
-            mInjector.actions.getRootDocument(
-                    root,
+            mInjector.actions.getDocument(
+                    root.authority, root.documentId, root.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     doc -> mInjector.actions.openRootDocument(doc));
         }

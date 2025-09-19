@@ -15,6 +15,11 @@
  */
 package com.android.documentsui.services
 
+import android.app.Notification.CATEGORY_ERROR
+import android.app.Notification.CATEGORY_PROGRESS
+import android.app.Notification.EXTRA_PROGRESS_INDETERMINATE
+import android.app.Notification.EXTRA_TEXT
+import android.app.Notification.EXTRA_TITLE
 import android.net.Uri
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
@@ -268,6 +273,16 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
             assertThat(msRemaining).isLessThan(0)
         }
 
+        with(job.getSetupNotification()) {
+            assertThat(category).isEqualTo(CATEGORY_PROGRESS)
+            with(extras) {
+                assertThat(getCharSequence(EXTRA_TITLE))
+                    .isEqualTo(if (isZipNgFlagEnabled()) "Zipping files" else "Compressing files")
+                assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Preparing...")
+                assertThat(getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isTrue()
+            }
+        }
+
         job.run()
 
         // The destination document provider used in this test does not automatically rename a
@@ -280,12 +295,35 @@ internal class CompressJobTest : AbstractJobTest<CompressJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isTrue()
-            // TODO(b/439976731) This might have to change to "Couldn't zip 2 files"
             assertThat(msg).isEqualTo("Zipping 2 files")
             assertThat(currentBytes).isEqualTo(0)
             assertThat(requiredBytes).isEqualTo(33)
             assertThat(msRemaining).isLessThan(0)
             assertThat(destination!!.peek().displayName).isEqualTo("TEST_ROOT_0")
+        }
+
+        with(job.getProgressNotification()) {
+            assertThat(category).isEqualTo(CATEGORY_PROGRESS)
+            with(extras) {
+                assertThat(getCharSequence(EXTRA_TITLE))
+                    .isEqualTo(if (isZipNgFlagEnabled()) "Zipping files" else "Compressing files")
+                assertThat(getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isFalse()
+            }
+        }
+
+        with(job.getFailureNotification()) {
+            assertThat(category).isEqualTo(CATEGORY_ERROR)
+            with(extras) {
+                assertThat(getCharSequence(EXTRA_TITLE))
+                    .isEqualTo(
+                        if (isZipNgFlagEnabled()) {
+                            "Couldn’t zip 2 files"
+                        } else {
+                            "Couldn’t compress 2 items"
+                        }
+                    )
+                assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details")
+            }
         }
 
         assertTreeIs(

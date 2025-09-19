@@ -319,6 +319,10 @@
     <!-- Title of the compress notification [CHAR LIMIT=24] -->
     <string name="compress_notification_title">Compressing files</string>
 
+    <!-- Title of the notification indicating that files are getting zipped (i.e. compressed and
+         bundled into a ZIP archive.) [CHAR LIMIT=24] -->
+    <string name="zip_notification_title">Zipping files</string>
+
     <!-- Title of the extract notification [CHAR LIMIT=24] -->
     <string name="extract_notification_title">Extracting files</string>
 
@@ -370,15 +374,15 @@
     <!-- Progress message shown by the Android File Manager when one or more
          files are being moved to the trash bin.  -->
     <string name="trashing">{count, plural,
-        =1 {Trashing <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Trashing <xliff:g id="count" example="3">{count}</xliff:g> items}
+        =1 {Trashing # file}
+        other {Trashing # files}
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
          files are being restored from the trash bin. -->
     <string name="restoring_from_trash">{count, plural,
-        =1 {Restoring <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Restoring <xliff:g id="count" example="3">{count}</xliff:g> items}
+        =1 {Restoring # file}
+        other {Restoring # files}
     }</string>
 
     <!-- Text shown for the undo button -->
@@ -410,16 +414,31 @@
         other {Couldn\u2019t copy <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
 
+    <!-- Error message shown by the Android File Manager when one or more files failed to be copied.
+         [CHAR_LIMIT=48] -->
+    <string name="copy_error_2">{count, plural,
+        =1 {Couldn\u2019t copy # file}
+        other {Couldn\u2019t copy # files}
+    }</string>
+
     <!-- Title of the compress error notification [CHAR LIMIT=48] -->
     <string name="compress_error_notification_title">{count, plural,
         =1 {Couldn\u2019t compress <xliff:g id="count" example="1">{count}</xliff:g> item}
         other {Couldn\u2019t compress <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
 
-    <!-- Title of the extract error notification [CHAR LIMIT=48] -->
-    <string name="extract_error_notification_title">{count, plural,
-        =1 {Couldn\u2019t extract <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Couldn\u2019t extract <xliff:g id="count" example="2">{count}</xliff:g> items}
+    <!-- Error message shown by the Android File Manager when one or more files failed to be zipped,
+         i.e. bundled together and compressed into a ZIP archive.  [CHAR_LIMIT=48] -->
+    <string name="compress_error_2">{count, plural,
+        =1 {Couldn\u2019t zip # file}
+        other {Couldn\u2019t zip # files}
+    }</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files failed to be
+         extracted from an archive.  [CHAR_LIMIT=48] -->
+    <string name="extract_error_2">{count, plural,
+        =1 {Couldn\u2019t extract # file}
+        other {Couldn\u2019t extract # files}
     }</string>
 
     <!-- Title of the move error notification [CHAR LIMIT=48] -->
@@ -428,22 +447,38 @@
         other {Couldn\u2019t move <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
 
+    <!-- Error message shown by the Android File Manager when one or more files failed to be moved
+         to a different folder.  [CHAR_LIMIT=48] -->
+    <string name="move_error_2">{count, plural,
+        =1 {Couldn\u2019t move # file}
+        other {Couldn\u2019t move # files}
+    }</string>
+
     <!-- Title of the delete error notification [CHAR LIMIT=48] -->
     <string name="delete_error_notification_title">{count, plural,
         =1 {Couldn\u2019t delete <xliff:g id="count" example="1">{count}</xliff:g> item}
         other {Couldn\u2019t delete <xliff:g id="count" example="2">{count}</xliff:g> items}
     }</string>
 
-    <!-- Title of the trash file error notification [CHAR LIMIT=48] -->
-    <string name="move_to_trash_error_notification_title">{count, plural,
-        =1 {Couldn\u2019t trash <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Couldn\u2019t trash <xliff:g id="count" example="2">{count}</xliff:g> items}
+    <!-- Error message shown by the Android File Manager when one or more files failed to be
+         deleted.  [CHAR_LIMIT=48] -->
+    <string name="delete_error_2">{count, plural,
+        =1 {Couldn\u2019t delete # file}
+        other {Couldn\u2019t delete # files}
     }</string>
 
-    <!-- Title of the restore from trash error notification [CHAR LIMIT=48] -->
-    <string name="restore_from_trash_error_notification_title">{count, plural,
-        =1 {Couldn\u2019t restore <xliff:g id="count" example="1">{count}</xliff:g> item}
-        other {Couldn\u2019t restore <xliff:g id="count" example="2">{count}</xliff:g> items}
+    <!-- Error message shown by the Android File Manager when one or more files failed to be moved
+         to the trash bin.  [CHAR_LIMIT=48] -->
+    <string name="trash_error_2">{count, plural,
+        =1 {Couldn\u2019t trash # file}
+        other {Couldn\u2019t trash # files}
+    }</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files failed to be
+         restored from the trash bin.  [CHAR_LIMIT=48] -->
+    <string name="restore_error_2">{count, plural,
+        =1 {Couldn\u2019t restore # file}
+        other {Couldn\u2019t restore # files}
     }</string>
 
     <!-- Second line for notifications saying that more information will be shown after touching [CHAR LIMIT=48] -->
@@ -457,11 +492,26 @@
         <item quantity="other">These files weren\u2019t copied: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
 
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be copied.  [CHAR_LIMIT=48] -->
+    <string name="copy_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t copied: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t copied: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
+
     <!-- Contents of the compressing failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="compress_failure_alert_content">
         <item quantity="one">This file wasn\u2019t compressed: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
         <item quantity="other">These files weren\u2019t compressed: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be zipped, i.e. bundled together and compressed into a ZIP
+         archive.  [CHAR_LIMIT=48] -->
+    <string name="compress_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t zipped: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t zipped: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
 
     <!-- Contents of the extracting failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="extract_failure_alert_content">
@@ -469,11 +519,25 @@
         <item quantity="other">These files weren\u2019t extracted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
 
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be extracted from an archive.  [CHAR_LIMIT=48] -->
+    <string name="extract_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t extracted: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t extracted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
+
     <!-- Contents of the moving failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="move_failure_alert_content">
         <item quantity="one">This file wasn\u2019t moved: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
         <item quantity="other">These files weren\u2019t moved: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be moved from one folder to another.  [CHAR_LIMIT=48] -->
+    <string name="move_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t moved: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t moved: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
 
     <!-- Contents of the deleting failure alert dialog. [CHAR LIMIT=48] -->
     <plurals name="delete_failure_alert_content">
@@ -481,11 +545,25 @@
         <item quantity="other">These files weren\u2019t deleted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
 
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be deleted.  [CHAR_LIMIT=48] -->
+    <string name="delete_failure_alert_content">{count, plural,
+        =1 {This file wasn\u2019t deleted: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files weren\u2019t deleted: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
+
     <!-- Contents of the copying warning dialog due to converted files. [CHAR LIMIT=64] -->
     <plurals name="copy_converted_warning_content">
         <item quantity="one">This file was converted to another format: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
         <item quantity="other">These files were converted to another format: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">%1$s</xliff:g></item>
     </plurals>
+
+    <!-- Warning message shown by the Android File Manager when one or more
+         files were converted to another format.  [CHAR_LIMIT=48] -->
+    <string name="copy_converted_warning_content">{count, plural,
+        =1 {This file was converted to another format: <xliff:g id="list" example="Document.pdf">{list}</xliff:g>}
+        other {These files were converted to another format: <xliff:g id="list" example="Document.pdf, Photo.jpg, Song.ogg">{list}</xliff:g>}
+    }</string>
 
     <!-- Toast shown when a user copies files to clipboard. -->
     <plurals name="clipboard_files_clipped">
@@ -525,7 +603,7 @@
          files are being extracted from an archive.  [CHAR_LIMIT=48] -->
     <string name="extract_in_progress">{count, plural,
         =1 {Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
-        other {Extracting # archives to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
+        other {Extracting # files to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D}
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
@@ -545,14 +623,14 @@
     <!-- Progress message shown by the Android File Manager when one or more
          files are being moved to the trash bin.  [CHAR_LIMIT=48] -->
     <string name="trash_in_progress">{count, plural,
-        =1 {Trashing <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        =1 {Trashing \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D}
         other {Trashing # files}
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
          files are being restored from the trash bin.  [CHAR_LIMIT=48] -->
     <string name="restore_in_progress">{count, plural,
-        =1 {Restoring <xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>}
+        =1 {Restoring \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D}
         other {Restoring # files}
     }</string>
 

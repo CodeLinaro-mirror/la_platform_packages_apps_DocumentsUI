@@ -105,7 +105,7 @@ public class RootCursorWrapper extends AbstractCursor {
 
     @Override
     public boolean onMove(int oldPosition, int newPosition) {
-        return mCursor.moveToPosition(newPosition);
+        return mCursor != null && !mCursor.isClosed() && mCursor.moveToPosition(newPosition);
     }
 
     @Override

@@ -270,4 +270,21 @@
         <item name="strokeWidth">0dp</item>
         <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
     </style>
+
+    <style name="PickDialogAnimation">
+        <item name="android:activityOpenEnterAnimation">@anim/m3_motion_fade_enter</item>
+        <item name="android:activityCloseEnterAnimation">@anim/m3_motion_fade_exit</item>
+        <!--
+        This animates the previous activity to slide down.
+        For file picking intents, sharesheet is often opened first to allow the user to choose
+        camera or files. When the user chooses files, the sharesheet exit animation and picker
+        dialog enter animation happen at the same time but during the animation, the transparent
+        area of pick dialog uses the last rendered frame (i.e. the frame with sharesheet still
+        visible).
+        Playing an explicit exit animation for the previous activity fixes this issue. This has
+        no effect if sharesheet doesn't open first (i.e. DocsUI is immediately opened on top of
+        the trigger app).
+        -->
+        <item name="android:activityOpenExitAnimation">@anim/pick_dialog_prev_activity_exit</item>
+    </style>
 </resources>
