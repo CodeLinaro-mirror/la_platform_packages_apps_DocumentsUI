@@ -35,6 +35,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * A Ui test will do tests in the internal storage root. It is implemented because some operations
  * is failed and its result will different from the test on the StubProvider. b/115304092 is a
@@ -91,22 +93,10 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void deleteTestFiles() throws Exception {
-        boolean selected = false;
-        // Delete the added file for not affect user and also avoid error on next test.
-        if (bots.directory.hasDocuments(fileName)) {
-            bots.directory.selectDocument(fileName, 1);
-            device.waitForIdle();
-            selected = true;
-        }
-        if (bots.directory.hasDocuments(newFileName)) {
-            bots.directory.selectDocument(newFileName, 1);
-            device.waitForIdle();
-            selected = true;
-        }
-        if (selected) {
-            bots.main.clickDelete();
-            device.waitForIdle();
-            bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        for (var doc : mDocsHelper.listAllChildren(rootPrimary)) {
+            if (Arrays.asList(fileName, newFileName).contains(doc.displayName)) {
+                mDocsHelper.deleteDocumentIfExists(doc.getDocumentUri());
+            }
         }
     }
 

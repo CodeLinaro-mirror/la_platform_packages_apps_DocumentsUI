@@ -139,6 +139,7 @@
 }
 -keep class com.android.documentsui.R$layout {
   int apps_row;
+  int breadcrumb_view_v2;
   int directory_header;
   int files_activity;
   int fixed_layout;
@@ -227,6 +228,15 @@
 # This is used in the unit test
 -keep class com.google.android.material.chip.Chip {
   public android.graphics.drawable.Drawable getChipIcon();
+}
+
+# This is used in the unit test.
+-keep class com.android.documentsui.breadcrumbs.BreadcrumbController {
+  public void setVisible(boolean);
+}
+-keep class com.android.documentsui.breadcrumbs.BreadcrumbView {
+  public void setVisible(boolean);
+  public boolean performPathItemClick(int);
 }
 
 -keep class com.android.documentsui.util.Material3Config {

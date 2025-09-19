@@ -138,10 +138,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/main_container_section_gap"
+                android:orientation="vertical"
                 android:background="@drawable/main_container_bottom_section_background">
 
                 <com.android.documentsui.HorizontalBreadcrumb
                     android:id="@+id/horizontal_breadcrumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
+
+                <com.android.documentsui.breadcrumbs.BreadcrumbView
+                    android:id="@+id/breadcrumb_view_v2"
+                    android:background="?attr/colorSurfaceBright"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
