@@ -138,6 +138,8 @@
     <string name="share_via" msgid="8725082736005677161">"Deel via"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopieer tans lêers"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Pers tans lêers saam"</string>
+    <!-- no translation found for zip_notification_title (2858653527172763548) -->
+    <skip />
     <string name="extract_notification_title" msgid="5067393961754430469">"Onttrek tans lêers"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Skuif tans lêers"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Vee tans lêers uit"</string>
@@ -164,8 +166,10 @@
       <item quantity="other">Vee tans <xliff:g id="COUNT_1">%1$d</xliff:g> items uit.</item>
       <item quantity="one">Vee tans <xliff:g id="COUNT_0">%1$d</xliff:g> item uit.</item>
     </plurals>
-    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Skuif tans <xliff:g id="COUNT_0">{count}</xliff:g> item na asblik}other{Skuif tans <xliff:g id="COUNT_1">{count}</xliff:g> items na asblik}}"</string>
-    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{Stel tans <xliff:g id="COUNT_0">{count}</xliff:g> item terug}other{Stel tans <xliff:g id="COUNT_1">{count}</xliff:g> items terug}}"</string>
+    <!-- no translation found for trashing (1363875848930103999) -->
+    <skip />
+    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
+    <skip />
     <string name="undo" msgid="2902438994196400565">"Ontdoen"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Berei tans voor …"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Berei tans voor …"</string>
@@ -178,38 +182,61 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item kopieer nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items kopieer nie}}"</string>
+    <!-- no translation found for copy_error_2 (2553643062672015237) -->
+    <skip />
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item saampers nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items saampers nie}}"</string>
-    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item onttrek nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items onttrek nie}}"</string>
+    <!-- no translation found for compress_error_2 (7035005747251809554) -->
+    <skip />
+    <!-- no translation found for extract_error_2 (6428683221773394140) -->
+    <skip />
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item skuif nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items skuif nie}}"</string>
+    <!-- no translation found for move_error_2 (8089293906168239907) -->
+    <skip />
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item uitvee nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items uitvee nie}}"</string>
-    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item na asblik skuif nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items na asblik skuif nie}}"</string>
-    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item terugstel nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items terugstel nie}}"</string>
+    <!-- no translation found for delete_error_2 (5368270399330057918) -->
+    <skip />
+    <!-- no translation found for trash_error_2 (5039906473394301366) -->
+    <skip />
+    <!-- no translation found for restore_error_2 (3095191316757396713) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tik om besonderhede te bekyk"</string>
     <string name="close" msgid="905969391788869975">"Maak toe"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">Hierdie lêers is nie gekopieer nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie gekopieer nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Hierdie lêers is nie saamgepers nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie saamgepers nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Hierdie lêers is nie onttrek nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie onttrek nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Hierdie lêers is nie geskuif nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie geskuif nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Hierdie lêers is nie uitgevee nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie uitgevee nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Hierdie lêers is in \'n ander formaat omgeskakel: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is in \'n ander formaat omgeskakel: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">Het <xliff:g id="COUNT_1">%1$d</xliff:g> items na knipbord gekopieer.</item>
       <item quantity="one">Het <xliff:g id="COUNT_0">%1$d</xliff:g> item na knipbord gekopieer.</item>
@@ -223,11 +250,14 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"Maak los"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Sommige lêers is omgeskakel"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Kopieer tans “<xliff:g id="FILENAME">{filename}</xliff:g>“ na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Kopieer tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Onttrek tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Onttrek tans # argiewe na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <!-- no translation found for extract_in_progress (8395914945005887951) -->
+    <skip />
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Skuif tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Skuif tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Vee tans “<xliff:g id="FILENAME">{filename}</xliff:g>” uit}other{Vee tans # lêers uit}}"</string>
-    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Skuif tans <xliff:g id="FILENAME">{filename}</xliff:g> na asblik}other{Skuif tans # lêers na asblik}}"</string>
-    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{Stel tans <xliff:g id="FILENAME">{filename}</xliff:g> terug}other{Stel tans # lêers terug}}"</string>
+    <!-- no translation found for trash_in_progress (148010238243445101) -->
+    <skip />
+    <!-- no translation found for restore_in_progress (77264930309492659) -->
+    <skip />
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Rits tans “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Rits tans # lêers}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Wys lêervordering"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Lêervordering"</string>
