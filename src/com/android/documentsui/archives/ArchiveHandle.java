@@ -26,7 +26,6 @@ import static com.android.documentsui.archives.ArchiveRegistry.ZIP_TYPE;
 import android.os.FileUtils;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -57,8 +56,6 @@ import java.util.List;
  * @param <T> the archive class such as SevenZFile, ZipFile, ArchiveInputStream etc.
  */
 abstract class ArchiveHandle<T> implements Closeable {
-    private static final String TAG = ArchiveHandle.class.getSimpleName();
-
     /**
      * To re-create the CommonArchive that belongs to SevenZFile, ZipFile, or ArchiveInputStream. It
      * needs file descriptor to create the input stream or seek to the head.
@@ -139,13 +136,8 @@ abstract class ArchiveHandle<T> implements Closeable {
         if (!isCommonArchiveSupportGetInputStream()) {
             FileInputStream fileInputStream = recreateCommonArchiveStream();
             T commonArchive = recreateCommonArchive(fileInputStream);
-            if (commonArchive != null) {
-                closeCommonArchive();
-                setCommonArchive(commonArchive);
-            } else {
-                Log.e(TAG, "new SevenZFile or ArchiveInputStream is null");
-                fileInputStream.close();
-            }
+            closeCommonArchive();
+            setCommonArchive(commonArchive);
         }
 
         return ArchiveEntryInputStream.create(this, archiveEntry);
@@ -159,7 +151,7 @@ abstract class ArchiveHandle<T> implements Closeable {
         throw new UnsupportedOperationException("This kind of ArchiveHandle doesn't support");
     }
 
-    T recreateCommonArchive(FileInputStream fileInputStream)
+    protected @NonNull T recreateCommonArchive(FileInputStream fileInputStream)
             throws CompressorException, ArchiveException, IOException {
         throw new UnsupportedOperationException("This kind of ArchiveHandle doesn't support");
     }
@@ -190,8 +182,8 @@ abstract class ArchiveHandle<T> implements Closeable {
         }
 
         @Override
-        protected SevenZFile recreateCommonArchive(@NonNull FileInputStream fileInputStream)
-                throws IOException {
+        protected @NonNull SevenZFile recreateCommonArchive(
+                @NonNull FileInputStream fileInputStream) throws IOException {
             return new SevenZFile(fileInputStream.getChannel());
         }
 
@@ -241,7 +233,7 @@ abstract class ArchiveHandle<T> implements Closeable {
         }
 
         @Override
-        protected ArchiveInputStream recreateCommonArchive(FileInputStream fileInputStream)
+        protected @NonNull ArchiveInputStream recreateCommonArchive(FileInputStream fileInputStream)
                 throws CompressorException, ArchiveException {
             return createCommonArchive(fileInputStream, getMimeType());
         }
@@ -281,7 +273,7 @@ abstract class ArchiveHandle<T> implements Closeable {
     }
 
     /** The only one way creates the instance of ArchiveHandle. */
-    public static ArchiveHandle create(
+    public static @NonNull ArchiveHandle create(
             @NonNull ParcelFileDescriptor parcelFileDescriptor, @NonNull String mimeType)
             throws CompressorException, ArchiveException, IOException {
         checkNotNull(parcelFileDescriptor);
