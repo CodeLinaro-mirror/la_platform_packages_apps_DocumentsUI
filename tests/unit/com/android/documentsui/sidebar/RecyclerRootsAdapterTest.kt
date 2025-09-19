@@ -31,6 +31,7 @@ import com.android.documentsui.R
 import com.android.documentsui.base.Features
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
+import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.common.truth.Expect
 import kotlin.jvm.java
 import org.junit.Before
@@ -60,6 +61,8 @@ class RecyclerRootsAdapterTest {
     fun setup() {
         MockitoAnnotations.openMocks(this)
         val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
+        context.setTheme(getRes(R.style.DocumentsTheme))
+        context.theme.applyStyle(getRes(R.style.DocumentsDefaultTheme), false)
         parent = RecyclerView(context)
         parent.layoutManager = LinearLayoutManager(context)
         items = mutableListOf()
