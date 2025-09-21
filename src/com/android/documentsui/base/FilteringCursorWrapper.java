@@ -20,6 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.TAG;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 
 import android.database.AbstractCursor;
 import android.database.ContentObserver;
@@ -28,10 +29,25 @@ import android.os.Bundle;
 import android.provider.DocumentsContract.Document;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Cursor wrapper that filters cursor results by given conditions.
  */
 public class FilteringCursorWrapper extends AbstractCursor {
+    private static final Set<String> NON_DESKTOP_FOLDERS = new HashSet<>(Arrays.asList(
+            "primary:Android",
+            "primary:Alarms",
+            "primary:Audiobooks",
+            "primary:Music",
+            "primary:Notifications",
+            "primary:Podcasts",
+            "primary:Recordings",
+            "primary:Ringtones"
+    ));
+
     private final Cursor mCursor;
 
     private int[] mPositions;
@@ -76,15 +92,31 @@ public class FilteringCursorWrapper extends AbstractCursor {
             return;
         }
 
-        filterByCondition((cursor) -> {
-            // Judge by name and documentId separately because for some providers
-            // e.g. DownloadProvider, documentId may not contain file name.
-            final String name = getCursorString(cursor, Document.COLUMN_DISPLAY_NAME);
-            final String documentId = getCursorString(cursor, Document.COLUMN_DOCUMENT_ID);
-            boolean documentIdHidden = documentId != null && documentId.contains("/.");
-            boolean fileNameHidden = name != null && name.startsWith(".");
-            return !(documentIdHidden || fileNameHidden);
-        });
+        filterByCondition(
+                (cursor) -> {
+                    // Judge by name and documentId separately because for some providers
+                    // e.g. DownloadProvider, documentId may not contain file name.
+                    final String name = getCursorString(cursor, Document.COLUMN_DISPLAY_NAME);
+                    final String documentId = getCursorString(cursor, Document.COLUMN_DOCUMENT_ID);
+                    if (name == null || documentId == null) {
+                        return true;
+                    }
+                    // Filter dot files.
+                    if (name.startsWith(".") || documentId.contains("/.")) {
+                        return false;
+                    }
+                    if (isDesktopUxPhase2FlagEnabled()) {
+                        // Filter desktop folders and their sub folders/files.
+                        final int firstSlashIndex = documentId.indexOf('/');
+                        final String rootDocumentId = firstSlashIndex != -1
+                                ? documentId.substring(0, firstSlashIndex)
+                                : documentId;
+                        if (NON_DESKTOP_FOLDERS.contains(rootDocumentId)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
     }
 
     @Override

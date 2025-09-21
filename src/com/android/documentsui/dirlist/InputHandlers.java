@@ -69,22 +69,6 @@ final class InputHandlers {
         KeyInputHandler.Callbacks<DocumentItemDetails> callbacks =
                 new KeyInputHandler.Callbacks<DocumentItemDetails>() {
             @Override
-            public boolean isInteractiveItem(DocumentItemDetails item, KeyEvent e) {
-                switch (item.getItemViewType()) {
-                    case DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE:
-                    case DocumentsAdapter.ITEM_TYPE_INFLATED_MESSAGE:
-                    case DocumentsAdapter.ITEM_TYPE_SECTION_BREAK:
-                        return false;
-                    case DocumentsAdapter.ITEM_TYPE_DOCUMENT:
-                    case DocumentsAdapter.ITEM_TYPE_DIRECTORY:
-                        return true;
-                    default:
-                        throw new RuntimeException(
-                                "Unsupported item type: " + item.getItemViewType());
-                }
-            }
-
-            @Override
             public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
                 // Handle enter key events
                 switch (e.getKeyCode()) {

@@ -17,8 +17,8 @@ package com.android.documentsui.dirlist;
 
 import android.view.KeyEvent;
 
-import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
+import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.SelectionTracker.SelectionPredicate;
 
 import com.android.documentsui.base.Events;
@@ -104,7 +104,6 @@ public final class KeyInputHandler extends KeyboardEventListener<DocumentItemDet
     }
 
     public static abstract class Callbacks<T extends ItemDetails<?>> {
-        public abstract boolean isInteractiveItem(T item, KeyEvent e);
         public abstract boolean onItemActivated(T item, KeyEvent e);
         public abstract boolean onFocusItem(T details, int keyCode, KeyEvent event);
     }

@@ -89,8 +89,10 @@ class DragHost extends AbstractDragHost {
         final RootItem rootItem = (RootItem) item;
         if (mDragAndDropManager.updateState(v, rootItem.root, null)
                 == DragAndDropManager.STATE_UNKNOWN) {
-            mActions.getRootDocument(
-                    rootItem.root,
+            mActions.getDocument(
+                    rootItem.root.authority,
+                    rootItem.root.documentId,
+                    rootItem.root.userId,
                     DRAG_LOAD_TIME_OUT,
                     (DocumentInfo doc) -> {
                         updateDropShadow(v, rootItem, doc);

@@ -91,7 +91,7 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Trashing document.txt")
+            assertThat(msg).isEqualTo("Trashing “document.txt”")
         }
 
         mDocs.assertHasDirectory(mSrcRoot, "dir1")
@@ -186,7 +186,7 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Trashing dir1")
+            assertThat(msg).isEqualTo("Trashing “dir1”")
         }
 
         // Parent root should not consist "dir1", only .trash-storage

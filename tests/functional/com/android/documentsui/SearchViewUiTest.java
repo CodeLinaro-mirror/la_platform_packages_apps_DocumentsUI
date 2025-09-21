@@ -29,6 +29,7 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasMoreThanOneChild;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasNoChildren;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasOneChild;
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -39,9 +40,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.provider.DocumentsContract;
 import android.provider.Settings;
 
 import androidx.test.espresso.Espresso;
@@ -54,6 +57,7 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.WaitForCheckState;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -65,6 +69,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.UUID;
 
 @LargeTest
 public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
@@ -656,5 +662,57 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         UiObject2 searchBar = device.findObject(By.res(pkg + ":id/docked_search_text"));
         assertNotNull(searchBar);
         assertTrue(searchBar.isEnabled());
+    }
+
+    @Test
+    @EnableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testSearchResultHidesNonDesktopFolders() throws Exception {
+        DocumentsProviderHelper rootStorageDocsHelper = new DocumentsProviderHelper(userId,
+                Providers.AUTHORITY_STORAGE, context,
+                Providers.AUTHORITY_STORAGE);
+        String testFileName = "showHideTest-" + UUID.randomUUID() + ".txt";
+        Uri androidFolderUri = DocumentsContract.buildDocumentUri(Providers.AUTHORITY_STORAGE,
+                Providers.ROOT_ID_DEVICE + ":Android");
+        Uri testFileUri = null;
+        try {
+            // Create a test file inside the Android folder.
+            testFileUri = rootStorageDocsHelper.createDocument(androidFolderUri, "text/plain",
+                    testFileName);
+
+            // Reset show/hide state to hide hidden files before the test.
+            bots.main.hideHiddenFilesIfNeeded();
+
+            // Open device root: the internal storage.
+            String deviceRootLabel = getDeviceLabel();
+            bots.roots.openRoot(deviceRootLabel);
+
+            // Search the test file.
+            bots.search.expand();
+            bots.search.setInputText(testFileName);
+            bots.keyboard.pressEnter();
+
+            // Assert there's no search result because the Android folder and its content are
+            // hidden.
+            String noSearchResults = String.format(context.getString(R.string.no_results),
+                    deviceRootLabel);
+            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+
+            // Now show hidden files, the test file should show.
+            bots.main.showHiddenFiles();
+            bots.directory.waitForDocument(testFileName);
+
+            // Now hide hidden files, the test file should disappear.
+            bots.main.hideHiddenFiles();
+            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+        } finally {
+            // Delete the created test file if it exists.
+            if (testFileUri != null) {
+                try {
+                    DocumentsContract.deleteDocument(context.getContentResolver(), testFileUri);
+                } catch (Exception e) {
+                    // Ignore cleanup errors.
+                }
+            }
+        }
     }
 }

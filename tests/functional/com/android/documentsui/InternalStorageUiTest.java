@@ -16,7 +16,11 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+
 import static org.junit.Assert.assertNull;
+
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.LargeTest;
 
@@ -24,10 +28,14 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.OverrideFlagsRule;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 /**
  * A Ui test will do tests in the internal storage root. It is implemented because some operations
@@ -36,6 +44,9 @@ import org.junit.Test;
  */
 @LargeTest
 public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
+
+    @Rule
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private static final String fileName = "!Test3345678";
     private static final String newFileName = "!9527Test";
@@ -82,22 +93,29 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private void deleteTestFiles() throws Exception {
-        boolean selected = false;
-        // Delete the added file for not affect user and also avoid error on next test.
-        if (bots.directory.hasDocuments(fileName)) {
-            bots.directory.selectDocument(fileName, 1);
-            device.waitForIdle();
-            selected = true;
+        for (var doc : mDocsHelper.listAllChildren(rootPrimary)) {
+            if (Arrays.asList(fileName, newFileName).contains(doc.displayName)) {
+                mDocsHelper.deleteDocumentIfExists(doc.getDocumentUri());
+            }
         }
-        if (bots.directory.hasDocuments(newFileName)) {
-            bots.directory.selectDocument(newFileName, 1);
-            device.waitForIdle();
-            selected = true;
-        }
-        if (selected) {
-            bots.main.clickDelete();
-            device.waitForIdle();
-            bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        }
+    }
+
+    @Test
+    @EnableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testShowHideNonDesktopFolders() throws Exception {
+        String[] desktopFolders = {"Android", "Alarms", "Music"};
+        // Reset show/hide state to hide hidden files before the test.
+        bots.main.hideHiddenFilesIfNeeded();
+
+        // By default non-desktop folders like Android/Alarms/Music don't show.
+        bots.directory.assertDocumentsAbsent(desktopFolders);
+
+        bots.main.showHiddenFiles();
+        // Assert these folder are now showing.
+        bots.directory.assertDocumentsPresent(desktopFolders);
+
+        bots.main.hideHiddenFiles();
+        // Assert these folder are gone.
+        bots.directory.assertDocumentsAbsent(desktopFolders);
     }
 }

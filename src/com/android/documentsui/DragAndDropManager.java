@@ -407,8 +407,10 @@ public interface DragAndDropManager {
             // Calculate the op type now just in case user releases Ctrl key while we're obtaining
             // root document in the background.
             final @OpType int opType = calculateOpType(clipData, destRoot);
-            action.getRootDocument(
-                    destRoot,
+            action.getDocument(
+                    destRoot.authority,
+                    destRoot.documentId,
+                    destRoot.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     (DocumentInfo doc) -> {
                         dropOnRootDocument(clipData, localState, destRoot, doc, opType, callback);

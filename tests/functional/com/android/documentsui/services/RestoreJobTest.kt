@@ -103,7 +103,7 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Restoring .trashed-12345-document.txt")
+            assertThat(msg).isEqualTo("Restoring “.trashed-12345-document.txt”")
         }
 
         // Verify filesystem changes: trash is empty, and the file is restored to the source root.
@@ -197,7 +197,7 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Restoring .trashed-12345-dir1")
+            assertThat(msg).isEqualTo("Restoring “.trashed-12345-dir1”")
         }
 
         // Verify the changes: trash should be empty, and the folder should be restored.

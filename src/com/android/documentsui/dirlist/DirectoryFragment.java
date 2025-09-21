@@ -1669,10 +1669,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // If we can reload the root doc successfully, we will push it to the stack and load the
         // stack.
         final RootInfo emptyDocRoot = mActivity.getCurrentRoot();
-        mInjector.actions.getRootDocument(
-                emptyDocRoot,
-                TimeoutTask.DEFAULT_TIMEOUT,
-                rootDoc -> {
+        mInjector.actions.getDocument(
+                emptyDocRoot.authority,
+                emptyDocRoot.documentId,
+                emptyDocRoot.userId,
+                TimeoutTask.DEFAULT_TIMEOUT, rootDoc -> {
                     mRefreshLayout.setRefreshing(false);
                     if (rootDoc != null && mActivity.getCurrentDirectory() == null) {
                         // Make sure the stack does not change during task was running.
@@ -1680,8 +1681,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         mActivity.updateNavigator();
                         mActions.loadDocumentsForCurrentStack();
                     }
-                }
-        );
+                });
     }
 
     private final class ModelUpdateListener implements EventListener<Model.Update> {

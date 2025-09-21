@@ -70,7 +70,8 @@ final class CompressJob extends CopyJob {
     @Override
     Builder createProgressBuilder() {
         return super.createProgressBuilder(
-                service.getString(getRes(R.string.compress_notification_title)),
+                service.getString(getRes(isZipNgFlagEnabled() ? R.string.zip_notification_title
+                        : R.string.compress_notification_title)),
                 getRes(R.drawable.ic_menu_compress),
                 service.getString(android.R.string.cancel),
                 getRes(R.drawable.ic_cab_cancel));
@@ -84,7 +85,9 @@ final class CompressJob extends CopyJob {
     @Override
     public Notification getFailureNotification() {
         return getFailureNotification(
-                getFailureContentTitle(getRes(R.string.compress_error_notification_title)),
+                getFailureContentTitle(
+                        getRes(isZipNgFlagEnabled() ? R.string.compress_error_2
+                                : R.string.compress_error_notification_title)),
                 getRes(R.drawable.ic_menu_compress));
     }
 
