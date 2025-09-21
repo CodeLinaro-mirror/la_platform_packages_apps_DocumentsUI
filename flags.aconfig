@@ -104,3 +104,11 @@ flag {
  bug: "436732697"
  is_fixed_read_only: true
 }
+
+flag {
+    name: "use_local_search_provider"
+    namespace: "documentsui"
+    description: "Enables local search provider feature"
+    bug: "436749447"
+    is_fixed_read_only: true
+}

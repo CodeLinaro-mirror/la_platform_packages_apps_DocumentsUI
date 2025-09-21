@@ -42,6 +42,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_ZIP_NG_RO,
                 Flags.FLAG_HOME_SCREEN_FILES_RO,
                 Flags.FLAG_USE_FILE_SUMMARY,
+                Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
             )
 
         @JvmStatic
@@ -160,6 +161,18 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
             return getInstance()
                 .overrides
                 .getOrDefault(Flags.FLAG_USE_FILE_SUMMARY, Flags.useFileSummary())
+        }
+
+        @JvmStatic
+        fun isUseLocalSearchProviderEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(
+                        Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
+                        Flags.useLocalSearchProvider(),
+                    )
+            return flag && isSearchV2Enabled()
         }
     }
 
