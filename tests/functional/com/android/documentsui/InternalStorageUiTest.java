@@ -17,6 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static org.junit.Assert.assertNull;
 
@@ -101,13 +102,13 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
     public void testShowHideNonDesktopFolders() throws Exception {
-        String[] desktopFolders = {"Android", "Alarms", "Music"};
+        String[] desktopFolders = {"Android", "Music"};
         // Reset show/hide state to hide hidden files before the test.
         bots.main.hideHiddenFilesIfNeeded();
 
-        // By default non-desktop folders like Android/Alarms/Music don't show.
+        // By default non-desktop folders like Android/Music don't show.
         bots.directory.assertDocumentsAbsent(desktopFolders);
 
         bots.main.showHiddenFiles();
