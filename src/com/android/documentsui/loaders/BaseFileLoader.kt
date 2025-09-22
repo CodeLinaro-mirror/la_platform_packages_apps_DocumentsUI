@@ -31,6 +31,7 @@ import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.roots.RootCursorWrapper
+import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 
 const val TAG = "SearchV2"
 
@@ -230,7 +231,9 @@ abstract class BaseFileLoader(
             val cursor = client.query(locationUri, null, queryArgs, cancelNotifier) ?: return null
             return RootCursorWrapper(
                 rootInfo.userId,
-                authority,
+                // rootInfo.authority == authority because otherwise rootInfo.rootId will not match
+                // with the authority. However, safeguard this with flag for now.
+                if (isUseLocalSearchProviderEnabled()) rootInfo.authority else authority,
                 rootInfo.rootId,
                 cursor,
                 maxResults,
