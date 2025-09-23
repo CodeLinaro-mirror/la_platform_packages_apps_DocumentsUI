@@ -78,7 +78,8 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
             TYPE_SD,
             TYPE_USB,
             TYPE_OTHER,
-            TYPE_TRASH
+            TYPE_TRASH,
+            TYPE_FILES
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface RootType {}
@@ -94,6 +95,7 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
     public static final int TYPE_USB = 10;
     public static final int TYPE_OTHER = 11;
     public static final int TYPE_TRASH = 12;
+    public static final int TYPE_FILES = 13;
 
     public UserId userId;
     public String authority;
@@ -288,6 +290,9 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
         } else if (isBugReport()) {
             derivedType = TYPE_OTHER;
             derivedIcon = getRes(R.drawable.ic_root_bugreport);
+        } else if (isFiles()) {
+            derivedType = TYPE_FILES;
+            derivedIcon = LOAD_FROM_CONTENT_RESOLVER;
         } else {
             derivedType = TYPE_OTHER;
         }
@@ -377,6 +382,11 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
                 && Providers.ROOT_ID_DOCUMENTS.equals(rootId);
     }
 
+    public boolean isFiles() {
+        return Providers.AUTHORITY_MEDIA.equals(authority)
+                && Providers.ROOT_ID_FILES.equals(rootId);
+    }
+
     public boolean isMtp() {
         return Providers.AUTHORITY_MTP.equals(authority);
     }
@@ -390,6 +400,7 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
                 || derivedType == TYPE_AUDIO
                 || derivedType == TYPE_RECENTS
                 || derivedType == TYPE_DOCUMENTS
+                || derivedType == TYPE_FILES
                 || derivedType == TYPE_TRASH;
     }
 

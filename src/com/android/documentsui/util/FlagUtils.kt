@@ -176,6 +176,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
             return flag && isSearchV2Enabled()
         }
 
+        @JvmStatic
         fun isUseAllfilesRootForRecentsEnabled(): Boolean {
             val flag =
                 getInstance()

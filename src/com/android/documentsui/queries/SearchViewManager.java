@@ -20,6 +20,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
+import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -877,9 +878,16 @@ public class SearchViewManager implements
      * @return The subset of roots to be queried about recent files.
      */
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
+        if (isUseAllfilesRootForRecentsEnabled()) {
+            return roots.filter(r -> r.isLocalOnly()
+                    && r.supportsRecents() && r.userId.equals(userId)
+                    && r.isFiles()).collect(
+                    Collectors.toList());
+        }
+
         return roots.filter(r -> r.isLocalOnly()
                 && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isExternalStorage()).collect(
+                && !r.isExternalStorage() && !r.isFiles()).collect(
                 Collectors.toList());
     }
 
