@@ -30,6 +30,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.android.documentsui.TestUtils.Companion.dpToPx
 import com.android.documentsui.TestUtils.Companion.pxToDp
+import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -107,7 +108,7 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.roots.openDrawerFromNavRail()
         // Both navigation rail's root list and drawer's root list are visible, we want to
         // explicitly test opening the root from the drawer.
-        bots.roots.openDrawerRoot(StubProvider.ROOT_1_ID)
+        openRoot(context!!, StubProvider.ROOT_1_ID)
         bots.main.assertWindowTitle(StubProvider.ROOT_1_ID)
     }
 }

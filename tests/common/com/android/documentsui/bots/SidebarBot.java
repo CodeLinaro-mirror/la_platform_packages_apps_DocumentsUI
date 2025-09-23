@@ -22,18 +22,14 @@ import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 import android.app.UiAutomation;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -41,7 +37,6 @@ import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
 
 import com.android.documentsui.R;
-import com.android.documentsui.actions.RelaxedClickAction;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -143,19 +138,6 @@ public class SidebarBot extends Bots.BaseBot {
         mUiBot.assertWindowTitle(label);
     }
 
-    /** Use openRoot above for general usage, which caters both the navigation rail and the drawer,
-     * only use openDrawerRoot if you want to open root explicitly from the drawer even if it's in
-     * navigation rail layout. */
-    public void openDrawerRoot(String label) throws UiObjectNotFoundException {
-        if (toolbarHasTitle(label)) {
-            return;
-        }
-        assertTrue(
-                "Failed to click on drawer root: " + label,
-                findRoot(label, RootListContainerType.FORCE_DRAWER).click());
-        mUiBot.assertWindowTitle(label);
-    }
-
     /**
      * Use openRoot above for general usage, which caters both the navigation rail and the drawer,
      * only use openNavRailRoot if you want to open root explicitly from the navigation rail.
@@ -250,43 +232,5 @@ public class SidebarBot extends Bots.BaseBot {
 
     public void assertHasFocus() {
         assertHasFocus(mRootListId);
-    }
-
-    /** Right clicks a root with `label` and then clicks the `menuOption`. */
-    public void rightClickRootAndClickMenuOption(String rootLabel, String menuOption)
-            throws UiObjectNotFoundException {
-        Rect point = findRoot(rootLabel, RootListContainerType.FOLLOW_LAYOUT).getVisibleBounds();
-
-        // The RootsFragment listens to right clicks in the GenericMotionListener. This is to allow
-        // for a left and right click to be used interchangeably. This means to mock this behaviour,
-        // 4 input events needs to be synthesized. A down, button press, button release and an up.
-        MotionEvent motionDown =
-                getTestRightClickMotionEvent(
-                        MotionEvent.ACTION_DOWN, point.centerX(), point.centerY());
-        mAutomation.injectInputEvent(motionDown, true);
-        SystemClock.sleep(25);
-
-        MotionEvent motionButtonPress =
-                getTestRightClickMotionEvent(
-                        MotionEvent.ACTION_BUTTON_PRESS, point.centerX(), point.centerY());
-        mAutomation.injectInputEvent(motionButtonPress, true);
-        SystemClock.sleep(25);
-
-        MotionEvent motionButtonRelease =
-                getTestRightClickMotionEvent(
-                        MotionEvent.ACTION_BUTTON_RELEASE, point.centerX(), point.centerY());
-        mAutomation.injectInputEvent(motionButtonRelease, true);
-        SystemClock.sleep(25);
-
-        MotionEvent motionUp =
-                getTestRightClickMotionEvent(
-                        MotionEvent.ACTION_UP, point.centerX(), point.centerY());
-        mAutomation.injectInputEvent(motionUp, true);
-
-        mDevice.waitForIdle();
-
-        ViewInteraction menuItem = waitForContextMenuItemToAppear(menuOption);
-        assertNotNull("Context menu item " + menuOption + " not found", menuItem);
-        menuItem.perform(new RelaxedClickAction());
     }
 }
