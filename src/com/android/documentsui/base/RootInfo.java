@@ -54,7 +54,7 @@ import java.util.Objects;
 /**
  * Representation of a {@link Root}.
  */
-public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, SidebarEntryItemInfo {
+public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
 
     private static final String TAG = "RootInfo";
     public static final int LOAD_FROM_CONTENT_RESOLVER = -1;
@@ -104,7 +104,7 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
 
         derivedMimeTypes = null;
         derivedIcon = 0;
-        derivedType = 0;
+        derivedType = TYPE_UNSET;
     }
 
     @Override
@@ -254,13 +254,13 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
         } else if (isTrash()) {
             derivedType = TYPE_TRASH;
         } else if (isBugReport()) {
-            derivedType = TYPE_OTHER;
+            derivedType = TYPE_ROOT_OTHER;
             derivedIcon = getRes(R.drawable.ic_root_bugreport);
         } else if (isFiles()) {
             derivedType = TYPE_FILES;
             derivedIcon = LOAD_FROM_CONTENT_RESOLVER;
         } else {
-            derivedType = TYPE_OTHER;
+            derivedType = TYPE_ROOT_OTHER;
         }
 
         if (VERBOSE) Log.v(TAG, "Derived fields: " + this);
@@ -288,6 +288,11 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
     @NonNull
     public RootInfo getRoot() {
         return this;
+    }
+
+    @Override
+    public int getDerivedType() {
+        return derivedType;
     }
 
     public boolean isBugReport() {
@@ -521,19 +526,22 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
     }
 
     @Override
-    public int compareTo(RootInfo other) {
+    public int compareTo(SidebarEntryItemInfo other) {
         // Sort by root type, then title, then summary.
-        int score = derivedType - other.derivedType;
+        int score = derivedType - other.getDerivedType();
         if (score != 0) {
             return score;
         }
 
-        score = compareToIgnoreCaseNullable(title, other.title);
+        // If comparing a shortcut info with a root info, the score should have already been
+        // returned since the derived types would be different.
+        RootInfo o = (RootInfo) other;
+        score = compareToIgnoreCaseNullable(title, o.title);
         if (score != 0) {
             return score;
         }
 
-        return compareToIgnoreCaseNullable(summary, other.summary);
+        return compareToIgnoreCaseNullable(summary, o.summary);
     }
 
     @Override

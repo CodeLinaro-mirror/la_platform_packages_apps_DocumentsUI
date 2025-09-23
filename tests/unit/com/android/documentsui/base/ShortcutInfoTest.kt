@@ -142,4 +142,28 @@ class ShortcutInfoTest {
 
         assertEquals(expected, shortcutInfo.toString())
     }
+
+    @Test
+    fun testDerivedTypeHomeScreen() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "com.android.externalstorage.documents"
+                rootId = "primary"
+            }
+        val shortcutInfo = ShortcutInfo(0, "Home screen", rootInfo, "primary:")
+        assertEquals(SidebarEntryItemInfo.TYPE_HOME_SCREEN, shortcutInfo.derivedType)
+    }
+
+    @Test
+    fun testDerivedTypeShortcutOther() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "aaa"
+                rootId = "rrr"
+            }
+        val shortcutInfo = ShortcutInfo(0, "ttt", rootInfo, "ppp")
+        assertEquals(SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER, shortcutInfo.derivedType)
+    }
 }

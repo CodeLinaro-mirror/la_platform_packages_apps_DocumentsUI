@@ -25,30 +25,38 @@ import androidx.annotation.IntDef
  * The interface containing common attributes and methods between a shortcut and a root that is
  * required to visually display the sidebar entry items.
  */
-interface SidebarEntryItemInfo {
+// TODO: b/446566923 - Figure out if we need the `Comparable` interface or if we just need the
+//  `compareTo()` method.
+interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
     val root: RootInfo
     val documentId: String?
     val uri: Uri?
     val title: String?
+    val derivedType: Int
 
     // The values of these constants determine the sort order of various roots in the RootsFragment.
     companion object {
+        const val TYPE_UNSET: Int = 0
         const val TYPE_RECENTS: Int = 1
-        const val TYPE_IMAGES: Int = 2
-        const val TYPE_VIDEO: Int = 3
-        const val TYPE_AUDIO: Int = 4
-        const val TYPE_DOCUMENTS: Int = 5
-        const val TYPE_DOWNLOADS: Int = 6
-        const val TYPE_LOCAL: Int = 7
-        const val TYPE_MTP: Int = 8
-        const val TYPE_SD: Int = 9
-        const val TYPE_USB: Int = 10
-        const val TYPE_TRASH: Int = 11
-        const val TYPE_FILES: Int = 12
-        const val TYPE_OTHER: Int = 13
+        const val TYPE_HOME_SCREEN: Int = 2
+        const val TYPE_IMAGES: Int = 3
+        const val TYPE_VIDEO: Int = 4
+        const val TYPE_AUDIO: Int = 5
+        const val TYPE_DOCUMENTS: Int = 6
+        const val TYPE_DOWNLOADS: Int = 7
+        const val TYPE_LOCAL: Int = 8
+        const val TYPE_MTP: Int = 9
+        const val TYPE_SD: Int = 10
+        const val TYPE_USB: Int = 11
+        const val TYPE_TRASH: Int = 12
+        const val TYPE_FILES: Int = 13
+        const val TYPE_ROOT_OTHER: Int = 14
+        const val TYPE_SHORTCUT_OTHER: Int = 15
     }
     @IntDef(
+        TYPE_UNSET,
         TYPE_RECENTS,
+        TYPE_HOME_SCREEN,
         TYPE_IMAGES,
         TYPE_VIDEO,
         TYPE_AUDIO,
@@ -60,7 +68,8 @@ interface SidebarEntryItemInfo {
         TYPE_USB,
         TYPE_TRASH,
         TYPE_FILES,
-        TYPE_OTHER,
+        TYPE_ROOT_OTHER,
+        TYPE_SHORTCUT_OTHER,
     )
     @Retention(AnnotationRetention.SOURCE)
     annotation class SidebarEntryItemType
