@@ -26,6 +26,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 
@@ -72,6 +73,7 @@ public class RootsFragmentTest {
     private TestEnv mEnv;
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
     private TestUserManagerState mTestUserManagerState;
+    private Resources mResources;
 
     private static final String[] EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE = {
         TestProvidersAccess.RECENTS.title,
@@ -122,8 +124,8 @@ public class RootsFragmentTest {
         mContext = mock(Context.class);
         mDevicePolicyManager = mock(DevicePolicyManager.class);
         mPackageManager = mock(PackageManager.class);
-        when(mContext.getResources()).thenReturn(
-                InstrumentationRegistry.getInstrumentation().getTargetContext().getResources());
+        mResources = mock(Resources.class);
+        when(mContext.getResources()).thenReturn(mResources);
         when(mContext.getSystemService(Context.DEVICE_POLICY_SERVICE))
                 .thenReturn(mDevicePolicyManager);
         when(mContext.getApplicationContext()).thenReturn(
@@ -169,6 +171,59 @@ public class RootsFragmentTest {
         } else {
             assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_FALSE));
         }
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+        Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER
+    })
+    public void testSortLoadResult_localSearchConfigured() {
+        final List<RootInfo> rootInfoList =
+                Collections.singletonList(TestProvidersAccess.LOCAL_SEARCH);
+        when(mResources.getString(R.string.local_search_provider))
+                .thenReturn(TestProvidersAccess.LOCAL_SEARCH.getUri().toString());
+
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        rootInfoList,
+                        null /* excludePackage */,
+                        null /* handlerAppIntent */,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        /* maybeShowBadge */ false,
+                        mTestUserManagerState);
+
+        assertEquals(0, items.size());
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER})
+    public void testSortLoadResult_localSearchNotConfigured() {
+        final List<RootInfo> rootInfoList =
+                Collections.singletonList(TestProvidersAccess.LOCAL_SEARCH);
+        when(mResources.getString(R.string.local_search_provider)).thenReturn("");
+
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        rootInfoList,
+                        null /* excludePackage */,
+                        null /* handlerAppIntent */,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        /* maybeShowBadge */ false,
+                        mTestUserManagerState);
+
+        assertEquals(1, items.size());
+        RootItem item = (RootItem) items.get(0);
+        assertEquals(TestProvidersAccess.LOCAL_SEARCH.title, item.root.title);
     }
 
     @Test
