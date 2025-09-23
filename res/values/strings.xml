@@ -673,6 +673,8 @@
     <string name="job_progress_icon_label">Show file progress</string>
     <!-- Title for a pop-up window showing the progress of file operations. -->
     <string name="job_progress_panel_title">File Progress</string>
+    <!-- Label for a button to dismiss all notifications about file operation progress. [CHAR_LIMIT=24] -->
+    <string name="job_progress_panel_dismiss_all">Dismiss all</string>
     <!-- Status message shown when a file operation is completed. -->
     <string name="job_progress_item_completed">Completed</string>
     <!-- Status message shown when a file operation is canceled by the user. -->
