@@ -173,7 +173,7 @@ public interface ActionHandler {
     /**
      * Trash the selected document(s)
      */
-    void trashSelectedDocuments(List<DocumentInfo> docs);
+    void trashSelectedDocuments();
 
     /**
      * Restore the selected document(s)

@@ -20,6 +20,7 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
@@ -375,7 +376,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
-    public void trashSelectedDocuments(List<DocumentInfo> docs) {
+    public void trashSelectedDocuments() {
+        Selection selection = getSelectedOrFocused();
+        if (selection.isEmpty()) {
+            return;
+        }
+
+        List<DocumentInfo> docs = mModel.getDocuments(selection);
         if (docs == null || docs.isEmpty()) {
             return;
         }
@@ -641,6 +648,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
 
         return false;
+    }
+
+    /**
+     * Trashes the selected documents if the trash feature is enabled and all documents support it.
+     * Otherwise, it initiates the delete flow for the selected documents.
+     */
+    public void runDeleteOrTrashHandler() {
+        Selection<String> selection = getSelectedOrFocused();
+        if (selection.isEmpty()) {
+            return;
+        }
+
+        if (isTrashFlowEnabled()
+                && !mModel.hasDocuments(selection, DocumentFilters.NOT_SUPPORT_TRASH)) {
+            trashSelectedDocuments();
+        } else {
+            showDeleteDialog();
+        }
     }
 
     @Override

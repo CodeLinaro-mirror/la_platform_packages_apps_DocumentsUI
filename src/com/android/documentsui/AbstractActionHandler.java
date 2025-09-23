@@ -755,7 +755,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void trashSelectedDocuments(List<DocumentInfo> docs) {
+    public void trashSelectedDocuments() {
         throw new UnsupportedOperationException("Trash document not supported!");
     }
 
