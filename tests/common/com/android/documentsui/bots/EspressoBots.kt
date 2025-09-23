@@ -24,17 +24,17 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.android.documentsui.actions.actionOnRootItem
 import com.android.documentsui.actions.rightClick
 import com.android.documentsui.actions.showRootsList
+import com.android.documentsui.actions.waitForRootsListDrawerToClose
 
+/** Open the root with the given label. */
 fun openRoot(context: Context, label: String) {
     showRootsList(context)
     actionOnRootItem(label, click())
+    waitForRootsListDrawerToClose(context)
 }
 
-fun rightClickRootAndClickMenuOption(
-    context: Context,
-    label: String,
-    menuOption: String?
-) {
+/** Open the root with the given label, right click on it, and click the given menu option. */
+fun rightClickRootAndClickMenuOption(context: Context, label: String, menuOption: String?) {
     showRootsList(context)
     actionOnRootItem(label, rightClick())
     onView(withText(menuOption)).inRoot(RootMatchers.isPlatformPopup()).perform(click())
