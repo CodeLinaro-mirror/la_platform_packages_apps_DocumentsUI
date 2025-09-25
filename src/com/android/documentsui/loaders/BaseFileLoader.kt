@@ -219,9 +219,6 @@ abstract class BaseFileLoader(
         maxResults: Int,
     ): Cursor? {
         val authority = locationUri.authority ?: return null
-        if (DEBUG) {
-            Log.d(TAG, "BaseFileLoader.queryLocation for ${rootInfo.userId} at $locationUri")
-        }
         val resolver = rootInfo.userId.getContentResolver(context) ?: return null
         resolver.acquireUnstableContentProviderClient(authority).use { client ->
             if (client == null) {

@@ -116,12 +116,12 @@ class SearchLoader(
                     result = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
                 } catch (e: Exception) {
                     if (DEBUG) {
-                        Log.d(TAG, "Failed to get cursor for $searchUri", e)
+                        Log.d(TAG, "Failed to get cursor for ${searchUri.authority}", e)
                     }
                 }
             }
             if (DEBUG) {
-                Log.d(TAG, "Query on $searchUri took $queryDuration")
+                Log.d(TAG, "Query on ${searchUri.authority} took $queryDuration")
             }
             return result
         }
@@ -391,7 +391,7 @@ class SearchLoader(
             val queryArgs = createQueryArgs(rootInfo, rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
             if (DEBUG) {
-                Log.d(TAG, "Querying $searchUris with args $queryArgs")
+                Log.d(TAG, "Querying ${searchUris.map { it.authority }}")
             }
             searchTaskList.add(SearchTask(rootInfo, searchUris, queryArgs, index, countDownLatch))
         }
