@@ -39,8 +39,7 @@
     <string name="menu_delete" msgid="1022254131543256626">"Törlés"</string>
     <string name="menu_permanently_delete" msgid="1177349666644056627">"Végleges törlés"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Áthelyezés a kukába"</string>
-    <!-- no translation found for menu_restore_from_trash (6335501796145576127) -->
-    <skip />
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Visszaállítás"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Az összes kijelölése"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Az összes kijelölés törlése"</string>
     <string name="menu_select" msgid="1366061076507142387">"Kiválasztás"</string>
@@ -120,8 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Ez a művelet nem engedélyezett"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"További információért forduljon rendszergazdájához"</string>
     <string name="root_recent" msgid="1080156975424341623">"Legutóbbiak"</string>
-    <!-- no translation found for root_trash (1869929519939073178) -->
-    <skip />
+    <string name="root_trash" msgid="1869929519939073178">"Kuka"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> szabad"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Tárhelyszolgáltatások"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Gyorsparancsok"</string>
@@ -144,8 +142,7 @@
     <string name="move_notification_title" msgid="3173424987049347605">"Fájlok áthelyezése"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Fájlok törlése"</string>
     <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Fájlok kukába helyezése…"</string>
-    <!-- no translation found for restore_from_trash_notification_title (6818405564188548805) -->
-    <skip />
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Fájlok visszaállítása…"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> van hátra"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elem másolása folyamatban.</item>
@@ -168,8 +165,7 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elem törlése folyamatban.</item>
     </plurals>
     <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> elem áthelyezése a kukába…}other{<xliff:g id="COUNT_1">{count}</xliff:g> elem áthelyezése a kukába…}}"</string>
-    <!-- no translation found for restoring_from_trash (6346617909485060438) -->
-    <skip />
+    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> elem visszaállítása…}other{<xliff:g id="COUNT_1">{count}</xliff:g> elem visszaállítása…}}"</string>
     <string name="undo" msgid="2902438994196400565">"Visszavonás"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Előkészítés…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Előkészítés…"</string>
@@ -177,20 +173,17 @@
     <string name="move_preparing" msgid="6504239656430530761">"Előkészítés…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Előkészítés…"</string>
     <string name="move_to_trash_preparing" msgid="6180195603212537441">"Előkészítés…"</string>
-    <!-- no translation found for restore_from_trash_preparing (2829747628222239861) -->
-    <skip />
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Előkészítés…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="TOTALCOUNT">%2$d</xliff:g>/<xliff:g id="COUNT_0">%1$d</xliff:g>"</string>
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="TOTALCOUNT">%2$d</xliff:g>/<xliff:g id="COUNT_0">%1$d</xliff:g>."</string>
-    <!-- no translation found for restore_from_trash_progress (6003816126633922428) -->
-    <skip />
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="TOTALCOUNT">%2$d</xliff:g>/<xliff:g id="COUNT_0">%1$d</xliff:g>."</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> elem másolása sikertelen}other{<xliff:g id="COUNT_1">{count}</xliff:g> elem másolása sikertelen}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nem sikerült tömöríteni <xliff:g id="COUNT_0">{count}</xliff:g> elemet}other{Nem sikerült tömöríteni <xliff:g id="COUNT_1">{count}</xliff:g> elemet}}"</string>
     <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> elemet nem sikerült kibontani}other{<xliff:g id="COUNT_1">{count}</xliff:g> elemet nem sikerült kibontani}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> elemet nem sikerült áthelyezni}other{<xliff:g id="COUNT_1">{count}</xliff:g> elemet nem sikerült áthelyezni}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nem sikerült törölni <xliff:g id="COUNT_0">{count}</xliff:g> elemet}other{Nem sikerült törölni <xliff:g id="COUNT_1">{count}</xliff:g> elemet}}"</string>
     <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> elemet nem sikerült a kukába helyezni}other{<xliff:g id="COUNT_1">{count}</xliff:g> elemet nem sikerült a kukába helyezni}}"</string>
-    <!-- no translation found for restore_from_trash_error_notification_title (5097907450416686866) -->
-    <skip />
+    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{Nem sikerült visszaállítani <xliff:g id="COUNT_0">{count}</xliff:g> elemet}other{Nem sikerült visszaállítani <xliff:g id="COUNT_1">{count}</xliff:g> elemet}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Koppintson rá a részletek megtekintéséhez"</string>
     <string name="close" msgid="905969391788869975">"Bezárás"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -234,8 +227,7 @@
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{„<xliff:g id="FILENAME">{filename}</xliff:g>” áthelyezése ide: „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”…}other{# fájl áthelyezése ide: „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{„<xliff:g id="FILENAME">{filename}</xliff:g>” törlése…}other{# fájl törlése…}}"</string>
     <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{A(z) <xliff:g id="FILENAME">{filename}</xliff:g> fájl áthelyezése a kukába…}other{# fájl áthelyezése a kukába…}}"</string>
-    <!-- no translation found for restore_in_progress (6756221866797865046) -->
-    <skip />
+    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> visszaállítása…}other{# fájl visszaállítása…}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{„<xliff:g id="FILENAME">{filename}</xliff:g>” tömörítése…}other{# fájl tömörítése…}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Fájl előrehaladásának megjelenítése"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Fájl előrehaladása"</string>
@@ -295,8 +287,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Nem lehet megjeleníteni a tartalmakat"</string>
     <string name="sign_in" msgid="6253762676723505592">"Bejelentkezés"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archive<xliff:g id="EXTENSION">%s</xliff:g>"</string>
-    <!-- no translation found for new_archive_file_name_2 (6787685985722032255) -->
-    <skip />
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Archiválás"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Felülírja a következő fájlt: <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Folytatás a háttérben"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
