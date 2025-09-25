@@ -59,7 +59,7 @@ import java.util.Objects;
 public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, SidebarEntryItemInfo {
 
     private static final String TAG = "RootInfo";
-    private static final int LOAD_FROM_CONTENT_RESOLVER = -1;
+    public static final int LOAD_FROM_CONTENT_RESOLVER = -1;
     // private static final int VERSION_INIT = 1; // Not used anymore
     private static final int VERSION_DROP_TYPE = 2;
     private static final int VERSION_SEARCH_TYPE = 3;
@@ -508,7 +508,7 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
     public Drawable loadDrawerIcon(Context context, boolean maybeShowBadge) {
         if (derivedIcon == LOAD_FROM_CONTENT_RESOLVER) {
             return IconUtils.applyTintColor(
-                    context, loadMimeTypeIcon(context), getRes(R.color.item_root_icon));
+                context, loadMimeTypeIcon(context), getRes(R.color.item_root_icon));
         } else if (derivedIcon != 0) {
             return IconUtils.applyTintColor(context, derivedIcon, getRes(R.color.item_root_icon));
         } else {

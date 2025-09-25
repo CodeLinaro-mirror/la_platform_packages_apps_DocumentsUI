@@ -15,6 +15,8 @@
  */
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.Material3Config.getRes;
+
 import android.content.ContentResolver;
 import android.os.Process;
 import android.os.UserHandle;
@@ -23,8 +25,10 @@ import android.provider.DocumentsContract.Root;
 import androidx.annotation.NonNull;
 
 import com.android.documentsui.InspectorProvider;
+import com.android.documentsui.R;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -57,6 +61,9 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo NO_TREE_ROOT;
     public static final RootInfo SD_CARD;
     public static final RootInfo LOCAL_SEARCH;
+    public static final ShortcutInfo HOME_SCREEN_SHORTCUT;
+    private static final int HOME_SCREEN_ICON_RES_ID =
+            getRes(R.drawable.ic_root_homescreen);
 
     static {
         UserId userId = TestProvidersAccess.USER_ID;
@@ -193,6 +200,13 @@ public class TestProvidersAccess implements ProvidersAccess {
         LOCAL_SEARCH.title = "Local Search";
         LOCAL_SEARCH.derivedType = RootInfo.TYPE_LOCAL;
         LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY;
+
+        HOME_SCREEN_SHORTCUT = new ShortcutInfo(
+            HOME_SCREEN_ICON_RES_ID,
+            "Home screen",
+            EXTERNALSTORAGE,
+            "primary:"
+        );
     }
 
     public static class OtherUser {

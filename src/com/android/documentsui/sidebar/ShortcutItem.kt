@@ -89,8 +89,9 @@ open class ShortcutItem(
     }
 
     public override fun bindView(convertView: View) {
-        // TODO: b/439694430 - implement this view related method
-        return
+        bindAction(convertView, View.GONE, -1, null)
+        bindIconAndTitle(convertView)
+        bindSummary(convertView, null)
     }
 
     override fun isRoot(): Boolean {
