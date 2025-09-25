@@ -56,9 +56,10 @@ class ShortcutInfo(
 
     private fun loadMimeTypeIcon(context: Context): Drawable? {
         return when (root.derivedType) {
-            RootInfo.TYPE_IMAGES -> IconUtils.loadMimeIcon(context, MimeTypes.IMAGE_MIME)
-            RootInfo.TYPE_AUDIO -> IconUtils.loadMimeIcon(context, MimeTypes.AUDIO_MIME)
-            RootInfo.TYPE_VIDEO -> IconUtils.loadMimeIcon(context, MimeTypes.VIDEO_MIME)
+            SidebarEntryItemInfo.TYPE_IMAGES ->
+                IconUtils.loadMimeIcon(context, MimeTypes.IMAGE_MIME)
+            SidebarEntryItemInfo.TYPE_AUDIO -> IconUtils.loadMimeIcon(context, MimeTypes.AUDIO_MIME)
+            SidebarEntryItemInfo.TYPE_VIDEO -> IconUtils.loadMimeIcon(context, MimeTypes.VIDEO_MIME)
             else -> IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE)
         }
     }

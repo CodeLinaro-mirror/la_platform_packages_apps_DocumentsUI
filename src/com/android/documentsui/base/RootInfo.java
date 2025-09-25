@@ -38,7 +38,6 @@ import android.provider.DocumentsContract.Root;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -48,8 +47,6 @@ import com.android.documentsui.R;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.net.ProtocolException;
 import java.util.Objects;
 
@@ -64,38 +61,6 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
     private static final int VERSION_DROP_TYPE = 2;
     private static final int VERSION_SEARCH_TYPE = 3;
     private static final int VERSION_USER_ID = 4;
-
-    // The values of these constants determine the sort order of various roots in the RootsFragment.
-    @IntDef(flag = false, value = {
-            TYPE_RECENTS,
-            TYPE_IMAGES,
-            TYPE_VIDEO,
-            TYPE_AUDIO,
-            TYPE_DOCUMENTS,
-            TYPE_DOWNLOADS,
-            TYPE_LOCAL,
-            TYPE_MTP,
-            TYPE_SD,
-            TYPE_USB,
-            TYPE_OTHER,
-            TYPE_TRASH,
-            TYPE_FILES
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface RootType {}
-    public static final int TYPE_RECENTS = 1;
-    public static final int TYPE_IMAGES = 2;
-    public static final int TYPE_VIDEO = 3;
-    public static final int TYPE_AUDIO = 4;
-    public static final int TYPE_DOCUMENTS = 5;
-    public static final int TYPE_DOWNLOADS = 6;
-    public static final int TYPE_LOCAL = 7;
-    public static final int TYPE_MTP = 8;
-    public static final int TYPE_SD = 9;
-    public static final int TYPE_USB = 10;
-    public static final int TYPE_OTHER = 11;
-    public static final int TYPE_TRASH = 12;
-    public static final int TYPE_FILES = 13;
 
     public UserId userId;
     public String authority;
@@ -112,7 +77,7 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, Side
     /** Derived fields that aren't persisted */
     public String[] derivedMimeTypes;
     public int derivedIcon;
-    public @RootType int derivedType;
+    public @SidebarEntryItemType int derivedType;
     // Currently, we are not persisting this and we should be asking Provider whether a Root
     // is in the process of eject. Provider does not have this available yet.
     public transient boolean ejecting;
