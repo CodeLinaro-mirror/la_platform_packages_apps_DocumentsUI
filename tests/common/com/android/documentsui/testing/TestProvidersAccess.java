@@ -56,6 +56,7 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo EXTERNALSTORAGE;
     public static final RootInfo NO_TREE_ROOT;
     public static final RootInfo SD_CARD;
+    public static final RootInfo LOCAL_SEARCH;
 
     static {
         UserId userId = TestProvidersAccess.USER_ID;
@@ -184,6 +185,14 @@ public class TestProvidersAccess implements ProvidersAccess {
         SD_CARD.derivedType = RootInfo.TYPE_SD;
         SD_CARD.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_IS_CHILD;
+
+        LOCAL_SEARCH = new RootInfo();
+        LOCAL_SEARCH.userId = userId;
+        LOCAL_SEARCH.authority = "com.android.documentsui.testing.localsearch";
+        LOCAL_SEARCH.rootId = "local_search";
+        LOCAL_SEARCH.title = "Local Search";
+        LOCAL_SEARCH.derivedType = RootInfo.TYPE_LOCAL;
+        LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY;
     }
 
     public static class OtherUser {
@@ -318,6 +327,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         add(PICKLES);
         add(EXTERNALSTORAGE);
         add(NO_TREE_ROOT);
+        add(LOCAL_SEARCH);
     }
 
     private void add(RootInfo root) {
@@ -333,6 +343,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         pm.addStubContentProviderForRoot(TestProvidersAccess.HAMMY);
         pm.addStubContentProviderForRoot(TestProvidersAccess.PICKLES);
         pm.addStubContentProviderForRoot(TestProvidersAccess.NO_TREE_ROOT);
+        pm.addStubContentProviderForRoot(TestProvidersAccess.LOCAL_SEARCH);
     }
 
     @Override

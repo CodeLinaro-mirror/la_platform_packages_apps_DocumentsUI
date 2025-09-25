@@ -15,17 +15,22 @@
  */
 package com.android.documentsui
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.platform.test.annotations.EnableFlags
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ProgressBar
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.assertion.ViewAssertions.selectedDescendantsMatch
+import androidx.test.espresso.idling.CountingIdlingResource
 import androidx.test.espresso.matcher.BoundedDiagnosingMatcher
 import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
@@ -52,8 +57,10 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
+import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -90,7 +97,13 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
     private var lastId = 0L
 
+    private lateinit var jobUpdateIdle: CountingIdlingResource
+    private lateinit var receiver: BroadcastReceiver
+
     private fun sendProgress(progresses: ArrayList<JobProgress>, id: Long = lastId++) {
+        if (jobUpdateIdle.isIdleNow) {
+            jobUpdateIdle.increment()
+        }
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var intent = Intent(ACTION_PROGRESS).apply {
             `package` = context.packageName
@@ -106,6 +119,30 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(matches(isDisplayed()))
             .perform(click())
         onView(withId(R.id.job_progress_panel_title)).check(matches(isDisplayed()))
+    }
+
+    @Before
+    fun setUpJobPanelViewModelIdlingResource() {
+        jobUpdateIdle = CountingIdlingResource("job")
+        receiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(context: Context, intent: Intent) {
+                    if (!jobUpdateIdle.isIdleNow) {
+                        jobUpdateIdle.decrement()
+                    }
+                }
+            }
+        val filter = IntentFilter(ACTION_PROGRESS)
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        IdlingRegistry.getInstance().register(jobUpdateIdle)
+    }
+
+    @After
+    fun resetJobPanelViewModelIdlingResource() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        context.unregisterReceiver(receiver)
+        IdlingRegistry.getInstance().unregister(jobUpdateIdle)
     }
 
     @Test

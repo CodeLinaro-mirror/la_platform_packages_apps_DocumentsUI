@@ -665,7 +665,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
     public void testSearchResultHidesNonDesktopFolders() throws Exception {
         DocumentsProviderHelper rootStorageDocsHelper = new DocumentsProviderHelper(userId,
                 Providers.AUTHORITY_STORAGE, context,
@@ -687,9 +687,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.roots.openRoot(deviceRootLabel);
 
             // Search the test file.
-            bots.search.expand();
-            bots.search.setInputText(testFileName);
-            bots.keyboard.pressEnter();
+            bots.search.doSearch(testFileName);
 
             // Assert there's no search result because the Android folder and its content are
             // hidden.
@@ -697,12 +695,20 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                     deviceRootLabel);
             bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
 
-            // Now show hidden files, the test file should show.
+            // Now show hidden files, the test file should show. (Close the search first before
+            // showing hidden files because the 3-dot menu is not visible on drawer/nav_rail layout
+            // when search is active.)
+            bots.search.closeSearch();
             bots.main.showHiddenFiles();
+            bots.search.doSearch(testFileName);
             bots.directory.waitForDocument(testFileName);
 
-            // Now hide hidden files, the test file should disappear.
+            // Now hide hidden files, the test file should disappear. (Close the search first before
+            // hiding hidden files because the 3-dot menu is not visible on drawer/nav_rail layout
+            // when search is active.)
+            bots.search.closeSearch();
             bots.main.hideHiddenFiles();
+            bots.search.doSearch(testFileName);
             bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
         } finally {
             // Delete the created test file if it exists.

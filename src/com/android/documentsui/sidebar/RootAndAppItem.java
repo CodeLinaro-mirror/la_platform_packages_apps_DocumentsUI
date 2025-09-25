@@ -55,7 +55,7 @@ class RootAndAppItem extends RootItem {
 
     @Override
     boolean showAppDetails() {
-        mActionHandler.showAppDetails(resolveInfo, userId);
+        getActionHandler().showAppDetails(resolveInfo, userId);
         return true;
     }
 
@@ -77,17 +77,22 @@ class RootAndAppItem extends RootItem {
 
     @Override
     protected void onActionClick(View view) {
-        mActionHandler.openRoot(resolveInfo, userId);
+        getActionHandler().openRoot(resolveInfo, userId);
     }
 
     @Override
     public String toString() {
         return "RootAndAppItem{"
-                + "id=" + stringId
-                + ", userId=" + userId
-                + ", root=" + root
-                + ", resolveInfo=" + resolveInfo
-                + ", docInfo=" + docInfo
+                + "id="
+                + stringId
+                + ", userId="
+                + userId
+                + ", root="
+                + root
+                + ", resolveInfo="
+                + resolveInfo
+                + ", docInfo="
+                + getDocInfo()
                 + "}";
     }
 }

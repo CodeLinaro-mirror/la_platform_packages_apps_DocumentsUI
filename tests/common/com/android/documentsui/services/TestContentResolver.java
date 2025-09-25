@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
  * A test resolver that enables this test suite to listen for notifications that mark when copy
  * operations are done.
  */
-class TestContentResolver extends MockContentResolver {
+public class TestContentResolver extends MockContentResolver {
 
     private static final String TAG = "TestContextResolver";
 
@@ -40,6 +40,7 @@ class TestContentResolver extends MockContentResolver {
     private Context mContext;
 
     public TestContentResolver(Context context) {
+        super(context);
         mContext = context;
         mReadySignal = new CountDownLatch(1);
     }

@@ -158,17 +158,15 @@
   int cant_select_work_files_error_message;
   int cant_select_work_files_error_title;
   int clear_selection;
-  int compress_error_notification_title;
   int copy_error_notification_title;
   int copy_notification_title;
   int copy_preparing;
   int copy_remaining;
   int debug_content_uri;
   int default_root_uri;
-  int delete_error_notification_title;
   int directory_items;
   int empty;
-  int extract_error_notification_title;
+  int local_summary_provider;
   int menu_copy;
   int menu_move;
   int menu_rename;
@@ -196,7 +194,6 @@
   int metadata_iso_format;
   int metadata_iso_speed_ratings;
   int metadata_shutter_speed;
-  int move_error_notification_title;
   int name_conflict;
   int no_results;
   int personal_tab;
@@ -331,6 +328,14 @@
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }
 
+-keep class com.android.documentsui.base.RootInfo { *; }
+
+-keep class com.android.documentsui.base.ShortcutInfo { *; }
+-keep class com.android.documentsui.base.SidebarEntryItemInfo { *; }
 -keep class android.provider.Flags {
   public static boolean enableDocumentsTrashApi();
 }
+-keep class com.android.documentsui.sidebar.BaseSidebarEntryItem { *; }
+-keep class com.android.documentsui.sidebar.ShortcutItem { *; }
+# TODO(lucmult): Remove this when this class is used.
+-keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }

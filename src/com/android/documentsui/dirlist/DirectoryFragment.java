@@ -964,9 +964,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         if (isUseMaterial3FlagEnabled() && mRecView.getItemDecorationCount() > 0) {
-            // Invalidate item decorations so they are recalculated before layout. This also
-            // calls requestLayout().
-            mRecView.invalidateItemDecorations();
+            mRecView.post(() -> {
+                if (mRecView != null) {
+
+                    // Invalidate item decorations so they are recalculated before layout. This also
+                    // calls requestLayout(). Post this to the UI thread as this will cause a
+                    // crash if it's executed during a scroll or layout.
+                    mRecView.invalidateItemDecorations();
+                }
+            });
         } else {
             mRecView.requestLayout();
         }
