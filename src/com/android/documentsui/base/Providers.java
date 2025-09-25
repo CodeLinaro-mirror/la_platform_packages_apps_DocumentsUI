@@ -45,6 +45,7 @@ public final class Providers {
     public static final String AUTHORITY_BUGREPORT = "com.android.shell.documents";
 
     public static final String TRASH_ROOT_ID = "trash_root";
+    public static final String HOME_SCREEN_SHORTCUT_TITLE = "Home screen";
 
     private static final String DOCSUI_PACKAGE = "com.android.documentsui";
     private static final Set<String> SYSTEM_AUTHORITIES = Set.of(

@@ -21,6 +21,7 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import com.android.documentsui.IconUtils
 import com.android.documentsui.R
+import com.android.documentsui.base.Shared.compareToIgnoreCaseNullable
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import java.util.Objects
 
@@ -33,6 +34,20 @@ class ShortcutInfo(
     override var documentId: String? = null
     override val uri: Uri?
         get() = DocumentsContract.buildDocumentUri(root.authority, documentId)
+
+    @SidebarEntryItemInfo.SidebarEntryItemType
+    override val derivedType: Int
+        get() {
+            if (
+                title.equals(Providers.HOME_SCREEN_SHORTCUT_TITLE) &&
+                    parentDirDocumentId.equals("primary:") &&
+                    root.authority.equals(Providers.AUTHORITY_STORAGE)
+            ) {
+                return SidebarEntryItemInfo.TYPE_HOME_SCREEN
+            } else {
+                return SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER
+            }
+        }
 
     override fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable? {
         if (icon == RootInfo.LOAD_FROM_CONTENT_RESOLVER) {
@@ -90,5 +105,16 @@ class ShortcutInfo(
             root +
             "} @ " +
             uri)
+    }
+
+    override fun compareTo(other: SidebarEntryItemInfo): Int {
+        val score: Int = derivedType - other.derivedType
+        if (score != 0) {
+            return score
+        }
+        // If comparing a shortcut info with a root info, the score should have already been
+        // returned since the derived types would be different.
+        val o: ShortcutInfo = other as ShortcutInfo
+        return compareToIgnoreCaseNullable(title, o.title)
     }
 }
