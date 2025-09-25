@@ -16,6 +16,7 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
@@ -295,5 +296,15 @@ public class SearchBot extends Bots.BaseBot {
             onView(allOf(withContentDescription("Collapse"), isDescendantOfA(withId(R.id.toolbar))))
                     .perform(click());
         }
+    }
+
+    /**
+     * Performs a search with the given query.
+     */
+    public void doSearch(String query) throws UiObjectNotFoundException {
+        expand();
+        setInputText(query);
+        // Try to hide the virtual keyboard: on small devices it can hide some files.
+        closeSoftKeyboard();
     }
 }

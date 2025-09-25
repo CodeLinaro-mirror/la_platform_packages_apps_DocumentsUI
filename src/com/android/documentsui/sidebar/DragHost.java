@@ -105,7 +105,7 @@ class DragHost extends AbstractDragHost {
         if (rootDoc == null) {
             Log.e(TAG, "Root DocumentInfo is null. Defaulting to unknown.");
         } else {
-            rootItem.docInfo = rootDoc;
+            rootItem.setDocInfo(rootDoc);
             mDragAndDropManager.updateState(v, rootItem.root, rootDoc);
         }
     }

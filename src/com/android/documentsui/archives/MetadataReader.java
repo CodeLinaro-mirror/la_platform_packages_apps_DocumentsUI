@@ -30,34 +30,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class providing support for extracting metadata from a file as a
- * {@link Bundle} suitable for use with {@link DocumentsContract#getDocumentMetadata}.
- * <p>Currently only EXIF data is supported.
- * <p>TODO: Add support for common video and audio types, as well as PDF files.
- * Copied from android.provider.MetadataReader.java
+ * Class providing support for extracting metadata from a file as a {@link Bundle} suitable for use
+ * with {@link DocumentsContract#getDocumentMetadata}.
+ *
+ * Currently only EXIF data is supported.
+ *
+ * TODO: Add support for common video and audio types, as well as PDF files. Copied from
+ * android.provider.MetadataReader.java
  */
 public final class MetadataReader {
 
     private MetadataReader() {}
 
     private static final String[] DEFAULT_EXIF_TAGS = {
-            ExifInterface.TAG_APERTURE,
-            ExifInterface.TAG_COPYRIGHT,
-            ExifInterface.TAG_DATETIME,
-            ExifInterface.TAG_EXPOSURE_TIME,
-            ExifInterface.TAG_FOCAL_LENGTH,
-            ExifInterface.TAG_F_NUMBER,
-            ExifInterface.TAG_GPS_LATITUDE,
-            ExifInterface.TAG_GPS_LATITUDE_REF,
-            ExifInterface.TAG_GPS_LONGITUDE,
-            ExifInterface.TAG_GPS_LONGITUDE_REF,
-            ExifInterface.TAG_IMAGE_LENGTH,
-            ExifInterface.TAG_IMAGE_WIDTH,
-            ExifInterface.TAG_ISO_SPEED_RATINGS,
-            ExifInterface.TAG_MAKE,
-            ExifInterface.TAG_MODEL,
-            ExifInterface.TAG_ORIENTATION,
-            ExifInterface.TAG_SHUTTER_SPEED_VALUE,
+        ExifInterface.TAG_APERTURE,
+        ExifInterface.TAG_COPYRIGHT,
+        ExifInterface.TAG_DATETIME,
+        ExifInterface.TAG_EXPOSURE_TIME,
+        ExifInterface.TAG_FOCAL_LENGTH,
+        ExifInterface.TAG_F_NUMBER,
+        ExifInterface.TAG_GPS_LATITUDE,
+        ExifInterface.TAG_GPS_LATITUDE_REF,
+        ExifInterface.TAG_GPS_LONGITUDE,
+        ExifInterface.TAG_GPS_LONGITUDE_REF,
+        ExifInterface.TAG_IMAGE_LENGTH,
+        ExifInterface.TAG_IMAGE_WIDTH,
+        ExifInterface.TAG_ISO_SPEED_RATINGS,
+        ExifInterface.TAG_MAKE,
+        ExifInterface.TAG_MODEL,
+        ExifInterface.TAG_ORIENTATION,
+        ExifInterface.TAG_SHUTTER_SPEED_VALUE,
     };
 
     private static final int TYPE_INT = 0;
@@ -65,6 +67,7 @@ public final class MetadataReader {
     private static final int TYPE_STRING = 2;
 
     private static final Map<String, Integer> TYPE_MAPPING = new HashMap<>();
+
     static {
         // TODO: Move this over to ExifInterface.java
         // Since each ExifInterface item has a type, and there's currently no way to get the type
@@ -194,8 +197,8 @@ public final class MetadataReader {
         TYPE_MAPPING.put(ExifInterface.TAG_THUMBNAIL_IMAGE_WIDTH, TYPE_INT);
         TYPE_MAPPING.put(ExifInterface.TAG_DNG_VERSION, TYPE_INT);
         TYPE_MAPPING.put(ExifInterface.TAG_DEFAULT_CROP_SIZE, TYPE_INT);
-        //I don't know how to represent this. Type is unknown
-        //TYPE_MAPPING.put(ExifInterface.TAG_ORF_THUMBNAIL_IMAGE, TYPE_STRING);
+        // I don't know how to represent this. Type is unknown
+        // TYPE_MAPPING.put(ExifInterface.TAG_ORF_THUMBNAIL_IMAGE, TYPE_STRING);
         TYPE_MAPPING.put(ExifInterface.TAG_ORF_PREVIEW_IMAGE_START, TYPE_INT);
         TYPE_MAPPING.put(ExifInterface.TAG_ORF_PREVIEW_IMAGE_LENGTH, TYPE_INT);
         TYPE_MAPPING.put(ExifInterface.TAG_ORF_ASPECT_FRAME, TYPE_INT);
@@ -205,13 +208,13 @@ public final class MetadataReader {
         TYPE_MAPPING.put(ExifInterface.TAG_RW2_SENSOR_TOP_BORDER, TYPE_INT);
         TYPE_MAPPING.put(ExifInterface.TAG_RW2_ISO, TYPE_INT);
     }
+
     private static final String JPG_MIME_TYPE = "image/jpg";
     private static final String JPEG_MIME_TYPE = "image/jpeg";
 
-
     /**
-     * Returns true if caller can generally expect to get metadata results
-     * for the supplied mimetype.
+     * Returns true if caller can generally expect to get metadata results for the supplied
+     * mimetype.
      */
     public static boolean isSupportedMimeType(String mimeType) {
         return JPG_MIME_TYPE.equals(mimeType) || JPEG_MIME_TYPE.equals(mimeType);
@@ -224,12 +227,13 @@ public final class MetadataReader {
      * @param metadata the bundle to which we add any relevant metadata
      * @param stream InputStream containing a file
      * @param mimeType type of the given file
-     * @param tags a variable amount of keys to differentiate which tags the user wants
-     *             if null, returns a default set of data. See {@link DEFAULT_EXIF_TAGS}.
+     * @param tags a variable amount of keys to differentiate which tags the user wants if null,
+     *     returns a default set of data. See {@link DEFAULT_EXIF_TAGS}.
      * @throws IOException when the file doesn't exist
      */
-    public static void getMetadata(Bundle metadata, InputStream stream, String mimeType,
-            @Nullable String[] tags) throws IOException {
+    public static void getMetadata(
+            Bundle metadata, InputStream stream, String mimeType, @Nullable String[] tags)
+            throws IOException {
         List<String> metadataTypes = new ArrayList<>();
         if (isSupportedMimeType(mimeType)) {
             Bundle exifData = getExifData(stream, tags);
@@ -238,7 +242,8 @@ public final class MetadataReader {
                 metadataTypes.add(DocumentsContract.METADATA_EXIF);
             }
         }
-        metadata.putStringArray(DocumentsContract.METADATA_TYPES,
+        metadata.putStringArray(
+                DocumentsContract.METADATA_TYPES,
                 metadataTypes.toArray(new String[metadataTypes.size()]));
         // TODO: Add support for PDF and Video metadata
         // TODO: Broaden image support to all images
@@ -248,8 +253,8 @@ public final class MetadataReader {
      * Helper method that is called if getMetadata is called for an image mimeType.
      *
      * @param stream the input stream from which to extra data.
-     * @param tags a list of ExifInterface tags that are used to retrieve data.
-     *             if null, returns a default set of data. See {@link DEFAULT_EXIF_TAGS}.
+     * @param tags a list of ExifInterface tags that are used to retrieve data. if null, returns a
+     *     default set of data. See {@link DEFAULT_EXIF_TAGS}.
      */
     private static Bundle getExifData(InputStream stream, @Nullable String[] tags)
             throws IOException {

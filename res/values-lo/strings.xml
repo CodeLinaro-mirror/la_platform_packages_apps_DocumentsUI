@@ -138,6 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"ແບ່ງປັນຜ່ານ"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ກຳລັງສຳເນົາໄຟລ໌"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ກຳລັງບີບອັດໄຟລ໌"</string>
+    <string name="zip_notification_title" msgid="2858653527172763548">"ກຳລັງບີບອັດໄຟລ໌"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"ກຳລັງແຕກໄຟລ໌"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ກຳລັງຍ້າຍໄຟລ໌"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ກຳລັງລຶບໄຟລ໌ອອກ"</string>
@@ -164,8 +165,8 @@
       <item quantity="other">ກຳລັງລຶບ <xliff:g id="COUNT_1">%1$d</xliff:g> ໄຟລ໌ອອກ.</item>
       <item quantity="one">ກຳ​ລັງ​ລຶບ <xliff:g id="COUNT_0">%1$d</xliff:g> ໄຟ​ລ໌.</item>
     </plurals>
-    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{ກຳລັງລຶບ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄປໃສ່ຖັງຂີ້ເຫຍື້ອ}other{ກຳລັງລຶບ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄປໃສ່ຖັງຂີ້ເຫຍື້ອ}}"</string>
-    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{ກຳລັງກູ້ຄືນ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການ}other{ກຳລັງກູ້ຄືນ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການ}}"</string>
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{ກຳລັງຖິ້ມ # ໄຟລ໌ໄປຖັງຂີ້ເຫຍື້ອ}other{ກຳລັງຖິ້ມ # ໄຟລ໌ໄປຖັງຂີ້ເຫຍື້ອ}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{ກຳລັງກູ້ຄືນ # ໄຟລ໌}other{ກຳລັງກູ້ຄືນ # ໄຟລ໌}}"</string>
     <string name="undo" msgid="2902438994196400565">"ຍົກເລີກ"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"ກຳລັງກະກຽມ..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"ກຳລັງກະກຽມ..."</string>
@@ -178,38 +179,48 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{ບໍ່ສາມາດສຳເນົາ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄດ້}other{ບໍ່ສາມາດສຳເນົາ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄດ້}}"</string>
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{ບໍ່ສາມາດສຳເນົາ # ໄຟລ໌}other{ບໍ່ສາມາດສຳເນົາ # ໄຟລ໌}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{ບໍ່ສາມາດບີບອັດ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄດ້}other{ບໍ່ສາມາດບີບອັດ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄດ້}}"</string>
-    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{ບໍ່ສາມາດແຕກໄຟລ໌ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄດ້}other{ບໍ່ສາມາດແຕກໄຟລ໌ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄດ້}}"</string>
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{ບໍ່ສາມາດບີບອັດ # ໄຟລ໌}other{ບໍ່ສາມາດບີບອັດ # ໄຟລ໌}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{ບໍ່ສາມາດແຕກ # ໄຟລ໌}other{ບໍ່ສາມາດແຕກ # ໄຟລ໌}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{ບໍ່ສາມາດຍ້າຍ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄດ້}other{ບໍ່ສາມາດຍ້າຍ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄດ້}}"</string>
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{ບໍ່ສາມາດຍ້າຍ # ໄຟລ໌}other{ບໍ່ສາມາດຍ້າຍ # ໄຟລ໌}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{ບໍ່ສາມາດລຶບ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄດ້}other{ບໍ່ສາມາດລຶບ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄດ້}}"</string>
-    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{ບໍ່ສາມາດລຶບ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄປໃສ່ຖັງຂີ້ເຫຍື້ອໄດ້}other{ບໍ່ສາມາດລຶບ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄປໃສ່ຖັງຂີ້ເຫຍື້ອໄດ້}}"</string>
-    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{ບໍ່ສາມາດກູ້ຄືນ <xliff:g id="COUNT_0">{count}</xliff:g> ລາຍການໄດ້}other{ບໍ່ສາມາດກູ້ຄືນ <xliff:g id="COUNT_1">{count}</xliff:g> ລາຍການໄດ້}}"</string>
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{ບໍ່ສາມາດລຶບ # ໄຟລ໌}other{ບໍ່ສາມາດລຶບ # ໄຟລ໌}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{ບໍ່ສາມາດຖິ້ມ # ໄຟລ໌ໄປຖັງຂີ້ເຫຍື້ອ}other{ບໍ່ສາມາດຖິ້ມ # ໄຟລ໌ໄປຖັງຂີ້ເຫຍື້ອ}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{ບໍ່ສາມາດກູ້ຄືນ # ໄຟລ໌}other{ບໍ່ສາມາດກູ້ຄືນ # ໄຟລ໌}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"ແຕະເພື່ອເບິ່ງລາຍລະອຽດ"</string>
     <string name="close" msgid="905969391788869975">"ປິດ"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">ບໍ່ໄດ້ສຳເນົາໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ບໍ່ໄດ້ສຳເນົາໄຟລ໌ນີ້: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{ໄຟລ໌ນີ້ບໍ່ໄດ້ຖືກສຳເນົາ: <xliff:g id="LIST_0">{list}</xliff:g>}other{ໄຟລ໌ເຫຼົ່ານີ້ບໍ່ໄດ້ຖືກສຳເນົາ: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">ໄຟລ໌ເຫຼົ່ານີ້ຍັງບໍ່ໄດ້ຖືກບີບອັດເທື່ອ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ໄຟລ໌ນີ້ຍັງບໍ່ໄດ້ຖືກບີບອັດເທື່ອ: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{ໄຟລ໌ນີ້ບໍ່ໄດ້ຖືກບີບອັດ: <xliff:g id="LIST_0">{list}</xliff:g>}other{ໄຟລ໌ເຫຼົ່ານີ້ບໍ່ໄດ້ຖືກບີບອັດ: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">ບໍ່ໄດ້ແຕກໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ບໍ່ໄດ້ແຕກໄຟລ໌ນີ້: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{ບໍ່ໄດ້ແຕກໄຟລ໌ນີ້: <xliff:g id="LIST_0">{list}</xliff:g>}other{ບໍ່ໄດ້ແຕກໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">ບໍ່ໄດ້ຍ້າຍໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ບໍ່ໄດ້ຍ້າຍໄຟລ໌ນີ້: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{ບໍ່ໄດ້ຍ້າຍໄຟລ໌ນີ້: <xliff:g id="LIST_0">{list}</xliff:g>}other{ບໍ່ໄດ້ຍ້າຍໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">ບໍ່ໄດ້ລຶບໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ບໍ່ໄດ້ລຶບໄຟລ໌ນີ້: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{ບໍ່ໄດ້ລຶບໄຟລ໌ນີ້: <xliff:g id="LIST_0">{list}</xliff:g>}other{ບໍ່ໄດ້ລຶບໄຟລ໌ເຫຼົ່ານີ້: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">ໄຟລ໌ເຫຼົ່ານີ້ຖືກແປງເປັນຮູບແບບອື່ນແລ້ວ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ໄຟລ໌ນີ້ຖືກແປງເປັນຮູບແບບອື່ນແລ້ວ: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{ໄຟລ໌ນີ້ຖືກປ່ຽນແປງເປັນຮູບແບບອື່ນແລ້ວ: <xliff:g id="LIST_0">{list}</xliff:g>}other{ໄຟລ໌ເຫຼົ່ານີ້ຖືກປ່ຽນແປງເປັນຮູບແບບອື່ນແລ້ວ: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">ສຳເນົາໄຟລ໌ <xliff:g id="COUNT_1">%1$d</xliff:g> ໄຟລ໌ໃສ່ຄລິບບອດແລ້ວ.</item>
       <item quantity="one">Copied <xliff:g id="COUNT_0">%1$d</xliff:g> item to clipboard.</item>
@@ -223,11 +234,11 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"ຖອດອອກ"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"ປ່ຽນແປງບາງໄຟລ໌ແລ້ວ"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{ກຳລັງສຳເນົາ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງສຳເນົາ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{ກຳລັງແຕກໄຟລ໌ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງແຕກໄຟລ໌ທີ່ເກັບໄວ້ໃນແຟ້ມ # ລາຍການໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{ກຳລັງແຕກໄຟລ໌ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງແຕກ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{ກຳລັງຍ້າຍ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງຍ້າຍ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{ກຳລັງລຶບ “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{ກຳລັງລຶບ # ໄຟລ໌}}"</string>
-    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{ກຳລັງລຶບໄຟລ໌ <xliff:g id="FILENAME">{filename}</xliff:g> ໄປໃສ່ຖັງຂີ້ເຫຍື້ອ}other{ກຳລັງລຶບ # ໄຟລ໌ໄປໃສ່ຖັງຂີ້ເຫຍື້ອ}}"</string>
-    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{ກຳລັງກູ້ຄືນ <xliff:g id="FILENAME">{filename}</xliff:g>}other{ກຳລັງກູ້ຄືນ # ໄຟລ໌}}"</string>
+    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{ກຳລັງຖິ້ມ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປຖັງຂີ້ເຫຍື້ອ}other{ກຳລັງຖິ້ມ # ໄຟລ໌ໄປຖັງຂີ້ເຫຍື້ອ}}"</string>
+    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{ກຳລັງກູ້ຄືນ “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{ກຳລັງກູ້ຄືນ # ໄຟລ໌}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{ກຳລັງບີບອັດ “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{ກຳລັງບີບອັດ # ໄຟລ໌}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ສະແດງຄວາມຄືບໜ້າຂອງໄຟລ໌"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ຄວາມຄືບໜ້າຂອງໄຟລ໌"</string>

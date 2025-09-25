@@ -250,10 +250,12 @@ public class RootsFragment extends Fragment {
         }
 
         final RootItem rootItem = (RootItem) item;
-        getRootDocument(rootItem, (DocumentInfo doc) -> {
-            rootItem.docInfo = doc;
-            callback.run();
-        });
+        getRootDocument(
+                rootItem,
+                (DocumentInfo doc) -> {
+                    rootItem.setDocInfo(doc);
+                    callback.run();
+                });
         return true;
     }
 
@@ -273,16 +275,18 @@ public class RootsFragment extends Fragment {
                     DocumentsApplication.getDragAndDropManager(activity),
                     this::getItem,
                     mActionHandler);
-            final ItemDragListener<DragHost> listener = new ItemDragListener<DragHost>(host) {
-                @Override
-                public boolean handleDropEventChecked(View v, DragEvent event) {
-                    final Item item = getItem(v);
+            final ItemDragListener<DragHost> listener =
+                    new ItemDragListener<DragHost>(host) {
+                        @Override
+                        public boolean handleDropEventChecked(View v, DragEvent event) {
+                            final Item item = getItem(v);
 
-                    assert (item.isRoot());
+                            // TODO: b/441194501 - implement `isShortcut()` check in here
+                            assert (item.isRoot());
 
-                    return item.dropOn(event);
-                }
-            };
+                            return item.dropOn(event);
+                        }
+                    };
             mDragListener = mListHandler.createDragListener(listener);
         }
 

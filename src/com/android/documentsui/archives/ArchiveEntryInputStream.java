@@ -36,17 +36,19 @@ import java.io.InputStream;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-/**
- * To simulate the input stream by using ZipFile, SevenZFile, or ArchiveInputStream.
- */
+/** To simulate the input stream by using ZipFile, SevenZFile, or ArchiveInputStream. */
 abstract class ArchiveEntryInputStream extends InputStream {
     private final @NonNull ReadSource mReadSource;
+
     /** Expected number of bytes if the data being extracted. */
     private final long mExpectedSize;
+
     /** Number of bytes having been extracted so far. */
     private long mAccumulatedSize = 0;
+
     /** Expected CRC when all the data has been extracted, or -1 if no CRC needs to be checked. */
     private long mExpectedCrc = -1;
+
     /** CRC accumulator, or null if no CRC needs to be checked. */
     private @Nullable Checksum mCrcComputer = null;
 
@@ -79,8 +81,11 @@ abstract class ArchiveEntryInputStream extends InputStream {
                 mAccumulatedSize += n;
                 if (mAccumulatedSize > mExpectedSize) {
                     throw new IOException(
-                            "Extracted file is too long: Already extracted " + mAccumulatedSize
-                                    + " bytes when only " + mExpectedSize + " bytes are expected");
+                            "Extracted file is too long: Already extracted "
+                                    + mAccumulatedSize
+                                    + " bytes when only "
+                                    + mExpectedSize
+                                    + " bytes are expected");
                 }
 
                 if (mCrcComputer != null) mCrcComputer.update(b, off, n);
@@ -94,8 +99,11 @@ abstract class ArchiveEntryInputStream extends InputStream {
             // Check file size.
             if (mAccumulatedSize != mExpectedSize) {
                 throw new IOException(
-                        "Extracted file is too short: Only extracted " + mAccumulatedSize
-                                + " bytes when " + mExpectedSize + " bytes are expected");
+                        "Extracted file is too short: Only extracted "
+                                + mAccumulatedSize
+                                + " bytes when "
+                                + mExpectedSize
+                                + " bytes are expected");
             }
 
             // Check CRC.
@@ -117,16 +125,12 @@ abstract class ArchiveEntryInputStream extends InputStream {
         return mReadSource == null ? 0 : StrictMath.toIntExact(mExpectedSize);
     }
 
-    /**
-     * The interface describe how to make the ArchiveHandle to next entry.
-     */
+    /** The interface describe how to make the ArchiveHandle to next entry. */
     private interface NextEntryIterator {
         ArchiveEntry getNextEntry() throws IOException;
     }
 
-    /**
-     * The interface provide where to read the data.
-     */
+    /** The interface provide where to read the data. */
     private interface ReadSource {
         int read(byte[] b, int off, int len) throws IOException;
     }
@@ -143,8 +147,9 @@ abstract class ArchiveEntryInputStream extends InputStream {
     }
 
     private static class WrapArchiveInputStream extends ArchiveEntryInputStream {
-        private WrapArchiveInputStream(ReadSource readSource,
-                ArchiveEntry archiveEntry, NextEntryIterator iterator) throws IOException {
+        private WrapArchiveInputStream(
+                ReadSource readSource, ArchiveEntry archiveEntry, NextEntryIterator iterator)
+                throws IOException {
             super(readSource, archiveEntry);
 
             moveToArchiveEntry(iterator, archiveEntry);

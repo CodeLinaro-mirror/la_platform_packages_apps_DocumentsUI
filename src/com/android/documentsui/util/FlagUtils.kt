@@ -41,6 +41,9 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_VISUAL_SIGNALS_RO,
                 Flags.FLAG_ZIP_NG_RO,
                 Flags.FLAG_HOME_SCREEN_FILES_RO,
+                Flags.FLAG_USE_FILE_SUMMARY,
+                Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
+                Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
             )
 
         @JvmStatic
@@ -152,6 +155,36 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                     .overrides
                     .getOrDefault(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.homeScreenFilesRo())
             return flag && isUseMaterial3FlagEnabled()
+        }
+
+        @JvmStatic
+        fun isUseFileSummaryEnabled(): Boolean {
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_USE_FILE_SUMMARY, Flags.useFileSummary())
+        }
+
+        @JvmStatic
+        fun isUseLocalSearchProviderEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(
+                        Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
+                        Flags.useLocalSearchProvider(),
+                    )
+            return flag && isSearchV2Enabled()
+        }
+
+        fun isUseAllfilesRootForRecentsEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(
+                        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+                        Flags.useAllfilesRootForRecents(),
+                    )
+            return flag && isSearchV2Enabled()
         }
     }
 

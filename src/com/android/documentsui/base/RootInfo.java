@@ -39,6 +39,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
@@ -54,7 +56,7 @@ import java.util.Objects;
 /**
  * Representation of a {@link Root}.
  */
-public class RootInfo implements Durable, Parcelable, Comparable<RootInfo> {
+public class RootInfo implements Durable, Parcelable, Comparable<RootInfo>, SidebarEntryItemInfo {
 
     private static final String TAG = "RootInfo";
     private static final int LOAD_FROM_CONTENT_RESOLVER = -1;
@@ -293,8 +295,28 @@ public class RootInfo implements Durable, Parcelable, Comparable<RootInfo> {
         if (VERBOSE) Log.v(TAG, "Derived fields: " + this);
     }
 
+    @Override
+    @NonNull
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    @Override
+    @NonNull
     public Uri getUri() {
         return DocumentsContract.buildRootUri(authority, rootId);
+    }
+
+    @Override
+    @Nullable
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    @NonNull
+    public RootInfo getRoot() {
+        return this;
     }
 
     public boolean isBugReport() {

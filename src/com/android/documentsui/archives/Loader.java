@@ -23,16 +23,14 @@ import android.util.Log;
 
 import androidx.annotation.GuardedBy;
 
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.compressors.CompressorException;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.compressors.CompressorException;
-
-/**
- * Loads an instance of Archive lazily.
- */
+/** Loads an instance of Archive lazily. */
 public class Loader {
     private static final String TAG = "Loader";
 
@@ -48,10 +46,13 @@ public class Loader {
     private final Uri mNotificationUri;
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
     private final Object mLock = new Object();
+
     @GuardedBy("mLock")
     private int mStatus = STATUS_OPENING;
+
     @GuardedBy("mLock")
     private int mRefCount = 0;
+
     private Archive mArchive = null;
 
     Loader(Context context, Uri archiveUri, int accessMode, Uri notificationUri) {
@@ -82,17 +83,24 @@ public class Loader {
             if (ReadableArchive.supportsAccessMode(mAccessMode)) {
                 final ContentResolver contentResolver = mContext.getContentResolver();
                 final String archiveMimeType = contentResolver.getType(mArchiveUri);
-                mArchive = ReadableArchive.createForParcelFileDescriptor(
-                        mContext,
-                        contentResolver.openFileDescriptor(
-                                mArchiveUri, "r", null /* signal */),
-                        mArchiveUri, archiveMimeType, mAccessMode, mNotificationUri);
+                mArchive =
+                        ReadableArchive.createForParcelFileDescriptor(
+                                mContext,
+                                contentResolver.openFileDescriptor(
+                                        mArchiveUri, "r", null /* signal */),
+                                mArchiveUri,
+                                archiveMimeType,
+                                mAccessMode,
+                                mNotificationUri);
             } else if (WriteableArchive.supportsAccessMode(mAccessMode)) {
-                mArchive = WriteableArchive.createForParcelFileDescriptor(
-                        mContext,
-                        mContext.getContentResolver().openFileDescriptor(
-                                mArchiveUri, "w", null /* signal */),
-                        mArchiveUri, mAccessMode, mNotificationUri);
+                mArchive =
+                        WriteableArchive.createForParcelFileDescriptor(
+                                mContext,
+                                mContext.getContentResolver()
+                                        .openFileDescriptor(mArchiveUri, "w", null /* signal */),
+                                mArchiveUri,
+                                mAccessMode,
+                                mNotificationUri);
             } else {
                 throw new IllegalStateException("Access mode not supported.");
             }
@@ -116,9 +124,11 @@ public class Loader {
                 if (mRefCount > 0) {
                     // Notify observers that the root directory is loaded (or failed)
                     // so clients reload it.
-                    mContext.getContentResolver().notifyChange(
-                            ArchivesProvider.buildUriForArchive(mArchiveUri, mAccessMode),
-                            null /* observer */, false /* syncToNetwork */);
+                    mContext.getContentResolver()
+                            .notifyChange(
+                                    ArchivesProvider.buildUriForArchive(mArchiveUri, mAccessMode),
+                                    null /* observer */,
+                                    false /* syncToNetwork */);
                 }
             }
         }
@@ -142,9 +152,9 @@ public class Loader {
         synchronized (mLock) {
             mRefCount--;
             if (mRefCount == 0) {
-                assert(mStatus == STATUS_OPENING
+                assert mStatus == STATUS_OPENING
                         || mStatus == STATUS_OPENED
-                        || mStatus == STATUS_FAILED);
+                        || mStatus == STATUS_FAILED;
 
                 switch (mStatus) {
                     case STATUS_OPENED:

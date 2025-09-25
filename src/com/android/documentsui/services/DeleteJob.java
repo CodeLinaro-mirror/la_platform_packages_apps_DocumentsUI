@@ -17,6 +17,7 @@
 package com.android.documentsui.services;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -36,8 +37,6 @@ import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
-
-import java.io.FileNotFoundException;
 
 import javax.annotation.Nullable;
 
@@ -102,39 +101,31 @@ final class DeleteJob extends ResolvedResourcesJob {
 
     @Override
     JobProgress getJobProgress() {
-        return new JobProgress(
-                id,
-                operationType,
-                getState(),
-                getProgressMessage(),
-                hasFailures());
+        return new JobProgress(id, operationType, getState(), getProgressMessage(), hasFailures());
     }
 
     @Override
     void start() {
-        ContentResolver resolver = appContext.getContentResolver();
-
-        DocumentInfo parentDoc;
-        try {
-            parentDoc = mParentUri != null
-                ? DocumentInfo.fromUri(resolver, mParentUri, UserId.DEFAULT_USER)
-                : null;
-        } catch (FileNotFoundException e) {
-          Log.e(TAG, "Failed to resolve parent from Uri: " + mParentUri + ". Cannot continue.", e);
-          failureCount += this.mResourceUris.getItemCount();
-          return;
+        DocumentInfo parentDoc = null;
+        if (mParentUri != null) {
+            try {
+                ContentResolver resolver = appContext.getContentResolver();
+                parentDoc = DocumentInfo.fromUri(resolver, mParentUri, UserId.DEFAULT_USER);
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot resolve parent URI " + redact(mParentUri), e);
+                onFileFailed(mResolvedDocs);
+                return;
+            }
         }
 
         for (DocumentInfo doc : mResolvedDocs) {
-            if (DEBUG) {
-                Log.d(TAG, "Deleting document @ " + doc.derivedUri);
-            }
+            if (DEBUG) Log.d(TAG, "Deleting " + redact(doc));
             try {
                 deleteDocument(doc, parentDoc);
-            } catch (ResourceException e) {
+            } catch (Exception e) {
                 Metrics.logFileOperationFailure(
                         appContext, MetricConsts.SUBFILEOP_DELETE_DOCUMENT, doc.derivedUri);
-                Log.e(TAG, "Failed to delete document @ " + doc.derivedUri, e);
+                Log.e(TAG, "Cannot delete " + redact(doc), e);
                 onFileFailed(doc);
             }
 

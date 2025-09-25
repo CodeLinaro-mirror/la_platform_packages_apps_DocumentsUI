@@ -16,16 +16,25 @@
 
 package com.android.documentsui.services;
 
+import static android.app.Notification.CATEGORY_ERROR;
+import static android.app.Notification.CATEGORY_PROGRESS;
+import static android.app.Notification.EXTRA_PROGRESS_INDETERMINATE;
+import static android.app.Notification.EXTRA_TEXT;
+import static android.app.Notification.EXTRA_TITLE;
+
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
+import static com.android.documentsui.services.Job.STATE_COMPLETED;
+import static com.android.documentsui.services.Job.STATE_CREATED;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.truth.Truth.assertThat;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
+import android.app.Notification;
 import android.net.Uri;
+import android.os.Bundle;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 
@@ -45,115 +54,165 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Test
-    public void testDeleteFiles() throws Exception {
-        Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
-        mDocs.writeDocument(testFile1, HAM_BYTES);
-
-        Uri testFile2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
-        mDocs.writeDocument(testFile2, FRUITY_BYTES);
-
-        createJob(newArrayList(testFile1, testFile2),
-                DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId))
-                .run();
-        mJobListener.waitForFinished();
-
-        mDocs.assertChildCount(mSrcRoot, 0);
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
-    public void testDeleteFilesWithProgress() throws Exception {
-        Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
-        mDocs.writeDocument(testFile1, HAM_BYTES);
-
-        Uri testFile2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
-        mDocs.writeDocument(testFile2, FRUITY_BYTES);
-
-        DeleteJob job = createJob(newArrayList(testFile1, testFile2),
-                DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
-        var progress = job.getJobProgress();
-        assertEquals(job.id, progress.id);
-        assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting 2 files", progress.msg);
-
-        job.run();
-        mJobListener.waitForFinished();
-
-        mDocs.assertChildCount(mSrcRoot, 0);
-
-        progress = job.getJobProgress();
-        assertEquals(Job.STATE_COMPLETED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting 2 files", progress.msg);
-    }
-
-    @Test
-    public void testDeleteFiles_NoSrcParent() throws Exception {
-        Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
-        mDocs.writeDocument(testFile1, HAM_BYTES);
-
-        Uri testFile2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
-        mDocs.writeDocument(testFile2, FRUITY_BYTES);
-
-        createJob(newArrayList(testFile1, testFile2), null).run();
-        mJobListener.waitForFinished();
-
-        mDocs.assertChildCount(mSrcRoot, 0);
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
-    public void testDeleteFilesWithProgress_NoSrcParent() throws Exception {
-        Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
-        mDocs.writeDocument(testFile1, HAM_BYTES);
-
-        Uri testFile2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
-        mDocs.writeDocument(testFile2, FRUITY_BYTES);
-
-        DeleteJob job = createJob(newArrayList(testFile1, testFile2), null);
-        job.run();
-        mJobListener.waitForFinished();
-
-        mDocs.assertChildCount(mSrcRoot, 0);
-        var progress = job.getJobProgress();
-        assertEquals(Job.STATE_COMPLETED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting 2 files", progress.msg);
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
-    public void testDeleteSingleFile_ProgressMessage() throws Exception {
-        Uri testFile = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
+    public void failsOnInvalidParent() throws Exception {
+        // Create a source file to be moved.
+        Uri testFile = mDocs.createDocument(mSrcRoot, "text/plain", "test.txt");
         mDocs.writeDocument(testFile, HAM_BYTES);
-        DeleteJob job = createJob(newArrayList(testFile), null);
 
-        var progress = job.getJobProgress();
-        assertEquals(job.id, progress.id);
-        assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting “test1.txt”", progress.msg);
+        // A URI that is guaranteed to fail when resolving.
+        Uri invalidParentUri = Uri.parse("content://i.do.not.exist/doc/ghost");
+
+        // Create and run the job with the invalid source parent.
+        final DeleteJob job = createJob(newArrayList(testFile), invalidParentUri);
+
+        {
+            final Notification notification = job.getSetupNotification();
+            assertThat(notification.category).isEqualTo(CATEGORY_PROGRESS);
+            final Bundle extras = notification.extras;
+            assertThat(extras.getCharSequence(EXTRA_TITLE)).isEqualTo("Deleting files");
+            assertThat(extras.getCharSequence(EXTRA_TEXT)).isEqualTo("Preparing...");
+            assertThat(extras.getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isTrue();
+        }
+
+        job.run();
+
+        {
+            final Notification notification = job.getProgressNotification();
+            assertThat(notification.category).isEqualTo(CATEGORY_PROGRESS);
+            final Bundle extras = notification.extras;
+            assertThat(extras.getCharSequence(EXTRA_TITLE)).isEqualTo("Deleting files");
+            assertThat(extras.getCharSequence(EXTRA_TEXT)).isNull();
+            assertThat(extras.getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isFalse();
+        }
+
+        mJobListener.assertFailed();
+        mJobListener.assertFailureCount(1);
+
+        {
+            final Notification notification = job.getFailureNotification();
+            assertThat(notification.category).isEqualTo(CATEGORY_ERROR);
+            final Bundle extras = notification.extras;
+            assertThat(extras.getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t delete 1 file");
+            assertThat(extras.getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details");
+        }
+
+        // The job should fail, so no files should be deleted.
+        // Verify the source file still exists.
+        mDocs.assertChildCount(mSrcRoot, 1);
+        mDocs.assertHasFile(mSrcRoot, "test.txt");
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void deleteOneFile() throws Exception {
+        final Uri uri = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
+        mDocs.writeDocument(uri, HAM_BYTES);
+
+        final DeleteJob job = createJob(newArrayList(uri),
+                DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
+
+        {
+            final JobProgress progress = job.getJobProgress();
+            assertThat(progress.operationType).isEqualTo(OPERATION_DELETE);
+            assertThat(progress.id).isEqualTo(job.id);
+            assertThat(progress.state).isEqualTo(STATE_CREATED);
+            assertThat(progress.hasFailures).isFalse();
+            assertThat(progress.msg).isEqualTo("Deleting “test1.txt”");
+        }
 
         job.run();
         mJobListener.waitForFinished();
 
-        progress = job.getJobProgress();
-        assertEquals(Job.STATE_COMPLETED, progress.state);
-        assertEquals(OPERATION_DELETE, progress.operationType);
-        assertFalse(progress.hasFailures);
-        assertEquals("Deleting “test1.txt”", progress.msg);
+        {
+            final JobProgress progress = job.getJobProgress();
+            assertThat(progress.operationType).isEqualTo(OPERATION_DELETE);
+            assertThat(progress.id).isEqualTo(job.id);
+            assertThat(progress.state).isEqualTo(STATE_COMPLETED);
+            assertThat(progress.hasFailures).isFalse();
+            assertThat(progress.msg).isEqualTo("Deleting “test1.txt”");
+        }
+
+        // All the files should have been deleted.
+        mDocs.assertChildCount(mSrcRoot, 0);
     }
 
-    /**
-     * Creates a job with a stack consisting to the default src directory.
-     */
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void deleteTwoFiles() throws Exception {
+        final Uri uri1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
+        mDocs.writeDocument(uri1, HAM_BYTES);
+
+        final Uri uri2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
+        mDocs.writeDocument(uri2, FRUITY_BYTES);
+
+        final DeleteJob job = createJob(newArrayList(uri1, uri2),
+                DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
+
+        {
+            final JobProgress progress = job.getJobProgress();
+            assertThat(progress.operationType).isEqualTo(OPERATION_DELETE);
+            assertThat(progress.id).isEqualTo(job.id);
+            assertThat(progress.state).isEqualTo(STATE_CREATED);
+            assertThat(progress.hasFailures).isFalse();
+            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+        }
+
+        job.run();
+        mJobListener.waitForFinished();
+
+        {
+            final JobProgress progress = job.getJobProgress();
+            assertThat(progress.operationType).isEqualTo(OPERATION_DELETE);
+            assertThat(progress.id).isEqualTo(job.id);
+            assertThat(progress.state).isEqualTo(STATE_COMPLETED);
+            assertThat(progress.hasFailures).isFalse();
+            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+        }
+
+        // All the files should have been deleted.
+        mDocs.assertChildCount(mSrcRoot, 0);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void deleteTwoFilesWithoutParent() throws Exception {
+        final Uri uri1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
+        mDocs.writeDocument(uri1, HAM_BYTES);
+
+        final Uri uri2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
+        mDocs.writeDocument(uri2, FRUITY_BYTES);
+
+        final DeleteJob job = createJob(newArrayList(uri1, uri2), null);
+
+        {
+            final JobProgress progress = job.getJobProgress();
+            assertThat(progress.operationType).isEqualTo(OPERATION_DELETE);
+            assertThat(progress.id).isEqualTo(job.id);
+            assertThat(progress.state).isEqualTo(STATE_CREATED);
+            assertThat(progress.hasFailures).isFalse();
+            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+        }
+
+        job.run();
+        mJobListener.waitForFinished();
+
+        {
+            final JobProgress progress = job.getJobProgress();
+            assertThat(progress.operationType).isEqualTo(OPERATION_DELETE);
+            assertThat(progress.id).isEqualTo(job.id);
+            assertThat(progress.state).isEqualTo(STATE_COMPLETED);
+            assertThat(progress.hasFailures).isFalse();
+            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+        }
+
+        // All the files should have been deleted.
+        mDocs.assertChildCount(mSrcRoot, 0);
+    }
+
+    /** Creates a job with a stack consisting of the default source directory. */
     private DeleteJob createJob(List<Uri> srcs, Uri srcParent) throws Exception {
-        Uri stack = DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId);
+        final Uri stack = DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId);
         return createJob(OPERATION_DELETE, srcs, srcParent, stack);
     }
 }
