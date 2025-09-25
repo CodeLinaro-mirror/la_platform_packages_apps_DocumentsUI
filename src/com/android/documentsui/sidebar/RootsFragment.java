@@ -457,10 +457,14 @@ public class RootsFragment extends Fragment {
                 // No-op.
             } else if (root.isFiles()) {
                 // Never show this if MediaDocumentsProvider is serving it, it's for Recents only.
+            } else if (root.isLocalSearch(context)) {
+                // Local search provider is integrated with other providers, not to browse the
+                // files.
             } else if (hideMediaRoots
-                    && (root.isImages() || root.isVideos()
-                    || root.isDocuments()
-                    || root.isAudio())) {
+                    && (root.isImages()
+                            || root.isVideos()
+                            || root.isDocuments()
+                            || root.isAudio())) {
                 Log.d(TAG, "Hiding " + root);
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
