@@ -349,3 +349,5 @@
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
 
 -keep class com.android.documentsui.roots.ProvidersCache { *; }
+
+-keep class com.android.documentsui.base.PathExtractor { *; }
