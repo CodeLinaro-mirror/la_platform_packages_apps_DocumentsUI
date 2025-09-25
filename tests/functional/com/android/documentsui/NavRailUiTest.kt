@@ -26,7 +26,6 @@ import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import android.view.Display
 import androidx.test.core.app.ActivityScenario
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.android.documentsui.TestUtils.Companion.dpToPx
 import com.android.documentsui.TestUtils.Companion.pxToDp
@@ -38,17 +37,15 @@ import kotlin.math.roundToInt
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 @LargeTest
 @EnableFlags(FLAG_USE_MATERIAL3)
-@RunWith(AndroidJUnit4::class)
 class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule val setFlags = OverrideFlagsRule()
 
     companion object {
         private const val MEDIUM_WINDOW_WIDTH = 700
-        private const val MEDIUM_WINDOW_HEIGHT = 900
+        private const val MEDIUM_WINDOW_HEIGHT = 800
     }
 
     /** Override the base method to launch activity in a specified window size. */
@@ -86,11 +83,13 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
             context!!.getPackageManager().hasSystemFeature(FEATURE_FREEFORM_WINDOW_MANAGEMENT),
         )
         val displayMetrics = Resources.getSystem().displayMetrics
+        // status bar (35dp) + navigation bar (48dp) with some additional buffer
+        val systemUiHeightBuffer = 100
         assumeTrue(
             "Skipping test: test device window size is too small to support medium layout.",
             pxToDp(displayMetrics.widthPixels.toFloat(), displayMetrics) >= MEDIUM_WINDOW_WIDTH &&
                 pxToDp(displayMetrics.heightPixels.toFloat(), displayMetrics) >=
-                    MEDIUM_WINDOW_HEIGHT,
+                    MEDIUM_WINDOW_HEIGHT + systemUiHeightBuffer,
         )
     }
 
