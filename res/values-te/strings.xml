@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"దీనితో షేర్ చేయండి"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ఫైళ్లు కాపీ అవుతున్నాయి"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ఫైళ్లను కుదిస్తోంది"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"ఫైల్స్‌ను జిప్ చేస్తోంది"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"ఫైళ్లను సంగ్రహిస్తోంది"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ఫైళ్లను తరలిస్తోంది"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ఫైళ్లను తొలగిస్తోంది"</string>
@@ -166,10 +165,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలను తొలగిస్తోంది.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> అంశాన్ని తొలగిస్తోంది.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{# ఫైల్‌ను ట్రాష్‌కు తరలిస్తోంది}other{# ఫైళ్లను ట్రాష్‌కు తరలిస్తోంది}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{# ఫైల్ రీస్టోర్ అవుతోంది}other{# ఫైళ్లు రీస్టోర్ అవుతున్నాయి}}"</string>
     <string name="undo" msgid="2902438994196400565">"చర్య రద్దు చేయండి"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"సిద్ధం చేస్తోంది..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"సిద్ధం చేస్తోంది..."</string>
@@ -182,61 +179,48 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"మొత్తం <xliff:g id="TOTALCOUNT">%2$d</xliff:g>‌లో <xliff:g id="COUNT_0">%1$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను కాపీ చేయడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను కాపీ చేయడం సాధ్యపడలేదు}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{# ఫైల్‌ను కాపీ చేయడం సాధ్యపడలేదు}other{# ఫైళ్లను కాపీ చేయడం సాధ్యపడలేదు}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను కుదించడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను కుదించడం సాధ్యపడలేదు}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{# ఫైల్‌ను జిప్ చేయడం సాధ్యపడలేదు}other{# ఫైళ్లను జిప్ చేయడం సాధ్యపడలేదు}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{# ఫైల్‌ను ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడలేదు}other{# ఫైళ్లను ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడలేదు}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను తరలించడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను తరలించడం సాధ్యపడలేదు}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{# ఫైల్‌ను తరలించడం సాధ్యపడలేదు}other{# ఫైళ్లను తరలించడం సాధ్యపడలేదు}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను తొలగించడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను తొలగించడం సాధ్యపడలేదు}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{# ఫైల్‌ను తొలగించడం సాధ్యపడలేదు}other{# ఫైళ్లను తొలగించడం సాధ్యపడలేదు}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{# ఫైల్‌ను ట్రాష్ చేయడం సాధ్యం కాలేదు}other{# ఫైళ్లను ట్రాష్ చేయడం సాధ్యం కాలేదు}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{# ఫైల్‌ను రీస్టోర్ చేయడం సాధ్యం కాలేదు}other{# ఫైళ్లను రీస్టోర్ చేయడం సాధ్యం కాలేదు}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"వివరాలను చూడటానికి నొక్కండి"</string>
     <string name="close" msgid="905969391788869975">"మూసివేయండి"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">ఈ ఫైళ్లు కాపీ కాలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ కాపీ కాలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{ఈ ఫైల్ కాపీ అవ్వలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు కాపీ అవ్వలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">ఈ ఫైళ్లు కుదించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ కుదించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{ఈ ఫైల్ జిప్ చేయబడలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు జిప్ చేయబడలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">ఈ ఫైళ్లు సంగ్రహించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ సంగ్రహించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{ఈ ఫైల్ ఎక్స్‌ట్రాక్ట్ అవ్వలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు ఎక్స్‌ట్రాక్ట్ అవ్వలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">ఈ ఫైళ్లు తరలించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ తరలించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{ఈ ఫైల్ తరలించబడలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు తరలించబడలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">ఈ ఫైళ్లు తొలగించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ తొలగించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{ఈ ఫైల్ తొలగించబడలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు తొలగించబడలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">ఈ ఫైళ్లు మరో ఫార్మాట్‌లోకి మార్చబడ్డాయి: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ మరో ఫార్మాట్‌లోకి మార్చబడింది: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{ఈ ఫైల్ వేరొక ఫార్మాట్‌కు మార్చబడింది: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు వేరొక ఫార్మాట్‌కు మార్చబడ్డాయి: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలు కాపీ చేయబడ్డాయి.</item>
       <item quantity="one">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_0">%1$d</xliff:g> అంశం కాపీ చేయబడింది.</item>
@@ -250,14 +234,11 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"తీసివేయండి"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"కొన్ని పైల్‌లు మార్చబడ్డాయి"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"కు కాపీ చేస్తోంది}other{# ఫైళ్లను \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"కు కాపీ చేస్తోంది}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
+    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>”, “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”‌కు ఎక్స్‌ట్రాక్ట్ అవుతోంది}other{# ఫైళ్లు “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”‌కు ఎక్స్‌ట్రాక్ట్ అవుతున్నాయి}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"కు తరలిస్తోంది}other{# ఫైళ్లను \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"కు తరలిస్తోంది}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను తొలగిస్తోంది}other{# ఫైళ్లను తొలగిస్తోంది}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
+    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>”‌ను ట్రాష్‌కు తరలిస్తోంది}other{# ఫైళ్లను ట్రాష్‌కు తరలిస్తోంది}}"</string>
+    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” రీస్టోర్ అవుతోంది}other{# ఫైళ్లు రీస్టోర్ అవుతున్నాయి}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>”‌ను జిప్ చేస్తోంది}other{# ఫైల్స్‌ను జిప్ చేస్తోంది}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ఫైల్ ప్రోగ్రెస్‌లో ఉంది"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ఫైల్ ప్రోగ్రెస్"</string>
