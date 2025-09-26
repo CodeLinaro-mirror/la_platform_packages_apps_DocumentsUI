@@ -432,6 +432,9 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
         bots.main.assertWindowTitle(SHORTCUT_ID);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
+        bots.roots.assertItemSelected(SHORTCUT_ID);
+        bots.roots.assertItemNotSelected(primaryRoot.title);
+
         cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
     }
 
@@ -458,7 +461,10 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.main.assertOptionsMenuSearchShow();
         }
         bots.main.assertWindowTitle(SHORTCUT_ID);
+        bots.roots.assertItemSelected(SHORTCUT_ID);
+        bots.roots.assertItemNotSelected(primaryRoot.title);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
+
         cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
     }
 

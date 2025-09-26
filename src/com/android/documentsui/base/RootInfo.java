@@ -567,4 +567,9 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
     public String getDirectoryString() {
         return !TextUtils.isEmpty(summary) ? summary : title;
     }
+
+    @Override
+    public void setTitle(String s) {
+        title = s;
+    }
 }

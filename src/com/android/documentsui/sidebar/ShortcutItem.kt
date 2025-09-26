@@ -29,7 +29,7 @@ import java.util.Objects
 
 open class ShortcutItem(
     @LayoutRes layoutId: Int,
-    title: String,
+    title: String?,
     userId: UserId,
     actionHandler: ActionHandler?,
     packageName: String,

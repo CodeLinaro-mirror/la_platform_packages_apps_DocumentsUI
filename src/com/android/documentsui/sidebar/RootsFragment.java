@@ -78,6 +78,7 @@ import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -808,16 +809,37 @@ public class RootsFragment extends Fragment {
             return;
         }
 
-        final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
-        for (int i = 0; i < mListHandler.getItemCount(); i++) {
-            final Object item = mListHandler.getItem(i);
-            if (item instanceof RootItem) {
-                final RootInfo testRoot = ((RootItem) item).root;
-                if (Objects.equals(testRoot, root)) {
-                    // b/37358441 should reload all root title after configuration changed
-                    root.title = testRoot.title;
-                    mListHandler.selectItem(i);
-                    return;
+        if (isHomeScreenFilesFlagEnabled()) {
+            SidebarEntryItemInfo itemInfo = getBaseActivity().getCurrentShortcut();
+            if (itemInfo == null) {
+                itemInfo = getBaseActivity().getCurrentRoot();
+            }
+            for (int i = 0; i < mListHandler.getItemCount(); i++) {
+                final Object item = mListHandler.getItem(i);
+                if (item instanceof BaseSidebarEntryItem) {
+                    final SidebarEntryItemInfo testInfo =
+                            ((BaseSidebarEntryItem) item).getItemInfo();
+                    if (Objects.equals(testInfo, itemInfo)) {
+                        // TODO: b/447254297 - Check if this is still necessary for language
+                        //  configuration changes.
+                        itemInfo.setTitle(testInfo.getTitle());
+                        mListHandler.selectItem(i);
+                        return;
+                    }
+                }
+            }
+        } else {
+            final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
+            for (int i = 0; i < mListHandler.getItemCount(); i++) {
+                final Object item = mListHandler.getItem(i);
+                if (item instanceof RootItem) {
+                    final RootInfo testRoot = ((RootItem) item).root;
+                    if (Objects.equals(testRoot, root)) {
+                        // b/37358441 should reload all root title after configuration changed
+                        root.title = testRoot.title;
+                        mListHandler.selectItem(i);
+                        return;
+                    }
                 }
             }
         }

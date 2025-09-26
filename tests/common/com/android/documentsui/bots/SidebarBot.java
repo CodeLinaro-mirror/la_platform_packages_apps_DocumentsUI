@@ -22,6 +22,7 @@ import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import android.app.UiAutomation;
@@ -232,5 +233,27 @@ public class SidebarBot extends Bots.BaseBot {
 
     public void assertHasFocus() {
         assertHasFocus(mRootListId);
+    }
+
+    /**
+     * Check if the labelled item is selected on the sidebar.
+     */
+    public void assertItemSelected(String label) throws UiObjectNotFoundException {
+        UiObject sidebarItem = findRoot(label, RootListContainerType.FOLLOW_LAYOUT);
+        if (!sidebarItem.exists()) {
+            throw new AssertionError("Cannot find item " + label);
+        }
+        assertTrue(findRoot(label, RootListContainerType.FOLLOW_LAYOUT).isSelected());
+    }
+
+    /**
+     * Check if the labelled item is not selected on the sidebar.
+     */
+    public void assertItemNotSelected(String label) throws UiObjectNotFoundException {
+        UiObject sidebarItem = findRoot(label, RootListContainerType.FOLLOW_LAYOUT);
+        if (!sidebarItem.exists()) {
+            throw new AssertionError("Cannot find item " + label);
+        }
+        assertFalse(findRoot(label, RootListContainerType.FOLLOW_LAYOUT).isSelected());
     }
 }
