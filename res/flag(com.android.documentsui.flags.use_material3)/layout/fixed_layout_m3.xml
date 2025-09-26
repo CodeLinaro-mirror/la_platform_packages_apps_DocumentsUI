@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     android:id="@+id/coordinator_layout"
     android:background="?attr/colorSurfaceContainer"
-    android:focusable="true">
+    android:focusable="false">
 
     <LinearLayout
         android:layout_width="match_parent"
