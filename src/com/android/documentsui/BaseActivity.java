@@ -178,6 +178,18 @@ public abstract class BaseActivity
         mConfigStore = configStore;
     }
 
+    /**
+     * @return A model that supports breadcrumb view v2, if one has been created.
+     */
+    public @Nullable BreadcrumbModel getBreadcrumbModel() {
+        if (isSearchV2Enabled()) {
+            if (mNavigator != null) {
+                return mNavigator.getBreadcrumbModel();
+            }
+        }
+        return null;
+    }
+
     @CallSuper
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -242,9 +254,7 @@ public abstract class BaseActivity
                 BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
                 BreadcrumbController breadcrumbController = new BreadcrumbController(
                         this, model, (BreadcrumbView) breadcrumbView2);
-                breadcrumbController.setClickConsumer(index -> {
-                    mNavigator.onNavigationItemSelected(index);
-                });
+                // TODO(b:416108180): Connect to mNavigator directory change.
                 mNavigator.setBreadcrumbController(breadcrumbController);
             }
         }

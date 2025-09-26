@@ -237,7 +237,10 @@
 
 # This is used in the unit test.
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbController {
-  public void setVisible(boolean);
+  public void setClickConsumer(java.util.function.IntConsumer);
+}
+-keep class com.android.documentsui.breadcrumbs.BreadcrumbModel {
+  public boolean setFromStack(com.android.documentsui.base.DocumentStack);
 }
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbView {
   public void setVisible(boolean);

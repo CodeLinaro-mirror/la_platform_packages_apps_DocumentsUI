@@ -48,6 +48,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.breadcrumbs.BreadcrumbController;
+import com.android.documentsui.breadcrumbs.BreadcrumbModel;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -220,13 +221,21 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
     }
 
-    /**
-     * Updates model held by the breadcrumb controller if it is enabled.
-     */
-    private void updateBreadcrumbs() {
+    /** Provides access to breadcrumb model v2 if one has been set */
+    public @Nullable BreadcrumbModel getBreadcrumbModel() {
         if (isSearchV2Enabled()) {
             if (mBreadcrumbController != null) {
-                mBreadcrumbController.getModel().setFromStack(mState.stack);
+                return mBreadcrumbController.getModel();
+            }
+        }
+        return null;
+    }
+
+    /** Updates the visibility of the breadcrumb v2 */
+    private void setBreadcrumbVisible(boolean visible) {
+        if (isSearchV2Enabled()) {
+            if (mBreadcrumbController != null) {
+                mBreadcrumbController.setVisible(visible);
             }
         }
     }
@@ -362,7 +371,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
-            updateBreadcrumbs();
+            setBreadcrumbVisible(true);
             return;
         }
 
@@ -383,7 +392,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
-            updateBreadcrumbs();
+            setBreadcrumbVisible(true);
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(VISIBLE);
             return;
@@ -395,7 +404,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
-        updateBreadcrumbs();
+        setBreadcrumbVisible(false);
         mBreadcrumb.postUpdate();
     }
 
