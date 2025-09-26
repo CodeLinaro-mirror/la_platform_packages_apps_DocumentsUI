@@ -63,6 +63,7 @@ import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
@@ -79,6 +80,7 @@ import com.android.documentsui.queries.SearchChipData;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
+import com.android.documentsui.roots.GetDocumentTask;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.sorting.SortController;
@@ -650,9 +652,12 @@ public abstract class BaseActivity
         mSearchManager.cancelSearch();
 
         // Skip refreshing if root nor directory didn't change
-        if (root.equals(getCurrentRoot()) && mState.stack.size() <= 1) {
+        if (root.equals(getCurrentRoot()) && getCurrentShortcut() == null
+                && mState.stack.size() <= 1) {
             return;
         }
+
+        mState.shortcut = null;
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController.closeSelectionBar();
@@ -682,6 +687,60 @@ public abstract class BaseActivity
                     doc -> mInjector.actions.openRootDocument(doc));
         }
 
+        expandAppBar();
+        updateHeaderTitle();
+    }
+
+
+    @Override
+    public void onShortcutPicked(ShortcutInfo shortcut) {
+        // Clicking on the current root removes search
+        mSearchManager.cancelSearch();
+
+        // Skip refreshing if root nor directory didn't change
+        if (shortcut.equals(getCurrentShortcut()) && mState.stack.size() <= 1) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mInjector.selectionBarController.closeSelectionBar();
+        } else {
+            mInjector.actionModeController.finishActionMode();
+        }
+        mSortController.onViewModeChanged(mState.derivedMode);
+
+        // Set summary header's visibility to invisible. Only recents and downloads root may have
+        // summary in their docs.
+        mState.sortModel.setDimensionVisibility(
+                SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
+
+        mInjector.actions.loadDocument(shortcut.getParentDirectoryUri(), shortcut.getRoot().userId,
+            (@Nullable DocumentStack stack) -> {
+                if (stack != null) {
+                    // Create the shortcut folder if it does not exist yet, then open this
+                    // shortcut folder.
+                    mInjector.actions.getShortcutDocument(
+                        shortcut,
+                        TimeoutTask.DEFAULT_TIMEOUT,
+                        uri -> {
+                            shortcut.setDocumentId(DocumentsContract.getDocumentId(uri));
+                            new GetDocumentTask(
+                                shortcut.getRoot().authority,
+                                shortcut.getDocumentId(),
+                                shortcut.getRoot().userId,
+                                this,
+                                TimeoutTask.DEFAULT_TIMEOUT,
+                                mDocs,
+                                doc -> {
+                                    // Reset the stack and store the shortcut reference.
+                                    mState.stack.reset(stack);
+                                    mState.shortcut = shortcut;
+                                    mInjector.actions.openRootDocument(doc);
+                                }
+                            ).execute();
+                        });
+                }
+            });
         expandAppBar();
         updateHeaderTitle();
     }
@@ -1072,6 +1131,13 @@ public abstract class BaseActivity
         } else {
             return mProviders.getRecentsRoot(getSelectedUser());
         }
+    }
+
+    /**
+     * Returns the currently selected shortcut if available.
+     */
+    public @Nullable ShortcutInfo getCurrentShortcut() {
+        return mState.shortcut;
     }
 
     @Override

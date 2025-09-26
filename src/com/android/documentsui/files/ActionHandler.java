@@ -64,6 +64,7 @@ import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.ClipStore;
@@ -206,6 +207,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     public void openRoot(RootInfo root) {
         Metrics.logRootVisited(MetricConsts.FILES_SCOPE, root);
         mActivity.onRootPicked(root);
+    }
+
+    @Override
+    public void openShortcut(ShortcutInfo shortcut) {
+        mActivity.onShortcutPicked(shortcut);
     }
 
     @Override

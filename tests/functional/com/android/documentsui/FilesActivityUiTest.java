@@ -22,10 +22,12 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static com.android.documentsui.DocumentsApplication.getProvidersCache;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
+import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -34,6 +36,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.annotation.Nullable;
 import android.app.Instrumentation;
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -41,7 +44,6 @@ import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
@@ -55,18 +57,20 @@ import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.roots.ProvidersCache;
+import com.android.documentsui.roots.ShortcutResourceValues;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
+import java.util.List;
 import java.util.UUID;
 
 @LargeTest
-@RunWith(AndroidJUnit4.class)
 public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
+    public static final String SHORTCUT_ID = "Test Shortcut";
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
@@ -142,10 +146,12 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         return storageDocsHelper;
     }
 
-    private void cleanupFile(String fileName, String primaryRootTitle)
-            throws UiObjectNotFoundException {
+    private void cleanupFile(String fileName, String primaryRootTitle,
+            @Nullable String parentDirName) throws UiObjectNotFoundException {
         EspressoBotsKt.openRoot(context, primaryRootTitle);
-        bots.directory.openDocument("Download");
+        if (parentDirName != null) {
+            bots.directory.openDocument(parentDirName);
+        }
 
         bots.directory.waitForDocument(fileName);
         bots.directory.selectDocument(fileName, 1);
@@ -326,7 +332,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.clearSelection();
             device.wait(Until.gone(By.desc("Share")), /* timeout= */ 5000);
         } finally {
-            cleanupFile(fileName, primaryRoot.title);
+            cleanupFile(fileName, primaryRoot.title, "Download");
         }
     }
 
@@ -356,7 +362,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             assertTrue(bots.directory.findDocument(createdFileName).exists());
         } finally {
             if (createdFileName != null) {
-                cleanupFile(createdFileName, primaryRoot.title);
+                cleanupFile(createdFileName, primaryRoot.title, "Download");
             }
         }
     }
@@ -385,4 +391,75 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.assertNoSelection();
         }
     }
+
+    private DocumentsProviderHelper setUpShortcuts() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+
+        // Mock the resource values for shortcuts
+        ShortcutResourceValues resource = new ShortcutResourceValues(
+                primaryRoot.authority,
+                primaryRoot.rootId,
+                primaryRoot.documentId,
+                SHORTCUT_ID,
+                R.drawable.ic_root_homescreen
+        );
+
+        // Reset and refresh the shortcut resources
+        ProvidersCache providers = getProvidersCache(context);
+        providers.setShortcutResources(List.of(resource));
+        providers.updateAsync(false, null);
+        return storageDocsHelper;
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO})
+    public void testClickShortcutFolderPreExisting() throws Exception {
+        // Set up the shortcut resources and pre create the shortcut folder.
+        DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        storageDocsHelper.createFolder(primaryRoot.documentId, SHORTCUT_ID);
+
+        EspressoBotsKt.openRoot(context, SHORTCUT_ID);
+        bots.main.assertSearchBarGone();
+        boolean showDockedSearch = context.getResources().getBoolean(
+                getRes(R.bool.show_docked_search));
+        if (showDockedSearch) {
+            bots.main.assertDockedSearchBarShow();
+        } else {
+            bots.main.assertOptionsMenuSearchShow();
+        }
+        bots.main.assertWindowTitle(SHORTCUT_ID);
+        storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
+        cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO})
+    public void testClickShortcutFolderNotExisting() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        try {
+            // Delete the folder just in case it exists
+            cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
+        } catch (Exception e) {
+            // Do nothing.
+        }
+        storageDocsHelper.assertDoesNotExist(primaryRoot.documentId, SHORTCUT_ID);
+
+        EspressoBotsKt.openRoot(context, SHORTCUT_ID);
+        bots.main.assertSearchBarGone();
+        boolean showDockedSearch = context.getResources().getBoolean(
+                getRes(R.bool.show_docked_search));
+        if (showDockedSearch) {
+            bots.main.assertDockedSearchBarShow();
+        } else {
+            bots.main.assertOptionsMenuSearchShow();
+        }
+        bots.main.assertWindowTitle(SHORTCUT_ID);
+        storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
+        cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
+    }
+
 }
