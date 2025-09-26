@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"اشتراک کریں بذریعہ"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"فائلیں کاپی ہو رہی ہیں"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"فائلز کمپریس ہو رہی ہیں"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"فائلز زپ کی جا رہی ہیں"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"فائلیں نکالی جا رہی ہیں"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"فائلیں منتقل ہو رہی ہیں"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"فائلیں حذف کی جا رہی ہیں"</string>
@@ -166,10 +165,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز حذف ہو رہے ہیں۔</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم حذف ہو رہا ہے۔</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{‫# فائل کو کوڑے دان میں منتقل کیا جا رہا ہے}other{‫# فائلز کو کوڑے دان میں منتقل کیا جا رہا ہے}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{‫# فائل کو بحال کیا جا رہا ہے}other{‫# فائلز کو بحال کیا جا رہا ہے}}"</string>
     <string name="undo" msgid="2902438994196400565">"کالعدم کریں"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"تیار ہو رہا ہے…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"تیار ہو رہا ہے…"</string>
@@ -182,61 +179,48 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="TOTALCOUNT">%2$d</xliff:g> / <xliff:g id="COUNT_0">%1$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="TOTALCOUNT">%2$d</xliff:g> / <xliff:g id="COUNT_0">%1$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> آئٹم کو کاپی نہیں کیا جا سکا}other{<xliff:g id="COUNT_1">{count}</xliff:g> آئٹمز کو کاپی نہیں کیا جا سکا}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{‫# فائل کو کاپی نہیں کیا جا سکا}other{‫# فائلز کو کاپی نہیں کیا جا سکا}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> آئٹم کو کمپریس نہیں کیا جا سکا}other{<xliff:g id="COUNT_1">{count}</xliff:g> آئٹمز کو کمپریس نہیں کیا جا سکا}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{‫# فائل کو زپ نہیں کیا جا سکا}other{‫# فائلز کو زپ نہیں کیا جا سکا}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{‫# فائل کو نکالا نہیں جا سکا}other{‫# فائلز کو نکالا نہیں جا سکا}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> آئٹم کو منتقل نہیں کیا جا سکا}other{<xliff:g id="COUNT_1">{count}</xliff:g> آئٹمز کو منتقل نہیں کیا جا سکا}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{‫# فائل کو منتقل نہیں کیا جا سکا}other{‫# فائلز کو منتقل نہیں کیا جا سکا}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> آئٹم کو حذف نہیں کیا جا سکا}other{<xliff:g id="COUNT_1">{count}</xliff:g> آئٹمز کو حذف نہیں کیا جا سکا}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{‫# فائل کو حذف نہیں کیا جا سکا}other{‫# فائلز کو حذف نہیں کیا جا سکا}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{‫# فائل کو کوڑے دان میں منتقل نہیں کیا جا سکا}other{‫# فائلز کو کوڑے دان میں منتقل نہیں کیا جا سکا}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{‫# فائل کو بحال نہیں کیا جا سکا}other{‫# فائلز کو بحال نہیں کیا جا سکا}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"تفصیلات دیکھنے کیلئے تھپتھپائیں"</string>
     <string name="close" msgid="905969391788869975">"بند کریں"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">یہ فائلز کاپی نہیں ہوئیں: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">یہ فائل کاپی نہیں ہوئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{یہ فائل کاپی نہیں ہوئی: <xliff:g id="LIST_0">{list}</xliff:g>}other{یہ فائلز کاپی نہیں ہوئیں: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">یہ فائلز کمپریس نہیں ہوئیں: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">یہ فائل کمپریس نہیں ہوئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{اس فائل کو زپ نہیں کیا گیا تھا: <xliff:g id="LIST_0">{list}</xliff:g>}other{ان فائلز کو زپ نہیں کیا گیا تھا: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">یہ فائلز نکالی نہیں گئیں: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">یہ فائل نکالی نہیں گئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{یہ فائل نکالی نہیں گئی: <xliff:g id="LIST_0">{list}</xliff:g>}other{یہ فائلز نکالی نہیں گئیں: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">یہ فائلز منتقل نہیں ہوئیں: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">یہ فائل منتقل نہیں ہوئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{اس فائل کو منتقل نہیں کیا گیا: <xliff:g id="LIST_0">{list}</xliff:g>}other{ان فائلز کو منتقل نہیں کیا گیا: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">یہ فائلز حذف نہیں ہوئیں: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">یہ فائل حذف نہیں ہوئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{یہ فائل حذف نہیں ہوئی: <xliff:g id="LIST_0">{list}</xliff:g>}other{یہ فائلیں حذف نہیں ہوئیں: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">یہ فائلز دوسرے فارمیٹ میں تبدیل ہوگئیں: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">یہ فائل دوسرے فارمیٹ میں تبدیل ہوگئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{یہ فائل دوسرے فارمیٹ میں تبدیل ہوگئی: <xliff:g id="LIST_0">{list}</xliff:g>}other{یہ فائلز دوسرے فارمیٹ میں تبدیل ہوگئیں: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">کلپ بورڈ پر <xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز کاپی کئے گئے۔</item>
       <item quantity="one">کلپ بورڈ پر <xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم کاپی کیا گیا۔</item>
@@ -250,14 +234,11 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"خارج کریں"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"کچھ فائلوں کو تبدیل کیا گیا تھا"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" میں کاپی کیا جا رہا ہے}other{‫# فائلز کو \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\" میں کاپی کیا جا رہا ہے}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
+    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" میں نکالا جا رہا ہے}other{‫# فائلز کو \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\" میں نکالا جا رہا ہے}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" میں منتقل کیا جا رہا ہے}other{‫# فائلز کو \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\" میں منتقل کیا جا رہا ہے}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو حذف کیا جار ہا ہے}other{‫# فائلز کو حذف کیا جا رہا ہے}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
+    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو کوڑے دان میں منتقل کیا جا رہا ہے}other{‫# فائلز کو کوڑے دان میں منتقل کیا جا رہا ہے}}"</string>
+    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو بحال کیا جا رہا ہے}other{‫# فائلز کو بحال کیا جا رہا ہے}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{‫\"<xliff:g id="FILENAME">{filename}</xliff:g>\" کو زپ کیا جا رہا ہے}other{‫# فائلز کو زپ کیا جا رہا ہے}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"فائل کی پیشرفت دکھائیں"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"فائل کی پیشرفت"</string>
