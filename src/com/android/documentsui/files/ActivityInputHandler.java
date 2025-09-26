@@ -23,20 +23,20 @@ import android.view.KeyEvent;
  */
 final class ActivityInputHandler {
 
-    private final Runnable mDeleteHandler;
+    private final Runnable mDeleteOrTrashHandler;
 
-    ActivityInputHandler(Runnable deleteHandler) {
-        mDeleteHandler = deleteHandler;
+    ActivityInputHandler(Runnable deleteOrTrashHandler) {
+        mDeleteOrTrashHandler = deleteOrTrashHandler;
     }
 
     boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_FORWARD_DEL:
-                mDeleteHandler.run();
+                mDeleteOrTrashHandler.run();
                 return true;
             case KeyEvent.KEYCODE_DEL:
                 if (event.isAltPressed()) {
-                    mDeleteHandler.run();
+                    mDeleteOrTrashHandler.run();
                     return true;
                 }
                 return false;

@@ -1154,7 +1154,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mActions.showDeleteDialog();
             return true;
         } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
-            trashSelectedDocuments(selection);
+            mActions.trashSelectedDocuments();
             return true;
         } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
             restoreDocumentsFromTrash(selection);
@@ -1294,16 +1294,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         } else {
             mActivity.onDocumentPicked(docs.get(0));
         }
-    }
-
-    private void trashSelectedDocuments(final Selection selected) {
-        if (selected.isEmpty()) {
-            return;
-        }
-
-        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
-        List<DocumentInfo> docs = mModel.getDocuments(selected);
-        mActions.trashSelectedDocuments(docs);
     }
 
     private void restoreDocumentsFromTrash(final Selection selected) {
