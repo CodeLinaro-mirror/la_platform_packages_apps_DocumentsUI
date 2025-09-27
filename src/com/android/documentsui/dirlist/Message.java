@@ -30,6 +30,7 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFIL
 import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFILE_NOT_ALLOWED_TITLE;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -498,6 +499,10 @@ abstract class Message {
                         isUseMaterial3FlagEnabled()
                                 ? R.drawable.empty_search
                                 : R.drawable.empty;
+            } else if (isTrashFlowEnabled() && mEnv.isOnTrashPage()) {
+                message = mEnv.getContext().getResources().getText(R.string.trash_page_empty_title);
+                drawableId =
+                        isUseMaterial3FlagEnabled() ? R.drawable.ic_empty_trash : R.drawable.empty;
             } else {
                 message = mEnv.getContext().getResources().getText(R.string.empty);
                 drawableId = getRes(R.drawable.empty);
