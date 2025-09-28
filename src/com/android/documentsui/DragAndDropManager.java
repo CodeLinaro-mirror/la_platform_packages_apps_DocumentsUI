@@ -315,7 +315,7 @@ public interface DragAndDropManager {
 
         @Override
         public boolean canSpringOpen(RootInfo root, DocumentInfo doc) {
-            return isValidDestination(root, doc.derivedUri);
+            return isValidDestination(root, doc.derivedUri, mInvalidDest);
         }
 
         @Override
@@ -400,7 +400,7 @@ public interface DragAndDropManager {
 
             final Uri rootDocUri =
                     DocumentsContract.buildDocumentUri(destRoot.authority, destRoot.documentId);
-            if (!isValidDestination(destRoot, rootDocUri)) {
+            if (!isValidDestination(destRoot, rootDocUri, mInvalidDest)) {
                 return false;
             }
 
@@ -515,11 +515,15 @@ public interface DragAndDropManager {
         private boolean canCopyTo(DocumentStack dstStack) {
             final RootInfo root = dstStack.getRoot();
             final DocumentInfo dst = dstStack.peek();
-            return isValidDestination(root, dst.derivedUri);
+            return isValidDestination(root, dst.derivedUri, mInvalidDest);
         }
 
-        private boolean isValidDestination(RootInfo root, Uri dstUri) {
-            return root.supportsCreate()  && !mInvalidDest.contains(dstUri);
+        private boolean isValidDestination(RootInfo root, Uri dstUri, List<Uri> invalidDest) {
+            // We pass in the invalid destinations since this check can also be called from an
+            // asynchronous task. This method needs to maintain the same invalid destination
+            // values as when the asynchronous task starts, but mInvalidDest can be mutated in the
+            // meantime.
+            return root.supportsCreate() && !invalidDest.contains(dstUri);
         }
     }
 }
