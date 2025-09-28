@@ -602,6 +602,42 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         loadHomeDir();
     }
 
+    @Override
+    public void showEmptyTrashConfirmationDialog() {
+        if (!mState.stack.isTrash()) {
+            return;
+        }
+
+        // If there are no trash documents, don't show the dialog.
+        if (mModel.getModelIds().length == 0) {
+            return;
+        }
+
+        EmptyTrashDialogFragment.show(mActivity.getSupportFragmentManager());
+    }
+
+    @Override
+    public void permanentlyDeleteTrashDocuments() {
+        // If this is not the trash page then ignore.
+        if (!mState.stack.isTrash()) {
+            return;
+        }
+
+        // Select all documents in the trash and then perform the permanent delete operation.
+        selectAllFiles();
+        Selection<String> selection = getSelectedOrFocused();
+        if (selection.isEmpty()) {
+            return;
+        }
+
+        List<DocumentInfo> docs = mModel.getDocuments(selection);
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        deleteSelectedDocuments(docs, /* srcParent */ null);
+    }
+
     // If EXTRA_STACK is not null in intent, we'll skip other means of loading
     // or restoring the stack (like URI).
     //

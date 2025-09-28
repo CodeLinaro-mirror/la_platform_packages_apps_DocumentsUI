@@ -101,7 +101,12 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
             mTextView.setText(mMessage.getMessageString());
         }
 
-        mIcon.setImageDrawable(mMessage.getIcon());
+        if (mMessage.getIcon() != null) {
+            mIcon.setImageDrawable(mMessage.getIcon());
+            mIcon.setVisibility(View.VISIBLE);
+        } else {
+            mIcon.setVisibility(View.GONE);
+        }
 
         if (mMessage.shouldKeep()) {
             mActionView.setVisibility(View.VISIBLE);

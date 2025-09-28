@@ -178,8 +178,12 @@ public class ActionHandlerTest {
     }
 
     private void assertSelectionContainerClosed() {
+        assertSelectionContainerClosed(/* wantedNumberOfInvocations */ 1);
+    }
+
+    private void assertSelectionContainerClosed(int wantedNumberOfInvocations) {
         if (isUseMaterial3FlagEnabled()) {
-            verify(mMockCloseSelectionBar, times(1)).run();
+            verify(mMockCloseSelectionBar, times(wantedNumberOfInvocations)).run();
         } else {
             assertTrue(mActionModeAddons.finishActionModeCalled);
         }
@@ -997,6 +1001,78 @@ public class ActionHandlerTest {
     public void testOpenSettings() {
         mHandler.openSettings(TestProvidersAccess.HAMMY);
         mActivity.assertActivityStarted(DocumentsContract.ACTION_DOCUMENT_ROOT_SETTINGS);
+    }
+
+    /**
+     * Verifies that the "Empty Trash" confirmation dialog does not appear if the trash is empty.
+     * When the method is called on an empty trash, no service should be started, and the UI state
+     * should remain unchanged.
+     */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testShowEmptyTrashConfirmationDialog_NoDialog() {
+        assumeTrashApiIsAvailable();
+        // Clear the environment to ensure trash is empty
+        mEnv.clear();
+        mEnv.state.stack.changeRoot(TestProvidersAccess.TRASH_ROOT);
+
+        mHandler.showEmptyTrashConfirmationDialog();
+
+        // Assert that no actions were taken
+        mActivity.startService.assertNotCalled();
+        assertFalse(mActionModeAddons.finishActionModeCalled);
+    }
+
+    /**
+     * Verifies that items currently in the trash are permanently deleted. This test first moves a
+     * file to the trash and then calls the permanent delete method, asserting that the correct
+     * deletion service is triggered.
+     */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testPermanentlyDeleteTrashDocuments() {
+        assumeTrashApiIsAvailable();
+        // Add a file and move it to the trash
+        mEnv.populateStack();
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PNG);
+        mHandler.trashSelectedDocuments();
+        mActivity.startService.assertCalled();
+        assertSelectionContainerClosed();
+        mEnv.state.stack.changeRoot(TestProvidersAccess.TRASH_ROOT);
+
+        // reset
+        mActivity.startService.reset();
+
+        // Call the method to permanently delete items.
+        mHandler.permanentlyDeleteTrashDocuments();
+
+        // Assert that the deletion service was started.
+        mActivity.startService.assertCalled();
+        // Total number of invocations is 2 now.
+        assertSelectionContainerClosed(/* wantedNumberOfInvocations */ 2);
+    }
+
+    /** Verifies that the permanent delete action does nothing if the trash is already empty. */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testPermanentlyDeleteTrashDocuments_NoItems() {
+        assumeTrashApiIsAvailable();
+        // Ensure the environment and trash are empty
+        mEnv.clear();
+
+        mEnv.state.stack.changeRoot(TestProvidersAccess.TRASH_ROOT);
+
+        mHandler.permanentlyDeleteTrashDocuments();
+
+        // Assert that no deletion service was started
+        mActivity.startService.assertNotCalled();
     }
 
     private void assertRootPicked(Uri expectedUri) throws Exception {

@@ -53,9 +53,9 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.RootCursorWrapper;
 
-import com.google.common.collect.Lists;
-
 import libcore.io.Streams;
+
+import com.google.common.collect.Lists;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -442,5 +442,28 @@ public class DocumentsProviderHelper {
 
     public void cleanUp() {
         mClient.close();
+    }
+
+    /**
+     * Retrieves a list of all documents in the trash.
+     *
+     * @return A {@link List} of {@link DocumentInfo} objects for each item in the trash.
+     * @throws Exception if there is an issue querying the content provider.
+     */
+    public List<DocumentInfo> getAllTrashItems() throws Exception {
+        Uri uri = DocumentsContract.buildTrashDocumentsUri(mAuthority);
+        List<DocumentInfo> children = new ArrayList<>();
+        try (Cursor cursor = mClient.query(uri, null, null, null, null, null)) {
+            if (cursor == null) {
+                Log.w(TAG, "query() returned null cursor");
+            } else {
+                Cursor wrapper =
+                        new RootCursorWrapper(mUserId, mAuthority, "totally-fake", cursor, -1);
+                while (wrapper.moveToNext()) {
+                    children.add(DocumentInfo.fromDirectoryCursor(wrapper));
+                }
+            }
+        }
+        return children;
     }
 }

@@ -240,4 +240,17 @@ public interface ActionHandler {
      * @param callback - Callback sequence after the document stack task has finished executing
      */
     void loadDocument(Uri uri, UserId userId, LoadDocStackTask.LoadDocStackCallback callback);
+
+    /**
+     * Shows a confirmation dialog to the user before emptying the trash. This dialog should clarify
+     * that this action is irreversible and will permanently delete all items.
+     */
+    void showEmptyTrashConfirmationDialog();
+
+    /**
+     * Permanently deletes all documents that are currently in the trash. This action is typically
+     * triggered after the user confirms the action, for instance, via the dialog shown by {@link
+     * #showEmptyTrashConfirmationDialog()}.
+     */
+    void permanentlyDeleteTrashDocuments();
 }
