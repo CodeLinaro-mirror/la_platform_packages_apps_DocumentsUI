@@ -56,6 +56,8 @@ public abstract class TestMenu implements Menu {
                 R.id.dir_menu_open_in_new_window,
                 R.id.dir_menu_extract_here,
                 R.id.dir_menu_browse,
+                R.id.dir_menu_move_to_trash,
+                R.id.dir_menu_restore_from_trash,
                 R.id.root_menu_eject_root,
                 R.id.root_menu_open_in_new_window,
                 R.id.root_menu_paste_into_folder,
