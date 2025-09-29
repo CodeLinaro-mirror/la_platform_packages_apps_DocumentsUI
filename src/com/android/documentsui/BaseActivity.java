@@ -298,6 +298,15 @@ public abstract class BaseActivity
 
                     @Override
                     public void onSearchFinished() {
+                        // When docked search bar is used, no need to invalidate the options menus
+                        // because docked search bar won't affect the options menu, invalidating it
+                        // will affect the tab navigation between the docked search bar and the
+                        // next option menu button (list/grid button), because it will try to
+                        // re-render all the option menu buttons.
+                        if (isUseMaterial3FlagEnabled()
+                                && getResources().getBoolean(getRes(R.bool.show_docked_search))) {
+                            return;
+                        }
                         // Restores menu icons state
                         invalidateOptionsMenu();
                     }
