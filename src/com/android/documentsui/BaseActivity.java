@@ -287,6 +287,9 @@ public abstract class BaseActivity
                         if (dir != null) {
                             dir.scrollToTop();
                         }
+                        if (isSearchV2Enabled() && isSearchDocked()) {
+                            updateNavigator();
+                        }
                     }
 
                     @Override
@@ -335,6 +338,9 @@ public abstract class BaseActivity
                         if (isUseMaterial3FlagEnabled()) {
                             // Whenever a search chip is clicked, close the navigation bar.
                             mInjector.selectionBarController.closeSelectionBar();
+                        }
+                        if (isSearchV2Enabled() && isSearchDocked()) {
+                            updateNavigator();
                         }
                     }
 

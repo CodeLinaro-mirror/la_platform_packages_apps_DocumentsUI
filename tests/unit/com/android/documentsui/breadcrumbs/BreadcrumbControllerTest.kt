@@ -83,4 +83,14 @@ class BreadcrumbControllerTest {
         assertTrue(view.performPathItemClick(0))
         assertEquals(-1, folderIndex)
     }
+
+    @Test
+    fun testClearOnHide() {
+        controller.setVisible(true)
+        controller.getModel().setPath(arrayOf("Foo", "Bar", "baz.txt"))
+        assertEquals(3, view.getPathLength())
+        controller.setVisible(false)
+        controller.setVisible(true)
+        assertEquals(0, view.getPathLength())
+    }
 }
