@@ -101,7 +101,15 @@ final class DeleteJob extends ResolvedResourcesJob {
 
     @Override
     JobProgress getJobProgress() {
-        return new JobProgress(id, operationType, getState(), getProgressMessage(), hasFailures());
+        return new JobProgress(
+                id,
+                operationType,
+                getState(),
+                getProgressMessage(),
+                hasFailures(),
+                failedDocs,
+                failedUris,
+                failedPaths);
     }
 
     @Override

@@ -125,12 +125,20 @@
             app:layout_constraintStart_toEndOf="@id/job_progress_item_cancel"
             app:layout_constraintTop_toTopOf="@id/job_progress_item_cancel" />
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/job_progress_item_see_details"
+            style="@style/JobProgressItemActionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/job_progress_item_see_details"
+            app:layout_constraintStart_toEndOf="@id/job_progress_item_show_in_folder"
+            app:layout_constraintTop_toTopOf="@id/job_progress_item_show_in_folder" />
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/job_progress_item_dismiss"
             style="@style/JobProgressItemActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_dismiss"
-            app:layout_constraintStart_toEndOf="@id/job_progress_item_show_in_folder"
-            app:layout_constraintTop_toTopOf="@id/job_progress_item_show_in_folder" />
+            app:layout_constraintStart_toEndOf="@id/job_progress_item_see_details"
+            app:layout_constraintTop_toTopOf="@id/job_progress_item_see_details" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

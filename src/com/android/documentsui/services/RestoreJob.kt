@@ -98,6 +98,9 @@ class RestoreJob(
             state,
             getProgressMessage(R.string.restore_in_progress),
             hasFailures(),
+            failedDocs,
+            failedUris,
+            failedPaths,
         )
     }
 

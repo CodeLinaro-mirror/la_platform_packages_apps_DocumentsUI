@@ -53,6 +53,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.LoadDocStackTask.LoadDocStackCallback;
+import com.android.documentsui.OperationDialogFragment.DialogType;
 import com.android.documentsui.base.BooleanConsumer;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
@@ -79,6 +80,7 @@ import com.android.documentsui.roots.GetShortcutUriTask;
 import com.android.documentsui.roots.LoadFirstRootTask;
 import com.android.documentsui.roots.LoadRootTask;
 import com.android.documentsui.roots.ProvidersAccess;
+import com.android.documentsui.services.JobProgress;
 import com.android.documentsui.sidebar.EjectRootTask;
 import com.android.documentsui.sorting.SortListFragment;
 import com.android.documentsui.ui.DialogController;
@@ -385,6 +387,13 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         Metrics.logUserAction(MetricConsts.USER_ACTION_CREATE_DIR);
 
         CreateDirectoryFragment.show(mActivity.getSupportFragmentManager());
+    }
+
+    @Override
+    public void showFileOperationDetailsDialog(
+            @DialogType int dialogType, JobProgress jobProgress) {
+        OperationDialogFragment.show(
+                mActivity.getSupportFragmentManager(), dialogType, jobProgress);
     }
 
     @Override

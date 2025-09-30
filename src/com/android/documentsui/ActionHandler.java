@@ -26,12 +26,14 @@ import android.view.DragEvent;
 import androidx.annotation.IntDef;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
+import com.android.documentsui.OperationDialogFragment.DialogType;
 import com.android.documentsui.base.BooleanConsumer;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.services.JobProgress;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -212,6 +214,11 @@ public interface ActionHandler {
 
     void setDebugMode(boolean enabled);
     void showDebugMessage();
+
+    /**
+     * Shows an alert dialog informing the user about the files that failed during a file operation.
+     */
+    void showFileOperationDetailsDialog(@DialogType int dialogType, JobProgress jobProgress);
 
     void showSortDialog();
 
