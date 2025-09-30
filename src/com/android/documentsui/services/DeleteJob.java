@@ -96,7 +96,8 @@ final class DeleteJob extends ResolvedResourcesJob {
     }
 
     private String getProgressMessage() {
-        return getProgressMessage(R.string.delete_in_progress);
+        return getProgressMessage(
+                R.string.delete_specific_file_in_progress, R.string.delete_in_progress);
     }
 
     @Override
