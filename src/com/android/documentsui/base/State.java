@@ -16,6 +16,8 @@
 
 package com.android.documentsui.base;
 
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+
 import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -213,6 +215,12 @@ public class State implements android.os.Parcelable {
         out.writeInt(allowMultiple ? 1 : 0);
         out.writeInt(localOnly ? 1 : 0);
         DurableUtils.writeToParcel(out, stack);
+        if (isHomeScreenFilesFlagEnabled()) {
+            out.writeBoolean(/*has shortcut*/ shortcut != null);
+            if (shortcut != null) {
+                DurableUtils.writeToParcel(out, shortcut);
+            }
+        }
         out.writeMap(dirConfigs);
         out.writeList(excludedAuthorities);
         out.writeInt(openableOnly ? 1 : 0);
@@ -234,6 +242,7 @@ public class State implements android.os.Parcelable {
                 + ", allowMultiple=" + allowMultiple
                 + ", localOnly=" + localOnly
                 + ", stack=" + stack
+                + ", shortcut=" + shortcut
                 + ", dirConfigs=" + dirConfigs
                 + ", excludedAuthorities=" + excludedAuthorities
                 + ", openableOnly=" + openableOnly
@@ -257,6 +266,13 @@ public class State implements android.os.Parcelable {
             state.allowMultiple = in.readInt() != 0;
             state.localOnly = in.readInt() != 0;
             DurableUtils.readFromParcel(in, state.stack);
+            if (isHomeScreenFilesFlagEnabled()) {
+                boolean hasShortcut = in.readBoolean();
+                if (hasShortcut) {
+                    state.shortcut = new ShortcutInfo();
+                    DurableUtils.readFromParcel(in, state.shortcut);
+                }
+            }
             in.readMap(state.dirConfigs, loader);
             in.readList(state.excludedAuthorities, loader);
             state.openableOnly = in.readInt() != 0;
