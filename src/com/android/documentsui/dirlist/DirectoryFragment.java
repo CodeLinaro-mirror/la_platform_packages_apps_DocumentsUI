@@ -1193,13 +1193,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // It won't end action mode if user cancels the delete.
             mActions.showDeleteDialog();
             return true;
-        } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
+        } else if (isTrashFlowEnabled()
+                && (id == getRes(R.id.action_menu_move_to_trash)
+                        || id == getRes(R.id.dir_menu_move_to_trash))) {
             mActions.trashSelectedDocuments();
             return true;
-        } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
+        } else if (isTrashFlowEnabled()
+                && (id == getRes(R.id.action_menu_restore_from_trash)
+                        || id == getRes(R.id.dir_menu_restore_from_trash))) {
             restoreDocumentsFromTrash(selection);
             return true;
-        }  else if (id == getRes(R.id.action_menu_copy_to)) {
+        } else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
