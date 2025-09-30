@@ -16,9 +16,11 @@
 
 package com.android.documentsui;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -47,6 +49,7 @@ import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
+import android.view.KeyEvent;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -754,5 +757,60 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 }
             }
         }
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testTabNavigationWithDockedSearchBar() throws Exception {
+        Assume.assumeTrue(
+                "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
+
+        // The button next to the docked search bar is the list or grid button, switch to list mode
+        // before the test so we can assert the next focused view is the grid button.
+        bots.main.switchToListMode();
+
+        // Click the docked search bar.
+        bots.search.expand();
+        closeSoftKeyboard();
+
+        // Assert it should get the focus.
+        bots.search.assertInputFocused(true);
+
+        // Press tab to move the focus.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+
+        // Assert that the focus should go to the grid button.
+        bots.search.assertInputFocused(false);
+        onView(withId(R.id.sub_menu_grid)).check(matches(hasFocus()));
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testTabNavigationWithDockedSearchBar_withQuery() throws Exception {
+        Assume.assumeTrue(
+                "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
+
+        // The button next to the docked search bar is the list or grid button, switch to list mode
+        // before the test so we can assert the next focused view is the grid button.
+        bots.main.switchToListMode();
+
+        // Click the docked search bar and type something.
+        bots.search.doSearch("a");
+
+        // Assert it should get the focus.
+        bots.search.assertInputFocused(true);
+
+        // Press tab to move the focus.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+
+        // Assert that the focus should go to the close search button.
+        bots.search.assertInputFocused(false);
+        onView(withId(R.id.docked_search_clear)).check(matches(hasFocus()));
+
+        // Press tab to move the focus.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+
+        // Assert that the focus should go to the grid button.
+        onView(withId(R.id.sub_menu_grid)).check(matches(hasFocus()));
     }
 }
