@@ -60,17 +60,14 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-/**
- * Adds a gap between items in a vertical Recycler View.
- */
-private class VerticalMarginItemDecoration(
-    private val marginSize: Int
-) : RecyclerView.ItemDecoration() {
+/** Adds a gap between items in a vertical Recycler View. */
+private class VerticalMarginItemDecoration(private val marginSize: Int) :
+    RecyclerView.ItemDecoration() {
     override fun getItemOffsets(
         outRect: Rect,
         view: View,
         parent: RecyclerView,
-        state: RecyclerView.State
+        state: RecyclerView.State,
     ) {
         if (parent.getChildAdapterPosition(view) > 0) {
             outRect.top = marginSize
@@ -89,8 +86,7 @@ class JobPanelController(
     private val activityContext: Context,
     private val actions: ActionHandler,
     private val viewModel: JobPanelViewModel,
-) : BroadcastReceiver(),
-    DefaultLifecycleObserver {
+) : BroadcastReceiver(), DefaultLifecycleObserver {
     companion object {
         private const val TAG = "JobPanelController"
         private const val MAX_PROGRESS = 100
@@ -104,9 +100,8 @@ class JobPanelController(
         private val context = cardView.context
 
         // Header elements.
-        private val titleView = cardView.findViewById<TextView>(
-            getRes(R.id.job_progress_item_title)
-        )
+        private val titleView =
+            cardView.findViewById<TextView>(getRes(R.id.job_progress_item_title))
         private val toggleExpandButton =
             cardView.findViewById<MaterialButton>(getRes(R.id.job_progress_item_expand))
 
@@ -121,14 +116,12 @@ class JobPanelController(
             cardView.findViewById<TextView>(getRes(R.id.job_progress_item_secondary_status))
 
         // Buttons
-        private val cancelButton = cardView.findViewById<Button>(
-            getRes(R.id.job_progress_item_cancel)
-        )
+        private val cancelButton =
+            cardView.findViewById<Button>(getRes(R.id.job_progress_item_cancel))
         private val showInFolderButton =
             cardView.findViewById<Button>(getRes(R.id.job_progress_item_show_in_folder))
-        private val dismissButton = cardView.findViewById<Button>(
-            getRes(R.id.job_progress_item_dismiss)
-        )
+        private val dismissButton =
+            cardView.findViewById<Button>(getRes(R.id.job_progress_item_dismiss))
 
         fun setJobProgress(jobProgress: JobProgress, expanded: Boolean) {
             titleView.text = jobProgress.msg
@@ -164,9 +157,7 @@ class JobPanelController(
 
             if (expanded && jobProgress.isFinal && jobProgress.destination != null) {
                 showInFolderButton.isVisible = true
-                showInFolderButton.setOnClickListener {
-                    controller.showInFolder(jobProgress)
-                }
+                showInFolderButton.setOnClickListener { controller.showInFolder(jobProgress) }
             } else {
                 showInFolderButton.isVisible = false
             }
@@ -209,16 +200,21 @@ class JobPanelController(
                 primaryStatusView.text =
                     context.getString(getRes(R.string.job_progress_item_canceled))
                 secondaryStatusView.isGone = true
-            } else if (expanded && jobProgress.state == Job.STATE_SET_UP &&
-                !jobProgress.isIndeterminate) {
+            } else if (
+                expanded && jobProgress.state == Job.STATE_SET_UP && !jobProgress.isIndeterminate
+            ) {
                 primaryStatusView.setTextAppearance(getRes(R.style.JobProgressItemStatusText))
-                primaryStatusView.text = context.getString(
-                    getRes(R.string.job_progress_item_byte_progress),
-                    Formatter.formatFileSize(context, jobProgress.currentBytes),
-                    Formatter.formatFileSize(context, jobProgress.requiredBytes),
-                )
-                secondaryStatusView.text = context.getString(getRes(R.string.copy_remaining),
-                    FormatUtils.formatDuration(jobProgress.msRemaining))
+                primaryStatusView.text =
+                    context.getString(
+                        getRes(R.string.job_progress_item_byte_progress),
+                        Formatter.formatFileSize(context, jobProgress.currentBytes),
+                        Formatter.formatFileSize(context, jobProgress.requiredBytes),
+                    )
+                secondaryStatusView.text =
+                    context.getString(
+                        getRes(R.string.copy_remaining),
+                        FormatUtils.formatDuration(jobProgress.msRemaining),
+                    )
             } else {
                 primaryStatusView.isGone = true
                 secondaryStatusView.isGone = true
@@ -282,23 +278,29 @@ class JobPanelController(
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProgressItemHolder {
             val context = parent.context
-            val view = LayoutInflater.from(context)
-                .inflate(getRes(R.layout.job_progress_item), parent, false) as MaterialCardView
+            val view =
+                LayoutInflater.from(context)
+                    .inflate(getRes(R.layout.job_progress_item), parent, false) as MaterialCardView
             if (viewType != 0) {
                 val outerRadius =
                     context.resources.getDimension(getRes(R.dimen.job_progress_list_corner_radius))
-                view.shapeAppearanceModel = ShapeAppearanceModel
-                    .builder(context, getRes(R.style.JobProgressItemCardBaseShape), 0)
-                    .apply {
-                        if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_TOP) {
-                            setTopLeftCornerSize(outerRadius)
-                            setTopRightCornerSize(outerRadius)
+                view.shapeAppearanceModel =
+                    ShapeAppearanceModel.builder(
+                            context,
+                            getRes(R.style.JobProgressItemCardBaseShape),
+                            0,
+                        )
+                        .apply {
+                            if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_TOP) {
+                                setTopLeftCornerSize(outerRadius)
+                                setTopRightCornerSize(outerRadius)
+                            }
+                            if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_BOTTOM) {
+                                setBottomLeftCornerSize(outerRadius)
+                                setBottomRightCornerSize(outerRadius)
+                            }
                         }
-                        if (viewType == VIEW_TOP_BOTTOM || viewType == VIEW_BOTTOM) {
-                            setBottomLeftCornerSize(outerRadius)
-                            setBottomRightCornerSize(outerRadius)
-                        }
-                    }.build()
+                        .build()
             }
             return ProgressItemHolder(controller, view)
         }
@@ -314,7 +316,7 @@ class JobPanelController(
 
             override fun areContentsTheSame(
                 oldModel: ProgressViewModel,
-                newModel: ProgressViewModel
+                newModel: ProgressViewModel,
             ) = oldModel == newModel
         }
     }
@@ -340,14 +342,15 @@ class JobPanelController(
 
         menuItem?.let {
             Menus.setEnabledAndVisible(it, menuIconState !is MenuIconState.INVISIBLE)
-            val icon = it.actionView!!
-                .findViewById<ProgressBar>(R.id.job_progress_toolbar_indicator)
+            val icon =
+                it.actionView!!.findViewById<ProgressBar>(R.id.job_progress_toolbar_indicator)
             when (menuIconState) {
                 is MenuIconState.INDETERMINATE -> icon.isIndeterminate = true
-                is MenuIconState.VISIBLE -> icon.apply {
-                    isIndeterminate = false
-                    setProgress(menuIconState.totalProgress, animate)
-                }
+                is MenuIconState.VISIBLE ->
+                    icon.apply {
+                        isIndeterminate = false
+                        setProgress(menuIconState.totalProgress, animate)
+                    }
                 is MenuIconState.INVISIBLE -> {}
             }
             val badge = it.actionView!!.findViewById<ImageView>(R.id.job_progress_toolbar_badge)
@@ -360,25 +363,29 @@ class JobPanelController(
      */
     @Suppress("ktlint:standard:comment-wrapping")
     fun setMenuItem(newMenuItem: MenuItem) {
-        val progressIcon = newMenuItem.actionView!!
-            .findViewById<ProgressBar>(R.id.job_progress_toolbar_indicator)
+        val progressIcon =
+            newMenuItem.actionView!!.findViewById<ProgressBar>(R.id.job_progress_toolbar_indicator)
         progressIcon.max = MAX_PROGRESS
         progressIcon.setOnClickListener { view ->
-            val panel = LayoutInflater.from(activityContext).inflate(
-                getRes(R.layout.job_progress_panel),
-                /* root= */ null
-            )
+            val panel =
+                LayoutInflater.from(activityContext)
+                    .inflate(getRes(R.layout.job_progress_panel), /* root= */ null)
 
-            panel.findViewById<Button>(R.id.job_progress_panel_dismiss_all)
-                .setOnClickListener { viewModel.dismissCompleted() }
+            panel.findViewById<Button>(R.id.job_progress_panel_dismiss_all).setOnClickListener {
+                viewModel.dismissCompleted()
+            }
 
             val listAdapter = ProgressListAdapter(this)
             listAdapter.submitList(ArrayList(viewModel.currentJobs.values))
             panel.findViewById<RecyclerView>(getRes(R.id.job_progress_list)).apply {
                 layoutManager = LinearLayoutManager(context)
-                addItemDecoration(VerticalMarginItemDecoration(
-                    context.resources.getDimensionPixelSize(getRes(R.dimen.job_progress_list_gap))
-                ))
+                addItemDecoration(
+                    VerticalMarginItemDecoration(
+                        context.resources.getDimensionPixelSize(
+                            getRes(R.dimen.job_progress_list_gap)
+                        )
+                    )
+                )
                 itemAnimator = null
                 adapter = listAdapter
                 if (viewModel.listState != null) {
@@ -388,28 +395,29 @@ class JobPanelController(
             }
             progressListAdapter = listAdapter
             val popupWidth =
-                activityContext.resources.getDimension(
-                    getRes(R.dimen.job_progress_panel_width)
-                ) + activityContext.resources.getDimension(
-                    getRes(R.dimen.job_progress_panel_margin)
-                )
-            popup = PopupWindow(
-                /* contentView= */ panel,
-                /* width= */ popupWidth.toInt(),
-                /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
-                /* focusable= */ true
-            ).apply {
-                setOnDismissListener {
-                    progressListAdapter = null
-                    popup = null
-                }
-                showAsDropDown(
-                    /* anchor= */ view,
-                    /* xoff= */ 0,
-                    /* yoff= */ 0,
-                    /* gravity= */ Gravity.TOP or Gravity.END,
-                )
-            }
+                activityContext.resources.getDimension(getRes(R.dimen.job_progress_panel_width)) +
+                    activityContext.resources.getDimension(
+                        getRes(R.dimen.job_progress_panel_margin)
+                    )
+            popup =
+                PopupWindow(
+                        /* contentView= */ panel,
+                        /* width= */ popupWidth.toInt(),
+                        /* height= */ ViewGroup.LayoutParams.WRAP_CONTENT,
+                        /* focusable= */ true,
+                    )
+                    .apply {
+                        setOnDismissListener {
+                            progressListAdapter = null
+                            popup = null
+                        }
+                        showAsDropDown(
+                            /* anchor= */ view,
+                            /* xoff= */ 0,
+                            /* yoff= */ 0,
+                            /* gravity= */ Gravity.TOP or Gravity.END,
+                        )
+                    }
         }
         // Restore the popup if we had saved state.
         if (viewModel.listState != null) {
@@ -422,9 +430,7 @@ class JobPanelController(
 
     override fun onCreate(owner: LifecycleOwner) {
         owner.lifecycleScope.launch {
-            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                observeViewModel()
-            }
+            owner.repeatOnLifecycle(Lifecycle.State.STARTED) { observeViewModel() }
         }
     }
 
@@ -447,18 +453,22 @@ class JobPanelController(
         activityContext.unregisterReceiver(this)
         // We need to save the popup's UI state and manually dismiss the popup, as it somehow
         // stays alive even if the activity is destroyed due to a configuration change.
-        viewModel.listState = popup?.contentView
-            ?.findViewById<RecyclerView>(R.id.job_progress_list)?.layoutManager
-            ?.onSaveInstanceState()
+        viewModel.listState =
+            popup
+                ?.contentView
+                ?.findViewById<RecyclerView>(R.id.job_progress_list)
+                ?.layoutManager
+                ?.onSaveInstanceState()
         popup?.dismiss()
     }
 
     override fun onReceive(context: Context?, intent: Intent) {
-        val progresses = IntentCompat.getParcelableArrayListExtra(
-            intent,
-            FileOperationService.EXTRA_PROGRESS,
-            JobProgress::class.java
-        )
+        val progresses =
+            IntentCompat.getParcelableArrayListExtra(
+                intent,
+                FileOperationService.EXTRA_PROGRESS,
+                JobProgress::class.java,
+            )
         viewModel.updateProgress(progresses!!)
     }
 
