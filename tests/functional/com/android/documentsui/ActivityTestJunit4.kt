@@ -26,6 +26,7 @@ import android.provider.DocumentsContract
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import androidx.annotation.LayoutRes
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.Configurator
@@ -81,6 +82,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     @JvmField protected var mDocsHelper: DocumentsProviderHelper? = null
 
     @JvmField protected var mActivityScenario: ActivityScenario<T?>? = null
+    @LayoutRes protected var activityLayoutId: Int? = null
     private var initialScreenOffTimeoutValue: String? = null
     private var initialSleepTimeoutValue: String? = null
 
@@ -110,8 +112,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
         automation = InstrumentationRegistry.getInstrumentation().uiAutomation
         features = RuntimeFeatures(context!!.getResources(), null)
 
-        bots = Bots(device, automation, context, TIMEOUT)
-
         Configurator.getInstance().toolType = MotionEvent.TOOL_TYPE_MOUSE
 
         mDocsHelper =
@@ -131,7 +131,14 @@ abstract class ActivityTestJunit4<T : Activity?> {
         ActivityTest.closeNonDocsUiWindows(context, device)
         launchActivity()
 
-        logLayout()
+        mActivityScenario?.onActivity({ activity ->
+            activityLayoutId = (activity as? BaseActivity)?.layoutId
+            bots = Bots(device, automation, context, TIMEOUT, activityLayoutId)
+            if (activityLayoutId != null) {
+                logLayout()
+            }
+        })
+
         logFeatureFlags()
 
         // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will

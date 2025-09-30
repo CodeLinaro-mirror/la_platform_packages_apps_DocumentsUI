@@ -17,6 +17,7 @@
 package com.android.documentsui.bots
 
 import android.content.Context
+import androidx.annotation.LayoutRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.RootMatchers
@@ -27,15 +28,20 @@ import com.android.documentsui.actions.showRootsList
 import com.android.documentsui.actions.waitForRootsListDrawerToClose
 
 /** Open the root with the given label. */
-fun openRoot(context: Context, label: String) {
-    showRootsList(context)
+fun openRoot(context: Context, label: String, @LayoutRes layoutId: Int?) {
+    showRootsList(context, layoutId)
     actionOnRootItem(label, click())
-    waitForRootsListDrawerToClose(context)
+    waitForRootsListDrawerToClose(context, layoutId)
 }
 
 /** Open the root with the given label, right click on it, and click the given menu option. */
-fun rightClickRootAndClickMenuOption(context: Context, label: String, menuOption: String?) {
-    showRootsList(context)
+fun rightClickRootAndClickMenuOption(
+    context: Context,
+    label: String,
+    menuOption: String?,
+    @LayoutRes layoutId: Int?,
+) {
+    showRootsList(context, layoutId)
     actionOnRootItem(label, rightClick())
     onView(withText(menuOption)).inRoot(RootMatchers.isPlatformPopup()).perform(click())
 }

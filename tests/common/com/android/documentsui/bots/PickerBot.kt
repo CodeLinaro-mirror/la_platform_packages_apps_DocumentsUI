@@ -16,6 +16,7 @@
 package com.android.documentsui.bots
 
 import android.content.Context
+import androidx.annotation.LayoutRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
@@ -33,8 +34,8 @@ import com.android.documentsui.util.Material3Config.Companion.getRes
  * A test helper class that provides support for controlling picker activities programmatically, and
  * making assertions against the state of the UI.
  */
-class PickerBot(device: UiDevice?, context: Context?, timeout: Int) :
-    BaseBot(device, context, timeout) {
+class PickerBot(device: UiDevice?, context: Context?, timeout: Int, @LayoutRes layoutId: Int?) :
+    BaseBot(device, context, timeout, layoutId) {
     /** Clicks the save button with id button1 */
     fun clickSaveButton() {
         onView(withId(android.R.id.button1)).perform(click())

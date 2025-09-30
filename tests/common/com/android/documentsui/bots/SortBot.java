@@ -32,6 +32,7 @@ import static junit.framework.Assert.assertTrue;
 
 import static org.hamcrest.Matchers.allOf;
 
+import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
 
@@ -61,8 +62,13 @@ public class SortBot extends Bots.BaseBot {
     private final ColumnSortBot mColumnBot;
     private final UiBot mUiBot;
 
-    public SortBot(UiDevice device, Context context, int timeout, UiBot uiBot) {
-        super(device, context, timeout);
+    public SortBot(
+            UiDevice device,
+            Context context,
+            int timeout,
+            UiBot uiBot,
+            @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mColumnBot = new ColumnSortBot();
         mUiBot = uiBot;
     }

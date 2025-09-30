@@ -17,6 +17,7 @@ package com.android.documentsui.bots
 
 import android.content.Context
 import android.widget.FrameLayout
+import androidx.annotation.LayoutRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewAssertion
@@ -44,8 +45,8 @@ import org.hamcrest.CoreMatchers.allOf
  * A test helper class that provides support for controlling the peek overlay and making assertions
  * against the state of it.
  */
-class PeekBot(device: UiDevice, context: Context, timeout: Int) :
-    Bots.BaseBot(device, context, timeout) {
+class PeekBot(device: UiDevice, context: Context, timeout: Int, @LayoutRes layoutId: Int) :
+    Bots.BaseBot(device, context, timeout, layoutId) {
     private val peekOverlayMatcher = withId(R.id.peek_overlay)
     private val peekContainerMatcher =
         allOf(withId(R.id.peek_container), isDescendantOfA(peekOverlayMatcher))

@@ -407,7 +407,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
 
         // Try from a different root.
-        openRoot(context, StubProvider.ROOT_1_ID)
+        openRoot(context, StubProvider.ROOT_1_ID, activityLayoutId)
         openPanel()
         onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
         bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)

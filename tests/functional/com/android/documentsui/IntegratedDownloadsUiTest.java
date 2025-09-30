@@ -49,7 +49,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         // We'll still see an entry in the downloads UI with a "Queued" label.
         dm.enqueue(new Request(Uri.parse("http://hammychamp.toodles")));
 
-        EspressoBotsKt.openRoot(context, "Downloads");
+        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         bots.directory.assertDocumentsVisible("Queued");
     }
 
@@ -61,7 +61,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         // This downloads fails! But it'll still show up.
         dm.enqueue(new Request(Uri.parse("http://www.google.com/hamfancy")));
 
-        EspressoBotsKt.openRoot(context, "Downloads");
+        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         UiObject doc = bots.directory.findDocument("Unsuccessful");
         doc.waitForExists(TIMEOUT);
 

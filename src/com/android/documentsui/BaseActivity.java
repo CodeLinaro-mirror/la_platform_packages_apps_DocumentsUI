@@ -128,8 +128,7 @@ public abstract class BaseActivity
     private final List<EventListener> mEventListeners = new ArrayList<>();
     private final String mTag;
 
-    @LayoutRes
-    private int mLayoutId;
+    @LayoutRes private int mLayoutId;
 
     private RootsMonitor<BaseActivity> mRootsMonitor;
 
@@ -172,6 +171,11 @@ public abstract class BaseActivity
     protected abstract void onDirectoryCreated(DocumentInfo doc);
 
     public abstract Injector<?> getInjector();
+
+    @VisibleForTesting
+    public @LayoutRes int getLayoutId() {
+        return mLayoutId;
+    }
 
     @VisibleForTesting
     protected void initConfigStore() {
