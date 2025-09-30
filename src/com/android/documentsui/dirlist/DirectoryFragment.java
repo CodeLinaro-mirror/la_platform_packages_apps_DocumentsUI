@@ -16,7 +16,6 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
@@ -893,9 +892,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (startUnpackingArchive(docDetails)) return true;
         }
 
-        if (isDesktopFileHandlingFlagEnabled()) {
-            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -1293,11 +1289,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            if (isDesktopFileHandlingFlagEnabled()) {
-                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-            } else {
-                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
-            }
+            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
         }
         return true;
     }
