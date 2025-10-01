@@ -667,7 +667,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
                         @Override
                         public void onSelectionChanged() {
-                            if (mPathExtractor == null || mBreadcrumbModel == null) {
+                            // If the path extractor or the breadcrumb model were not set up or the
+                            // activity is either null or indicating that it is neither in the
+                            // recents view or is searching, do not extract paths from the currently
+                            // selected files. The extracted path is used only in recent and search
+                            // results to show the location of the selected file.
+                            if (mPathExtractor == null
+                                    || mBreadcrumbModel == null
+                                    || mActivity == null
+                                    || !(mActivity.isSearching() || mActivity.isInRecents())) {
                                 return;
                             }
                             String selectedId = null;

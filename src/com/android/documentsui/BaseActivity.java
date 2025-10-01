@@ -1179,6 +1179,15 @@ public abstract class BaseActivity
         return mState.stack.isRecents();
     }
 
+    /**
+     * Allows others to check if the application is currently searching or just listing directories.
+     *
+     * @return Whether or not search is currently active.
+     */
+    public boolean isSearching() {
+        return mSearchManager.isSearching();
+    }
+
     @VisibleForTesting
     public void addEventListener(EventListener listener) {
         mEventListeners.add(listener);
