@@ -303,8 +303,7 @@ public abstract class BaseActivity
                         // will affect the tab navigation between the docked search bar and the
                         // next option menu button (list/grid button), because it will try to
                         // re-render all the option menu buttons.
-                        if (isUseMaterial3FlagEnabled()
-                                && getResources().getBoolean(getRes(R.bool.show_docked_search))) {
+                        if (isUseMaterial3FlagEnabled() && isSearchDocked()) {
                             return;
                         }
                         // Restores menu icons state
@@ -537,6 +536,13 @@ public abstract class BaseActivity
         mLastSelectedUser = getSelectedUser();
     }
 
+    /**
+     * @return Whether or not the search view is docked in the toolbar.
+     */
+    public boolean isSearchDocked() {
+        return getResources().getBoolean(getRes(R.bool.show_docked_search));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean showMenu = super.onCreateOptionsMenu(menu);
@@ -546,8 +552,7 @@ public abstract class BaseActivity
         boolean fullBarSearch = getResources().getBoolean(getRes(R.bool.full_bar_search_view));
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
                 R.bool.show_search_bar);
-        boolean showDockedSearch = getResources().getBoolean(getRes(R.bool.show_docked_search));
-        mSearchManager.install(menu, fullBarSearch, showSearchBar, showDockedSearch);
+        mSearchManager.install(menu, fullBarSearch, showSearchBar, isSearchDocked());
 
         // Remove the subMenu when material3 is launched b/379776735.
         final ActionMenuView subMenuView = findViewById(getRes(R.id.sub_menu));
