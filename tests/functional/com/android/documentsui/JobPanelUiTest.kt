@@ -57,6 +57,7 @@ import com.android.documentsui.testing.MutableJobProgress
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Assert.assertTrue
@@ -222,21 +223,37 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(selectedDescendantsMatch(withText(R.string.move_failed), isDisplayed()))
             .check(
                 selectedDescendantsMatch(
-                    withText(R.string.job_progress_item_see_details),
-                    isDisplayed(),
+                    withId(R.id.job_progress_item_secondary_status),
+                    allOf(withText(R.string.job_progress_item_see_details), isDisplayed()),
                 )
             )
 
         // Dismiss the first item.
         onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress1))).perform(click())
+        onView(
+                allOf(
+                    withId(R.id.job_progress_item_see_details),
+                    insideItem(progress1),
+                    isDisplayed(),
+                )
+            )
+            .check(doesNotExist())
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress1)))
             .perform(click())
         onView(withText(progress1.msg)).check(doesNotExist())
 
         // Dismiss the second item. The panel should disappear.
         onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress2))).perform(click())
-        onView(allOf(withText(R.string.job_progress_item_see_details), isDisplayed()))
+        onView(
+                allOf(
+                    withId(R.id.job_progress_item_secondary_status),
+                    insideItem(progress2),
+                    isDisplayed(),
+                )
+            )
             .check(doesNotExist())
+        onView(allOf(withId(R.id.job_progress_item_see_details), insideItem(progress2)))
+            .check(matches(isDisplayed()))
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress2)))
             .perform(click())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
@@ -442,6 +459,42 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         sendProgress(arrayListOf(inProgress.toJobProgress()))
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(40)))
         onView(withId(R.id.job_progress_toolbar_badge)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testShowDetailsForFailedItem() {
+        val root = testFiles.getRoot(StubProvider.ROOT_0_ID)
+        val doc = testFiles.docsHelper.findDocument(root.documentId, TestFilesRule.FILE_NAME_1)
+        val uri = testFiles.getUriInRoot(StubProvider.ROOT_0_ID, TestFilesRule.FILE_NAME_2)!!
+        val failed =
+            MutableJobProgress(
+                id = "failed_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job failed",
+                hasFailures = true,
+                failedDocs = arrayListOf(doc),
+                failedUris = arrayListOf(uri),
+                failedPaths = arrayListOf("failed/item.txt"),
+            )
+        sendProgress(arrayListOf(failed.toJobProgress()))
+
+        // Click the see details button of the failed item.
+        openPanel()
+        onView(withText(failed.msg)).perform(click())
+        onView(withId(R.id.job_progress_item_see_details)).perform(click())
+
+        // A dialog should pop up with the failed path inside.
+        onView(
+                withText(
+                    allOf(
+                        containsString(doc.displayName),
+                        containsString(uri.toString()),
+                        containsString("item.txt"),
+                    )
+                )
+            )
+            .check(matches(isDisplayed()))
     }
 
     @Test

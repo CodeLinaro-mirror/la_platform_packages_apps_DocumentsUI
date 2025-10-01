@@ -46,6 +46,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.documentsui.JobPanelViewModel.MenuIconState
 import com.android.documentsui.JobPanelViewModel.ProgressViewModel
+import com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_FAILURE
+import com.android.documentsui.OperationDialogFragment.DialogType
 import com.android.documentsui.base.Menus
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperations
@@ -120,6 +122,8 @@ class JobPanelController(
             cardView.findViewById<Button>(getRes(R.id.job_progress_item_cancel))
         private val showInFolderButton =
             cardView.findViewById<Button>(getRes(R.id.job_progress_item_show_in_folder))
+        private val seeDetailsButton =
+            cardView.findViewById<Button>(getRes(R.id.job_progress_item_see_details))
         private val dismissButton =
             cardView.findViewById<Button>(getRes(R.id.job_progress_item_dismiss))
 
@@ -150,12 +154,25 @@ class JobPanelController(
                 cancelButton.setOnClickListener { FileOperations.cancel(context, jobProgress.id) }
             }
 
+            seeDetailsButton.isVisible =
+                expanded && jobProgress.state == Job.STATE_COMPLETED && jobProgress.hasFailures
+            if (seeDetailsButton.isVisible) {
+                seeDetailsButton.setOnClickListener {
+                    controller.showDetailsDialog(DIALOG_TYPE_FAILURE, jobProgress)
+                }
+            }
+
             dismissButton.isVisible = expanded && jobProgress.isFinal
             if (dismissButton.isVisible) {
                 dismissButton.setOnClickListener { controller.dismissProgress(jobProgress.id) }
             }
 
-            if (expanded && jobProgress.isFinal && jobProgress.destination != null) {
+            if (
+                expanded &&
+                    jobProgress.isFinal &&
+                    jobProgress.destination != null &&
+                    !jobProgress.hasFailures
+            ) {
                 showInFolderButton.isVisible = true
                 showInFolderButton.setOnClickListener { controller.showInFolder(jobProgress) }
             } else {
@@ -483,5 +500,9 @@ class JobPanelController(
     private fun showInFolder(jobProgress: JobProgress) {
         actions.jumpToDirectory(jobProgress.destination)
         popup?.dismiss()
+    }
+
+    private fun showDetailsDialog(@DialogType dialogType: Int, jobProgress: JobProgress) {
+        actions.showFileOperationDetailsDialog(dialogType, jobProgress)
     }
 }
