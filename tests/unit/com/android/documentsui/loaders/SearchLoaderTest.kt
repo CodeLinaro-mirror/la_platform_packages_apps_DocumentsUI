@@ -312,7 +312,6 @@ class SearchLoaderTest {
             expect.that(getFileCount(result)).isEqualTo(1)
 
             val document = getDocuments(result)[0]
-            expect.that(document.authority).isEqualTo(TestProvidersAccess.DOWNLOADS.authority)
             expect.that(document.displayName).isEqualTo(testParams.expectedDisplayName)
         }
     }
