@@ -1874,5 +1874,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         public ActionHandler getActionHandler() {
             return mActions;
         }
+
+        @Override
+        public boolean isOnTrashPage() {
+            return mState.stack.isTrash();
+        }
     }
 }
