@@ -73,6 +73,7 @@
     <dimen name="list_item_padding_vertical">4dp</dimen>
     <dimen name="list_item_icon_margin_end">12dp</dimen>
     <dimen name="list_item_icon_size">32dp</dimen>
+    <dimen name="list_item_preview_icon_size">48dp</dimen>
     <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="list_item_width_m3">72dp</dimen>
     <dimen name="list_item_padding_m3">16dp</dimen>
