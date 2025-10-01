@@ -386,4 +386,6 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Pregled slike <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Sakrivanje ploče s informacijama"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Prikaz ploče s informacijama"</string>
+    <!-- no translation found for trash_page_empty_title (1277047027818824150) -->
+    <skip />
 </resources>
