@@ -79,8 +79,12 @@ public class RecentsLoader extends MultiRootDocumentsLoader {
 
     @Override
     protected boolean shouldIgnoreRoot(RootInfo root) {
-        // only query the root is local only, support recents, and is from the selected user.
-        return !root.isLocalOnly() || !root.supportsRecents() || !mUserId.equals(root.userId);
+        // only query the root is local only, support recents, from the selected user, and not the
+        // MediaDocumentsProvider "all files" root, which is only supported when using Searchv2.
+        return !root.isLocalOnly()
+                || !root.supportsRecents()
+                || !mUserId.equals(root.userId)
+                || root.isFiles();
     }
 
     @Override
