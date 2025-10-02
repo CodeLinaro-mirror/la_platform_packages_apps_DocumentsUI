@@ -452,7 +452,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertWindowTitle(SHORTCUT_ID);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
 
-        // TODO: b/447024807 - Readd the checked added for shortcut sidebar selection changes.
+        bots.roots.assertItemSelected(SHORTCUT_ID);
+        bots.roots.assertItemNotSelected(primaryRoot.title);
 
         cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
     }
@@ -481,7 +482,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertWindowTitle(SHORTCUT_ID);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
 
-        // TODO: b/447024807 - Readd the checked added for shortcut sidebar selection changes.
+        bots.roots.assertItemSelected(SHORTCUT_ID);
+        bots.roots.assertItemNotSelected(primaryRoot.title);
 
         cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
     }

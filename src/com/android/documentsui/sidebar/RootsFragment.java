@@ -855,7 +855,7 @@ public class RootsFragment extends Fragment {
                 final Object item = mListHandler.getItem(i);
                 if (item instanceof BaseSidebarEntryItem) {
                     final SidebarEntryItemInfo testInfo =
-                            ((BaseSidebarEntryItem) item).getItemInfo();
+                        ((BaseSidebarEntryItem) item).getItemInfo();
                     if (Objects.equals(testInfo, itemInfo)) {
                         // TODO: b/447254297 - Check if this is still necessary for language
                         //  configuration changes.
