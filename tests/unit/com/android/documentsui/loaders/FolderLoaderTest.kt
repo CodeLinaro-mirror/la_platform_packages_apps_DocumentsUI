@@ -54,47 +54,48 @@ class FolderLoaderTest() {
         companion object {
             @JvmStatic
             @Parameters(name = "with parameters {0}")
-            fun data() = listOf(
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    null,
-                    ALL_RESULTS,
-                    Bundle(),
-                    TOTAL_FILE_COUNT
-                ),
-                // Result limiting only works for search, not folder navigation, expect limit to be ignored.
-                LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
-                // The first file is at NOW, the second at NOW - 1h, etc.
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    Duration.ofMinutes(1L),
-                    ALL_RESULTS,
-                    Bundle(),
-                    1
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    Duration.ofMinutes(60L + 1),
-                    ALL_RESULTS,
-                    Bundle(),
-                    2
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
-                    ALL_RESULTS,
-                    Bundle(),
-                    TOTAL_FILE_COUNT
-                ),
-            )
+            fun data() =
+                listOf(
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        null,
+                        ALL_RESULTS,
+                        Bundle(),
+                        TOTAL_FILE_COUNT,
+                    ),
+                    // Result limiting only works for search, not folder navigation, expect limit to
+                    // be ignored.
+                    LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
+                    // The first file is at NOW, the second at NOW - 1h, etc.
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        Duration.ofMinutes(1L),
+                        ALL_RESULTS,
+                        Bundle(),
+                        1,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        Duration.ofMinutes(60L + 1),
+                        ALL_RESULTS,
+                        Bundle(),
+                        2,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
+                        ALL_RESULTS,
+                        Bundle(),
+                        TOTAL_FILE_COUNT,
+                    ),
+                )
         }
 
-        @get:Rule
-        val setFlags = OverrideFlagsRule()
+        @get:Rule val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
         lateinit var mockProvider: TestDocumentsProvider
@@ -134,7 +135,7 @@ class FolderLoaderTest() {
                     TestProvidersAccess.DOWNLOADS,
                     rootFolderInfo,
                     queryOptions,
-                    environment.state.sortModel
+                    environment.state.sortModel,
                 )
             val directoryResult = loader.loadInBackground()
             assertEquals(testParams.expectedCount, getFileCount(directoryResult))
@@ -151,7 +152,7 @@ class FolderLoaderTest() {
                     TestProvidersAccess.DOWNLOADS,
                     null,
                     queryOptions,
-                    environment.state.sortModel
+                    environment.state.sortModel,
                 )
             val directoryResult = loader.loadInBackground()
             assertEquals(testParams.expectedCount, getFileCount(directoryResult))
@@ -160,8 +161,7 @@ class FolderLoaderTest() {
 
     @SmallTest
     class PlainTests : BaseLoaderTest() {
-        @get:Rule
-        val setFlags = OverrideFlagsRule()
+        @get:Rule val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
         lateinit var mockProvider: TestDocumentsProvider
@@ -178,7 +178,7 @@ class FolderLoaderTest() {
                     null,
                     true,
                     arrayOf("*/*"),
-                    Bundle()
+                    Bundle(),
                 )
             // Set up sample files using Downloads provider.
             mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
@@ -201,7 +201,7 @@ class FolderLoaderTest() {
                     TestProvidersAccess.DOWNLOADS,
                     null,
                     queryOptions,
-                    environment.state.sortModel
+                    environment.state.sortModel,
                 )
             val result = loader.loadInBackground()
             assertEquals(0, result?.cursor?.count)

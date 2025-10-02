@@ -36,21 +36,20 @@ import com.android.documentsui.base.RootInfo
 import com.android.documentsui.sorting.SortModel
 
 /**
- * A specialization of the BaseFileLoader that loads the children of a single folder. To list
- * a directory you need to provide:
+ * A specialization of the BaseFileLoader that loads the children of a single folder. To list a
+ * directory you need to provide:
+ * - The current application context
+ * - A content lock for which a locking content observer is built
+ * - A list of user IDs on behalf of which the search is conducted
+ * - The root info of the listed directory
+ * - The document info of the listed directory, may be null.
+ * - a lookup from file extension to file type
+ * - The model capable of sorting results
  *
- *  - The current application context
- *  - A content lock for which a locking content observer is built
- *  - A list of user IDs on behalf of which the search is conducted
- *  - The root info of the listed directory
- *  - The document info of the listed directory, may be null.
- *  - a lookup from file extension to file type
- *  - The model capable of sorting results
- *
- *  Typically, here we expect mListedDir to be not null, as this is the directory we are listing.
- *  However, when profile is switched while using the app as a file picker, it is possible that
- *  the listing directory is null. If this is the case, we assume that we should be listing the
- *  location specified by the mRoot.
+ * Typically, here we expect mListedDir to be not null, as this is the directory we are listing.
+ * However, when profile is switched while using the app as a file picker, it is possible that the
+ * listing directory is null. If this is the case, we assume that we should be listing the location
+ * specified by the mRoot.
  */
 class FolderLoader(
     context: Context,
@@ -85,14 +84,11 @@ class FolderLoader(
         val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
         val folderChildrenUri =
             if (mListedDir == null) {
-                DocumentsContract.buildChildDocumentsUri(
-                    mRoot.authority,
-                    mRoot.documentId
-                )
+                DocumentsContract.buildChildDocumentsUri(mRoot.authority, mRoot.documentId)
             } else {
                 DocumentsContract.buildChildDocumentsUri(
                     mListedDir.authority,
-                    mListedDir.documentId
+                    mListedDir.documentId,
                 )
             }
         val result = DirectoryResult()
@@ -103,12 +99,7 @@ class FolderLoader(
         }
         var cursor: Cursor? = null
         try {
-            cursor = queryLocation(
-                mRoot,
-                folderChildrenUri,
-                mOptions.otherQueryArgs,
-                ALL_RESULTS
-            )
+            cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
         } catch (e: Exception) {
             result.exception = e
         } finally {
