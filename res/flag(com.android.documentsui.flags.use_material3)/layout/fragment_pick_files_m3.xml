@@ -21,7 +21,6 @@
     android:layout_height="wrap_content"
     android:paddingStart="@dimen/picker_saver_padding_start"
     android:paddingEnd="@dimen/picker_saver_padding_end"
-    android:paddingBottom="@dimen/picker_saver_padding_bottom"
     android:paddingTop="@dimen/picker_saver_padding_top"
     android:background="?attr/colorSurfaceContainer"
     android:baselineAligned="false"
