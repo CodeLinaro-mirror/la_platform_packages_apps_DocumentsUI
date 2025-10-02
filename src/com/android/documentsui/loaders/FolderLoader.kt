@@ -99,7 +99,7 @@ class FolderLoader(
         }
         var cursor: Cursor? = null
         try {
-            cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
+            cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs)
         } catch (e: Exception) {
             result.exception = e
         } finally {

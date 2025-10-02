@@ -196,15 +196,10 @@ abstract class BaseFileLoader(
      * locationUri. It returns a non-null cursor, if it can access the location given by the
      * `locationUri`, or null, if it fails to query the given location for the current user.
      */
-    fun queryLocation(
-        rootInfo: RootInfo,
-        locationUri: Uri,
-        queryArgs: Bundle?,
-        maxResults: Int,
-    ): Cursor? {
+    fun queryLocation(rootInfo: RootInfo, locationUri: Uri, queryArgs: Bundle?): Cursor? {
         try {
             Trace.beginSection("documentsui.searchv2.BaseFileLoader#queryLocation")
-            return queryLocationTraced(rootInfo, locationUri, queryArgs, maxResults)
+            return queryLocationTraced(rootInfo, locationUri, queryArgs)
         } finally {
             Trace.endSection()
         }
@@ -215,7 +210,6 @@ abstract class BaseFileLoader(
         rootInfo: RootInfo,
         locationUri: Uri,
         queryArgs: Bundle?,
-        maxResults: Int,
     ): Cursor? {
         val authority = locationUri.authority ?: return null
         val resolver = rootInfo.userId.getContentResolver(context) ?: return null
@@ -225,13 +219,24 @@ abstract class BaseFileLoader(
             }
             // TODO(b:440453094): Fix handling of cancel signal is documents providers.
             val cursor = client.query(locationUri, null, queryArgs, cancelNotifier) ?: return null
-            return RootCursorWrapper(
-                rootInfo.userId,
-                authority,
-                rootInfo.rootId,
-                cursor,
-                maxResults,
-            )
+            return createRootCursorWrapper(rootInfo, locationUri, cursor)
         }
     }
+
+    /**
+     * A method to create RootCursorWrapper given a result Cursor from the query. This allows
+     * subclass to override the creation, such as specifying max result or authority.
+     */
+    open fun createRootCursorWrapper(
+        rootInfo: RootInfo,
+        locationUri: Uri,
+        cursor: Cursor,
+    ): RootCursorWrapper =
+        RootCursorWrapper(
+            rootInfo.userId,
+            locationUri.authority,
+            rootInfo.rootId,
+            cursor,
+            ALL_RESULTS,
+        )
 }

@@ -23,6 +23,7 @@ import androidx.loader.content.Loader
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
+import com.android.documentsui.archives.ArchivesProvider
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
@@ -206,6 +207,35 @@ class FolderLoaderTest() {
             val result = loader.loadInBackground()
             assertEquals(0, result?.cursor?.count)
             assertEquals(message, result?.exception?.message)
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testLoadInBackground_archiveUri_hasCorrectAuthority() {
+            val provider = TestDocumentsProvider(context, ArchivesProvider.AUTHORITY)
+            activity.contentResolver.addProvider(ArchivesProvider.AUTHORITY, provider)
+
+            val archiveFile = environment.archiveModel.createFile("whatsinthere.zip", 0)
+            val docs = createDocuments(1)
+            provider.setNextChildDocumentsReturns(*docs)
+
+            val loader =
+                FolderLoader(
+                    context = activity,
+                    mimeTypeLookup = TestFileTypeLookup(),
+                    contentLock = contentLock,
+                    // Try listing an archive file inside the external storage.
+                    mRoot = TestProvidersAccess.EXTERNALSTORAGE,
+                    mListedDir = archiveFile,
+                    mOptions = queryOptions,
+                    mSortModel = environment.state.sortModel,
+                )
+
+            val result = loader.loadInBackground()
+            assertEquals(1, getFileCount(result))
+
+            val document = getDocuments(result)[0]
+            assertEquals(ArchivesProvider.AUTHORITY, document.authority)
         }
 
         @Test
