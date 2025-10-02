@@ -36,6 +36,7 @@ import android.os.Bundle;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
@@ -142,7 +143,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testCopyDocument_Cancel() throws Exception {
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
 
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
@@ -162,7 +163,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testCopyDocument_CancelFromNotification() throws Exception {
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -172,17 +173,17 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         device.waitForIdle();
         assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         device.waitForIdle();
         assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }
@@ -190,7 +191,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testMoveDocument_Cancel() throws Exception {
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
 
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
@@ -211,7 +212,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Ignore("TODO(b/437236527): deflake and re-enable")
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -221,17 +222,17 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_move));
         device.waitForIdle();
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         device.waitForIdle();
         assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         device.waitForIdle();
         assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }

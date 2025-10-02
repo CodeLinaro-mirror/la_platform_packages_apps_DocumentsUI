@@ -16,6 +16,8 @@
 
 package com.android.documentsui.files;
 
+import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasData;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
@@ -34,6 +36,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -43,6 +47,7 @@ import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Parcelable;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -58,6 +63,7 @@ import android.view.DragEvent;
 import androidx.core.util.Preconditions;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.MediumTest;
+import androidx.test.filters.SdkSuppress;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.ModelId;
@@ -293,6 +299,95 @@ public class ActionHandlerTest {
 
         mActivity.startService.assertCalled();
         assertSelectionContainerClosed();
+    }
+
+    /** Verifies that trashable documents are trashed when the trash feature is enabled. */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testRunDeleteOrTrashHandler_trashesTrashableDocuments_whenTrashIsEnabled() {
+        assumeTrashApiIsAvailable();
+        mEnv.populateStack();
+        mEnv.selectionMgr.clearSelection();
+
+        ActionHandler<TestActivity> handlerSpy = spy(mHandler);
+        doNothing().when(handlerSpy).trashSelectedDocuments();
+
+        final DocumentInfo trashableDoc =
+                mEnv.model.createDocument(
+                        "trashable-doc",
+                        "plain/text",
+                        DocumentsContract.Document.FLAG_SUPPORTS_TRASH);
+        mEnv.model.update();
+        mEnv.selectDocument(trashableDoc);
+
+        handlerSpy.runDeleteOrTrashHandler();
+
+        verify(handlerSpy).trashSelectedDocuments();
+    }
+
+    /** Verifies that non-trashable documents are deleted when the trash feature is enabled. */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testRunDeleteOrTrashHandler_deletesNonTrashableDocuments_whenTrashIsEnabled() {
+        assumeTrashApiIsAvailable();
+        mEnv.populateStack();
+        mEnv.selectionMgr.clearSelection();
+
+        ActionHandler<TestActivity> handlerSpy = spy(mHandler);
+        doNothing().when(handlerSpy).showDeleteDialog();
+
+        final DocumentInfo nonTrashableDoc =
+                mEnv.model.createDocument("non-trashable-doc", "plain/text", 0);
+        mEnv.model.update();
+        mEnv.selectDocument(nonTrashableDoc);
+
+        handlerSpy.runDeleteOrTrashHandler();
+
+        verify(handlerSpy).showDeleteDialog();
+    }
+
+    /**
+     * Verifies that all documents are deleted when the trash feature is disabled, regardless of
+     * their individual trash support.
+     */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testRunDeleteOrTrashHandler_deletesAllDocuments_whenTrashIsDisabled() {
+        assumeTrashApiIsAvailable();
+        mEnv.populateStack();
+        mEnv.selectionMgr.clearSelection();
+
+        ActionHandler<TestActivity> handlerSpy = spy(mHandler);
+        doNothing().when(handlerSpy).showDeleteDialog();
+
+        // Test with a document that supports trash
+        final DocumentInfo trashableDoc =
+                mEnv.model.createDocument(
+                        "trashable-doc",
+                        "plain/text",
+                        DocumentsContract.Document.FLAG_SUPPORTS_TRASH);
+        mEnv.model.update();
+        mEnv.selectDocument(trashableDoc);
+
+        handlerSpy.runDeleteOrTrashHandler();
+
+        verify(handlerSpy).showDeleteDialog();
+
+        // Test with a document that does not support trash
+        final DocumentInfo nonTrashableDoc =
+                mEnv.model.createDocument("non-trashable-doc", "plain/text", 0);
+        mEnv.model.update();
+        mEnv.selectDocument(nonTrashableDoc);
+
+        handlerSpy.runDeleteOrTrashHandler();
+
+        verify(handlerSpy, times(2)).showDeleteDialog();
     }
 
     @Test
@@ -928,5 +1023,18 @@ public class ActionHandlerTest {
                 mDragAndDropManager,
                 mPeekViewManager,
                 mEnv.injector);
+    }
+
+    /**
+     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
+     * The Trash feature under test relies on DocumentsContract APIs introduced in the
+     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
+     * subject to MTS testing, which runs on older Android base builds to verify backward
+     * compatibility. However, this specific Trash feature lacks backward compatibility
+     * with platforms at or below Baklava. This assumption prevents failures when the
+     * test runs on an older base OS without the necessary APIs.
+     */
+    private void assumeTrashApiIsAvailable() {
+        assumeTrue(VersionUtils.isGreaterThanB());
     }
 }

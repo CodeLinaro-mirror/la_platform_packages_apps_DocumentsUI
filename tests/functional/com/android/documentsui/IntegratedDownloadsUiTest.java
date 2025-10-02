@@ -28,6 +28,7 @@ import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiObject;
 
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 
 import org.junit.Ignore;
@@ -48,7 +49,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         // We'll still see an entry in the downloads UI with a "Queued" label.
         dm.enqueue(new Request(Uri.parse("http://hammychamp.toodles")));
 
-        bots.roots.openRoot("Downloads");
+        EspressoBotsKt.openRoot(context, "Downloads");
         bots.directory.assertDocumentsVisible("Queued");
     }
 
@@ -60,7 +61,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         // This downloads fails! But it'll still show up.
         dm.enqueue(new Request(Uri.parse("http://www.google.com/hamfancy")));
 
-        bots.roots.openRoot("Downloads");
+        EspressoBotsKt.openRoot(context, "Downloads");
         UiObject doc = bots.directory.findDocument("Unsuccessful");
         doc.waitForExists(TIMEOUT);
 

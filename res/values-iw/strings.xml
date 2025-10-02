@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"שיתוף באמצעות"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"המערכת מעתיקה את הקבצים"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"מתבצעת דחיסה של קבצים"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"מתבצעת דחיסה של קבצים"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"המערכת מחלצת קבצים"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"בתהליך העברת קבצים"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"מחיקת קבצים"</string>
@@ -171,10 +170,8 @@
       <item quantity="two">מתבצעת מחיקה של <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים.</item>
       <item quantity="other">מתבצעת מחיקה של <xliff:g id="COUNT_1">%1$d</xliff:g> פריטים.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{קובץ אחד מועבר לאשפה}one{‫# קבצים מועברים לאשפה}two{‫# קבצים מועברים לאשפה}other{‫# קבצים מועברים לאשפה}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{מתבצע שחזור של קובץ אחד}one{מתבצע שחזור של # קבצים}two{מתבצע שחזור של # קבצים}other{מתבצע שחזור של # קבצים}}"</string>
     <string name="undo" msgid="2902438994196400565">"ביטול"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"בהכנה…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"בהכנה…"</string>
@@ -187,23 +184,16 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"‫<xliff:g id="COUNT_0">%1$d</xliff:g> מתוך <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"‫<xliff:g id="COUNT_0">%1$d</xliff:g> מתוך <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{לא הצלחנו להעתיק פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו להעתיק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו להעתיק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו להעתיק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{קובץ אחד לא הועתק}one{‫# קבצים לא הועתקו}two{‫# קבצים לא הועתקו}other{‫# קבצים לא הועתקו}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{לא הצלחנו לדחוס את הנתונים של פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו לדחוס את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו לדחוס את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו לדחוס את הנתונים של <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{קובץ אחד לא נדחס}one{‫# קבצים לא נדחסו}two{‫# קבצים לא נדחסו}other{‫# קבצים לא נדחסו}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{קובץ אחד לא חולץ}one{‫# קבצים לא חולצו}two{‫# קבצים לא חולצו}other{‫# קבצים לא חולצו}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{לא הצלחנו להעביר פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו להעביר <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{קובץ אחד לא הועבר}one{‫# קבצים לא הועברו}two{‫# קבצים לא הועברו}other{‫# קבצים לא הועברו}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{לא הצלחנו למחוק פריט אחד (<xliff:g id="COUNT_0">{count}</xliff:g>)}one{לא הצלחנו למחוק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}two{לא הצלחנו למחוק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}other{לא הצלחנו למחוק <xliff:g id="COUNT_1">{count}</xliff:g> פריטים}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{קובץ אחד לא נמחק}one{‫# קבצים לא נמחקו}two{‫# קבצים לא נמחקו}other{‫# קבצים לא נמחקו}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{קובץ אחד לא הועבר לאשפה}one{‫# קבצים לא הועברו לאשפה}two{‫# קבצים לא הועברו לאשפה}other{‫# קבצים לא הועברו לאשפה}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{קובץ אחד לא שוחזר}one{‫# קבצים לא שוחזרו}two{‫# קבצים לא שוחזרו}other{‫# קבצים לא שוחזרו}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"יש ללחוץ להצגת הפרטים"</string>
     <string name="close" msgid="905969391788869975">"סגירה"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -211,43 +201,37 @@
       <item quantity="two">הקבצים הבאים לא הועתקו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">הקבצים הבאים לא הועתקו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{הקובץ \"<xliff:g id="LIST_0">{list}</xliff:g>\" לא הועתק}one{הקבצים האלה לא הועתקו :<xliff:g id="LIST_1">{list}</xliff:g>}two{הקבצים האלה לא הועתקו :<xliff:g id="LIST_1">{list}</xliff:g>}other{הקבצים האלה לא הועתקו :<xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">הקבצים הבאים לא היו דחוסים: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">הקבצים הבאים לא היו דחוסים: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">הקבצים הבאים לא היו דחוסים: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{הקובץ \"<xliff:g id="LIST_0">{list}</xliff:g>\" לא נדחס}one{הקבצים האלה לא נדחסו: <xliff:g id="LIST_1">{list}</xliff:g>}two{הקבצים האלה לא נדחסו: <xliff:g id="LIST_1">{list}</xliff:g>}other{הקבצים האלה לא נדחסו: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">הקבצים הבאים לא חולצו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">הקבצים הבאים לא חולצו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">הקבצים הבאים לא חולצו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{הקובץ \"<xliff:g id="LIST_0">{list}</xliff:g>\" לא חולץ}one{הקבצים האלה לא חולצו: <xliff:g id="LIST_1">{list}</xliff:g>}two{הקבצים האלה לא חולצו: <xliff:g id="LIST_1">{list}</xliff:g>}other{הקבצים האלה לא חולצו: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">הקבצים הבאים לא הועברו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">הקבצים הבאים לא הועברו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">הקבצים הבאים לא הועברו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{הקובץ \"<xliff:g id="LIST_0">{list}</xliff:g>\" לא הועבר}one{הקבצים האלה לא הועברו: <xliff:g id="LIST_1">{list}</xliff:g>}two{הקבצים האלה לא הועברו: <xliff:g id="LIST_1">{list}</xliff:g>}other{הקבצים האלה לא הועברו: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">הקבצים הבאים לא נמחקו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">הקבצים הבאים לא נמחקו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">הקבצים הבאים לא נמחקו: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{הקובץ \"<xliff:g id="LIST_0">{list}</xliff:g>\" לא נמחק}one{הקבצים האלה לא נמחקו: <xliff:g id="LIST_1">{list}</xliff:g>}two{הקבצים האלה לא נמחקו: <xliff:g id="LIST_1">{list}</xliff:g>}other{הקבצים האלה לא נמחקו: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">הקבצים הבאים הומרו לפורמט אחר: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">הקבצים הבאים הומרו לפורמט אחר: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">הקבצים הבאים הומרו לפורמט אחר: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{הקובץ \"<xliff:g id="LIST_0">{list}</xliff:g>\" הומר לפורמט אחר}one{הקבצים האלה הומרו לפורמט אחר: <xliff:g id="LIST_1">{list}</xliff:g>}two{הקבצים האלה הומרו לפורמט אחר: <xliff:g id="LIST_1">{list}</xliff:g>}other{הקבצים האלה הומרו לפורמט אחר: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים הועתקו ללוח.</item>
       <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> פריטים הועתקו ללוח.</item>
@@ -262,14 +246,11 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"הוצאה"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"קבצים מסוימים הומרו"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{מתבצעת העתקה של \"<xliff:g id="FILENAME">{filename}</xliff:g>\" לתיקייה \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# קבצים מועתקים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# קבצים מועתקים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# קבצים מועתקים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
+    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{הקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\" מחולץ אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# קבצים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# קבצים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# קבצים מחולצים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{המערכת מעבירה את \"<xliff:g id="FILENAME">{filename}</xliff:g>\" אל \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}two{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{‫# קבצים מועברים אל \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{מתבצעת מחיקה של \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת מחיקה של # קבצים}two{מתבצעת מחיקה של # קבצים}other{מתבצעת מחיקה של # קבצים}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
+    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{הקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\" מועבר לאשפה}one{‫# קבצים מועברים לאשפה}two{‫# קבצים מועברים לאשפה}other{‫# קבצים מועברים לאשפה}}"</string>
+    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{מתבצע שחזור של הקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצע שחזור של # קבצים}two{מתבצע שחזור של # קבצים}other{מתבצע שחזור של # קבצים}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{מתבצעת דחיסה לקובץ \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{מתבצעת דחיסה ל-# קבצים}two{מתבצעת דחיסה ל-# קבצים}other{מתבצעת דחיסה ל-# קבצים}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"הצגת ההתקדמות בהעלאת הקובץ"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ההתקדמות בפעולה בקובץ"</string>

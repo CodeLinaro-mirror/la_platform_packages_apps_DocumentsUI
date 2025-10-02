@@ -25,6 +25,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -54,7 +55,7 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     public void testNavigate_FromEmptyDirectory() throws Exception {
         device.waitForIdle();
 
-        bots.roots.openRoot(mTestFilesRule.getRoot(ROOT_0_ID).title);
+        EspressoBotsKt.openRoot(context, mTestFilesRule.getRoot(ROOT_0_ID).title);
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
 
         // Check to make sure back button is properly handled by non-Doc type DocHolders

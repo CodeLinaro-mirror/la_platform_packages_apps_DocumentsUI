@@ -22,6 +22,7 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.services.FileOperationService;
@@ -140,6 +141,15 @@ public class State implements android.os.Parcelable {
 
     /** Current user navigation stack; empty implies recents. */
     public final DocumentStack stack = new DocumentStack();
+
+    /**
+     * Stores a ShortcutInfo reference of the currently selected shortcut. If a root is selected
+     * instead, this value will be null.
+     */
+    // TODO: b/447024807 - Make ShortcutInfo Parcelable and Durable for persisting state
+    //  configurations.
+    @Nullable
+    public ShortcutInfo shortcut;
 
     /** Instance configs for every shown directory */
     public HashMap<String, SparseArray<Parcelable>> dirConfigs = new HashMap<>();

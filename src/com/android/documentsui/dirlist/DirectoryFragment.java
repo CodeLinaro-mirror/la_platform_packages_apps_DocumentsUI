@@ -27,9 +27,10 @@ import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager;
@@ -109,11 +110,13 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Features;
+import com.android.documentsui.base.PathExtractor;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.breadcrumbs.BreadcrumbModel;
 import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
@@ -227,6 +230,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private Handler mHandler;
     private Runnable mProviderTestRunnable;
+
+    private @Nullable PathExtractor mPathExtractor;
+    private @Nullable BreadcrumbModel mBreadcrumbModel;
 
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
@@ -457,6 +463,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mHandler = new Handler(Looper.getMainLooper());
         mActivity = getBaseActivity();
+        if (isSearchV2Enabled()) {
+            mPathExtractor = new PathExtractor(mActivity);
+            mBreadcrumbModel = mActivity.getBreadcrumbModel();
+        }
         mRootView =
                 (AnimationView)
                         inflater.inflate(getRes(R.layout.fragment_directory), container, false);
@@ -540,6 +550,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (isUseMaterial3FlagEnabled()) {
             mRootView.removeOnSizeChangedListener(mOnSizeChangedListener);
         }
+        mBreadcrumbModel = null;
 
         super.onDestroyView();
     }
@@ -650,6 +661,39 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         mSelectionMgr.addObserver(mSelectionMetadata);
+        if (isSearchV2Enabled()) {
+            mSelectionMgr.addObserver(
+                    new SelectionTracker.SelectionObserver<String>() {
+                        private final String[] mEmptyPath = new String[0];
+
+                        @Override
+                        public void onSelectionChanged() {
+                            if (mPathExtractor == null || mBreadcrumbModel == null) {
+                                return;
+                            }
+                            String selectedId = null;
+                            if (mSelectionMgr.getSelection().size() == 1) {
+                                for (String id : mSelectionMgr.getSelection()) {
+                                    selectedId = id;
+                                }
+                            }
+                            String[] path = mEmptyPath;
+                            if (selectedId != null) {
+                                DocumentInfo info = mModel.getDocument(selectedId);
+                                if (info != null) {
+                                    try {
+                                        path = mPathExtractor.getDocumentInfoPath(info);
+                                    } catch (Exception e) {
+                                        if (DEBUG) {
+                                            Log.d(TAG, "Failed to get path for " + info, e);
+                                        }
+                                    }
+                                }
+                            }
+                            mBreadcrumbModel.setPath(path);
+                        }
+                    });
+        }
 
         // Construction of the input handlers is non trivial, so to keep logic clear,
         // and code flexible, and DirectoryFragment small, the construction has been
@@ -1154,7 +1198,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mActions.showDeleteDialog();
             return true;
         } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
-            trashSelectedDocuments(selection);
+            mActions.trashSelectedDocuments();
             return true;
         } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
             restoreDocumentsFromTrash(selection);
@@ -1294,16 +1338,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         } else {
             mActivity.onDocumentPicked(docs.get(0));
         }
-    }
-
-    private void trashSelectedDocuments(final Selection selected) {
-        if (selected.isEmpty()) {
-            return;
-        }
-
-        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
-        List<DocumentInfo> docs = mModel.getDocuments(selected);
-        mActions.trashSelectedDocuments(docs);
     }
 
     private void restoreDocumentsFromTrash(final Selection selected) {

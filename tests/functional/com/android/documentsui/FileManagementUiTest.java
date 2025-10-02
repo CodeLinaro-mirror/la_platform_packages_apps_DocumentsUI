@@ -31,6 +31,7 @@ import androidx.test.filters.LargeTest;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
@@ -100,13 +101,15 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.waitForIdle();
 
+        // Keep using the old openRoot. The copy action triggers a system popup and a DocsUI
+        // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
         bots.roots.openRoot(ROOT_1_ID);
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
 
         bots.directory.waitForDocument("file1.png");
         bots.directory.assertDocumentsVisible("file1.png");
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.directory.assertDocumentsAbsent("file1.png");
     }
 
@@ -120,12 +123,14 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.waitForIdle();
 
+        // Keep using the old openRoot. The copy action triggers a system popup and a DocsUI
+        // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
         bots.roots.openRoot(ROOT_1_ID);
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
 
         bots.directory.waitForDocument("file1.png");
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.directory.waitForDocument("file1.png");
     }
 
@@ -176,7 +181,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             nameOfLastFile = nameOfLastFile.compareTo(name) < 0 ? name : nameOfLastFile;
         }
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.directory.openDocument("test");
         bots.sort.sortBy(
                 SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_ASCENDING);
@@ -186,6 +191,8 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(
                 KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_LEFT_ON | KeyEvent.META_CTRL_ON);
 
+        // Keep using the old openRoot. The copy action triggers a system popup and a DocsUI
+        // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
         bots.roots.openRoot(ROOT_0_ID);
         bots.directory.openDocument("target");
         bots.directory.pasteFilesFromClipboard();
