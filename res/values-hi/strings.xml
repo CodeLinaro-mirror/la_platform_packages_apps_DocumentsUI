@@ -368,4 +368,6 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> वाली इमेज की झलक"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"जानकारी वाला पैनल छिपाएं"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"जानकारी वाला पैनल दिखाएं"</string>
+    <!-- no translation found for trash_page_empty_title (1277047027818824150) -->
+    <skip />
 </resources>
