@@ -34,6 +34,7 @@ import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
@@ -158,7 +159,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     @HugeLongTest
     @Test
     public void testDeleteAllDocument() throws Exception {
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.main.clickToolbarOverflowItem(
                 context.getResources().getString(R.string.menu_select_all));
         device.waitForIdle();
@@ -175,7 +176,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
         assertTrue(mErrorReason, mOperationExecuted);
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         device.waitForIdle();
 
         List<DocumentInfo> root1 = mDocsHelper.listChildren(rootDir0.documentId, 1000);

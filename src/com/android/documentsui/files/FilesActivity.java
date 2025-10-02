@@ -242,7 +242,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         mInjector.appsRowManager = mAppsRowManager;
 
         mActivityInputHandler =
-                new ActivityInputHandler(mInjector.actions::showDeleteDialog);
+                new ActivityInputHandler(mInjector.actions::runDeleteOrTrashHandler);
         mSharedInputHandler =
                 new SharedInputHandler(
                         mInjector.focusManager,

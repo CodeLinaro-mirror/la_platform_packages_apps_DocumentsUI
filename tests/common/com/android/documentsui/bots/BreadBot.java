@@ -16,13 +16,26 @@
 
 package com.android.documentsui.bots;
 
-import android.content.Context;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.content.Context;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
 
+import com.android.documentsui.R;
+
 import junit.framework.Assert;
+
+import org.hamcrest.Matcher;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +51,40 @@ import java.util.function.Predicate;
 public class BreadBot extends Bots.BaseBot {
 
     private final String mBreadCrumbId;
+
+    /**
+     * Helper view action that, given a linear view, attempts to collect text from all TextView
+     * children contained in it.
+     */
+    // TODO(b:416108180): Consider making it a EqualsToPathAssertion extends ViewAssertion.
+    private static ViewAction getTextOfTextViews(final List<String> texts) {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isAssignableFrom(LinearLayout.class);
+            }
+
+            @Override
+            public String getDescription() {
+                return "Gets text from linear layout inside breadcrumb v2";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                if (view.getVisibility() != View.VISIBLE) {
+                    return;
+                }
+                LinearLayout linearLayout = (LinearLayout) view;
+                for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                    View child = linearLayout.getChildAt(i);
+                    if (child instanceof TextView) {
+                        TextView textView = (TextView) child;
+                        texts.add(textView.getText().toString());
+                    }
+                }
+            }
+        };
+    }
 
     public BreadBot(UiDevice device, Context context, int timeout) {
         super(device, context, timeout);
@@ -74,5 +121,16 @@ public class BreadBot extends Bots.BaseBot {
     private UiObject2 findHorizontalEntry(String label) {
         UiObject2 breadcrumb = mDevice.findObject(By.res(mBreadCrumbId));
         return breadcrumb.findObject(By.text(label));
+    }
+
+    /**
+     * Returns the full path displayed in breadcrumb v2, providing it is visible.
+     *
+     * @return A list of strings extracted from breadcrumb v2 TextView elements.
+     */
+    public List<String> getBreadcrumbV2Path() {
+        List<String> collectedTexts = new ArrayList<>();
+        onView(withId(R.id.breadcrumb_path_holder)).perform(getTextOfTextViews(collectedTexts));
+        return collectedTexts;
     }
 }

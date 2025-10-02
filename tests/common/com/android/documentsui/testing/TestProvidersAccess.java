@@ -15,6 +15,8 @@
  */
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.Material3Config.getRes;
+
 import android.content.ContentResolver;
 import android.os.Process;
 import android.os.UserHandle;
@@ -23,8 +25,11 @@ import android.provider.DocumentsContract.Root;
 import androidx.annotation.NonNull;
 
 import com.android.documentsui.InspectorProvider;
+import com.android.documentsui.R;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -46,6 +51,7 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo HOME;
     public static final RootInfo HAMMY;
     public static final RootInfo PICKLES;
+    public static final RootInfo PEPPER;
     public static final RootInfo RECENTS;
     public static final RootInfo TRASH_ROOT;
     public static final RootInfo INSPECTOR;
@@ -57,6 +63,13 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo NO_TREE_ROOT;
     public static final RootInfo SD_CARD;
     public static final RootInfo LOCAL_SEARCH;
+    public static final ShortcutInfo HOME_SCREEN_SHORTCUT;
+    public static final ShortcutInfo LIVE_IMAGES_SHORTCUT;
+    public static final ShortcutInfo TEST_SHORTCUT;
+    private static final int HOME_SCREEN_ICON_RES_ID =
+            getRes(R.drawable.ic_root_homescreen);
+    private static final int LIVE_IMAGES_ICON_RES_ID = 12;
+    private static final int TEST_ICON_RES_ID = 15;
 
     static {
         UserId userId = TestProvidersAccess.USER_ID;
@@ -68,7 +81,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         DOWNLOADS.authority = Providers.AUTHORITY_DOWNLOADS;
         DOWNLOADS.rootId = Providers.ROOT_ID_DOWNLOADS;
         DOWNLOADS.title = "Downloads";
-        DOWNLOADS.derivedType = RootInfo.TYPE_DOWNLOADS;
+        DOWNLOADS.derivedType = SidebarEntryItemInfo.TYPE_DOWNLOADS;
         DOWNLOADS.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_RECENTS;
@@ -80,7 +93,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         HOME.authority = Providers.AUTHORITY_STORAGE;
         HOME.rootId = Providers.ROOT_ID_HOME;
         HOME.title = "Home";
-        HOME.derivedType = RootInfo.TYPE_LOCAL;
+        HOME.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
         HOME.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_CREATE
                 | Root.FLAG_SUPPORTS_IS_CHILD
@@ -91,7 +104,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         HAMMY.authority = "yummies";
         HAMMY.rootId = "hamsandwich";
         HAMMY.title = "Ham Sandwich";
-        HAMMY.derivedType = RootInfo.TYPE_LOCAL;
+        HAMMY.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
         HAMMY.flags = Root.FLAG_LOCAL_ONLY;
 
         PICKLES = new RootInfo();
@@ -101,10 +114,17 @@ public class TestProvidersAccess implements ProvidersAccess {
         PICKLES.title = "Pickles";
         PICKLES.summary = "Yummy pickles";
 
+        PEPPER = new RootInfo();
+        PEPPER.userId = userId;
+        PEPPER.authority = "peppery";
+        PEPPER.rootId = "pepper";
+        PEPPER.title = "Pepper";
+        PEPPER.flags = Root.FLAG_SUPPORTS_CREATE;
+
         RECENTS = new RootInfo() {
             {
                 // Special root for recents
-                derivedType = RootInfo.TYPE_RECENTS;
+                derivedType = SidebarEntryItemInfo.TYPE_RECENTS;
                 flags = Root.FLAG_LOCAL_ONLY;
                 availableBytes = -1;
             }
@@ -116,7 +136,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             {
                 // Special root for trash
                 rootId = Providers.TRASH_ROOT_ID;
-                derivedType = RootInfo.TYPE_TRASH;
+                derivedType = SidebarEntryItemInfo.TYPE_TRASH;
                 flags = Root.FLAG_LOCAL_ONLY;
                 availableBytes = -1;
             }
@@ -137,35 +157,35 @@ public class TestProvidersAccess implements ProvidersAccess {
         IMAGE.authority = Providers.AUTHORITY_MEDIA;
         IMAGE.rootId = Providers.ROOT_ID_IMAGES;
         IMAGE.title = "Images";
-        IMAGE.derivedType = RootInfo.TYPE_IMAGES;
+        IMAGE.derivedType = SidebarEntryItemInfo.TYPE_IMAGES;
 
         AUDIO = new RootInfo();
         AUDIO.userId = userId;
         AUDIO.authority = Providers.AUTHORITY_MEDIA;
         AUDIO.rootId = Providers.ROOT_ID_AUDIO;
         AUDIO.title = "Audio";
-        AUDIO.derivedType = RootInfo.TYPE_AUDIO;
+        AUDIO.derivedType = SidebarEntryItemInfo.TYPE_AUDIO;
 
         VIDEO = new RootInfo();
         VIDEO.userId = userId;
         VIDEO.authority = Providers.AUTHORITY_MEDIA;
         VIDEO.rootId = Providers.ROOT_ID_VIDEOS;
         VIDEO.title = "Videos";
-        VIDEO.derivedType = RootInfo.TYPE_VIDEO;
+        VIDEO.derivedType = SidebarEntryItemInfo.TYPE_VIDEO;
 
         DOCUMENT = new RootInfo();
         DOCUMENT.userId = userId;
         DOCUMENT.authority = Providers.AUTHORITY_MEDIA;
         DOCUMENT.rootId = Providers.ROOT_ID_DOCUMENTS;
         DOCUMENT.title = "Documents";
-        DOCUMENT.derivedType = RootInfo.TYPE_DOCUMENTS;
+        DOCUMENT.derivedType = SidebarEntryItemInfo.TYPE_DOCUMENTS;
 
         EXTERNALSTORAGE = new RootInfo();
         EXTERNALSTORAGE.userId = userId;
         EXTERNALSTORAGE.authority = Providers.AUTHORITY_STORAGE;
         EXTERNALSTORAGE.rootId = Providers.ROOT_ID_DEVICE;
         EXTERNALSTORAGE.title = "Device";
-        EXTERNALSTORAGE.derivedType = RootInfo.TYPE_LOCAL;
+        EXTERNALSTORAGE.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
         EXTERNALSTORAGE.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_IS_CHILD;
 
@@ -174,7 +194,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         NO_TREE_ROOT.authority = "no.tree.authority";
         NO_TREE_ROOT.rootId = "1";
         NO_TREE_ROOT.title = "No Tree Title";
-        NO_TREE_ROOT.derivedType = RootInfo.TYPE_LOCAL;
+        NO_TREE_ROOT.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
         NO_TREE_ROOT.flags = Root.FLAG_LOCAL_ONLY;
 
         SD_CARD = new RootInfo();
@@ -182,7 +202,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         SD_CARD.authority = Providers.AUTHORITY_STORAGE;
         SD_CARD.rootId = Providers.ROOT_ID_DOCUMENTS;
         SD_CARD.title = "SD card";
-        SD_CARD.derivedType = RootInfo.TYPE_SD;
+        SD_CARD.derivedType = SidebarEntryItemInfo.TYPE_SD;
         SD_CARD.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_IS_CHILD;
 
@@ -193,6 +213,27 @@ public class TestProvidersAccess implements ProvidersAccess {
         LOCAL_SEARCH.title = "Local Search";
         LOCAL_SEARCH.derivedType = RootInfo.TYPE_LOCAL;
         LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY;
+
+        HOME_SCREEN_SHORTCUT = new ShortcutInfo(
+                HOME_SCREEN_ICON_RES_ID,
+                Providers.HOME_SCREEN_SHORTCUT_TITLE,
+                EXTERNALSTORAGE,
+                "primary:"
+        );
+
+        LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
+                LIVE_IMAGES_ICON_RES_ID,
+                "Live images",
+                IMAGE,
+                "something/to/image:"
+        );
+
+        TEST_SHORTCUT = new ShortcutInfo(
+                TEST_ICON_RES_ID,
+                "shortcut in pepper",
+                PEPPER,
+                "some parent dir"
+        );
     }
 
     public static class OtherUser {
@@ -214,7 +255,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             DOWNLOADS.authority = Providers.AUTHORITY_DOWNLOADS;
             DOWNLOADS.rootId = Providers.ROOT_ID_DOWNLOADS;
             DOWNLOADS.title = "Downloads";
-            DOWNLOADS.derivedType = RootInfo.TYPE_DOWNLOADS;
+            DOWNLOADS.derivedType = SidebarEntryItemInfo.TYPE_DOWNLOADS;
             DOWNLOADS.flags = Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_SUPPORTS_RECENTS;
@@ -224,7 +265,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             HOME.authority = Providers.AUTHORITY_STORAGE;
             HOME.rootId = Providers.ROOT_ID_HOME;
             HOME.title = "Home";
-            HOME.derivedType = RootInfo.TYPE_LOCAL;
+            HOME.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
             HOME.flags = Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_SUPPORTS_IS_CHILD
@@ -235,7 +276,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             IMAGE.authority = Providers.AUTHORITY_MEDIA;
             IMAGE.rootId = Providers.ROOT_ID_IMAGES;
             IMAGE.title = "Images";
-            IMAGE.derivedType = RootInfo.TYPE_IMAGES;
+            IMAGE.derivedType = SidebarEntryItemInfo.TYPE_IMAGES;
 
             PICKLES = new RootInfo();
             PICKLES.userId = userId;
@@ -249,7 +290,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             MTP_ROOT.authority = Providers.AUTHORITY_MTP;
             MTP_ROOT.rootId = Providers.ROOT_ID_DOCUMENTS;
             MTP_ROOT.title = "MTP";
-            MTP_ROOT.derivedType = RootInfo.TYPE_MTP;
+            MTP_ROOT.derivedType = SidebarEntryItemInfo.TYPE_MTP;
             MTP_ROOT.flags = Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_IS_CHILD;
@@ -275,7 +316,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             DOWNLOADS.authority = Providers.AUTHORITY_DOWNLOADS;
             DOWNLOADS.rootId = Providers.ROOT_ID_DOWNLOADS;
             DOWNLOADS.title = "Downloads";
-            DOWNLOADS.derivedType = RootInfo.TYPE_DOWNLOADS;
+            DOWNLOADS.derivedType = SidebarEntryItemInfo.TYPE_DOWNLOADS;
             DOWNLOADS.flags = Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_SUPPORTS_RECENTS;
@@ -285,7 +326,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             HOME.authority = Providers.AUTHORITY_STORAGE;
             HOME.rootId = Providers.ROOT_ID_HOME;
             HOME.title = "Home";
-            HOME.derivedType = RootInfo.TYPE_LOCAL;
+            HOME.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
             HOME.flags = Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_SUPPORTS_IS_CHILD
@@ -296,7 +337,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             IMAGE.authority = Providers.AUTHORITY_MEDIA;
             IMAGE.rootId = Providers.ROOT_ID_IMAGES;
             IMAGE.title = "Images";
-            IMAGE.derivedType = RootInfo.TYPE_IMAGES;
+            IMAGE.derivedType = SidebarEntryItemInfo.TYPE_IMAGES;
 
             PICKLES = new RootInfo();
             PICKLES.userId = userId;
@@ -310,7 +351,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             MTP_ROOT.authority = Providers.AUTHORITY_MTP;
             MTP_ROOT.rootId = Providers.ROOT_ID_DOCUMENTS;
             MTP_ROOT.title = "MTP";
-            MTP_ROOT.derivedType = RootInfo.TYPE_MTP;
+            MTP_ROOT.derivedType = SidebarEntryItemInfo.TYPE_MTP;
             MTP_ROOT.flags = Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_IS_CHILD;

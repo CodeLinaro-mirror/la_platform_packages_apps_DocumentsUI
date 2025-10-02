@@ -59,7 +59,7 @@ class BreadcrumbModel : ViewModel() {
      * path, which means the argument cannot be re-used. Returns true, if the set path was different
      * than the one kept by this model.
      */
-    private fun setPath(newPath: Array<String>): Boolean {
+    fun setPath(newPath: Array<String>): Boolean {
         val currentPath = mutablePathData.value?.toTypedArray() ?: arrayOf()
         if (currentPath.contentEquals(newPath)) {
             return false

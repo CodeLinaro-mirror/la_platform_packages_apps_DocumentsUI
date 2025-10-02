@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"Partager via"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Copie de fichiers…"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Compression des fichiers"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"Compression de fichiers…"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Extraction des fichiers"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Déplacement des fichiers"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Suppression des fichiers"</string>
@@ -171,10 +170,8 @@
       <item quantity="many">Suppression de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
       <item quantity="other">Suppression de <xliff:g id="COUNT_1">%1$d</xliff:g> éléments en cours.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{Mise à la corbeille de # fichier en cours…}one{Mise à la corbeille de # fichier en cours…}many{Mise à la corbeille de # de fichiers en cours…}other{Mise à la corbeille de # fichiers en cours…}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{Restauration de # fichier en cours…}one{Restauration de # fichier en cours…}many{Restauration de # de fichiers en cours…}other{Restauration de # fichiers en cours…}}"</string>
     <string name="undo" msgid="2902438994196400565">"Annuler"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Préparation en cours…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Préparation en cours…"</string>
@@ -187,23 +184,16 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Impossible de copier <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de copier <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Impossible de copier # fichier}one{Impossible de copier # fichier}many{Impossible de copier # de fichiers}other{Impossible de copier # fichiers}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Impossible de compresser <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de compresser <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Impossible de compresser # fichier au format zip}one{Impossible de compresser # fichier au format zip}many{Impos. de compresser # de fichiers au format zip}other{Impos. de compresser # fichiers au format zip}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Impossible d\'extraire # fichier}one{Impossible d\'extraire # fichier}many{Impossible d\'extraire # de fichiers}other{Impossible d\'extraire # fichiers}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Impossible de déplacer <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de déplacer <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Impossible de déplacer # fichier}one{Impossible de déplacer # fichier}many{Impossible de déplacer # de fichiers}other{Impossible de déplacer # fichiers}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Impossible de supprimer <xliff:g id="COUNT_0">{count}</xliff:g> élément}one{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> élément}many{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> d\'éléments}other{Impossible de supprimer <xliff:g id="COUNT_1">{count}</xliff:g> éléments}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Impossible de supprimer # fichier}one{Impossible de supprimer # fichier}many{Impossible de supprimer # de fichiers}other{Impossible de supprimer # fichiers}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Impossible de mettre # fichier à la corbeille}one{Impossible de mettre # fichier à la corbeille}many{Impossible de mettre # de fichier à la corbeille}other{Impossible de mettre # fichiers à la corbeille}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Impossible de restaurer # fichier}one{Impossible de restaurer # fichier}many{Impossible de restaurer # de fichier}other{Impossible de restaurer # fichiers}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Touchez pour afficher les détails"</string>
     <string name="close" msgid="905969391788869975">"Fermer"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -211,43 +201,37 @@
       <item quantity="many">Ces fichiers n\'ont pas été copiés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ces fichiers n\'ont pas été copiés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Ce fichier n\'a pas été copié : <xliff:g id="LIST_0">{list}</xliff:g>}one{Ce fichier n\'a pas été copié : <xliff:g id="LIST_1">{list}</xliff:g>}many{Ces fichiers n\'ont pas été copiés : <xliff:g id="LIST_1">{list}</xliff:g>}other{Ces fichiers n\'ont pas été copiés : <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">Ce fichier n\'a pas été compressé : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Ces fichiers n\'ont pas été compressés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ces fichiers n\'ont pas été compressés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Ce fich. n\'a pas été compressé au format zip : <xliff:g id="LIST_0">{list}</xliff:g>}one{Ce fich. n\'a pas été compressé au format zip : <xliff:g id="LIST_1">{list}</xliff:g>}many{Ces fich. n\'ont pas été compr. au format zip : <xliff:g id="LIST_1">{list}</xliff:g>}other{Ces fich. n\'ont pas été compr. au format zip : <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">Ce fichier n\'a pas été extrait : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Ces fichiers n\'ont pas été extraits : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ces fichiers n\'ont pas été extraits : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Ce fichier n\'a pas été extrait : <xliff:g id="LIST_0">{list}</xliff:g>}one{Ce fichier n\'a pas été extrait : <xliff:g id="LIST_1">{list}</xliff:g>}many{Ces fichiers n\'ont pas été extraits : <xliff:g id="LIST_1">{list}</xliff:g>}other{Ces fichiers n\'ont pas été extraits : <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">Ce fichier n\'a pas été déplacé : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Ces fichiers n\'ont pas été déplacés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ces fichiers n\'ont pas été déplacés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Ce fichier n\'a pas été déplacé : <xliff:g id="LIST_0">{list}</xliff:g>}one{Ce fichier n\'a pas été déplacé : <xliff:g id="LIST_1">{list}</xliff:g>}many{Ces fichiers n\'ont pas été déplacés : <xliff:g id="LIST_1">{list}</xliff:g>}other{Ces fichiers n\'ont pas été déplacés : <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">Ce fichier n\'a pas été supprimé : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Ces fichiers n\'ont pas été supprimés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ces fichiers n\'ont pas été supprimés : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Ce fichier n\'a pas été supprimé : <xliff:g id="LIST_0">{list}</xliff:g>}one{Ce fichier n\'a pas été supprimé : <xliff:g id="LIST_1">{list}</xliff:g>}many{Ces fichiers n\'ont pas été supprimés : <xliff:g id="LIST_1">{list}</xliff:g>}other{Ces fichiers n\'ont pas été supprimés : <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">Ce fichier a été converti en un autre format : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Ces fichiers ont été convertis en un autre format : <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ces fichiers ont été convertis en un autre format : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Ce fichier a été converti dans un autre format : <xliff:g id="LIST_0">{list}</xliff:g>}one{Ce fichier a été converti dans un autre format : <xliff:g id="LIST_1">{list}</xliff:g>}many{Fichiers convertis dans un autre format : <xliff:g id="LIST_1">{list}</xliff:g>}other{Fichiers convertis dans un autre format : <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> élément copié dans le presse-papiers.</item>
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> d\'éléments copiés dans le presse-papiers.</item>
@@ -262,14 +246,11 @@
     <string name="menu_eject_root" msgid="9215040039374893613">"Éjecter"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Certains fichiers ont été convertis"</string>
     <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Copie de « <xliff:g id="FILENAME">{filename}</xliff:g> » vers « <xliff:g id="DIRECTORY_0">{directory}</xliff:g> » en cours…}one{Copie de # fichier vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}many{Copie de # de fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}other{Copie de # fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
+    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{Extraction de « <xliff:g id="FILENAME">{filename}</xliff:g> » vers « <xliff:g id="DIRECTORY_0">{directory}</xliff:g> » en cours…}one{Extraction de # fichier vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}many{Extraction de # de fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}other{Extraction de # fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Déplacement de « <xliff:g id="FILENAME">{filename}</xliff:g> » vers « <xliff:g id="DIRECTORY_0">{directory}</xliff:g> » en cours…}one{Déplacement de # fichier vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}many{Déplacement de # de fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}other{Déplacement de # fichiers vers « <xliff:g id="DIRECTORY_1">{directory}</xliff:g> » en cours…}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Suppression de « <xliff:g id="FILENAME">{filename}</xliff:g> » en cours…}one{Suppression de # fichier}many{Suppression de # de fichiers}other{Suppression de # fichiers}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
+    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{Mise à la corbeille de « <xliff:g id="FILENAME">{filename}</xliff:g> » en cours…}one{Mise à la corbeille de # fichier en cours…}many{Mise à la corbeille de # de fichiers en cours…}other{Mise à la corbeille de # fichiers en cours…}}"</string>
+    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{Restauration de « <xliff:g id="FILENAME">{filename}</xliff:g> » en cours…}one{Restauration de # fichier en cours…}many{Restauration de # de fichiers en cours…}other{Restauration de # fichiers en cours…}}"</string>
     <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Compression de « <xliff:g id="FILENAME">{filename}</xliff:g> » en cours…}one{Compression de # fichier en cours…}many{Compression de # de fichiers en cours…}other{Compression de # fichiers en cours…}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Afficher la progression du fichier"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progression du fichier"</string>
@@ -280,7 +261,7 @@
     <string name="copy_completed" msgid="3749037014674785400">"Copié"</string>
     <string name="move_completed" msgid="3981250605092729273">"Déplacé"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Supprimé"</string>
-    <string name="compress_completed" msgid="6522047921428919799">"Fichier compressé"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"Compressé(s)"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extrait"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Impossible de copier"</string>
     <string name="move_failed" msgid="7692364307225994220">"Impossible de déplacer"</string>

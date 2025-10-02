@@ -27,6 +27,7 @@ import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -59,7 +60,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
                 Providers.AUTHORITY_STORAGE);
         rootPrimary = mDocsHelper.getRoot(Providers.ROOT_ID_DEVICE);
 
-        bots.roots.openRoot(rootPrimary.title);
+        EspressoBotsKt.openRoot(context, rootPrimary.title);
         deleteTestFiles();
     }
 

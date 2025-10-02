@@ -29,6 +29,7 @@ import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.testing.TestEnv;
@@ -402,6 +403,11 @@ public class ProfileTabsTest {
 
         @Override
         public void onRootPicked(RootInfo root) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public void onShortcutPicked(ShortcutInfo shortcut) {
             throw new UnsupportedOperationException("not implemented");
         }
 

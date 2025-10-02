@@ -100,6 +100,19 @@ public class DocumentsProviderHelper {
         }
     }
 
+    /**
+     * Delete the specified document.
+     * @param documentUri the URI of the document to delete.
+     * @return true if the document was deleted or false otherwise.
+     */
+    public boolean deleteDocument(Uri documentUri) {
+        try {
+            return DocumentsContract.deleteDocument(wrap(mClient), documentUri);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
     public Uri createDocument(Uri parentUri, String mimeType, String name) {
         if (name.contains("/")) {
             throw new IllegalArgumentException("Name and mimetype probably interposed.");

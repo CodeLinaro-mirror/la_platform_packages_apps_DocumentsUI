@@ -42,6 +42,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.actions.RelaxedClickAction
+import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
@@ -381,7 +382,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
 
         // Try from a different root.
-        bots.roots.openRoot(StubProvider.ROOT_1_ID)
+        openRoot(context, StubProvider.ROOT_1_ID)
         openPanel()
         onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
         bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)

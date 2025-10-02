@@ -310,9 +310,10 @@ class SearchLoaderTest {
                 )
             val result = loader.loadInBackground()
             expect.that(getFileCount(result)).isEqualTo(1)
-            expect
-                .that(getDocuments(result)[0].displayName)
-                .isEqualTo(testParams.expectedDisplayName)
+
+            val document = getDocuments(result)[0]
+            expect.that(document.authority).isEqualTo(TestProvidersAccess.DOWNLOADS.authority)
+            expect.that(document.displayName).isEqualTo(testParams.expectedDisplayName)
         }
     }
 

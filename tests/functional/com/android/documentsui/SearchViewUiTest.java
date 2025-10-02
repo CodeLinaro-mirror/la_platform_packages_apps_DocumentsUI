@@ -30,6 +30,7 @@ import static com.android.documentsui.conditions.HasChildCountCondition.hasMoreT
 import static com.android.documentsui.conditions.HasChildCountCondition.hasNoChildren;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasOneChild;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -58,6 +59,7 @@ import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.base.Providers;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -70,6 +72,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 @LargeTest
@@ -129,7 +132,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @HugeLongTest
     public void testSearchIconHidden() throws Exception {
-        bots.roots.openRoot(ROOT_1_ID);  // root 1 doesn't support search
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);  // root 1 doesn't support search
 
         bots.search.assertIsVisible(false);
     }
@@ -304,11 +307,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.keyboard.pressEnter();
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         device.waitForIdle();
         assertDefaultContentOfTestDir1();
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         device.waitForIdle();
 
         assertDefaultContentOfTestDir0();
@@ -433,7 +436,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move to a different root.
-        bots.roots.openRoot("Paging Root");
+        EspressoBotsKt.openRoot(context, "Paging Root");
 
         // Start search, again.
         bots.search.expand();
@@ -463,7 +466,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move to the Recents view and expect the last modified to be gone.
-        bots.roots.openRoot("Recent");
+        EspressoBotsKt.openRoot(context, "Recent");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
         onView(withId(R.id.search_last_modified_trigger)).check(matches(withEffectiveVisibility(
@@ -472,7 +475,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
-        bots.roots.openRoot("Downloads");
+        EspressoBotsKt.openRoot(context, "Downloads");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
         bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
@@ -531,7 +534,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         String deviceLabel = getDeviceLabel();
 
         // Open the root and select the DCIM folder for selection.
-        bots.roots.openRoot(deviceLabel);
+        EspressoBotsKt.openRoot(context, deviceLabel);
         bots.directory.selectDocument("DCIM", 1);
 
         // Click on the Images search chips.
@@ -577,7 +580,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Use Paging Root, as it throws:
         //     java.lang.UnsupportedOperationException: Search not supported
-        bots.roots.openRoot("Paging Root");
+        EspressoBotsKt.openRoot(context, "Paging Root");
         bots.search.expand();
         bots.search.setInputText("00");
         UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
@@ -617,11 +620,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Starting in ROOT_ID_0, which is searchable.
         assertNotNull("Icon should be visible in ROOT_0_ID", bots.search.getSearchIcon());
         // Broken root cannot be searched.
-        bots.roots.openRoot("Broken Root Doc");
+        EspressoBotsKt.openRoot(context, "Broken Root Doc");
         assertNull("Icon should not be visible ini Broken Root Doc", bots.search.getSearchIcon());
         // Device root should be searchable.
         String deviceLabel = getDeviceLabel();
-        bots.roots.openRoot(deviceLabel);
+        EspressoBotsKt.openRoot(context, deviceLabel);
         assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
     }
 
@@ -665,6 +668,37 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3, FLAG_SINGLE_CLICK_TO_SELECT})
+    public void testPathOfSearchResultSingleSelection() throws Exception {
+        bots.search.expand();
+        bots.search.setInputText("file");
+        device.waitForIdle();
+
+        // Click file12.png; check that one element is selected.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
+        bots.directory.assertSelection(1);
+
+        // Verify that the breadcrumb path shows the correct information.
+        List<String> path = bots.breadcrumb.getBreadcrumbV2Path();
+        assertEquals("TEST_ROOT_0/" + TestFilesRule.FILE_NAME_2, String.join("/", path));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3, FLAG_SINGLE_CLICK_TO_SELECT})
+    public void testPathOfSearchResultMultipleSelection() throws Exception {
+        bots.search.expand();
+        bots.search.setInputText("file");
+        device.waitForIdle();
+
+        // Click file12.png; check that one element is selected.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 2);
+
+        List<String> path = bots.breadcrumb.getBreadcrumbV2Path();
+        assertEquals("", String.join("/", path));
+    }
+
+    @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
     public void testSearchResultHidesNonDesktopFolders() throws Exception {
         DocumentsProviderHelper rootStorageDocsHelper = new DocumentsProviderHelper(userId,
@@ -684,7 +718,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Open device root: the internal storage.
             String deviceRootLabel = getDeviceLabel();
-            bots.roots.openRoot(deviceRootLabel);
+            EspressoBotsKt.openRoot(context, deviceRootLabel);
 
             // Search the test file.
             bots.search.doSearch(testFileName);

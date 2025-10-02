@@ -63,6 +63,7 @@
   int ic_eject;
   int ic_menu_copy;
   int ic_root_download;
+  int ic_root_homescreen;
   int ic_sd_storage;
   int root_list_selector;
   int work_off;
@@ -218,6 +219,13 @@
   int DocumentsDefaultTheme;
   int DocumentsTheme;
 }
+-keep class com.android.documentsui.R$array {
+  int shortcut_authorities;
+  int shortcut_root_ids;
+  int shortcut_parent_doc_ids;
+  int shortcut_titles;
+  int shortcut_icons;
+}
 
 # Keep Apache Commons Compress classes
 -keep class org.apache.commons.compress.** { *; }
@@ -229,7 +237,10 @@
 
 # This is used in the unit test.
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbController {
-  public void setVisible(boolean);
+  public void setClickConsumer(java.util.function.IntConsumer);
+}
+-keep class com.android.documentsui.breadcrumbs.BreadcrumbModel {
+  public boolean setFromStack(com.android.documentsui.base.DocumentStack);
 }
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbView {
   public void setVisible(boolean);
@@ -339,3 +350,7 @@
 -keep class com.android.documentsui.sidebar.ShortcutItem { *; }
 # TODO(lucmult): Remove this when this class is used.
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
+
+-keep class com.android.documentsui.roots.ProvidersCache { *; }
+
+-keep class com.android.documentsui.base.PathExtractor { *; }

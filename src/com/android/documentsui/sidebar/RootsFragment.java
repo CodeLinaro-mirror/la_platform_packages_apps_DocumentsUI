@@ -19,6 +19,7 @@ package com.android.documentsui.sidebar;
 import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -76,6 +77,8 @@ import com.android.documentsui.base.Events;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -340,11 +343,18 @@ public class RootsFragment extends Fragment {
                         && userManagerState == null) {
                     userManagerState = DocumentsApplication.getUserManagerState(getContext());
                 }
+                Collection<ShortcutInfo> shortcuts;
+                if (isHomeScreenFilesFlagEnabled()) {
+                    shortcuts = providers.loadShortcutsForUser(getBaseActivity().getSelectedUser());
+                } else {
+                    shortcuts = new ArrayList<>();
+                }
 
                 List<Item> sortedItems = sortLoadResult(
                         getContext(),
                         state,
                         roots,
+                        shortcuts,
                         excludePackage,
                         shouldIncludeHandlerApp ? handlerAppIntent : null,
                         DocumentsApplication.getProvidersCache(getContext()),
@@ -433,6 +443,7 @@ public class RootsFragment extends Fragment {
             Context context,
             State state,
             Collection<RootInfo> roots,
+            Collection<ShortcutInfo> shortcuts,
             @Nullable String excludePackage,
             @Nullable Intent handlerAppIntent,
             ProvidersAccess providersAccess,
@@ -455,10 +466,16 @@ public class RootsFragment extends Fragment {
 
             if (root.isExternalStorageHome()) {
                 // No-op.
+            } else if (root.isFiles()) {
+                // Never show this if MediaDocumentsProvider is serving it, it's for Recents only.
+            } else if (root.isLocalSearch(context)) {
+                // Local search provider is integrated with other providers, not to browse the
+                // files.
             } else if (hideMediaRoots
-                    && (root.isImages() || root.isVideos()
-                    || root.isDocuments()
-                    || root.isAudio())) {
+                    && (root.isImages()
+                            || root.isVideos()
+                            || root.isDocuments()
+                            || root.isAudio())) {
                 Log.d(TAG, "Hiding " + root);
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
@@ -493,11 +510,38 @@ public class RootsFragment extends Fragment {
         final List<RootItem> storageProviders = storageProvidersBuilder.getList();
 
         final RootComparator comp = new RootComparator();
-        Collections.sort(libraries, comp);
-        Collections.sort(storageProviders, comp);
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Handle the shortcuts next. The shortcuts passed in are specific to the user. So we
+            // can just create and add the shortcut items normally as it should already account for
+            // cross profile behaviour.
+            final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
+            librariesAndShortcuts.addAll(libraries);
+            for (final ShortcutInfo shortcut : shortcuts) {
+                final ShortcutItem item;
+                item = new ShortcutItem(
+                        shortcut,
+                        mActionHandler,
+                        /* packageName= */ "",
+                        maybeShowBadge);
+                librariesAndShortcuts.add(item);
+            }
+            final SidebarEntryItemComparator sidebarItemComp = new SidebarEntryItemComparator();
+            Collections.sort(librariesAndShortcuts, sidebarItemComp);
+            Collections.sort(storageProviders, comp);
 
-        if (VERBOSE) Log.v(TAG, "Adding library roots: " + libraries);
-        result.addAll(libraries);
+            if (VERBOSE) {
+                Log.v(TAG, "Adding library roots and system defined shortcuts: "
+                        + librariesAndShortcuts);
+            }
+            result.addAll(librariesAndShortcuts);
+        } else {
+            Collections.sort(libraries, comp);
+            Collections.sort(storageProviders, comp);
+
+            if (VERBOSE) Log.v(TAG, "Adding library roots: " + libraries);
+            result.addAll(libraries);
+        }
+
 
         // Only add the spacer if it is actually separating something.
         if (!result.isEmpty() && !storageProviders.isEmpty()) {
@@ -765,16 +809,37 @@ public class RootsFragment extends Fragment {
             return;
         }
 
-        final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
-        for (int i = 0; i < mListHandler.getItemCount(); i++) {
-            final Object item = mListHandler.getItem(i);
-            if (item instanceof RootItem) {
-                final RootInfo testRoot = ((RootItem) item).root;
-                if (Objects.equals(testRoot, root)) {
-                    // b/37358441 should reload all root title after configuration changed
-                    root.title = testRoot.title;
-                    mListHandler.selectItem(i);
-                    return;
+        if (isHomeScreenFilesFlagEnabled()) {
+            SidebarEntryItemInfo itemInfo = getBaseActivity().getCurrentShortcut();
+            if (itemInfo == null) {
+                itemInfo = getBaseActivity().getCurrentRoot();
+            }
+            for (int i = 0; i < mListHandler.getItemCount(); i++) {
+                final Object item = mListHandler.getItem(i);
+                if (item instanceof BaseSidebarEntryItem) {
+                    final SidebarEntryItemInfo testInfo =
+                            ((BaseSidebarEntryItem) item).getItemInfo();
+                    if (Objects.equals(testInfo, itemInfo)) {
+                        // TODO: b/447254297 - Check if this is still necessary for language
+                        //  configuration changes.
+                        itemInfo.setTitle(testInfo.getTitle());
+                        mListHandler.selectItem(i);
+                        return;
+                    }
+                }
+            }
+        } else {
+            final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
+            for (int i = 0; i < mListHandler.getItemCount(); i++) {
+                final Object item = mListHandler.getItem(i);
+                if (item instanceof RootItem) {
+                    final RootInfo testRoot = ((RootItem) item).root;
+                    if (Objects.equals(testRoot, root)) {
+                        // b/37358441 should reload all root title after configuration changed
+                        root.title = testRoot.title;
+                        mListHandler.selectItem(i);
+                        return;
+                    }
                 }
             }
         }
@@ -886,6 +951,14 @@ public class RootsFragment extends Fragment {
             return lhs.root.compareTo(rhs.root);
         }
     }
+
+    private static class SidebarEntryItemComparator implements Comparator<BaseSidebarEntryItem> {
+        @Override
+        public int compare(BaseSidebarEntryItem lhs, BaseSidebarEntryItem rhs) {
+            return lhs.getItemInfo().compareTo(rhs.getItemInfo());
+        }
+    }
+
 
     /**
      * The comparator of {@link AppItem}, {@link RootItem} and {@link RootAndAppItem}.
