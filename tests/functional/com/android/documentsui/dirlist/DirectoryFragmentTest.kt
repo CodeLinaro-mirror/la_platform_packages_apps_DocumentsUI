@@ -22,6 +22,8 @@ import android.content.pm.PackageManager
 import android.database.MatrixCursor
 import android.os.Bundle
 import android.os.Looper
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -39,14 +41,23 @@ import com.android.documentsui.MenuManager
 import com.android.documentsui.ProfileTabsController
 import com.android.documentsui.R
 import com.android.documentsui.SelectionBarController
+import com.android.documentsui.base.State.MODE_GRID
+import com.android.documentsui.base.State.MODE_LIST
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.roots.RootCursorWrapper
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.SortModels
 import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.common.truth.Truth.assertThat
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
@@ -58,6 +69,8 @@ import org.mockito.Mockito.`when`
 @RunWith(AndroidJUnit4::class)
 @MediumTest
 class DirectoryFragmentTest {
+    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
+
     private lateinit var env: TestEnv
     private lateinit var injector: Injector<ActionHandler>
     private lateinit var fragment: DirectoryFragmentWithActivity
@@ -116,6 +129,15 @@ class DirectoryFragmentTest {
         fragment.onActivityCreated(null)
     }
 
+    fun prepareLooperForUpdateLayout() {
+        // updateLayout() will then trigger a SwipeRefreshLayout to set the offset, which internally
+        // triggers CircularProgressDrawable's animation. The animation requires a valid Looper
+        // thread.
+        if (Looper.myLooper() == null) {
+            Looper.prepare()
+        }
+    }
+
     @Test
     fun testOnModelUpdate_notifySelectionChange() {
         val authority = TestProvidersAccess.HOME.authority
@@ -139,13 +161,8 @@ class DirectoryFragmentTest {
             }
         injector.selectionMgr.addObserver(observer)
 
-        // model.update() will trigger a updateLayout() call in ModelUpdateListener, which then
-        // triggers SwipeRefreshLayout to set the offset, which internally triggers
-        // CircularProgressDrawable's animation. The animation requires a valid Looper thread.
-        if (Looper.myLooper() == null) {
-            Looper.prepare()
-        }
-
+        // model.update() will trigger a updateLayout() call
+        prepareLooperForUpdateLayout()
         // Trigger a model update with only "file2" in it to simulate the deletion of "file1".
         val cursor =
             MatrixCursor(
@@ -153,7 +170,7 @@ class DirectoryFragmentTest {
                     RootCursorWrapper.COLUMN_AUTHORITY,
                     RootCursorWrapper.COLUMN_USER_ID,
                     DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                ),
+                )
             )
         val row = cursor.newRow()
         row.add(RootCursorWrapper.COLUMN_AUTHORITY, authority)
@@ -168,6 +185,85 @@ class DirectoryFragmentTest {
         assertThat(injector.selectionMgr.selection).contains(getModelId("file2"))
         assertThat(observer.selections).hasSize(1)
         assertThat(observer.selections).contains(getModelId("file2"))
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testUpdateLayout_inGridMode_createsItemDecorationInvalidator_whenMaterial3Enabled() {
+        fragment.mItemDecorationInvalidator = null
+
+        // Trigger an updateLayout for GRID mode which will require invalidating the item
+        // decorations.
+        env.state.derivedMode = MODE_GRID
+        prepareLooperForUpdateLayout()
+        fragment.onViewModeChanged()
+
+        // Check that a ItemDecorationInvalidator exists.
+        assertNotNull(fragment.mItemDecorationInvalidator)
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
+    fun testUpdateLayout_inGridMode_doesNotCreateItemDecorationInvalidator_whenMaterial3Disabled() {
+        fragment.mItemDecorationInvalidator = null
+
+        // Trigger an updateLayout for GRID mode but since the useMaterial3 flag is off, no item
+        // decorations are being used.
+        env.state.derivedMode = MODE_GRID
+        prepareLooperForUpdateLayout()
+        fragment.onViewModeChanged()
+
+        // Check that no ItemDecorationInvalidator was created.
+        assertNull(fragment.mItemDecorationInvalidator)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testUpdateLayout_inListMode_doesNotCreateItemDecorationInvalidator() {
+        fragment.mItemDecorationInvalidator = null
+
+        // Trigger an updateLayout for List mode which will not require invalidating the item
+        // decorations.
+        env.state.derivedMode = MODE_LIST
+        prepareLooperForUpdateLayout()
+        fragment.onViewModeChanged()
+
+        // Check that no ItemDecorationInvalidator exists.
+        assertNull(fragment.mItemDecorationInvalidator)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testUpdateLayout_inGridMode_doesNotReuseFinishedItemDecorationInvalidator() {
+        val existingItemDecorationInvalidator = mock(ItemDecorationInvalidator::class.java)
+        `when`(existingItemDecorationInvalidator.hasFinishedInvalidation()).thenReturn(true)
+        fragment.mItemDecorationInvalidator = existingItemDecorationInvalidator
+
+        // Trigger an updateLayout for GRID mode which will require invalidating the item
+        // decorations.
+        env.state.derivedMode = MODE_GRID
+        prepareLooperForUpdateLayout()
+        fragment.onViewModeChanged()
+
+        // Check that a new ItemDecorationInvalidator has been created.
+        assertNotEquals(existingItemDecorationInvalidator, fragment.mItemDecorationInvalidator)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testUpdateLayout_inGridMode_reusesUnfinishedItemDecorationInvalidator() {
+        val existingItemDecorationInvalidator = mock(ItemDecorationInvalidator::class.java)
+        `when`(existingItemDecorationInvalidator.hasFinishedInvalidation()).thenReturn(false)
+        fragment.mItemDecorationInvalidator = existingItemDecorationInvalidator
+
+        // Trigger an updateLayout for GRID mode which will require invalidating the item
+        // decorations.
+        env.state.derivedMode = MODE_GRID
+        prepareLooperForUpdateLayout()
+        fragment.onViewModeChanged()
+
+        // Check that the existing ItemDecorationInvalidator is still used.
+        assertEquals(existingItemDecorationInvalidator, fragment.mItemDecorationInvalidator)
     }
 }
 

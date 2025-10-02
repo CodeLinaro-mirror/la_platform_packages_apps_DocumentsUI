@@ -67,6 +67,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.FractionRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -245,6 +246,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     // Blocks loading/reloading of content while user is actively making selection.
     private ContentLock mContentLock = new ContentLock();
+
+    @VisibleForTesting @Nullable ItemDecorationInvalidator mItemDecorationInvalidator;
 
     private SortModel.UpdateListener mSortListener = (model, updateType) -> {
         // Only when sort order has changed do we need to trigger another loading.
@@ -1004,15 +1007,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         if (isUseMaterial3FlagEnabled() && mRecView.getItemDecorationCount() > 0) {
-            mRecView.post(() -> {
-                if (mRecView != null) {
-
-                    // Invalidate item decorations so they are recalculated before layout. This also
-                    // calls requestLayout(). Post this to the UI thread as this will cause a
-                    // crash if it's executed during a scroll or layout.
-                    mRecView.invalidateItemDecorations();
-                }
-            });
+            if (mItemDecorationInvalidator == null
+                    || mItemDecorationInvalidator.hasFinishedInvalidation()) {
+                // Create a new ItemDecorationInvalidator to invalidate the item decorations the
+                // next time the recycler view is idle.
+                mItemDecorationInvalidator = ItemDecorationInvalidator.create(mRecView);
+            }
         } else {
             mRecView.requestLayout();
         }
@@ -1864,3 +1864,4 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 }
+
