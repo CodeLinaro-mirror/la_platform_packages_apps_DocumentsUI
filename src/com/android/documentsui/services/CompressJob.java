@@ -93,7 +93,8 @@ final class CompressJob extends CopyJob {
 
     @Override
     protected String getProgressMessage() {
-        return getProgressMessage(R.string.compress_in_progress);
+        return getProgressMessage(
+                R.string.compress_specific_file_in_progress, R.string.compress_in_progress);
     }
 
     @Override
