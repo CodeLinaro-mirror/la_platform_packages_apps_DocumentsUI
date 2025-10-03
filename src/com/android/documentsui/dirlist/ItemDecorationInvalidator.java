@@ -78,7 +78,8 @@ public class ItemDecorationInvalidator extends RecyclerView.OnScrollListener
         return mInvalidatedItemDecorations;
     }
 
-    private void teardown() {
+    /** Unregisters the ItemDecorationInvalidator as a listener for the scroll and layout state. */
+    public void teardown() {
         mRecView.removeOnScrollListener(this);
         stopObservingLayout();
     }

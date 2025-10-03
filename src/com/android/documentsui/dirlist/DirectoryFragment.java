@@ -554,6 +554,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
         mBreadcrumbModel = null;
 
+        if (mItemDecorationInvalidator != null) {
+            mItemDecorationInvalidator.teardown();
+            mItemDecorationInvalidator = null;
+        }
+
         super.onDestroyView();
     }
 

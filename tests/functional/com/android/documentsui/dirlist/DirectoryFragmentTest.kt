@@ -63,7 +63,9 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
@@ -264,6 +266,20 @@ class DirectoryFragmentTest {
 
         // Check that the existing ItemDecorationInvalidator is still used.
         assertEquals(existingItemDecorationInvalidator, fragment.mItemDecorationInvalidator)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testItemDecorationInvalidator_teardown_whenFragmentDestroyed() {
+        val itemDecorationInvalidator = mock(ItemDecorationInvalidator::class.java)
+        fragment.mItemDecorationInvalidator = itemDecorationInvalidator
+
+        verify(itemDecorationInvalidator, never()).teardown()
+
+        fragment.onDestroyView()
+
+        verify(itemDecorationInvalidator).teardown()
+        assertNull(fragment.mItemDecorationInvalidator)
     }
 }
 
