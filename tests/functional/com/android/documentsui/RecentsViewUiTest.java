@@ -16,19 +16,21 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiObject;
 
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
@@ -146,5 +148,65 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.directory.assertDocumentsCount(1);
         bots.directory.waitForDocument(testFileName);
+    }
+
+    /** When using the new Search stack, files in Recents are movable. */
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testMoveToInRecentsWithSearchV2() throws Exception {
+        final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
+        final String testFileName = testFileNamePrefix.concat(".jpg");
+
+        // Check: the random test file is visible in Recents.
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
+
+        // Check: the random test file is not yet in Downloads.
+        bots.roots.openRoot("Downloads");
+        UiObject fileInDownloads = bots.directory.findDocument(testFileName, true);
+        assertFalse(fileInDownloads.exists());
+
+        // Move the file to Downloads.
+        bots.roots.openRoot("Recent");
+        bots.directory.selectDocument(testFileName, 1);
+        device.waitForIdle();
+        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_move));
+        device.waitForIdle();
+        bots.roots.openRoot("Downloads");
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        device.waitForIdle();
+
+        // Check: the random test file is now in Downloads.
+        bots.roots.openRoot("Downloads");
+        fileInDownloads = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInDownloads.exists());
+    }
+
+    /**
+     * When using the old search stack, files in Recents are not movable, because
+     * MultiRootDocumentsLoader applies NotMovableMaskCursor to all queries, which dynamically
+     * rewrites the Document flags to remove FLAG_SUPPORTS_DELETE, FLAG_SUPPORTS_REMOVE etc.
+     */
+    @Test
+    @DisableFlags({FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testMoveToInRecentsWithSearchV1() throws Exception {
+        final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
+        final String testFileName = testFileNamePrefix.concat(".jpg");
+
+        // Check: the random test file is visible in Recents.
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
+
+        // Check: the "Move to" item is not visible in the context menu.
+        bots.roots.openRoot("Recent");
+        bots.directory.selectDocument(testFileName, 1);
+        device.waitForIdle();
+        bots.main.openOverflowMenu();
+
+        final Map<String, Boolean> menuItems = new HashMap<>();
+        menuItems.put(context.getResources().getString(R.string.menu_move), false);
+        bots.menu.assertPresentMenuItems(menuItems);
     }
 }

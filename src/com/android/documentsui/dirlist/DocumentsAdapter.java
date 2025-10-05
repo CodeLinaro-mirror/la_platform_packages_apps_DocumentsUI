@@ -93,5 +93,10 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
         boolean isDocumentEnabled(String mimeType, int flags);
         void initDocumentHolder(DocumentHolder holder);
         void onBindDocumentHolder(DocumentHolder holder, Cursor cursor);
+
+        /**
+         * @return {@code true} if the user is on the trash page, {@code false} otherwise.
+         */
+        boolean isOnTrashPage();
     }
 }

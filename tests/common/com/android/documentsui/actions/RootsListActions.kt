@@ -26,8 +26,8 @@ import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.android.documentsui.R
+import com.android.documentsui.sidebar.BaseSidebarEntryItem
 import com.android.documentsui.sidebar.RecyclerRootsAdapter
-import com.android.documentsui.sidebar.RootItem
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.utils.inFixedLayout
 import org.hamcrest.Description
@@ -102,15 +102,15 @@ internal constructor(private val mLabel: String, private val mAction: ViewAction
     }
 }
 
-/** Matcher used for finding a RootItem in the roots list. */
+/** Matcher used for finding a BaseSidebarEntryItem in the roots list. */
 internal class ListViewItemMatcher internal constructor(private val mLabel: String?) :
     TypeSafeMatcher<Any?>() {
     override fun matchesSafely(item: Any?): Boolean {
-        if (item !is RootItem) {
+        if (item !is BaseSidebarEntryItem) {
             return false
         }
-        val root = item
-        return root.title == mLabel
+        val sidebarEntryItem = item
+        return sidebarEntryItem.title == mLabel
     }
 
     override fun describeTo(description: Description) {

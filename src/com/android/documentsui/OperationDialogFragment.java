@@ -38,6 +38,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
+import com.android.documentsui.services.JobProgress;
 import com.android.documentsui.ui.MessageBuilder;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -67,6 +68,9 @@ public class OperationDialogFragment extends DialogFragment {
 
     private static final String TAG = "OperationDialogFragment";
 
+    /**
+     * Displays a dialog showing the details of warnings/errors that happened during an operation.
+     */
     public static void show(
             FragmentManager fm,
             @DialogType int dialogType,
@@ -89,6 +93,22 @@ public class OperationDialogFragment extends DialogFragment {
 
         ft.add(fragment, TAG);
         ft.commitAllowingStateLoss();
+    }
+
+    /**
+     * Same as {@link #show(FragmentManager, int, ArrayList, ArrayList, ArrayList, DocumentStack,
+     * int)} but takes in a {@link JobProgress} struct to see the operation details.
+     */
+    public static void show(
+            FragmentManager fm, @DialogType int dialogType, JobProgress jobProgress) {
+        show(
+                fm,
+                dialogType,
+                jobProgress.failedDocs,
+                jobProgress.failedUris,
+                jobProgress.failedPaths,
+                jobProgress.destination,
+                jobProgress.operationType);
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -241,15 +242,23 @@ public abstract class MenuManager {
         MenuItem copy = menu.findItem(getRes(R.id.dir_menu_copy_to_clipboard));
         MenuItem delete = menu.findItem(getRes(R.id.dir_menu_delete));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
+        MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
+        MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
 
+        final boolean canTrash = isTrashFlowEnabled() && selectionDetails.canTrash();
+        final boolean canRestore = isTrashFlowEnabled() && selectionDetails.canRestore();
         final boolean canCopy =
-                selectionDetails.size() > 0 && !selectionDetails.containsPartialFiles();
+                selectionDetails.size() > 0
+                        && !selectionDetails.containsPartialFiles()
+                        && !canRestore;
         final boolean canDelete = selectionDetails.canDelete();
+
         Menus.setEnabledAndVisible(cut, canCopy && canDelete);
         Menus.setEnabledAndVisible(copy, canCopy);
         Menus.setEnabledAndVisible(delete, canDelete);
-
         Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
+        Menus.setEnabledAndVisible(moveToTrash, canTrash);
+        Menus.setEnabledAndVisible(restoreFromTrash, canRestore);
 
         updateCompress(menu.findItem(getRes(R.id.dir_menu_compress)), selectionDetails);
     }

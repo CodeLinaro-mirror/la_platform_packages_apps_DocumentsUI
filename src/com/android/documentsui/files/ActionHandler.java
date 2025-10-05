@@ -23,6 +23,7 @@ import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEn
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -333,14 +334,31 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        // The DocumentInfo of the parent of the document(s) to be deleted is used to send the URI
+        // of that parent to FileOperationService for the DeleteJob. If specified, DeleteJob will
+        // try to remove the document from the parent rather than deleting the document, this
+        // distinction is important if the DocumentProvider supports the document appearing under
+        // multiple parents.
+        //
+        // When viewing the "Recent" root, it is considered the parent, however it's a synthetic
+        // root and not the actual parent of the documents. Its URI, when passed to
+        // FileOperationService, is meaningless and causes DeleteJob to unnecessarily fail for
+        // documents in Recents.
+        //
+        // If the user is in the "Recent" view, pass a null DocumentInfo as parent, causing a null
+        // parentUri to be specified for DeleteJob.
+        DocumentInfo parentDocumentInfo = mState.stack.peek();
+        if (isSearchV2Enabled() && mState.stack.isRecents()) {
+            parentDocumentInfo = null;
+        }
         DeleteDocumentFragment.show(mActivity.getSupportFragmentManager(),
                 mModel.getDocuments(selection),
-                mState.stack.peek());
+                parentDocumentInfo);
     }
 
 
     @Override
-    public void deleteSelectedDocuments(List<DocumentInfo> docs, DocumentInfo srcParent) {
+    public void deleteSelectedDocuments(List<DocumentInfo> docs, @Nullable DocumentInfo srcParent) {
         if (docs == null || docs.isEmpty()) {
             return;
         }
@@ -370,6 +388,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        // srcParent can be null, such as when the user is viewing the "Recent" root.
         FileOperation operation = new FileOperation.Builder()
                 .withOpType(FileOperationService.OPERATION_DELETE)
                 .withDestination(mState.stack)

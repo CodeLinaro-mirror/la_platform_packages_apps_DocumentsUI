@@ -30,6 +30,7 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     private final TestEnv mEnv;
     private final ActionHandler mActionHandler;
     private boolean mInSearchMode;
+    private boolean mIsOnTrashPage;
 
     public TestEnvironment(Context testContext, TestEnv env, ActionHandler actionHandler) {
         this.testContext = testContext;
@@ -91,7 +92,16 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     public void onBindDocumentHolder(DocumentHolder holder, Cursor cursor) {
     }
 
+    @Override
+    public boolean isOnTrashPage() {
+        return mIsOnTrashPage;
+    }
+
     public void setInSearchMode(boolean inSearchMode) {
         mInSearchMode = inSearchMode;
+    }
+
+    public void setIsOnTrashPage(boolean isOnTrashPage) {
+        mIsOnTrashPage = isOnTrashPage;
     }
 }

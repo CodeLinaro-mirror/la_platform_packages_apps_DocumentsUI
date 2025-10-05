@@ -94,6 +94,8 @@ public final class MenuManagerTest {
     private TestMenuItem dirOpenInNewWindow;
     private TestMenuItem mDirExtractHere;
     private TestMenuItem mDirBrowse;
+    private TestMenuItem mDirMoveToTrash;
+    private TestMenuItem mDirRestoreFromTrash;
 
     /* Root List Context Menu items */
     private TestMenuItem rootEjectRoot;
@@ -187,6 +189,8 @@ public final class MenuManagerTest {
         dirOpenInNewWindow = testMenu.findItem(R.id.dir_menu_open_in_new_window);
         mDirExtractHere = testMenu.findItem(R.id.dir_menu_extract_here);
         mDirBrowse = testMenu.findItem(R.id.dir_menu_browse);
+        mDirMoveToTrash = testMenu.findItem(R.id.dir_menu_move_to_trash);
+        mDirRestoreFromTrash = testMenu.findItem(R.id.dir_menu_restore_from_trash);
 
         rootEjectRoot = testMenu.findItem(R.id.root_menu_eject_root);
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
@@ -1086,5 +1090,66 @@ public final class MenuManagerTest {
         selectionDetails.canRestore = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
         mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testContextMenu_canTrash_enabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canTrash = false;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirMoveToTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canTrash = true;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirMoveToTrash.assertEnabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @DisableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testContextMenu_canTrash_disabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canTrash = false;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirMoveToTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canTrash = true;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        // If the flag is disabled, the menu item will not be visible
+        mDirMoveToTrash.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testContextMenu_canRestoreFromTrash_enabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canRestore = false;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirRestoreFromTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canRestore = true;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirRestoreFromTrash.assertEnabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testContextMenu_canRestoreFromTrash_disabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canRestore = false;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirRestoreFromTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canRestore = true;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        mDirRestoreFromTrash.assertDisabledAndInvisible();
     }
 }

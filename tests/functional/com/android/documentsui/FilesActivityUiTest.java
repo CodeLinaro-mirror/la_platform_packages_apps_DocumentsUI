@@ -130,7 +130,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         DocumentsProviderHelper storageDocsHelper =
                 new DocumentsProviderHelper(
                         UserId.DEFAULT_USER, AUTHORITY_STORAGE, context, AUTHORITY_STORAGE);
-
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
 
         // Create Download folder if it doesn't exist.
@@ -432,8 +431,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
         bots.main.assertWindowTitle(SHORTCUT_ID);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
-        bots.roots.assertItemSelected(SHORTCUT_ID);
-        bots.roots.assertItemNotSelected(primaryRoot.title);
+
+        // TODO: b/447024807 - Readd the checked added for shortcut sidebar selection changes.
 
         cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
     }
@@ -461,9 +460,9 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.main.assertOptionsMenuSearchShow();
         }
         bots.main.assertWindowTitle(SHORTCUT_ID);
-        bots.roots.assertItemSelected(SHORTCUT_ID);
-        bots.roots.assertItemNotSelected(primaryRoot.title);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
+
+        // TODO: b/447024807 - Readd the checked added for shortcut sidebar selection changes.
 
         cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
     }

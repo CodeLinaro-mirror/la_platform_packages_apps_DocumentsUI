@@ -972,4 +972,7 @@
 
     <!-- Accessibility label for the toolbar's "hide info" toggle button in Peek. -->
     <string name="a11y_peek_show_info_button">Show info panel</string>
+
+    <!-- Title displayed on the trash page when it contains no files. [CHAR_LIMIT=48] -->
+    <string name="trash_page_empty_title">Nothing in trash</string>
 </resources>

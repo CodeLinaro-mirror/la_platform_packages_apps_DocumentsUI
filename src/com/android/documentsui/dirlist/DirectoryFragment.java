@@ -16,7 +16,6 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
@@ -668,7 +667,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
                         @Override
                         public void onSelectionChanged() {
-                            if (mPathExtractor == null || mBreadcrumbModel == null) {
+                            // If the path extractor or the breadcrumb model were not set up or the
+                            // activity is either null or indicating that it is neither in the
+                            // recents view or is searching, do not extract paths from the currently
+                            // selected files. The extracted path is used only in recent and search
+                            // results to show the location of the selected file.
+                            if (mPathExtractor == null
+                                    || mBreadcrumbModel == null
+                                    || mActivity == null
+                                    || !(mActivity.isSearching() || mActivity.isInRecents())) {
                                 return;
                             }
                             String selectedId = null;
@@ -893,9 +900,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (startUnpackingArchive(docDetails)) return true;
         }
 
-        if (isDesktopFileHandlingFlagEnabled()) {
-            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -1197,13 +1201,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // It won't end action mode if user cancels the delete.
             mActions.showDeleteDialog();
             return true;
-        } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
+        } else if (isTrashFlowEnabled()
+                && (id == getRes(R.id.action_menu_move_to_trash)
+                        || id == getRes(R.id.dir_menu_move_to_trash))) {
             mActions.trashSelectedDocuments();
             return true;
-        } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
+        } else if (isTrashFlowEnabled()
+                && (id == getRes(R.id.action_menu_restore_from_trash)
+                        || id == getRes(R.id.dir_menu_restore_from_trash))) {
             restoreDocumentsFromTrash(selection);
             return true;
-        }  else if (id == getRes(R.id.action_menu_copy_to)) {
+        } else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
@@ -1293,11 +1301,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            if (isDesktopFileHandlingFlagEnabled()) {
-                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-            } else {
-                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
-            }
+            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
         }
         return true;
     }
@@ -1411,9 +1415,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         final DocumentInfo parent = mActivity.getCurrentDirectory();
+        Uri parentUri = parent == null ? null : parent.derivedUri;
+
+        // If the user is in the "Recent" view, there is no meaningful parent URI, but the
+        // FileOperationService can successfully deal with this for move operations. This is only
+        // enabled for Search v2 as using the old loaders masks out flags like FLAG_SUPPORTS_DELETE
+        // for the "Recent" view.
+        if (isSearchV2Enabled() && (mode == FileOperationService.OPERATION_MOVE
+                && mState.stack.isRecents())) {
+            parentUri = null;
+        }
+
         final FileOperation operation = new FileOperation.Builder()
                 .withOpType(mode)
-                .withSrcParent(parent == null ? null : parent.derivedUri)
+                .withSrcParent(parentUri)
                 .withSrcs(srcs)
                 .build();
 
@@ -1858,6 +1873,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public ActionHandler getActionHandler() {
             return mActions;
+        }
+
+        @Override
+        public boolean isOnTrashPage() {
+            return mState.stack.isTrash();
         }
     }
 }

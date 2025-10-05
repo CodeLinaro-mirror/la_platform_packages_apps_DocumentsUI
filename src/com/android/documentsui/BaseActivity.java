@@ -264,92 +264,105 @@ public abstract class BaseActivity
             appBarLayout.addOnOffsetChangedListener(mNavigator);
         }
 
-        SearchManagerListener searchListener = new SearchManagerListener() {
-            /**
-             * Called when search results changed. Refreshes the content of the directory. It
-             * doesn't refresh elements on the action bar. e.g. The current directory name displayed
-             * on the action bar won't get updated.
-             */
-            @Override
-            public void onSearchChanged(@Nullable String query) {
-                if (mSearchManager.isSearching()) {
-                    Metrics.logSearchMode(query != null, mSearchManager.hasCheckedChip());
-                    if (mInjector.pickResult != null) {
-                        mInjector.pickResult.increaseActionCount();
+        SearchManagerListener searchListener =
+                new SearchManagerListener() {
+                    /**
+                     * Called when search results changed. Refreshes the content of the directory.
+                     * It doesn't refresh elements on the action bar. e.g. The current directory
+                     * name displayed on the action bar won't get updated.
+                     */
+                    @Override
+                    public void onSearchChanged(@Nullable String query) {
+                        if (mSearchManager.isSearching()) {
+                            Metrics.logSearchMode(query != null, mSearchManager.hasCheckedChip());
+                            if (mInjector.pickResult != null) {
+                                mInjector.pickResult.increaseActionCount();
+                            }
+                        }
+
+                        mInjector.actions.loadDocumentsForCurrentStack();
+
+                        expandAppBar();
+                        DirectoryFragment dir = getDirectoryFragment();
+                        if (dir != null) {
+                            dir.scrollToTop();
+                        }
                     }
-                }
 
-                mInjector.actions.loadDocumentsForCurrentStack();
-
-                expandAppBar();
-                DirectoryFragment dir = getDirectoryFragment();
-                if (dir != null) {
-                    dir.scrollToTop();
-                }
-            }
-
-            @Override
-            public void onSearchStarting() {
-                if (isSearchV2Enabled()) {
-                    mInjector.getModel().setLoading(true);
-                }
-            }
-
-            @Override
-            public void onSearchFinished() {
-                // Restores menu icons state
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onSearchViewChanged(boolean opened) {
-                mNavigator.update();
-                // We also need to update AppsRowManager because we may want to show/hide the
-                // appsRow in cross-profile search according to the searching conditions.
-                mAppsRowManager.updateView(BaseActivity.this);
-            }
-
-            @Override
-            public void onSearchChipStateChanged(View v) {
-                final Checkable chip = (Checkable) v;
-                if (chip.isChecked()) {
-                    final SearchChipData item = (SearchChipData) v.getTag();
-                    Metrics.logUserAction(MetricConsts.USER_ACTION_SEARCH_CHIP);
-                    Metrics.logSearchType(item.getChipType());
-                }
-                // We also need to update AppsRowManager because we may want to show/hide the
-                // appsRow in cross-profile search according to the searching conditions.
-                mAppsRowManager.updateView(BaseActivity.this);
-
-                if (isUseMaterial3FlagEnabled()) {
-                    // Whenever a search chip is clicked, close the navigation bar.
-                    mInjector.selectionBarController.closeSelectionBar();
-                }
-            }
-
-            @Override
-            public void onSearchViewFocusChanged(boolean hasFocus) {
-                final boolean isInitialSearch
-                        = !TextUtils.isEmpty(mSearchManager.getCurrentSearch())
-                        && TextUtils.isEmpty(mSearchManager.getSearchViewText());
-                if (hasFocus) {
-                    if (!isInitialSearch) {
-                        SearchFragment.showFragment(getSupportFragmentManager(),
-                                mSearchManager.getSearchViewText());
+                    @Override
+                    public void onSearchStarting() {
+                        if (isSearchV2Enabled()) {
+                            mInjector.getModel().setLoading(true);
+                        }
                     }
-                } else {
-                    SearchFragment.dismissFragment(getSupportFragmentManager());
-                }
-            }
 
-            @Override
-            public void onSearchViewClearClicked() {
-                if (SearchFragment.get(getSupportFragmentManager()) == null) {
-                    SearchFragment.showFragment(getSupportFragmentManager(),
-                            mSearchManager.getSearchViewText());
-                }
-            }
-        };
+                    @Override
+                    public void onSearchFinished() {
+                        // When docked search bar is used, no need to invalidate the options menus
+                        // because docked search bar won't affect the options menu, invalidating it
+                        // will affect the tab navigation between the docked search bar and the
+                        // next option menu button (list/grid button), because it will try to
+                        // re-render all the option menu buttons.
+                        if (isUseMaterial3FlagEnabled() && isSearchDocked()) {
+                            return;
+                        }
+                        // Restores menu icons state
+                        invalidateOptionsMenu();
+                    }
+
+                    @Override
+                    public void onSearchViewChanged(boolean opened) {
+                        mNavigator.update();
+                        // We also need to update AppsRowManager because we may want to show/hide
+                        // the appsRow in cross-profile search according to the searching
+                        // conditions.
+                        mAppsRowManager.updateView(BaseActivity.this);
+                    }
+
+                    @Override
+                    public void onSearchChipStateChanged(View v) {
+                        final Checkable chip = (Checkable) v;
+                        if (chip.isChecked()) {
+                            final SearchChipData item = (SearchChipData) v.getTag();
+                            Metrics.logUserAction(MetricConsts.USER_ACTION_SEARCH_CHIP);
+                            Metrics.logSearchType(item.getChipType());
+                        }
+                        // We also need to update AppsRowManager because we may want to show/hide
+                        // the appsRow in cross-profile search according to the searching
+                        // conditions.
+                        mAppsRowManager.updateView(BaseActivity.this);
+
+                        if (isUseMaterial3FlagEnabled()) {
+                            // Whenever a search chip is clicked, close the navigation bar.
+                            mInjector.selectionBarController.closeSelectionBar();
+                        }
+                    }
+
+                    @Override
+                    public void onSearchViewFocusChanged(boolean hasFocus) {
+                        final boolean isInitialSearch =
+                                !TextUtils.isEmpty(mSearchManager.getCurrentSearch())
+                                        && TextUtils.isEmpty(mSearchManager.getSearchViewText());
+                        if (hasFocus) {
+                            if (!isInitialSearch) {
+                                SearchFragment.showFragment(
+                                        getSupportFragmentManager(),
+                                        mSearchManager.getSearchViewText());
+                            }
+                        } else {
+                            SearchFragment.dismissFragment(getSupportFragmentManager());
+                        }
+                    }
+
+                    @Override
+                    public void onSearchViewClearClicked() {
+                        if (SearchFragment.get(getSupportFragmentManager()) == null) {
+                            SearchFragment.showFragment(
+                                    getSupportFragmentManager(),
+                                    mSearchManager.getSearchViewText());
+                        }
+                    }
+                };
 
         // "Commands" are meta input for controlling system behavior.
         // We piggy back on search input as it is the only text input
@@ -523,6 +536,13 @@ public abstract class BaseActivity
         mLastSelectedUser = getSelectedUser();
     }
 
+    /**
+     * @return Whether or not the search view is docked in the toolbar.
+     */
+    public boolean isSearchDocked() {
+        return getResources().getBoolean(getRes(R.bool.show_docked_search));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean showMenu = super.onCreateOptionsMenu(menu);
@@ -532,8 +552,7 @@ public abstract class BaseActivity
         boolean fullBarSearch = getResources().getBoolean(getRes(R.bool.full_bar_search_view));
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
                 R.bool.show_search_bar);
-        boolean showDockedSearch = getResources().getBoolean(getRes(R.bool.show_docked_search));
-        mSearchManager.install(menu, fullBarSearch, showSearchBar, showDockedSearch);
+        mSearchManager.install(menu, fullBarSearch, showSearchBar, isSearchDocked());
 
         // Remove the subMenu when material3 is launched b/379776735.
         final ActionMenuView subMenuView = findViewById(getRes(R.id.sub_menu));
@@ -1158,6 +1177,15 @@ public abstract class BaseActivity
     @Override
     public boolean isInRecents() {
         return mState.stack.isRecents();
+    }
+
+    /**
+     * Allows others to check if the application is currently searching or just listing directories.
+     *
+     * @return Whether or not search is currently active.
+     */
+    public boolean isSearching() {
+        return mSearchManager.isSearching();
     }
 
     @VisibleForTesting
