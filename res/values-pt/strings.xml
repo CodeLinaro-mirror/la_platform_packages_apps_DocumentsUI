@@ -245,15 +245,38 @@
     <string name="rename_error" msgid="6700093173508118635">"Falha ao renomear documento"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Ejetar"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Alguns arquivos foram convertidos"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Copiando <xliff:g id="FILENAME">{filename}</xliff:g> para <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Copiando # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Copiando # de arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Copiando # arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{Extraindo \"<xliff:g id="FILENAME">{filename}</xliff:g>\" para \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{Extraindo # arquivo para \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}many{Extraindo # de arquivos para \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}other{Extraindo # arquivos para \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Transferindo <xliff:g id="FILENAME">{filename}</xliff:g> para <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}one{Transferindo # arquivo para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Transferindo # de arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Transferindo # arquivos para <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Excluindo <xliff:g id="FILENAME">{filename}</xliff:g>}one{Excluindo # arquivo}many{Excluindo # de arquivos}other{Excluindo # arquivos}}"</string>
-    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{Movendo \"<xliff:g id="FILENAME">{filename}</xliff:g>\" para a lixeira}one{Movendo # arquivo para a lixeira}many{Movendo # de arquivos para a lixeira}other{Movendo # arquivos para a lixeira}}"</string>
-    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{Restaurando \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Restaurando # arquivo}many{Restaurando # de arquivos}other{Restaurando # arquivos}}"</string>
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Compactando \"<xliff:g id="FILENAME">{filename}</xliff:g>\"}one{Compactando # arquivo}many{Compactando # de arquivos}other{Compactando # arquivos}}"</string>
+    <!-- no translation found for copy_specific_file_in_progress (2492589332201937030) -->
+    <skip />
+    <!-- no translation found for copy_in_progress (6872096819249174615) -->
+    <skip />
+    <!-- no translation found for extract_specific_file_in_progress (1162381859640495308) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (4629395179865084830) -->
+    <skip />
+    <!-- no translation found for move_specific_file_in_progress (6369336484584073740) -->
+    <skip />
+    <!-- no translation found for move_in_progress (326356777470353315) -->
+    <skip />
+    <!-- no translation found for delete_specific_file_in_progress (7262273537447952230) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (7743890721129810508) -->
+    <skip />
+    <!-- no translation found for trash_specific_file_in_progress (8266568481798889707) -->
+    <skip />
+    <!-- no translation found for trash_in_progress (2509104069807418022) -->
+    <skip />
+    <!-- no translation found for restore_specific_file_in_progress (6034897285865039861) -->
+    <skip />
+    <!-- no translation found for restore_in_progress (9063203913920540783) -->
+    <skip />
+    <!-- no translation found for compress_specific_file_in_progress (7855233703746784378) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (5311444499230611877) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Mostrar progresso do arquivo"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Progresso do arquivo"</string>
+    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
+    <skip />
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Concluída"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Cancelada"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Ver detalhes"</string>
@@ -386,6 +409,5 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Visualização da imagem de <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Ocultar o painel de informações"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Mostrar o painel de informações"</string>
-    <!-- no translation found for trash_page_empty_title (1277047027818824150) -->
-    <skip />
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Lixeira vazia"</string>
 </resources>

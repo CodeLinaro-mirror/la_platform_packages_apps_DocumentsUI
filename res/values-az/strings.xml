@@ -233,15 +233,38 @@
     <string name="rename_error" msgid="6700093173508118635">"Sənəd adını dəyişmək uğursuz oldu"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Çıxarın"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Bəzi fayllar konvertasiya edilib"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" faylı \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" kataloquna kopiyalanır}other{# fayl \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\" kataloquna kopiyalanır}}"</string>
-    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" faylı \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" kataloquna çıxarılır}other{# fayl \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\" kataloquna çıxarılır}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" kataloquna köçürülür}other{# fayl \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\" kataloquna köçürülür}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" silinir}other{# fayl silinir}}"</string>
-    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" faylı zibil qutusuna köçürülür}other{# fayl zibil qutusuna köçürülür}}"</string>
-    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" bərpa edilir}other{# fayl bərpa edilir}}"</string>
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\" sıxılır}other{# fayl sıxılır}}"</string>
+    <!-- no translation found for copy_specific_file_in_progress (2492589332201937030) -->
+    <skip />
+    <!-- no translation found for copy_in_progress (6872096819249174615) -->
+    <skip />
+    <!-- no translation found for extract_specific_file_in_progress (1162381859640495308) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (4629395179865084830) -->
+    <skip />
+    <!-- no translation found for move_specific_file_in_progress (6369336484584073740) -->
+    <skip />
+    <!-- no translation found for move_in_progress (326356777470353315) -->
+    <skip />
+    <!-- no translation found for delete_specific_file_in_progress (7262273537447952230) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (7743890721129810508) -->
+    <skip />
+    <!-- no translation found for trash_specific_file_in_progress (8266568481798889707) -->
+    <skip />
+    <!-- no translation found for trash_in_progress (2509104069807418022) -->
+    <skip />
+    <!-- no translation found for restore_specific_file_in_progress (6034897285865039861) -->
+    <skip />
+    <!-- no translation found for restore_in_progress (9063203913920540783) -->
+    <skip />
+    <!-- no translation found for compress_specific_file_in_progress (7855233703746784378) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (5311444499230611877) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Faylın gedişatını göstərin"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Fayl gedişatı"</string>
+    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
+    <skip />
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Tamamlandı"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Ləğv edildi"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Detallara baxın"</string>

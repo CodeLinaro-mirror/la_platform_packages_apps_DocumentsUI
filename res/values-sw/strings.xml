@@ -233,15 +233,38 @@
     <string name="rename_error" msgid="6700093173508118635">"Imeshindwa kubadilisha jina la hati"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Ondoa"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Imebadilisha muundo wa baadhi ya faili"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Inanakili “<xliff:g id="FILENAME">{filename}</xliff:g>” kwenye “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Inanakili faili # kwenye “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{Inadondoa “<xliff:g id="FILENAME">{filename}</xliff:g>” kwenye “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Inadondoa faili # kwenye “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Inahamishia “<xliff:g id="FILENAME">{filename}</xliff:g>” kwenye “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Inahamishia faili # kwenye “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Inafuta “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Inafuta faili #}}"</string>
-    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{Inaweka \"<xliff:g id="FILENAME">{filename}</xliff:g>\" kwenye tupio}other{Inaweka faili # kwenye tupio}}"</string>
-    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{Inarejesha “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Inarejesha faili #}}"</string>
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Inabana “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Inabana faili #}}"</string>
+    <!-- no translation found for copy_specific_file_in_progress (2492589332201937030) -->
+    <skip />
+    <!-- no translation found for copy_in_progress (6872096819249174615) -->
+    <skip />
+    <!-- no translation found for extract_specific_file_in_progress (1162381859640495308) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (4629395179865084830) -->
+    <skip />
+    <!-- no translation found for move_specific_file_in_progress (6369336484584073740) -->
+    <skip />
+    <!-- no translation found for move_in_progress (326356777470353315) -->
+    <skip />
+    <!-- no translation found for delete_specific_file_in_progress (7262273537447952230) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (7743890721129810508) -->
+    <skip />
+    <!-- no translation found for trash_specific_file_in_progress (8266568481798889707) -->
+    <skip />
+    <!-- no translation found for trash_in_progress (2509104069807418022) -->
+    <skip />
+    <!-- no translation found for restore_specific_file_in_progress (6034897285865039861) -->
+    <skip />
+    <!-- no translation found for restore_in_progress (9063203913920540783) -->
+    <skip />
+    <!-- no translation found for compress_specific_file_in_progress (7855233703746784378) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (5311444499230611877) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Onyesha hatua za faili"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Hatua za Faili"</string>
+    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
+    <skip />
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Imekamilika"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Umebatilisha"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Angalia maelezo"</string>
