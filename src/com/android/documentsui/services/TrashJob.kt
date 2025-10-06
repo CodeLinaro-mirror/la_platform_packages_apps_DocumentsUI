@@ -92,6 +92,9 @@ class TrashJob(
             state,
             getProgressMessage(R.string.trash_in_progress),
             hasFailures(),
+            failedDocs,
+            failedUris,
+            failedPaths,
         )
     }
 

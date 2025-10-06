@@ -123,7 +123,7 @@ class RootsAdapter extends ArrayAdapter<Item> {
         final Item item = getItem(position);
         if (item instanceof RootAndAppItem) {
             return TYPE_ROOT_AND_APP;
-        } else if (item instanceof RootItem) {
+        } else if (item instanceof BaseSidebarEntryItem) {
             return TYPE_ROOT;
         } else if (item instanceof AppItem) {
             return TYPE_APP;

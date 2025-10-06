@@ -354,3 +354,7 @@
 -keep class com.android.documentsui.roots.ProvidersCache { *; }
 
 -keep class com.android.documentsui.base.PathExtractor { *; }
+
+-keep class com.android.documentsui.services.JobProgress {
+  public <init>(java.lang.String, int, int, java.lang.String, boolean);
+}

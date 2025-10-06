@@ -320,7 +320,24 @@ public class DirectoryListBot extends Bots.BaseBot {
         new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
 
         if (withScroll) {
-            new UiScrollable(docList).scrollIntoView(new UiSelector().text(label));
+            UiScrollable docListView = new UiScrollable(docList);
+            // In drawer_layout the file list occupied the whole app window height because of
+            // the CollapsingToolbarLayout, so "scrollIntoView" might start swipe on the
+            // app bar or breadcrumb area, which doesn't actually trigger the scroll of the list.
+            // Setting a dead zone here to avoid starting swipe on these areas.
+            // Note: 0.2 is just an estimated percentage here (the dead zone ratio on 4 sides, we
+            // only need dead zone for the top and the bottom, but there's no API to set specific
+            // sides).
+            final double originalPercent = docListView.getSwipeDeadZonePercentage();
+            final boolean docListCoveredByOtherViews =
+                    inDrawerLayout() && isUseMaterial3FlagEnabled();
+            if (docListCoveredByOtherViews) {
+                docListView.setSwipeDeadZonePercentage(0.2);
+            }
+            docListView.scrollIntoView(new UiSelector().text(label));
+            if (docListCoveredByOtherViews) {
+                docListView.setSwipeDeadZonePercentage(originalPercent);
+            }
         }
         return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
     }
