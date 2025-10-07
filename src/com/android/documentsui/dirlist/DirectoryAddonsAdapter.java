@@ -16,6 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.os.UserManager;
@@ -70,7 +71,15 @@ final class DirectoryAddonsAdapter extends DocumentsAdapter {
         mConfigStore = configStore;
         // TODO: We should not instantiate the messages here, but rather instantiate them
         // when we get an update event.
-        mHeaderMessage = new HeaderMessage(environment, this::onDismissHeaderMessage, mConfigStore);
+        // Only show the empty trash banner when on the trash page.
+        if (isTrashFlowEnabled() && isUseMaterial3FlagEnabled() && environment.isOnTrashPage()) {
+            mHeaderMessage =
+                    new HeaderMessage(
+                            environment, this::showEmptyTrashConfirmationDialog, mConfigStore);
+        } else {
+            mHeaderMessage =
+                    new HeaderMessage(environment, this::onDismissHeaderMessage, mConfigStore);
+        }
         if (mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
             mInflateMessage = new InflateMessage(environment, this::onDismissHeaderMessage,
                     sourceUserId, selectedUserId, userIdLabelMap, userManager, mConfigStore);
@@ -137,6 +146,10 @@ final class DirectoryAddonsAdapter extends DocumentsAdapter {
                 holder = mDelegate.createViewHolder(parent, viewType);
         }
         return holder;
+    }
+
+    private void showEmptyTrashConfirmationDialog() {
+        mEnv.getActionHandler().showEmptyTrashConfirmationDialog();
     }
 
     private void onDismissHeaderMessage() {

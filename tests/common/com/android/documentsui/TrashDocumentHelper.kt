@@ -23,9 +23,7 @@ import java.io.FileNotFoundException
 import java.util.ArrayList
 import java.util.Locale
 
-/**
- * Provides support for document trash operations
- */
+/** Provides support for document trash operations */
 object TrashDocumentHelper {
 
     const val TRASH_LOCATION: String = ".trash-storage"
@@ -39,8 +37,8 @@ object TrashDocumentHelper {
     /**
      * Moves a file or directory to the trash.
      *
-     * <p>The item is moved into a designated trash folder within the root and renamed to
-     * include an expiration timestamp.
+     * <p>The item is moved into a designated trash folder within the root and renamed to include an
+     * expiration timestamp.
      *
      * @param originalFile The file or directory to trash.
      * @param rootDir The root directory where the trash folder is located.
@@ -52,29 +50,20 @@ object TrashDocumentHelper {
         val trashStorageDir = File(rootDir, TRASH_LOCATION)
         if (!trashStorageDir.exists()) {
             if (!trashStorageDir.mkdirs()) {
-                Log.e(
-                    TAG,
-                    "Failed to create trash storage directory: " + trashStorageDir.path
-                )
+                Log.e(TAG, "Failed to create trash storage directory: " + trashStorageDir.path)
                 throw FileNotFoundException("Failed to create trash storage directory.")
             }
         }
 
-        val dateExpires =
-            (System.currentTimeMillis() + DEFAULT_DURATION_TRASHED) / 1000
+        val dateExpires = (System.currentTimeMillis() + DEFAULT_DURATION_TRASHED) / 1000
 
-        val destinationFile = prepareDestinationFile(
-            originalFile,
-            trashStorageDir,
-            rootDir,
-            dateExpires
-        )
+        val destinationFile =
+            prepareDestinationFile(originalFile, trashStorageDir, rootDir, dateExpires)
 
         if (!originalFile.renameTo(destinationFile)) {
             Log.e(
                 TAG,
-                "Failed to move file to trash: " + originalFile.path + " to " +
-                        destinationFile.path
+                "Failed to move file to trash: " + originalFile.path + " to " + destinationFile.path,
             )
             throw FileNotFoundException("Failed to trash document: $originalFile")
         }
@@ -89,10 +78,15 @@ object TrashDocumentHelper {
         return files
     }
 
+    /** Checks if a given file is a trashed item by its name prefix. */
+    fun isTrashFile(file: File): Boolean {
+        return file.name.startsWith(".$PREFIX_TRASHED")
+    }
+
     /**
      * Prepares the full destination path for the file within the trash directory.
      *
-     * @param originalFile       The file to be trashed.
+     * @param originalFile The file to be trashed.
      * @param trashBaseDirectory The base trash directory.
      * @param rootDir The root directory where the trash folder is located.
      * @param dateExpires The `dateExpires` timestamp (in seconds) of the item
@@ -104,7 +98,7 @@ object TrashDocumentHelper {
         originalFile: File,
         trashBaseDirectory: File,
         rootDir: File,
-        dateExpires: Long
+        dateExpires: Long,
     ): File {
         val updatedDisplayName = getTrashFileName(dateExpires, originalFile.name)
 
@@ -124,8 +118,7 @@ object TrashDocumentHelper {
 
         if (!destParent.mkdirs()) {
             check(destParent.exists()) {
-                "Failed to create trash sub-directory: " +
-                        destParent.absolutePath
+                "Failed to create trash sub-directory: " + destParent.absolutePath
             }
         }
 
@@ -133,14 +126,14 @@ object TrashDocumentHelper {
     }
 
     /**
-     * Recursively prefixes the names of all children (files and directories)
-     * within a given directory on disk, ensuring they reflect the trashed state.
-     * This method is intended to be called on a directory that has just been
-     * moved to trash, and its children need consistent naming.
+     * Recursively prefixes the names of all children (files and directories) within a given
+     * directory on disk, ensuring they reflect the trashed state. This method is intended to be
+     * called on a directory that has just been moved to trash, and its children need consistent
+     * naming.
      *
-     * @param parentDir                The directory whose children need to be prefixed.
+     * @param parentDir The directory whose children need to be prefixed.
      * @param parentTrashedDateExpires The `dateExpires` timestamp (in seconds) of the parent
-     * trashed directory. Children will inherit this expiration.
+     *   trashed directory. Children will inherit this expiration.
      */
     private fun prefixChildrenOnDisk(parentDir: File, parentTrashedDateExpires: Long) {
         val children = parentDir.listFiles() ?: return
@@ -153,8 +146,10 @@ object TrashDocumentHelper {
             if (!child.renameTo(renamedChildFile)) {
                 Log.w(
                     TAG,
-                    "Failed to rename child: " + child.absolutePath + " to " +
-                            renamedChildFile.absolutePath
+                    "Failed to rename child: " +
+                        child.absolutePath +
+                        " to " +
+                        renamedChildFile.absolutePath,
                 )
             }
 
@@ -173,12 +168,6 @@ object TrashDocumentHelper {
      * @return The formatted filename to be used for the trashed item.
      */
     private fun getTrashFileName(dateExpires: Long, name: String): String {
-        return String.format(
-            Locale.US,
-            ".%s-%d-%s",
-            PREFIX_TRASHED,
-            dateExpires,
-            name
-        )
+        return String.format(Locale.US, ".%s-%d-%s", PREFIX_TRASHED, dateExpires, name)
     }
 }

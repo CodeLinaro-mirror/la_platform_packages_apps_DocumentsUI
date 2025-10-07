@@ -141,8 +141,8 @@ public class TestProvidersAccess implements ProvidersAccess {
                 availableBytes = -1;
             }
         };
-        RECENTS.userId = userId;
-        RECENTS.title = "Trash";
+        TRASH_ROOT.userId = userId;
+        TRASH_ROOT.title = "Trash";
 
         INSPECTOR = new RootInfo();
         INSPECTOR.userId = userId;

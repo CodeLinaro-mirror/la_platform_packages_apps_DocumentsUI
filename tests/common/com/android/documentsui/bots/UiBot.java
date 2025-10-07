@@ -457,4 +457,32 @@ public class UiBot extends Bots.BaseBot {
         clickToolbarOverflowItem(mContext.getString(R.string.menu_hide_hidden_files));
         mDevice.waitForIdle();
     }
+
+    /**
+     * Asserts that the "Empty Trash" banner is currently visible. This banner only appears
+     * on the trash page.
+     */
+    public void assertEmptyTrashBannerIsVisible() {
+        onView(
+                allOf(
+                        withId(R.id.message_textview),
+                        withText(
+                                "Files in the trash for more than 30 days will be "
+                                        + "automatically deleted."),
+                        isDisplayed()))
+                .check(matches(isDisplayed()));
+    }
+
+    /**
+     * Clicks the "Empty Trash" button, which is found within the "Empty Trash" banner on the
+     * trash page.
+     */
+    public void clickEmptyTrashNowButton() {
+        onView(
+                allOf(
+                        withId(R.id.dismiss_button),
+                        withText(mContext.getString(R.string.empty_trash_banner_button)),
+                        isDisplayed()))
+                .perform(click());
+    }
 }
