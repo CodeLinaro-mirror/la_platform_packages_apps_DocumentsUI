@@ -36,8 +36,8 @@ import java.nio.charset.StandardCharsets
 import kotlin.math.roundToInt
 
 /**
- * Dialog shown to users when a file cannot be opened with any of currently installed apps.
- * User sent to Play store search with the file extension (e.g. ".psd") prefilled as the search text.
+ * Dialog shown to users when a file cannot be opened with any of currently installed apps. User
+ * sent to Play store search with the file extension (e.g. ".psd") prefilled as the search text.
  */
 class NoApplicationFragment : DialogFragment() {
     private var mTargetDoc: DocumentInfo? = null
@@ -50,7 +50,7 @@ class NoApplicationFragment : DialogFragment() {
         /**
          * Create and show the dialog UI.
          *
-         * @param fm  the fragment manager
+         * @param fm the fragment manager
          * @param targetDoc the document user is trying to open
          */
         @JvmStatic
@@ -75,10 +75,7 @@ class NoApplicationFragment : DialogFragment() {
         }
 
         fun createIntent(extension: String): Intent {
-            val encodedExtension = URLEncoder.encode(
-                extension,
-                StandardCharsets.UTF_8.toString()
-            )
+            val encodedExtension = URLEncoder.encode(extension, StandardCharsets.UTF_8.toString())
             val playLink = "https://play.google.com/store/search?q=$encodedExtension&c=apps"
             return Intent(Intent.ACTION_VIEW, playLink.toUri())
         }
@@ -95,21 +92,24 @@ class NoApplicationFragment : DialogFragment() {
             mTargetDoc =
                 savedInstanceState.getParcelable(Shared.EXTRA_DOC, DocumentInfo::class.java)
         }
-        val builder = MaterialAlertDialogBuilder(requireContext())
-            // We're setting the inset size explicitly so changes to the default inset size in the
-            // future don't change our dialog size (the inset size affect the dialog size because
-            // we're overriding the window size to get our desired dialog size).
-            .setBackgroundInsetStart(dpToPx(INSET))
-            .setBackgroundInsetEnd(dpToPx(INSET))
-            .setTitle(getString(R.string.no_application_dialog_title))
-            .setMessage(getString(R.string.no_application_dialog_message))
+        val builder =
+            MaterialAlertDialogBuilder(requireContext())
+                // We're setting the inset size explicitly so changes to the default inset size in
+                // the
+                // future don't change our dialog size (the inset size affect the dialog size
+                // because
+                // we're overriding the window size to get our desired dialog size).
+                .setBackgroundInsetStart(dpToPx(INSET))
+                .setBackgroundInsetEnd(dpToPx(INSET))
+                .setTitle(getString(R.string.no_application_dialog_title))
+                .setMessage(getString(R.string.no_application_dialog_message))
 
         mTargetDoc?.let { doc ->
-            // If the file type is totally unknown, we can't help the user search for a compatible app.
+            // If the file type is totally unknown, we can't help the user search for a compatible
+            // app.
             getExtension(doc)?.let { ext ->
-                builder.setPositiveButton(
-                    getString(R.string.no_application_dialog_button)
-                ) { _, _ ->
+                builder.setPositiveButton(getString(R.string.no_application_dialog_button)) { _, _
+                    ->
                     startActivity(createIntent(ext))
                 }
             }
@@ -139,9 +139,10 @@ class NoApplicationFragment : DialogFragment() {
 
     fun dpToPx(dp: Float): Int {
         return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            requireContext().resources.displayMetrics
-        ).roundToInt()
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                requireContext().resources.displayMetrics,
+            )
+            .roundToInt()
     }
 }
