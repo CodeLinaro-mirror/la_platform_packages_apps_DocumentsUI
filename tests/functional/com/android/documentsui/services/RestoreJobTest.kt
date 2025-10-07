@@ -55,6 +55,7 @@ import org.junit.Test
  */
 @MediumTest
 @RequiresFlagsEnabled(FLAG_ENABLE_DOCUMENTS_TRASH_API)
+@EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
 internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
     @get:Rule val setFlags = OverrideFlagsRule()
@@ -79,7 +80,6 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
      * and that the parent directories within the trash are removed.
      */
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testRestoreSingleFile() {
         val trashStorageDir = mDocs.createFolder(mSrcRoot, TrashDocumentHelper.TRASH_LOCATION)
         val testDirUri = mDocs.createFolder(trashStorageDir, "testDir")
@@ -121,7 +121,6 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
      * moved to their original location and the trash directory is cleaned up.
      */
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testRestoreMultipleFiles() {
         // Create a trash directory and place two trashed files inside a subdirectory
         val trashStorageDir = mDocs.createFolder(mSrcRoot, TrashDocumentHelper.TRASH_LOCATION)
@@ -168,7 +167,6 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
      * moved back to the original location.
      */
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testRestoreFolder() {
         // Create a trash directory, then create a folder with two files inside it.
         val trashStorageDir = mDocs.createFolder(mSrcRoot, TrashDocumentHelper.TRASH_LOCATION)
@@ -217,7 +215,6 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
      * generated.
      */
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testRestoreFailsForNonTrashedFile() {
         // Create a document in the source root. Attempting to restore a file that isn't
         // in the trash directory should cause a failure.
@@ -259,7 +256,6 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
      * prefix).
      */
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testRestoreFailsForImproperlyNamedFileInTrash() {
         // Create a file directly in the trash directory without the ".trashed-" prefix.
         // The restore operation should fail because it's not a valid trashed file.
@@ -302,7 +298,6 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
      * throws an exception, which is then caught and handled to prevent the app from crashing.
      */
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testRestoreFailsWhenFileAlreadyExistsAtDestination() {
         // Setup: Create a directory structure in the trash and add a trashed file to it.
         val trashStorageDir = mDocs.createFolder(mSrcRoot, TrashDocumentHelper.TRASH_LOCATION)

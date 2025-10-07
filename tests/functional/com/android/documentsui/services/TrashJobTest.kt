@@ -43,6 +43,7 @@ import org.junit.Test
 /** Tests TrashJob. */
 @MediumTest
 @RequiresFlagsEnabled(FLAG_ENABLE_DOCUMENTS_TRASH_API)
+@EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
 internal class TrashJobTest : AbstractJobTest<TrashJob>() {
     @get:Rule val setFlags = OverrideFlagsRule()
@@ -63,7 +64,6 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testTrashSingleFile() {
         val testDir1 = mDocs.createFolder(mSrcRoot, "dir1")
         val fileUri = mDocs.createDocument(testDir1, "text/plain", "document.txt")
@@ -107,7 +107,6 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testTrashMultipleFile() {
         val testDir1 = mDocs.createFolder(mSrcRoot, "dir1")
         val file1Uri = mDocs.createDocument(testDir1, "text/plain", "document1.txt")
@@ -154,7 +153,6 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testTrashFolder() {
         val testDir1 = mDocs.createFolder(mSrcRoot, "dir1")
         mDocs.createDocument(testDir1, "text/plain", "document1.txt")
@@ -216,7 +214,6 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
     fun testTrashFailedNoFileFound() {
         // create a document in mDestRoot, trashDocument only working for mSrcRoot,
         // so this will give FileNotFoundException

@@ -1033,7 +1033,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canTrash_enabled() {
         assumeTrashApiIsAvailable();
@@ -1048,7 +1048,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @DisableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canTrash_disabled() {
         assumeTrashApiIsAvailable();
@@ -1064,7 +1064,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canRestoreFromTrash_enabled() {
         assumeTrashApiIsAvailable();
@@ -1079,7 +1079,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canRestoreFromTrash_disabled() {
         assumeTrashApiIsAvailable();
@@ -1094,7 +1094,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canTrash_enabled() {
         assumeTrashApiIsAvailable();
@@ -1109,7 +1109,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @DisableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canTrash_disabled() {
         assumeTrashApiIsAvailable();
@@ -1125,7 +1125,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canRestoreFromTrash_enabled() {
         assumeTrashApiIsAvailable();
@@ -1140,7 +1140,7 @@ public final class MenuManagerTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canRestoreFromTrash_disabled() {
         assumeTrashApiIsAvailable();
