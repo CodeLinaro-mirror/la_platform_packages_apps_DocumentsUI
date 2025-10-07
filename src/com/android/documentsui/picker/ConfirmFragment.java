@@ -24,12 +24,12 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.documentsui.BaseActivity;
+import com.android.documentsui.DocumentsUIDialogFragment;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
@@ -37,10 +37,8 @@ import com.android.modules.utils.build.SdkLevel;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-/**
- * Used to confirm with user that it's OK to overwrite an existing file.
- */
-public class ConfirmFragment extends DialogFragment {
+/** Used to confirm with user that it's OK to overwrite an existing file. */
+public class ConfirmFragment extends DocumentsUIDialogFragment {
 
     private static final String TAG = "ConfirmFragment";
 

@@ -40,5 +40,7 @@
 
     <dimen name="pick_dialog_window_margin_horizontal">@dimen/space_medium_5</dimen>
     <dimen name="pick_dialog_window_margin_vertical">@dimen/space_medium_1</dimen>
+
+    <integer name="dialog_width_percentage">50</integer>
 </resources>
 

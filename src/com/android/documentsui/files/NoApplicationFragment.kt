@@ -20,7 +20,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AlertDialog
@@ -30,10 +29,11 @@ import androidx.fragment.app.FragmentManager
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Shared
+import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
+import com.android.documentsui.util.UnitUtils.Companion.dpToPx
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import kotlin.math.roundToInt
 
 /**
  * Dialog shown to users when a file cannot be opened with any of currently installed apps. User
@@ -92,17 +92,18 @@ class NoApplicationFragment : DialogFragment() {
             mTargetDoc =
                 savedInstanceState.getParcelable(Shared.EXTRA_DOC, DocumentInfo::class.java)
         }
-        val builder =
-            MaterialAlertDialogBuilder(requireContext())
-                // We're setting the inset size explicitly so changes to the default inset size in
-                // the
-                // future don't change our dialog size (the inset size affect the dialog size
-                // because
-                // we're overriding the window size to get our desired dialog size).
-                .setBackgroundInsetStart(dpToPx(INSET))
-                .setBackgroundInsetEnd(dpToPx(INSET))
-                .setTitle(getString(R.string.no_application_dialog_title))
-                .setMessage(getString(R.string.no_application_dialog_message))
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        if (!isDesktopUxPhase2FlagEnabled()) {
+            // We're setting the inset size explicitly so changes to the default inset size in
+            // the future don't change our dialog size (the inset size affect the dialog size
+            // because we're overriding the window size to get our desired dialog size).
+            builder
+                .setBackgroundInsetStart(dpToPx(requireContext(), INSET))
+                .setBackgroundInsetEnd(dpToPx(requireContext(), INSET))
+        }
+        builder
+            .setTitle(getString(R.string.no_application_dialog_title))
+            .setMessage(getString(R.string.no_application_dialog_message))
 
         mTargetDoc?.let { doc ->
             // If the file type is totally unknown, we can't help the user search for a compatible
@@ -120,13 +121,18 @@ class NoApplicationFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
+        // When desktop_ux_phase2 flag is ON, the base class will handle the dialog size.
+        if (isDesktopUxPhase2FlagEnabled()) {
+            return
+        }
+
         (dialog as? AlertDialog)?.let { d ->
             d.window?.let { w ->
                 val params = WindowManager.LayoutParams()
                 params.copyFrom(w.attributes)
                 val maxWidth = requireContext().resources.displayMetrics.widthPixels
                 // The window size is dialog size + right & left insets.
-                params.width = dpToPx(WIDTH + (2 * INSET)).coerceAtMost(maxWidth)
+                params.width = dpToPx(requireContext(), WIDTH + (2 * INSET)).coerceAtMost(maxWidth)
                 w.attributes = params
             }
         }
@@ -135,14 +141,5 @@ class NoApplicationFragment : DialogFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(Shared.EXTRA_DOC, mTargetDoc)
-    }
-
-    fun dpToPx(dp: Float): Int {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                requireContext().resources.displayMetrics,
-            )
-            .roundToInt()
     }
 }

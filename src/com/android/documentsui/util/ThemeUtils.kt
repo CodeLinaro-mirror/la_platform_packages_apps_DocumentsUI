@@ -106,8 +106,6 @@ private fun initializeIdMapping() {
             R.dimen.check_icon_size to R.dimen.check_icon_size_m3,
             R.dimen.cross_profile_button_message_margin_top to
                 R.dimen.cross_profile_button_message_margin_top_m3,
-            R.dimen.dialog_content_padding_bottom to R.dimen.dialog_content_padding_bottom_m3,
-            R.dimen.dialog_content_padding_top to R.dimen.dialog_content_padding_top_m3,
             R.dimen.dir_elevation to R.dimen.dir_elevation_m3,
             R.dimen.doc_header_height to R.dimen.doc_header_height_m3,
             R.dimen.doc_header_sort_icon_size to R.dimen.doc_header_sort_icon_size_m3,
