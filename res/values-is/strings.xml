@@ -47,7 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"Póstnúmer"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Flytja út í…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Draga allt út …"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"Draga út hingað"</string>
+    <string name="menu_extract_here" msgid="7120939831786325360">"Draga út"</string>
     <string name="menu_browse" msgid="6007716414766674967">"Skoða"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Endurnefna"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Sækja upplýsingar"</string>
@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Ekki hægt að eyða einhverjum skjölum"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ekki er hægt að deila meira en <xliff:g id="COUNT">%1$d</xliff:g> skrám"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Aðgerð ekki leyfileg"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Opna með …"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Það eru engin studd forrit uppsett. Prófaðu að setja eitt forrit frá Play Store upp."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Leita í Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Deila í gegnum"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Afritar skrár"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Þjappar skrám"</string>
@@ -168,22 +165,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Undirbýr..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Undirbýr..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="one">Gat ekki afritað <xliff:g id="COUNT_1">%1$d</xliff:g> atriði</item>
-      <item quantity="other">Gat ekki afritað <xliff:g id="COUNT_1">%1$d</xliff:g> atriði</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="one">Ekki tókst að þjappa <xliff:g id="COUNT_1">%1$d</xliff:g> skrá</item>
-      <item quantity="other">Ekki tókst að þjappa <xliff:g id="COUNT_1">%1$d</xliff:g> skrám</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="one">Gat ekki flutt <xliff:g id="COUNT_1">%1$d</xliff:g> atriði</item>
-      <item quantity="other">Gat ekki flutt <xliff:g id="COUNT_1">%1$d</xliff:g> atriði</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="one">Gat ekki eytt <xliff:g id="COUNT_1">%1$d</xliff:g> atriði</item>
-      <item quantity="other">Gat ekki eytt <xliff:g id="COUNT_1">%1$d</xliff:g> atriðum</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Ýttu til að skoða frekari upplýsingar"</string>
     <string name="close" msgid="905969391788869975">"Loka"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -214,25 +205,39 @@
       <item quantity="one">Afritaði <xliff:g id="COUNT_1">%1$d</xliff:g> atriði á klippiborð.</item>
       <item quantity="other">Afritaði <xliff:g id="COUNT_1">%1$d</xliff:g> atriði á klippiborð.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Þetta safn er á skrifvarinni staðsetningu og er ekki hægt að draga út héðan."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Skráaraðgerðin er ekki studd."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Skráaraðgerð mistókst."</string>
     <string name="rename_error" msgid="6700093173508118635">"Ekki tókst að endurnefna skjalið"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Fjarlægja"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Sumum skrám var umbreytt"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Afritar “<xliff:g id="FILENAME">{filename}</xliff:g>” yfir á “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}one{Afritar # skrá yfir á “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Afritar # skrár yfir á “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Dregur <xliff:g id="FILENAME">{filename}</xliff:g> yfir í \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"}one{Dregur # söfn yfir í “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Dregur # söfn yfir í “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Færir “<xliff:g id="FILENAME">{filename}</xliff:g>” yfir í “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}one{Færir # skrá yfir í “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Færir # skrár yfir í “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Eyðir “<xliff:g id="FILENAME">{filename}</xliff:g>”}one{Eyðir # skrá}other{Eyðir # skrám}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Þjappar “<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Þjappa # skrá}other{Þjappa # skrár}}"</string>
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Sýna framvindu skráar"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"Framvinda skrár"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"Lokið"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Hætt við"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Sjá nánar"</string>
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g> af <xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Afritað"</string>
     <string name="move_completed" msgid="3981250605092729273">"Flutt"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Eytt"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"Þjappað"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"Þjappað"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Dregin út"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"Ekki tókst að afrita"</string>
+    <string name="move_failed" msgid="7692364307225994220">"Ekki tókst að færa"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"Ekki var hægt að eyða"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"Ekki tókst að þjappa"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"Ekki tókst að draga út"</string>
+    <string name="expand_label" msgid="5683357671239615207">"Stækka"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Minnka"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Viltu veita <xliff:g id="APPNAME"><b>^1</b></xliff:g> aðgang að skráasafninu <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> á <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Viltu veita <xliff:g id="APPNAME"><b>^1</b></xliff:g> aðgang að skráasafninu <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Viltu veita <xliff:g id="APPNAME"><b>^1</b></xliff:g> aðgang að gögnunum þínum, þar á meðal myndum og myndskeiðum, á <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>

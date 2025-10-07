@@ -81,6 +81,11 @@ public abstract class MenuManager {
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
         updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
 
+        if (isZipNgFlagEnabled()) {
+            updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
+            updateBrowse(menu.findItem(getRes(R.id.action_menu_browse)), selection);
+        }
+
         Menus.disableHiddenItems(menu);
     }
 
@@ -466,6 +471,16 @@ public abstract class MenuManager {
          * type.
          */
         boolean isArchive();
+
+        /**
+         * Returns whether the selection is a single file that can be opened by multiple opening
+         * apps.
+         *
+         * This is a necessary signal to enable "open with" on desktop devices since performing
+         * "open with" with a file that has a single opening app will automatically open that app
+         * (i.e. does not do the expected "open with" behavior).
+         */
+        boolean hasMultipleOpeningApps();
 
         // TODO: Update these to express characteristics instead of answering concrete questions,
         // since the answer to those questions is (or can be) activity specific.

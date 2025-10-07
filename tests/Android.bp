@@ -14,6 +14,7 @@
 
 package {
     default_applicable_licenses: ["Android-Apache-2.0"],
+    default_team: "trendy_team_documentsui",
 }
 
 java_defaults {
@@ -26,6 +27,7 @@ java_defaults {
 
     static_libs: [
         "androidx.test.core",
+        "androidx.test.espresso.contrib",
         "androidx.test.espresso.core",
         "androidx.test.ext.truth",
         "androidx.test.rules",
@@ -36,6 +38,8 @@ java_defaults {
         "guava",
         "kotlinx_coroutines_test",
         "mockito-target",
+        "microbenchmark-device-lib",
+        "platform-test-annotations",
     ],
 }
 
@@ -45,6 +49,12 @@ android_library {
         "common/com/android/documentsui/**/*.java",
         "common/com/android/documentsui/**/*.kt",
         "functional/com/android/documentsui/ActivityTest.java",
+    ],
+    exclude_srcs: [
+        // TestRunner has a dependency on microbenchmark-device-lib. Since it's
+        // not used in this test target, we exclude instead of adding an
+        // unnecessary dependency.
+        "common/com/android/documentsui/TestRunner.kt",
     ],
     resource_dirs: [],
     libs: [
@@ -56,6 +66,7 @@ android_library {
 
     static_libs: [
         "androidx.legacy_legacy-support-v4",
+        "androidx.test.espresso.contrib",
         "androidx.test.espresso.core",
         "androidx.test.rules",
         "androidx.test.uiautomator_uiautomator",
@@ -87,7 +98,7 @@ android_library {
     ],
 
     min_sdk_version: "30",
-    target_sdk_version: "30",
+    target_sdk_version: "33",
 }
 
 android_library {
@@ -123,9 +134,10 @@ android_library {
     ],
 
     min_sdk_version: "30",
-    target_sdk_version: "30",
+    target_sdk_version: "33",
     lint: {
         baseline_filename: "lint-baseline.xml",
+        enabled: false,
     },
 }
 
@@ -154,5 +166,5 @@ android_test {
 
     instrumentation_for: "DocumentsUI",
     min_sdk_version: "30",
-    target_sdk_version: "30",
+    target_sdk_version: "33",
 }

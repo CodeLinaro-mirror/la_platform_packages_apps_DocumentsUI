@@ -47,7 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"ஜிப் செய்தல்"</string>
     <string name="menu_extract" msgid="8171946945982532262">"இங்கு பிரி…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"அனைத்தையும் பிரித்தெடு…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"இங்கே பிரித்தெடு"</string>
+    <string name="menu_extract_here" msgid="7120939831786325360">"பிரித்தெடுத்தல்"</string>
     <string name="menu_browse" msgid="6007716414766674967">"பிரவுசிங் செய்"</string>
     <string name="menu_rename" msgid="1883113442688817554">"பெயர் மாற்று"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"தகவலைப் பெறு"</string>
@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"சில ஆவணங்களை நீக்க முடியவில்லை"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> ஃபைல்களுக்கு மேல் பகிர முடியாது"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"செயல் அனுமதிக்கப்படவில்லை"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"இதில் திறங்கள்…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"ஆதரிக்கப்படும் ஆப்ஸ் எதுவும் நிறுவப்படவில்லை. Play Storeரில் இருந்து ஓர் ஆப்ஸை நிறுவவும்."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Storeரில் தேடு"</string>
     <string name="share_via" msgid="8725082736005677161">"இதன் வழியாகப் பகிர்"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ஃபைல்களை நகலெடுத்தல்"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"அளவைக் குறைக்கிறது"</string>
@@ -168,22 +165,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"தயாராகிறது..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"தயாராகிறது..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> உருப்படிகளை நகலெடுக்க முடியவில்லை</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> உருப்படியை நகலெடுக்க முடியவில்லை</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ஃபைல்களின் அளவைக் குறைக்க முடியவில்லை</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ஃபைலின் அளவைக் குறைக்க முடியவில்லை</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> உருப்படிகளை நகர்த்த முடியவில்லை</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> உருப்படியை நகர்த்த முடியவில்லை</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> உருப்படிகளை நீக்க முடியவில்லை</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> உருப்படியை நீக்க முடியவில்லை</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"விவரங்களைப் பார்க்க, தட்டவும்"</string>
     <string name="close" msgid="905969391788869975">"மூடு"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -214,25 +205,39 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ஃபைல்கள் , கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டன.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ஃபைல், கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"இந்தக் காப்பகம் படிக்க மட்டுமேயான இடத்தில் உள்ளது, அதை இங்கே பிரித்தெடுக்க முடியாது."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ஃபைல் செயல்பாடு ஆதரிக்கப்படவில்லை."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ஃபைல் செயல்பாடு தோல்வியடைந்தது."</string>
     <string name="rename_error" msgid="6700093173508118635">"ஆவணத்தின் பெயரை மாற்ற முடியவில்லை"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"வெளியேற்று"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"சில ஃபைல்கள்  மாற்றப்பட்டன"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”க்கு நகலெடுக்கிறது}other{# ஃபைல்களை “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”க்கு நகலெடுக்கிறது}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” இல் பிரித்தெடுக்கிறது}other{# காப்பகங்களை “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” இல் பிரித்தெடுக்கிறது}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”க்கு நகர்த்துகிறது}other{# ஃபைல்களை “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”க்கு நகர்த்துகிறது}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை நீக்குகிறது}other{# ஃபைல்களை நீக்குகிறது}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ ஃபைலை ஜிப் செய்கிறது}other{# ஃபைல்களை ஜிப் செய்கிறது}}"</string>
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"ஃபைலின் செயல்நிலையைக் காட்டும்"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"ஃபைல் செயல்நிலை"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"முடிந்தது"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"ரத்துசெய்யப்பட்டது"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"விவரங்களைப் பாருங்கள்"</string>
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g>/<xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"நகலெடுக்கப்பட்டது"</string>
     <string name="move_completed" msgid="3981250605092729273">"நகர்த்தப்பட்டது"</string>
     <string name="delete_completed" msgid="4149401155614626199">"நீக்கப்பட்டது"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"சுருக்கப்பட்டது"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"ஜிப் செய்யப்பட்டது"</string>
     <string name="extract_completed" msgid="8824595789915249972">"பிரித்தெடுக்கப்பட்டது"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"நகலெடுக்க முடியவில்லை"</string>
+    <string name="move_failed" msgid="7692364307225994220">"நகர்த்த முடியவில்லை"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"நீக்க முடியவில்லை"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"ஜிப் செய்ய முடியவில்லை"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"பிரித்தெடுக்க முடியவில்லை"</string>
+    <string name="expand_label" msgid="5683357671239615207">"விரிக்கும்"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"சுருக்கும்"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="STORAGE"><i>^3</i></xliff:g> இல் உள்ள <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> கோப்பகத்தை அணுக, <xliff:g id="APPNAME"><b>^1</b></xliff:g>ஐ அனுமதிக்கவா?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="DIRECTORY"><i>^2</i></xliff:g> கோப்பகத்தை அணுக, <xliff:g id="APPNAME"><b>^1</b></xliff:g>ஐ அனுமதிக்கவா?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="STORAGE"><i>^2</i></xliff:g> இல் உள்ள படங்கள், வீடியோக்கள் உட்பட எல்லா தரவையும் அணுக, <xliff:g id="APPNAME"><b>^1</b></xliff:g>ஐ அனுமதிக்கவா?"</string>

@@ -44,10 +44,10 @@
     <string name="menu_copy" msgid="7404820171352314754">"ចម្លងទៅ…"</string>
     <string name="menu_move" msgid="2310760789561129882">"ផ្លាស់ទីទៅ…"</string>
     <string name="menu_compress" msgid="37539111904724188">"បង្ហាប់"</string>
-    <string name="menu_zip" msgid="5734673122376258045">"លេខ​កូដ​តំបន់"</string>
+    <string name="menu_zip" msgid="5734673122376258045">"Zip"</string>
     <string name="menu_extract" msgid="8171946945982532262">"ស្រង់​ទៅ…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"ស្រង់ចេញទាំងអស់…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"ស្រង់​ចេញ​ទីនេះ"</string>
+    <string name="menu_extract_here" msgid="7120939831786325360">"ដកស្រង់"</string>
     <string name="menu_browse" msgid="6007716414766674967">"រុករក"</string>
     <string name="menu_rename" msgid="1883113442688817554">"ប្ដូរឈ្មោះ"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"ទទួល​ព័ត៌មាន"</string>
@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"មិនអាចលុបឯកសារមួយចំនួន"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"មិនអាច​ចែករំលែក​ឯកសារ​ច្រើន​ជាង <xliff:g id="COUNT">%1$d</xliff:g> បាន​ទេ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"សកម្មភាពមិនត្រូវបានអនុញ្ញាត"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"បើក​ដោយ​ប្រើ…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"មិនមានការដំឡើងកម្មវិធី​ដែលអាចប្រើបានទេ។ សាកល្បងដំឡើងកម្មវិធីពី Play Store។"</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"ស្វែងរក​នៅលើ Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"ចែករំលែក​តាម"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"កំពុងចម្លងឯកសារ"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"កំពុង​បង្ហាប់​ឯកសារ"</string>
@@ -150,8 +147,8 @@
       <item quantity="one">កំពុង​បង្ហាប់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g> ។</item>
     </plurals>
     <plurals name="extract_begin" formatted="false" msgid="1006380679562903749">
-      <item quantity="other">កំពុង​ស្រង់​ឯកសារ​ <xliff:g id="COUNT_1">%1$d</xliff:g> ។</item>
-      <item quantity="one">កំពុង​ស្រង់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g> ។</item>
+      <item quantity="other">កំពុង​ស្រង់​ឯកសារ​ <xliff:g id="COUNT_1">%1$d</xliff:g>។</item>
+      <item quantity="one">កំពុង​ស្រង់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g>។</item>
     </plurals>
     <plurals name="move_begin" formatted="false" msgid="1464229874265756956">
       <item quantity="other">កំពុង​ផ្លាស់ទី​ធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> ។</item>
@@ -168,22 +165,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"កំពុងរៀបចំ..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"កំពុងរៀបចំ..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="other">មិនអាច​ចម្លងធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> បានទេ</item>
-      <item quantity="one">មិនអាច​ចម្លងធាតុ <xliff:g id="COUNT_0">%1$d</xliff:g> បានទេ</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="other">មិនអាច​បង្ហាប់​ឯកសារ <xliff:g id="COUNT_1">%1$d</xliff:g> បាន​ទេ</item>
-      <item quantity="one">មិនអាច​បង្ហាប់​ឯកសារ <xliff:g id="COUNT_0">%1$d</xliff:g> បាន​ទេ</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="other">មិនអាច​ផ្លាស់ទីធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> បានទេ</item>
-      <item quantity="one">មិនអាច​ផ្លាស់ទីធាតុ <xliff:g id="COUNT_0">%1$d</xliff:g> បានទេ</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="other">មិនអាច​លុបធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> បានទេ</item>
-      <item quantity="one">មិនអាច​លុបធាតុ <xliff:g id="COUNT_0">%1$d</xliff:g> បានទេ</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"ប៉ះដើម្បីមើលព័ត៌មានលម្អិត"</string>
     <string name="close" msgid="905969391788869975">"បិទ​"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -214,25 +205,39 @@
       <item quantity="other">បាន​ចម្លងធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> ទៅអង្គចងចាំ។</item>
       <item quantity="one">បាន​ចម្លងធាតុ <xliff:g id="COUNT_0">%1$d</xliff:g> ទៅ​អង្គចងចាំ។</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"បណ្ណសារនេះស្ថិតនៅក្នុងទីតាំងដែលបានតែអានប៉ុណ្ណោះ និងមិនអាចដកស្រង់នៅទីនេះបានទេ។"</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"មិនស្គាល់ប្រតិបត្តិការឯកសារនេះទេ។"</string>
     <string name="file_operation_error" msgid="2234357335716533795">"មិនអាចធ្វើប្រតិបត្តិការឯកសារនេះបានទេ។"</string>
     <string name="rename_error" msgid="6700093173508118635">"បានបរាជ័យក្នុងការប្តូរឈ្មោះឯកសារ"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"ដកចេញ"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"ឯកសារមួយចំនួនត្រូវបានបម្លែង"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{កំពុងចម្លង “<xliff:g id="FILENAME">{filename}</xliff:g>” ទៅ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{កំពុងចម្លងឯកសារ # ទៅ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{កំពុងដកស្រង់ “<xliff:g id="FILENAME">{filename}</xliff:g>” ទៅ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{កំពុងដកស្រង់បណ្ណសារ # ទៅ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{កំពុងផ្លាស់ទី “<xliff:g id="FILENAME">{filename}</xliff:g>” ទៅ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{កំពុងផ្លាស់ទីឯកសារ # ទៅ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{កំពុងលុប “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{កំពុងលុបឯកសារ #}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{កំពុង​បង្ហាប់ “<xliff:g id="FILENAME">{filename}</xliff:g>“}other{កំពុងបង្ហាប់ឯកសារ #}}"</string>
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"បង្ហាញដំណើរការឯកសារ"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"ដំណើរវិវឌ្ឍន៍នៃឯកសារ"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"បានបញ្ចប់"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"បាន​បោះបង់"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"មើលព័ត៌មានលម្អិត"</string>
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g> នៃ <xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"បានចម្លង"</string>
     <string name="move_completed" msgid="3981250605092729273">"បានផ្លាស់ទី"</string>
     <string name="delete_completed" msgid="4149401155614626199">"បាន​លុប"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"បាន​បង្ហាប់"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"បានបង្ហាប់"</string>
     <string name="extract_completed" msgid="8824595789915249972">"បានដកស្រង់"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"មិនអាច​ចម្លងបានទេ"</string>
+    <string name="move_failed" msgid="7692364307225994220">"មិនអាចផ្លាស់ទីបានទេ"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"មិនអាច​លុប​បានទេ"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"មិនអាចបង្ហាប់បានទេ"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"មិនអាចដកស្រង់ចេញបានទេ"</string>
+    <string name="expand_label" msgid="5683357671239615207">"ពង្រីក"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"បង្រួម"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"ផ្តល់សិទ្ធិឲ្យ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ដើម្បីចូលដំណើរការថត <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> នៅលើ <xliff:g id="STORAGE"><i>^3</i></xliff:g> ឬ?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"ផ្តល់សិទ្ធិឲ្យ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ដើម្បីចូលដំណើរការថត <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ឬ?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"ផ្តល់សិទ្ធិឲ្យ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ដើម្បីចូលដំណើរការទិន្នន័យរបស់អ្នក រាប់បញ្ចូលទាំងរូបថត និងវីដេអូ នៅលើ <xliff:g id="STORAGE"><i>^2</i></xliff:g> ឬ?"</string>

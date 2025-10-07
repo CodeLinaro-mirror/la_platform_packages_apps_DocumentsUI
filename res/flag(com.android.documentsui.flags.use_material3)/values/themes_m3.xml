@@ -55,7 +55,9 @@
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyleM3</item>
         <item name="materialAlertDialogTheme">@style/MaterialAlertDialogThemeM3</item>
         <item name="queryBackground">@color/menu_search_background_m3</item>
+        <item name="snackbarStyle">@style/SnackbarStyle</item>
         <item name="snackbarButtonStyle">@style/SnackbarButtonStyleM3</item>
+        <item name="snackbarTextViewStyle">@style/SnackbarTextViewStyle</item>
 
         <!-- Menus -->
         <item name="actionOverflowMenuStyle">@style/OverflowMenuStyleM3</item>

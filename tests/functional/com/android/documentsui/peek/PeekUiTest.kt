@@ -22,7 +22,10 @@ import android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT
 import android.content.res.Resources
 import android.graphics.Rect
 import android.os.RemoteException
+import android.platform.test.annotations.DesktopTest
+import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.view.Display
 import androidx.media3.ui.R as ExoPlayerR
@@ -46,7 +49,7 @@ import com.android.documentsui.TestUtils.Companion.pxToDp
 import com.android.documentsui.bots.PeekBot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.rules.TestFilesRule
 import java.io.IOException
 import junit.framework.Assert.assertNotNull
@@ -61,9 +64,14 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-@RequiresFlagsEnabled(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_PEEK_PREVIEW_RO)
+@EnableFlags(Flags.FLAG_USE_MATERIAL3)
+// TODO(b/433858983): Change to EnableFlags once peek is overridable in FlagUtils.
+@RequiresFlagsEnabled(Flags.FLAG_USE_PEEK_PREVIEW_RO)
 class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
-    @get:Rule val checkFlags = CheckAndForceMaterial3Flag()
+    @get:Rule val setFlags = OverrideFlagsRule()
+
+    // TODO(b/433858983): Remove CheckFlagsRule once peek is overridable in FlagUtils.
+    @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     @Suppress("ktlint:standard:comment-wrapping")
     @get:Rule
@@ -162,6 +170,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         showAndCheckPreview("file0.log")
     }
 
+    @DesktopTest(cujs = ["b/434068614"])
     @Test
     @Throws(Exception::class)
     fun testFileCantBeSelectedDuringFilePreview() {

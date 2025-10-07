@@ -47,7 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"Cod poștal"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Extrage în…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Extrage tot…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"Extrage aici"</string>
+    <string name="menu_extract_here" msgid="7120939831786325360">"Extrage"</string>
     <string name="menu_browse" msgid="6007716414766674967">"Răsfoiește"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Redenumește"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Vezi informațiile"</string>
@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Anumite documente nu au putut fi șterse"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Numărul de fișiere distribuite nu poate depăși <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acțiunea nu este permisă"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Deschide cu…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Nu sunt instalate aplicații acceptate. Încearcă să instalezi una din Magazinul Play."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Caută în Magazinul Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Trimite prin"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Se copiază fișierele"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Se comprimă fișierele"</string>
@@ -173,26 +170,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Se pregătește..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Se pregătește..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="few">Nu s-au putut copia <xliff:g id="COUNT_1">%1$d</xliff:g> articole</item>
-      <item quantity="other">Nu s-au putut copia <xliff:g id="COUNT_1">%1$d</xliff:g> de articole</item>
-      <item quantity="one">Nu s-a putut copia <xliff:g id="COUNT_0">%1$d</xliff:g> articol</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="few">Nu s-au putut comprima <xliff:g id="COUNT_1">%1$d</xliff:g> fișiere</item>
-      <item quantity="other">Nu s-au putut comprima <xliff:g id="COUNT_1">%1$d</xliff:g> de fișiere</item>
-      <item quantity="one">Nu s-a putut comprima <xliff:g id="COUNT_0">%1$d</xliff:g> fișier</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="few">Nu s-au putut muta <xliff:g id="COUNT_1">%1$d</xliff:g> articole</item>
-      <item quantity="other">Nu s-au putut muta <xliff:g id="COUNT_1">%1$d</xliff:g> de articole</item>
-      <item quantity="one">Nu s-a putut muta <xliff:g id="COUNT_0">%1$d</xliff:g> articol</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="few">Nu s-au putut șterge <xliff:g id="COUNT_1">%1$d</xliff:g> articole</item>
-      <item quantity="other">Nu s-au putut șterge <xliff:g id="COUNT_1">%1$d</xliff:g> de articole</item>
-      <item quantity="one">Nu s-a putut șterge <xliff:g id="COUNT_0">%1$d</xliff:g> articol</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Atinge pentru a vedea detaliile"</string>
     <string name="close" msgid="905969391788869975">"Închide"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -230,25 +217,39 @@
       <item quantity="other">S-au copiat <xliff:g id="COUNT_1">%1$d</xliff:g> de articole în clipboard.</item>
       <item quantity="one">S-a copiat <xliff:g id="COUNT_0">%1$d</xliff:g> articol în clipboard.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Arhiva se află într-o locație numai în citire și nu poate fi extrasă aici."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operațiunea cu fișierul nu este acceptată."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Operațiunea cu fișierul nu a reușit."</string>
     <string name="rename_error" msgid="6700093173508118635">"Documentul nu a putut fi redenumit"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Scoate"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Unele fișiere au fost convertite"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Se copiază <xliff:g id="FILENAME">{filename}</xliff:g> în <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Se copiază # fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Se copiază # de fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Se extrage <xliff:g id="FILENAME">{filename}</xliff:g> în <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Se extrag # arhive în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Se extrag # de arhive în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Se mută <xliff:g id="FILENAME">{filename}</xliff:g> în <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Se mută # fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Se mută # de fișiere în <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Se șterge <xliff:g id="FILENAME">{filename}</xliff:g>}few{Se șterg # fișiere}other{Se șterg # de fișiere}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Se arhivează <xliff:g id="FILENAME">{filename}</xliff:g>}few{Se arhivează # fișiere}other{Se arhivează # de fișiere}}"</string>
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Afișează progresul fișierului"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"Progresul fișierului"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"Finalizat"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Anulată"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Vezi detaliile"</string>
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g> din <xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Copiat"</string>
     <string name="move_completed" msgid="3981250605092729273">"Mutat"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Șters"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"Comprimat"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"Arhivat"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extras"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"Datele nu s-au putut copia"</string>
+    <string name="move_failed" msgid="7692364307225994220">"Nu s-a putut muta"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"Nu s-a șters"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"Nu s-a putut arhiva"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"Nu s-a putut extrage"</string>
+    <string name="expand_label" msgid="5683357671239615207">"Extinde"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Restrânge"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Permiți aplicației <xliff:g id="APPNAME"><b>^1</b></xliff:g> să acceseze directorul <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> de pe <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Permiți aplicației <xliff:g id="APPNAME"><b>^1</b></xliff:g> să acceseze directorul <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Permiți ca <xliff:g id="APPNAME"><b>^1</b></xliff:g> să acceseze datele, inclusiv fotografiile și videoclipurile, de pe <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>

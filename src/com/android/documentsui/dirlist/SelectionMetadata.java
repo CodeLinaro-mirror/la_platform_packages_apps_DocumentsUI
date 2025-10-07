@@ -18,6 +18,7 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.database.Cursor;
@@ -31,6 +32,7 @@ import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.roots.RootCursorWrapper;
 
+import java.util.HashMap;
 import java.util.function.Function;
 
 /**
@@ -48,6 +50,7 @@ public class SelectionMetadata extends SelectionObserver<String>
             Document.FLAG_SUPPORTS_REMOVE | Document.FLAG_SUPPORTS_DELETE;
 
     private final Function<String, Cursor> mDocFinder;
+    private final Function<String, Integer> mCountOpeningApps;
 
     private int mDirectoryCount = 0;
     private int mFileCount = 0;
@@ -66,8 +69,22 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     private boolean mSupportsSettings = false;
 
-    public SelectionMetadata(Function<String, Cursor> docFinder) {
+    // For each selected file, remember the number of installed apps that support opening it. We
+    // need this information to respond to hasMultipleOpeningApps.
+    HashMap<String, Integer> mOpeningAppCountForFile = new HashMap<>();
+
+    /**
+     * Keeps track of different properties about the current selection.
+     *
+     * @param docFinder A function that returns a cursor for the given document ID.
+     * @param countOpeningApps A function that returns the number of installed apps that support
+     *                         opening a file given its document ID.
+     */
+    public SelectionMetadata(
+            Function<String, Cursor> docFinder,
+            Function<String, Integer> countOpeningApps) {
         mDocFinder = docFinder;
+        mCountOpeningApps = countOpeningApps;
     }
 
     @Override
@@ -88,6 +105,15 @@ public class SelectionMetadata extends SelectionObserver<String>
             mFileCount += delta;
             if (ArchivesProvider.isSupportedArchiveType(mimeType)) {
                 mArchiveCount += delta;
+            }
+            if (isDesktopFileHandlingFlagEnabled()) {
+                if (selected) {
+                    mOpeningAppCountForFile.put(
+                            modelId,
+                            mCountOpeningApps.apply(modelId));
+                } else {
+                    mOpeningAppCountForFile.remove(modelId);
+                }
             }
         }
 
@@ -159,6 +185,18 @@ public class SelectionMetadata extends SelectionObserver<String>
     }
 
     @Override
+    public boolean hasMultipleOpeningApps() {
+        if (isDesktopFileHandlingFlagEnabled()) {
+            if (mOpeningAppCountForFile.size() == 1) {
+                int openingAppCount = mOpeningAppCountForFile.values().iterator().next();
+                return openingAppCount > 1;
+            }
+        }
+        // When the flag is disabled, this method is not used anywhere.
+        return false;
+    }
+
+    @Override
     public boolean canDelete() {
         return size() > 0 && mNoDeleteCount == 0;
     }
@@ -185,7 +223,8 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     @Override
     public boolean canOpen() {
-        return mFileCount == 1 && mDirectoryCount == 0 && mPartialCount == 0 && (
-                mInArchiveCount == 0 || (isZipNgFlagEnabled() && mArchiveCount == 0));
+        return mFileCount == 1 && mDirectoryCount == 0 && mPartialCount == 0
+                && (mArchiveCount == 0 || !isZipNgFlagEnabled())
+                && (mInArchiveCount == 0 || isZipNgFlagEnabled());
     }
 }

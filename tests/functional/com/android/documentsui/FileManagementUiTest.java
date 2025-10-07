@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.platform.test.annotations.DesktopTest;
 import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
@@ -97,12 +98,13 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
 
         bots.directory.waitForDocument("file1.png");
-        bots.directory.assertDocumentsPresent("file1.png");
+        bots.directory.assertDocumentsVisible("file1.png");
 
         bots.roots.openRoot(ROOT_0_ID);
         bots.directory.assertDocumentsAbsent("file1.png");
     }
 
+    @DesktopTest(cujs = {"b/434068359"})
     @HugeLongTest
     @Test
     public void testKeyboard_CopyDocument() throws Exception {
@@ -134,7 +136,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
         device.waitForIdle();
 
-        bots.directory.assertDocumentsPresent("file1.png");
+        bots.directory.assertDocumentsVisible("file1.png");
     }
 
     @Test

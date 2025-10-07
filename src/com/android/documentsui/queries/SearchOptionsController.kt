@@ -24,6 +24,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.MenuRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.iterator
+import com.android.documentsui.MetricConsts
 import com.android.documentsui.R
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.util.FlagUtils
@@ -77,6 +78,19 @@ class SearchOptionsController(private val container: View?) {
             R.menu.search_last_modified_menu -> lastModifiedOption.value
             R.menu.search_file_type_menu -> fileTypeOption.value
             else -> throw IllegalArgumentException("Unexpected menu ID $menuId")
+        }
+    }
+
+    /**
+     * Explicitly sets the file type based on a MetricConsts.
+     */
+    public fun setSelectedFileType(@MetricConsts.SearchType typeId: Int) {
+        fileTypeOption = when (typeId) {
+            MetricConsts.TYPE_CHIP_AUDIOS -> FileTypeOption.AUDIO
+            MetricConsts.TYPE_CHIP_DOCS -> FileTypeOption.DOCUMENTS
+            MetricConsts.TYPE_CHIP_IMAGES -> FileTypeOption.IMAGES
+            MetricConsts.TYPE_CHIP_VIDEOS -> FileTypeOption.VIDEO
+            else -> throw IllegalArgumentException("Cannot convert $typeId to file type")
         }
     }
 
@@ -271,6 +285,10 @@ class SearchOptionsController(private val container: View?) {
            } else {
                chip.visibility = View.VISIBLE
            }
+        }
+        val typeChip = container.findViewById<Chip>(getRes(R.id.search_file_type_trigger))
+        if (typeChip != null) {
+            typeChip.text = container.resources.getString(fileTypeOption.textId)
         }
     }
 

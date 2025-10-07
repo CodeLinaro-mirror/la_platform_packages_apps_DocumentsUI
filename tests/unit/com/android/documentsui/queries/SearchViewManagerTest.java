@@ -23,6 +23,7 @@ import static android.provider.DocumentsContract.QUERY_ARG_MIME_TYPES;
 import static android.provider.DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
 
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -39,8 +40,8 @@ import static org.mockito.Mockito.when;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.view.View;
@@ -59,7 +60,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestEventHandler;
 import com.android.documentsui.testing.TestHandler;
 import com.android.documentsui.testing.TestMenu;
@@ -85,7 +86,7 @@ import java.util.TimerTask;
 public final class SearchViewManagerTest {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private TestEventHandler<String> mTestEventHandler;
     private TestTimer mTestTimer;
@@ -414,7 +415,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testBuildQueryArgs_hasMimeType() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -428,7 +429,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testBuildQueryArgs_hasLargeFilesSize() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -441,7 +442,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testBuildQueryArgs_hasWeekAgoTime() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
@@ -460,7 +461,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testSupportsMimeTypesSearch_showChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -474,7 +475,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testNotSupportsMimeTypesSearch_notShowChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -502,7 +503,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testNotSupportsSearch_notShowMenuAndChips() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);
@@ -517,7 +518,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @EnableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testOnSearchStartingCalled() {
         mSearchViewManager.onClick(null);
         mTestEventHandler.nextReturn(true);
@@ -539,7 +540,7 @@ public final class SearchViewManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @EnableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testMediaAndDownloadsHiddenOnSearchEverywhere() {
         RootInfo mediaRoot = spy(new RootInfo());
         mediaRoot.authority = Providers.AUTHORITY_MEDIA;

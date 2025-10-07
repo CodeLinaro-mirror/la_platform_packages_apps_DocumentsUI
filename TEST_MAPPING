@@ -6,14 +6,32 @@
     },
     {
       "name": "DocumentsUIUnitTests"
+    },
+    {
+      "name": "DocumentsUIGoogleTests",
+      "keywords": ["internal"],
+      "options": [
+        {
+          "exclude-annotation": "androidx.test.filters.LargeTest"
+        },
+        {
+          "exclude-annotation": "com.android.documentsui.filters.HugeLongTest"
+        }
+      ]
     }
   ],
-  "postsubmit": [
+  "documentsui-mainline-presubmit": [
+    {
+      "name": "DocumentsUIUnitTests"
+    },
     {
       "name": "DocumentsUIGoogleTests",
       "options": [
         {
           "exclude-annotation": "androidx.test.filters.LargeTest"
+        },
+        {
+          "exclude-annotation": "com.android.documentsui.filters.HugeLongTest"
         }
       ]
     }
@@ -21,6 +39,17 @@
   "desktop-presubmit": [
     {
       "name": "DocumentsUIUnitTests"
+    },
+    {
+      "name": "DocumentsUIGoogleTests",
+      "options": [
+        {
+          "exclude-annotation": "androidx.test.filters.LargeTest"
+        },
+        {
+          "exclude-annotation": "com.android.documentsui.filters.HugeLongTest"
+        }
+      ]
     }
   ],
   "desktop-postsubmit": [

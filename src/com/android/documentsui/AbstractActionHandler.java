@@ -20,6 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
@@ -81,6 +82,7 @@ import com.android.documentsui.ui.Snackbars;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -932,11 +934,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
 
             if (isSearchV2Enabled()) {
-                // SearchV2 needs to know the root, as it fine-tunes it behavior based on where
-                // search is performed. Thus before creating a loader we update the search view
-                // manager with the current root. Search view manager then is ready to act
-                // appropriately, once it gets notified about search starting.
-                mSearchMgr.setCurrentRoot(mState.stack.getRoot());
                 return onCreateLoaderV2(id, args);
             }
             return onCreateLoaderV1(id, args);
@@ -944,6 +941,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         private Loader<DirectoryResult> onCreateLoaderV1(int id, Bundle args) {
             Context context = mActivity;
+            UserId initialUser = mState.stack.getRoot().userId;
+
+            if (isMovingContentIntoPrivateSpaceEnabled()) {
+                List<UserId> allowedUsers = UserId.nonExcludedUsers(mState,
+                        mInjector.userManagerProvider.getUserIds(mActivity));
+
+                if (initialUser.isExcluded(mState) && !Objects.isNull(allowedUsers)
+                        && !allowedUsers.isEmpty()) {
+                    // start with the next available user. This could be any user.
+                    initialUser = allowedUsers.get(0);
+                }
+            }
 
             if (mState.stack.isRecents()) {
                 final LockingContentObserver observer = new LockingContentObserver(
@@ -961,7 +970,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                             mExecutors,
                             mInjector.fileTypeLookup,
                             mSearchMgr.buildQueryArgs(),
-                            mState.stack.getRoot().userId);
+                            initialUser);
                 } else {
                     if (DEBUG) {
                         Log.d(TAG, "Creating new loader recents.");
@@ -972,7 +981,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                             mState,
                             mExecutors,
                             mInjector.fileTypeLookup,
-                            mState.stack.getRoot().userId);
+                            initialUser);
                 }
                 loader.setObserver(observer);
                 return loader;
@@ -1029,16 +1038,55 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
 
             DocumentStack stack = mState.stack;
+
+            RootInfo root = stack.getRoot();
+
+            if (isMovingContentIntoPrivateSpaceEnabled()) {
+                List<UserId> allowedUsers = UserId.nonExcludedUsers(mState,
+                        mInjector.userManagerProvider.getUserIds(mActivity));
+
+                // If the current root's user is excluded and there are other users available
+                if (root.userId.isExcluded(mState) && !allowedUsers.isEmpty()) {
+                    UserId newUserId = allowedUsers.get(0);
+
+                    RootInfo newRoot = RootInfo.copyRootInfo(root);
+                    newRoot.userId = newUserId;
+
+                    stack.changeRoot(newRoot);
+
+                    root = newRoot;
+                }
+            }
+
+            // SearchV2 needs to know the root, as it fine-tunes it behavior based on where
+            // search is performed. Thus before creating a loader we update the search view
+            // manager with the current root. Search view manager then is ready to act
+            // appropriately, once it gets notified about search starting.
+            mSearchMgr.setCurrentRoot(root);
+
             Duration lastModifiedDelta = stack.isRecents()
                     ? Duration.ofMillis(RecentsLoader.REJECT_OLDER_THAN)
                     : null;
-            RootInfo root = stack.getRoot();
             int maxResults = (root == null || root.isRecents())
                     ? RecentsLoader.MAX_DOCS_FROM_ROOT : MAX_RESULTS;
-            QueryOptions options = new QueryOptions(
-                    maxResults, maxResults, lastModifiedDelta,
-                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles,
-                    mState.acceptMimes, mSearchMgr.buildQueryArgs());
+            // acceptMimes, if not null, represents restrictions on types of files loader should
+            // return. However, when listing directories, we must include the directory MIME type
+            // itself, as otherwise directories containing only directories appear empty.
+            String[] acceptMimes = null;
+            if (stack.isRecents() || mSearchMgr.isSearching()) {
+                acceptMimes = mState.acceptMimes;
+            } else if (mState.isPhotoPicking()) {
+                acceptMimes = new String[]{
+                        DocumentsContract.Document.MIME_TYPE_DIR, MimeTypes.IMAGE_MIME,
+                };
+            } else if (mState.acceptMimes != null) {
+                int mimeCount = mState.acceptMimes.length;
+                acceptMimes = Arrays.copyOf(mState.acceptMimes, mimeCount + 1);
+                acceptMimes[mimeCount - 1] = DocumentsContract.Document.MIME_TYPE_DIR;
+            }
+            QueryOptions options = new QueryOptions(maxResults, maxResults, lastModifiedDelta,
+                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles, acceptMimes,
+                    mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 if (DEBUG) {

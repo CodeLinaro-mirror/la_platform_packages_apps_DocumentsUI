@@ -17,7 +17,6 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -40,6 +39,7 @@ import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
@@ -94,10 +94,36 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertEquals(count, docsList.getChildCount());
     }
 
+    /**
+     * Checks if the given set of file labels is visible, without scrolling.
+     * @param labels The labels to be found in the current view.
+     * @throws UiObjectNotFoundException If files with given labels do not exist.
+     */
+    public void assertDocumentsVisible(String... labels) throws UiObjectNotFoundException {
+        assertDocumentsExistWithScroll(false, labels);
+    }
+
+    /**
+     * Checks if the given set of file labels is visible, with scrolling.
+     * @param labels The labels to be found in the current view, scrolling included.
+     * @throws UiObjectNotFoundException If files with given labels do not exist.
+     */
     public void assertDocumentsPresent(String... labels) throws UiObjectNotFoundException {
+        assertDocumentsExistWithScroll(true, labels);
+    }
+
+    /**
+     * Checks if the given set of file labels is exists. The scroll variable controls if the code
+     * is allowed to scroll the file panel to try to locate the documents.
+     * @param scroll If file view may be scrolled to find the specified file labels.
+     * @param labels The labels to be found in the current view, scrolling included.
+     * @throws UiObjectNotFoundException If files with given labels do not exist.
+     */
+    public void assertDocumentsExistWithScroll(boolean scroll, String... labels)
+            throws UiObjectNotFoundException {
         List<String> absent = new ArrayList<>();
         for (String label : labels) {
-            if (!findDocument(label).exists()) {
+            if (!findDocument(label, scroll).exists()) {
                 absent.add(label);
             }
         }
@@ -196,21 +222,18 @@ public class DirectoryListBot extends Bots.BaseBot {
         Configurator.getInstance().setToolType(toolType);
     }
 
-    private void selectDocument(String label) throws UiObjectNotFoundException {
-        waitForDocument(label);
-        UiObject2 selectionHotspot = findSelectionHotspot(label);
-        selectionHotspot.click();
-    }
-
     /**
      * @param label The filename of the document
      * @param number Which nth document it is. The number corresponding to "n selected"
      */
     public void selectDocument(String label, int number) throws UiObjectNotFoundException {
-        selectDocument(label);
+        waitForDocument(label);
+        UiObject2 selectionHotspot = findSelectionHotspot(label);
+        selectionHotspot.click();
 
-        // wait until selection is fully done to avoid future click being registered as double
-        // clicking
+        // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
+        // also avoids a future click being registered as double clicking.
+        SystemClock.sleep((ViewConfiguration.getDoubleTapTimeout() * 3) / 2);
         assertSelection(number);
     }
 
@@ -263,7 +286,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         int contentDescription = isUseMaterial3FlagEnabled()
                 ? R.string.clear_selection : android.R.string.cancel;
         onView(allOf(withContentDescription(contentDescription),
-                isDescendantOfA(withId(parentId)))).perform(click());
+                isDescendantOfA(withId(parentId)))).perform(clickAndRetryOnLongPress());
     }
 
     public void pasteFilesFromClipboard() {
@@ -352,16 +375,53 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void assertOrder(String[] dirs, String[] files) throws UiObjectNotFoundException {
-        for (int i = 0; i < dirs.length - 1; ++i) {
-            assertOrder(dirs[i], dirs[i + 1]);
+        int remaining = mTimeout;
+        if (remaining < 0) {
+            remaining = 0;
+        }
+        // 1048576 is (1 << 20), a power of two close to one million. The value is basically
+        // arbitrary. We just want our sleeps to start as a small fraction of the default timeout,
+        // but double in length each iteration.
+        int retryTimeout = remaining / 1048576;
+        if ((retryTimeout < 1) && (remaining != 0)) {
+            retryTimeout = 1;
         }
 
-        if (dirs.length > 0 && files.length > 0) {
-            assertOrder(dirs[dirs.length - 1], files[0]);
-        }
+        // Check that the bounding boxes for the (dirs ++ files) UI items are ordered. Use
+        // exponential backoff in case we have to wait (without explicit synchronization) for a
+        // worker thread to sort things (and having that trigger UI changes).
+        //
+        // Loop invariants:
+        //  • (0 <= retryTimeout) and (retryTimeout <= remaining)
+        //  • (0 < retryTimeout) unless (0 == remaining), in which case (0 == retryTimeout)
+        //  • remaining decreases on each complete (no return or fail) iteration
+        while (true) {
+            try {
+                for (int i = 0; i < dirs.length - 1; ++i) {
+                    checkOrder(dirs[i], dirs[i + 1]);
+                }
 
-        for (int i = 0; i < files.length - 1; ++i) {
-            assertOrder(files[i], files[i + 1]);
+                if (dirs.length > 0 && files.length > 0) {
+                    checkOrder(dirs[dirs.length - 1], files[0]);
+                }
+
+                for (int i = 0; i < files.length - 1; ++i) {
+                    checkOrder(files[i], files[i + 1]);
+                }
+
+                return;
+            } catch (NotInOrderException nioe) {
+                if (remaining <= 0) {
+                    fail(nioe.getMessage());
+                }
+                SystemClock.sleep(retryTimeout);
+
+                remaining -= retryTimeout;
+                retryTimeout *= 2;
+                if ((retryTimeout > remaining) || (retryTimeout <= 0)) {
+                    retryTimeout = remaining;
+                }
+            }
         }
     }
 
@@ -383,8 +443,8 @@ public class DirectoryListBot extends Bots.BaseBot {
         mAutomation.injectInputEvent(motionUp, true);
     }
 
-    private void assertOrder(String first, String second) throws UiObjectNotFoundException {
-
+    private void checkOrder(String first, String second) throws NotInOrderException,
+            UiObjectNotFoundException {
         final UiObject firstObj = findDocument(first);
         final UiObject secondObj = findDocument(second);
 
@@ -392,15 +452,20 @@ public class DirectoryListBot extends Bots.BaseBot {
         final Rect firstBound = firstObj.getVisibleBounds();
         final Rect secondBound = secondObj.getVisibleBounds();
         if (layoutDirection == View.LAYOUT_DIRECTION_LTR) {
-            assertTrue(
-                    "\"" + first + "\" is not located above or to the left of \"" + second
-                            + "\" in LTR",
-                    firstBound.bottom < secondBound.top || firstBound.right < secondBound.left);
+            if (firstBound.bottom < secondBound.top || firstBound.right < secondBound.left) {
+                return;
+            }
         } else {
-            assertTrue(
-                    "\"" + first + "\" is not located above or to the right of \"" + second +
-                            "\" in RTL",
-                    firstBound.bottom < secondBound.top || firstBound.left > secondBound.right);
+            if (firstBound.bottom < secondBound.top || firstBound.left > secondBound.right) {
+                return;
+            }
+        }
+        throw new NotInOrderException(first + " is not located before " + second);
+    }
+
+    private static class NotInOrderException extends Exception {
+        NotInOrderException(String m) {
+            super(m);
         }
     }
 }

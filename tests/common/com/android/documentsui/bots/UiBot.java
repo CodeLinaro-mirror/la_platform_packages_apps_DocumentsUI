@@ -28,7 +28,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
-import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -39,7 +38,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
 
 import android.content.Context;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -111,12 +109,29 @@ public class UiBot extends Bots.BaseBot {
                 description.appendText("with toolbar title: ");
                 textMatcher.describeTo(description);
             }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                super.describeMismatch(item, description);
+                if (item != null && item instanceof Toolbar) {
+                    Toolbar toolbar = (Toolbar) item;
+                    description.appendText(
+                            "unexpected toolbar title: \"" + toolbar.getTitle() + "\"");
+                }
+            }
         };
     }
 
     public void assertWindowTitle(String expected) {
-        onView(TOOLBAR)
-                .check(matches(withToolbarTitle(is(expected))));
+        mDevice.waitForIdle(mTimeout);
+        if (!isUseMaterial3FlagEnabled() && expected.equals("Recent")) {
+            // When m3 is off and `show_search_bar` is on, the toolbar on the "recent files" screen
+            // on phones contains a search bar instead of a title, so let's check the `header_title`
+            // instead. NOTE: header_title doesn't exist in m3.
+            onView(withId(R.id.header_title)).check(matches(withText("Recent files")));
+            return;
+        }
+        onView(TOOLBAR).check(matches(withToolbarTitle(is(expected))));
     }
 
     /**
@@ -124,6 +139,20 @@ public class UiBot extends Bots.BaseBot {
      */
     public void assertSearchBarShow() {
         onView(withId(R.id.searchbar_title)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Checks that the docked search bar is visible.
+     */
+    public void assertDockedSearchBarShow() {
+        onView(withId(R.id.docked_search_toolbar)).check(matches(isDisplayed()));
+    }
+
+    /**
+     * Checks that the search menu item is visible.
+     */
+    public void assertOptionsMenuSearchShow() {
+        onView(withId(R.id.option_menu_search)).check(matches(isDisplayed()));
     }
 
     /**
@@ -204,36 +233,6 @@ public class UiBot extends Bots.BaseBot {
         assertNotNull(listModeBtn);
     }
 
-    /**
-     * Check if the app is running in fixed_layout.
-     */
-    public boolean inFixedLayout() {
-        TypedValue val = new TypedValue();
-        // We alias files_activity to either fixed or drawer layouts based
-        // on screen dimensions. In order to determine which layout
-        // has been selected, we check the resolved value.
-        mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
-        return val.resourceId == getRes(R.layout.fixed_layout);
-    }
-
-    /**
-     * Check if the app is running in nav_rail_layout.
-     */
-    public boolean isNavRailLayout() {
-        TypedValue val = new TypedValue();
-        mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
-        return val.resourceId == getRes(R.layout.nav_rail_layout);
-    }
-
-    /**
-     * Check if the app is running in drawer_layout.
-     */
-    public boolean inDrawerLayout() {
-        TypedValue val = new TypedValue();
-        mContext.getResources().getValue(getRes(R.layout.files_activity), val, true);
-        return val.resourceId == getRes(R.layout.drawer_layout);
-    }
-
     public void switchToListMode() {
         final UiObject2 listMode = menuListMode();
         if (listMode != null) {
@@ -267,11 +266,11 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickToolbarItem(int id) {
-        onView(withId(id)).perform(click());
+        onView(withId(id)).perform(clickAndRetryOnLongPress());
     }
 
     public void clickNewFolder() {
-        onView(ACTIONBAR_OVERFLOW).perform(click());
+        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
 
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText("New folder")).perform(click());
@@ -279,9 +278,9 @@ public class UiBot extends Bots.BaseBot {
 
     public void clickActionbarOverflowItem(String label) {
         if (isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR_OVERFLOW).perform(click());
+            onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         } else {
-            onView(ACTIONBAR_OVERFLOW).perform(click());
+            onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         }
         mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
@@ -289,7 +288,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void clickToolbarOverflowItem(String label) {
-        onView(TOOLBAR_OVERFLOW).perform(click());
+        onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
     }

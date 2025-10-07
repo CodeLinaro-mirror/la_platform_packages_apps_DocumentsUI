@@ -29,8 +29,8 @@ import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
@@ -46,7 +46,7 @@ import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.TestData;
 import com.android.documentsui.flags.Flags;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
@@ -108,6 +108,8 @@ public final class MenuManagerTest {
     private TestMenuItem actionModeViewInOwner;
     private TestMenuItem actionModeInspector;
     private TestMenuItem actionModeSort;
+    private TestMenuItem mActionExtractHere;
+    private TestMenuItem mActionBrowse;
 
     /* Option Menu items */
     private TestMenuItem optionSearch;
@@ -140,7 +142,7 @@ public final class MenuManagerTest {
     private int mFilesCount;
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Before
     public void setUp() {
@@ -191,6 +193,8 @@ public final class MenuManagerTest {
         actionModeInspector = testMenu.findItem(R.id.action_menu_inspect);
         actionModeViewInOwner = testMenu.findItem(R.id.action_menu_view_in_owner);
         actionModeSort = testMenu.findItem(R.id.action_menu_sort);
+        mActionExtractHere = testMenu.findItem(R.id.action_menu_extract_here);
+        mActionBrowse = testMenu.findItem(R.id.action_menu_browse);
 
         // Menu actions (including overflow) when action mode is not active.
         optionSearch = testMenu.findItem(R.id.option_menu_search);
@@ -273,6 +277,43 @@ public final class MenuManagerTest {
         actionModeSelectAll.assertEnabledAndVisible();
         mActionModeDeselectAll.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
+        mActionExtractHere.assertDisabledAndInvisible();
+        mActionBrowse.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testActionMenu_OnArchive() {
+        selectionDetails.size = 1;
+        selectionDetails.containFiles = true;
+        selectionDetails.isArchive = true;
+        selectionDetails.containsFilesInArchive = false;
+        dirDetails.isInArchive = false;
+        dirDetails.canCreateDirectory = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        if (isZipNgFlagEnabled()) {
+            mActionExtractHere.assertEnabledAndVisible();
+            mActionBrowse.assertEnabledAndVisible();
+        } else {
+            mActionExtractHere.assertDisabledAndInvisible();
+            mActionBrowse.assertDisabledAndInvisible();
+        }
+
+        // On archive in read-only directory (but not a nested archive)
+        dirDetails.canCreateDirectory = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionExtractHere.assertDisabledAndInvisible();
+        if (isZipNgFlagEnabled()) {
+            mActionBrowse.assertEnabledAndVisible();
+        } else {
+            mActionBrowse.assertDisabledAndInvisible();
+        }
+
+        // On nested archive
+        selectionDetails.containsFilesInArchive = true;
+        dirDetails.isInArchive = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionExtractHere.assertDisabledAndInvisible();
+        mActionBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -289,6 +330,8 @@ public final class MenuManagerTest {
         actionModeMoveTo.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
+        mActionExtractHere.assertDisabledAndInvisible();
+        mActionBrowse.assertDisabledAndInvisible();
     }
 
     @Test
@@ -419,6 +462,7 @@ public final class MenuManagerTest {
     @Test
     public void testActionMenu_CanOpenWith() {
         selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeOpenWith.assertEnabledAndVisible();
@@ -427,6 +471,27 @@ public final class MenuManagerTest {
     @Test
     public void testActionMenu_NoOpenWith() {
         selectionDetails.canOpen = false;
+        selectionDetails.hasMultipleOpeningApps = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testActionMenu_OpenWith_SingleOpeningApp() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testActionMenu_NoOpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeOpenWith.assertDisabledAndInvisible();
@@ -646,20 +711,26 @@ public final class MenuManagerTest {
 
     @SuppressLint("VisibleForTests")
     @Test
-    @RequiresFlagsDisabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpen() {
         selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpen.assertDisabledAndInvisible();
         dirOpenWith.assertEnabledAndVisible();
     }
 
     @SuppressLint("VisibleForTests")
     @Test
-    @RequiresFlagsEnabled({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_OnFile_CanOpenDesktop() {
         selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpen.assertEnabledAndVisible();
         dirOpenWith.assertEnabledAndVisible();
     }
@@ -668,8 +739,33 @@ public final class MenuManagerTest {
     @Test
     public void testContextMenu_OnFile_NoOpen() {
         selectionDetails.canOpen = false;
+        selectionDetails.hasMultipleOpeningApps = true;
+
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpen.assertDisabledAndInvisible();
+        dirOpenWith.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testContextMenu_OnFile_OpenWith_SingleOpeningApp() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        dirOpenWith.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    public void testContextMenu_OnFile_NoOpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
         dirOpenWith.assertDisabledAndInvisible();
     }
 

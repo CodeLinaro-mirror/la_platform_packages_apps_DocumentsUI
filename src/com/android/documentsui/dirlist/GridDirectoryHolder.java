@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
@@ -125,9 +126,15 @@ final class GridDirectoryHolder extends DocumentHolder {
     }
 
     @Override
-    public boolean inSelectRegion(MotionEvent event) {
-        return mAction == State.ACTION_BROWSE ? Views.isEventOver(event, itemView.getParent(),
-                mIconLayout) : false;
+    public int classifySelectionHotspot(MotionEvent event) {
+        if (mAction != State.ACTION_BROWSE) {
+            // No-op.
+
+        } else if (Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+        }
+
+        return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
     }
 
     /**

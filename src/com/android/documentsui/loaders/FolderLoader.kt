@@ -17,10 +17,12 @@ package com.android.documentsui.loaders
 
 import android.content.ContentProviderClient
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.os.RemoteException
 import android.provider.DocumentsContract
 import android.util.Log
+import androidx.tracing.Trace
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
@@ -63,6 +65,15 @@ class FolderLoader(
 
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
+        try {
+            Trace.beginSection("documentsui.searchv2.FolderLoader#loadInBackground")
+            return loadInBackgroundInternal()
+        } finally {
+            Trace.endSection()
+        }
+    }
+
+    fun loadInBackgroundInternal(): DirectoryResult? {
         val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
         val folderChildrenUri =
             if (mListedDir == null) {
@@ -82,7 +93,17 @@ class FolderLoader(
         if (mListedDir != null && mListedDir.isInArchive) {
             result.setClient(openArchive(folderChildrenUri))
         }
-        var cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs, ALL_RESULTS)
+        var cursor: Cursor? = null
+        try {
+            cursor = queryLocation(
+                mRoot,
+                folderChildrenUri,
+                mOptions.otherQueryArgs,
+                ALL_RESULTS
+            )
+        } catch (e: Exception) {
+            result.exception = e
+        }
         if (cursor == null) {
             cursor = emptyCursor()
             result.setClient(null)

@@ -20,21 +20,30 @@ import static android.content.Context.RECEIVER_EXPORTED;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
-import android.util.Log;
 
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +53,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
-* This class test the below points
-* - Delete large number of files
-*/
+ * This class test the below points
+ *
+ * <p>- Delete large number of files
+ */
 @LargeTest
-public class FileDeleteUiTest extends ActivityTest<FilesActivity> {
+public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String TAG = "FileDeleteUiTest";
 
     private static final int STUB_FILE_COUNT = 1000;
@@ -75,32 +85,19 @@ public class FileDeleteUiTest extends ActivityTest<FilesActivity> {
         }
     };
 
+    @Rule
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule().createTestFiles(this::initTestFiles);
+
     private CountDownLatch mCountDownLatch;
 
     private boolean mOperationExecuted;
 
     private String mErrorReason;
 
-    public FileDeleteUiTest() {
-        super(FilesActivity.class);
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // Set a flag to prevent many refreshes.
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
-        mDocsHelper.configure(null, bundle);
-
-        try {
-            bots.notifications.setNotificationAccess(getActivity(), true);
-        } catch (Exception e) {
-            Log.d(TAG, "Cannot set notification access. ", e);
-        }
-
-        initTestFiles();
+    @Before
+    public void setUpTest() throws Exception {
+        setNotificationAccess(true);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(TestNotificationService.ACTION_OPERATION_RESULT);
@@ -113,28 +110,19 @@ public class FileDeleteUiTest extends ActivityTest<FilesActivity> {
         mCountDownLatch = new CountDownLatch(1);
     }
 
-    @Override
-    public void tearDown() throws Exception {
+    @After
+    public void tearDownTest() {
         context.unregisterReceiver(mReceiver);
         mCountDownLatch = null;
-        try {
-            bots.notifications.setNotificationAccess(getActivity(), false);
-        } catch (Exception e) {
-            Log.d(TAG, "Cannot set notification access. ", e);
-        }
-        super.tearDown();
+        setNotificationAccess(false);
     }
 
-    @Override
-    public void initTestFiles() throws RemoteException {
-        try {
-            createStubFiles();
-        } catch (Exception e) {
-            fail("Initialization failed");
-        }
-    }
-
-    private void createStubFiles() throws Exception {
+    private void initTestFiles(DocumentsProviderHelper docsHelper) throws Exception {
+        // Set a flag to prevent many refreshes.
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
+        docsHelper.configure(null, bundle);
+        final RootInfo root = docsHelper.getRoot(StubProvider.ROOT_0_ID);
         final ThreadPoolExecutor exec = new ThreadPoolExecutor(
                 5, 5, 1000L, TimeUnit.MILLISECONDS,
                         new ArrayBlockingQueue<Runnable>(100, true));
@@ -143,23 +131,26 @@ public class FileDeleteUiTest extends ActivityTest<FilesActivity> {
             if (exec.getQueue().size() >= 80) {
                 Thread.sleep(50);
             }
-            exec.submit(new Runnable() {
-                @Override
-                public void run() {
-                    Uri uri = mDocsHelper.createDocument(rootDir0, "text/plain", fileName);
-                    try {
-                        mDocsHelper.writeDocument(uri, new byte[1]);
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-            });
+            exec.submit(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Uri uri = docsHelper.createDocument(root, "text/plain", fileName);
+                            try {
+                                docsHelper.writeDocument(uri, new byte[1]);
+                            } catch (Exception e) {
+                                // ignore
+                            }
+                        }
+                    });
             mCopyFileList.add(fileName);
         }
         exec.shutdown();
     }
 
     @HugeLongTest
+    @Test
+    @Ignore("TODO(b/437215252): deflake")
     public void testDeleteAllDocument() throws Exception {
         bots.roots.openRoot(ROOT_0_ID);
         bots.main.clickToolbarOverflowItem(

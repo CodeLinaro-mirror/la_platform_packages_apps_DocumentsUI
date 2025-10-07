@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
@@ -220,9 +221,15 @@ final class ListDocumentHolder extends DocumentHolder {
     }
 
     @Override
-    public boolean inSelectRegion(MotionEvent event) {
-        return (mDoc.isDirectory() && !(mAction == State.ACTION_BROWSE)) ?
-                false : Views.isEventOver(event, itemView.getParent(), mIconLayout);
+    public int classifySelectionHotspot(MotionEvent event) {
+        if (mDoc.isDirectory() && (mAction != State.ACTION_BROWSE)) {
+            // No-op.
+
+        } else if (Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+        }
+
+        return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
     }
 
     @Override
@@ -258,17 +265,7 @@ final class ListDocumentHolder extends DocumentHolder {
         if (isUseMaterial3FlagEnabled()) {
             // Only Normal type work with ellipsize=middle.
             mTitle.setText(mDoc.displayName, TextView.BufferType.NORMAL);
-            // Doing this hacky way instead of just "mTitle.setTooltipText()" because calling
-            // "mTitle.setTooltipText()" directly will break the ripple effects on the title area.
-            itemView.setOnHoverListener(
-                    (v, event) -> {
-                        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                            mTitle.setTooltipText(mDoc.displayName);
-                        } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-                            mTitle.setTooltipText(null);
-                        }
-                        return false;
-                    });
+            mTitle.setTooltipText(mDoc.displayName);
         } else {
             mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
         }

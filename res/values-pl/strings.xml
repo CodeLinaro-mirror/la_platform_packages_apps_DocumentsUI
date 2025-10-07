@@ -47,7 +47,7 @@
     <string name="menu_zip" msgid="5734673122376258045">"Utwórz archiwum ZIP"</string>
     <string name="menu_extract" msgid="8171946945982532262">"Rozpakuj do…"</string>
     <string name="menu_extract_all" msgid="7335680068521252718">"Wyodrębnij wszystko…"</string>
-    <string name="menu_extract_here" msgid="8725302045721604762">"Rozpakuj tutaj"</string>
+    <string name="menu_extract_here" msgid="7120939831786325360">"Wyodrębnij"</string>
     <string name="menu_browse" msgid="6007716414766674967">"Przeglądaj"</string>
     <string name="menu_rename" msgid="1883113442688817554">"Zmień nazwę"</string>
     <string name="menu_inspect" msgid="7279855349299446224">"Zobacz informacje"</string>
@@ -128,12 +128,9 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Nie można usunąć niektórych dokumentów"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nie możesz udostępnić więcej plików niż <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Niedozwolona czynność"</string>
-    <!-- no translation found for no_application_dialog_title (515133936841913019) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_message (5444094365658346573) -->
-    <skip />
-    <!-- no translation found for no_application_dialog_button (5317480122655874659) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="515133936841913019">"Otwórz za pomocą…"</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"Nie zainstalowano obsługiwanych aplikacji. Zainstaluj jakąś ze Sklepu Play."</string>
+    <string name="no_application_dialog_button" msgid="5317480122655874659">"Szukaj w Sklepie Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Udostępnij przez"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopiowanie plików"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Kompresuję pliki"</string>
@@ -178,30 +175,16 @@
     <string name="move_preparing" msgid="6504239656430530761">"Przygotowuję..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Przygotowuję..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <plurals name="copy_error_notification_title" formatted="false" msgid="3188432450429390963">
-      <item quantity="few">Nie udało się skopiować <xliff:g id="COUNT_1">%1$d</xliff:g> elementów</item>
-      <item quantity="many">Nie udało się skopiować <xliff:g id="COUNT_1">%1$d</xliff:g> elementów</item>
-      <item quantity="other">Nie udało się skopiować <xliff:g id="COUNT_1">%1$d</xliff:g> elementu</item>
-      <item quantity="one">Nie udało się skopiować <xliff:g id="COUNT_0">%1$d</xliff:g> elementu</item>
-    </plurals>
-    <plurals name="compress_error_notification_title" formatted="false" msgid="3043630066678213644">
-      <item quantity="few">Nie udało się skompresować <xliff:g id="COUNT_1">%1$d</xliff:g> plików</item>
-      <item quantity="many">Nie udało się skompresować <xliff:g id="COUNT_1">%1$d</xliff:g> plików</item>
-      <item quantity="other">Nie udało się skompresować <xliff:g id="COUNT_1">%1$d</xliff:g> pliku</item>
-      <item quantity="one">Nie udało się skompresować <xliff:g id="COUNT_0">%1$d</xliff:g> pliku</item>
-    </plurals>
-    <plurals name="move_error_notification_title" formatted="false" msgid="2185736082411854754">
-      <item quantity="few">Nie udało się przenieść <xliff:g id="COUNT_1">%1$d</xliff:g> elementów</item>
-      <item quantity="many">Nie udało się przenieść <xliff:g id="COUNT_1">%1$d</xliff:g> elementów</item>
-      <item quantity="other">Nie udało się przenieść <xliff:g id="COUNT_1">%1$d</xliff:g> elementu</item>
-      <item quantity="one">Nie udało się przenieść <xliff:g id="COUNT_0">%1$d</xliff:g> elementu</item>
-    </plurals>
-    <plurals name="delete_error_notification_title" formatted="false" msgid="7568122018481625267">
-      <item quantity="few">Nie udało się usunąć <xliff:g id="COUNT_1">%1$d</xliff:g> elementów</item>
-      <item quantity="many">Nie udało się usunąć <xliff:g id="COUNT_1">%1$d</xliff:g> elementów</item>
-      <item quantity="other">Nie udało się usunąć <xliff:g id="COUNT_1">%1$d</xliff:g> elementu</item>
-      <item quantity="one">Nie udało się usunąć <xliff:g id="COUNT_0">%1$d</xliff:g> elementu</item>
-    </plurals>
+    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
+    <skip />
+    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
+    <skip />
+    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
+    <skip />
+    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
+    <skip />
+    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
+    <skip />
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Kliknij, by zobaczyć szczegóły"</string>
     <string name="close" msgid="905969391788869975">"Zamknij"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -246,25 +229,39 @@
       <item quantity="other">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementu do schowka.</item>
       <item quantity="one">Skopiowano <xliff:g id="COUNT_0">%1$d</xliff:g> element do schowka.</item>
     </plurals>
+    <!-- no translation found for read_only_label (894442752344379606) -->
+    <skip />
+    <!-- no translation found for read_only_explanation (213951358525192590) -->
+    <skip />
+    <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"To archiwum jest w lokalizacji tylko do odczytu i nie można go tutaj wyodrębnić."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operacja na pliku nie jest obsługiwana."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Nie udało się wykonać operacji na pliku."</string>
     <string name="rename_error" msgid="6700093173508118635">"Nie udało się zmienić nazwy dokumentu"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Odłącz"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Niektóre pliki zostały przekonwertowane"</string>
-    <!-- no translation found for job_progress_icon_label (1387365706178067075) -->
-    <skip />
-    <!-- no translation found for job_progress_item_canceled (8915289522101993231) -->
-    <skip />
+    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Kopiuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Kopiuję # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Kopiuję # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Kopiuję # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Wyodrębniam plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Wyodrębniam # archiwa do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Wyodrębniam # archiwów do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Wyodrębniam # archiwum do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Przenoszę plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Przenoszę # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Przenoszę # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Przenoszę # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Usuwam plik „<xliff:g id="FILENAME">{filename}</xliff:g>”}few{Usuwam # pliki}many{Usuwam # plików}other{Usuwam # pliku}}"</string>
+    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Kompresuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>”}few{Kompresuję # pliki}many{Kompresuję # plików}other{Kompresuję # pliku}}"</string>
+    <string name="job_progress_icon_label" msgid="1387365706178067075">"Pokaż postęp przetwarzania pliku"</string>
+    <string name="job_progress_panel_title" msgid="1640388840961608168">"Postęp przetwarzania pliku"</string>
+    <string name="job_progress_item_completed" msgid="3933347715328014840">"Ukończono"</string>
+    <string name="job_progress_item_canceled" msgid="8915289522101993231">"Anulowano"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Zobacz szczegóły"</string>
+    <string name="job_progress_item_byte_progress" msgid="5457665342067136443">"<xliff:g id="CURRENTBYTES">%1$s</xliff:g> z <xliff:g id="TOTALBYTES">%2$s</xliff:g>"</string>
     <string name="copy_completed" msgid="3749037014674785400">"Skopiowano"</string>
     <string name="move_completed" msgid="3981250605092729273">"Przeniesiono"</string>
     <string name="delete_completed" msgid="4149401155614626199">"Usunięto"</string>
-    <string name="compress_completed" msgid="8808356399995313077">"Skompresowano"</string>
+    <string name="compress_completed" msgid="6522047921428919799">"Skompresowano"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Wyodrębniono"</string>
-    <!-- no translation found for expand_label (5683357671239615207) -->
-    <skip />
-    <!-- no translation found for collapse_label (4530974883269531062) -->
-    <skip />
+    <string name="copy_failed" msgid="3700193913993844675">"Nie udało się skopiować"</string>
+    <string name="move_failed" msgid="7692364307225994220">"Nie udało się przenieść"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"Nie udało się usunąć"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"Nie udało się skompresować"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"Nie udało się wyodrębnić"</string>
+    <string name="expand_label" msgid="5683357671239615207">"Rozwiń"</string>
+    <string name="collapse_label" msgid="4530974883269531062">"Zwiń"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Zezwolić aplikacji <xliff:g id="APPNAME"><b>^1</b></xliff:g> na dostęp do katalogu <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> w pamięci masowej <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"Przyznać aplikacji <xliff:g id="APPNAME"><b>^1</b></xliff:g> dostęp do katalogu <xliff:g id="DIRECTORY"><i>^2</i></xliff:g>?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"Zezwolić aplikacji <xliff:g id="APPNAME"><b>^1</b></xliff:g> na dostęp do Twoich danych, w tym zdjęć i filmów, zapisanych w pamięci <xliff:g id="STORAGE"><i>^2</i></xliff:g>?"</string>

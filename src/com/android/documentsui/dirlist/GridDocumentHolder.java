@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
@@ -223,15 +224,20 @@ final class GridDocumentHolder extends DocumentHolder {
     }
 
     @Override
-    public boolean inSelectRegion(MotionEvent event) {
-        if (isUseMaterial3FlagEnabled()) {
-            if (!mHasSelectionRegion) {
-                // There is no selection region.
-                return false;
-            }
-            return Views.isEventOver(event, itemView.getParent(), mSelectionCircle);
+    public int classifySelectionHotspot(MotionEvent event) {
+        if (!isUseMaterial3FlagEnabled()) {
+            return Views.isEventOver(event, itemView.getParent(), mIconLayout)
+                ? ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI
+                : ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
+
+        } else if (!mHasSelectionRegion) {
+            return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
+
+        } else if (Views.isEventOver(event, itemView.getParent(), mSelectionCircle)) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
         }
-        return Views.isEventOver(event, itemView.getParent(), mIconLayout);
+
+        return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
     }
 
     @Override

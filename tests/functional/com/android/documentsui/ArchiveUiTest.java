@@ -18,19 +18,21 @@ package com.android.documentsui;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
-import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
 
+import static org.junit.Assert.assertNotNull;
+
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
@@ -41,88 +43,127 @@ import java.io.InputStream;
 @LargeTest
 public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule = new TestFilesRule();
 
     @Test
-    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaDefaultAction() throws Exception {
         createArchiveInRootDir0();
-        bots.roots.openRoot(ROOT_0_ID);
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         assertExtractedArchive();
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    public void cannotExtractArchiveInReadOnlyFolder() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.openDocument("archive.zip");
+        assertNotNull("Expect an error snackbar", bots.directory.getSnackbar(
+                context.getString(R.string.cannot_extract_in_read_only_folder)));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaContextMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.roots.openRoot(ROOT_0_ID);
         bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
-        bots.menu.clickMenuItem("Extract here");
+        bots.menu.clickMenuItem("Extract");
         assertExtractedArchive();
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    public void extractArchiveViaActionMenu() throws Exception {
+        createArchiveInRootDir0();
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.selectDocument("archive.zip", 1);
+        bots.main.clickActionItem("Extract");
+        assertExtractedArchive();
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
+    public void browseArchiveViaActionMenu() throws Exception {
+        bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
+        bots.directory.selectDocument("archive.zip", 1);
+        bots.main.clickActionItem("Browse");
+        bots.directory.waitForDocument("file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.openDocument("dir1");
+        bots.directory.waitForDocument("cherries.txt");
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void openArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsPresent("dir1", "dir2", "file1.txt");
+        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
 
     @Test
-    @RequiresFlagsDisabled({FLAG_ZIP_NG_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaDefaultAction() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("broken.zip");
         bots.directory.openDocument("broken.zip");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ZIP_NG_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_DESKTOP_FILE_HANDLING_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({FLAG_ZIP_NG_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
         bots.roots.openRoot("ResourcesProvider");
+        bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));

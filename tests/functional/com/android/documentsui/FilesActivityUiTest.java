@@ -27,16 +27,18 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.app.Instrumentation;
 import android.content.ContentResolver;
 import android.net.Uri;
-import android.platform.test.annotations.RequiresFlagsDisabled;
-import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.annotations.DesktopTest;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -50,19 +52,21 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.UUID;
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Rule
-    public final CheckAndForceMaterial3Flag mCheckFlagsRule = new CheckAndForceMaterial3Flag();
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -79,12 +83,11 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     // It is special cased in a variety of ways, which is why we just want
     // to be able to click on it.
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testClickRecent() throws Exception {
         bots.roots.openRoot("Recent");
 
-        boolean showSearchBar =
-                isUseMaterial3FlagEnabled() ? false : context.getResources().getBoolean(
-                        R.bool.show_search_bar);
+        boolean showSearchBar = context.getResources().getBoolean(R.bool.show_search_bar);
         if (showSearchBar) {
             bots.main.assertSearchBarShow();
         } else {
@@ -92,6 +95,22 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.search.assertIconVisible(true);
             bots.main.assertWindowTitle("Recent");
         }
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testClickRecentM3() throws Exception {
+        bots.roots.openRoot("Recent");
+
+        bots.main.assertSearchBarGone();
+        boolean showDockedSearch = context.getResources().getBoolean(
+                getRes(R.bool.show_docked_search));
+        if (showDockedSearch) {
+            bots.main.assertDockedSearchBarShow();
+        } else {
+            bots.main.assertOptionsMenuSearchShow();
+        }
+        bots.main.assertWindowTitle("Recent");
     }
 
     private DocumentsProviderHelper setupStorageAuthorityDocsHelper() throws Exception {
@@ -132,7 +151,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootClick_SetsWindowTitle() throws Exception {
         bots.roots.openRoot("Images");
         bots.main.assertWindowTitle("Images");
@@ -140,24 +159,30 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     public void testFilesListed() throws Exception {
-        bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv");
+        bots.directory.assertDocumentsVisible("file0.log", "file1.png", "file2.csv");
     }
 
     @Test
     public void testFilesList_LiveUpdate() throws Exception {
+        // Minimize the chances of the files being invisible.
+        bots.main.switchToListMode();
+
+        // Create a file with a unique name.
         RootInfo root = mTestFilesRule.docsHelper.getRoot(ROOT_0_ID);
-        String newFileName = "mxuadkjf.txt";  // Random, unique name.
+        String newFileName = "mxuadkjf.txt";
         mTestFilesRule.docsHelper.createDocument(root, "text/plain", newFileName);
 
         bots.directory.waitForDocument(newFileName);
+        // Documents should be present, but may not necessary be visible on small screen.
         bots.directory.assertDocumentsPresent("file0.log", "file1.png", "file2.csv", newFileName);
     }
 
+    @DesktopTest(cujs = {"b/434068747"})
     @Test
     public void testNavigate_byBreadcrumb() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
         bots.directory.waitForDocument(TestFilesRule.CHILD_DIR_1);  // wait for known content
-        bots.directory.assertDocumentsPresent(TestFilesRule.CHILD_DIR_1);
+        bots.directory.assertDocumentsVisible(TestFilesRule.CHILD_DIR_1);
 
         device.waitForIdle();
         bots.breadcrumb.assertItemsPresent(TestFilesRule.DIR_NAME_1, "TEST_ROOT_0");
@@ -192,7 +217,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @HugeLongTest
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_UpdatesSortHeader() throws Exception {
 
         // switch to separate display modes for two separate roots. Each
@@ -217,7 +242,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsDisabled(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_NonM3PerRootViewModeState() throws Exception {
         // Assign different view modes across "Images" and "Videos" roots.
         // Images root --> grid mode
@@ -237,7 +262,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_M3GlobalViewModeState() throws Exception {
         bots.roots.openRoot("Recent");
         bots.main.switchToGridMode();
@@ -255,7 +280,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @RequiresFlagsEnabled(FLAG_USE_MATERIAL3)
+    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testClearSelectionInRecentsResetsActions() throws Exception {
         // Ensure Downloads exists and get the location of the main root (e.g. "Pixel Tablet").
         DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
@@ -296,4 +321,36 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             cleanupFile(fileName, primaryRoot.title);
         }
     }
+
+    @Test
+    public void testRecentsShowsZipFiles() throws Exception {
+        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+
+        String createdFileName = null;
+        try {
+            DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
+            assertNotNull(info);
+
+            // Create a zip file in "Download" folder. Since we are creating a file in the Download
+            // folder, create a unique name that has little to no chance of colliding with actual
+            // user files.
+            createdFileName = "a_zip_test_" + UUID.randomUUID() + ".zip";
+            storageDocsHelper.createDocument(info.documentId, "application/zip", createdFileName);
+            bots.directory.waitForDocument(createdFileName);
+
+            // Open Recent and wait for the newly created files to appear. We limit searches to just
+            // this week to make the test run more efficiently.
+            bots.roots.openRoot("Recent");
+
+            // Verify that just created zip file appears among recent files. It should appear on top
+            // so no scrolling.
+            assertTrue(bots.directory.findDocument(createdFileName).exists());
+        } finally {
+            if (createdFileName != null) {
+                cleanupFile(createdFileName, primaryRoot.title);
+            }
+        }
+    }
+
 }

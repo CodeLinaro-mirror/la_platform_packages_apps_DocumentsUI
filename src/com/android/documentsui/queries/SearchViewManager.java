@@ -562,6 +562,10 @@ public class SearchViewManager implements
         if (isSearchV2Enabled()) {
             if (mSearchOptionsController != null) {
                 if (SearchOptionsControls.DROPDOWNS == controls) {
+                    Integer mimeChipType = mChipViewManager.getLeadingMimeChipType();
+                    if (mimeChipType != null) {
+                        mSearchOptionsController.setSelectedFileType(mimeChipType);
+                    }
                     mSearchOptionsController.show(mCurrentRoot);
                 } else {
                     mSearchOptionsController.hide();
@@ -875,8 +879,8 @@ public class SearchViewManager implements
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
         return roots.filter(r -> r.isLocalOnly()
                 && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isDownloads() && !r.isExternalStorage()).collect(
-                Collectors.toUnmodifiableList());
+                && !r.isExternalStorage()).collect(
+                Collectors.toList());
     }
 
     /**

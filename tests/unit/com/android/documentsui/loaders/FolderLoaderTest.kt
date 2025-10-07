@@ -15,13 +15,16 @@
  */
 package com.android.documentsui.loaders
 
+import android.content.Context
 import android.os.Bundle
-import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
-import com.android.documentsui.rules.CheckAndForceMaterial3Flag
+import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.testing.TestDocumentsProvider
 import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestProvidersAccess
 import java.time.Duration
@@ -29,114 +32,175 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import org.mockito.Mockito
 
 private const val TOTAL_FILE_COUNT = 10
 
-@RunWith(Parameterized::class)
-@SmallTest
-class FolderLoaderTest(private val testParams: LoaderTestParams) : BaseLoaderTest() {
-    companion object {
-        @JvmStatic
-        @Parameters(name = "with parameters {0}")
-        fun data() = listOf(
-            LoaderTestParams(TOTAL_FILE_COUNT, "", null, ALL_RESULTS, Bundle(), TOTAL_FILE_COUNT),
-            // Result limiting only works for search, not folder navigation, expect limit to be ignored.
-            LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
-            // The first file is at NOW, the second at NOW - 1h, etc.
-            LoaderTestParams(
-                TOTAL_FILE_COUNT,
-                "",
-                Duration.ofMinutes(1L),
-                ALL_RESULTS,
-                Bundle(),
-                1
-            ),
-            LoaderTestParams(
-                TOTAL_FILE_COUNT,
-                "",
-                Duration.ofMinutes(60L + 1),
-                ALL_RESULTS,
-                Bundle(),
-                2
-            ),
-            LoaderTestParams(
-                TOTAL_FILE_COUNT,
-                "",
-                Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
-                ALL_RESULTS,
-                Bundle(),
-                TOTAL_FILE_COUNT
-            ),
-        )
+@RunWith(Enclosed::class)
+class FolderLoaderTest() {
+
+    @RunWith(Parameterized::class)
+    @SmallTest
+    class ParametrizedTests(private val testParams: LoaderTestParams) : BaseLoaderTest() {
+        companion object {
+            @JvmStatic
+            @Parameters(name = "with parameters {0}")
+            fun data() = listOf(
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "",
+                    null,
+                    ALL_RESULTS,
+                    Bundle(),
+                    TOTAL_FILE_COUNT
+                ),
+                // Result limiting only works for search, not folder navigation, expect limit to be ignored.
+                LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
+                // The first file is at NOW, the second at NOW - 1h, etc.
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "",
+                    Duration.ofMinutes(1L),
+                    ALL_RESULTS,
+                    Bundle(),
+                    1
+                ),
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "",
+                    Duration.ofMinutes(60L + 1),
+                    ALL_RESULTS,
+                    Bundle(),
+                    2
+                ),
+                LoaderTestParams(
+                    TOTAL_FILE_COUNT,
+                    "",
+                    Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
+                    ALL_RESULTS,
+                    Bundle(),
+                    TOTAL_FILE_COUNT
+                ),
+            )
+        }
+
+        @get:Rule
+        val setFlags = OverrideFlagsRule()
+
+        val contentLock = ContentLock()
+        lateinit var mockProvider: TestDocumentsProvider
+        lateinit var queryOptions: QueryOptions
+
+        @Before
+        fun setUpTest() {
+            queryOptions =
+                QueryOptions(
+                    testParams.fakeFileCount + 1,
+                    testParams.maxResultsPerRoot,
+                    testParams.lastModifiedDelta,
+                    null,
+                    true,
+                    arrayOf("*/*"),
+                    testParams.otherArgs,
+                )
+            // Set up sample files using Downloads provider.
+            mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
+            val docs = createDocuments(TOTAL_FILE_COUNT)
+            mockProvider.setNextChildDocumentsReturns(*docs)
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testLoadInBackground() {
+            // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
+            val rootFolderInfo = DocumentInfo()
+            rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
+            rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
+
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    rootFolderInfo,
+                    queryOptions,
+                    environment.state.sortModel
+                )
+            val directoryResult = loader.loadInBackground()
+            assertEquals(testParams.expectedCount, getFileCount(directoryResult))
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testListRootIfNullFolder() {
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    null,
+                    queryOptions,
+                    environment.state.sortModel
+                )
+            val directoryResult = loader.loadInBackground()
+            assertEquals(testParams.expectedCount, getFileCount(directoryResult))
+        }
     }
 
-    @get:Rule
-    val checkFlags = CheckAndForceMaterial3Flag()
+    @SmallTest
+    class PlainTests : BaseLoaderTest() {
+        @get:Rule
+        val setFlags = OverrideFlagsRule()
 
-    val contentLock = ContentLock()
-    lateinit var queryOptions: QueryOptions
+        val contentLock = ContentLock()
+        lateinit var mockProvider: TestDocumentsProvider
+        lateinit var queryOptions: QueryOptions
+        lateinit var context: Context
 
-    @Before
-    fun setUpTest() {
-        queryOptions =
-            QueryOptions(
-                testParams.fakeFileCount + 1,
-                testParams.maxResultsPerRoot,
-                testParams.lastModifiedDelta,
-                null,
-                true,
-                arrayOf("*/*"),
-                testParams.otherArgs,
-            )
-        // Set up sample files using Downloads provider.
-        val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
-        val docs = createDocuments(TOTAL_FILE_COUNT)
-        mockProvider!!.setNextChildDocumentsReturns(*docs)
-    }
+        @Before
+        fun setUpTest() {
+            queryOptions =
+                QueryOptions(
+                    TOTAL_FILE_COUNT,
+                    TOTAL_FILE_COUNT,
+                    null,
+                    null,
+                    true,
+                    arrayOf("*/*"),
+                    Bundle()
+                )
+            // Set up sample files using Downloads provider.
+            mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
+            val docs = createDocuments(TOTAL_FILE_COUNT)
+            mockProvider.setNextChildDocumentsReturns(*docs)
+            context = Mockito.mock(Context::class.java)
+        }
 
-    @Test
-    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
-    fun testLoadInBackground() {
-        // TODO(majewski): Is there a better way to create Downloads root folder DocumentInfo?
-        val rootFolderInfo = DocumentInfo()
-        rootFolderInfo.authority = TestProvidersAccess.DOWNLOADS.authority
-        rootFolderInfo.userId = TestProvidersAccess.DOWNLOADS.userId
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testThrownExceptions() {
+            val message = "Testing exception throwing"
+            mockProvider.setThrownRuntimeMessage(message)
 
-        val loader =
-            FolderLoader(
-                activity,
-                TestFileTypeLookup(),
-                contentLock,
-                TestProvidersAccess.DOWNLOADS,
-                rootFolderInfo,
-                queryOptions,
-                environment.state.sortModel
-            )
-        val directoryResult = loader.loadInBackground()
-        assertEquals(testParams.expectedCount, getFileCount(directoryResult))
-    }
-
-    @Test
-    @RequiresFlagsEnabled(FLAG_USE_SEARCH_V2_READ_ONLY)
-    fun testListRootIfNullFolder() {
-        val mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]
-        val docs = createDocuments(TOTAL_FILE_COUNT)
-        mockProvider!!.setNextChildDocumentsReturns(*docs)
-
-        val loader =
-            FolderLoader(
-                activity,
-                TestFileTypeLookup(),
-                contentLock,
-                TestProvidersAccess.DOWNLOADS,
-                null,
-                queryOptions,
-                environment.state.sortModel
-            )
-        val directoryResult = loader.loadInBackground()
-        assertEquals(testParams.expectedCount, getFileCount(directoryResult))
+            val loader =
+                FolderLoader(
+                    activity,
+                    TestFileTypeLookup(),
+                    contentLock,
+                    TestProvidersAccess.DOWNLOADS,
+                    null,
+                    queryOptions,
+                    environment.state.sortModel
+                )
+            val result = loader.loadInBackground()
+            assertEquals(0, result?.cursor?.count)
+            assertEquals(message, result?.exception?.message)
+        }
     }
 }
