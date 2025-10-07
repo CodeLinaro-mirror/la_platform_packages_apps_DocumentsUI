@@ -33,6 +33,7 @@ import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
+import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.sorting.SortModel
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import java.util.concurrent.CountDownLatch
@@ -113,7 +114,7 @@ class SearchLoader(
             var result: Cursor? = null
             val queryDuration = measureTime {
                 try {
-                    result = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
+                    result = queryLocation(rootInfo, searchUri, queryArgs)
                 } catch (e: Exception) {
                     if (DEBUG) {
                         Log.d(TAG, "Failed to get cursor for ${searchUri.authority}", e)
@@ -142,6 +143,19 @@ class SearchLoader(
             latch.countDown()
         }
     }
+
+    override fun createRootCursorWrapper(
+        rootInfo: RootInfo,
+        locationUri: Uri,
+        cursor: Cursor,
+    ): RootCursorWrapper =
+        RootCursorWrapper(
+            rootInfo.userId,
+            if (shouldUseSemanticSearch(rootInfo)) rootInfo.authority else locationUri.authority,
+            rootInfo.rootId,
+            cursor,
+            options.maxResults,
+        )
 
     private val searchTaskList = mutableListOf<SearchTask>()
 
