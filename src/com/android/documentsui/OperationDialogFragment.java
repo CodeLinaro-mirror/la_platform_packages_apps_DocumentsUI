@@ -30,6 +30,7 @@ import android.widget.TextView;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -119,10 +120,12 @@ public class OperationDialogFragment extends DialogFragment {
               getArguments().getInt(FileOperationService.EXTRA_DIALOG_TYPE);
         final @OpType int operationType =
               getArguments().getInt(FileOperationService.EXTRA_OPERATION_TYPE);
-        final List<DocumentInfo> failedDocs = getArguments().getParcelableArrayList(
-                FileOperationService.EXTRA_FAILED_DOCS, DocumentInfo.class);
-        final List<Uri> failedUris = getArguments().getParcelableArrayList(
-                FileOperationService.EXTRA_FAILED_URIS, Uri.class);
+        final List<DocumentInfo> failedDocs =
+                BundleCompat.getParcelableArrayList(
+                        getArguments(), FileOperationService.EXTRA_FAILED_DOCS, DocumentInfo.class);
+        final List<Uri> failedUris =
+                BundleCompat.getParcelableArrayList(
+                        getArguments(), FileOperationService.EXTRA_FAILED_URIS, Uri.class);
         final List<String> failedPaths = getArguments().getStringArrayList(
                 FileOperationService.EXTRA_FAILED_PATHS);
 
