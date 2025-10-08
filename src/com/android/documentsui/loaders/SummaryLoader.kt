@@ -103,10 +103,6 @@ class SummaryLoader(
         val docIdToModelId = mutableMapOf<String, String>()
         for (modelId in modelIds) {
             val (_, _, docId) = modelId.split('|')
-            Log.d(
-                TAG,
-                "Loading (byFolder ${parentDoc.documentId}) summary for: $modelId - docId: $docId",
-            )
             docIdToModelId[docId] = modelId
         }
         val contentResolver: ContentResolver = context.contentResolver
@@ -152,7 +148,6 @@ class SummaryLoader(
             }
 
             val (_, docAuthority, docId) = modelId.split('|')
-            Log.d(TAG, "Loading (byIds) summary for: $modelId - docId: $docId")
             val docUri = DocumentsContract.buildDocumentUri(authority, docId)
 
             val queryArgs = Bundle()

@@ -18,10 +18,11 @@ package com.android.documentsui.dirlist;
 
 import static org.junit.Assert.assertTrue;
 
+import android.view.ViewGroup;
+
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver;
-import android.view.ViewGroup;
 
 import com.android.documentsui.Model.Update;
 import com.android.documentsui.base.EventListener;
@@ -87,6 +88,11 @@ public class TestDocumentsAdapter extends DocumentsAdapter {
     @Override
     EventListener<Update> getModelUpdateListener() {
         return mModelListener;
+    }
+
+    @Override
+    public void onSummariesUpdated(List<Integer> updatedIndices) {
+        // No-op for the test double, can be overridden if needed.
     }
 
     @Override

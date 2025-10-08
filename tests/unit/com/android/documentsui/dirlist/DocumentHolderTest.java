@@ -32,6 +32,8 @@ import androidx.test.filters.Suppress;
 import com.android.documentsui.R;
 import com.android.documentsui.TestConfigStore;
 
+import javax.annotation.Nullable;
+
 public class DocumentHolderTest extends AndroidTestCase {
 
     DocumentHolder mHolder;
@@ -42,12 +44,14 @@ public class DocumentHolderTest extends AndroidTestCase {
     public void setUp() throws Exception {
         Context context = getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        mHolder = new DocumentHolder(getContext(), inflater.inflate(R.layout.item_doc_list, null),
-                mTestConfigStore) {
-            @Override
-            public void bind(Cursor cursor, String modelId) {
-            }
-        };
+        mHolder =
+                new DocumentHolder(
+                        getContext(),
+                        inflater.inflate(R.layout.item_doc_list, null),
+                        mTestConfigStore) {
+                    @Override
+                    public void bind(Cursor cursor, String modelId, @Nullable String summary) {}
+                };
 
         mListener = new TestListener();
         mHolder.addKeyEventListener(mListener);

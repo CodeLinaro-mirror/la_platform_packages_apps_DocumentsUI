@@ -441,6 +441,17 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
         return (flags & Root.FLAG_LOCAL_ONLY) != 0;
     }
 
+    /** Return true if the root is one of the local providers. */
+    public boolean isLocalProvider() {
+        return isExternalStorage()
+                || isDownloads()
+                || isImages()
+                || isVideos()
+                || isAudio()
+                || isDocuments()
+                || isFiles();
+    }
+
     public boolean isEmpty() {
         return (flags & Root.FLAG_EMPTY) != 0;
     }

@@ -99,6 +99,7 @@
 
     <!-- The authority of a DocumentsProvider that provides summaries/description for local files.
     If it's empty or the package isn't installed it will just disable the summary for local files.
+    It should be a valid root URI, i.e. `content://<com.android.provider.authority>/root/<root_id>`
      -->
     <string name="local_summary_provider" translatable="false" />
 

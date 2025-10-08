@@ -188,7 +188,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         return DocumentsApplication.getUserManagerState(context).getUserIds();
                     }
                 });
-
+        initInjector();
         super.onCreate(icicle);
 
         // The customizations here plus the PickDialogTheme style PickActivity styled as a dialog.

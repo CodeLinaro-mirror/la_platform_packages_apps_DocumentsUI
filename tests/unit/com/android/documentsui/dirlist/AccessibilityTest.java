@@ -28,6 +28,7 @@ import android.platform.test.annotations.EnableFlags;
 import android.view.View;
 import android.widget.Space;
 
+import androidx.annotation.Nullable;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -99,13 +100,12 @@ public class AccessibilityTest {
         List<RecyclerView.ViewHolder> holders = new ArrayList<>();
         TestConfigStore testConfigStore = new TestConfigStore();
         testConfigStore.enablePrivateSpaceInPhotoPicker();
-        holders.add(new MessageHolder(mView.getContext(), new Space(mView.getContext()),
-                testConfigStore) {
-            @Override
-            public void bind(Cursor cursor, String modelId) {
-
-            }
-        });
+        holders.add(
+                new MessageHolder(
+                        mView.getContext(), new Space(mView.getContext()), testConfigStore) {
+                    @Override
+                    public void bind(Cursor cursor, String modelId, @Nullable String summary) {}
+                });
 
         mView.setHolders(holders);
 
@@ -121,13 +121,12 @@ public class AccessibilityTest {
         List<RecyclerView.ViewHolder> holders = new ArrayList<>();
         TestConfigStore testConfigStore = new TestConfigStore();
         testConfigStore.disablePrivateSpaceInPhotoPicker();
-        holders.add(new MessageHolder(mView.getContext(), new Space(mView.getContext()),
-                testConfigStore) {
-            @Override
-            public void bind(Cursor cursor, String modelId) {
-
-            }
-        });
+        holders.add(
+                new MessageHolder(
+                        mView.getContext(), new Space(mView.getContext()), testConfigStore) {
+                    @Override
+                    public void bind(Cursor cursor, String modelId, @Nullable String summary) {}
+                });
 
         mView.setHolders(holders);
 

@@ -44,6 +44,8 @@ class SummaryProviderManagerTest {
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var mockResources: Resources
+    private var TEST_SUMMARY_PROVIDER =
+        "content://${TestSummaryProvider.Companion.AUTHORITY}/root/summary-root"
 
     /** A custom ContextWrapper that allows us to override getResources() for testing. */
     private class TestContextWrapper(base: Context, private val mockResources: Resources) :
@@ -82,7 +84,7 @@ class SummaryProviderManagerTest {
     @Test
     fun testStart_withProviderEmpty_isDisabled() = runTest {
         `when`(mockResources.getString(R.string.local_summary_provider))
-            .thenReturn(TestSummaryProvider.Companion.AUTHORITY)
+            .thenReturn(TEST_SUMMARY_PROVIDER)
         setIsEmpty(true)
         val manager = SummaryProviderManager(context, this)
         manager.start()
@@ -97,7 +99,7 @@ class SummaryProviderManagerTest {
     @Test
     fun testStart_withProviderNotEmpty_isEnabled() = runTest {
         `when`(mockResources.getString(R.string.local_summary_provider))
-            .thenReturn(TestSummaryProvider.Companion.AUTHORITY)
+            .thenReturn(TEST_SUMMARY_PROVIDER)
         setIsEmpty(false)
         val manager = SummaryProviderManager(context, this)
         manager.start()
@@ -112,7 +114,7 @@ class SummaryProviderManagerTest {
     fun testStateChanges_whenProviderUpdates() =
         runTest(timeout = 10.seconds) {
             `when`(mockResources.getString(R.string.local_summary_provider))
-                .thenReturn(TestSummaryProvider.Companion.AUTHORITY)
+                .thenReturn(TEST_SUMMARY_PROVIDER)
 
             // Emulate the provider being disabled.
             setIsEmpty(true)

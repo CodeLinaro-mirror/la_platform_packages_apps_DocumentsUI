@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.Model;
+import com.android.documentsui.SummaryUpdateListener;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.State;
@@ -34,15 +35,16 @@ import com.android.documentsui.base.State;
 import java.util.List;
 
 /**
- * DocumentsAdapter provides glue between a directory Model, and RecyclerView. We've
- * abstracted this a bit in order to decompose some specialized support
- * for adding stub layout objects (@see SectionBreakDocumentsAdapter). Handling of the
- * stub layout objects was error prone when interspersed with the core mode / adapter code.
+ * DocumentsAdapter provides glue between a directory Model, and RecyclerView. We've abstracted this
+ * a bit in order to decompose some specialized support for adding stub layout objects (@see
+ * SectionBreakDocumentsAdapter). Handling of the stub layout objects was error prone when
+ * interspersed with the core mode / adapter code.
  *
  * @see ModelBackedDocumentsAdapter
  * @see DirectoryAddonsAdapter
  */
-public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHolder> {
+public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHolder>
+        implements SummaryUpdateListener {
     // Item types used by ModelBackedDocumentsAdapter
     public static final int ITEM_TYPE_DOCUMENT = 1;
     public static final int ITEM_TYPE_DIRECTORY = 2;
@@ -57,6 +59,13 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
     public abstract int getPosition(String id);
 
     abstract EventListener<Model.Update> getModelUpdateListener();
+
+    /**
+     * Called when summaries for items in the model have been updated.
+     *
+     * @param updatedIndices A list of indices in the adapter that need to be refreshed.
+     */
+    public abstract void onSummariesUpdated(List<Integer> updatedIndices);
 
     /**
      * Returns a class that yields the span size for a particular element. This is

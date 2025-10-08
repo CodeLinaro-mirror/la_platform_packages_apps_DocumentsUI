@@ -86,10 +86,8 @@ public abstract class DocumentHolder
         mConfigStore = configStore;
     }
 
-    /**
-     * Binds the view to the given item data.
-     */
-    public abstract void bind(Cursor cursor, String modelId);
+    /** Binds the view to the given item data. */
+    public abstract void bind(Cursor cursor, String modelId, @Nullable String summary);
 
     public String getModelId() {
         return mModelId;
