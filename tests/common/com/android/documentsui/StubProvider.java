@@ -233,8 +233,10 @@ public class StubProvider extends DocumentsProvider {
     public void deleteDocument(String documentId)
             throws FileNotFoundException {
         final StubDocument document = mStorage.get(documentId);
+        if (document == null)
+            throw new FileNotFoundException();
         final long fileSize = document.file.length();
-        if (document == null || !document.file.delete())
+        if (!document.file.delete())
             throw new FileNotFoundException();
         synchronized (mWriteLock) {
             document.rootInfo.size -= fileSize;
