@@ -20,8 +20,8 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
-import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -156,10 +156,10 @@ public class SearchViewManager implements
         }
 
         if (savedState != null) {
-            setCurrentSearch(savedState.getString(Shared.EXTRA_QUERY));
+            mCurrentSearch = savedState.getString(Shared.EXTRA_QUERY);
             mChipViewManager.restoreCheckedChipItems(savedState);
         } else {
-            setCurrentSearch(null);
+            mCurrentSearch = null;
         }
     }
 
@@ -432,7 +432,7 @@ public class SearchViewManager implements
         }
 
         if (!supportsSearch) {
-            setCurrentSearch(null);
+            mCurrentSearch = null;
         }
 
         if (mShowDockedSearch && !mShowSearchBar) {
@@ -604,7 +604,8 @@ public class SearchViewManager implements
 
             // Clear checked chips
             mChipViewManager.clearCheckedChips();
-            setCurrentSearch(null);
+            mCurrentSearch = null;
+            mListener.onSearchChanged(mCurrentSearch);
         }
 
         if (mFullBar && mMenuItem != null) {
@@ -627,7 +628,7 @@ public class SearchViewManager implements
                 && mDockedSearchEditText.hasFocus() : mSearchView != null && mSearchView.hasFocus();
         if (hasFocus && mCurrentSearch == null) {
             // Restore focus even if no text was input before screen rotation.
-            setCurrentSearch("");
+            mCurrentSearch = "";
         }
         state.putString(Shared.EXTRA_QUERY, mCurrentSearch);
         mChipViewManager.onSaveInstanceState(state);
@@ -653,7 +654,10 @@ public class SearchViewManager implements
         } else {
             cancelQueuedSearch();
             // Don't kick off a search if we've already finished it.
-            setCurrentSearch(query);
+            if (!TextUtils.equals(mCurrentSearch, query)) {
+                mCurrentSearch = query;
+                mListener.onSearchChanged(mCurrentSearch);
+            }
             recordHistory();
             if (!mShowDockedSearch && mSearchView != null) {
                 mSearchView.clearFocus();
@@ -690,11 +694,14 @@ public class SearchViewManager implements
             public void run() {
                 // Do the actual work on the main looper.
                 synchronized (mSearchLock) {
-                    mQueuedSearchRunnable =
-                            () -> {
-                                setCurrentSearch(newText);
-                                logTextSearchMetric();
-                            };
+                    mQueuedSearchRunnable = () -> {
+                        mCurrentSearch = newText;
+                        if (mCurrentSearch != null && mCurrentSearch.isEmpty()) {
+                            mCurrentSearch = null;
+                        }
+                        logTextSearchMetric();
+                        mListener.onSearchChanged(mCurrentSearch);
+                    };
                     mUiHandler.post(mQueuedSearchRunnable);
                 }
             }
@@ -837,24 +844,8 @@ public class SearchViewManager implements
         return mQueryContentFromIntent;
     }
 
-    /**
-     * Updates the current search to the specified query. If the search query has changed the
-     * SearchManagerListener is notified about it.
-     *
-     * @param queryString The new current search query.
-     */
     public void setCurrentSearch(String queryString) {
-        if (!TextUtils.equals(mCurrentSearch, queryString)) {
-            mCurrentSearch = queryString;
-            if (mCurrentSearch != null && mCurrentSearch.isEmpty()) {
-                // Due isSearching() method checking for null query only, if the query is empty we
-                // force it to null, so that isSearching() returns false.
-                mCurrentSearch = null;
-            }
-            if (mListener != null) {
-                mListener.onSearchChanged(queryString);
-            }
-        }
+        mCurrentSearch = queryString;
     }
 
     /**

@@ -52,11 +52,6 @@ class BreadcrumbController(
 
     /** Sets whether the breadcrumb should be visible or not. */
     fun setVisible(visible: Boolean) {
-        if (!visible) {
-            // When hiding the breadcrumb view, clear its state. When showing it, we wish to start
-            // with clean state, which is then updated to some selected path.
-            view.setPath(arrayOf())
-        }
         view.setVisible(visible)
     }
 
