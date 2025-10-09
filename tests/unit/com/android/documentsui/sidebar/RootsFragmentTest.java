@@ -212,23 +212,6 @@ public class RootsFragmentTest {
     }
 
     @Test
-    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
-    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
-    public void testSortLoadResult_WithCorrectOrder_useMaterial3FlagDisabled_ShortcutsEnabled() {
-        List<Item> items = mRootsFragment.sortLoadResult(
-            mContext,
-            mEnv.state,
-            createFakeRootInfoList(),
-            createFakeShortcutInfoList(),
-            null /* excludePackage */, null /* handlerAppIntent */, new TestProvidersAccess(),
-            UserId.DEFAULT_USER,
-            Collections.singletonList(UserId.DEFAULT_USER),
-            /* maybeShowBadge */ false, mTestUserManagerState);
-        assertTrue(assertSortedResult(
-                items, EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_TRUE));
-    }
-
-    @Test
     @EnableFlags({
         Flags.FLAG_USE_MATERIAL3,
         Flags.FLAG_USE_SEARCH_V2_READ_ONLY,

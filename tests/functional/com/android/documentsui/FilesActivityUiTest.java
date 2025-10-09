@@ -413,7 +413,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO})
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testClickShortcutFolderPreExisting() throws Exception {
         // Set up the shortcut resources and pre create the shortcut folder.
         DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
@@ -438,7 +438,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO})
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testClickShortcutFolderNotExisting() throws Exception {
         DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);

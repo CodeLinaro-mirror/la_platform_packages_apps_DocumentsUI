@@ -150,7 +150,8 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
 
         @JvmStatic
         fun isHomeScreenFilesFlagEnabled(): Boolean {
-            return getInstance()
+            return isUseMaterial3FlagEnabled() &&
+                getInstance()
                     .overrides
                     .getOrDefault(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.homeScreenFilesRo())
         }
