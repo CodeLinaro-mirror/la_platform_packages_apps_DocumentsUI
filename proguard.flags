@@ -352,6 +352,9 @@
 # TODO(lucmult): Remove these when they're used by the prod code.
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
 -keep class com.android.documentsui.loaders.SummaryLoader { *; }
+-keep class com.android.documentsui.loaders.SummaryLoader { *; }
+-keep interface com.android.documentsui.SummaryUpdateListener { *; }
+-keep class com.android.documentsui.ModelSummariesUpdate { *; }
 
 -keep class com.android.documentsui.base.PathExtractor { *; }
 
