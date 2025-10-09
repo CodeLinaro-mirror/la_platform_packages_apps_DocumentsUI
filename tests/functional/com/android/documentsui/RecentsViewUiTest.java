@@ -200,6 +200,28 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 .check(matches(DirectoryListBot.withDisplayedFilenameCount(testFileName, 1)));
     }
 
+    /** When using the new Search stack, files in Recents are deletable. */
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testDeleteFromRecentsWithSearchV2() throws Exception {
+        final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
+        final String testFileName = testFileNamePrefix.concat(".jpg");
+
+        // Check: the random test file is visible in Recents.
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
+
+        // Check: the file can be successfully deleted.
+        bots.directory.selectDocument(testFileName, 1);
+        device.waitForIdle();
+        bots.main.clickDelete();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        device.waitForIdle();
+        fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertFalse(fileInRecents.exists());
+    }
+
     /** When using the new Search stack, files in Recents are movable. */
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
