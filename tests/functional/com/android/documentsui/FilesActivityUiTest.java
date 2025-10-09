@@ -61,6 +61,7 @@ import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.roots.ShortcutResourceValues;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
+import com.android.documentsui.sidebar.RootsFragment;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -412,13 +413,32 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         return storageDocsHelper;
     }
 
+    private void cleanUpShortcutFolder(DocumentsProviderHelper docsHelper,
+            String parentDocId, String shortcutTitle) {
+        try {
+            // Delete the folder just in case it exists
+            DocumentInfo shortcutDoc =
+                docsHelper.findDocument(parentDocId, shortcutTitle);
+            if (shortcutDoc != null) {
+                docsHelper.deleteDocumentIfExists(shortcutDoc.derivedUri);
+            }
+        } catch (Exception e) {
+            // Do nothing.
+        }
+    }
+
     @Test
     @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testClickShortcutFolderPreExisting() throws Exception {
         // Set up the shortcut resources and pre create the shortcut folder.
         DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
         storageDocsHelper.createFolder(primaryRoot.documentId, SHORTCUT_ID);
+        mActivityScenario.onActivity(activity -> {
+            RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
+            fragment.reloadRootsAndShortcuts();
+        });
 
         EspressoBotsKt.openRoot(context, SHORTCUT_ID);
         bots.main.assertSearchBarGone();
@@ -432,9 +452,10 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertWindowTitle(SHORTCUT_ID);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
 
-        // TODO: b/447024807 - Readd the checked added for shortcut sidebar selection changes.
+        bots.roots.assertItemSelected(SHORTCUT_ID);
+        bots.roots.assertItemNotSelected(primaryRoot.title);
 
-        cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
+        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
     }
 
     @Test
@@ -442,13 +463,12 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testClickShortcutFolderNotExisting() throws Exception {
         DocumentsProviderHelper storageDocsHelper = setUpShortcuts();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        try {
-            // Delete the folder just in case it exists
-            cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
-        } catch (Exception e) {
-            // Do nothing.
-        }
+        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
         storageDocsHelper.assertDoesNotExist(primaryRoot.documentId, SHORTCUT_ID);
+        mActivityScenario.onActivity(activity -> {
+            RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
+            fragment.reloadRootsAndShortcuts();
+        });
 
         EspressoBotsKt.openRoot(context, SHORTCUT_ID);
         bots.main.assertSearchBarGone();
@@ -462,9 +482,10 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.assertWindowTitle(SHORTCUT_ID);
         storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
 
-        // TODO: b/447024807 - Readd the checked added for shortcut sidebar selection changes.
+        bots.roots.assertItemSelected(SHORTCUT_ID);
+        bots.roots.assertItemNotSelected(primaryRoot.title);
 
-        cleanupFile(SHORTCUT_ID, primaryRoot.title, null);
+        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
     }
 
 }

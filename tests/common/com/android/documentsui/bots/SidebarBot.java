@@ -243,7 +243,8 @@ public class SidebarBot extends Bots.BaseBot {
         if (!sidebarItem.exists()) {
             throw new AssertionError("Cannot find item " + label);
         }
-        assertTrue(findRoot(label, RootListContainerType.FOLLOW_LAYOUT).isSelected());
+        assertTrue(sidebarItem.isSelected());
+        closeDrawer();
     }
 
     /**
@@ -254,6 +255,7 @@ public class SidebarBot extends Bots.BaseBot {
         if (!sidebarItem.exists()) {
             throw new AssertionError("Cannot find item " + label);
         }
-        assertFalse(findRoot(label, RootListContainerType.FOLLOW_LAYOUT).isSelected());
+        assertFalse(sidebarItem.isSelected());
+        closeDrawer();
     }
 }
