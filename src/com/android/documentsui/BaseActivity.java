@@ -51,6 +51,8 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -628,36 +630,82 @@ public abstract class BaseActivity
         return state;
     }
 
+    /**
+     * We don't handle the bottom padding in the XML layout file because the bottom padding needs to
+     * be merged into Navigation Gesture area (it's transparent) when navigation gesture is used in
+     * the bottom navigation bar. Check {@link #setContainer} for more details.
+     */
+    protected int getBottomPadding() {
+        if (isUseMaterial3FlagEnabled()) {
+            return getResources().getDimensionPixelSize(R.dimen.layout_padding_bottom);
+        }
+        return 0;
+    }
+
     protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        root.setOnApplyWindowInsetsListener(
-                (v, insets) -> {
-                    root.setPadding(
-                            insets.getSystemWindowInsetLeft(),
-                            insets.getSystemWindowInsetTop(),
-                            insets.getSystemWindowInsetRight(),
-                            0);
 
-                    boolean isNavBarVisible =
-                            insets.isVisible(WindowInsetsCompat.Type.navigationBars());
-                    if (isNavBarVisible) {
-                        View saveContainer = findViewById(getRes(R.id.container_save));
-                        saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+        if (isUseMaterial3FlagEnabled()) {
+            ViewCompat.setOnApplyWindowInsetsListener(
+                    root,
+                    (v, insets) -> {
+                        // Navigation gesture is special because it's a transparent area so we can
+                        // use that area as bottom padding to achieve an immersive experience.
+                        Insets navBarInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+                        Insets tappableInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.tappableElement());
+                        final boolean isGestureNav =
+                                navBarInsets.bottom > 0
+                                        && tappableInsets.bottom < navBarInsets.bottom;
 
-                        View rootsContainer = findViewById(getRes(R.id.container_roots));
-                        rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+                        // System bars includes both status bar (top) and navigation bar (bottom)
+                        // and also others, the insets will only have non-zero values when the app
+                        // might be overlapped with these areas (i.e. in fullscreen mode),
+                        // otherwise (i.e. in window mode) they will all be 0.
+                        Insets systemBarInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                        v.setPadding(
+                                systemBarInsets.left,
+                                systemBarInsets.top,
+                                systemBarInsets.right,
+                                // When navigation gesture is used, we just use the navigation
+                                // gesture area (bottom inset) as the bottom padding.
+                                isGestureNav
+                                        ? systemBarInsets.bottom
+                                        : systemBarInsets.bottom + getBottomPadding());
+                        return WindowInsetsCompat.CONSUMED;
+                    });
+        } else {
+            root.setOnApplyWindowInsetsListener(
+                    (v, insets) -> {
+                        root.setPadding(
+                                insets.getSystemWindowInsetLeft(),
+                                insets.getSystemWindowInsetTop(),
+                                insets.getSystemWindowInsetRight(),
+                                0);
 
-                        View navRailContainer = findViewById(R.id.nav_rail_container_roots);
-                        if (navRailContainer != null) {
-                            navRailContainer.setPadding(
-                                    0, 0, 0, insets.getSystemWindowInsetBottom());
+                        boolean isNavBarVisible =
+                                insets.isVisible(WindowInsetsCompat.Type.navigationBars());
+                        if (isNavBarVisible) {
+                            View saveContainer = findViewById(getRes(R.id.container_save));
+                            saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+
+                            View rootsContainer = findViewById(getRes(R.id.container_roots));
+                            rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+
+                            View navRailContainer = findViewById(R.id.nav_rail_container_roots);
+                            if (navRailContainer != null) {
+                                navRailContainer.setPadding(
+                                        0, 0, 0, insets.getSystemWindowInsetBottom());
+                            }
                         }
-                    }
 
-                    return insets.consumeSystemWindowInsets();
-                });
+                        return insets.consumeSystemWindowInsets();
+                    });
+        }
 
         getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);

@@ -31,7 +31,6 @@
         android:baselineAligned="false"
         android:background="?attr/colorSurfaceContainer"
         android:paddingTop="@dimen/layout_padding_top"
-        android:paddingBottom="@dimen/layout_padding_bottom"
         android:paddingEnd="@dimen/layout_padding_end">
         <!-- Navigation: left hand side. -->
         <FrameLayout
