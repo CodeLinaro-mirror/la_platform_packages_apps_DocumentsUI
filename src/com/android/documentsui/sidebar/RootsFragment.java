@@ -351,12 +351,12 @@ public class RootsFragment extends Fragment {
         };
     }
 
-    @VisibleForTesting
-    public void reloadRootsAndShortcuts() {
+    private void reloadRootsAndShortcuts() {
         LoaderManager.getInstance(this).restartLoader(2, null, mRootsCallbacks);
     }
 
-    private void loadFinished(Collection<RootInfo> roots, Collection<ShortcutInfo> shortcuts,
+    @VisibleForTesting
+    public void loadFinished(Collection<RootInfo> roots, Collection<ShortcutInfo> shortcuts,
             BaseActivity activity, State state) {
         boolean shouldIncludeHandlerApp = getArguments().getBoolean(EXTRA_INCLUDE_APPS,
                 /* defaultValue= */ false);

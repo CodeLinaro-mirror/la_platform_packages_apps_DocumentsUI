@@ -20,6 +20,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -56,6 +57,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import java.util.Objects;
 import java.util.function.IntConsumer;
 
 /** A facade over the portions of the app and drawer toolbars. */
@@ -343,7 +345,12 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         boolean changed = false;
         while (mState.stack.size() > position + 1) {
             changed = true;
-            mState.stack.pop();
+            DocumentInfo popped = mState.stack.pop();
+            if (isHomeScreenFilesFlagEnabled() && mState.shortcut != null &&
+                    Objects.equals(popped.documentId, mState.shortcut.getDocumentId())) {
+                // Only reset the shortcut to null if it gets popped off the stack.
+                mState.shortcut = null;
+            }
         }
         if (changed) {
             mEnv.refreshCurrentRootAndDirectory(AnimationView.ANIM_LEAVE);

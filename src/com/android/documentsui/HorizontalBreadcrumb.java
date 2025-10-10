@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -106,16 +107,32 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
             } else {
                 int currentItemCount = mAdapter.getItemCount();
                 int lastItemCount = mAdapter.getLastItemSize();
-                if (currentItemCount > lastItemCount) {
-                    mAdapter.notifyItemRangeInserted(lastItemCount,
-                            currentItemCount - lastItemCount);
-                    mAdapter.notifyItemChanged(lastItemCount - 1);
-                } else if (currentItemCount < lastItemCount) {
-                    mAdapter.notifyItemRangeRemoved(currentItemCount,
-                            lastItemCount - currentItemCount);
-                    mAdapter.notifyItemChanged(currentItemCount - 1);
+                if (isHomeScreenFilesFlagEnabled()) {
+                    if (currentItemCount > lastItemCount) {
+                        mAdapter.notifyItemRangeInserted(lastItemCount,
+                                currentItemCount - lastItemCount);
+                    } else if (currentItemCount < lastItemCount) {
+                        mAdapter.notifyItemRangeRemoved(currentItemCount,
+                                lastItemCount - currentItemCount);
+                    }
+                    // Update all the items in the breadcrumb path at indexes which were not
+                    // notified for either insertion or removal.
+                    int minimumCount = Math.min(currentItemCount, lastItemCount);
+                    for (int i = 0; i < minimumCount; i++) {
+                        mAdapter.notifyItemChanged(i);
+                    }
                 } else {
-                    mAdapter.notifyItemChanged(currentItemCount - 1);
+                    if (currentItemCount > lastItemCount) {
+                        mAdapter.notifyItemRangeInserted(lastItemCount,
+                                currentItemCount - lastItemCount);
+                        mAdapter.notifyItemChanged(lastItemCount - 1);
+                    } else if (currentItemCount < lastItemCount) {
+                        mAdapter.notifyItemRangeRemoved(currentItemCount,
+                                lastItemCount - currentItemCount);
+                        mAdapter.notifyItemChanged(currentItemCount - 1);
+                    } else {
+                        mAdapter.notifyItemChanged(currentItemCount - 1);
+                    }
                 }
             }
             if (shouldScroll) {
