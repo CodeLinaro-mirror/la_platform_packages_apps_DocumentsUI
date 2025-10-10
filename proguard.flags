@@ -243,8 +243,8 @@
   public boolean setFromStack(com.android.documentsui.base.DocumentStack);
 }
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbView {
+  public void setVisible(boolean);
   public boolean performPathItemClick(int);
-  public int getPathLength();
 }
 
 -keep class com.android.documentsui.util.Material3Config {

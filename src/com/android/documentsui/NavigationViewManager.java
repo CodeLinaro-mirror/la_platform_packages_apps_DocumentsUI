@@ -232,7 +232,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     }
 
     /** Updates the visibility of the breadcrumb v2 */
-    private void setBreadcrumbV2Visible(boolean visible) {
+    private void setBreadcrumbVisible(boolean visible) {
         if (isSearchV2Enabled()) {
             if (mBreadcrumbController != null) {
                 mBreadcrumbController.setVisible(visible);
@@ -370,7 +370,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
-            setBreadcrumbV2Visible(true);
+            setBreadcrumbVisible(true);
             return;
         }
 
@@ -391,22 +391,9 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
-            setBreadcrumbV2Visible(true);
+            setBreadcrumbVisible(true);
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(VISIBLE);
-            return;
-        }
-
-        boolean showBreadcrumbV2 = mActivity.isSearching() || mActivity.isInRecents();
-        if (isSearchV2Enabled() && showDockedSearch && showBreadcrumbV2) {
-            // Special case: if the search is docked we need to add new breadcrumb handling code
-            // as the old shouldShowSearchBar() method returns false, preventing the pre SearchV2
-            // code for adjusting breadcrumb visibility.
-            mBreadcrumb.show(false);
-            setBreadcrumbV2Visible(true);
-            if (mActivity.isSearching()) {
-                mToolbar.setTitle(null);
-            }
             return;
         }
 
@@ -416,7 +403,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
-        setBreadcrumbV2Visible(false);
+        setBreadcrumbVisible(false);
         mBreadcrumb.postUpdate();
     }
 

@@ -32,6 +32,7 @@ import static com.android.documentsui.conditions.HasChildCountCondition.hasMoreT
 import static com.android.documentsui.conditions.HasChildCountCondition.hasNoChildren;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasOneChild;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -74,6 +75,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 @LargeTest
@@ -669,33 +671,34 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3, FLAG_SINGLE_CLICK_TO_SELECT})
     public void testPathOfSearchResultSingleSelection() throws Exception {
         bots.search.expand();
         bots.search.setInputText("file");
         device.waitForIdle();
 
-        // Click file1.log; check that one element is selected.
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        // Click file12.png; check that one element is selected.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
         bots.directory.assertSelection(1);
 
         // Verify that the breadcrumb path shows the correct information.
-        onView(withId(R.id.breadcrumb_path_holder))
-                .check(bots.breadcrumb.pathEqualsTo("TEST_ROOT_0", TestFilesRule.FILE_NAME_1));
+        List<String> path = bots.breadcrumb.getBreadcrumbV2Path();
+        assertEquals("TEST_ROOT_0/" + TestFilesRule.FILE_NAME_2, String.join("/", path));
     }
 
     @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3, FLAG_SINGLE_CLICK_TO_SELECT})
     public void testPathOfSearchResultMultipleSelection() throws Exception {
         bots.search.expand();
         bots.search.setInputText("file");
         device.waitForIdle();
 
-        // Click file1.log and NO_RENAMEfile.txt which should stop breadcrumb path.
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        // Click file12.png; check that one element is selected.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 2);
 
-        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathEqualsTo(""));
+        List<String> path = bots.breadcrumb.getBreadcrumbV2Path();
+        assertEquals("", String.join("/", path));
     }
 
     @Test

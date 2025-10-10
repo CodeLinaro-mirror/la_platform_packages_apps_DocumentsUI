@@ -23,7 +23,6 @@ import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.isEmpty
 import com.android.documentsui.R
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.util.Material3Config.Companion.getRes
@@ -128,7 +127,7 @@ class BreadcrumbView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
      * focus away from other elements of the DocumentsUI.
      */
     private fun scrollToEnd() {
-        if (horizontalScrollView.isEmpty()) {
+        if (horizontalScrollView.childCount == 0) {
             return
         }
         horizontalScrollView.post {
@@ -140,9 +139,6 @@ class BreadcrumbView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
             horizontalScrollView.smoothScrollTo(maxScrollX, 0)
         }
     }
-
-    /** Returns the current length of the path shown by this view. */
-    fun getPathLength() = pathItems.size
 
     /** Clears the view. */
     fun clear() {

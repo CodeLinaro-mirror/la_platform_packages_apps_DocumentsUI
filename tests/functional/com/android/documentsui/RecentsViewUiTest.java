@@ -261,17 +261,4 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(context.getResources().getString(R.string.menu_move), false);
         bots.menu.assertPresentMenuItems(menuItems);
     }
-
-    @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testPathOfSearchResultInRecents() throws Exception {
-        bots.roots.openRoot("Recent");
-        device.waitForIdle();
-
-        bots.directory.selectFirstDocument();
-
-        // Check that the breadcrumb path starts with "Recent". We don't know more about the
-        // selected file, to perform a more exact comparison.
-        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathStartsWith("Recent"));
-    }
 }
