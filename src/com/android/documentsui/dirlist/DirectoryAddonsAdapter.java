@@ -101,6 +101,11 @@ final class DirectoryAddonsAdapter extends DocumentsAdapter {
     }
 
     @Override
+    public void onSummariesUpdated(List<Integer> updatedIndices) {
+        mDelegate.onSummariesUpdated(updatedIndices);
+    }
+
+    @Override
     public GridLayoutManager.SpanSizeLookup createSpanSizeLookup() {
         return new GridLayoutManager.SpanSizeLookup() {
             @Override

@@ -20,6 +20,7 @@ import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -55,6 +56,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwnerKt;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -75,6 +77,7 @@ import com.android.documentsui.breadcrumbs.BreadcrumbView;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
+import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.prefs.LocalPreferences;
 import com.android.documentsui.prefs.PreferencesMonitor;
 import com.android.documentsui.queries.CommandInterceptor;
@@ -190,6 +193,18 @@ public abstract class BaseActivity
             }
         }
         return null;
+    }
+
+    /**
+     * Initialization for the injector that is common between Files and Pick activity. Important:
+     * This is called before the BaseActivity.onCreate(), so it can't rely on things initiated
+     * there.
+     */
+    protected void initInjector() {
+        if (isUseFileSummaryEnabled()) {
+            mInjector.setSummaryProviderManager(
+                    new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this)));
+        }
     }
 
     @CallSuper
@@ -749,11 +764,18 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        // Set summary header's visibility. Only recents and downloads root may have summary in
-        // their docs.
-        mState.sortModel.setDimensionVisibility(
-                SortModel.SORT_DIMENSION_ID_SUMMARY,
-                root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
+        if (isUseFileSummaryEnabled()) {
+            // Summary is only enabled for local roots.
+            mState.sortModel.setDimensionVisibility(
+                    SortModel.SORT_DIMENSION_ID_SUMMARY,
+                    root.isLocalProvider() ? View.VISIBLE : View.INVISIBLE);
+        } else {
+            // Set summary header's visibility. Only recents and downloads root may have summary in
+            // their docs.
+            mState.sortModel.setDimensionVisibility(
+                    SortModel.SORT_DIMENSION_ID_SUMMARY,
+                    root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
+        }
 
         // Clear entire backstack and start in new root
         mState.stack.changeRoot(root);

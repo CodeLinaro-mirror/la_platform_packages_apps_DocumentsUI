@@ -34,6 +34,7 @@ import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.dirlist.AppsRowManager;
+import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.picker.PickResult;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.ui.DialogController;
@@ -84,6 +85,9 @@ public class Injector<T extends ActionHandler> {
     public DocsSelectionHelper selectionMgr;
 
     private final Model mModel;
+
+    /** The Document Provider to use to fetch summary for local files. */
+    @Nullable private SummaryProviderManager mSummaryProviderManager = null;
 
     // must be initialized before calling super.onCreate because prefs
     // are used in State initialization.
@@ -154,6 +158,18 @@ public class Injector<T extends ActionHandler> {
             return null;
         }
         return actionModeController.reset(selectionDetails, menuItemClicker);
+    }
+
+    /** Sets the summary provider manager and starts if it isn't null. */
+    public void setSummaryProviderManager(@Nullable SummaryProviderManager summaryProviderManager) {
+        mSummaryProviderManager = summaryProviderManager;
+        if (mSummaryProviderManager != null) {
+            mSummaryProviderManager.start();
+        }
+    }
+
+    public @Nullable SummaryProviderManager getSummaryProviderManager() {
+        return mSummaryProviderManager;
     }
 
     /**

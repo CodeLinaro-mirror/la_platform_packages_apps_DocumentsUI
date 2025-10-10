@@ -28,6 +28,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_UN
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -547,6 +548,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mModel.removeUpdateListener(mModelUpdateListener);
         mModel.removeUpdateListener(mAdapter.getModelUpdateListener());
+        if (isUseFileSummaryEnabled()) {
+            mModel.removeSummaryUpdateListener(mAdapter);
+        }
         setPreDrawListenerEnabled(false);
 
         if (isUseMaterial3FlagEnabled()) {
@@ -610,6 +614,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mModel.addUpdateListener(mAdapter.getModelUpdateListener());
         mModel.addUpdateListener(mModelUpdateListener);
+        if (isUseFileSummaryEnabled()) {
+            mModel.addSummaryUpdateListener(mAdapter);
+        }
 
         SelectionPredicate<String> selectionPredicate =
                 new DocsSelectionPredicate(mInjector.config, mState, mModel, mRecView);

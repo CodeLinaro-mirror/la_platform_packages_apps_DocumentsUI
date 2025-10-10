@@ -18,6 +18,7 @@ package com.android.documentsui.loaders
 
 import android.net.Uri
 import android.provider.DocumentsContract
+import androidx.core.os.BundleCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ModelId
@@ -94,7 +95,9 @@ class SummaryLoaderTest : BaseLoaderTest() {
         // Check that query args were passed
         val queryArgs = summaryProvider.lastQueryArgs
         assertThat(queryArgs).isNotNull()
-        val extraUri = queryArgs?.getParcelable<Uri>(EXTRA_URI)
+        val extraUri =
+            queryArgs?.let { BundleCompat.getParcelable(queryArgs, EXTRA_URI, Uri::class.java) }
+
         assertThat(extraUri).isEqualTo(DocumentsContract.buildRootsUri(authority))
     }
 

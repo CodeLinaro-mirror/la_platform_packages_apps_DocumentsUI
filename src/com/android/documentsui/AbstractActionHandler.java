@@ -68,11 +68,13 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.FocusHandler;
+import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.files.LauncherActivity;
 import com.android.documentsui.files.QuickViewIntentBuilder;
 import com.android.documentsui.loaders.FolderLoader;
 import com.android.documentsui.loaders.QueryOptions;
 import com.android.documentsui.loaders.SearchLoader;
+import com.android.documentsui.loaders.SummaryLoader;
 import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.GetDocumentTask;
@@ -85,12 +87,16 @@ import com.android.documentsui.sidebar.EjectRootTask;
 import com.android.documentsui.sorting.SortListFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.Snackbars;
+import com.android.documentsui.util.FlagUtils;
+
+import kotlin.Unit;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -111,6 +117,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @VisibleForTesting
     static final int LOADER_ID = 42;
+
+    static final int SUMMARY_LOADER_ID = 23;
 
     private static final String TAG = "AbstractActionHandler";
     private static final int REFRESH_SPINNER_TIMEOUT = 500;
@@ -1227,18 +1235,66 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         @Override
         public void onLoadFinished(Loader<DirectoryResult> loader, DirectoryResult result) {
             if (DEBUG) {
-                Log.d(TAG, "Loader has finished for: "
-                        + DocumentInfo.debugString(mState.stack.peek()));
+                Log.d(
+                        TAG,
+                        "Loader has finished for: "
+                                + DocumentInfo.debugString(mState.stack.peek()));
             }
             assert (result != null);
 
+            // First: Update the  file list with the new results.
             mInjector.getModel().update(result);
             mLoaderSemaphore.release();
+
+            // Second: Fetch the summary for the result.
+            startLoadingSummaries();
         }
 
         @Override
         public void onLoaderReset(Loader<DirectoryResult> loader) {
             mLoaderSemaphore.release();
+        }
+
+        private void startLoadingSummaries() {
+            if (!FlagUtils.isUseFileSummaryEnabled()) {
+                return;
+            }
+            final SummaryProviderManager summaryProviderManager =
+                    mInjector.getSummaryProviderManager();
+            if (summaryProviderManager == null || !summaryProviderManager.isEnabled()) {
+                return;
+            }
+
+            final DocumentInfo documentInfo = mState.stack.peek();
+            final RootInfo root = mState.stack.getRoot();
+
+            // We only fetch summaries for local files.
+            if (!(root != null && root.isLocalProvider())) {
+                return;
+            }
+
+            List<String> documentIds = Arrays.asList(mInjector.getModel().getModelIds());
+
+            final String summaryProviderAuthority = summaryProviderManager.getAuthority();
+
+            mActivity
+                    .getSupportLoaderManager()
+                    .restartLoader(
+                            SUMMARY_LOADER_ID,
+                            null,
+                            SummaryLoader.createCallback(
+                                    mActivity,
+                                    summaryProviderAuthority,
+                                    documentInfo,
+                                    documentIds,
+                                    summaries -> {
+                                        onSummariesLoaded(summaries);
+                                        return Unit.INSTANCE;
+                                    }));
+        }
+
+        private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
+            mInjector.getModel().updateSummaries(summaries);
         }
     }
 
