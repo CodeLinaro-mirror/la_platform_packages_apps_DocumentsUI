@@ -84,4 +84,7 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
     fun isEjecting(): Boolean
     fun supportsInspect(): Boolean
     fun hasSettings(): Boolean
+
+    /** Returns true if this root can be a target for a drag and drop operation. */
+    fun isValidDropTarget(): Boolean
 }

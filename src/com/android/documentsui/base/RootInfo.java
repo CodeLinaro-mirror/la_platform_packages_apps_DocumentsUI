@@ -593,4 +593,11 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
     public boolean supportsInspect() {
         return false;
     }
+
+    @Override
+    public boolean isValidDropTarget() {
+        // A root is considered a valid drop target if it supports creating new files or if it
+        // is the trash root.
+        return supportsCreate() || isTrash();
+    }
 }

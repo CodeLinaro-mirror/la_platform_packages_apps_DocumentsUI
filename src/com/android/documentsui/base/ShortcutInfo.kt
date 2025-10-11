@@ -117,6 +117,10 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         return root.hasSettings()
     }
 
+    override fun isValidDropTarget(): Boolean {
+        return supportsCreate() || root.isTrash()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

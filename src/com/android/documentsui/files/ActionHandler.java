@@ -139,7 +139,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public boolean dropOn(DragEvent event, RootInfo root) {
-        if (!root.supportsCreate() || root.isLibrary()) {
+        if (!root.isValidDropTarget()) {
+            return false;
+        }
+
+        // Except trash root, other library roots do not support drag & drop operations.
+        if (root.isLibrary() && !root.isTrash()) {
             return false;
         }
 

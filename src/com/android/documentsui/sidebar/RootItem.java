@@ -123,7 +123,7 @@ public class RootItem extends BaseSidebarEntryItem {
 
     @Override
     public boolean isDropTarget() {
-        return root.supportsCreate();
+        return root.isValidDropTarget();
     }
 
     @Override
