@@ -372,7 +372,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         // Only select things currently visible in the adapter.
         boolean changed = mSelectionMgr.setItemsSelected(enabled, true);
-        if (changed) {
+        if (changed && mDisplayStateChangedListener != null) {
             mDisplayStateChangedListener.run();
         }
     }
@@ -436,6 +436,16 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         } else {
             openChildContainer(doc);
         }
+    }
+
+    @Override
+    public void showEmptyTrashConfirmationDialog() {
+        throw new UnsupportedOperationException("Empty trash not supported!");
+    }
+
+    @Override
+    public void permanentlyDeleteTrashDocuments() {
+        throw new UnsupportedOperationException("Empty trash not supported!");
     }
 
     // TODO: Make this private and make tests call interface method instead.

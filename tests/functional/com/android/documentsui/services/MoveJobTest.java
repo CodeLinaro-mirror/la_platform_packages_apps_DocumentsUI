@@ -242,5 +242,11 @@ public class MoveJobTest extends AbstractCopyJobTest<MoveJob> {
         mDocs.assertChildCount(mSrcRoot, 1);
     }
 
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void testMoveFileWithFileNotFound() throws Exception {
+        runCopyFileWithFileNotFoundTest();
+    }
+
     // TODO: Add test cases for moving when multi-parented.
 }

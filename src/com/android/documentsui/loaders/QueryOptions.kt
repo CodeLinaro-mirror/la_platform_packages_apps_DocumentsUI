@@ -26,22 +26,23 @@ const val ALL_RESULTS: Int = -1
 
 /**
  * Common query options. These are:
- *  - maximum number of results to return across all queried providers; pass ALL_RESULTS to impose
- *    no limits.
- *  - maximum number of results to return *per root*; pass ALL_RESULTS to impose no limits,
- *    and note that this only works for DocumentsProviders that support QUERY_ARG_LIMIT for queries
- *    on their Roots.
- *  - maximum lastModified delta in milliseconds: the delta from now used to reject files that were
- *    not modified in the specified milliseconds; pass null for no limits.
- *  - maximum time the query should return, including empty, results; pass null for no limits.
- *  - whether or not to show hidden files.
- *  - A list of MIME types used to filter returned files.
- *  - "Other" query arguments not covered by the above.
+ * - maximum number of results to return across all queried providers; pass ALL_RESULTS to impose no
+ *   limits.
+ * - maximum number of results to return *per root*; pass ALL_RESULTS to impose no limits, and note
+ *   that this only works for DocumentsProviders that support QUERY_ARG_LIMIT for queries on their
+ *   Roots.
+ * - maximum lastModified delta in milliseconds: the delta from now used to reject files that were
+ *   not modified in the specified milliseconds; pass null for no limits.
+ * - maximum time the query should return, including empty, results; pass null for no limits.
+ * - whether or not to show hidden files.
+ * - A list of MIME types used to filter returned files.
+ * - "Other" query arguments not covered by the above.
  *
- *  The "other" query arguments are added as due to existing code communicating information such
- *  as acceptable file kind (images, videos, etc.) is done via Bundle arguments. This could be
- *  and should be changed if this code ever is rewritten.
- *  TODO(b:397095797): Merge otherQueryArgs with acceptableMimeTypes and maxLastModifiedDelta.
+ * The "other" query arguments are added as due to existing code communicating information such as
+ * acceptable file kind (images, videos, etc.) is done via Bundle arguments. This could be and
+ * should be changed if this code ever is rewritten.
+ *
+ * TODO(b:397095797): Merge otherQueryArgs with acceptableMimeTypes and maxLastModifiedDelta.
  */
 data class QueryOptions(
     val maxResults: Int,
@@ -60,17 +61,17 @@ data class QueryOptions(
         other as QueryOptions
 
         return maxResults == other.maxResults &&
-                maxResultsPerRoot == other.maxResultsPerRoot &&
-                maxLastModifiedDelta == other.maxLastModifiedDelta &&
-                maxQueryTime == other.maxQueryTime &&
-                showHidden == other.showHidden &&
-                acceptableMimeTypes.contentEquals(other.acceptableMimeTypes)
+            maxResultsPerRoot == other.maxResultsPerRoot &&
+            maxLastModifiedDelta == other.maxLastModifiedDelta &&
+            maxQueryTime == other.maxQueryTime &&
+            showHidden == other.showHidden &&
+            acceptableMimeTypes.contentEquals(other.acceptableMimeTypes)
     }
 
     /**
      * Helper method that computes the earliest valid last modified timestamp. Converts last
-     * modified duration to milliseconds past now. If the maxLastModifiedDelta is negative
-     * this method returns 0L.
+     * modified duration to milliseconds past now. If the maxLastModifiedDelta is negative this
+     * method returns 0L.
      */
     fun getRejectBeforeTimestamp() =
         if (maxLastModifiedDelta == null) {
@@ -80,9 +81,8 @@ data class QueryOptions(
         }
 
     /**
-     * Helper function that indicates if query time is unlimited. Due to internal reliance on
-     * Java's Duration class it assumes anything larger than 60 seconds has unlimited waiting
-     * time.
+     * Helper function that indicates if query time is unlimited. Due to internal reliance on Java's
+     * Duration class it assumes anything larger than 60 seconds has unlimited waiting time.
      */
     fun isQueryTimeUnlimited() = maxQueryTime == null
 
@@ -93,7 +93,7 @@ data class QueryOptions(
             maxLastModifiedDelta,
             maxQueryTime,
             showHidden,
-            acceptableMimeTypes.contentHashCode()
+            acceptableMimeTypes.contentHashCode(),
         )
     }
 }

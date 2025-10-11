@@ -189,7 +189,7 @@ object RestoreDocumentHelper {
      * @param segment The path segment to clean.
      * @return The cleaned segment, or the original if no matching prefix was found.
      */
-    private fun cleanSegment(segment: String?): String? {
+    fun cleanSegment(segment: String?): String? {
         if (segment == null || segment.isEmpty()) {
             return segment
         }

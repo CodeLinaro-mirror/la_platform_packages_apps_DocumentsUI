@@ -233,15 +233,38 @@
     <string name="rename_error" msgid="6700093173508118635">"ਦਸਤਾਵੇਜ਼ ਦਾ ਮੁੜ-ਨਾਮਕਰਨ ਕਰਨਾ ਅਸਫਲ ਰਿਹਾ"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"ਬਾਹਰ ਕੱਢੋ"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"ਕੁਝ ਫ਼ਾਈਲਾਂ ਦਾ ਰੂਪਾਂਤਰਨ ਕੀਤਾ ਗਿਆ ਸੀ"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” ਵਿੱਚ ਕਾਪੀ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਕਾਪੀ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਕਾਪੀ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” ਵਿੱਚ ਐਕਸਟਰੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਐਕਸਟਰੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਐਕਸਟਰੈਕਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” ਵਿੱਚ ਲਿਜਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਰੱਦੀ ਵਿੱਚ ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਮੁੜ-ਬਹਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਮੁੜ-ਬਹਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਮੁੜ-ਬਹਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}one{# ਫ਼ਾਈਲ ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}other{# ਫ਼ਾਈਲਾਂ ਨੂੰ ਜ਼ਿਪ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ}}"</string>
+    <!-- no translation found for copy_specific_file_in_progress (2492589332201937030) -->
+    <skip />
+    <!-- no translation found for copy_in_progress (6872096819249174615) -->
+    <skip />
+    <!-- no translation found for extract_specific_file_in_progress (1162381859640495308) -->
+    <skip />
+    <!-- no translation found for extract_in_progress (4629395179865084830) -->
+    <skip />
+    <!-- no translation found for move_specific_file_in_progress (6369336484584073740) -->
+    <skip />
+    <!-- no translation found for move_in_progress (326356777470353315) -->
+    <skip />
+    <!-- no translation found for delete_specific_file_in_progress (7262273537447952230) -->
+    <skip />
+    <!-- no translation found for delete_in_progress (7743890721129810508) -->
+    <skip />
+    <!-- no translation found for trash_specific_file_in_progress (8266568481798889707) -->
+    <skip />
+    <!-- no translation found for trash_in_progress (2509104069807418022) -->
+    <skip />
+    <!-- no translation found for restore_specific_file_in_progress (6034897285865039861) -->
+    <skip />
+    <!-- no translation found for restore_in_progress (9063203913920540783) -->
+    <skip />
+    <!-- no translation found for compress_specific_file_in_progress (7855233703746784378) -->
+    <skip />
+    <!-- no translation found for compress_in_progress (5311444499230611877) -->
+    <skip />
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ਫ਼ਾਈਲ ਨਾਲ ਸੰਬੰਧਿਤ ਪ੍ਰਗਤੀ ਦਿਖਾਓ"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ਫ਼ਾਈਲ ਦੀ ਪ੍ਰਗਤੀ"</string>
+    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
+    <skip />
     <string name="job_progress_item_completed" msgid="3933347715328014840">"ਪੂਰਾ ਹੋਇਆ"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"ਰੱਦ ਕੀਤਾ ਗਿਆ"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"ਵੇਰਵੇ ਦੇਖੋ"</string>
@@ -368,4 +391,6 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> ਦੀ ਚਿੱਤਰ ਪੂਰਵ-ਝਲਕ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ਜਾਣਕਾਰੀ ਪੈਨਲ ਲੁਕਾਓ"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"ਜਾਣਕਾਰੀ ਪੈਨਲ ਦਿਖਾਓ"</string>
+    <!-- no translation found for trash_page_empty_title (1277047027818824150) -->
+    <skip />
 </resources>

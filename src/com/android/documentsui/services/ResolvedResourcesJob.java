@@ -202,7 +202,16 @@ public abstract class ResolvedResourcesJob extends Job {
         return mResolvedDocs.size();
     }
 
-    protected String getProgressMessage(int stringId, @NonNull Map<String, Object> formatArgs) {
+    /**
+     * Returns a progress message to be displayed to the user for this job.
+     *
+     * @param explicitStringId String used when there is a single file and the filename is known.
+     * @param pluralStringId String used when there are multiple files or the filename is unknown.
+     * @param formatArgs Extra format args passed when formatting the string.
+     * @return The progress message to be displayed.
+     */
+    protected String getProgressMessage(
+            int explicitStringId, int pluralStringId, @NonNull Map<String, Object> formatArgs) {
         final int n = mResourceUris.getItemCount();
         formatArgs.put("count", n);
 
@@ -213,14 +222,18 @@ public abstract class ResolvedResourcesJob extends Job {
             } catch (IndexOutOfBoundsException ignored) {
                 name = "";
             }
-            formatArgs.put("filename", BidiFormatter.getInstance().unicodeWrap(name));
+            if (!name.isEmpty()) {
+                formatArgs.put("filename", BidiFormatter.getInstance().unicodeWrap(name));
+                return new MessageFormat(
+                                service.getString(getRes(explicitStringId)), Locale.getDefault())
+                        .format(formatArgs);
+            }
         }
-
-        return new MessageFormat(service.getString(getRes(stringId)), Locale.getDefault()).format(
-                formatArgs);
+        return new MessageFormat(service.getString(getRes(pluralStringId)), Locale.getDefault())
+                .format(formatArgs);
     }
 
-    protected String getProgressMessage(int stringId) {
-        return getProgressMessage(stringId, new HashMap<>());
+    protected String getProgressMessage(int explicitStringId, int pluralStringId) {
+        return getProgressMessage(explicitStringId, pluralStringId, new HashMap<>());
     }
 }

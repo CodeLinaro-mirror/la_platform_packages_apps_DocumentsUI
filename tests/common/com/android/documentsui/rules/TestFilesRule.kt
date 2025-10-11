@@ -39,7 +39,7 @@ import org.junit.rules.ExternalResource
  */
 open class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResource() {
     // Only needed so that the file creation function could throw.
-    interface CreateFilesFunction {
+    fun interface CreateFilesFunction {
         @Throws(Exception::class) fun apply(helper: DocumentsProviderHelper)
     }
 

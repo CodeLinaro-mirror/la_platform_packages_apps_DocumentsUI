@@ -16,10 +16,17 @@
 
 package com.android.documentsui;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -32,6 +39,7 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObject;
 
+import com.android.documentsui.bots.DirectoryListBot;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -94,6 +102,21 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_8, true).exists());
     }
 
+    @Test
+    @DisableFlags({FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testRecentsDoesNotContainEntriesFromAllFilesRootWithSearchV1() throws Exception {
+        bots.roots.openRoot("Recent");
+
+        // When Searchv2 is disabled, the old loaders are used: check that they're not picking up
+        // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
+        // we could see two copies of each file.
+        onView(withId(R.id.dir_list))
+                .check(
+                        matches(
+                                DirectoryListBot.withDisplayedFilenameCount(
+                                        TestFilesRule.FILE_NAME_2, 1)));
+    }
+
     /**
      * When the feature is enabled (see comment on testRecentsContainsAllFileTypes() for detail on
      * when this is true), we should now see a "Rename" option on files in Recents.
@@ -146,8 +169,37 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText(testFileName);
         bots.keyboard.pressEnter();
 
-        bots.directory.assertDocumentsCount(1);
         bots.directory.waitForDocument(testFileName);
+        onView(withId(R.id.dir_list))
+                .check(matches(DirectoryListBot.withDisplayedFilenameCount(testFileName, 1)));
+    }
+
+    @Test
+    @DisableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchInRecentsDoesNotContainEntriesFromAllFilesRootWithSearchV1()
+            throws Exception {
+        final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
+        final String testFileName = testFileNamePrefix.concat(".jpg");
+
+        bots.roots.openRoot("Recent");
+
+        // Even pre-M3, DocsUI can run in large screen or small layout, and the way to activate
+        // Search in Recent view differs between the two.
+        if (bots.search.getSearchIcon() != null) {
+            bots.search.expand();
+        } else {
+            onView(allOf(withId(R.id.searchbar_title), isDisplayed())).perform(click());
+        }
+
+        bots.search.setInputText(testFileName);
+        bots.keyboard.pressEnter();
+
+        // When Searchv2 is disabled, the old loaders are used: check that they're not picking up
+        // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
+        // we could see two copies of the file.
+        bots.directory.waitForDocument(testFileName);
+        onView(withId(R.id.dir_list))
+                .check(matches(DirectoryListBot.withDisplayedFilenameCount(testFileName, 1)));
     }
 
     /** When using the new Search stack, files in Recents are movable. */
