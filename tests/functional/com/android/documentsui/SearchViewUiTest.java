@@ -810,4 +810,26 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Assert that the focus should go to the grid button.
         onView(withId(R.id.sub_menu_grid)).check(matches(hasFocus()));
     }
+
+    @Test
+    public void testRecreatePreservesSearchState() throws Exception {
+        String[] expectedMatches =
+                new String[] {
+                    TestFilesRule.FILE_NAME_1,
+                    TestFilesRule.FILE_NAME_2,
+                    TestFilesRule.FILE_NAME_NO_RENAME,
+                };
+
+        // Search and expect 3 files to match.
+        bots.search.expand();
+        bots.search.setInputText("file");
+        device.waitForIdle();
+        bots.directory.assertDocumentsPresent(expectedMatches);
+
+        // Relaunch the app, and expect the same result. Also this must never crash.
+        mActivityScenario.recreate();
+        device.waitForIdle();
+        bots.directory.assertDocumentsPresent(expectedMatches);
+        bots.search.assertInputEquals("file");
+    }
 }
