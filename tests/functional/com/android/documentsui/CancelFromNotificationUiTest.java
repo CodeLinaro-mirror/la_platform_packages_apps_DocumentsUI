@@ -44,7 +44,6 @@ import com.android.documentsui.services.TestNotificationService;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -209,7 +208,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     }
 
     @HugeLongTest
-    @Ignore("TODO(b/437236527): deflake and re-enable")
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
         EspressoBotsKt.openRoot(context, ROOT_0_ID);

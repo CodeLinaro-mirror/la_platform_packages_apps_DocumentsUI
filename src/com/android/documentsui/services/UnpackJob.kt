@@ -160,7 +160,12 @@ class UnpackJob(
                 "directory" to BidiFormatter.getInstance().unicodeWrap(dstInfo.displayName)
             )
 
-        val message = getProgressMessage(R.string.extract_in_progress, args)
+        val message =
+            getProgressMessage(
+                R.string.extract_specific_file_in_progress,
+                R.string.extract_in_progress,
+                args,
+            )
 
         val bytesCopied: Long
         val bytesRequired: Long

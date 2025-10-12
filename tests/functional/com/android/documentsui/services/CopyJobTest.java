@@ -213,6 +213,12 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void testCopyFileWithFileNotFound() throws Exception {
+        runCopyFileWithFileNotFoundTest();
+    }
+
+    @Test
     public void testCopyProgressWithFileCount() throws Exception {
         runCopyProgressForFileCountTest();
     }

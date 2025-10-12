@@ -74,6 +74,8 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRenameFile() throws Exception {
         createTestFiles();
 
+        var originalFile = bots.directory.findDocument(fileName);
+
         bots.directory.selectDocument(fileName, 1);
         device.waitForIdle();
 
@@ -84,7 +86,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.keyboard.pressEnter();
 
-        bots.directory.assertDocumentsAbsent(fileName);
+        originalFile.waitUntilGone(3000);
         bots.directory.assertDocumentsVisible(newFileName);
         // Snackbar will not show if no exception.
         assertNull(bots.directory.getSnackbar(context.getString(R.string.rename_error)));

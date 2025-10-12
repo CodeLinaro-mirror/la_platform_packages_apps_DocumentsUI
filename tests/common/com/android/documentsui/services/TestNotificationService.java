@@ -195,10 +195,6 @@ public class TestNotificationService extends NotificationListenerService {
 
     private boolean doCancel(Notification noti)
             throws NameNotFoundException, PendingIntent.CanceledException {
-        if (!isStartProgress(noti)) {
-            return false;
-        }
-
         Notification.Action aList [] = noti.actions;
         if (aList == null) {
             return false;

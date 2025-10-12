@@ -175,6 +175,14 @@ abstract class Message {
             // overwriting.
             if (event.hasAuthenticationException()) {
                 updateToAuthenticationExceptionHeader(event);
+            } else if (isTrashFlowEnabled()
+                    && isUseMaterial3FlagEnabled()
+                    && mEnv.isOnTrashPage()) {
+                update(
+                        null,
+                        mEnv.getContext().getString(getRes(R.string.empty_trash_banner_message)),
+                        mEnv.getContext().getString(getRes(R.string.empty_trash_banner_button)),
+                        null);
             } else if (mEnv.getModel().error != null) {
                 update(
                         null,

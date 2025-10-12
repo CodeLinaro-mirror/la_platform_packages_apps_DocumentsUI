@@ -23,6 +23,7 @@ import androidx.loader.content.Loader
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
+import com.android.documentsui.archives.ArchivesProvider
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
@@ -54,47 +55,48 @@ class FolderLoaderTest() {
         companion object {
             @JvmStatic
             @Parameters(name = "with parameters {0}")
-            fun data() = listOf(
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    null,
-                    ALL_RESULTS,
-                    Bundle(),
-                    TOTAL_FILE_COUNT
-                ),
-                // Result limiting only works for search, not folder navigation, expect limit to be ignored.
-                LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
-                // The first file is at NOW, the second at NOW - 1h, etc.
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    Duration.ofMinutes(1L),
-                    ALL_RESULTS,
-                    Bundle(),
-                    1
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    Duration.ofMinutes(60L + 1),
-                    ALL_RESULTS,
-                    Bundle(),
-                    2
-                ),
-                LoaderTestParams(
-                    TOTAL_FILE_COUNT,
-                    "",
-                    Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
-                    ALL_RESULTS,
-                    Bundle(),
-                    TOTAL_FILE_COUNT
-                ),
-            )
+            fun data() =
+                listOf(
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        null,
+                        ALL_RESULTS,
+                        Bundle(),
+                        TOTAL_FILE_COUNT,
+                    ),
+                    // Result limiting only works for search, not folder navigation, expect limit to
+                    // be ignored.
+                    LoaderTestParams(TOTAL_FILE_COUNT, "", null, 2, Bundle(), TOTAL_FILE_COUNT),
+                    // The first file is at NOW, the second at NOW - 1h, etc.
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        Duration.ofMinutes(1L),
+                        ALL_RESULTS,
+                        Bundle(),
+                        1,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        Duration.ofMinutes(60L + 1),
+                        ALL_RESULTS,
+                        Bundle(),
+                        2,
+                    ),
+                    LoaderTestParams(
+                        TOTAL_FILE_COUNT,
+                        "",
+                        Duration.ofMinutes(TOTAL_FILE_COUNT * 60L + 1),
+                        ALL_RESULTS,
+                        Bundle(),
+                        TOTAL_FILE_COUNT,
+                    ),
+                )
         }
 
-        @get:Rule
-        val setFlags = OverrideFlagsRule()
+        @get:Rule val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
         lateinit var mockProvider: TestDocumentsProvider
@@ -134,7 +136,7 @@ class FolderLoaderTest() {
                     TestProvidersAccess.DOWNLOADS,
                     rootFolderInfo,
                     queryOptions,
-                    environment.state.sortModel
+                    environment.state.sortModel,
                 )
             val directoryResult = loader.loadInBackground()
             assertEquals(testParams.expectedCount, getFileCount(directoryResult))
@@ -151,7 +153,7 @@ class FolderLoaderTest() {
                     TestProvidersAccess.DOWNLOADS,
                     null,
                     queryOptions,
-                    environment.state.sortModel
+                    environment.state.sortModel,
                 )
             val directoryResult = loader.loadInBackground()
             assertEquals(testParams.expectedCount, getFileCount(directoryResult))
@@ -160,8 +162,7 @@ class FolderLoaderTest() {
 
     @SmallTest
     class PlainTests : BaseLoaderTest() {
-        @get:Rule
-        val setFlags = OverrideFlagsRule()
+        @get:Rule val setFlags = OverrideFlagsRule()
 
         val contentLock = ContentLock()
         lateinit var mockProvider: TestDocumentsProvider
@@ -178,7 +179,7 @@ class FolderLoaderTest() {
                     null,
                     true,
                     arrayOf("*/*"),
-                    Bundle()
+                    Bundle(),
                 )
             // Set up sample files using Downloads provider.
             mockProvider = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
@@ -201,11 +202,40 @@ class FolderLoaderTest() {
                     TestProvidersAccess.DOWNLOADS,
                     null,
                     queryOptions,
-                    environment.state.sortModel
+                    environment.state.sortModel,
                 )
             val result = loader.loadInBackground()
             assertEquals(0, result?.cursor?.count)
             assertEquals(message, result?.exception?.message)
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testLoadInBackground_archiveUri_hasCorrectAuthority() {
+            val provider = TestDocumentsProvider(context, ArchivesProvider.AUTHORITY)
+            activity.contentResolver.addProvider(ArchivesProvider.AUTHORITY, provider)
+
+            val archiveFile = environment.archiveModel.createFile("whatsinthere.zip", 0)
+            val docs = createDocuments(1)
+            provider.setNextChildDocumentsReturns(*docs)
+
+            val loader =
+                FolderLoader(
+                    context = activity,
+                    mimeTypeLookup = TestFileTypeLookup(),
+                    contentLock = contentLock,
+                    // Try listing an archive file inside the external storage.
+                    mRoot = TestProvidersAccess.EXTERNALSTORAGE,
+                    mListedDir = archiveFile,
+                    mOptions = queryOptions,
+                    mSortModel = environment.state.sortModel,
+                )
+
+            val result = loader.loadInBackground()
+            assertEquals(1, getFileCount(result))
+
+            val document = getDocuments(result)[0]
+            assertEquals(ArchivesProvider.AUTHORITY, document.authority)
         }
 
         @Test
