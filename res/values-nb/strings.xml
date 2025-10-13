@@ -249,8 +249,7 @@
     <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Komprimerer # fil}other{Komprimerer # filer}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Vis filfremdrift"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Filfremdrift"</string>
-    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
-    <skip />
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Lukk alle"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Fullført"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Avbrutt"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Se detaljer"</string>

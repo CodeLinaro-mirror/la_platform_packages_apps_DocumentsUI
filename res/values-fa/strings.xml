@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"پنهان کردن پانل اطلاعات"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"نشان دادن پانل اطلاعات"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"چیزی در «حذف‌شده‌ها» نیست"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"فایل‌هایی که بیش‌از ۳۰ روز در حذف‌شده‌ها بوده‌اند، به‌طور خودکار حذف می‌شوند."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"خالی کردن حذف‌شده‌ها همین الآن"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"حذف‌شده‌ها خالی شود؟"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"این کنش واگردشدنی نیست و فایل‌ها دیگر قابل‌بازیابی نیستند."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"خالی کردن حذف‌شده‌ها"</string>
 </resources>

@@ -249,8 +249,7 @@
     <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Zini-zip ang # file}one{Zini-zip ang # file}other{Zini-zip ang # na file}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Ipakita ang pag-usad ng file"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Pag-usad ng file"</string>
-    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
-    <skip />
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"I-dismiss lahat"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Tapos na"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Nakansela"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Tingnan ang mga detalye"</string>
@@ -378,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Itago ang panel ng impormasyon"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Ipakita ang panel ng impormasyon"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"Walang laman ang trash"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Awtomatikong ide-delete ang mga file sa trash na mahigit 30 araw na."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Tanggalan ng laman ang trash ngayon"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Tanggalan ng laman ang trash?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Hindi na maa-undo ang aksyong ito, at hindi na mare-recover ang mga file."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tanggalan ng laman ang trash"</string>
 </resources>
