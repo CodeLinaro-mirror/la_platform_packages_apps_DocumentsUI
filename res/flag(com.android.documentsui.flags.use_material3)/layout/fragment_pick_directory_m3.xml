@@ -28,8 +28,7 @@
         android:gravity="center_vertical|end"
         android:paddingStart="@dimen/picker_saver_padding_start"
         android:paddingEnd="@dimen/picker_saver_padding_end"
-        android:paddingTop="@dimen/picker_saver_padding_top"
-        android:paddingBottom="@dimen/picker_saver_padding_bottom">
+        android:paddingTop="@dimen/picker_saver_padding_top">
 
         <com.google.android.material.button.MaterialButton
             android:id="@android:id/button2"

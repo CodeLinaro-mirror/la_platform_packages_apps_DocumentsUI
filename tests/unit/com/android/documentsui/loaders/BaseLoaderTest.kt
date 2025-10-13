@@ -24,12 +24,14 @@ import com.android.documentsui.Model
 import com.android.documentsui.TestActivity
 import com.android.documentsui.TestConfigStore
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.UserId
 import com.android.documentsui.sorting.SortModel
 import com.android.documentsui.testing.ActivityManagers
 import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.TestFeatures
 import com.android.documentsui.testing.TestModel
+import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.testing.UserManagers
 import java.time.Duration
 import java.util.Locale
@@ -97,9 +99,14 @@ open class BaseLoaderTest {
     lateinit var activity: TestActivity
     lateinit var testConfigStore: TestConfigStore
 
+    /** Returns the root info for the current environment. */
+    open fun getEnvRootInfo(): RootInfo {
+        return TestProvidersAccess.HOME
+    }
+
     @Before
     fun setUp() {
-        environment = TestEnv.create()
+        environment = TestEnv.create(getEnvRootInfo().authority)
         testConfigStore = TestConfigStore()
         environment.state.configStore = testConfigStore
         environment.state.showHiddenFiles = false

@@ -308,7 +308,7 @@ public class ActionHandlerTest {
     /** Verifies that trashable documents are trashed when the trash feature is enabled. */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_trashesTrashableDocuments_whenTrashIsEnabled() {
         assumeTrashApiIsAvailable();
@@ -334,7 +334,7 @@ public class ActionHandlerTest {
     /** Verifies that non-trashable documents are deleted when the trash feature is enabled. */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_deletesNonTrashableDocuments_whenTrashIsEnabled() {
         assumeTrashApiIsAvailable();
@@ -360,7 +360,7 @@ public class ActionHandlerTest {
      */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_deletesAllDocuments_whenTrashIsDisabled() {
         assumeTrashApiIsAvailable();

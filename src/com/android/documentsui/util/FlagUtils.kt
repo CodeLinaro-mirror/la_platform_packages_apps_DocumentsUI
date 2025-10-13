@@ -132,6 +132,12 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
             if (!enableDocumentsTrashApi()) {
                 return false
             }
+
+            // Trash feature will be available only when use_material_3 flag is enabled
+            if (!isUseMaterial3FlagEnabled()) {
+                return false
+            }
+
             return getInstance()
                 .overrides
                 .getOrDefault(Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.enableTrashFlowRo())
@@ -150,7 +156,8 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
 
         @JvmStatic
         fun isHomeScreenFilesFlagEnabled(): Boolean {
-            return getInstance()
+            return isUseMaterial3FlagEnabled() &&
+                getInstance()
                     .overrides
                     .getOrDefault(Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.homeScreenFilesRo())
         }

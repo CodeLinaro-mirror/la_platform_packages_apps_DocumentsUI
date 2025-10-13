@@ -15,7 +15,6 @@
  */
 package com.android.documentsui.dirlist
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
@@ -54,14 +53,15 @@ class SummaryProviderManager(private val context: Context, private val scope: Co
     private val _state = MutableStateFlow(SummaryState.INITIALIZING)
     val state: StateFlow<SummaryState> = _state
 
-    private val authority: String? = context.getString(R.string.local_summary_provider)
+    val authorityUri: Uri? = Uri.parse(context.getString(R.string.local_summary_provider))
+    val authority: String? = authorityUri?.authority
+
     private var contentObserver: ContentObserver? = null
-    private var packageReceiver: BroadcastReceiver? = null
     private val contentResolver = context.contentResolver
 
     /** Starts monitoring the summary provider's state. */
     fun start() {
-        if (authority.isNullOrEmpty()) {
+        if (authority.isNullOrEmpty() || authorityUri == Uri.EMPTY) {
             _state.value = SummaryState.DISABLED
             return
         }
@@ -78,24 +78,27 @@ class SummaryProviderManager(private val context: Context, private val scope: Co
      * revokes consent).
      */
     private fun startContentObserver() {
-        val rootsUri = DocumentsContract.buildRootsUri(authority)
-        val contentObserver =
-            object : ContentObserver(null) {
-                override fun onChange(selfChange: Boolean, uri: Uri?) {
-                    scope.launch {
-                        if (DEBUG) Log.d(TAG, "ContentObserver.onChange: uri=$uri")
-                        updateState()
+        try {
+            val rootsUri = DocumentsContract.buildRootsUri(authority!!)
+            val contentObserver =
+                object : ContentObserver(null) {
+                    override fun onChange(selfChange: Boolean, uri: Uri?) {
+                        scope.launch {
+                            if (DEBUG) Log.d(TAG, "ContentObserver.onChange: uri=$uri")
+                            updateState()
+                        }
                     }
                 }
-            }
-        this.contentObserver = contentObserver
-        contentResolver.registerContentObserver(rootsUri, true, contentObserver)
+            this.contentObserver = contentObserver
+            contentResolver.registerContentObserver(rootsUri, true, contentObserver)
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to start observer for summary provider: $authority", e)
+        }
     }
 
     /** Stops monitoring the summary provider's state. */
     fun stop() {
         contentObserver?.let { contentResolver.unregisterContentObserver(it) }
-        packageReceiver?.let { context.unregisterReceiver(it) }
     }
 
     /**
@@ -111,10 +114,26 @@ class SummaryProviderManager(private val context: Context, private val scope: Co
         withContext(Dispatchers.IO) {
             val rootsUri = DocumentsContract.buildRootsUri(authority)
             val projection = arrayOf(Root.COLUMN_FLAGS, Root.COLUMN_ROOT_ID)
+
             try {
-                contentResolver.query(rootsUri, projection, null, null, null)?.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        val flags = cursor.getInt(cursor.getColumnIndexOrThrow(Root.COLUMN_FLAGS))
+                val rootId = DocumentsContract.getRootId(authorityUri)
+                var foundRoot = false
+
+                val cursor = contentResolver.query(rootsUri, projection, null, null, null)
+                if (cursor == null) {
+                    Log.w(TAG, "Summary provider $authority returned null, assuming disabled")
+                    _state.value = SummaryState.DISABLED
+                    return@withContext
+                }
+                cursor.use {
+                    while (it.moveToNext()) {
+                        val currentRootId =
+                            it.getString(it.getColumnIndexOrThrow(Root.COLUMN_ROOT_ID))
+                        if (currentRootId != rootId) {
+                            continue
+                        }
+                        foundRoot = true
+                        val flags = it.getInt(it.getColumnIndexOrThrow(Root.COLUMN_FLAGS))
                         // The FLAG_EMPTY is used by the provider to signal that it's
                         // disabled, for example, when the user has not given consent.
                         if ((flags and Root.FLAG_EMPTY) != 0) {
@@ -122,17 +141,14 @@ class SummaryProviderManager(private val context: Context, private val scope: Co
                         } else {
                             _state.value = SummaryState.ENABLED
                         }
-                    } else {
-                        // No roots found, consider it disabled.
+                    }
+                    if (!foundRoot) {
+                        Log.w(TAG, "Root $rootId not found in $authority, assuming disabled")
                         _state.value = SummaryState.DISABLED
                     }
                 }
             } catch (e: Exception) {
-                Log.w(
-                    TAG,
-                    "Failed to query summary provider: $authority, assuming disabled state",
-                    e,
-                )
+                Log.w(TAG, "Failed to query summary provider: $authority, assuming disabled", e)
                 _state.value = SummaryState.DISABLED
             }
         }

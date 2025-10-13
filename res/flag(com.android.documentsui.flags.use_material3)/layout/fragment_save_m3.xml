@@ -22,7 +22,6 @@
     android:paddingStart="@dimen/picker_saver_padding_start"
     android:paddingEnd="@dimen/picker_saver_padding_end"
     android:paddingTop="@dimen/picker_saver_padding_top"
-    android:paddingBottom="@dimen/picker_saver_padding_bottom"
     android:orientation="horizontal"
     android:baselineAligned="false"
     android:gravity="center_vertical|end">

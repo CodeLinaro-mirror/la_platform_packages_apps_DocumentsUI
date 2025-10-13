@@ -27,6 +27,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.R;
 import com.android.documentsui.base.State.ViewMode;
@@ -64,7 +66,7 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
         mMessage = message;
         mDismissButton.setOnClickListener(this::onButtonClick);
         mActionButton.setOnClickListener(this::onButtonClick);
-        bind(null, null);
+        bind(null, null, null);
     }
 
     /**
@@ -87,7 +89,7 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
     }
 
     @Override
-    public void bind(Cursor cursor, String modelId) {
+    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
         if (mMessage.getTitleString() != null) {
             mTitle.setVisibility(View.VISIBLE);
             mSubtitle.setVisibility(View.VISIBLE);

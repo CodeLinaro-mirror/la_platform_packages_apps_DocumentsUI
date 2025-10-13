@@ -448,7 +448,9 @@ public class SortModel implements Parcelable {
                         .build());
 
         // Summary column
-        // Summary is only visible in Downloads and Recents root.
+        // Before M3: Summary is only visible in Downloads and Recents root.
+        // After M3: Summary is only visible if the flag useFileSummary() is enabled, local summary
+        // provider is configured and for local roots.
         dimensions.add(
                 builder.withId(SORT_DIMENSION_ID_SUMMARY)
                         .withLabelId(getRes(R.string.sort_dimension_summary))

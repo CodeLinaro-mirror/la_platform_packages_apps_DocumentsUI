@@ -144,7 +144,7 @@ public class GestureBot extends Bots.BaseBot {
     }
 
     private boolean touchDown(int x, int y, int button) {
-        long mDownTime = SystemClock.uptimeMillis();
+        mDownTime = SystemClock.uptimeMillis();
         MotionEvent event = getMotionEvent(mDownTime, mDownTime, MotionEvent.ACTION_DOWN, button, x,
                 y);
         return mAutomation.injectInputEvent(event, true);
@@ -153,7 +153,6 @@ public class GestureBot extends Bots.BaseBot {
     private boolean touchUp(int x, int y) {
         final long eventTime = SystemClock.uptimeMillis();
         MotionEvent event = getMotionEvent(mDownTime, eventTime, MotionEvent.ACTION_UP, 0, x, y);
-        mDownTime = 0;
         return mAutomation.injectInputEvent(event, true);
     }
 

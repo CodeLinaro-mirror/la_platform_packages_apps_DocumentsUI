@@ -81,13 +81,16 @@ public abstract class MenuManager {
         updateInspect(menu.findItem(getRes(R.id.action_menu_inspect)), selection);
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
         updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
-        updateMoveToTrash(menu.findItem(getRes(R.id.action_menu_move_to_trash)), selection);
-        updateRestoreFromTrash(menu.findItem(getRes(R.id.action_menu_restore_from_trash)),
-                selection);
 
         if (isZipNgFlagEnabled()) {
             updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
             updateBrowse(menu.findItem(getRes(R.id.action_menu_browse)), selection);
+        }
+
+        if (isTrashFlowEnabled()) {
+            updateMoveToTrash(menu.findItem(getRes(R.id.action_menu_move_to_trash)), selection);
+            updateRestoreFromTrash(
+                    menu.findItem(getRes(R.id.action_menu_restore_from_trash)), selection);
         }
 
         Menus.disableHiddenItems(menu);
@@ -242,11 +245,17 @@ public abstract class MenuManager {
         MenuItem copy = menu.findItem(getRes(R.id.dir_menu_copy_to_clipboard));
         MenuItem delete = menu.findItem(getRes(R.id.dir_menu_delete));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
-        MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
-        MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
 
-        final boolean canTrash = isTrashFlowEnabled() && selectionDetails.canTrash();
-        final boolean canRestore = isTrashFlowEnabled() && selectionDetails.canRestore();
+        boolean canRestore = false;
+        if (isTrashFlowEnabled()) {
+            MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
+            MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
+            final boolean canTrash = selectionDetails.canTrash();
+            canRestore = selectionDetails.canRestore();
+            Menus.setEnabledAndVisible(moveToTrash, canTrash);
+            Menus.setEnabledAndVisible(restoreFromTrash, canRestore);
+        }
+
         final boolean canCopy =
                 selectionDetails.size() > 0
                         && !selectionDetails.containsPartialFiles()
@@ -257,8 +266,6 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(copy, canCopy);
         Menus.setEnabledAndVisible(delete, canDelete);
         Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
-        Menus.setEnabledAndVisible(moveToTrash, canTrash);
-        Menus.setEnabledAndVisible(restoreFromTrash, canRestore);
 
         updateCompress(menu.findItem(getRes(R.id.dir_menu_compress)), selectionDetails);
     }

@@ -136,7 +136,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         return DocumentsApplication.getUserManagerState(context).getUserIds();
                     }
                 });
-
+        initInjector();
         super.onCreate(icicle);
 
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
