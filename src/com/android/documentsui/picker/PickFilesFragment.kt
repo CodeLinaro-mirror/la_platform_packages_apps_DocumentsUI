@@ -23,10 +23,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.selection.SelectionTracker
 import com.android.documentsui.DocsSelectionHelper
+import com.android.documentsui.FocusManager
 import com.android.documentsui.R
 import com.android.documentsui.base.State.ACTION_GET_CONTENT
 import com.android.documentsui.base.State.ACTION_OPEN
 import com.android.documentsui.base.State.ActionType
+import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.button.MaterialButton
@@ -72,6 +74,9 @@ class PickFilesFragment : Fragment() {
 
         pick = containerView!!.findViewById(getRes(R.id.button_pick))
         pick!!.setOnClickListener(pickListener)
+        if (isDesktopUxPhase2FlagEnabled()) {
+            FocusManager.setButtonFocusStyle(pick)
+        }
 
         cancel = containerView.findViewById(getRes(R.id.button_cancel))
         val showCancelButton =
@@ -79,6 +84,9 @@ class PickFilesFragment : Fragment() {
         cancel?.apply {
             if (showCancelButton) {
                 setOnClickListener(cancelListener)
+                if (isDesktopUxPhase2FlagEnabled()) {
+                    FocusManager.setButtonFocusStyle(cancel)
+                }
                 visibility = View.VISIBLE
             } else {
                 visibility = View.GONE
