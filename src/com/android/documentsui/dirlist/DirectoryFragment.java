@@ -1384,8 +1384,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void viewDocument(final Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_OPEN);
+        Trace.beginSection("DirectoryFragment#viewDocument");
 
         if (selected.isEmpty()) {
+            Trace.endSection();
             return;
         }
 
@@ -1394,6 +1396,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 DocumentInfo.fromDirectoryCursor(mModel.getItem(selected.iterator().next()));
 
         mActions.openDocumentViewOnly(doc);
+        Trace.endSection();
     }
 
     private void transferDocuments(

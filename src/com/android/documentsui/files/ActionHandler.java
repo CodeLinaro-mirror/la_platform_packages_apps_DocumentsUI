@@ -20,10 +20,10 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -34,6 +34,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.FileUtils;
+import android.os.Trace;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.util.Log;
@@ -219,15 +220,19 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     @Override
     public boolean openItem(ItemDetails<String> details, @ViewType int type,
             @ViewType int fallback) {
+        Trace.beginSection("documentsui.files.ActionHandler#openItem");
         DocumentInfo doc = mModel.getDocument(details.getSelectionKey());
         if (doc == null) {
             Log.w(TAG, "Can't view item. No Document available for modeId: "
                     + details.getSelectionKey());
+            Trace.endSection();
             return false;
         }
         mInjector.searchManager.recordHistory();
 
-        return openDocument(doc, type, fallback);
+        boolean result = openDocument(doc, type, fallback);
+        Trace.endSection();
+        return result;
     }
 
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
