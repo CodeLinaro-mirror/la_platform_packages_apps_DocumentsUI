@@ -653,7 +653,7 @@ public abstract class BaseActivity
 
     /**
      * We don't handle the bottom padding in the XML layout file because the bottom padding needs to
-     * be merged into Navigation Gesture area (it's transparent) when navigation gesture is used in
+     * be merged into Gesture navigation area (it's transparent) when Gesture navigation is used in
      * the bottom navigation bar. Check {@link #setContainer} for more details.
      */
     protected int getBottomPadding() {
@@ -665,6 +665,7 @@ public abstract class BaseActivity
 
     protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
+        View mainContainer = findViewById(getRes(R.id.main_container));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
@@ -672,8 +673,6 @@ public abstract class BaseActivity
             ViewCompat.setOnApplyWindowInsetsListener(
                     root,
                     (v, insets) -> {
-                        // Navigation gesture is special because it's a transparent area so we can
-                        // use that area as bottom padding to achieve an immersive experience.
                         Insets navBarInsets =
                                 insets.getInsets(WindowInsetsCompat.Type.navigationBars());
                         Insets tappableInsets =
@@ -688,15 +687,23 @@ public abstract class BaseActivity
                         // otherwise (i.e. in window mode) they will all be 0.
                         Insets systemBarInsets =
                                 insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                        // When Gesture navigation is used, we use its height (i.e.
+                        // systemBarInsets.bottom) as the bottom padding for the whole root
+                        // container (root container by default doesn't have bottom padding) without
+                        // adding additional "getBottomPadding()" so avoid the total bottom padding
+                        // looks too big (because gesture navigation area is transparent).
                         v.setPadding(
                                 systemBarInsets.left,
                                 systemBarInsets.top,
                                 systemBarInsets.right,
-                                // When navigation gesture is used, we just use the navigation
-                                // gesture area (bottom inset) as the bottom padding.
-                                isGestureNav
-                                        ? systemBarInsets.bottom
-                                        : systemBarInsets.bottom + getBottomPadding());
+                                isGestureNav ? systemBarInsets.bottom : 0);
+                        // When Gesture navigation is not used, we only add bottom padding to the
+                        // main container (i.e. right section) because we don't want bottom padding
+                        // on the navigation tree area.
+                        if (!isGestureNav) {
+                            mainContainer.setPadding(
+                                    0, 0, 0, systemBarInsets.bottom + getBottomPadding());
+                        }
                         return WindowInsetsCompat.CONSUMED;
                     });
         } else {
