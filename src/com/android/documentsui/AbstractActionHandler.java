@@ -243,7 +243,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback) {
+    public void getShortcutDocument(ShortcutInfo shortcut, int timeout,
+            Consumer<Uri> callback) {
         Context context = mActivity.getApplicationContext();
         ContentResolver resolver = shortcut.getRoot().userId.getContentResolver(context);
 
@@ -345,6 +346,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public boolean dropOn(DragEvent event, RootInfo root) {
         throw new UnsupportedOperationException("Can't open an app.");
+    }
+
+    @Override
+    public boolean dropOn(DragEvent event, ShortcutInfo shortcut) {
+        throw new UnsupportedOperationException("Can't drop on a shortcut");
     }
 
     @Override

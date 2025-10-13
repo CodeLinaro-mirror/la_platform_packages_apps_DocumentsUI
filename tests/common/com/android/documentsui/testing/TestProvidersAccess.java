@@ -70,6 +70,9 @@ public class TestProvidersAccess implements ProvidersAccess {
             getRes(R.drawable.ic_root_homescreen);
     private static final int LIVE_IMAGES_ICON_RES_ID = 12;
     private static final int TEST_ICON_RES_ID = 15;
+    private static final String HOME_SCREEN_DOC_ID = "primary%3AHome screen";
+    public static final String LIVE_IMAGES_DOC_ID = "images_root%3ALive images";
+    public static final String TEST_SHORTCUT_DOC_ID = "pepper%3ATest Shortcut";
 
     static {
         UserId userId = TestProvidersAccess.USER_ID;
@@ -220,6 +223,7 @@ public class TestProvidersAccess implements ProvidersAccess {
                 EXTERNALSTORAGE,
                 "primary:"
         );
+        HOME_SCREEN_SHORTCUT.setDocumentId(HOME_SCREEN_DOC_ID);
 
         LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
                 LIVE_IMAGES_ICON_RES_ID,
@@ -227,6 +231,7 @@ public class TestProvidersAccess implements ProvidersAccess {
                 IMAGE,
                 "something/to/image:"
         );
+        LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
 
         TEST_SHORTCUT = new ShortcutInfo(
                 TEST_ICON_RES_ID,
@@ -234,6 +239,7 @@ public class TestProvidersAccess implements ProvidersAccess {
                 PEPPER,
                 "some parent dir"
         );
+        TEST_SHORTCUT.setDocumentId(TEST_SHORTCUT_DOC_ID);
     }
 
     public static class OtherUser {
@@ -345,6 +351,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             PICKLES.rootId = "pickles";
             PICKLES.title = "Pickles";
             PICKLES.summary = "Yummy pickles";
+            PICKLES.flags = Root.FLAG_SUPPORTS_CREATE;
 
             MTP_ROOT = new RootInfo();
             MTP_ROOT.userId = userId;
@@ -359,6 +366,7 @@ public class TestProvidersAccess implements ProvidersAccess {
     }
 
     public final Map<String, Collection<RootInfo>> roots = new HashMap<>();
+    public final Map<UserId, Collection<ShortcutInfo>> shortcuts = new HashMap<>();
     private @Nullable RootInfo nextRoot;
 
     public TestProvidersAccess() {
@@ -369,6 +377,8 @@ public class TestProvidersAccess implements ProvidersAccess {
         add(EXTERNALSTORAGE);
         add(NO_TREE_ROOT);
         add(LOCAL_SEARCH);
+        add(HOME_SCREEN_SHORTCUT);
+        add(TEST_SHORTCUT);
     }
 
     private void add(RootInfo root) {
@@ -376,6 +386,13 @@ public class TestProvidersAccess implements ProvidersAccess {
             roots.put(root.authority, new ArrayList<>());
         }
         roots.get(root.authority).add(root);
+    }
+
+    private void add(ShortcutInfo shortcut) {
+        if (!shortcuts.containsKey(shortcut.getRoot().userId)) {
+            shortcuts.put(shortcut.getRoot().userId, new ArrayList<>());
+        }
+        shortcuts.get(shortcut.getRoot().userId).add(shortcut);
     }
 
     public void configurePm(TestPackageManager pm) {

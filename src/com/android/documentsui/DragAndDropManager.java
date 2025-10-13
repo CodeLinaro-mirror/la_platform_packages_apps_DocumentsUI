@@ -37,6 +37,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.IconHelper;
 import com.android.documentsui.services.FileOperationService;
@@ -131,15 +132,16 @@ public interface DragAndDropManager {
     /**
      * Drops items onto the a root.
      *
-     * @param clipData the clip data that contains sources information.
+     * @param clipData   the clip data that contains sources information.
      * @param localState used to determine if this is a multi-window drag and drop.
-     * @param destRoot the target root
-     * @param actions {@link ActionHandler} used to load root document.
-     * @param callback callback called when file operation is rejected or scheduled.
+     * @param itemInfo   the target root
+     * @param actions    {@link ActionHandler} used to load root document.
+     * @param callback   callback called when file operation is rejected or scheduled.
+     * @param invalidDest a list of URIs representing invalid drop destinations
      * @return true if target accepts this drop; false otherwise
      */
-    boolean drop(ClipData clipData, Object localState, RootInfo destRoot, ActionHandler actions,
-            FileOperations.Callback callback);
+    boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
+            ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest);
 
     /**
      * Drops items onto the target.
@@ -165,6 +167,11 @@ public interface DragAndDropManager {
     static DragAndDropManager create(Context context, DocumentClipper clipper) {
         return new RuntimeDragAndDropManager(context, clipper);
     }
+
+    /**
+     * Returns the list of invalid destinations via their URIs to drop the documents.
+     */
+    List<Uri> getInvalidDestinations();
 
     class RuntimeDragAndDropManager implements DragAndDropManager {
         private static final String SRC_ROOT_KEY = "dragAndDropMgr:srcRoot";
@@ -350,7 +357,7 @@ public interface DragAndDropManager {
             }
 
             @State int state;
-            final @OpType int opType = calculateOpType(mClipData, destRoot);
+            final @OpType int opType = calculateOpType(mClipData, destRoot.getUri());
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
                     state = STATE_COPY;
@@ -395,25 +402,26 @@ public interface DragAndDropManager {
         }
 
         @Override
-        public boolean drop(ClipData clipData, Object localState, RootInfo destRoot,
-                ActionHandler action, FileOperations.Callback callback) {
+        public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
+                ActionHandler action, FileOperations.Callback callback, List<Uri> invalidDest) {
+            final Uri rootDocUri = DocumentsContract.buildDocumentUri(
+                    itemInfo.getRoot().authority, itemInfo.getDocumentId());
 
-            final Uri rootDocUri =
-                    DocumentsContract.buildDocumentUri(destRoot.authority, destRoot.documentId);
-            if (!isValidDestination(destRoot, rootDocUri, mInvalidDest)) {
+            if (!isValidDestination(itemInfo, rootDocUri, invalidDest)) {
                 return false;
             }
 
             // Calculate the op type now just in case user releases Ctrl key while we're obtaining
             // root document in the background.
-            final @OpType int opType = calculateOpType(clipData, destRoot);
+            final @OpType int opType = calculateOpType(clipData, itemInfo.getUri());
             action.getDocument(
-                    destRoot.authority,
-                    destRoot.documentId,
-                    destRoot.userId,
+                    itemInfo.getRoot().authority,
+                    itemInfo.getDocumentId(),
+                    itemInfo.getRoot().userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     (DocumentInfo doc) -> {
-                        dropOnRootDocument(clipData, localState, destRoot, doc, opType, callback);
+                        dropOnRootDocument(clipData, localState, itemInfo.getRoot(), doc,
+                                opType, callback);
                     });
 
             return true;
@@ -453,7 +461,7 @@ public interface DragAndDropManager {
                     clipData,
                     localState,
                     dstStack,
-                    calculateOpType(clipData, dstStack.getRoot()),
+                    calculateOpType(clipData, dstStack.getRoot().getUri()),
                     callback);
             return true;
         }
@@ -490,18 +498,22 @@ public interface DragAndDropManager {
             mDragInitiated = false;
         }
 
-        private @OpType int calculateOpType(ClipData clipData, RootInfo destRoot) {
+        @Override
+        public List<Uri> getInvalidDestinations() {
+            return mInvalidDest;
+        }
+
+        private @OpType int calculateOpType(ClipData clipData, Uri destUri) {
             if (mMustBeCopied) {
                 return FileOperationService.OPERATION_COPY;
             }
 
             final String srcRootUri = clipData.getDescription().getExtras().getString(SRC_ROOT_KEY);
-            final String destRootUri = destRoot.getUri().toString();
 
-            assert(srcRootUri != null);
-            assert(destRootUri != null);
+            assert (srcRootUri != null);
+            assert (destUri != null);
 
-            if (srcRootUri.equals(destRootUri)) {
+            if (srcRootUri.equals(destUri.toString())) {
                 return mIsCtrlPressed
                         ? FileOperationService.OPERATION_COPY
                         : FileOperationService.OPERATION_MOVE;
@@ -518,7 +530,8 @@ public interface DragAndDropManager {
             return isValidDestination(root, dst.derivedUri, mInvalidDest);
         }
 
-        private boolean isValidDestination(RootInfo root, Uri dstUri, List<Uri> invalidDest) {
+        private boolean isValidDestination(SidebarEntryItemInfo root, Uri dstUri,
+                List<Uri> invalidDest) {
             // We pass in the invalid destinations since this check can also be called from an
             // asynchronous task. This method needs to maintain the same invalid destination
             // values as when the asynchronous task starts, but mInvalidDest can be mutated in the

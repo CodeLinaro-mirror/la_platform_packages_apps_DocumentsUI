@@ -148,7 +148,22 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         final Object localState = event.getLocalState();
 
         return mDragAndDropManager.drop(
-                clipData, localState, root, this, mDialogs::showFileOperationStatus);
+                clipData, localState, root, this, mDialogs::showFileOperationStatus,
+                mDragAndDropManager.getInvalidDestinations());
+    }
+
+    @Override
+    public boolean dropOn(DragEvent event, ShortcutInfo shortcut) {
+        if (!shortcut.supportsCreate()) {
+            return false;
+        }
+
+        final ClipData clipData = event.getClipData();
+        final Object localState = event.getLocalState();
+
+        return mDragAndDropManager.drop(
+                clipData, localState, shortcut, this,
+                mDialogs::showFileOperationStatus, mDragAndDropManager.getInvalidDestinations());
     }
 
     @Override

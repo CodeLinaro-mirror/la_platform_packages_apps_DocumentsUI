@@ -25,6 +25,7 @@ import com.android.documentsui.ActionHandler;
 import com.android.documentsui.DragAndDropManager;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Lookup;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 
 /**
  * Drag host for items in {@link RootsFragment}.
@@ -86,27 +87,27 @@ class DragHost extends AbstractDragHost {
             return;
         }
 
-        final RootItem rootItem = (RootItem) item;
-        if (mDragAndDropManager.updateState(v, rootItem.root, null)
+        final BaseSidebarEntryItem sidebarItem = (BaseSidebarEntryItem) item;
+        if (mDragAndDropManager.updateState(v, sidebarItem.getItemInfo().getRoot(), null)
                 == DragAndDropManager.STATE_UNKNOWN) {
+            SidebarEntryItemInfo itemInfo = sidebarItem.getItemInfo();
             mActions.getDocument(
-                    rootItem.root.authority,
-                    rootItem.root.documentId,
-                    rootItem.root.userId,
+                    itemInfo.getRoot().authority,
+                    itemInfo.getDocumentId(),
+                    itemInfo.getRoot().userId,
                     DRAG_LOAD_TIME_OUT,
                     (DocumentInfo doc) -> {
-                        updateDropShadow(v, rootItem, doc);
+                        updateDropShadow(v, sidebarItem, doc);
                     });
         }
     }
 
-    private void updateDropShadow(
-            View v, RootItem rootItem, DocumentInfo rootDoc) {
-        if (rootDoc == null) {
-            Log.e(TAG, "Root DocumentInfo is null. Defaulting to unknown.");
+    private void updateDropShadow(View v, BaseSidebarEntryItem sidebarItem, DocumentInfo destDoc) {
+        if (destDoc == null) {
+            Log.e(TAG, "Destination DocumentInfo is null. Defaulting to unknown.");
         } else {
-            rootItem.setDocInfo(rootDoc);
-            mDragAndDropManager.updateState(v, rootItem.root, rootDoc);
+            sidebarItem.setDocInfo(destDoc);
+            mDragAndDropManager.updateState(v, sidebarItem.getItemInfo().getRoot(), destDoc);
         }
     }
 }
