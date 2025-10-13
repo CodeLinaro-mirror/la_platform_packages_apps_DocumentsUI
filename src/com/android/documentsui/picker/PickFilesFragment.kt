@@ -36,25 +36,25 @@ import com.google.android.material.button.MaterialButton
  * useMaterial3 is enabled.
  */
 class PickFilesFragment : Fragment() {
-    private val resetObserver = object : DocsSelectionHelper.ResetObserver() {
-        override fun onReset() {
-            // Only add the selectionObserver once the selectionMgr is initialised (reset).
-            selectionMgr!!.addObserver(selectionObserver)
+    private val resetObserver =
+        object : DocsSelectionHelper.ResetObserver() {
+            override fun onReset() {
+                // Only add the selectionObserver once the selectionMgr is initialised (reset).
+                selectionMgr!!.addObserver(selectionObserver)
+            }
         }
-    }
-    private val selectionObserver = object : SelectionTracker.SelectionObserver<String>() {
-        override fun onSelectionChanged() {
-            togglePickButton()
+    private val selectionObserver =
+        object : SelectionTracker.SelectionObserver<String>() {
+            override fun onSelectionChanged() {
+                togglePickButton()
+            }
         }
-    }
     private var selectionMgr: DocsSelectionHelper? = null
-    private val pickListener: View.OnClickListener = View.OnClickListener {
-        actionHandler!!.pickSelected()
-    }
+    private val pickListener: View.OnClickListener =
+        View.OnClickListener { actionHandler!!.pickSelected() }
 
-    private val cancelListener: View.OnClickListener = View.OnClickListener {
-        actionHandler!!.cancelPicking()
-    }
+    private val cancelListener: View.OnClickListener =
+        View.OnClickListener { actionHandler!!.cancelPicking() }
 
     private var actionHandler: ActionHandler<PickActivity?>? = null
     private var pick: MaterialButton? = null
@@ -63,7 +63,7 @@ class PickFilesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val containerView =
             inflater.inflate(getRes(R.layout.fragment_pick_files_m3), container, false)
@@ -97,9 +97,7 @@ class PickFilesFragment : Fragment() {
         selectionMgr?.removeResetObserver(resetObserver)
     }
 
-    /**
-     * Enables/disables the pick button based on the state of selection.
-     */
+    /** Enables/disables the pick button based on the state of selection. */
     private fun togglePickButton() {
         if (!isUseMaterial3FlagEnabled()) {
             return
@@ -112,10 +110,7 @@ class PickFilesFragment : Fragment() {
         private const val TAG: String = "PickFilesFragment"
 
         @JvmStatic
-        fun show(
-            fm: FragmentManager,
-            @ActionType action: Int
-        ) {
+        fun show(fm: FragmentManager, @ActionType action: Int) {
             if (action != ACTION_GET_CONTENT && action != ACTION_OPEN) {
                 return
             }
