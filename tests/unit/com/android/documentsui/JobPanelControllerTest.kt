@@ -87,6 +87,7 @@ class JobPanelControllerTest {
             ActionMenuView(context).menu.add("job_panel").apply {
                 actionView =
                     FrameLayout(context).apply {
+                        id = getRes(R.id.job_progress_toolbar_container)
                         addView(progressBar)
                         addView(badge)
                     }
