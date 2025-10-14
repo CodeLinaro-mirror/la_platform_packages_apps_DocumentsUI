@@ -23,6 +23,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Trace;
 import android.provider.DocumentsContract;
 import android.view.DragEvent;
 import android.view.KeyEvent;
@@ -48,6 +49,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Manager that tracks control key state, calculates the default file operation (move or copy)
@@ -200,6 +202,7 @@ public interface DragAndDropManager {
         // Boolean flag for current drag and drop operation. Returns true if the files can only
         // be copied (ie. files that don't support delete or remove).
         private boolean mMustBeCopied;
+        private static final int DRAG_EVENT_COOKIE = 478919;
 
         private RuntimeDragAndDropManager(Context context, DocumentClipper clipper) {
             this(
@@ -252,6 +255,8 @@ public interface DragAndDropManager {
                 IconHelper iconHelper,
                 @Nullable DocumentInfo parent) {
 
+            Trace.beginAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
+                    DRAG_EVENT_COOKIE);
             mDragInitiated = true;
             mView = v;
             mInvalidDest = invalidDest;
@@ -497,6 +502,8 @@ public interface DragAndDropManager {
             mDestRoot = null;
             mMustBeCopied = false;
             mDragInitiated = false;
+            Trace.endAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
+                    DRAG_EVENT_COOKIE);
         }
 
         @Override
