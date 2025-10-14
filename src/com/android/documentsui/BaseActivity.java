@@ -201,6 +201,7 @@ public abstract class BaseActivity
      * there.
      */
     protected void initInjector() {
+        mInjector = getInjector();
         if (isUseFileSummaryEnabled()) {
             mInjector.setSummaryProviderManager(
                     new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this)));
@@ -238,7 +239,6 @@ public abstract class BaseActivity
 
         initConfigStore();
 
-        mInjector = getInjector();
         mState = getState(savedInstanceState);
         mDrawer = DrawerController.create(this, mInjector.config);
         Metrics.logActivityLaunch(mState, intent);
