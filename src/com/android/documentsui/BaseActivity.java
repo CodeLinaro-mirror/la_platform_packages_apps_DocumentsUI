@@ -86,6 +86,7 @@ import com.android.documentsui.queries.SearchChipData;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
+import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.sorting.SortController;
@@ -188,18 +189,6 @@ public abstract class BaseActivity
     }
 
     /**
-     * @return A model that supports breadcrumb view v2, if one has been created.
-     */
-    public @Nullable BreadcrumbModel getBreadcrumbModel() {
-        if (isSearchV2Enabled()) {
-            if (mNavigator != null) {
-                return mNavigator.getBreadcrumbModel();
-            }
-        }
-        return null;
-    }
-
-    /**
      * Initialization for the injector that is common between Files and Pick activity. Important:
      * This is called before the BaseActivity.onCreate(), so it can't rely on things initiated
      * there.
@@ -277,10 +266,8 @@ public abstract class BaseActivity
             View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
             if (breadcrumbView2 != null) {
                 BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
-                BreadcrumbController breadcrumbController = new BreadcrumbController(
-                        this, model, (BreadcrumbView) breadcrumbView2);
-                // TODO(b:416108180): Connect to mNavigator directory change.
-                mNavigator.setBreadcrumbController(breadcrumbController);
+                mInjector.setBreadcrumbController(
+                        new BreadcrumbController(this, model, (BreadcrumbView) breadcrumbView2));
             }
         }
 
@@ -1279,6 +1266,16 @@ public abstract class BaseActivity
      */
     public boolean isSearching() {
         return mSearchManager.isSearching();
+    }
+
+    /**
+     * Allows other views to inspect roots.
+     *
+     * @return ProvidersAccess for those views that need to access roots of the application.
+     */
+    // TODO(b/444316005): Remove, once MediaStore.toMediaUri works.
+    public ProvidersAccess getProvidersAccess() {
+        return mProviders;
     }
 
     @VisibleForTesting

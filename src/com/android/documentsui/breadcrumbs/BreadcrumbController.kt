@@ -56,6 +56,7 @@ class BreadcrumbController(
             // When hiding the breadcrumb view, clear its state. When showing it, we wish to start
             // with clean state, which is then updated to some selected path.
             view.setPath(arrayOf())
+            model.setPath(arrayOf())
         }
         view.setVisible(visible)
     }

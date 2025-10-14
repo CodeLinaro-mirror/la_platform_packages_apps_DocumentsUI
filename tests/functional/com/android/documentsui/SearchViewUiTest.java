@@ -18,9 +18,11 @@ package com.android.documentsui;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -35,6 +37,7 @@ import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -685,6 +688,20 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Verify that the breadcrumb path shows the correct information.
         onView(withId(R.id.breadcrumb_path_holder))
                 .check(bots.breadcrumb.pathEqualsTo("TEST_ROOT_0", TestFilesRule.FILE_NAME_1));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testDirectoryChangedOnSearchBreadcrumbClick() throws Exception {
+        bots.search.doSearch("file");
+        bots.directory.findDocument(TestFilesRule.DIR_NAME_1).waitUntilGone(mTimeout);
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        // Click the first item of the path, which should take us to the directory listing.
+        onView(allOf(withText("TEST_ROOT_0"), isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
+                .perform(click());
+        // Wait for the directory, previously filtered out by search, to re-appear.
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
     }
 
     @Test
