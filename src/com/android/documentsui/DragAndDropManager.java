@@ -71,19 +71,20 @@ public interface DragAndDropManager {
     /**
      * Starts a drag and drop.
      *
-     * @param v the view which
-     *          {@link View#startDragAndDrop(ClipData, View.DragShadowBuilder, Object, int)} will be
-     *          called.
-     * @param srcs documents that are dragged
-     * @param root the root in which documents being dragged are
+     * @param v           the view which
+     *                    {@link View#startDragAndDrop(ClipData, View.DragShadowBuilder, Object,
+     *                    int)} will be
+     *                    called.
+     * @param srcs        documents that are dragged
+     * @param itemInfo    the root in which documents being dragged are
      * @param invalidDest destinations that don't accept this drag and drop
-     * @param iconHelper used to load document icons
-     * @param parent {@link DocumentInfo} of the container of srcs
+     * @param iconHelper  used to load document icons
+     * @param parent      {@link DocumentInfo} of the container of srcs
      */
     void startDrag(
             View v,
             List<DocumentInfo> srcs,
-            RootInfo root,
+            SidebarEntryItemInfo itemInfo,
             List<Uri> invalidDest,
             SelectionDetails selectionDetails,
             IconHelper iconHelper,
@@ -109,12 +110,12 @@ public interface DragAndDropManager {
     /**
      * Updates the state according to the destination passed.
      * @param v the view which {@link View#updateDragShadow(View.DragShadowBuilder)} will be called.
-     * @param destRoot the root of the destination document.
+     * @param destItemInfo the root or shortcut of the destination document.
      * @param destDoc the destination document. Can be null if this is TBD. Must be a folder.
      * @return the new state. Can be any state in {@link State}.
      */
     @State int updateState(
-            View v, RootInfo destRoot, @Nullable DocumentInfo destDoc);
+            View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc);
 
     /**
      * Resets state back to {@link #STATE_UNKNOWN}. This is used when user drags items leaving a UI
@@ -245,7 +246,7 @@ public interface DragAndDropManager {
         public void startDrag(
                 View v,
                 List<DocumentInfo> srcs,
-                RootInfo root,
+                SidebarEntryItemInfo itemInfo,
                 List<Uri> invalidDest,
                 SelectionDetails selectionDetails,
                 IconHelper iconHelper,
@@ -265,7 +266,7 @@ public interface DragAndDropManager {
                     : mClipper.getClipDataForDocuments(
                             uris, FileOperationService.OPERATION_UNKNOWN, parent);
             mClipData.getDescription().getExtras()
-                    .putString(SRC_ROOT_KEY, root.getUri().toString());
+                    .putString(SRC_ROOT_KEY, itemInfo.getRoot().getUri().toString());
 
             updateShadow(srcs, iconHelper);
 
@@ -333,13 +334,12 @@ public interface DragAndDropManager {
 
         @Override
         public @State int updateState(
-                View v, RootInfo destRoot, @Nullable DocumentInfo destDoc) {
-
+                View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc) {
             mView = v;
-            mDestRoot = destRoot;
+            mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
 
-            if (!destRoot.supportsCreate()) {
+            if (!destItemInfo.supportsCreate()) {
                 updateState(STATE_NOT_ALLOWED);
                 return STATE_NOT_ALLOWED;
             }
@@ -357,7 +357,8 @@ public interface DragAndDropManager {
             }
 
             @State int state;
-            final @OpType int opType = calculateOpType(mClipData, destRoot.getUri());
+            final @OpType int opType = calculateOpType(
+                    mClipData, destItemInfo.getRoot().getUri());
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
                     state = STATE_COPY;
@@ -413,7 +414,7 @@ public interface DragAndDropManager {
 
             // Calculate the op type now just in case user releases Ctrl key while we're obtaining
             // root document in the background.
-            final @OpType int opType = calculateOpType(clipData, itemInfo.getUri());
+            final @OpType int opType = calculateOpType(clipData, itemInfo.getRoot().getUri());
             action.getDocument(
                     itemInfo.getRoot().authority,
                     itemInfo.getDocumentId(),
