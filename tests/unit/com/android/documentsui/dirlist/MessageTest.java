@@ -319,7 +319,7 @@ public final class MessageTest {
 
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testInflateMessage_updateToEmptyMessage_InTrashPage() {
         // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).

@@ -31,6 +31,7 @@
     android:paddingVertical="@dimen/list_item_padding_vertical">
 
     <LinearLayout
+        android:id="@+id/title_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
@@ -101,6 +102,15 @@
             android:textAppearance="@style/FileItemLabelText"/>
 
     </LinearLayout>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/file_summary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:visibility="gone"
+        android:textAlignment="viewStart"
+        style="@style/FileItemLabelStyle" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/file_type"

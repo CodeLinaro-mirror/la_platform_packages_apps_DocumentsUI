@@ -218,14 +218,13 @@
     <dimen name="main_container_corner_radius_large">16dp</dimen>
     <dimen name="main_container_corner_radius_small">4dp</dimen>
     <dimen name="picker_saver_padding_top">@dimen/space_small_1</dimen>
-    <!-- TODO(b/402604097): The bottom padding should be 0dp if there is a gesture navigation bar. -->
     <dimen name="picker_saver_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_padding_start">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_padding_end">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_button_gap">@dimen/space_extra_small_2</dimen>
     <dimen name="saver_progress_start_margin">@dimen/space_extra_small_4</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
-    <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
+    <dimen name="layout_padding_bottom">0dp</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>
 
     <dimen name="dialog_content_padding_horizontal">@dimen/space_small_4</dimen>

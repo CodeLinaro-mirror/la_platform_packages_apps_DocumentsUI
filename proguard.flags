@@ -243,8 +243,8 @@
   public boolean setFromStack(com.android.documentsui.base.DocumentStack);
 }
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbView {
-  public void setVisible(boolean);
   public boolean performPathItemClick(int);
+  public int getPathLength();
 }
 
 -keep class com.android.documentsui.util.Material3Config {
@@ -348,10 +348,12 @@
 }
 -keep class com.android.documentsui.sidebar.BaseSidebarEntryItem { *; }
 -keep class com.android.documentsui.sidebar.ShortcutItem { *; }
-# TODO(lucmult): Remove this when this class is used.
--keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
-
 -keep class com.android.documentsui.roots.ProvidersCache { *; }
+# TODO(lucmult): Remove these when they're used by the prod code.
+-keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
+-keep class com.android.documentsui.loaders.SummaryLoader { *; }
+-keep interface com.android.documentsui.SummaryUpdateListener { *; }
+-keep class com.android.documentsui.ModelSummariesUpdate { *; }
 
 -keep class com.android.documentsui.base.PathExtractor { *; }
 

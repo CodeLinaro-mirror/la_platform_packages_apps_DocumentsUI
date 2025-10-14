@@ -45,7 +45,7 @@ import kotlin.time.measureTime
  * The extra arg of URI to pass the context where the search is performed at. DocumentsProvider may
  * use this information to apply the appropriate scope to the search.
  */
-private val EXTRA_URI = "uri"
+const val EXTRA_URI = "uri"
 
 /**
  * A wrapper around the cursor. We use it to distinguish between pending tasks (null query result)
