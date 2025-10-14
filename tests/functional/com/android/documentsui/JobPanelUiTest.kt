@@ -527,6 +527,14 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 msg = "Job failed",
                 hasFailures = true,
             )
+        sendProgress(arrayListOf(inProgress.toJobProgress()))
+
+        // The dismiss all button should not appear if all jobs are in progress.
+        openPanel()
+        onView(allOf(withId(R.id.job_progress_panel_dismiss_all), isDisplayed()))
+            .check(doesNotExist())
+        Espresso.pressBack()
+
         sendProgress(
             arrayListOf(
                 inProgress.toJobProgress(),
@@ -534,8 +542,6 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 failed.toJobProgress(),
             )
         )
-
-        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
 
         // There are two jobs completed and one job at 40%, so the total progress is 80%.
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(80)))
@@ -547,6 +553,10 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withText(succeeded.msg)).check(doesNotExist())
         onView(withText(failed.msg)).check(doesNotExist())
         onView(withText(inProgress.msg)).check(matches(isDisplayed()))
+
+        // The button should also disappear afterwards.
+        onView(allOf(withId(R.id.job_progress_panel_dismiss_all), isDisplayed()))
+            .check(doesNotExist())
 
         // The total progress should now change to 40% as the two completed jobs are gone.
         Espresso.pressBack()
