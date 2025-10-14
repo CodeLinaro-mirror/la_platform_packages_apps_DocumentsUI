@@ -18,6 +18,8 @@ package com.android.documentsui;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.platform.test.annotations.DesktopTest;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 
 import androidx.test.filters.LargeTest;
@@ -37,6 +39,8 @@ import java.util.List;
 
 @LargeTest
 public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
+    // How far in from the edge in dp we should start drags so they don't trigger edge gestures.
+    private static final int EDGE_GAP = 40;
 
     @Rule
     public TestFilesRule mTestFiles = new TestFilesRule();
@@ -46,13 +50,18 @@ public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.closeDrawer();
     }
 
+    private int getScaledEdgeGap() {
+        final DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EDGE_GAP, dm);
+    }
+
     @DesktopTest(cujs = {"b/434067616"})
     @Test
     public void testBandSelection_allFiles() throws Exception {
         bots.main.switchToGridMode();
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
         Rect startDir = bots.directory.findDocument(TestFilesRule.DIR_NAME_1).getBounds();
-        Point start = new Point(dirListBounds.right - 1, startDir.centerY());
+        Point start = new Point(dirListBounds.right - getScaledEdgeGap(), startDir.centerY());
         Point end = new Point(dirListBounds.left + 1, dirListBounds.bottom - 1);
         bots.gesture.bandSelection(start, end);
 
@@ -75,7 +84,7 @@ public class BandSelectionUiTest extends ActivityTestJunit4<FilesActivity> {
         Rect dirListBounds = bots.directory.findDocumentsList().getBounds();
         Rect startDoc = bots.directory.findDocument(createdDocs.get(0).displayName).getBounds();
         Point endPoint = new Point(dirListBounds.left + 1, startDoc.centerY());
-        Point startPoint = new Point(dirListBounds.right - 1, startDoc.centerY());
+        Point startPoint = new Point(dirListBounds.right - getScaledEdgeGap(), startDoc.centerY());
 
         // Count the number of documents in the top row. This can differ based on the screen size so
         // calculate it dynamically to avoid failing on different devices.
