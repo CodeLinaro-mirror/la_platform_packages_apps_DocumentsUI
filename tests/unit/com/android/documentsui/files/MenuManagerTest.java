@@ -312,6 +312,8 @@ public final class MenuManagerTest {
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
+        mActionModeTrash.assertDisabledAndInvisible();
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
     }
 
     @Test
