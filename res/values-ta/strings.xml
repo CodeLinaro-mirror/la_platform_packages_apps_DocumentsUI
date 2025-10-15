@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"தகவல் பேனலை மறைக்கும்"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"தகவல் பேனலை காட்டும்"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"நீக்கியவையில் எதுவுமில்லை"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"\'நீக்கியவை\' பிரிவில் 30 நாட்களுக்கு மேல் உள்ள ஃபைல்கள் தானாகவே நீக்கப்படும்."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"\'நீக்கியவை\' பிரிவை இப்போதே காலியாக்கு"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"\'நீக்கியவை\' பிரிவைக் காலியாக்கவா?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"இதைச் செயல்தவிர்க்க முடியாது, இனி ஃபைல்களை மீட்டெடுக்கவும் முடியாது."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"\'நீக்கியவை\' பிரிவைக் காலியாக்கு"</string>
 </resources>

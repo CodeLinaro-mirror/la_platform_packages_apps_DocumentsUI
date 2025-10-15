@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Versteek inligtingpaneel"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Wys inligtingpaneel"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"Niks in asblik nie"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Lêers wat meer as 30 dae lank in die asblik is, sal outomaties uitgevee word."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Maak asblik nou leeg"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Maak asblik leeg?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Hierdie handeling kan nie ontdoen word nie, en die lêers sal nie meer teruggestel kan word nie."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Maak asblik leeg"</string>
 </resources>
