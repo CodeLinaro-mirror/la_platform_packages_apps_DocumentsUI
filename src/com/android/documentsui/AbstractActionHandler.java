@@ -27,7 +27,6 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -79,7 +78,6 @@ import com.android.documentsui.loaders.SummaryLoader;
 import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.GetDocumentTask;
-import com.android.documentsui.roots.GetShortcutUriTask;
 import com.android.documentsui.roots.LoadFirstRootTask;
 import com.android.documentsui.roots.LoadRootTask;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -241,23 +239,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 callback);
 
         task.executeOnExecutor(mExecutors.lookup(authority));
-    }
-
-    @Override
-    public void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback) {
-        Context context = mActivity.getApplicationContext();
-        ContentResolver resolver = shortcut.getRoot().userId.getContentResolver(context);
-
-        // Create the shortcut folder and get its URI first if it doesn't exist. Then call
-        // and execute the next task to open the shortcut folder.
-        GetShortcutUriTask task = new GetShortcutUriTask(
-                shortcut,
-                resolver,
-                mActivity,
-                timeout,
-                callback);
-
-        task.executeOnExecutor(mExecutors.lookup(shortcut.getRoot().authority));
     }
 
     @Override

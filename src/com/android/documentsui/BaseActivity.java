@@ -85,7 +85,6 @@ import com.android.documentsui.queries.SearchChipData;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
-import com.android.documentsui.roots.GetDocumentTask;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.sorting.SortController;
@@ -99,7 +98,6 @@ import com.google.android.material.color.DynamicColors;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -831,30 +829,16 @@ public abstract class BaseActivity
                 shortcut,
                 (@Nullable DocumentStack stack) -> {
                     if (stack != null) {
-                        // TODO: b/446566923 - remove the getShortcutDocument() method since we will
-                        //  eagerly load all the shortcuts. Remove and fix the tests in
-                        //  FilesActivityUiTest as well that depends on this change.
-                        // Create the shortcut folder if it does not exist yet, then open this
-                        // shortcut folder.
-                        mInjector.actions.getShortcutDocument(
-                                shortcut,
+                        mInjector.actions.getDocument(
+                                shortcut.getRoot().authority,
+                                shortcut.getDocumentId(),
+                                shortcut.getRoot().userId,
                                 TimeoutTask.DEFAULT_TIMEOUT,
-                                uri -> {
-                                    shortcut.setDocumentId(DocumentsContract.getDocumentId(uri));
-                                    new GetDocumentTask(
-                                        shortcut.getRoot().authority,
-                                        shortcut.getDocumentId(),
-                                        shortcut.getRoot().userId,
-                                        this,
-                                        TimeoutTask.DEFAULT_TIMEOUT,
-                                        mDocs,
-                                        doc -> {
-                                            // Reset the stack and store the shortcut reference.
-                                            mState.stack.reset(stack);
-                                            mState.shortcut = shortcut;
-                                            mInjector.actions.openRootDocument(doc);
-                                        }
-                                    ).execute();
+                                doc -> {
+                                    // Reset the stack and store the shortcut reference.
+                                    mState.stack.reset(stack);
+                                    mState.shortcut = shortcut;
+                                    mInjector.actions.openRootDocument(doc);
                                 });
                     }
         });
