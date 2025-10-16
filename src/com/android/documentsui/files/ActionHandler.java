@@ -161,7 +161,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public boolean dropOn(DragEvent event, ShortcutInfo shortcut) {
-        if (!shortcut.supportsCreate()) {
+        if (!shortcut.isValidDropTarget()) {
             return false;
         }
 

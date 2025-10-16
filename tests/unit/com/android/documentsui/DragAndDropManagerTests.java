@@ -1346,6 +1346,114 @@ public class DragAndDropManagerTests {
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_APK));
     }
 
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testDrop_Restores_DropOnValidRoot() throws Exception {
+        assumeTrashApiIsAvailable();
+        mActions.nextRootDocument = TestEnv.FOLDER_1;
+
+        // Start dragging a trashed file.
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE),
+                TestProvidersAccess.TRASH_ROOT,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
+                mDetails,
+                mIconHelper,
+                null);
+
+        // Update state to a valid destination.
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_1);
+
+        // Drop the item.
+        mManager.drop(
+                mClipData,
+                mManager,
+                TestProvidersAccess.HOME,
+                mActions,
+                mCallback,
+                mManager.getInvalidDestinations());
+
+        mEnv.beforeAsserts();
+        final DocumentStack expect = new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_1);
+        // Verify that restoreFromTrashClipData is called with the correct parameters.
+        mClipper.restoreFromClipData.assertLastArgument(Pair.create(expect, mClipData));
+        mClipper.opType.assertLastArgument(FileOperationService.OPERATION_RESTORE);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testUpdateState_UpdatesToRestore_WhenDropOnValidRoot() {
+        assumeTrashApiIsAvailable();
+        // Start dragging a trashed file.
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE),
+                TestProvidersAccess.TRASH_ROOT,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
+                mDetails,
+                mIconHelper,
+                null);
+
+        // Update the state by hovering over a valid destination.
+        final @State int state =
+                mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_1);
+
+        // Verify the state is updated to STATE_RESTORES_FROM_TRASH.
+        assertEquals(DragAndDropManager.STATE_RESTORES_FROM_TRASH, state);
+        assertStateUpdated(DragAndDropManager.STATE_RESTORES_FROM_TRASH);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testDrop_Rejects_RestoreToDifferentAuthority() {
+        assumeTrashApiIsAvailable();
+        // Start dragging a trashed file from HOME provider.
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE),
+                TestProvidersAccess.TRASH_ROOT,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
+                mDetails,
+                mIconHelper,
+                null);
+
+        final DocumentStack stack =
+                new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testUpdateState_UpdatesToNotAllowed_WhenRestoringToDifferentAuthority() {
+        assumeTrashApiIsAvailable();
+        // Start dragging a trashed file from HOME provider.
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE),
+                TestProvidersAccess.TRASH_ROOT,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
+                mDetails,
+                mIconHelper,
+                null);
+
+        // Try to drop on a different authority (DOWNLOADS).
+        final @State int state =
+                mManager.updateState(
+                        mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+
+        assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
+        assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
+    }
+
     private void assertStateUpdated(@State int expected) {
         mShadowBuilder.state.assertLastArgument(expected);
         mShadowUpdateListener.assertCalled();
