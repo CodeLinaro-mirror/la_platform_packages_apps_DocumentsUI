@@ -79,4 +79,5 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
 
     // For sidebar item appearance/view
     fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable?
+    fun supportsCreate(): Boolean
 }

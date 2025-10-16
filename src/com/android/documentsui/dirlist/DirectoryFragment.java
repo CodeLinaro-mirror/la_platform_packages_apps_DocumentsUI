@@ -47,6 +47,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.DocumentsContract;
@@ -143,6 +144,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -152,6 +154,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     static final int TYPE_NORMAL = 1;
     static final int TYPE_RECENT_OPEN = 2;
+    private static final Random RANDOM = new Random();
 
     @IntDef(flag = true, value = {
             REQUEST_COPY_DESTINATION
@@ -1381,8 +1384,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void viewDocument(final Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_OPEN);
+        Trace.beginSection("DirectoryFragment#viewDocument");
 
         if (selected.isEmpty()) {
+            Trace.endSection();
             return;
         }
 
@@ -1391,6 +1396,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 DocumentInfo.fromDirectoryCursor(mModel.getItem(selected.iterator().next()));
 
         mActions.openDocumentViewOnly(doc);
+        Trace.endSection();
     }
 
     private void transferDocuments(
@@ -1538,11 +1544,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     public void pasteFromClipboard() {
         Metrics.logUserAction(MetricConsts.USER_ACTION_PASTE_CLIPBOARD);
+        int cookie = Trace.isEnabled() ? RANDOM.nextInt() : 0;
+        if (Trace.isEnabled()) {
+            Trace.beginAsyncSection("DirectoryFragment#pasteFromClipboard", cookie);
+        }
         // Since we are pasting into the current window, we already have the destination in the
         // stack. No need for a destination DocumentInfo.
         mClipper.copyFromClipboard(
                 mState.stack,
-                mInjector.dialogs::showFileOperationStatus);
+                (status, opType, docCount) -> {
+                    mInjector.dialogs.showFileOperationStatus(status, opType, docCount);
+                    Trace.endAsyncSection("DirectoryFragment#pasteFromClipboard", cookie);
+                });
         getBaseActivity().invalidateOptionsMenu();
     }
 

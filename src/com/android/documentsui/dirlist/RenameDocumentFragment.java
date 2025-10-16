@@ -36,10 +36,10 @@ import android.widget.TextView.OnEditorActionListener;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.android.documentsui.BaseActivity;
+import com.android.documentsui.DocumentsUIDialogFragment;
 import com.android.documentsui.Metrics;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
@@ -49,10 +49,8 @@ import com.android.documentsui.ui.Snackbars;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
-/**
- * Dialog to rename file or directory.
- */
-public class RenameDocumentFragment extends DialogFragment {
+/** Dialog to rename file or directory. */
+public class RenameDocumentFragment extends DocumentsUIDialogFragment {
     private static final String TAG_RENAME_DOCUMENT = "rename_document";
     private DocumentInfo mDocument;
     private EditText mEditText;

@@ -44,7 +44,6 @@ import android.widget.TextView.OnEditorActionListener;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.android.documentsui.base.DocumentInfo;
@@ -55,10 +54,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
-/**
- * Dialog to create a new directory.
- */
-public class CreateDirectoryFragment extends DialogFragment {
+/** Dialog to create a new directory. */
+public class CreateDirectoryFragment extends DocumentsUIDialogFragment {
     private static final String TAG_CREATE_DIRECTORY = "create_directory";
     private @Nullable DialogInterface mDialog;
     private EditText mEditText;
