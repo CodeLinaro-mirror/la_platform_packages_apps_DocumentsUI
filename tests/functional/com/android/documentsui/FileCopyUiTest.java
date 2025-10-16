@@ -235,7 +235,11 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         device.executeShellCommand("settings put global stay_on_while_plugged_in "
                 + mPreTestStayAwakeValue);
 
-        context.unregisterReceiver(mReceiver);
+        try {
+            context.unregisterReceiver(mReceiver);
+        } catch (Exception e) {
+            Log.d(TAG, "Error unregistering the receiver, it might not be registered.", e);
+        }
         mCountDownLatch = null;
         setNotificationAccess(false);
     }
