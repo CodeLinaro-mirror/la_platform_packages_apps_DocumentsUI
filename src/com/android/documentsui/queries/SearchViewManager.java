@@ -692,8 +692,14 @@ public class SearchViewManager implements
                 synchronized (mSearchLock) {
                     mQueuedSearchRunnable =
                             () -> {
-                                setCurrentSearch(newText);
+                                boolean notified = setCurrentSearch(newText);
                                 logTextSearchMetric();
+                                // If options change, the setCurrentSearch does not notify the
+                                // listener. We amend this here.
+                                // TODO(b:450381836): Unify text and option change notifications.
+                                if (!notified) {
+                                    mListener.onSearchChanged(newText);
+                                }
                             };
                     mUiHandler.post(mQueuedSearchRunnable);
                 }
@@ -842,11 +848,14 @@ public class SearchViewManager implements
      * SearchManagerListener is notified about it.
      *
      * @param queryString The new current search query.
+     * @return If a onSearchChanged notification was posted.
      */
-    public void setCurrentSearch(String queryString) {
+    public boolean setCurrentSearch(String queryString) {
         if (setCurrentSearchInternal(queryString) && mListener != null) {
             mListener.onSearchChanged(queryString);
+            return true;
         }
+        return false;
     }
 
     /**

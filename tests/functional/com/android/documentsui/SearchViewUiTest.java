@@ -832,4 +832,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.assertDocumentsPresent(expectedMatches);
         bots.search.assertInputEquals("file");
     }
+
+    // TODO(b:450381836): Add tests that check that options change trigger search.
 }
