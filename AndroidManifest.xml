@@ -255,8 +255,8 @@
         </receiver>
 
         <!-- Run FileOperationService in a separate process so that we can use FileLock class to
-            wait until jumbo clip is done writing to disk before reading it. See ClipStorage for
-            details. -->
+            wait until jumbo clip is done writing to disk before reading it. See ClipStorage and
+            DocumentClipper for details. -->
         <service
             android:name=".services.FileOperationService"
             android:exported="false"
