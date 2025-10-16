@@ -71,6 +71,11 @@ public class SharedInputHandler {
 
             // This is the Android back button, not backspace.
             case KeyEvent.KEYCODE_BACK:
+                // isCanceled=true indicates the back press event is already consumed by the system,
+                // e.g. close the soft keyboard, our app level shouldn't do anything.
+                if (event.isCanceled()) {
+                    return true;
+                }
                 return onBack();
 
             case KeyEvent.KEYCODE_TAB:
