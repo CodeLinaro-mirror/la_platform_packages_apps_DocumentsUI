@@ -53,8 +53,7 @@ import org.junit.runner.RunWith
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class JobPanelControllerTest {
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
@@ -66,11 +65,12 @@ class JobPanelControllerTest {
     private var lastId = 0L
 
     private fun sendProgress(progress: ArrayList<JobProgress>, id: Long = lastId++) {
-        var intent = Intent(ACTION_PROGRESS).apply {
-            `package` = context.packageName
-            putExtra("id", id)
-            putParcelableArrayListExtra(EXTRA_PROGRESS, progress)
-        }
+        var intent =
+            Intent(ACTION_PROGRESS).apply {
+                `package` = context.packageName
+                putExtra("id", id)
+                putParcelableArrayListExtra(EXTRA_PROGRESS, progress)
+            }
         controller.onReceive(context, intent)
     }
 
@@ -78,22 +78,20 @@ class JobPanelControllerTest {
     fun setUp() {
         // The default progress bar only has an indeterminate state, so we need to style it to allow
         // determinate progress.
-        progressBar = ProgressBar(
-            context,
-            null,
-            android.R.attr.progressBarStyleHorizontal
-        ).apply {
-            id = getRes(R.id.job_progress_toolbar_indicator)
-        }
-        badge = ImageView(context).apply {
-            id = getRes(R.id.job_progress_toolbar_badge)
-        }
-        menuItem = ActionMenuView(context).menu.add("job_panel").apply {
-            actionView = FrameLayout(context).apply {
-                addView(progressBar)
-                addView(badge)
+        progressBar =
+            ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
+                id = getRes(R.id.job_progress_toolbar_indicator)
             }
-        }
+        badge = ImageView(context).apply { id = getRes(R.id.job_progress_toolbar_badge) }
+        menuItem =
+            ActionMenuView(context).menu.add("job_panel").apply {
+                actionView =
+                    FrameLayout(context).apply {
+                        id = getRes(R.id.job_progress_toolbar_container)
+                        addView(progressBar)
+                        addView(badge)
+                    }
+            }
 
         controller = JobPanelController(context, TestActionHandler(), JobPanelViewModel())
         TestScope().launch(UnconfinedTestDispatcher()) { controller.observeViewModel() }
@@ -105,16 +103,17 @@ class JobPanelControllerTest {
         assertFalse(menuItem.isVisible())
         assertFalse(menuItem.isEnabled())
 
-        val progress = MutableJobProgress(
-            id = "jobId1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_STARTED,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 0,
-            requiredBytes = 10,
-            msRemaining = -1
-        )
+        val progress =
+            MutableJobProgress(
+                id = "jobId1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_STARTED,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 0,
+                requiredBytes = 10,
+                msRemaining = -1,
+            )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
         assertTrue(menuItem.isVisible())
@@ -149,26 +148,28 @@ class JobPanelControllerTest {
         assertFalse(menuItem.isVisible())
         assertFalse(menuItem.isEnabled())
 
-        val progress1 = MutableJobProgress(
-            id = "jobId1",
-            operationType = FileOperationService.OPERATION_MOVE,
-            state = Job.STATE_STARTED,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 0,
-            requiredBytes = 10,
-            msRemaining = -1
-        )
-        val progress2 = MutableJobProgress(
-            id = "jobId2",
-            operationType = FileOperationService.OPERATION_DELETE,
-            state = Job.STATE_STARTED,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 0,
-            requiredBytes = 50,
-            msRemaining = -1
-        )
+        val progress1 =
+            MutableJobProgress(
+                id = "jobId1",
+                operationType = FileOperationService.OPERATION_MOVE,
+                state = Job.STATE_STARTED,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 0,
+                requiredBytes = 10,
+                msRemaining = -1,
+            )
+        val progress2 =
+            MutableJobProgress(
+                id = "jobId2",
+                operationType = FileOperationService.OPERATION_DELETE,
+                state = Job.STATE_STARTED,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 0,
+                requiredBytes = 50,
+                msRemaining = -1,
+            )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
         assertTrue(menuItem.isVisible())
@@ -222,26 +223,28 @@ class JobPanelControllerTest {
 
     @Test
     fun testIndeterminateJobs() {
-        val indeterminate = MutableJobProgress(
-            id = "indeterminate",
-            operationType = FileOperationService.OPERATION_MOVE,
-            state = Job.STATE_SET_UP,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = -1,
-            requiredBytes = -1,
-            msRemaining = -1
-        )
-        val determinate = MutableJobProgress(
-            id = "determinate",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 40,
-            requiredBytes = 100,
-            msRemaining = -1
-        )
+        val indeterminate =
+            MutableJobProgress(
+                id = "indeterminate",
+                operationType = FileOperationService.OPERATION_MOVE,
+                state = Job.STATE_SET_UP,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = -1,
+                requiredBytes = -1,
+                msRemaining = -1,
+            )
+        val determinate =
+            MutableJobProgress(
+                id = "determinate",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 40,
+                requiredBytes = 100,
+                msRemaining = -1,
+            )
         sendProgress(arrayListOf(indeterminate.toJobProgress()))
 
         assertTrue(menuItem.isVisible())
