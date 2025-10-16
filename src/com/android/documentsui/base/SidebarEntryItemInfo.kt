@@ -80,4 +80,8 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
     // For sidebar item appearance/view
     fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable?
     fun supportsCreate(): Boolean
+    fun supportsEject(): Boolean
+    fun isEjecting(): Boolean
+    fun supportsInspect(): Boolean
+    fun hasSettings(): Boolean
 }

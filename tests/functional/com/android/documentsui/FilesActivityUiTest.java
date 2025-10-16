@@ -395,12 +395,19 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         }
     }
 
-    private void setUpShortcuts(List<ShortcutResourceValues> resources) {
+    private void setUpShortcuts(List<ShortcutResourceValues> resources,
+            DocumentsProviderHelper storageDocsHelper) throws Exception {
         // Reset and refresh the shortcut resources
         ProvidersCache providers = getProvidersCache(context);
         providers.setShortcutResources(resources);
         Collection<RootInfo> roots = providers.getRootsBlocking();
         Collection<ShortcutInfo> shortcuts = providers.loadShortcutsForUser(userId);
+        for (ShortcutInfo shortcut : shortcuts) {
+            // Create the shortcut folders if they don't exist yet. In the actual code, this is
+            // done by the loaders but we are not calling the loaders in the tests.
+            shortcut.setDocumentId(getOrCreateFolderDocId(
+                    storageDocsHelper, shortcut.getParentDirDocumentId(), shortcut.getTitle()));
+        }
 
         mActivityScenario.onActivity(activity -> {
             RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
@@ -435,45 +442,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                 SHORTCUT_ID,
                 R.drawable.ic_root_homescreen
         );
-        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
-        storageDocsHelper.createFolder(primaryRoot.documentId, SHORTCUT_ID);
-        setUpShortcuts(List.of(resource));
-
-        EspressoBotsKt.openRoot(context, SHORTCUT_ID);
-        bots.main.assertSearchBarGone();
-        boolean showDockedSearch = context.getResources().getBoolean(
-                getRes(R.bool.show_docked_search));
-        if (showDockedSearch) {
-            bots.main.assertDockedSearchBarShow();
-        } else {
-            bots.main.assertOptionsMenuSearchShow();
-        }
-        bots.main.assertWindowTitle(SHORTCUT_ID);
-        storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
-
-        bots.roots.assertItemSelected(SHORTCUT_ID);
-        bots.roots.assertItemNotSelected(primaryRoot.title);
-
-        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
-    }
-
-    @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
-    public void testClickShortcutFolderNotExisting() throws Exception {
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        // Set up the shortcut resources.
-        ShortcutResourceValues resource = new ShortcutResourceValues(
-                primaryRoot.authority,
-                primaryRoot.rootId,
-                primaryRoot.documentId,
-                SHORTCUT_ID,
-                R.drawable.ic_root_homescreen
-        );
-        setUpShortcuts(List.of(resource));
-        // Ensure that the shortcut folder is yet to exist.
-        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
-        storageDocsHelper.assertDoesNotExist(primaryRoot.documentId, SHORTCUT_ID);
+        setUpShortcuts(List.of(resource), storageDocsHelper);
 
         EspressoBotsKt.openRoot(context, SHORTCUT_ID);
         bots.main.assertSearchBarGone();
@@ -522,7 +491,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                         folder2Id,
                         "Folder 3",
                         R.drawable.ic_root_smartphone));
-        setUpShortcuts(resources);
+        setUpShortcuts(resources, storageDocsHelper);
 
         EspressoBotsKt.openRoot(context, "Folder 3");
         bots.main.assertWindowTitle("Folder 3");
@@ -558,7 +527,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                         folder1Id,
                         "Folder 2",
                         R.drawable.ic_root_smartphone));
-        setUpShortcuts(resources);
+        setUpShortcuts(resources, storageDocsHelper);
 
         // We will have a chain of folders like so: storage -> 1 -> 2 (shortcut) -> 3 -> 4
         EspressoBotsKt.openRoot(context, "Folder 2");
@@ -615,7 +584,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                         folder2Id,
                         "Folder 3",
                 R.drawable.ic_root_smartphone));
-        setUpShortcuts(resources);
+        setUpShortcuts(resources, storageDocsHelper);
 
         EspressoBotsKt.openRoot(context, "Folder 3");
         bots.main.assertWindowTitle("Folder 3");

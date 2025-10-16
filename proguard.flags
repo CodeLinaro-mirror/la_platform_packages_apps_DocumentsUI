@@ -131,6 +131,7 @@
   int root_menu_open_in_new_window;
   int root_menu_paste_into_folder;
   int root_menu_settings;
+  int root_menu_inspect;
   int sub_menu_grid;
   int sub_menu_list;
   int table_header;

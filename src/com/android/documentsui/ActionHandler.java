@@ -32,6 +32,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.services.JobProgress;
 
@@ -87,14 +88,6 @@ public interface ActionHandler {
             Consumer<DocumentInfo> callback);
 
     /**
-     * Attempts to create the shortcut folder first if it doesn't exist. Once finished, it will
-     * call GetDocumentTask to get the shortcut's document and open DocumentsUI to this document.
-     * If the task times out, callback will be called with null Uri. Supply
-     * {@link TimeoutTask#DEFAULT_TIMEOUT} if you don't want to the task to ever time out.
-     */
-    void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback);
-
-    /**
      * Attempts to refresh the given DocumentInfo, which should be at the top of the state stack.
      * Returns a boolean answer to the callback, given by {@link ContentProvider#refresh}.
      */
@@ -130,7 +123,11 @@ public interface ActionHandler {
 
     void openInNewWindow(DocumentStack path);
 
-    void pasteIntoFolder(RootInfo root);
+    /**
+     * Pastes the selected items into a sidebar item entry.
+     * @param itemInfo - the destination sidebar item entry
+     */
+    void pasteIntoFolder(SidebarEntryItemInfo itemInfo);
 
     void selectAllFiles();
 

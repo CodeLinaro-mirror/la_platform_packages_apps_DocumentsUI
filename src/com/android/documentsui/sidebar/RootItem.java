@@ -23,15 +23,12 @@ import android.provider.DocumentsProvider;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.DragEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
 import com.android.documentsui.ActionHandler;
-import com.android.documentsui.MenuManager;
 import com.android.documentsui.R;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.SidebarEntryItemInfo;
@@ -132,12 +129,6 @@ public class RootItem extends BaseSidebarEntryItem {
     @Override
     boolean dropOn(DragEvent event) {
         return getActionHandler().dropOn(event, root);
-    }
-
-    @Override
-    public void createContextMenu(Menu menu, MenuInflater inflater, MenuManager menuManager) {
-        inflater.inflate(getRes(R.menu.root_context_menu), menu);
-        menuManager.updateRootContextMenu(menu, root, getDocInfo());
     }
 
     @Override

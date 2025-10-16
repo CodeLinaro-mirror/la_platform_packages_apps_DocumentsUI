@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -49,6 +50,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.TestData;
@@ -60,6 +62,7 @@ import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuInflater;
 import com.android.documentsui.testing.TestMenuItem;
+import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.util.VersionUtils;
@@ -102,6 +105,7 @@ public final class MenuManagerTest {
     private TestMenuItem rootOpenInNewWindow;
     private TestMenuItem rootPasteIntoFolder;
     private TestMenuItem rootSettings;
+    private TestMenuItem mRootInspector;
 
     /* Action Mode menu items */
     private TestMenuItem actionModeOpen;
@@ -145,6 +149,7 @@ public final class MenuManagerTest {
     private TestDirectoryDetails dirDetails;
     private TestSearchViewManager testSearchManager;
     private RootInfo testRootInfo;
+    private ShortcutInfo mTestShortcutInfo;
     private DocumentInfo testDocInfo;
     private State state = new State();
     private MenuManager mgr;
@@ -196,6 +201,7 @@ public final class MenuManagerTest {
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
         rootPasteIntoFolder = testMenu.findItem(R.id.root_menu_paste_into_folder);
         rootSettings = testMenu.findItem(R.id.root_menu_settings);
+        mRootInspector = testMenu.findItem(R.id.root_menu_inspect);
 
         // Menu actions (including overflow) when action mode *is* active.
         actionModeOpenWith = testMenu.findItem(R.id.action_menu_open_with);
@@ -263,6 +269,9 @@ public final class MenuManagerTest {
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
         state.stack.push(testDocInfo);
+        if (isHomeScreenFilesFlagEnabled()) {
+            mTestShortcutInfo = new ShortcutInfo();
+        }
     }
 
     private Uri getUriFromModelId(String id) {
@@ -972,7 +981,7 @@ public final class MenuManagerTest {
     public void testRootContextMenu() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_CREATE;
 
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertEnabledAndVisible();
@@ -983,7 +992,7 @@ public final class MenuManagerTest {
     @Test
     public void testRootContextMenu_HasRootSettings() {
         testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootSettings.assertEnabledAndVisible();
     }
@@ -991,7 +1000,7 @@ public final class MenuManagerTest {
     @Test
     public void testRootContextMenu_NonWritableRoot() {
         dirDetails.hasItemsToPaste = true;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootPasteIntoFolder.assertDisabledAndInvisible();
     }
@@ -1001,7 +1010,7 @@ public final class MenuManagerTest {
         testRootInfo.flags = Root.FLAG_SUPPORTS_CREATE;
         testDocInfo.flags = Document.FLAG_DIR_SUPPORTS_CREATE;
         dirDetails.hasItemsToPaste = false;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootPasteIntoFolder.assertDisabledAndInvisible();
     }
@@ -1011,7 +1020,7 @@ public final class MenuManagerTest {
         testRootInfo.flags = Root.FLAG_SUPPORTS_CREATE;
         testDocInfo.flags = Document.FLAG_DIR_SUPPORTS_CREATE;
         dirDetails.hasItemsToPaste = true;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootPasteIntoFolder.assertEnabledAndVisible();
     }
@@ -1019,7 +1028,7 @@ public final class MenuManagerTest {
     @Test
     public void testRootContextMenu_Eject() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_EJECT;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertEnabledAndVisible();
     }
@@ -1028,9 +1037,88 @@ public final class MenuManagerTest {
     public void testRootContextMenu_EjectInProcess() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_EJECT;
         testRootInfo.ejecting = true;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testRootContextMenu_InspectDisabled() {
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
+
+        mRootInspector.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_ShortcutSupportsCreate() {
+        mTestShortcutInfo.getRoot().flags = Root.FLAG_SUPPORTS_CREATE;
+
+        mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, testDocInfo);
+
+        rootEjectRoot.assertDisabledAndInvisible();
+        rootOpenInNewWindow.assertEnabledAndVisible();
+        rootPasteIntoFolder.assertDisabledAndInvisible();
+        rootSettings.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_HasRootSettings() {
+        mTestShortcutInfo.getRoot().flags = Root.FLAG_HAS_SETTINGS;
+        mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, null);
+
+        rootSettings.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_NonWritableRoot() {
+        dirDetails.hasItemsToPaste = true;
+        mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, testDocInfo);
+
+        rootPasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_NothingToPaste() {
+        mTestShortcutInfo.getRoot().flags = Root.FLAG_SUPPORTS_CREATE;
+        testDocInfo.flags = Document.FLAG_DIR_SUPPORTS_CREATE;
+        dirDetails.hasItemsToPaste = false;
+        mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, testDocInfo);
+
+        rootPasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_PasteIntoWritableRoot() {
+        mTestShortcutInfo.getRoot().flags = Root.FLAG_SUPPORTS_CREATE;
+        testDocInfo.flags = Document.FLAG_DIR_SUPPORTS_CREATE;
+        dirDetails.hasItemsToPaste = true;
+        mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, testDocInfo);
+
+        rootPasteIntoFolder.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_ShortcutDoesNotEject() {
+        mTestShortcutInfo.getRoot().flags = Root.FLAG_SUPPORTS_EJECT;
+        mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, testDocInfo);
+
+        rootEjectRoot.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testShortcutContextMenu_InspectEnabled() {
+        ShortcutInfo homeScreenShortcut =
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT.copyShortcutInfo();
+        mgr.updateSidebarItemContextMenu(testMenu, homeScreenShortcut, testDocInfo);
+
+        mRootInspector.assertEnabledAndVisible();
     }
 
     @Test
