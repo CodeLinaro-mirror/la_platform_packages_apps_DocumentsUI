@@ -83,6 +83,11 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
     val menuIconState: StateFlow<MenuIconState>
         get() = _menuIconState
 
+    private var dismissibleCount = 0
+    private val _anyDismissible = MutableStateFlow(false)
+    val anyDismissible: StateFlow<Boolean>
+        get() = _anyDismissible
+
     var listState: Parcelable? = null
 
     /** Gets the state of the toolbar progress icon based off the current jobs tracked. */
@@ -128,13 +133,20 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
         }
         _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }
 
+        dismissibleCount = _currentJobs.count { (_, value) -> value.jobProgress.isFinal }
+        _anyDismissible.value = dismissibleCount > 0
+
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)
     }
 
     /** Removes a specific progress item from the list managed by this class. */
     fun dismissProgress(id: String) {
-        _currentJobs.remove(id)
+        val entry = _currentJobs.remove(id)
+        if (entry != null && entry.jobProgress.isFinal) {
+            dismissibleCount--
+            _anyDismissible.value = dismissibleCount > 0
+        }
 
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)
@@ -143,6 +155,8 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
     /** Dismisses all completed progresses. */
     fun dismissCompleted() {
         _currentJobs.entries.removeAll { (_, v) -> v.jobProgress.isFinal }
+        dismissibleCount = 0
+        _anyDismissible.value = false
 
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)
