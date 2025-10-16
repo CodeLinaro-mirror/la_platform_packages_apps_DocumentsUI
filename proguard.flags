@@ -361,3 +361,4 @@
 -keep class com.android.documentsui.services.JobProgress {
   public <init>(java.lang.String, int, int, java.lang.String, boolean);
 }
+-keep class com.android.documentsui.sidebar.NavRailShortcutItem { *; }
