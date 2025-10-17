@@ -38,6 +38,7 @@ import com.android.documentsui.services.JobProgress;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -255,4 +256,12 @@ public interface ActionHandler {
      * #showEmptyTrashConfirmationDialog()}.
      */
     void permanentlyDeleteTrashDocuments();
+
+    /**
+     * Retrieves the list of shortcuts for the given user and compares the shortcuts'
+     * URIs against the provided collection of URIs. If there is a match, the file operation
+     * should be blocked and a dialog should be shown to inform the user of this block.
+     * @return boolean value on whether or not the file operation should be blocked.
+     */
+    boolean blockOperationForShortcuts(Collection<Uri> uris, UserId userId);
 }

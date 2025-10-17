@@ -25,6 +25,13 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.graphics.drawable.Drawable;
@@ -974,7 +981,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.HAMMY, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
     }
 
     @Test
@@ -993,7 +1000,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1015,7 +1022,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
@@ -1037,7 +1044,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1122,6 +1129,69 @@ public class DragAndDropManagerTests {
         assertFalse(mManager.drop(
                 mClipData, mManager, TestProvidersAccess.HOME_SCREEN_SHORTCUT, mActions,
                 mCallback, mManager.getInvalidDestinations()));
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testDrop_MoveAShortcut_OperationBlocked() throws Exception {
+        TestActionHandler spyActionHandler = spy(mActions);
+        TestDocumentClipper spyClipper = spy(mClipper);
+        DragAndDropManager newManager = createNewManagerWithSpyClipper(spyClipper);
+
+        newManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.EXTERNALSTORAGE,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
+        newManager.onKeyEvent(event);
+
+        // Mock the shortcut URI item for the clip data.
+        Mockito.when(mClipData.getItemCount()).thenReturn(1);
+        Mockito.when(mClipData.getItemAt(0)).thenReturn(
+                new ClipData.Item(TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri()));
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.DOWNLOADS.getUri();
+        newManager.drop(mClipData, newManager, new DocumentStack(
+                TestProvidersAccess.DOWNLOADS, docInfo), spyActionHandler, mCallback);
+
+        mEnv.beforeAsserts();
+        // Verify that the block operation was called.
+        verify(spyActionHandler).blockOperationForShortcuts(any(), any());
+        // If the file operation is blocked, copyFromClipData should never have been called.
+        verify(spyClipper, never()).copyFromClipData(
+                any(), any(), anyInt(), any());
+    }
+
+    @SuppressLint("VisibleForTests")
+    private DragAndDropManager createNewManagerWithSpyClipper(TestDocumentClipper spyClipper) {
+        DragAndDropManager newManager = new RuntimeDragAndDropManager(
+                mActivity, spyClipper, mShadowBuilder, mDefaultIcon) {
+            @Override
+            void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
+                    Object localState, int flag) {
+                assertSame(mStartDragView, v);
+                assertSame(mShadowBuilder, builder);
+                assertNotNull(localState);
+
+                mFlagListener.accept(flag);
+                mStartDragListener.accept(clipData);
+            }
+
+            @Override
+            void updateDragShadow(View v) {
+                assertSame(mUpdateShadowView, v);
+
+                mShadowUpdateListener.accept(null);
+            }
+        };
+        return newManager;
     }
 
     private void assertStateUpdated(@State int expected) {

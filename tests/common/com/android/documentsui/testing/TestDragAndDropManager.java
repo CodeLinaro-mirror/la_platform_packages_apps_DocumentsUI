@@ -85,7 +85,7 @@ public class TestDragAndDropManager implements DragAndDropManager {
 
     @Override
     public boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-            FileOperations.Callback callback) {
+            ActionHandler actions, FileOperations.Callback callback) {
         return dropOnDocumentHandler.accept(Pair.create(clipData, dstStack));
     }
 

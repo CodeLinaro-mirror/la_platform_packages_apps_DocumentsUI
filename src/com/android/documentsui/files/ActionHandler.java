@@ -20,6 +20,7 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -205,6 +206,14 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public @Nullable DocumentInfo renameDocument(String name, DocumentInfo document) {
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(List.of(document.derivedUri), document.userId)) {
+            // This should have been blocked earlier before the popup appears, but leave here
+            // just in case.
+            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+            return null;
+        }
+
         ContentResolver resolver = document.userId.getContentResolver(mActivity);
         ContentProviderClient client = null;
 
@@ -305,6 +314,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        if (isHomeScreenFilesFlagEnabled()) {
+            List<DocumentInfo> docs = mModel.getDocuments(selection);
+            if (docs == null || docs.isEmpty()) {
+                mDialogs.showOperationUnsupported();
+                return;
+            }
+
+            List<Uri> uris = new ArrayList<>();
+            for (DocumentInfo doc : docs) {
+                uris.add(doc.derivedUri);
+            }
+
+            if (blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+                Log.e(TAG, "Failed to cut because a protected folder is selected.");
+                return;
+            }
+        }
+
         mSelectionMgr.clearSelection();
 
         mClipper.clipDocumentsForCut(mModel::getItemUri, selection, mState.stack.peek());
@@ -395,6 +422,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             uris.add(doc.derivedUri);
         }
 
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to delete because a protected folder is selected.");
+            return;
+        }
+
         UrisSupplier srcs;
         try {
             srcs = UrisSupplier.create(
@@ -442,6 +475,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         List<Uri> uris = new ArrayList<>(docs.size());
         for (DocumentInfo doc : docs) {
             uris.add(doc.derivedUri);
+        }
+
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to trash because a protected folder is selected.");
+            return;
         }
 
         UrisSupplier srcs;
