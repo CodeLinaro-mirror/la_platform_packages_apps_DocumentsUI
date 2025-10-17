@@ -99,6 +99,6 @@ class GetShortcutUriTask(
     }
 
     companion object {
-        private const val TAG = "GetShortcutDocumentTask"
+        private const val TAG = "GetShortcutUriTask"
     }
 }

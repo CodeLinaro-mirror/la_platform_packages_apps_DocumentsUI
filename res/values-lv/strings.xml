@@ -261,8 +261,7 @@
     <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Notiek # faila arhivēšana…}zero{Notiek # failu arhivēšana…}one{Notiek # faila arhivēšana…}other{Notiek # failu arhivēšana…}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Rādīt faila darbību norisi"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Faila darbības norise"</string>
-    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
-    <skip />
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Noraidīt visus"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Pabeigts"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Atcelta"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Skatīt detalizētu informāciju"</string>

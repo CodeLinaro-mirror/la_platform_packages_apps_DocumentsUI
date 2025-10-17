@@ -249,8 +249,7 @@
     <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{# ఫైల్‌ను జిప్ చేస్తోంది}other{# ఫైల్స్‌ను జిప్ చేస్తోంది}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ఫైల్ ప్రోగ్రెస్‌లో ఉంది"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ఫైల్ ప్రోగ్రెస్"</string>
-    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
-    <skip />
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"అన్నింటినీ విస్మరించండి"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"పూర్తయింది"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"రద్దయింది"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"వివరాలను చూడండి"</string>

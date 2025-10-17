@@ -249,8 +249,7 @@
     <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{# ફાઇલ ઝિપ કરી રહ્યાં છીએ}one{# ફાઇલ ઝિપ કરી રહ્યાં છીએ}other{# ફાઇલ ઝિપ કરી રહ્યાં છીએ}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ફાઇલની પ્રગતિ બતાવો"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ફાઇલની પ્રગતિ"</string>
-    <!-- no translation found for job_progress_panel_dismiss_all (5858398094668912463) -->
-    <skip />
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"બધા છોડી દો"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"પૂર્ણ"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"રદ કર્યું"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"વિગતો જુઓ"</string>

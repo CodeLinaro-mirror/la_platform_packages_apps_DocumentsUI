@@ -37,6 +37,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.IconHelper;
 import com.android.documentsui.services.FileOperationService;
@@ -70,19 +71,20 @@ public interface DragAndDropManager {
     /**
      * Starts a drag and drop.
      *
-     * @param v the view which
-     *          {@link View#startDragAndDrop(ClipData, View.DragShadowBuilder, Object, int)} will be
-     *          called.
-     * @param srcs documents that are dragged
-     * @param root the root in which documents being dragged are
+     * @param v           the view which
+     *                    {@link View#startDragAndDrop(ClipData, View.DragShadowBuilder, Object,
+     *                    int)} will be
+     *                    called.
+     * @param srcs        documents that are dragged
+     * @param itemInfo    the root in which documents being dragged are
      * @param invalidDest destinations that don't accept this drag and drop
-     * @param iconHelper used to load document icons
-     * @param parent {@link DocumentInfo} of the container of srcs
+     * @param iconHelper  used to load document icons
+     * @param parent      {@link DocumentInfo} of the container of srcs
      */
     void startDrag(
             View v,
             List<DocumentInfo> srcs,
-            RootInfo root,
+            SidebarEntryItemInfo itemInfo,
             List<Uri> invalidDest,
             SelectionDetails selectionDetails,
             IconHelper iconHelper,
@@ -108,12 +110,12 @@ public interface DragAndDropManager {
     /**
      * Updates the state according to the destination passed.
      * @param v the view which {@link View#updateDragShadow(View.DragShadowBuilder)} will be called.
-     * @param destRoot the root of the destination document.
+     * @param destItemInfo the root or shortcut of the destination document.
      * @param destDoc the destination document. Can be null if this is TBD. Must be a folder.
      * @return the new state. Can be any state in {@link State}.
      */
     @State int updateState(
-            View v, RootInfo destRoot, @Nullable DocumentInfo destDoc);
+            View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc);
 
     /**
      * Resets state back to {@link #STATE_UNKNOWN}. This is used when user drags items leaving a UI
@@ -131,15 +133,16 @@ public interface DragAndDropManager {
     /**
      * Drops items onto the a root.
      *
-     * @param clipData the clip data that contains sources information.
+     * @param clipData   the clip data that contains sources information.
      * @param localState used to determine if this is a multi-window drag and drop.
-     * @param destRoot the target root
-     * @param actions {@link ActionHandler} used to load root document.
-     * @param callback callback called when file operation is rejected or scheduled.
+     * @param itemInfo   the target root
+     * @param actions    {@link ActionHandler} used to load root document.
+     * @param callback   callback called when file operation is rejected or scheduled.
+     * @param invalidDest a list of URIs representing invalid drop destinations
      * @return true if target accepts this drop; false otherwise
      */
-    boolean drop(ClipData clipData, Object localState, RootInfo destRoot, ActionHandler actions,
-            FileOperations.Callback callback);
+    boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
+            ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest);
 
     /**
      * Drops items onto the target.
@@ -165,6 +168,11 @@ public interface DragAndDropManager {
     static DragAndDropManager create(Context context, DocumentClipper clipper) {
         return new RuntimeDragAndDropManager(context, clipper);
     }
+
+    /**
+     * Returns the list of invalid destinations via their URIs to drop the documents.
+     */
+    List<Uri> getInvalidDestinations();
 
     class RuntimeDragAndDropManager implements DragAndDropManager {
         private static final String SRC_ROOT_KEY = "dragAndDropMgr:srcRoot";
@@ -238,7 +246,7 @@ public interface DragAndDropManager {
         public void startDrag(
                 View v,
                 List<DocumentInfo> srcs,
-                RootInfo root,
+                SidebarEntryItemInfo itemInfo,
                 List<Uri> invalidDest,
                 SelectionDetails selectionDetails,
                 IconHelper iconHelper,
@@ -258,7 +266,7 @@ public interface DragAndDropManager {
                     : mClipper.getClipDataForDocuments(
                             uris, FileOperationService.OPERATION_UNKNOWN, parent);
             mClipData.getDescription().getExtras()
-                    .putString(SRC_ROOT_KEY, root.getUri().toString());
+                    .putString(SRC_ROOT_KEY, itemInfo.getRoot().getUri().toString());
 
             updateShadow(srcs, iconHelper);
 
@@ -326,13 +334,12 @@ public interface DragAndDropManager {
 
         @Override
         public @State int updateState(
-                View v, RootInfo destRoot, @Nullable DocumentInfo destDoc) {
-
+                View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc) {
             mView = v;
-            mDestRoot = destRoot;
+            mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
 
-            if (!destRoot.supportsCreate()) {
+            if (!destItemInfo.supportsCreate()) {
                 updateState(STATE_NOT_ALLOWED);
                 return STATE_NOT_ALLOWED;
             }
@@ -350,7 +357,8 @@ public interface DragAndDropManager {
             }
 
             @State int state;
-            final @OpType int opType = calculateOpType(mClipData, destRoot);
+            final @OpType int opType = calculateOpType(
+                    mClipData, destItemInfo.getRoot().getUri());
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
                     state = STATE_COPY;
@@ -395,25 +403,26 @@ public interface DragAndDropManager {
         }
 
         @Override
-        public boolean drop(ClipData clipData, Object localState, RootInfo destRoot,
-                ActionHandler action, FileOperations.Callback callback) {
+        public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
+                ActionHandler action, FileOperations.Callback callback, List<Uri> invalidDest) {
+            final Uri rootDocUri = DocumentsContract.buildDocumentUri(
+                    itemInfo.getRoot().authority, itemInfo.getDocumentId());
 
-            final Uri rootDocUri =
-                    DocumentsContract.buildDocumentUri(destRoot.authority, destRoot.documentId);
-            if (!isValidDestination(destRoot, rootDocUri, mInvalidDest)) {
+            if (!isValidDestination(itemInfo, rootDocUri, invalidDest)) {
                 return false;
             }
 
             // Calculate the op type now just in case user releases Ctrl key while we're obtaining
             // root document in the background.
-            final @OpType int opType = calculateOpType(clipData, destRoot);
+            final @OpType int opType = calculateOpType(clipData, itemInfo.getRoot().getUri());
             action.getDocument(
-                    destRoot.authority,
-                    destRoot.documentId,
-                    destRoot.userId,
+                    itemInfo.getRoot().authority,
+                    itemInfo.getDocumentId(),
+                    itemInfo.getRoot().userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     (DocumentInfo doc) -> {
-                        dropOnRootDocument(clipData, localState, destRoot, doc, opType, callback);
+                        dropOnRootDocument(clipData, localState, itemInfo.getRoot(), doc,
+                                opType, callback);
                     });
 
             return true;
@@ -453,7 +462,7 @@ public interface DragAndDropManager {
                     clipData,
                     localState,
                     dstStack,
-                    calculateOpType(clipData, dstStack.getRoot()),
+                    calculateOpType(clipData, dstStack.getRoot().getUri()),
                     callback);
             return true;
         }
@@ -490,18 +499,22 @@ public interface DragAndDropManager {
             mDragInitiated = false;
         }
 
-        private @OpType int calculateOpType(ClipData clipData, RootInfo destRoot) {
+        @Override
+        public List<Uri> getInvalidDestinations() {
+            return mInvalidDest;
+        }
+
+        private @OpType int calculateOpType(ClipData clipData, Uri destUri) {
             if (mMustBeCopied) {
                 return FileOperationService.OPERATION_COPY;
             }
 
             final String srcRootUri = clipData.getDescription().getExtras().getString(SRC_ROOT_KEY);
-            final String destRootUri = destRoot.getUri().toString();
 
-            assert(srcRootUri != null);
-            assert(destRootUri != null);
+            assert (srcRootUri != null);
+            assert (destUri != null);
 
-            if (srcRootUri.equals(destRootUri)) {
+            if (srcRootUri.equals(destUri.toString())) {
                 return mIsCtrlPressed
                         ? FileOperationService.OPERATION_COPY
                         : FileOperationService.OPERATION_MOVE;
@@ -518,7 +531,8 @@ public interface DragAndDropManager {
             return isValidDestination(root, dst.derivedUri, mInvalidDest);
         }
 
-        private boolean isValidDestination(RootInfo root, Uri dstUri, List<Uri> invalidDest) {
+        private boolean isValidDestination(SidebarEntryItemInfo root, Uri dstUri,
+                List<Uri> invalidDest) {
             // We pass in the invalid destinations since this check can also be called from an
             // asynchronous task. This method needs to maintain the same invalid destination
             // values as when the asynchronous task starts, but mInvalidDest can be mutated in the

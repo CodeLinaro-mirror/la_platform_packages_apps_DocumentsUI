@@ -76,6 +76,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -815,7 +816,9 @@ public class ActionHandlerTest {
         mHandler.dropOn(event, TestProvidersAccess.DOWNLOADS);
         event.recycle();
 
-        Pair<ClipData, RootInfo> actual = mDragAndDropManager.dropOnRootHandler.getLastValue();
+        Pair<ClipData, SidebarEntryItemInfo> actual =
+                mDragAndDropManager.dropOnRootHandler.getLastValue();
+        assertNotNull(actual);
         assertSame(clipData, actual.first);
         assertSame(TestProvidersAccess.DOWNLOADS, actual.second);
     }

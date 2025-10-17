@@ -68,6 +68,11 @@ public interface ActionHandler {
     boolean dropOn(DragEvent event, RootInfo root);
 
     /**
+     * Drops documents on a shortcut sidebar entry.
+     */
+    boolean dropOn(DragEvent event, ShortcutInfo shortcut);
+
+    /**
      * Attempts to eject the identified root. Returns a boolean answer to listener.
      */
     void ejectRoot(RootInfo root, BooleanConsumer listener);

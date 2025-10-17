@@ -107,8 +107,7 @@ open class ShortcutItem(
     }
 
     override fun dropOn(event: DragEvent?): Boolean {
-        // TODO: b/441194501 - implement this view related method
-        return false
+        return actionHandler?.dropOn(event, shortcut) ?: false
     }
 
     override fun onActionClick(view: View) {
@@ -117,7 +116,6 @@ open class ShortcutItem(
     }
 
     override fun isDropTarget(): Boolean {
-        // TODO: b/441194501 - implement this view related method
-        return false
+        return itemInfo.supportsCreate()
     }
 }

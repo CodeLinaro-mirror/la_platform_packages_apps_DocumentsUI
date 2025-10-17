@@ -388,8 +388,9 @@ class JobPanelController(
                 LayoutInflater.from(activityContext)
                     .inflate(getRes(R.layout.job_progress_panel), /* root= */ null)
 
-            panel.findViewById<Button>(R.id.job_progress_panel_dismiss_all).setOnClickListener {
-                viewModel.dismissCompleted()
+            panel.findViewById<Button>(R.id.job_progress_panel_dismiss_all).apply {
+                isVisible = viewModel.anyDismissible.value
+                setOnClickListener { viewModel.dismissCompleted() }
             }
 
             val listAdapter = ProgressListAdapter(this)
@@ -462,6 +463,14 @@ class JobPanelController(
         launch {
             viewModel.menuIconState.collect { menuIconState ->
                 updateMenuItem(menuIconState, animate = true)
+            }
+        }
+        launch {
+            viewModel.anyDismissible.collect { dismissible ->
+                popup
+                    ?.contentView
+                    ?.findViewById<Button>(R.id.job_progress_panel_dismiss_all)
+                    ?.isVisible = dismissible
             }
         }
     }

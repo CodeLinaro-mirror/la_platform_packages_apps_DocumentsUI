@@ -97,6 +97,10 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         return DocumentsContract.buildDocumentUri(root.authority, parentDirDocumentId)
     }
 
+    override fun supportsCreate(): Boolean {
+        return root.supportsCreate()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false

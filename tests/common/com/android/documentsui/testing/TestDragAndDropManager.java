@@ -30,6 +30,8 @@ import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.dirlist.IconHelper;
 import com.android.documentsui.services.FileOperations;
 
@@ -38,7 +40,7 @@ import java.util.List;
 public class TestDragAndDropManager implements DragAndDropManager {
 
     public final TestEventListener<List<DocumentInfo>> startDragHandler = new TestEventListener<>();
-    public final TestEventHandler<Pair<ClipData, RootInfo>> dropOnRootHandler =
+    public final TestEventHandler<Pair<ClipData, SidebarEntryItemInfo>> dropOnRootHandler =
             new TestEventHandler<>();
     public final TestEventHandler<Pair<ClipData, DocumentStack>> dropOnDocumentHandler =
             new TestEventHandler<>();
@@ -47,8 +49,9 @@ public class TestDragAndDropManager implements DragAndDropManager {
     public void onKeyEvent(KeyEvent event) {}
 
     @Override
-    public void startDrag(View v, List<DocumentInfo> srcs, RootInfo root,  List<Uri> invalidDest,
-            SelectionDetails details, IconHelper iconHelper, @Nullable DocumentInfo parent) {
+    public void startDrag(View v, List<DocumentInfo> srcs, SidebarEntryItemInfo itemInfo,
+            List<Uri> invalidDest, SelectionDetails details, IconHelper iconHelper,
+            @Nullable DocumentInfo parent) {
         startDragHandler.accept(srcs);
     }
 
@@ -61,7 +64,8 @@ public class TestDragAndDropManager implements DragAndDropManager {
     public void updateStateToNotAllowed(View v) {}
 
     @Override
-    public int updateState(View v, RootInfo destRoot, @Nullable DocumentInfo destDoc) {
+    public int updateState(View v, SidebarEntryItemInfo destItemInfo,
+            @Nullable DocumentInfo destDoc) {
         return 0;
     }
 
@@ -74,8 +78,8 @@ public class TestDragAndDropManager implements DragAndDropManager {
     }
 
     @Override
-    public boolean drop(ClipData clipData, Object localState, RootInfo root, ActionHandler actions,
-            FileOperations.Callback callback) {
+    public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo root,
+            ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest) {
         return dropOnRootHandler.accept(Pair.create(clipData, root));
     }
 
@@ -87,4 +91,9 @@ public class TestDragAndDropManager implements DragAndDropManager {
 
     @Override
     public void dragEnded() {}
+
+    @Override
+    public List<Uri> getInvalidDestinations() {
+        return List.of();
+    }
 }
