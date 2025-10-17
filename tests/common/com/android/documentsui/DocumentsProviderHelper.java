@@ -24,12 +24,17 @@ import static android.provider.DocumentsContract.buildRootsUri;
 import static androidx.core.util.Preconditions.checkArgument;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
+import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
 
+import static org.junit.Assert.assertTrue;
+
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -63,7 +68,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides support for creation of documents in a test settings.
@@ -75,11 +82,34 @@ public class DocumentsProviderHelper {
     private final String mAuthority;
     private final ContentProviderClient mClient;
 
+    /** A helper constructor for local/internal storage (primary root) with the Download folder. */
+    public static DocumentsProviderHelper setupStorageAuthorityDocsHelper(Context context)
+            throws Exception {
+        // Create DocumentsProviderHelper to create files in Internal storage.
+        DocumentsProviderHelper storageDocsHelper =
+                new DocumentsProviderHelper(
+                        UserId.DEFAULT_USER, AUTHORITY_STORAGE, context, AUTHORITY_STORAGE);
+        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
+
+        // Create Download folder if it doesn't exist.
+        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
+
+        if (info == null) {
+            ContentResolver cr = context.getContentResolver();
+            Uri uri = storageDocsHelper.createFolder(primaryRoot.documentId, "Download");
+            info = DocumentInfo.fromUri(cr, uri, UserId.DEFAULT_USER);
+        }
+
+        assertTrue(info != null && info.isDirectory());
+        return storageDocsHelper;
+    }
+
     public DocumentsProviderHelper(UserId userId, String authority, Context context, String name) {
         checkArgument(!TextUtils.isEmpty(authority));
         mUserId = userId;
         mAuthority = authority;
         mClient = userId.getContentResolver(context).acquireContentProviderClient(name);
+        assertNotNull(mClient);
     }
 
     public RootInfo getRoot(String documentId) throws RemoteException {
@@ -465,5 +495,34 @@ public class DocumentsProviderHelper {
             }
         }
         return children;
+    }
+
+    /** Sends a message to the provider to remove all summaries. See {@link TestSummaryProvider}. */
+    public void clearDocumentSummaries() throws RemoteException {
+        Bundle configuration = new Bundle();
+        configuration.putSerializable(
+                TestSummaryProvider.EXTRA_SUMMARIES, new HashMap<String, String>());
+        configure(null, configuration);
+    }
+
+    /**
+     * Sends a message to the provider to prepare summaries for the tests. See {@link
+     * TestSummaryProvider}.
+     */
+    public void setProviderSummaries(Map<String, String> summaries) throws RemoteException {
+        Bundle configuration = new Bundle();
+        configuration.putSerializable(
+                TestSummaryProvider.EXTRA_SUMMARIES, new HashMap<>(summaries));
+        configure(null, configuration);
+    }
+
+    /**
+     * Sends a message to the provider to mark the provider's root as empty (or not empty). See
+     * {@link TestSummaryProvider}.
+     */
+    public void setSummaryProviderIsEmpty(boolean isEmpty) throws RemoteException {
+        Bundle configuration = new Bundle();
+        configuration.putBoolean(TestSummaryProvider.EXTRA_IS_EMPTY, isEmpty);
+        configure(null, configuration);
     }
 }

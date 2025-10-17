@@ -21,7 +21,6 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Root
 import android.util.Log
-import com.android.documentsui.R
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,11 +48,14 @@ enum class SummaryState {
  * This class is responsible for determining if the summary provider is enabled and notifying
  * listeners of any state changes.
  */
-class SummaryProviderManager(private val context: Context, private val scope: CoroutineScope) {
+class SummaryProviderManager(
+    private val context: Context,
+    private val scope: CoroutineScope,
+    val authorityUri: Uri?,
+) {
     private val _state = MutableStateFlow(SummaryState.INITIALIZING)
     val state: StateFlow<SummaryState> = _state
 
-    val authorityUri: Uri? = Uri.parse(context.getString(R.string.local_summary_provider))
     val authority: String? = authorityUri?.authority
 
     private var contentObserver: ContentObserver? = null
@@ -61,6 +63,7 @@ class SummaryProviderManager(private val context: Context, private val scope: Co
 
     /** Starts monitoring the summary provider's state. */
     fun start() {
+        Log.d(TAG, "Authority: $authority - $authorityUri")
         if (authority.isNullOrEmpty() || authorityUri == Uri.EMPTY) {
             _state.value = SummaryState.DISABLED
             return

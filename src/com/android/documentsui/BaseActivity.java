@@ -208,8 +208,26 @@ public abstract class BaseActivity
         mInjector = getInjector();
         if (isUseFileSummaryEnabled()) {
             mInjector.setSummaryProviderManager(
-                    new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this)));
+                    new SummaryProviderManager(
+                            this,
+                            LifecycleOwnerKt.getLifecycleScope(this),
+                            Uri.parse(getString(R.string.local_summary_provider))));
         }
+    }
+
+    /**
+     * Sets the local summary provider and initializes a new SummaryProviderManager.
+     *
+     * @param uri The URI of the local summary provider, the one emulated from the resources.
+     */
+    @VisibleForTesting
+    public void setLocalSummaryProvider(Uri uri) {
+        Log.d(TAG, "Setting local summary provider: " + uri);
+        if (mInjector.getSummaryProviderManager() != null) {
+            mInjector.getSummaryProviderManager().stop();
+        }
+        mInjector.setSummaryProviderManager(
+                new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this), uri));
     }
 
     @CallSuper
@@ -1250,9 +1268,8 @@ public abstract class BaseActivity
         RootInfo root = mState.stack.getRoot();
         if (root != null) {
             return root;
-        } else {
-            return mProviders.getRecentsRoot(getSelectedUser());
         }
+        return mProviders.getRecentsRoot(getSelectedUser());
     }
 
     /**

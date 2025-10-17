@@ -25,7 +25,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.android.documentsui.DocumentsApplication.getProvidersCache;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
-import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
@@ -38,7 +37,6 @@ import static org.junit.Assert.assertTrue;
 
 import android.annotation.Nullable;
 import android.app.Instrumentation;
-import android.content.ContentResolver;
 import android.net.Uri;
 import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
@@ -54,7 +52,6 @@ import androidx.test.uiautomator.Until;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
-import com.android.documentsui.base.UserId;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
@@ -130,23 +127,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     private DocumentsProviderHelper setupStorageAuthorityDocsHelper() throws Exception {
-        // Create DocumentsProviderHelper to create files in Internal storage.
-        DocumentsProviderHelper storageDocsHelper =
-                new DocumentsProviderHelper(
-                        UserId.DEFAULT_USER, AUTHORITY_STORAGE, context, AUTHORITY_STORAGE);
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-
-        // Create Download folder if it doesn't exist.
-        DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
-
-        if (info == null) {
-            ContentResolver cr = context.getContentResolver();
-            Uri uri = storageDocsHelper.createFolder(primaryRoot.documentId, "Download");
-            info = DocumentInfo.fromUri(cr, uri, UserId.DEFAULT_USER);
-        }
-
-        assertTrue(info != null && info.isDirectory());
-        return storageDocsHelper;
+        return DocumentsProviderHelper.setupStorageAuthorityDocsHelper(context);
     }
 
     private void cleanupFile(String fileName, String primaryRootTitle,
