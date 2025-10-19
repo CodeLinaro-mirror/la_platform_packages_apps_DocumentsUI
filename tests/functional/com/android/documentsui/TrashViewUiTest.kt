@@ -131,6 +131,91 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertDocumentsAbsent(*trashedFileNames.toTypedArray())
     }
 
+    /** Tests that permanently deleting selected items from the Trash view works correctly. */
+    @Test
+    fun testTrashPermanentlyDeleteItem() {
+        val trashedFileNames = moveFilesToTrash()
+        bots.roots.openRoot(TRASH_ROOT.title)
+
+        // First, check that the trashed files are visible in the UI.
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
+
+        // Select the first two files to permanently delete.
+        val filesToPermanentlyDelete = trashedFileNames.take(2)
+        filesToPermanentlyDelete.forEachIndexed { index, fileName ->
+            bots.directory.selectDocument(fileName, index + 1)
+        }
+
+        // Click the permanent delete button in the toolbar.
+        bots.main.clickDelete()
+        device!!.waitForIdle()
+
+        // Confirm the permanent delete dialog.
+        bots.main.clickDialogOkButton(false)
+        device!!.waitForIdle()
+
+        // Verify that the selected files are now gone.
+        bots.directory.assertDocumentsAbsent(*filesToPermanentlyDelete.toTypedArray())
+
+        // Verify that the remaining files are still in the trash.
+        val remainingFiles = trashedFileNames.drop(2)
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
+    }
+
+    /** Tests permanently deleting items from within a trashed folder. */
+    @Test
+    fun testPermanentlyDeleteItemsFromTrashedFolder() {
+        val trashedFolderName = moveFolderToTrash()
+        bots.roots.openRoot(TRASH_ROOT.title)
+
+        // First, check that the trashed folder is visible in the UI.
+        bots.directory.assertDocumentsPresent(trashedFolderName)
+
+        // Open the trashed folder.
+        bots.directory.openDocument(trashedFolderName)
+        device!!.waitForIdle()
+
+        val dirDocumentId =
+            mDocsHelper!!
+                .getAllTrashItems()
+                .first { it.displayName == trashedFolderName }
+                .documentId
+        val documents = mDocsHelper!!.listChildren(dirDocumentId)
+        val trashedFileNames = documents.map { it.displayName }
+        assert(trashedFileNames.size == TEST_FILE_COUNT) {
+            "Expected $TEST_FILE_COUNT files in the folder, but found ${trashedFileNames.size}"
+        }
+
+        // Check that the files are visible inside the folder.
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
+
+        // Select the first two files to permanently delete.
+        val filesToPermanentlyDelete = trashedFileNames.take(2)
+        filesToPermanentlyDelete.forEachIndexed { index, fileName ->
+            bots.directory.selectDocument(fileName, index + 1)
+        }
+
+        // Click the permanent delete button in the toolbar.
+        bots.main.clickDelete()
+        device!!.waitForIdle()
+
+        // Confirm the permanent delete dialog.
+        bots.main.clickDialogOkButton(false)
+        device!!.waitForIdle()
+
+        // Verify that the selected files are now gone from the folder.
+        bots.directory.assertDocumentsAbsent(*filesToPermanentlyDelete.toTypedArray())
+
+        // Verify that the remaining files are still in the folder.
+        val remainingFiles = trashedFileNames.drop(2)
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
+
+        // Go back to the trash root and verify the folder is still there.
+        device!!.pressBack()
+        device!!.waitForIdle()
+        bots.directory.assertDocumentsPresent(trashedFolderName)
+    }
+
     /**
      * Navigates into the test directory, selects a subset of files, and moves them to the trash.
      *
@@ -160,6 +245,27 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
 
         return filesToTrash
+    }
+
+    /**
+     * Moves the test directory and all its contents to the trash.
+     *
+     * @return The name of the folder moved to the trash.
+     */
+    @Throws(Exception::class)
+    private fun moveFolderToTrash(): String {
+        bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
+
+        // Select and move the entire directory to the trash.
+        bots.directory.selectDocument(TestFilesRule.DIR_NAME_1, 1)
+        bots.main.clickToolbarItem(R.id.action_menu_move_to_trash)
+
+        bots.directory.assertDocumentsAbsent(TestFilesRule.DIR_NAME_1)
+
+        device!!.waitForIdle()
+
+        return TestFilesRule.DIR_NAME_1
     }
 
     companion object {
