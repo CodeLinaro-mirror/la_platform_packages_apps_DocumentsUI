@@ -217,28 +217,21 @@ public class TestProvidersAccess implements ProvidersAccess {
         LOCAL_SEARCH.derivedType = RootInfo.TYPE_LOCAL;
         LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY;
 
-        HOME_SCREEN_SHORTCUT = new ShortcutInfo(
-                HOME_SCREEN_ICON_RES_ID,
-                Providers.HOME_SCREEN_SHORTCUT_TITLE,
-                EXTERNALSTORAGE,
-                "primary:"
-        );
+        HOME_SCREEN_SHORTCUT =
+                new ShortcutInfo(
+                        EXTERNALSTORAGE,
+                        "primary:",
+                        Providers.HOME_SCREEN_SHORTCUT_TITLE,
+                        HOME_SCREEN_ICON_RES_ID);
         HOME_SCREEN_SHORTCUT.setDocumentId(HOME_SCREEN_DOC_ID);
 
-        LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
-                LIVE_IMAGES_ICON_RES_ID,
-                "Live images",
-                IMAGE,
-                "something/to/image:"
-        );
+        LIVE_IMAGES_SHORTCUT =
+                new ShortcutInfo(
+                        IMAGE, "something/to/image:", "Live images", LIVE_IMAGES_ICON_RES_ID);
         LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
 
-        TEST_SHORTCUT = new ShortcutInfo(
-                TEST_ICON_RES_ID,
-                "shortcut in pepper",
-                PEPPER,
-                "some parent dir"
-        );
+        TEST_SHORTCUT =
+                new ShortcutInfo(PEPPER, "some parent dir", "shortcut in pepper", TEST_ICON_RES_ID);
         TEST_SHORTCUT.setDocumentId(TEST_SHORTCUT_DOC_ID);
     }
 
@@ -302,12 +295,9 @@ public class TestProvidersAccess implements ProvidersAccess {
                     | Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_IS_CHILD;
 
-            LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
-                LIVE_IMAGES_ICON_RES_ID,
-                "Live images",
-                IMAGE,
-                "something/to/image:"
-            );
+            LIVE_IMAGES_SHORTCUT =
+                    new ShortcutInfo(
+                            IMAGE, "something/to/image:", "Live images", LIVE_IMAGES_ICON_RES_ID);
             LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
         }
     }

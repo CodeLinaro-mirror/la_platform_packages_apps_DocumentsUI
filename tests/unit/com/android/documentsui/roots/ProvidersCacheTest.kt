@@ -180,10 +180,10 @@ class ProvidersCacheTest {
         val expected: Collection<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
-                    R.drawable.ic_root_homescreen,
-                    TEST_TITLE,
                     docsProviderRoot,
                     TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    R.drawable.ic_root_homescreen,
                 )
             )
         assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
@@ -224,10 +224,10 @@ class ProvidersCacheTest {
         val expected1: Collection<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
-                    R.drawable.ic_root_homescreen,
-                    TEST_TITLE,
                     docsProviderRoot1,
                     TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    R.drawable.ic_root_homescreen,
                 )
             )
         assertEquals(expected1, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
@@ -235,10 +235,10 @@ class ProvidersCacheTest {
         val expected2: Collection<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
-                    R.drawable.ic_root_homescreen,
-                    TEST_TITLE,
                     docsProviderRoot2,
                     TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    R.drawable.ic_root_homescreen,
                 )
             )
         assertEquals(expected2, providers.loadShortcutsForUser(UserId.of(100)))

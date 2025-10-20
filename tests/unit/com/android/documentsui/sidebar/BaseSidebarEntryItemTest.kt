@@ -51,7 +51,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "", false)
         val shortcutItem2 = ShortcutItem(shortcutInfo, actionHandler, "", false)
@@ -67,7 +67,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "", false)
         val shortcutItem2 = ShortcutItem(shortcutInfo, actionHandler, "", true)
@@ -83,7 +83,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "name1", false)
         val shortcutItem2 = ShortcutItem(shortcutInfo, actionHandler, "name2", false)
@@ -99,7 +99,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val shortcutItem = ShortcutItem(shortcutInfo, null, "", false)
         val shortcutItem2 = ShortcutItem(shortcutInfo, actionHandler, "", false)
@@ -115,9 +115,9 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
-        val shortcutInfo2 = ShortcutInfo(0, "diff title", rootInfo, "diff parent document id")
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "diff parent document id", "diff title", 0)
 
         val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "", true)
         val shortcutItem2 = ShortcutItem(shortcutInfo2, actionHandler, "", true)
@@ -133,7 +133,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "", false)
         val rootItem = RootItem(rootInfo, actionHandler, false)
@@ -149,7 +149,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
         val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
@@ -165,7 +165,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
         val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "", true)
@@ -181,7 +181,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "name1", false)
         val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "name2", false)
@@ -197,7 +197,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val item1 = NavRailShortcutItem(shortcutInfo, null, "", false)
         val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
@@ -213,9 +213,9 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
-        val shortcutInfo2 = ShortcutInfo(0, "diff title", rootInfo, "diff parent document id")
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "diff parent document id", "diff title", 0)
 
         val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "", true)
         val item2 = NavRailShortcutItem(shortcutInfo2, actionHandler, "", true)
@@ -231,7 +231,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val navRailShortcutItem = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
         val rootItem = RootItem(rootInfo, actionHandler, false)
@@ -247,7 +247,7 @@ class BaseSidebarEntryItemTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         val navRailShortcutItem = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
         val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "", false)

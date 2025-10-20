@@ -41,9 +41,9 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
-        val shortcutInfo2 = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
         assertEquals(shortcutInfo, shortcutInfo2)
     }
@@ -59,9 +59,9 @@ class ShortcutInfoTest {
 
         val copyRootInfo = RootInfo.copyRootInfo(rootInfo)
         copyRootInfo.userId = UserId.of(200)
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
 
-        val shortcutInfo2 = ShortcutInfo(0, "title", copyRootInfo, "parentDocumentId")
+        val shortcutInfo2 = ShortcutInfo(copyRootInfo, "parentDocumentId", "title", 0)
 
         assertNotEquals(shortcutInfo, shortcutInfo2)
     }
@@ -74,7 +74,7 @@ class ShortcutInfoTest {
                 authority = "authority1"
                 rootId = "root1"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo1, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo1, "parentDocumentId", "title", 0)
 
         val rootInfo2 =
             RootInfo().apply {
@@ -82,7 +82,7 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root2"
             }
-        val shortcutInfo2 = ShortcutInfo(0, "title", rootInfo2, "parentDocumentId")
+        val shortcutInfo2 = ShortcutInfo(rootInfo2, "parentDocumentId", "title", 0)
 
         assertNotEquals(shortcutInfo, shortcutInfo2)
     }
@@ -95,8 +95,8 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
-        val shortcutInfo2 = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
         // Uri is determined by the document id
         shortcutInfo.documentId = "documentId"
         shortcutInfo2.documentId = "documentId2"
@@ -112,7 +112,7 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
         val expected = DocumentsContract.buildDocumentUri(rootInfo.authority, "some doc id")
 
         // Uri is determined by the document id
@@ -129,7 +129,7 @@ class ShortcutInfoTest {
                 authority = "aaa"
                 rootId = "rrr"
             }
-        val shortcutInfo = ShortcutInfo(0, "ttt", rootInfo, "ppp")
+        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", 0)
         shortcutInfo.documentId = "ddd"
 
         val expected =
@@ -153,7 +153,7 @@ class ShortcutInfoTest {
                 authority = "com.android.externalstorage.documents"
                 rootId = "primary"
             }
-        val shortcutInfo = ShortcutInfo(0, "Home screen", rootInfo, "primary:")
+        val shortcutInfo = ShortcutInfo(rootInfo, "primary:", "Home screen", 0)
         assertEquals(SidebarEntryItemInfo.TYPE_HOME_SCREEN, shortcutInfo.derivedType)
     }
 
@@ -165,8 +165,7 @@ class ShortcutInfoTest {
                 authority = "aaa"
                 rootId = "rrr"
             }
-        val shortcutInfo = ShortcutInfo(0, "ttt", rootInfo, "ppp")
-        assertEquals(SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER, shortcutInfo.derivedType)
+        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", 0)
     }
 
     @Test
@@ -177,7 +176,7 @@ class ShortcutInfoTest {
                 authority = "aaa"
                 rootId = "rrr"
             }
-        val shortcutInfo = ShortcutInfo(0, "ttt", rootInfo, "ppp")
+        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", 0)
 
         Parcelables.assertParcelable(
             shortcutInfo,

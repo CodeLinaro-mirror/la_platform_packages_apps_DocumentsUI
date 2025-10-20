@@ -31,17 +31,17 @@ import java.io.DataOutputStream
 import java.util.Objects
 
 class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
-    constructor(icon: Int, title: String?, root: RootInfo, parentDirDocumentId: String?) : this() {
-        this.icon = icon
-        this.title = title
+    constructor(root: RootInfo, parentDirDocumentId: String?, title: String?, icon: Int) : this() {
         this.root = root
         this.parentDirDocumentId = parentDirDocumentId
+        this.title = title
+        this.icon = icon
     }
 
-    var icon: Int = ShortcutResourceValues.INVALID_ICON_REF
-    override var title: String? = null
     override var root: RootInfo = RootInfo()
     var parentDirDocumentId: String? = null
+    override var title: String? = null
+    var icon: Int = ShortcutResourceValues.INVALID_ICON_REF
     override var documentId: String? = null
     override val uri: Uri?
         get() = DocumentsContract.buildDocumentUri(root.authority, documentId)
