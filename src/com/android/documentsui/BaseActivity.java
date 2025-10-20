@@ -66,6 +66,7 @@ import com.android.documentsui.NavigationViewManager.Breadcrumb;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
@@ -137,6 +138,8 @@ public abstract class BaseActivity
     private boolean mHasQueryContentFromIntent;
 
     private PreferencesMonitor mPreferencesMonitor;
+
+    private NetworkMonitor mNetworkMonitor;
 
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
@@ -508,6 +511,9 @@ public abstract class BaseActivity
                 this::onPreferenceChanged);
         mPreferencesMonitor.start();
 
+        mNetworkMonitor = NetworkMonitor.create(getApplicationContext());
+        mInjector.networkMonitor = mNetworkMonitor;
+
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
         updateRecentsSetting();
@@ -627,6 +633,7 @@ public abstract class BaseActivity
         mRootsMonitor.stop();
         mPreferencesMonitor.stop();
         mSortController.destroy();
+        mNetworkMonitor.teardown();
         DocumentsApplication.invalidateUserManagerState(this);
         super.onDestroy();
     }

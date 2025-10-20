@@ -25,6 +25,7 @@ import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
@@ -564,6 +565,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mItemDecorationInvalidator = null;
         }
 
+        if (isCloudFeaturesFlagEnabled()) {
+            mInjector.networkMonitor.removeNetworkListener(mAdapter.getNetworkListener());
+        }
+
         super.onDestroyView();
     }
 
@@ -596,6 +601,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 mState.configStore);
 
         mAdapter = getModelBackedDocumentsAdapter();
+
+        if (isCloudFeaturesFlagEnabled()) {
+            mInjector.networkMonitor.addNetworkListener(mAdapter.getNetworkListener());
+        }
 
         mRecView.setAdapter(mAdapter);
 
@@ -1913,6 +1922,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean isSelected(String id) {
             return mSelectionMgr.isSelected(id);
+        }
+
+        @Override
+        public boolean isOnline() {
+            if (!isCloudFeaturesFlagEnabled()) {
+                return true;
+            }
+            return mInjector.networkMonitor.isOnline();
         }
 
         @Override
