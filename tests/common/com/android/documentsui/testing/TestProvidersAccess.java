@@ -73,6 +73,9 @@ public class TestProvidersAccess implements ProvidersAccess {
     private static final String HOME_SCREEN_DOC_ID = "primary%3AHome screen";
     public static final String LIVE_IMAGES_DOC_ID = "images_root%3ALive images";
     public static final String TEST_SHORTCUT_DOC_ID = "pepper%3ATest Shortcut";
+    public static final String HOME_SCREEN_GERMAN_TITLE = "Startbildschirm";
+    public static final String LIVE_IMAGES_GERMAN_TITLE = "Live-Bilder";
+    public static final String TEST_SHORTCUT_GERMAN_TITLE = "Testverknüpfung";
 
     static {
         UserId userId = TestProvidersAccess.USER_ID;
@@ -222,16 +225,26 @@ public class TestProvidersAccess implements ProvidersAccess {
                         EXTERNALSTORAGE,
                         "primary:",
                         Providers.HOME_SCREEN_SHORTCUT_TITLE,
+                        Providers.HOME_SCREEN_SHORTCUT_TITLE,
                         HOME_SCREEN_ICON_RES_ID);
         HOME_SCREEN_SHORTCUT.setDocumentId(HOME_SCREEN_DOC_ID);
 
         LIVE_IMAGES_SHORTCUT =
                 new ShortcutInfo(
-                        IMAGE, "something/to/image:", "Live images", LIVE_IMAGES_ICON_RES_ID);
+                        IMAGE,
+                        "something/to/image:",
+                        "Live images",
+                        "Live images",
+                        LIVE_IMAGES_ICON_RES_ID);
         LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
 
         TEST_SHORTCUT =
-                new ShortcutInfo(PEPPER, "some parent dir", "shortcut in pepper", TEST_ICON_RES_ID);
+                new ShortcutInfo(
+                        PEPPER,
+                        "some parent dir",
+                        "shortcut in pepper",
+                        "shortcut in pepper",
+                        TEST_ICON_RES_ID);
         TEST_SHORTCUT.setDocumentId(TEST_SHORTCUT_DOC_ID);
     }
 
@@ -291,13 +304,16 @@ public class TestProvidersAccess implements ProvidersAccess {
             MTP_ROOT.rootId = Providers.ROOT_ID_DOCUMENTS;
             MTP_ROOT.title = "MTP";
             MTP_ROOT.derivedType = SidebarEntryItemInfo.TYPE_MTP;
-            MTP_ROOT.flags = Root.FLAG_SUPPORTS_CREATE
-                    | Root.FLAG_LOCAL_ONLY
-                    | Root.FLAG_SUPPORTS_IS_CHILD;
+            MTP_ROOT.flags =
+                    Root.FLAG_SUPPORTS_CREATE | Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_IS_CHILD;
 
             LIVE_IMAGES_SHORTCUT =
                     new ShortcutInfo(
-                            IMAGE, "something/to/image:", "Live images", LIVE_IMAGES_ICON_RES_ID);
+                            IMAGE,
+                            "something/to/image:",
+                            "Live images",
+                            "Live images",
+                            LIVE_IMAGES_ICON_RES_ID);
             LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
         }
     }

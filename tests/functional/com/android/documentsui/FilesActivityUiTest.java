@@ -408,7 +408,8 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             // Create the shortcut folders if they don't exist yet. In the actual code, this is
             // done by the loaders but we are not calling the loaders in the tests.
             shortcut.setDocumentId(getOrCreateFolderDocId(
-                    storageDocsHelper, shortcut.getParentDirDocumentId(), shortcut.getTitle()));
+                    storageDocsHelper, shortcut.getParentDirDocumentId(),
+                    shortcut.getFolderTitle()));
         }
 
         mActivityScenario.onActivity(activity -> {
@@ -437,13 +438,14 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
         RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
         // Set up the shortcut resources and pre create the shortcut folder.
-        ShortcutResourceValues resource = new ShortcutResourceValues(
-                primaryRoot.authority,
-                primaryRoot.rootId,
-                primaryRoot.documentId,
-                SHORTCUT_ID,
-                R.drawable.ic_root_homescreen
-        );
+        ShortcutResourceValues resource =
+                new ShortcutResourceValues(
+                        primaryRoot.authority,
+                        primaryRoot.rootId,
+                        primaryRoot.documentId,
+                        SHORTCUT_ID,
+                        SHORTCUT_ID,
+                        R.drawable.ic_root_homescreen);
         setUpShortcuts(List.of(resource), storageDocsHelper);
 
         EspressoBotsKt.openRoot(context, SHORTCUT_ID, getActivityLayoutId());
@@ -486,13 +488,15 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                 getOrCreateFolderDocId(storageDocsHelper, folder1Id, "Folder 2");
         // Set up the shortcut resources and pre create the shortcut folder.
         // Mock the resource values for shortcuts
-        List<ShortcutResourceValues> resources = List.of(
-                new ShortcutResourceValues(
-                        primaryRoot.authority,
-                        primaryRoot.rootId,
-                        folder2Id,
-                        "Folder 3",
-                        R.drawable.ic_root_smartphone));
+        List<ShortcutResourceValues> resources =
+                List.of(
+                        new ShortcutResourceValues(
+                                primaryRoot.authority,
+                                primaryRoot.rootId,
+                                folder2Id,
+                                "Folder 3",
+                                "Folder 3",
+                                R.drawable.ic_root_smartphone));
         setUpShortcuts(resources, storageDocsHelper);
 
         EspressoBotsKt.openRoot(context, "Folder 3", getActivityLayoutId());
@@ -522,13 +526,15 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         getOrCreateFolderDocId(storageDocsHelper, folder3Id, "Folder 4");
         // Set up the shortcut resources and pre create the shortcut folder.
         // Mock the resource values for shortcuts
-        List<ShortcutResourceValues> resources = List.of(
-                new ShortcutResourceValues(
-                        primaryRoot.authority,
-                        primaryRoot.rootId,
-                        folder1Id,
-                        "Folder 2",
-                        R.drawable.ic_root_smartphone));
+        List<ShortcutResourceValues> resources =
+                List.of(
+                        new ShortcutResourceValues(
+                                primaryRoot.authority,
+                                primaryRoot.rootId,
+                                folder1Id,
+                                "Folder 2",
+                                "Folder 2",
+                                R.drawable.ic_root_smartphone));
         setUpShortcuts(resources, storageDocsHelper);
 
         // We will have a chain of folders like so: storage -> 1 -> 2 (shortcut) -> 3 -> 4
@@ -573,19 +579,22 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                 getOrCreateFolderDocId(storageDocsHelper, folderAId, "Folder B");
         // Set up the shortcut resources and pre create the shortcut folder.
         // Mock the resource values for shortcuts
-        List<ShortcutResourceValues> resources = List.of(
-                new ShortcutResourceValues(
-                        primaryRoot.authority,
-                        primaryRoot.rootId,
-                        folderBId,
-                        "Folder C",
-                        R.drawable.ic_root_homescreen),
-                new ShortcutResourceValues(
-                        primaryRoot.authority,
-                        primaryRoot.rootId,
-                        folder2Id,
-                        "Folder 3",
-                R.drawable.ic_root_smartphone));
+        List<ShortcutResourceValues> resources =
+                List.of(
+                        new ShortcutResourceValues(
+                                primaryRoot.authority,
+                                primaryRoot.rootId,
+                                folderBId,
+                                "Folder C",
+                                "Folder C",
+                                R.drawable.ic_root_homescreen),
+                        new ShortcutResourceValues(
+                                primaryRoot.authority,
+                                primaryRoot.rootId,
+                                folder2Id,
+                                "Folder 3",
+                                "Folder 3",
+                                R.drawable.ic_root_smartphone));
         setUpShortcuts(resources, storageDocsHelper);
 
         EspressoBotsKt.openRoot(context, "Folder 3", getActivityLayoutId());

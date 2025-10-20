@@ -41,11 +41,26 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", "title", 0)
 
-        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", "title", 0)
 
         assertEquals(shortcutInfo, shortcutInfo2)
+    }
+
+    @Test
+    fun testNotEqualsDiffLocalizedTitle() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", "aaaa", 0)
+
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", "bbbb", 0)
+
+        assertNotEquals(shortcutInfo, shortcutInfo2)
     }
 
     @Test
@@ -59,9 +74,9 @@ class ShortcutInfoTest {
 
         val copyRootInfo = RootInfo.copyRootInfo(rootInfo)
         copyRootInfo.userId = UserId.of(200)
-        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", "title", 0)
 
-        val shortcutInfo2 = ShortcutInfo(copyRootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo2 = ShortcutInfo(copyRootInfo, "parentDocumentId", "title", "title", 0)
 
         assertNotEquals(shortcutInfo, shortcutInfo2)
     }
@@ -74,7 +89,7 @@ class ShortcutInfoTest {
                 authority = "authority1"
                 rootId = "root1"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo1, "parentDocumentId", "title", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo1, "parentDocumentId", "title", "title", 0)
 
         val rootInfo2 =
             RootInfo().apply {
@@ -82,7 +97,7 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root2"
             }
-        val shortcutInfo2 = ShortcutInfo(rootInfo2, "parentDocumentId", "title", 0)
+        val shortcutInfo2 = ShortcutInfo(rootInfo2, "parentDocumentId", "title", "title", 0)
 
         assertNotEquals(shortcutInfo, shortcutInfo2)
     }
@@ -95,8 +110,8 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
-        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", "title", 0)
+        val shortcutInfo2 = ShortcutInfo(rootInfo, "parentDocumentId", "title", "title", 0)
         // Uri is determined by the document id
         shortcutInfo.documentId = "documentId"
         shortcutInfo2.documentId = "documentId2"
@@ -112,7 +127,7 @@ class ShortcutInfoTest {
                 authority = "authority"
                 rootId = "root"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "parentDocumentId", "title", "title", 0)
         val expected = DocumentsContract.buildDocumentUri(rootInfo.authority, "some doc id")
 
         // Uri is determined by the document id
@@ -129,11 +144,11 @@ class ShortcutInfoTest {
                 authority = "aaa"
                 rootId = "rrr"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", "ttt", 0)
         shortcutInfo.documentId = "ddd"
 
         val expected =
-            "ShortcutInfo{title=ttt, documentId=ddd" +
+            "ShortcutInfo{title=ttt, folderTitle=ttt, documentId=ddd" +
                 ", root=Root{userId=" +
                 UserId.of(100) +
                 ", authority=aaa, rootId=rrr, title=null, isUsb=false, isSd=false, isMtp=false" +
@@ -153,7 +168,7 @@ class ShortcutInfoTest {
                 authority = "com.android.externalstorage.documents"
                 rootId = "primary"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "primary:", "Home screen", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "primary:", "Home screen", "Home screen", 0)
         assertEquals(SidebarEntryItemInfo.TYPE_HOME_SCREEN, shortcutInfo.derivedType)
     }
 
@@ -165,7 +180,8 @@ class ShortcutInfoTest {
                 authority = "aaa"
                 rootId = "rrr"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", "ttt", 0)
+        assertEquals(SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER, shortcutInfo.derivedType)
     }
 
     @Test
@@ -176,7 +192,7 @@ class ShortcutInfoTest {
                 authority = "aaa"
                 rootId = "rrr"
             }
-        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", 0)
+        val shortcutInfo = ShortcutInfo(rootInfo, "ppp", "ttt", "ttt", 0)
 
         Parcelables.assertParcelable(
             shortcutInfo,

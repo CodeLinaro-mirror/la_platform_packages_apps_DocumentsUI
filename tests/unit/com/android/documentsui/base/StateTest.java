@@ -176,7 +176,7 @@ public class StateTest {
         root.userId = UserId.of(100);
         root.authority = "aaa";
         root.rootId = "rrr";
-        mState.shortcut = new ShortcutInfo(root, "ppp", "ttt", 10);
+        mState.shortcut = new ShortcutInfo(root, "ppp", "ttt", "lll", 10);
 
         Parcelables.assertParcelable(mState, 0,
             (State left, State right) -> Objects.equals(left.toString(), right.toString()));

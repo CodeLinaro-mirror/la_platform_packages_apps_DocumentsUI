@@ -49,6 +49,7 @@ class ProvidersCacheTest {
     private lateinit var rootIdsArray: Array<String>
     private lateinit var parentDocIdsArray: Array<String>
     private lateinit var titlesArray: Array<String>
+    private lateinit var localizedTitlesArray: Array<String>
 
     @Mock private lateinit var iconTypedArray: TypedArray
     private val ICON_DEFAULT_RES_ID: Int = 10
@@ -65,6 +66,7 @@ class ProvidersCacheTest {
         rootIdsArray = arrayOf("root one", "root two")
         parentDocIdsArray = arrayOf("parent one", "parent two")
         titlesArray = arrayOf("title A", "title B")
+        localizedTitlesArray = arrayOf("localized A", "localized B")
         whenever(context.getResources()).thenReturn(resources)
         whenever(resources.obtainTypedArray(R.array.shortcut_icons)).thenReturn(iconTypedArray)
         whenever(iconTypedArray.getResourceId(anyInt(), anyInt())).thenReturn(ICON_DEFAULT_RES_ID)
@@ -83,6 +85,8 @@ class ProvidersCacheTest {
             .thenReturn(arrayOf(parentDocIdsArray[0]))
         whenever(resources.getStringArray(R.array.shortcut_titles))
             .thenReturn(arrayOf(titlesArray[0]))
+        whenever(resources.getStringArray(R.array.shortcut_localized_titles))
+            .thenReturn(arrayOf(localizedTitlesArray[0]))
         whenever(iconTypedArray.length()).thenReturn(1)
 
         val expected: List<ShortcutResourceValues> =
@@ -91,6 +95,7 @@ class ProvidersCacheTest {
                     authoritiesArray[0],
                     rootIdsArray[0],
                     parentDocIdsArray[0],
+                    titlesArray[0],
                     titlesArray[0],
                     ICON_DEFAULT_RES_ID,
                 )
@@ -110,6 +115,8 @@ class ProvidersCacheTest {
         whenever(resources.getStringArray(R.array.shortcut_parent_doc_ids))
             .thenReturn(parentDocIdsArray)
         whenever(resources.getStringArray(R.array.shortcut_titles)).thenReturn(titlesArray)
+        whenever(resources.getStringArray(R.array.shortcut_localized_titles))
+            .thenReturn(localizedTitlesArray)
         whenever(iconTypedArray.length()).thenReturn(2)
 
         val shortcutResources1 =
@@ -118,6 +125,7 @@ class ProvidersCacheTest {
                 rootIdsArray[0],
                 parentDocIdsArray[0],
                 titlesArray[0],
+                titlesArray[0],
                 ICON_DEFAULT_RES_ID,
             )
         val shortcutResources2 =
@@ -125,6 +133,7 @@ class ProvidersCacheTest {
                 authoritiesArray[1],
                 rootIdsArray[1],
                 parentDocIdsArray[1],
+                titlesArray[1],
                 titlesArray[1],
                 ICON_DEFAULT_RES_ID,
             )
@@ -146,6 +155,8 @@ class ProvidersCacheTest {
         whenever(resources.getStringArray(R.array.shortcut_parent_doc_ids))
             .thenReturn(parentDocIdsArray)
         whenever(resources.getStringArray(R.array.shortcut_titles)).thenReturn(titlesArray)
+        whenever(resources.getStringArray(R.array.shortcut_localized_titles))
+            .thenReturn(localizedTitlesArray)
         whenever(iconTypedArray.length()).thenReturn(2)
 
         val expected: List<ShortcutResourceValues> = listOf()
@@ -170,6 +181,7 @@ class ProvidersCacheTest {
                     TEST_ROOT,
                     TEST_PARENT_DOCID,
                     TEST_TITLE,
+                    TEST_TITLE,
                     ICON_DEFAULT_RES_ID,
                 )
             )
@@ -182,6 +194,7 @@ class ProvidersCacheTest {
                 ShortcutInfo(
                     docsProviderRoot,
                     TEST_PARENT_DOCID,
+                    TEST_TITLE,
                     TEST_TITLE,
                     R.drawable.ic_root_homescreen,
                 )
@@ -214,6 +227,7 @@ class ProvidersCacheTest {
                     TEST_ROOT,
                     TEST_PARENT_DOCID,
                     TEST_TITLE,
+                    TEST_TITLE,
                     ICON_DEFAULT_RES_ID,
                 )
             )
@@ -227,6 +241,7 @@ class ProvidersCacheTest {
                     docsProviderRoot1,
                     TEST_PARENT_DOCID,
                     TEST_TITLE,
+                    TEST_TITLE,
                     R.drawable.ic_root_homescreen,
                 )
             )
@@ -237,6 +252,7 @@ class ProvidersCacheTest {
                 ShortcutInfo(
                     docsProviderRoot2,
                     TEST_PARENT_DOCID,
+                    TEST_TITLE,
                     TEST_TITLE,
                     R.drawable.ic_root_homescreen,
                 )
@@ -263,6 +279,7 @@ class ProvidersCacheTest {
                     "diff root",
                     TEST_PARENT_DOCID,
                     TEST_TITLE,
+                    TEST_TITLE,
                     ICON_DEFAULT_RES_ID,
                 )
             )
@@ -274,6 +291,44 @@ class ProvidersCacheTest {
         val expected: Collection<ShortcutInfo> = listOf()
         // Load the shortcuts, should expect empty collection due to no matching parent
         // documents provider root.
+        assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
+    }
+
+    @Test
+    fun testLoadShortcutsWithLocalizedTitleSuccess() {
+        val docsProviderRoot: RootInfo =
+            RootInfo().apply {
+                userId = UserId.DEFAULT_USER
+                authority = TEST_AUTHORITY
+                rootId = TEST_ROOT
+            }
+        val roots: List<RootInfo?>? = listOf(docsProviderRoot)
+
+        val shortcutResources: Collection<ShortcutResourceValues> =
+            listOf(
+                ShortcutResourceValues(
+                    TEST_AUTHORITY,
+                    TEST_ROOT,
+                    TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    "Tuisskerm",
+                    ICON_DEFAULT_RES_ID,
+                )
+            )
+        // Set the mRoots and shortcut resources for the test.
+        providers.setRoots(roots)
+        providers.setShortcutResources(shortcutResources)
+
+        val expected: Collection<ShortcutInfo> =
+            listOf(
+                ShortcutInfo(
+                    docsProviderRoot,
+                    TEST_PARENT_DOCID,
+                    TEST_TITLE,
+                    "Tuisskerm",
+                    R.drawable.ic_root_homescreen,
+                )
+            )
         assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
     }
 }
