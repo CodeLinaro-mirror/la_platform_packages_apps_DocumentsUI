@@ -53,9 +53,9 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.RootCursorWrapper;
 
-import com.google.common.collect.Lists;
-
 import libcore.io.Streams;
+
+import com.google.common.collect.Lists;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -97,6 +97,19 @@ public class DocumentsProviderHelper {
             throw new RuntimeException("Can't load root for id=" + documentId , e);
         } finally {
             FileUtils.closeQuietly(cursor);
+        }
+    }
+
+    /**
+     * Delete the specified document.
+     * @param documentUri the URI of the document to delete.
+     * @return true if the document was deleted or false otherwise.
+     */
+    public boolean deleteDocument(Uri documentUri) {
+        try {
+            return DocumentsContract.deleteDocument(wrap(mClient), documentUri);
+        } catch (FileNotFoundException e) {
+            return false;
         }
     }
 
@@ -177,6 +190,17 @@ public class DocumentsProviderHelper {
             out.write(contents, 0, length);
         }
         waitForWrite();
+    }
+
+    /** Delete a single document, do nothing if it does not exist. */
+    public boolean deleteDocumentIfExists(Uri documentUri) {
+        try {
+            DocumentsContract.deleteDocument(wrap(mClient), documentUri);
+            return true;
+        } catch (FileNotFoundException e) {
+            Log.w(TAG, "Could not delete document: " + documentUri, e);
+            return false;
+        }
     }
 
     public void waitForWrite() throws RemoteException {
@@ -418,5 +442,28 @@ public class DocumentsProviderHelper {
 
     public void cleanUp() {
         mClient.close();
+    }
+
+    /**
+     * Retrieves a list of all documents in the trash.
+     *
+     * @return A {@link List} of {@link DocumentInfo} objects for each item in the trash.
+     * @throws Exception if there is an issue querying the content provider.
+     */
+    public List<DocumentInfo> getAllTrashItems() throws Exception {
+        Uri uri = DocumentsContract.buildTrashDocumentsUri(mAuthority);
+        List<DocumentInfo> children = new ArrayList<>();
+        try (Cursor cursor = mClient.query(uri, null, null, null, null, null)) {
+            if (cursor == null) {
+                Log.w(TAG, "query() returned null cursor");
+            } else {
+                Cursor wrapper =
+                        new RootCursorWrapper(mUserId, mAuthority, "totally-fake", cursor, -1);
+                while (wrapper.moveToNext()) {
+                    children.add(DocumentInfo.fromDirectoryCursor(wrapper));
+                }
+            }
+        }
+        return children;
     }
 }

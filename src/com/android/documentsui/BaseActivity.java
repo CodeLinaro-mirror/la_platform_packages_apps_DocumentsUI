@@ -20,6 +20,7 @@ import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -51,8 +52,12 @@ import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwnerKt;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
@@ -62,12 +67,17 @@ import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.breadcrumbs.BreadcrumbController;
+import com.android.documentsui.breadcrumbs.BreadcrumbModel;
+import com.android.documentsui.breadcrumbs.BreadcrumbView;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
+import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.prefs.LocalPreferences;
 import com.android.documentsui.prefs.PreferencesMonitor;
 import com.android.documentsui.queries.CommandInterceptor;
@@ -172,6 +182,31 @@ public abstract class BaseActivity
         mConfigStore = configStore;
     }
 
+    /**
+     * @return A model that supports breadcrumb view v2, if one has been created.
+     */
+    public @Nullable BreadcrumbModel getBreadcrumbModel() {
+        if (isSearchV2Enabled()) {
+            if (mNavigator != null) {
+                return mNavigator.getBreadcrumbModel();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Initialization for the injector that is common between Files and Pick activity. Important:
+     * This is called before the BaseActivity.onCreate(), so it can't rely on things initiated
+     * there.
+     */
+    protected void initInjector() {
+        mInjector = getInjector();
+        if (isUseFileSummaryEnabled()) {
+            mInjector.setSummaryProviderManager(
+                    new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this)));
+        }
+    }
+
     @CallSuper
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -203,7 +238,6 @@ public abstract class BaseActivity
 
         initConfigStore();
 
-        mInjector = getInjector();
         mState = getState(savedInstanceState);
         mDrawer = DrawerController.create(this, mInjector.config);
         Metrics.logActivityLaunch(mState, intent);
@@ -230,97 +264,127 @@ public abstract class BaseActivity
         assert (profileTabsContainer != null);
 
         mNavigator = getNavigationViewManager(breadcrumb, profileTabsContainer);
+        if (isSearchV2Enabled()) {
+            View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
+            if (breadcrumbView2 != null) {
+                BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
+                BreadcrumbController breadcrumbController = new BreadcrumbController(
+                        this, model, (BreadcrumbView) breadcrumbView2);
+                // TODO(b:416108180): Connect to mNavigator directory change.
+                mNavigator.setBreadcrumbController(breadcrumbController);
+            }
+        }
+
         AppBarLayout appBarLayout = findViewById(getRes(R.id.app_bar));
         if (appBarLayout != null) {
             appBarLayout.addOnOffsetChangedListener(mNavigator);
         }
 
-        SearchManagerListener searchListener = new SearchManagerListener() {
-            /**
-             * Called when search results changed. Refreshes the content of the directory. It
-             * doesn't refresh elements on the action bar. e.g. The current directory name displayed
-             * on the action bar won't get updated.
-             */
-            @Override
-            public void onSearchChanged(@Nullable String query) {
-                if (mSearchManager.isSearching()) {
-                    Metrics.logSearchMode(query != null, mSearchManager.hasCheckedChip());
-                    if (mInjector.pickResult != null) {
-                        mInjector.pickResult.increaseActionCount();
+        SearchManagerListener searchListener =
+                new SearchManagerListener() {
+                    /**
+                     * Called when search results changed. Refreshes the content of the directory.
+                     * It doesn't refresh elements on the action bar. e.g. The current directory
+                     * name displayed on the action bar won't get updated.
+                     */
+                    @Override
+                    public void onSearchChanged(@Nullable String query) {
+                        if (mSearchManager.isSearching()) {
+                            Metrics.logSearchMode(query != null, mSearchManager.hasCheckedChip());
+                            if (mInjector.pickResult != null) {
+                                mInjector.pickResult.increaseActionCount();
+                            }
+                        }
+
+                        mInjector.actions.loadDocumentsForCurrentStack();
+
+                        expandAppBar();
+                        DirectoryFragment dir = getDirectoryFragment();
+                        if (dir != null) {
+                            dir.scrollToTop();
+                        }
+                        if (isSearchV2Enabled() && isSearchDocked()) {
+                            updateNavigator();
+                        }
                     }
-                }
 
-                mInjector.actions.loadDocumentsForCurrentStack();
-
-                expandAppBar();
-                DirectoryFragment dir = getDirectoryFragment();
-                if (dir != null) {
-                    dir.scrollToTop();
-                }
-            }
-
-            @Override
-            public void onSearchStarting() {
-                if (isSearchV2Enabled()) {
-                    mInjector.getModel().setLoading(true);
-                }
-            }
-
-            @Override
-            public void onSearchFinished() {
-                // Restores menu icons state
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onSearchViewChanged(boolean opened) {
-                mNavigator.update();
-                // We also need to update AppsRowManager because we may want to show/hide the
-                // appsRow in cross-profile search according to the searching conditions.
-                mAppsRowManager.updateView(BaseActivity.this);
-            }
-
-            @Override
-            public void onSearchChipStateChanged(View v) {
-                final Checkable chip = (Checkable) v;
-                if (chip.isChecked()) {
-                    final SearchChipData item = (SearchChipData) v.getTag();
-                    Metrics.logUserAction(MetricConsts.USER_ACTION_SEARCH_CHIP);
-                    Metrics.logSearchType(item.getChipType());
-                }
-                // We also need to update AppsRowManager because we may want to show/hide the
-                // appsRow in cross-profile search according to the searching conditions.
-                mAppsRowManager.updateView(BaseActivity.this);
-
-                if (isUseMaterial3FlagEnabled()) {
-                    // Whenever a search chip is clicked, close the navigation bar.
-                    mInjector.selectionBarController.closeSelectionBar();
-                }
-            }
-
-            @Override
-            public void onSearchViewFocusChanged(boolean hasFocus) {
-                final boolean isInitialSearch
-                        = !TextUtils.isEmpty(mSearchManager.getCurrentSearch())
-                        && TextUtils.isEmpty(mSearchManager.getSearchViewText());
-                if (hasFocus) {
-                    if (!isInitialSearch) {
-                        SearchFragment.showFragment(getSupportFragmentManager(),
-                                mSearchManager.getSearchViewText());
+                    @Override
+                    public void onSearchStarting() {
+                        if (isSearchV2Enabled()) {
+                            mInjector.getModel().setLoading(true);
+                        }
                     }
-                } else {
-                    SearchFragment.dismissFragment(getSupportFragmentManager());
-                }
-            }
 
-            @Override
-            public void onSearchViewClearClicked() {
-                if (SearchFragment.get(getSupportFragmentManager()) == null) {
-                    SearchFragment.showFragment(getSupportFragmentManager(),
-                            mSearchManager.getSearchViewText());
-                }
-            }
-        };
+                    @Override
+                    public void onSearchFinished() {
+                        // When docked search bar is used, no need to invalidate the options menus
+                        // because docked search bar won't affect the options menu, invalidating it
+                        // will affect the tab navigation between the docked search bar and the
+                        // next option menu button (list/grid button), because it will try to
+                        // re-render all the option menu buttons.
+                        if (isUseMaterial3FlagEnabled() && isSearchDocked()) {
+                            return;
+                        }
+                        // Restores menu icons state
+                        invalidateOptionsMenu();
+                    }
+
+                    @Override
+                    public void onSearchViewChanged(boolean opened) {
+                        mNavigator.update();
+                        // We also need to update AppsRowManager because we may want to show/hide
+                        // the appsRow in cross-profile search according to the searching
+                        // conditions.
+                        mAppsRowManager.updateView(BaseActivity.this);
+                    }
+
+                    @Override
+                    public void onSearchChipStateChanged(View v) {
+                        final Checkable chip = (Checkable) v;
+                        if (chip.isChecked()) {
+                            final SearchChipData item = (SearchChipData) v.getTag();
+                            Metrics.logUserAction(MetricConsts.USER_ACTION_SEARCH_CHIP);
+                            Metrics.logSearchType(item.getChipType());
+                        }
+                        // We also need to update AppsRowManager because we may want to show/hide
+                        // the appsRow in cross-profile search according to the searching
+                        // conditions.
+                        mAppsRowManager.updateView(BaseActivity.this);
+
+                        if (isUseMaterial3FlagEnabled()) {
+                            // Whenever a search chip is clicked, close the navigation bar.
+                            mInjector.selectionBarController.closeSelectionBar();
+                        }
+                        if (isSearchV2Enabled() && isSearchDocked()) {
+                            updateNavigator();
+                        }
+                    }
+
+                    @Override
+                    public void onSearchViewFocusChanged(boolean hasFocus) {
+                        final boolean isInitialSearch =
+                                !TextUtils.isEmpty(mSearchManager.getCurrentSearch())
+                                        && TextUtils.isEmpty(mSearchManager.getSearchViewText());
+                        if (hasFocus) {
+                            if (!isInitialSearch) {
+                                SearchFragment.showFragment(
+                                        getSupportFragmentManager(),
+                                        mSearchManager.getSearchViewText());
+                            }
+                        } else {
+                            SearchFragment.dismissFragment(getSupportFragmentManager());
+                        }
+                    }
+
+                    @Override
+                    public void onSearchViewClearClicked() {
+                        if (SearchFragment.get(getSupportFragmentManager()) == null) {
+                            SearchFragment.showFragment(
+                                    getSupportFragmentManager(),
+                                    mSearchManager.getSearchViewText());
+                        }
+                    }
+                };
 
         // "Commands" are meta input for controlling system behavior.
         // We piggy back on search input as it is the only text input
@@ -494,6 +558,13 @@ public abstract class BaseActivity
         mLastSelectedUser = getSelectedUser();
     }
 
+    /**
+     * @return Whether or not the search view is docked in the toolbar.
+     */
+    public boolean isSearchDocked() {
+        return getResources().getBoolean(getRes(R.bool.show_docked_search));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean showMenu = super.onCreateOptionsMenu(menu);
@@ -503,8 +574,7 @@ public abstract class BaseActivity
         boolean fullBarSearch = getResources().getBoolean(getRes(R.bool.full_bar_search_view));
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
                 R.bool.show_search_bar);
-        boolean showDockedSearch = getResources().getBoolean(getRes(R.bool.show_docked_search));
-        mSearchManager.install(menu, fullBarSearch, showSearchBar, showDockedSearch);
+        mSearchManager.install(menu, fullBarSearch, showSearchBar, isSearchDocked());
 
         // Remove the subMenu when material3 is launched b/379776735.
         final ActionMenuView subMenuView = findViewById(getRes(R.id.sub_menu));
@@ -580,36 +650,89 @@ public abstract class BaseActivity
         return state;
     }
 
-    private void setContainer() {
+    /**
+     * We don't handle the bottom padding in the XML layout file because the bottom padding needs to
+     * be merged into Gesture navigation area (it's transparent) when Gesture navigation is used in
+     * the bottom navigation bar. Check {@link #setContainer} for more details.
+     */
+    protected int getBottomPadding() {
+        if (isUseMaterial3FlagEnabled()) {
+            return getResources().getDimensionPixelSize(R.dimen.layout_padding_bottom);
+        }
+        return 0;
+    }
+
+    protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
+        View mainContainer = findViewById(getRes(R.id.main_container));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        root.setOnApplyWindowInsetsListener(
-                (v, insets) -> {
-                    root.setPadding(
-                            insets.getSystemWindowInsetLeft(),
-                            insets.getSystemWindowInsetTop(),
-                            insets.getSystemWindowInsetRight(),
-                            0);
 
-                    boolean isNavBarVisible =
-                            insets.isVisible(WindowInsetsCompat.Type.navigationBars());
-                    if (isNavBarVisible) {
-                        View saveContainer = findViewById(getRes(R.id.container_save));
-                        saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+        if (isUseMaterial3FlagEnabled()) {
+            ViewCompat.setOnApplyWindowInsetsListener(
+                    root,
+                    (v, insets) -> {
+                        Insets navBarInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.navigationBars());
+                        Insets tappableInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.tappableElement());
+                        final boolean isGestureNav =
+                                navBarInsets.bottom > 0
+                                        && tappableInsets.bottom < navBarInsets.bottom;
 
-                        View rootsContainer = findViewById(getRes(R.id.container_roots));
-                        rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
-
-                        View navRailContainer = findViewById(R.id.nav_rail_container_roots);
-                        if (navRailContainer != null) {
-                            navRailContainer.setPadding(
-                                    0, 0, 0, insets.getSystemWindowInsetBottom());
+                        // System bars includes both status bar (top) and navigation bar (bottom)
+                        // and also others, the insets will only have non-zero values when the app
+                        // might be overlapped with these areas (i.e. in fullscreen mode),
+                        // otherwise (i.e. in window mode) they will all be 0.
+                        Insets systemBarInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                        // When Gesture navigation is used, we use its height (i.e.
+                        // systemBarInsets.bottom) as the bottom padding for the whole root
+                        // container (root container by default doesn't have bottom padding) without
+                        // adding additional "getBottomPadding()" so avoid the total bottom padding
+                        // looks too big (because gesture navigation area is transparent).
+                        v.setPadding(
+                                systemBarInsets.left,
+                                systemBarInsets.top,
+                                systemBarInsets.right,
+                                isGestureNav ? systemBarInsets.bottom : 0);
+                        // When Gesture navigation is not used, we only add bottom padding to the
+                        // main container (i.e. right section) because we don't want bottom padding
+                        // on the navigation tree area.
+                        if (!isGestureNav) {
+                            mainContainer.setPadding(
+                                    0, 0, 0, systemBarInsets.bottom + getBottomPadding());
                         }
-                    }
+                        return WindowInsetsCompat.CONSUMED;
+                    });
+        } else {
+            root.setOnApplyWindowInsetsListener(
+                    (v, insets) -> {
+                        root.setPadding(
+                                insets.getSystemWindowInsetLeft(),
+                                insets.getSystemWindowInsetTop(),
+                                insets.getSystemWindowInsetRight(),
+                                0);
 
-                    return insets.consumeSystemWindowInsets();
-                });
+                        boolean isNavBarVisible =
+                                insets.isVisible(WindowInsetsCompat.Type.navigationBars());
+                        if (isNavBarVisible) {
+                            View saveContainer = findViewById(getRes(R.id.container_save));
+                            saveContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+
+                            View rootsContainer = findViewById(getRes(R.id.container_roots));
+                            rootsContainer.setPadding(0, 0, 0, insets.getSystemWindowInsetBottom());
+
+                            View navRailContainer = findViewById(R.id.nav_rail_container_roots);
+                            if (navRailContainer != null) {
+                                navRailContainer.setPadding(
+                                        0, 0, 0, insets.getSystemWindowInsetBottom());
+                            }
+                        }
+
+                        return insets.consumeSystemWindowInsets();
+                    });
+        }
 
         getWindow().setNavigationBarDividerColor(Color.TRANSPARENT);
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
@@ -633,9 +756,12 @@ public abstract class BaseActivity
         mSearchManager.cancelSearch();
 
         // Skip refreshing if root nor directory didn't change
-        if (root.equals(getCurrentRoot()) && mState.stack.size() <= 1) {
+        if (root.equals(getCurrentRoot()) && getCurrentShortcut() == null
+                && mState.stack.size() <= 1) {
             return;
         }
+
+        mState.shortcut = null;
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController.closeSelectionBar();
@@ -644,11 +770,18 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        // Set summary header's visibility. Only recents and downloads root may have summary in
-        // their docs.
-        mState.sortModel.setDimensionVisibility(
-                SortModel.SORT_DIMENSION_ID_SUMMARY,
-                root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
+        if (isUseFileSummaryEnabled()) {
+            // Summary is only enabled for local roots.
+            mState.sortModel.setDimensionVisibility(
+                    SortModel.SORT_DIMENSION_ID_SUMMARY,
+                    root.isLocalProvider() ? View.VISIBLE : View.INVISIBLE);
+        } else {
+            // Set summary header's visibility. Only recents and downloads root may have summary in
+            // their docs.
+            mState.sortModel.setDimensionVisibility(
+                    SortModel.SORT_DIMENSION_ID_SUMMARY,
+                    root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
+        }
 
         // Clear entire backstack and start in new root
         mState.stack.changeRoot(root);
@@ -659,14 +792,64 @@ public abstract class BaseActivity
         if (mProviders.isRecentsRoot(root)) {
             refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
         } else {
-            mInjector.actions.getRootDocument(
-                    root,
+            mInjector.actions.getDocument(
+                    root.authority, root.documentId, root.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     doc -> mInjector.actions.openRootDocument(doc));
         }
 
         expandAppBar();
         updateHeaderTitle();
+    }
+
+
+    @Override
+    public void onShortcutPicked(ShortcutInfo shortcut) {
+        // Clicking on the current root removes search
+        mSearchManager.cancelSearch();
+
+        // Skip refreshing if root nor directory didn't change
+        if (shortcut.equals(getCurrentShortcut()) && mState.stack.size() <= 1) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mInjector.selectionBarController.closeSelectionBar();
+        } else {
+            mInjector.actionModeController.finishActionMode();
+        }
+        mSortController.onViewModeChanged(mState.derivedMode);
+
+        // Set summary header's visibility to invisible. Only recents and downloads root may have
+        // summary in their docs.
+        mState.sortModel.setDimensionVisibility(
+                SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
+
+        buildStackToParentShortcutFolder(
+                shortcut,
+                (@Nullable DocumentStack stack) -> {
+                    if (stack != null) {
+                        mInjector.actions.getDocument(
+                                shortcut.getRoot().authority,
+                                shortcut.getDocumentId(),
+                                shortcut.getRoot().userId,
+                                TimeoutTask.DEFAULT_TIMEOUT,
+                                doc -> {
+                                    // Reset the stack and store the shortcut reference.
+                                    mState.stack.reset(stack);
+                                    mState.shortcut = shortcut;
+                                    mInjector.actions.openRootDocument(doc);
+                                });
+                    }
+        });
+        expandAppBar();
+        updateHeaderTitle();
+    }
+
+    public void buildStackToParentShortcutFolder(ShortcutInfo shortcut,
+            LoadDocStackTask.LoadDocStackCallback callback) {
+        mInjector.actions.loadDocument(
+                shortcut.getParentDirectoryUri(), shortcut.getRoot().userId, callback);
     }
 
     protected ProfileTabsAddons getProfileTabsAddon() {
@@ -879,7 +1062,7 @@ public abstract class BaseActivity
     }
 
     /**
-     * Reload documnets by current stack in certain situation.
+     * Reload documents by current stack in certain situation.
      */
     public void reloadDocumentsIfNeeded() {
         if (isInRecents() || mSearchManager.isSearching()) {
@@ -1057,6 +1240,13 @@ public abstract class BaseActivity
         }
     }
 
+    /**
+     * Returns the currently selected shortcut if available.
+     */
+    public @Nullable ShortcutInfo getCurrentShortcut() {
+        return mState.shortcut;
+    }
+
     @Override
     public DocumentInfo getCurrentDirectory() {
         return mState.stack.peek();
@@ -1065,6 +1255,15 @@ public abstract class BaseActivity
     @Override
     public boolean isInRecents() {
         return mState.stack.isRecents();
+    }
+
+    /**
+     * Allows others to check if the application is currently searching or just listing directories.
+     *
+     * @return Whether or not search is currently active.
+     */
+    public boolean isSearching() {
+        return mSearchManager.isSearching();
     }
 
     @VisibleForTesting

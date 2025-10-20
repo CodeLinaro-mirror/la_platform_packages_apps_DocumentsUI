@@ -20,6 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
@@ -42,9 +43,7 @@ import com.android.modules.utils.build.SdkLevel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Adapts from dirlist.Model to something RecyclerView understands.
- */
+/** Adapts from dirlist.Model to something RecyclerView understands. */
 final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
 
     private static final String TAG = "ModelBackedDocuments";
@@ -148,11 +147,22 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     public void onBindViewHolder(DocumentHolder holder, int position) {
         String modelId = mModelIds.get(position);
         Cursor cursor = mEnv.getModel().getItem(modelId);
+
+        String summary = getCursorString(cursor, Document.COLUMN_SUMMARY);
+
+        if (isUseFileSummaryEnabled()) {
+            String displayName = getCursorString(cursor, Document.COLUMN_DISPLAY_NAME);
+
+            // For Download provider, the summary is set to the display name.
+            if (summary == null || summary.equals(displayName)) {
+                summary = mEnv.getModel().getSummary(modelId);
+            }
+        }
         if (isUseMaterial3FlagEnabled()) {
             // Need the action to be set for bind().
             holder.setAction(mEnv.getDisplayState().action);
         }
-        holder.bind(cursor, modelId);
+        holder.bind(cursor, modelId, summary);
 
         final String docMimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
         final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
@@ -236,5 +246,14 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onSummariesUpdated(List<Integer> updatedIndices) {
+        for (int index : updatedIndices) {
+            if (index >= 0 && index < mModelIds.size()) {
+                notifyItemChanged(index);
+            }
+        }
     }
 }

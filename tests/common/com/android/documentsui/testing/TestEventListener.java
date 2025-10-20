@@ -17,6 +17,7 @@
 package com.android.documentsui.testing;
 
 import static junit.framework.Assert.assertFalse;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -54,5 +55,11 @@ public class TestEventListener<T> implements EventListener<T> {
 
     public T getLastValue() {
         return lastValue;
+    }
+
+    /** Resets the listener to its initial state, as if it had never been called. */
+    public void reset() {
+        lastValue = null;
+        called = false;
     }
 }

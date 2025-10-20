@@ -37,6 +37,9 @@
     <string name="menu_save" msgid="5195367497138965168">"Αποθήκευση"</string>
     <string name="menu_share" msgid="4307140947108068356">"Κοινοποίηση"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Διαγραφή"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Οριστική διαγραφή"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Μετακίνηση στον κάδο"</string>
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Επαναφορά"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Επιλογή όλων"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Αποεπιλογή όλων"</string>
     <string name="menu_select" msgid="1366061076507142387">"Επιλογή"</string>
@@ -116,6 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Η συγκεκριμένη ενέργεια δεν επιτρέπεται."</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Για να μάθετε περισσότερα, επικοινωνήστε με τον διαχειριστή IT."</string>
     <string name="root_recent" msgid="1080156975424341623">"Πρόσφατα"</string>
+    <string name="root_trash" msgid="1869929519939073178">"Κάδος"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> ελεύθερα"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Υπηρεσίες αποθήκευσης"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Συντομεύσεις"</string>
@@ -134,9 +138,12 @@
     <string name="share_via" msgid="8725082736005677161">"Κοινοποίηση μέσω"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Αντιγραφή αρχείων"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Συμπίεση αρχείων"</string>
+    <string name="zip_notification_title" msgid="2858653527172763548">"Γίνεται συμπίεση αρχείων"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Εξαγωγή αρχείων"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Μετακίνηση αρχείων"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Διαγραφή αρχείων"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Μετακ. αρχείων στον κάδο"</string>
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Επαναφορά αρχείων"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Απομένουν <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other">Αντιγραφή <xliff:g id="COUNT_1">%1$d</xliff:g> στοιχείων.</item>
@@ -158,66 +165,91 @@
       <item quantity="other">Διαγραφή <xliff:g id="COUNT_1">%1$d</xliff:g> στοιχείων.</item>
       <item quantity="one">Διαγραφή <xliff:g id="COUNT_0">%1$d</xliff:g> στοιχείου.</item>
     </plurals>
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{Γίνεται μετακίνηση # αρχείου στον κάδο}other{Γίνεται μετακίνηση # αρχείων στον κάδο}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{Γίνεται επαναφορά # αρχείου}other{Γίνεται επαναφορά # αρχείων}}"</string>
     <string name="undo" msgid="2902438994196400565">"Αναίρεση"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Προετοιμασία…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Προετοιμασία…"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Προετοιμασία…"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Προετοιμασία…"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Προετοιμασία…"</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Προετοιμασία…"</string>
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Προετοιμασία…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Δεν ήταν δυνατή η αντιγραφή <xliff:g id="COUNT_0">{count}</xliff:g> στοιχείου}other{Δεν ήταν δυνατή η αντιγραφή <xliff:g id="COUNT_1">{count}</xliff:g> στοιχείων}}"</string>
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Δεν ήταν δυνατή η αντιγραφή # αρχείου}other{Δεν ήταν δυνατή η αντιγραφή # αρχείων}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Δεν ήταν δυνατή η συμπίεση <xliff:g id="COUNT_0">{count}</xliff:g> στοιχείου}other{Δεν ήταν δυνατή η συμπίεση <xliff:g id="COUNT_1">{count}</xliff:g> στοιχείων}}"</string>
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Δεν ήταν δυνατή η συμπίεση # αρχείου}other{Δεν ήταν δυνατή η συμπίεση # αρχείων}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Δεν ήταν δυνατή η εξαγωγή # αρχείου}other{Δεν ήταν δυνατή η εξαγωγή # αρχείων}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Δεν ήταν δυνατή η μετακίνηση <xliff:g id="COUNT_0">{count}</xliff:g> στοιχείου}other{Δεν ήταν δυνατή η μετακίνηση <xliff:g id="COUNT_1">{count}</xliff:g> στοιχείων}}"</string>
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Δεν ήταν δυνατή η μετακίνηση # αρχείου}other{Δεν ήταν δυνατή η μετακίνηση # αρχείων}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Δεν ήταν δυνατή η διαγραφή <xliff:g id="COUNT_0">{count}</xliff:g> στοιχείου}other{Δεν ήταν δυνατή η διαγραφή <xliff:g id="COUNT_1">{count}</xliff:g> στοιχείων}}"</string>
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Δεν ήταν δυνατή η διαγραφή # αρχείου}other{Δεν ήταν δυνατή η διαγραφή # αρχείων}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Δεν ήταν δυνατή η μετακίνηση # αρχείου στον κάδο}other{Δεν ήταν δυνατή η μετακίνηση # αρχείων στον κάδο}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Δεν ήταν δυνατή η επαναφορά # αρχείου}other{Δεν ήταν δυνατή η επαναφορά # αρχείων}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Πατήστε για προβολή λεπτομερειών"</string>
     <string name="close" msgid="905969391788869975">"Κλείσιμο"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">Αυτά τα αρχεία δεν αντιγράφηκαν: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Αυτό το αρχείο δεν αντιγράφηκε: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Αυτό το αρχείο δεν αντιγράφηκε: <xliff:g id="LIST_0">{list}</xliff:g>}other{Αυτά τα αρχεία δεν αντιγράφηκαν: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Αυτά τα αρχεία δεν ήταν συμπιεσμένα: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Αυτό το αρχείο δεν ήταν συμπιεσμένο: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Αυτό το αρχείο δεν συμπιέστηκε: <xliff:g id="LIST_0">{list}</xliff:g>}other{Αυτά τα αρχεία δεν συμπιέστηκαν: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Δεν έγινε εξαγωγή αυτών των αρχείων: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Δεν έγινε εξαγωγή αυτού του αρχείου: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Δεν έγινε εξαγωγή αυτού του αρχείου: <xliff:g id="LIST_0">{list}</xliff:g>}other{Δεν έγινε εξαγωγή αυτών των αρχείων: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Αυτά τα αρχεία δεν μετακινήθηκαν: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Αυτό το αρχείο δεν μετακινήθηκε: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Αυτό το αρχείο δεν μετακινήθηκε: <xliff:g id="LIST_0">{list}</xliff:g>}other{Αυτά τα αρχεία δεν μετακινήθηκαν: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Αυτά τα αρχεία δεν διαγράφηκαν: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Αυτό το αρχείο δεν διαγράφηκε: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Αυτό το αρχείο δεν διαγράφηκε: <xliff:g id="LIST_0">{list}</xliff:g>}other{Αυτά τα αρχεία δεν διαγράφηκαν: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Αυτά τα αρχεία μετατράπηκαν σε άλλη μορφή: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Αυτό το αρχείο μετατράπηκε σε άλλη μορφή: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Αυτό το αρχείο μετατράπηκε σε άλλη μορφή: <xliff:g id="LIST_0">{list}</xliff:g>}other{Αυτά τα αρχεία μετατράπηκαν σε άλλη μορφή: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">Αντιγράφηκαν <xliff:g id="COUNT_1">%1$d</xliff:g> στοιχεία στο πρόχειρο.</item>
       <item quantity="one">Αντιγράφηκε <xliff:g id="COUNT_0">%1$d</xliff:g> στοιχείο στο πρόχειρο.</item>
     </plurals>
+    <string name="read_only_label" msgid="894442752344379606">"Μόνο για ανάγνωση"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Μπορείτε να δείτε αυτά τα αρχεία, αλλά ορισμένες ενέργειες δεν υποστηρίζονται"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Το αρχείο βρίσκεται σε μια τοποθεσία μόνο για ανάγνωση και δεν είναι δυνατή η εξαγωγή του εδώ."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Η λειτουργία αρχείου δεν υποστηρίζεται."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Η λειτουργία αρχείου απέτυχε."</string>
     <string name="rename_error" msgid="6700093173508118635">"Αποτυχία μετονομασίας εγγράφου"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Εξαγωγή"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Ορισμένα αρχεία μετατράπηκαν"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Γίνεται αντιγραφή του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον φάκελο <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{Γίνεται αντιγραφή # αρχείων στον φάκελο <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Γίνεται εξαγωγή του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον φάκελο <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{Γίνεται εξαγωγή # αρχείων στον φάκελο <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Γίνεται μετακίνηση του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον φάκελο <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{Γίνεται μετακίνηση # αρχείων στον φάκελο <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Γίνεται διαγραφή του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g>}other{Γίνεται διαγραφή # αρχείων}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Γίνεται συμπίεση του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g>}other{Γίνεται συμπίεση # αρχείων}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Γίνεται αντιγραφή του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον φάκελο <xliff:g id="DIRECTORY">{directory}</xliff:g>"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Γίνεται αντιγραφή # αρχείου στον φάκελο <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{Γίνεται αντιγραφή # αρχείων στον φάκελο <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Γίνεται εξαγωγή του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον φάκελο <xliff:g id="DIRECTORY">{directory}</xliff:g>"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Γίνεται εξαγωγή # αρχείου στον φάκελο <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{Γίνεται εξαγωγή # αρχείων στον φάκελο <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Γίνεται μετακίνηση του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον φάκελο <xliff:g id="DIRECTORY">{directory}</xliff:g>"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Γίνεται μετακίνηση # αρχείου στον φάκελο <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{Γίνεται μετακίνηση # αρχείων στον φάκελο <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Γίνεται διαγραφή του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g>"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Γίνεται διαγραφή # αρχείου}other{Γίνεται διαγραφή # αρχείων}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Γίνεται μετακίνηση του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g> στον κάδο"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{Γίνεται μετακίνηση # αρχείου στον κάδο}other{Γίνεται μετακίνηση # αρχείων στον κάδο}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Γίνεται επαναφορά του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g>"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Γίνεται επαναφορά # αρχείου}other{Γίνεται επαναφορά # αρχείων}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Γίνεται συμπίεση του αρχείου <xliff:g id="FILENAME">{filename}</xliff:g>"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Γίνεται συμπίεση # αρχείου}other{Γίνεται συμπίεση # αρχείων}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Εμφάνιση προόδου αρχείου"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Πρόοδος αρχείου"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Παράβλεψη όλων"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Ολοκληρώθηκε"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Ακυρώθηκε"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Δείτε λεπτομέρειες"</string>
@@ -274,6 +306,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Δεν είναι δυνατή η εμφάνιση των περιεχομένων"</string>
     <string name="sign_in" msgid="6253762676723505592">"Σύνδεση"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"αρχειοθέτηση<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Αρχείο"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Αντικατάσταση <xliff:g id="NAME">%1$s</xliff:g>;"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Συνέχεια στο παρασκήνιο"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
@@ -343,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Προεπισκόπηση εικόνας <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Απόκρυψη πλαισίου πληροφοριών"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Εμφάνιση πλαισίου πληροφοριών"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Δεν υπάρχει τίποτα στον κάδο"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Τα αρχεία που βρίσκονται στον κάδο για περισσότερες από 30 ημέρες θα διαγράφονται αυτόματα."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Άδειασμα κάδου τώρα"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Άδειασμα κάδου;"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Δεν είναι δυνατή η αναίρεση αυτής της ενέργειας και δεν θα είναι πλέον δυνατή η ανάκτηση των αρχείων."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Άδειασμα κάδου"</string>
 </resources>

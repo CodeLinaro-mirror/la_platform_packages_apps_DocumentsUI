@@ -37,6 +37,9 @@
     <string name="menu_save" msgid="5195367497138965168">"Zapisz"</string>
     <string name="menu_share" msgid="4307140947108068356">"Udostępnij"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Usuń"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Usuń trwale"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Przenieś do kosza"</string>
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Przywróć"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Zaznacz wszystko"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Odznacz wszystko"</string>
     <string name="menu_select" msgid="1366061076507142387">"Wybierz"</string>
@@ -116,6 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Ta czynność jest niedozwolona"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Aby dowiedzieć się więcej, skontaktuj się z administratorem IT"</string>
     <string name="root_recent" msgid="1080156975424341623">"Najnowsze"</string>
+    <string name="root_trash" msgid="1869929519939073178">"Kosz"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"Wolne <xliff:g id="SIZE">%1$s</xliff:g>"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Usługi pamięci masowej"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Skróty"</string>
@@ -134,9 +138,12 @@
     <string name="share_via" msgid="8725082736005677161">"Udostępnij przez"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopiowanie plików"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Kompresuję pliki"</string>
+    <string name="zip_notification_title" msgid="2858653527172763548">"Kompresuję pliki"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Wypakowuję pliki"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Przenoszenie plików"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Usuwanie plików"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Przenoszę pliki do kosza"</string>
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Przywracam pliki"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"Pozostało: <xliff:g id="DURATION">%s</xliff:g>"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="few">Kopiuję <xliff:g id="COUNT_1">%1$d</xliff:g> elementy.</item>
@@ -168,23 +175,30 @@
       <item quantity="other">Usuwam <xliff:g id="COUNT_1">%1$d</xliff:g> elementu.</item>
       <item quantity="one">Usuwam <xliff:g id="COUNT_0">%1$d</xliff:g> element.</item>
     </plurals>
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{Przenoszę # plik do kosza}few{Przenoszę # pliki do kosza}many{Przenoszę # plików do kosza}other{Przenoszę # pliku do kosza}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{Przywracam # plik}few{Przywracam # pliki}many{Przywracam # plików}other{Przywracam # pliku}}"</string>
     <string name="undo" msgid="2902438994196400565">"Cofnij"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Przygotowuję..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Przygotowuję..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Przygotowuję..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"Przygotowuję..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Przygotowuję..."</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Przygotowuję..."</string>
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Przygotowuję…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Nie udało się skopiować <xliff:g id="COUNT_0">{count}</xliff:g> elementu}few{Nie udało się skopiować <xliff:g id="COUNT_1">{count}</xliff:g> elementów}many{Nie udało się skopiować <xliff:g id="COUNT_1">{count}</xliff:g> elementów}other{Nie udało się skopiować <xliff:g id="COUNT_1">{count}</xliff:g> elementu}}"</string>
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Nie udało się skopiować # pliku}few{Nie udało się skopiować # plików}many{Nie udało się skopiować # plików}other{Nie udało się skopiować # pliku}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nie udało się skompresować <xliff:g id="COUNT_0">{count}</xliff:g> elementu}few{Nie udało się skompresować <xliff:g id="COUNT_1">{count}</xliff:g> elementów}many{Nie udało się skompresować <xliff:g id="COUNT_1">{count}</xliff:g> elementów}other{Nie udało się skompresować <xliff:g id="COUNT_1">{count}</xliff:g> elementu}}"</string>
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Nie udało się skompresować # pliku}few{Nie udało się skompresować # plików}many{Nie udało się skompresować # plików}other{Nie udało się skompresować # pliku}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Nie udało się wyodrębnić # pliku}few{Nie udało się wyodrębnić # plików}many{Nie udało się wyodrębnić # plików}other{Nie udało się wyodrębnić # pliku}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Nie udało się przenieść <xliff:g id="COUNT_0">{count}</xliff:g> elementu}few{Nie udało się przenieść <xliff:g id="COUNT_1">{count}</xliff:g> elementów}many{Nie udało się przenieść <xliff:g id="COUNT_1">{count}</xliff:g> elementów}other{Nie udało się przenieść <xliff:g id="COUNT_1">{count}</xliff:g> elementu}}"</string>
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Nie udało się przenieść # pliku}few{Nie udało się przenieść # plików}many{Nie udało się przenieść # plików}other{Nie udało się przenieść # pliku}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nie udało się usunąć <xliff:g id="COUNT_0">{count}</xliff:g> elementu}few{Nie udało się usunąć <xliff:g id="COUNT_1">{count}</xliff:g> elementów}many{Nie udało się usunąć <xliff:g id="COUNT_1">{count}</xliff:g> elementów}other{Nie udało się usunąć <xliff:g id="COUNT_1">{count}</xliff:g> elementu}}"</string>
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Nie udało się usunąć # pliku}few{Nie udało się usunąć # plików}many{Nie udało się usunąć # plików}other{Nie udało się usunąć # pliku}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Nie udało się przenieść # pliku do kosza}few{Nie udało się przenieść # plików do kosza}many{Nie udało się przenieść # plików do kosza}other{Nie udało się przenieść # pliku do kosza}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Nie udało się przywrócić # pliku}few{Nie udało się przywrócić # plików}many{Nie udało się przywrócić # plików}other{Nie udało się przywrócić # pliku}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Kliknij, by zobaczyć szczegóły"</string>
     <string name="close" msgid="905969391788869975">"Zamknij"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -193,55 +207,73 @@
       <item quantity="other">Te pliki nie zostały skopiowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ten plik nie został skopiowany: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Ten plik nie został skopiowany: <xliff:g id="LIST_0">{list}</xliff:g>}few{Te pliki nie zostały skopiowane: <xliff:g id="LIST_1">{list}</xliff:g>}many{Te pliki nie zostały skopiowane: <xliff:g id="LIST_1">{list}</xliff:g>}other{Te pliki nie zostały skopiowane: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="few">Te pliki nie zostały skompresowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Te pliki nie zostały skompresowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Te pliki nie zostały skompresowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ten plik nie został skompresowany: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Ten plik nie został skompresowany: <xliff:g id="LIST_0">{list}</xliff:g>}few{Te pliki nie zostały skompresowane: <xliff:g id="LIST_1">{list}</xliff:g>}many{Te pliki nie zostały skompresowane: <xliff:g id="LIST_1">{list}</xliff:g>}other{Te pliki nie zostały skompresowane: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="few">Te pliki nie zostały rozpakowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Te pliki nie zostały rozpakowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Te pliki nie zostały rozpakowane: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ten plik nie został rozpakowany: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Ten plik nie został wyodrębniony: <xliff:g id="LIST_0">{list}</xliff:g>}few{Te pliki nie zostały wyodrębnione: <xliff:g id="LIST_1">{list}</xliff:g>}many{Te pliki nie zostały wyodrębnione: <xliff:g id="LIST_1">{list}</xliff:g>}other{Te pliki nie zostały wyodrębnione: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="few">Te pliki nie zostały przeniesione: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Te pliki nie zostały przeniesione: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Te pliki nie zostały przeniesione: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ten plik nie został przeniesiony: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Ten plik nie został przeniesiony: <xliff:g id="LIST_0">{list}</xliff:g>}few{Te pliki nie zostały przeniesione: <xliff:g id="LIST_1">{list}</xliff:g>}many{Te pliki nie zostały przeniesione: <xliff:g id="LIST_1">{list}</xliff:g>}other{Te pliki nie zostały przeniesione: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="few">Te pliki nie zostały usunięte: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Te pliki nie zostały usunięte: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Te pliki nie zostały usunięte: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ten plik nie został usunięty: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Ten plik nie został usunięty: <xliff:g id="LIST_0">{list}</xliff:g>}few{Te pliki nie zostały usunięte: <xliff:g id="LIST_1">{list}</xliff:g>}many{Te pliki nie zostały usunięte: <xliff:g id="LIST_1">{list}</xliff:g>}other{Te pliki nie zostały usunięte: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="few">Te pliki zostały przekonwertowane na inny format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Te pliki zostały przekonwertowane na inny format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Te pliki zostały przekonwertowane na inny format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ten plik został przekonwertowany na inny format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Ten plik został przekonwertowany na inny format: <xliff:g id="LIST_0">{list}</xliff:g>}few{Te pliki zostały przekonwertowane na inny format: <xliff:g id="LIST_1">{list}</xliff:g>}many{Te pliki zostały przekonwertowane na inny format: <xliff:g id="LIST_1">{list}</xliff:g>}other{Te pliki zostały przekonwertowane na inny format: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="few">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementy do schowka.</item>
       <item quantity="many">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementów do schowka.</item>
       <item quantity="other">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementu do schowka.</item>
       <item quantity="one">Skopiowano <xliff:g id="COUNT_0">%1$d</xliff:g> element do schowka.</item>
     </plurals>
+    <string name="read_only_label" msgid="894442752344379606">"Tylko do odczytu"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Możesz wyświetlać te pliki, ale niektóre działania są nieobsługiwane"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"To archiwum jest w lokalizacji tylko do odczytu i nie można go tutaj wyodrębnić."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operacja na pliku nie jest obsługiwana."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Nie udało się wykonać operacji na pliku."</string>
     <string name="rename_error" msgid="6700093173508118635">"Nie udało się zmienić nazwy dokumentu"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Odłącz"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Niektóre pliki zostały przekonwertowane"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Kopiuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Kopiuję # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Kopiuję # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Kopiuję # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Wyodrębniam plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Wyodrębniam # archiwa do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Wyodrębniam # archiwów do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Wyodrębniam # archiwum do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Przenoszę plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Przenoszę # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Przenoszę # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Przenoszę # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Usuwam plik „<xliff:g id="FILENAME">{filename}</xliff:g>”}few{Usuwam # pliki}many{Usuwam # plików}other{Usuwam # pliku}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Kompresuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>”}few{Kompresuję # pliki}many{Kompresuję # plików}other{Kompresuję # pliku}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Kopiuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Kopiuję # plik do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Kopiuję # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Kopiuję # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Kopiuję # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Wyodrębniam plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Wyodrębniam # plik do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Wyodrębniam # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Wyodrębniam # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Wyodrębniam # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Przenoszę plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do katalogu „<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Przenoszę # plik do katalogu „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}few{Przenoszę # pliki do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}many{Przenoszę # plików do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}other{Przenoszę # pliku do katalogu „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Usuwam plik „<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Usuwam # plik}few{Usuwam # pliki}many{Usuwam # plików}other{Usuwam # pliku}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Przenoszę plik „<xliff:g id="FILENAME">{filename}</xliff:g>” do kosza"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{Przenoszę # plik do kosza}few{Przenoszę # pliki do kosza}many{Przenoszę # plików do kosza}other{Przenoszę # pliku do kosza}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Przywracam plik „<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Przywracam # plik}few{Przywracam # pliki}many{Przywracam # plików}other{Przywracam # pliku}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Kompresuję plik „<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Kompresuję # plik}few{Kompresuję # pliki}many{Kompresuję # plików}other{Kompresuję # pliku}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Pokaż postęp przetwarzania pliku"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Postęp przetwarzania pliku"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Zamknij wszystkie"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Ukończono"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Anulowano"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Zobacz szczegóły"</string>
@@ -308,6 +340,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Nie można wyświetlić zawartości"</string>
     <string name="sign_in" msgid="6253762676723505592">"Zaloguj się"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archiwum<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Archiwum"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Zastąpić plik <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Kontynuuj w tle"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
@@ -379,4 +412,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Podgląd obrazu z pliku <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Ukryj panel z informacjami"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Pokaż panel z informacjami"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Kosz jest pusty"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Pliki w koszu starsze niż 30 dni są automatycznie usuwane."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Opróżnij kosz"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Opróżnić kosz?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Tego działania nie można cofnąć i nie będzie można odzyskać plików."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Opróżnij kosz"</string>
 </resources>

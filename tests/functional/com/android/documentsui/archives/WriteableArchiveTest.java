@@ -22,6 +22,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract.Document;
 import android.test.AndroidTestCase;
 
+import androidx.annotation.NonNull;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.MediumTest;
 
@@ -51,16 +52,20 @@ public class WriteableArchiveTest extends AndroidTestCase {
     public void setUp() throws Exception {
         super.setUp();
         mExecutor = Executors.newSingleThreadExecutor();
-        mTestUtils = new TestUtils(InstrumentationRegistry.getTargetContext(),
-                InstrumentationRegistry.getContext(), mExecutor);
+        mTestUtils =
+                new TestUtils(
+                        InstrumentationRegistry.getTargetContext(),
+                        InstrumentationRegistry.getContext(),
+                        mExecutor);
         mFile = mTestUtils.createTemporaryFile();
 
-        mArchive = WriteableArchive.createForParcelFileDescriptor(
-                InstrumentationRegistry.getTargetContext(),
-                ParcelFileDescriptor.open(mFile, ParcelFileDescriptor.MODE_WRITE_ONLY),
-                ARCHIVE_URI,
-                ParcelFileDescriptor.MODE_WRITE_ONLY,
-                Uri.parse(NOTIFICATION_URI));
+        mArchive =
+                WriteableArchive.createForParcelFileDescriptor(
+                        InstrumentationRegistry.getTargetContext(),
+                        ParcelFileDescriptor.open(mFile, ParcelFileDescriptor.MODE_WRITE_ONLY),
+                        ARCHIVE_URI,
+                        ParcelFileDescriptor.MODE_WRITE_ONLY,
+                        Uri.parse(NOTIFICATION_URI));
     }
 
     @Override
@@ -76,69 +81,68 @@ public class WriteableArchiveTest extends AndroidTestCase {
         super.tearDown();
     }
 
-    public static ArchiveId createArchiveId(String path) {
+    public static ArchiveId createArchiveId(@NonNull String path) {
         return new ArchiveId(ARCHIVE_URI, ParcelFileDescriptor.MODE_WRITE_ONLY, path);
     }
 
     public void testCreateDocument() throws IOException {
-        final String dirDocumentId = mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                Document.MIME_TYPE_DIR, "dir");
+        final String dirDocumentId =
+                mArchive.createDocument(
+                        createArchiveId("/").toDocumentId(), Document.MIME_TYPE_DIR, "dir");
         assertEquals(createArchiveId("/dir/").toDocumentId(), dirDocumentId);
 
         final String documentId = mArchive.createDocument(dirDocumentId, "image/jpeg", "test.jpeg");
         assertEquals(createArchiveId("/dir/test.jpeg").toDocumentId(), documentId);
 
         try {
-            mArchive.createDocument(dirDocumentId,
-                    "image/jpeg", "test.jpeg");
+            mArchive.createDocument(dirDocumentId, "image/jpeg", "test.jpeg");
             fail("Creating should fail, as the document already exists.");
         } catch (IllegalStateException e) {
             // Expected.
         }
 
         try {
-            mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                    "image/jpeg", "test.jpeg/");
+            mArchive.createDocument(
+                    createArchiveId("/").toDocumentId(), "image/jpeg", "test.jpeg/");
             fail("Creating should fail, as the document name is invalid.");
         } catch (IllegalStateException e) {
             // Expected.
         }
 
         try {
-            mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                    Document.MIME_TYPE_DIR, "test/");
+            mArchive.createDocument(
+                    createArchiveId("/").toDocumentId(), Document.MIME_TYPE_DIR, "test/");
             fail("Creating should fail, as the document name is invalid.");
         } catch (IllegalStateException e) {
             // Expected.
         }
 
         try {
-            mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                    Document.MIME_TYPE_DIR, "..");
+            mArchive.createDocument(
+                    createArchiveId("/").toDocumentId(), Document.MIME_TYPE_DIR, "..");
             fail("Creating should fail, as the document name is invalid.");
         } catch (IllegalStateException e) {
             // Expected.
         }
 
         try {
-            mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                    Document.MIME_TYPE_DIR, ".");
+            mArchive.createDocument(
+                    createArchiveId("/").toDocumentId(), Document.MIME_TYPE_DIR, ".");
             fail("Creating should fail, as the document name is invalid.");
         } catch (IllegalStateException e) {
             // Expected.
         }
 
         try {
-            mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                    Document.MIME_TYPE_DIR, "");
+            mArchive.createDocument(
+                    createArchiveId("/").toDocumentId(), Document.MIME_TYPE_DIR, "");
             fail("Creating should fail, as the document name is invalid.");
         } catch (IllegalStateException e) {
             // Expected.
         }
 
         try {
-            mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                    "image/jpeg", "a/b.jpeg");
+            mArchive.createDocument(createArchiveId("/").toDocumentId(), "image/jpeg", "a/b.jpeg");
             fail("Creating should fail, as the document name is invalid.");
         } catch (IllegalStateException e) {
             // Expected.
@@ -146,35 +150,40 @@ public class WriteableArchiveTest extends AndroidTestCase {
     }
 
     public void testAddDirectory() throws IOException {
-        final String documentId = mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                Document.MIME_TYPE_DIR, "dir");
+        final String documentId =
+                mArchive.createDocument(
+                        createArchiveId("/").toDocumentId(), Document.MIME_TYPE_DIR, "dir");
 
         {
             final Cursor cursor = mArchive.queryDocument(documentId, null);
             assertTrue(cursor.moveToFirst());
-            assertEquals(documentId,
+            assertEquals(
+                    documentId,
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
-            assertEquals("dir",
+            assertEquals(
+                    "dir",
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-            assertEquals(Document.MIME_TYPE_DIR,
+            assertEquals(
+                    Document.MIME_TYPE_DIR,
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-            assertEquals(0,
-                    cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+            assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         }
 
         {
-            final Cursor cursor = mArchive.queryChildDocuments(
-                    createArchiveId("/").toDocumentId(), null, null);
+            final Cursor cursor =
+                    mArchive.queryChildDocuments(createArchiveId("/").toDocumentId(), null, null);
 
             assertTrue(cursor.moveToFirst());
-            assertEquals(documentId,
+            assertEquals(
+                    documentId,
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
-            assertEquals("dir",
+            assertEquals(
+                    "dir",
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-            assertEquals(Document.MIME_TYPE_DIR,
+            assertEquals(
+                    Document.MIME_TYPE_DIR,
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-            assertEquals(0,
-                    cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+            assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         }
 
         mArchive.close();
@@ -196,20 +205,23 @@ public class WriteableArchiveTest extends AndroidTestCase {
     }
 
     public void testAddFile() throws IOException, InterruptedException {
-        final String documentId = mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                "text/plain", "hoge.txt");
+        final String documentId =
+                mArchive.createDocument(
+                        createArchiveId("/").toDocumentId(), "text/plain", "hoge.txt");
 
         {
             final Cursor cursor = mArchive.queryDocument(documentId, null);
             assertTrue(cursor.moveToFirst());
-            assertEquals(documentId,
+            assertEquals(
+                    documentId,
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
-            assertEquals("hoge.txt",
+            assertEquals(
+                    "hoge.txt",
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-            assertEquals("text/plain",
+            assertEquals(
+                    "text/plain",
                     cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-            assertEquals(0,
-                    cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+            assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         }
 
         try {
@@ -240,8 +252,7 @@ public class WriteableArchiveTest extends AndroidTestCase {
         {
             final Cursor cursor = mArchive.queryDocument(documentId, null);
             assertTrue(cursor.moveToFirst());
-            assertEquals(12,
-                    cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+            assertEquals(12, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         }
 
         mArchive.close();
@@ -271,8 +282,9 @@ public class WriteableArchiveTest extends AndroidTestCase {
     }
 
     public void testAddFile_empty() throws IOException, Exception {
-        final String documentId = mArchive.createDocument(createArchiveId("/").toDocumentId(),
-                "text/plain", "hoge.txt");
+        final String documentId =
+                mArchive.createDocument(
+                        createArchiveId("/").toDocumentId(), "text/plain", "hoge.txt");
         mArchive.close();
 
         // Verify archive.

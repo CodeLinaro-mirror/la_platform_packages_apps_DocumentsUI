@@ -26,6 +26,9 @@ java_defaults {
     ],
 
     static_libs: [
+        "android.provider.flags-aconfig-java",
+        "androidx.arch.core_core-testing",
+        "androidx.lifecycle_lifecycle-runtime-testing",
         "androidx.test.core",
         "androidx.test.espresso.contrib",
         "androidx.test.espresso.core",
@@ -37,10 +40,14 @@ java_defaults {
         "flag-junit",
         "guava",
         "kotlinx_coroutines_test",
+        "mockito-kotlin-nodeps",
         "mockito-target",
         "microbenchmark-device-lib",
         "platform-test-annotations",
     ],
+    lint: {
+        test: true,
+    },
 }
 
 android_library {

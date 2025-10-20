@@ -68,6 +68,10 @@ public class Model {
 
     private boolean mIsLoading;
     private List<EventListener<Update>> mUpdateListeners = new ArrayList<>();
+
+    /** Used to update the summaries. */
+    private final ModelSummariesUpdate mSummariesUpdate = new ModelSummariesUpdate();
+
     private @Nullable Cursor mCursor;
     private int mCursorCount;
     private String mIds[] = new String[0];
@@ -97,6 +101,27 @@ public class Model {
         }
     }
 
+    /** Adds a summary update listener. */
+    public void addSummaryUpdateListener(SummaryUpdateListener listener) {
+        mSummariesUpdate.addSummaryUpdateListener(listener);
+    }
+
+    /** Removes a summary update listener. */
+    public void removeSummaryUpdateListener(SummaryUpdateListener listener) {
+        mSummariesUpdate.removeSummaryUpdateListener(listener);
+    }
+
+    /** Updates the summaries in the model. Delegates to ModelSummariesUpdate. */
+    public void updateSummaries(Map<String, String> summaries) {
+        // Pass the mPositions map to the updateSummaries method.
+        mSummariesUpdate.updateSummaries(summaries, mPositions);
+    }
+
+    /** Gets the summary for a given model ID. Delegates to ModelSummariesUpdate. */
+    public @Nullable String getSummary(String modelId) {
+        return mSummariesUpdate.getSummary(modelId);
+    }
+
     public void reset() {
         mCursor = null;
         mCursorCount = 0;
@@ -107,6 +132,7 @@ public class Model {
         doc = null;
         mIsLoading = false;
         mFileNames.clear();
+        mSummariesUpdate.reset();
         notifyUpdateListeners();
     }
 

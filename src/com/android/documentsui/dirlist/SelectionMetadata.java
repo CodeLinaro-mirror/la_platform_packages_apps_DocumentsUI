@@ -19,6 +19,7 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.database.Cursor;
@@ -66,6 +67,12 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     /** Number of archives. */
     private int mArchiveCount = 0;
+
+    /** Number of files that do not support trash. */
+    private int mUnsupportedTrashCount = 0;
+
+    /** Number of files that do not support restore from trash. */
+    private int mUnsupportedRestoreCount = 0;
 
     private boolean mSupportsSettings = false;
 
@@ -127,6 +134,12 @@ public class SelectionMetadata extends SelectionObserver<String>
         if ((docFlags & FLAG_CAN_DELETE) == 0) {
             mNoDeleteCount += delta;
         }
+        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_TRASH) == 0) {
+            mUnsupportedTrashCount += delta;
+        }
+        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_RESTORE) == 0) {
+            mUnsupportedRestoreCount += delta;
+        }
         if ((docFlags & Document.FLAG_SUPPORTS_RENAME) == 0) {
             mNoRenameCount += delta;
         }
@@ -149,9 +162,11 @@ public class SelectionMetadata extends SelectionObserver<String>
         mPartialCount = 0;
         mWritableDirectoryCount = 0;
         mNoDeleteCount = 0;
+        mUnsupportedTrashCount = 0;
         mNoRenameCount = 0;
         mInArchiveCount = 0;
         mArchiveCount = 0;
+        mUnsupportedRestoreCount = 0;
     }
 
     @Override
@@ -202,6 +217,22 @@ public class SelectionMetadata extends SelectionObserver<String>
     }
 
     @Override
+    public boolean canTrash() {
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
+        return size() > 0 && mUnsupportedTrashCount == 0;
+    }
+
+    @Override
+    public boolean canRestore() {
+        if (!isTrashFlowEnabled()) {
+            return false;
+        }
+        return size() > 0 && mUnsupportedRestoreCount == 0;
+    }
+
+    @Override
     public boolean canExtract() {
         return size() > 0 && mInArchiveCount == size();
     }
@@ -223,8 +254,11 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     @Override
     public boolean canOpen() {
-        return mFileCount == 1 && mDirectoryCount == 0 && mPartialCount == 0
+        return mFileCount == 1
+                && mDirectoryCount == 0
+                && mPartialCount == 0
                 && (mArchiveCount == 0 || !isZipNgFlagEnabled())
-                && (mInArchiveCount == 0 || isZipNgFlagEnabled());
+                && (mInArchiveCount == 0 || isZipNgFlagEnabled())
+                && !canRestore();
     }
 }

@@ -61,6 +61,7 @@ import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
@@ -391,6 +392,11 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         }
     }
 
+    @Override
+    public void openShortcut(ShortcutInfo shortcut) {
+        mInjector.pickResult.increaseActionCount();
+        mActivity.onShortcutPicked(shortcut);
+    }
 
     @Override
     public void springOpenDirectory(DocumentInfo doc) {

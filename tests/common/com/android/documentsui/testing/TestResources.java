@@ -70,6 +70,11 @@ public abstract class TestResources extends Resources {
         strings.put(R.string.default_root_uri, uri);
     }
 
+    /** Sets local search provider URI */
+    public void setLocalSearchProvider(String rootUri) {
+        strings.put(R.string.local_search_provider, rootUri);
+    }
+
     @Override
     public final boolean getBoolean(@BoolRes int id) throws NotFoundException {
         return bools.get(id);

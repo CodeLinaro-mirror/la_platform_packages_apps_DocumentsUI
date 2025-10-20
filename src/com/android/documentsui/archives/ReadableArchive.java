@@ -58,8 +58,8 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * Provides basic implementation for extracting and accessing
- * files within archives exposed by a document provider.
+ * Provides basic implementation for extracting and accessing files within archives exposed by a
+ * document provider.
  *
  * <p>This class is thread safe.
  */
@@ -133,8 +133,10 @@ public class ReadableArchive extends Archive {
             entry = stack.pop();
 
             entryPath = getEntryPath(entry);
-            delimiterIndex = entryPath.lastIndexOf('/', entry.isDirectory()
-                    ? entryPath.length() - 2 : entryPath.length() - 1);
+            delimiterIndex =
+                    entryPath.lastIndexOf(
+                            '/',
+                            entry.isDirectory() ? entryPath.length() - 2 : entryPath.length() - 1);
             parentPath = entryPath.substring(0, delimiterIndex) + "/";
 
             parentList = mTree.get(parentPath);
@@ -145,27 +147,28 @@ public class ReadableArchive extends Archive {
                 // fake ArchiveEntry and add it on top of the stack to process it next.
                 final String newParentPath = parentPath;
                 final Date newParentLastModify = entry.getLastModifiedDate();
-                parentEntry = new ArchiveEntry() {
-                    @Override
-                    public String getName() {
-                        return newParentPath;
-                    }
+                parentEntry =
+                        new ArchiveEntry() {
+                            @Override
+                            public String getName() {
+                                return newParentPath;
+                            }
 
-                    @Override
-                    public long getSize() {
-                        return 0;
-                    }
+                            @Override
+                            public long getSize() {
+                                return 0;
+                            }
 
-                    @Override
-                    public boolean isDirectory() {
-                        return true;
-                    }
+                            @Override
+                            public boolean isDirectory() {
+                                return true;
+                            }
 
-                    @Override
-                    public Date getLastModifiedDate() {
-                        return newParentLastModify;
-                    }
-                };
+                            @Override
+                            public Date getLastModifiedDate() {
+                                return newParentLastModify;
+                            }
+                        };
                 mEntries.put(parentPath, parentEntry);
 
                 if (!"/".equals(parentPath)) {
@@ -194,30 +197,32 @@ public class ReadableArchive extends Archive {
     }
 
     /**
-     * Creates a ReadableArchive instance for opening, browsing and accessing documents within
-     * the archive passed as a file descriptor.
-     * <p>
-     * If the file descriptor is not seekable, then a snapshot will be created.
-     * </p><p>
-     * This method takes ownership for the passed descriptor. The caller must
-     * not use it after passing.
-     * </p>
+     * Creates a ReadableArchive instance for opening, browsing and accessing documents within the
+     * archive passed as a file descriptor.
      *
-     * @param context         Context of the provider.
-     * @param descriptor      File descriptor for the archive's contents.
-     * @param archiveUri      URI of the archive document.
+     * If the file descriptor is not seekable, then a snapshot will be created.
+     *
+     * This method takes ownership for the passed descriptor. The caller must not use it after
+     * passing.
+     *
+     * @param context Context of the provider.
+     * @param descriptor File descriptor for the archive's contents.
+     * @param archiveUri URI of the archive document.
      * @param archiveMimeType MIME type of the archive document.
-     * @param accessMode      Access mode for the archive {@see ParcelFileDescriptor}.
+     * @param accessMode Access mode for the archive {@see ParcelFileDescriptor}.
      * @param notificationUri URI for notifying that the archive file has changed.
      */
     public static ReadableArchive createForParcelFileDescriptor(
-            Context context, ParcelFileDescriptor descriptor, Uri archiveUri,
-            @NonNull String archiveMimeType, int accessMode, @Nullable Uri notificationUri)
+            Context context,
+            ParcelFileDescriptor descriptor,
+            Uri archiveUri,
+            @NonNull String archiveMimeType,
+            int accessMode,
+            @Nullable Uri notificationUri)
             throws IOException, CompressorException, ArchiveException {
         if (canSeek(descriptor)) {
-            return new ReadableArchive(context, descriptor,
-                    archiveUri, archiveMimeType, accessMode,
-                    notificationUri);
+            return new ReadableArchive(
+                    context, descriptor, archiveUri, archiveMimeType, accessMode, notificationUri);
         }
 
         try {
@@ -227,17 +232,19 @@ public class ReadableArchive extends Archive {
                 // Create a copy of the archive, as ZipFile doesn't operate on streams.
                 // Moreover, ZipInputStream would be inefficient for large files on
                 // pipes.
-                snapshotFile = File.createTempFile("com.android.documentsui.snapshot{",
-                        "}.zip", context.getCacheDir());
+                snapshotFile =
+                        File.createTempFile(
+                                "com.android.documentsui.snapshot{",
+                                "}.zip",
+                                context.getCacheDir());
 
-                try (
-                    final FileOutputStream outputStream =
-                            new ParcelFileDescriptor.AutoCloseOutputStream(
-                                    ParcelFileDescriptor.open(
-                                            snapshotFile, ParcelFileDescriptor.MODE_WRITE_ONLY));
-                    final ParcelFileDescriptor.AutoCloseInputStream inputStream =
-                            new ParcelFileDescriptor.AutoCloseInputStream(descriptor);
-                ) {
+                try (FileOutputStream outputStream =
+                                new ParcelFileDescriptor.AutoCloseOutputStream(
+                                        ParcelFileDescriptor.open(
+                                                snapshotFile,
+                                                ParcelFileDescriptor.MODE_WRITE_ONLY));
+                        ParcelFileDescriptor.AutoCloseInputStream inputStream =
+                                new ParcelFileDescriptor.AutoCloseInputStream(descriptor); ) {
                     final byte[] buffer = new byte[32 * 1024];
                     int bytes;
                     while ((bytes = inputStream.read(buffer)) != -1) {
@@ -246,11 +253,15 @@ public class ReadableArchive extends Archive {
                     outputStream.flush();
                 }
 
-                ParcelFileDescriptor snapshotPfd = ParcelFileDescriptor.open(
-                        snapshotFile, MODE_READ_ONLY);
+                ParcelFileDescriptor snapshotPfd =
+                        ParcelFileDescriptor.open(snapshotFile, MODE_READ_ONLY);
 
-                return new ReadableArchive(context, snapshotPfd,
-                        archiveUri, archiveMimeType, accessMode,
+                return new ReadableArchive(
+                        context,
+                        snapshotPfd,
+                        archiveUri,
+                        archiveMimeType,
+                        accessMode,
                         notificationUri);
             } finally {
                 // On UNIX the file will be still available for processes which opened it, even
@@ -269,12 +280,14 @@ public class ReadableArchive extends Archive {
 
     @Override
     public ParcelFileDescriptor openDocument(
-            String documentId, String mode, @Nullable final CancellationSignal signal)
+            @NonNull String documentId, String mode, @Nullable final CancellationSignal signal)
             throws FileNotFoundException {
-        MorePreconditions.checkArgumentEquals("r", mode,
-                "Invalid mode. Only reading \"r\" supported, but got: \"%s\".");
+        MorePreconditions.checkArgumentEquals(
+                "r", mode, "Invalid mode. Only reading \"r\" supported, but got: \"%s\".");
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
         final ArchiveEntry entry = mEntries.get(parsedId.mPath);
@@ -283,8 +296,8 @@ public class ReadableArchive extends Archive {
         }
 
         try {
-            return mStorageManager.openProxyFileDescriptor(MODE_READ_ONLY,
-                    new Proxy(mArchiveHandle, entry), mHandler);
+            return mStorageManager.openProxyFileDescriptor(
+                    MODE_READ_ONLY, new Proxy(mArchiveHandle, entry), mHandler);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } catch (ArchiveException e) {
@@ -296,12 +309,15 @@ public class ReadableArchive extends Archive {
 
     @Override
     public AssetFileDescriptor openDocumentThumbnail(
-            String documentId, Point sizeHint, final CancellationSignal signal)
+            @NonNull String documentId, Point sizeHint, final CancellationSignal signal)
             throws FileNotFoundException {
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
-        Preconditions.checkArgument(getDocumentType(documentId).startsWith("image/"),
+        Preconditions.checkArgument(
+                getDocumentType(documentId).startsWith("image/"),
                 "Thumbnails only supported for image/* MIME type.");
 
         final ArchiveEntry entry = mEntries.get(parsedId.mPath);
@@ -376,8 +392,8 @@ public class ReadableArchive extends Archive {
             // Silent close.
         } finally {
             /**
-             * For creating FileInputStream by using FileDescriptor, the file descriptor will not
-             * be closed after FileInputStream closed.
+             * For creating FileInputStream by using FileDescriptor, the file descriptor will not be
+             * closed after FileInputStream closed.
              */
             IOUtils.closeQuietly(mParcelFileDescriptor);
         }

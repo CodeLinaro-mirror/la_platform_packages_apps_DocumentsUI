@@ -32,6 +32,7 @@ import android.system.OsConstants;
 import android.text.TextUtils;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.MediumTest;
 import androidx.test.runner.AndroidJUnit4;
@@ -65,8 +66,11 @@ public class ReadableArchiveTest {
     @Before
     public void setUp() throws Exception {
         mExecutor = Executors.newSingleThreadExecutor();
-        mTestUtils = new TestUtils(InstrumentationRegistry.getTargetContext(),
-                InstrumentationRegistry.getContext(), mExecutor);
+        mTestUtils =
+                new TestUtils(
+                        InstrumentationRegistry.getTargetContext(),
+                        InstrumentationRegistry.getContext(),
+                        mExecutor);
     }
 
     @After
@@ -78,19 +82,20 @@ public class ReadableArchiveTest {
         }
     }
 
-    public static ArchiveId createArchiveId(String path) {
+    public static ArchiveId createArchiveId(@NonNull String path) {
         return new ArchiveId(ARCHIVE_URI, ParcelFileDescriptor.MODE_READ_ONLY, path);
     }
 
     private void loadArchive(ParcelFileDescriptor descriptor, String mimeType)
             throws IOException, CompressorException, ArchiveException {
-        mArchive = ReadableArchive.createForParcelFileDescriptor(
-                InstrumentationRegistry.getTargetContext(),
-                descriptor,
-                ARCHIVE_URI,
-                mimeType,
-                ParcelFileDescriptor.MODE_READ_ONLY,
-                Uri.parse(NOTIFICATION_URI));
+        mArchive =
+                ReadableArchive.createForParcelFileDescriptor(
+                        InstrumentationRegistry.getTargetContext(),
+                        descriptor,
+                        ARCHIVE_URI,
+                        mimeType,
+                        ParcelFileDescriptor.MODE_READ_ONLY,
+                        Uri.parse(NOTIFICATION_URI));
     }
 
     private void loadArchive(ParcelFileDescriptor descriptor)
@@ -105,8 +110,9 @@ public class ReadableArchiveTest {
         final int count = cursor.getCount();
         for (int i = 0; i < count; i++) {
             cursor.moveToPosition(i);
-            if (TextUtils.equals(targetDocId, cursor.getString(
-                    cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)))) {
+            if (TextUtils.equals(
+                    targetDocId,
+                    cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)))) {
                 found = true;
                 break;
             }
@@ -116,101 +122,108 @@ public class ReadableArchiveTest {
     }
 
     @Test
-    public void testQueryChildDocument()
-            throws IOException, CompressorException, ArchiveException {
+    public void testQueryChildDocument() throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.archive));
-        final Cursor cursor = mArchive.queryChildDocuments(
-                createArchiveId("/").toDocumentId(), null, null);
+        final Cursor cursor =
+                mArchive.queryChildDocuments(createArchiveId("/").toDocumentId(), null, null);
 
         assertRowExist(cursor, createArchiveId("/file1.txt").toDocumentId());
-        assertEquals("file1.txt",
+        assertEquals(
+                "file1.txt",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-        assertEquals("text/plain",
+        assertEquals(
+                "text/plain",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-        assertEquals(13,
-                cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(13, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
 
         assertRowExist(cursor, createArchiveId("/dir1/").toDocumentId());
-        assertEquals("dir1",
+        assertEquals(
+                "dir1",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
+        assertEquals(
+                Document.MIME_TYPE_DIR,
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
 
         assertRowExist(cursor, createArchiveId("/dir2/").toDocumentId());
-        assertEquals("dir2",
+        assertEquals(
+                "dir2",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
+        assertEquals(
+                Document.MIME_TYPE_DIR,
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
 
         // Check if querying children works too.
-        final Cursor childCursor = mArchive.queryChildDocuments(
-                createArchiveId("/dir1/").toDocumentId(), null, null);
+        final Cursor childCursor =
+                mArchive.queryChildDocuments(createArchiveId("/dir1/").toDocumentId(), null, null);
 
         assertTrue(childCursor.moveToFirst());
         assertEquals(
                 createArchiveId("/dir1/cherries.txt").toDocumentId(),
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DOCUMENT_ID)));
-        assertEquals("cherries.txt",
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DISPLAY_NAME)));
-        assertEquals("text/plain",
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_MIME_TYPE)));
-        assertEquals(17,
-                childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
+        assertEquals(
+                "cherries.txt",
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
+        assertEquals(
+                "text/plain",
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
+        assertEquals(
+                17, childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
     }
 
     @Test
     public void testQueryChildDocument_NoDirs()
             throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.no_dirs));
-        final Cursor cursor = mArchive.queryChildDocuments(
-                createArchiveId("/").toDocumentId(), null, null);
+        final Cursor cursor =
+                mArchive.queryChildDocuments(createArchiveId("/").toDocumentId(), null, null);
 
         assertTrue(cursor.moveToFirst());
         assertEquals(
                 createArchiveId("/dir1/").toDocumentId(),
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
-        assertEquals("dir1",
+        assertEquals(
+                "dir1",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
+        assertEquals(
+                Document.MIME_TYPE_DIR,
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         assertFalse(cursor.moveToNext());
 
-        final Cursor childCursor = mArchive.queryChildDocuments(
-                createArchiveId("/dir1/").toDocumentId(), null, null);
+        final Cursor childCursor =
+                mArchive.queryChildDocuments(createArchiveId("/dir1/").toDocumentId(), null, null);
 
         assertTrue(childCursor.moveToFirst());
         assertEquals(
                 createArchiveId("/dir1/dir2/").toDocumentId(),
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DOCUMENT_ID)));
-        assertEquals("dir2",
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
+        assertEquals(
+                "dir2",
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
+        assertEquals(
+                Document.MIME_TYPE_DIR,
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
+        assertEquals(
+                0, childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         assertFalse(childCursor.moveToNext());
 
-        final Cursor childCursor2 = mArchive.queryChildDocuments(
-                createArchiveId("/dir1/dir2/").toDocumentId(),
-                null, null);
+        final Cursor childCursor2 =
+                mArchive.queryChildDocuments(
+                        createArchiveId("/dir1/dir2/").toDocumentId(), null, null);
 
         assertTrue(childCursor2.moveToFirst());
         assertEquals(
                 createArchiveId("/dir1/dir2/cherries.txt").toDocumentId(),
-                childCursor2.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DOCUMENT_ID)));
+                childCursor2.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
         assertFalse(childCursor2.moveToNext());
     }
 
@@ -218,106 +231,115 @@ public class ReadableArchiveTest {
     public void testQueryChildDocument_EmptyDirs()
             throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.empty_dirs));
-        final Cursor cursor = mArchive.queryChildDocuments(
-                createArchiveId("/").toDocumentId(), null, null);
+        final Cursor cursor =
+                mArchive.queryChildDocuments(createArchiveId("/").toDocumentId(), null, null);
 
         assertTrue(cursor.moveToFirst());
         assertEquals(
                 createArchiveId("/dir1/").toDocumentId(),
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
-        assertEquals("dir1",
+        assertEquals(
+                "dir1",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
+        assertEquals(
+                Document.MIME_TYPE_DIR,
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(0, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
         assertFalse(cursor.moveToNext());
 
-        final Cursor childCursor = mArchive.queryChildDocuments(
-                createArchiveId("/dir1/").toDocumentId(), null, null);
+        final Cursor childCursor =
+                mArchive.queryChildDocuments(createArchiveId("/dir1/").toDocumentId(), null, null);
 
         assertRowExist(childCursor, createArchiveId("/dir1/dir2/").toDocumentId());
-        assertEquals("dir2",
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(
+                "dir2",
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
+        assertEquals(
+                Document.MIME_TYPE_DIR,
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
+        assertEquals(
+                0, childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
 
         assertRowExist(childCursor, createArchiveId("/dir1/dir3/").toDocumentId());
         assertEquals(
                 createArchiveId("/dir1/dir3/").toDocumentId(),
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DOCUMENT_ID)));
-        assertEquals("dir3",
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_DISPLAY_NAME)));
-        assertEquals(Document.MIME_TYPE_DIR,
-                childCursor.getString(childCursor.getColumnIndexOrThrow(
-                        Document.COLUMN_MIME_TYPE)));
-        assertEquals(0,
-                childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
+        assertEquals(
+                "dir3",
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
+        assertEquals(
+                Document.MIME_TYPE_DIR,
+                childCursor.getString(
+                        childCursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
+        assertEquals(
+                0, childCursor.getInt(childCursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
 
-        final Cursor childCursor2 = mArchive.queryChildDocuments(
-                createArchiveId("/dir1/dir2/").toDocumentId(),
-                null, null);
+        final Cursor childCursor2 =
+                mArchive.queryChildDocuments(
+                        createArchiveId("/dir1/dir2/").toDocumentId(), null, null);
         assertFalse(childCursor2.moveToFirst());
 
-        final Cursor childCursor3 = mArchive.queryChildDocuments(
-                createArchiveId("/dir1/dir3/").toDocumentId(),
-                null, null);
+        final Cursor childCursor3 =
+                mArchive.queryChildDocuments(
+                        createArchiveId("/dir1/dir3/").toDocumentId(), null, null);
         assertFalse(childCursor3.moveToFirst());
     }
 
     @Test
     public void testGetDocumentType() throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.archive));
-        assertEquals(Document.MIME_TYPE_DIR, mArchive.getDocumentType(
-                createArchiveId("/dir1/").toDocumentId()));
-        assertEquals("text/plain", mArchive.getDocumentType(
-                createArchiveId("/file1.txt").toDocumentId()));
+        assertEquals(
+                Document.MIME_TYPE_DIR,
+                mArchive.getDocumentType(createArchiveId("/dir1/").toDocumentId()));
+        assertEquals(
+                "text/plain",
+                mArchive.getDocumentType(createArchiveId("/file1.txt").toDocumentId()));
     }
 
     @Test
     public void testIsChildDocument() throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.archive));
         final String documentId = createArchiveId("/").toDocumentId();
-        assertTrue(mArchive.isChildDocument(documentId,
-                createArchiveId("/dir1/").toDocumentId()));
-        assertFalse(mArchive.isChildDocument(documentId,
-                createArchiveId("/this-does-not-exist").toDocumentId()));
-        assertTrue(mArchive.isChildDocument(
-                createArchiveId("/dir1/").toDocumentId(),
-                createArchiveId("/dir1/cherries.txt").toDocumentId()));
-        assertTrue(mArchive.isChildDocument(documentId,
-                createArchiveId("/dir1/cherries.txt").toDocumentId()));
+        assertTrue(mArchive.isChildDocument(documentId, createArchiveId("/dir1/").toDocumentId()));
+        assertFalse(
+                mArchive.isChildDocument(
+                        documentId, createArchiveId("/this-does-not-exist").toDocumentId()));
+        assertTrue(
+                mArchive.isChildDocument(
+                        createArchiveId("/dir1/").toDocumentId(),
+                        createArchiveId("/dir1/cherries.txt").toDocumentId()));
+        assertTrue(
+                mArchive.isChildDocument(
+                        documentId, createArchiveId("/dir1/cherries.txt").toDocumentId()));
     }
 
     @Test
     public void testQueryDocument() throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.archive));
-        final Cursor cursor = mArchive.queryDocument(
-                createArchiveId("/dir2/strawberries.txt").toDocumentId(),
-                null);
+        final Cursor cursor =
+                mArchive.queryDocument(
+                        createArchiveId("/dir2/strawberries.txt").toDocumentId(), null);
 
         assertTrue(cursor.moveToFirst());
         assertEquals(
                 createArchiveId("/dir2/strawberries.txt").toDocumentId(),
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DOCUMENT_ID)));
-        assertEquals("strawberries.txt",
+        assertEquals(
+                "strawberries.txt",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_DISPLAY_NAME)));
-        assertEquals("text/plain",
+        assertEquals(
+                "text/plain",
                 cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)));
-        assertEquals(21,
-                cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
+        assertEquals(21, cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)));
     }
 
     private void queryDocumentByResIdWithMimeTypeAndVerify(@IdRes int resId, String mimeType)
             throws IOException, CompressorException, ArchiveException {
-        loadArchive(mTestUtils.getSeekableDescriptor(resId),
-                mimeType);
+        loadArchive(mTestUtils.getSeekableDescriptor(resId), mimeType);
         final String documentId = createArchiveId("/hello/hello.txt").toDocumentId();
 
         final Cursor cursor = mArchive.queryDocument(documentId, null);
@@ -329,15 +351,13 @@ public class ReadableArchiveTest {
                 .isEqualTo("hello.txt");
         assertThat(cursor.getString(cursor.getColumnIndexOrThrow(Document.COLUMN_MIME_TYPE)))
                 .isEqualTo("text/plain");
-        assertThat(cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE)))
-                .isEqualTo(48);
+        assertThat(cursor.getInt(cursor.getColumnIndexOrThrow(Document.COLUMN_SIZE))).isEqualTo(48);
     }
 
     @Test
     public void archive_sevenZFile_containsList()
             throws IOException, CompressorException, ArchiveException {
-        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_7z,
-                "application/x-7z-compressed");
+        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_7z, "application/x-7z-compressed");
     }
 
     @Test
@@ -349,29 +369,28 @@ public class ReadableArchiveTest {
     @Test
     public void archive_tgz_containsList()
             throws IOException, CompressorException, ArchiveException {
-        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_tgz,
-                "application/x-compressed-tar");
+        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_tgz, "application/x-compressed-tar");
     }
 
     @Test
     public void archive_tarXz_containsList()
             throws IOException, CompressorException, ArchiveException {
-        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_tar_xz,
-                "application/x-xz-compressed-tar");
+        queryDocumentByResIdWithMimeTypeAndVerify(
+                R.raw.hello_tar_xz, "application/x-xz-compressed-tar");
     }
 
     @Test
     public void archive_tarBz_containsList()
             throws IOException, CompressorException, ArchiveException {
-        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_tar_bz2,
-                "application/x-bzip-compressed-tar");
+        queryDocumentByResIdWithMimeTypeAndVerify(
+                R.raw.hello_tar_bz2, "application/x-bzip-compressed-tar");
     }
 
     @Test
     public void archive_tarBrotli_containsList()
             throws IOException, CompressorException, ArchiveException {
-        queryDocumentByResIdWithMimeTypeAndVerify(R.raw.hello_tar_br,
-                "application/x-brotli-compressed-tar");
+        queryDocumentByResIdWithMimeTypeAndVerify(
+                R.raw.hello_tar_br, "application/x-brotli-compressed-tar");
     }
 
     @Test
@@ -390,9 +409,11 @@ public class ReadableArchiveTest {
 
     // Common part of testOpenDocument and testOpenDocument_NonSeekable.
     void commonTestOpenDocument() throws IOException, ErrnoException {
-        final ParcelFileDescriptor descriptor = mArchive.openDocument(
-                createArchiveId("/dir2/strawberries.txt").toDocumentId(),
-                "r", null /* signal */);
+        final ParcelFileDescriptor descriptor =
+                mArchive.openDocument(
+                        createArchiveId("/dir2/strawberries.txt").toDocumentId(),
+                        "r",
+                        null /* signal */);
         assertTrue(Archive.canSeek(descriptor));
         try (ParcelFileDescriptor.AutoCloseInputStream inputStream =
                 new ParcelFileDescriptor.AutoCloseInputStream(descriptor)) {
@@ -412,7 +433,7 @@ public class ReadableArchiveTest {
     @Test
     public void testBrokenArchive() throws IOException, CompressorException, ArchiveException {
         loadArchive(mTestUtils.getNonSeekableDescriptor(R.raw.archive));
-        final Cursor cursor = mArchive.queryChildDocuments(
-                createArchiveId("/").toDocumentId(), null, null);
+        final Cursor cursor =
+                mArchive.queryChildDocuments(createArchiveId("/").toDocumentId(), null, null);
     }
 }

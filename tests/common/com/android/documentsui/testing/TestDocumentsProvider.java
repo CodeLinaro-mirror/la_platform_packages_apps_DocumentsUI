@@ -36,6 +36,9 @@ import android.util.Log;
 import com.android.documentsui.base.DocumentInfo;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Test doubles of {@link DocumentsProvider} to isolate document providers. This is not registered
@@ -56,10 +59,51 @@ public class TestDocumentsProvider extends DocumentsProvider {
             Document.COLUMN_ICON
     };
 
+    /** Faked result for {@link #queryChildDocuments(String, String[], String)}. */
     private Cursor mNextChildDocuments;
+
+    /** Faked result for {@link #queryRecentDocuments(String, String[])}. */
     private Cursor mNextRecentDocuments;
+
+    /** Faked result for {@link #queryTrashDocuments(String[])}. */
+    private Cursor mNextTrashDocuments;
+
+    /** Runtime exception thrown in either querySearchDocuments() or queryChildDocuments(). */
     private String mRuntimeMessage;
+
+    /** Artificial delay added before this provider returns its results, 0 means no delay. */
     private long mQueryDelayMs = 0;
+
+    /** Maps from document ID to a summary, that will be used when querying for summaries. */
+    private final Map<String, String> mNextSummaries = new HashMap<>();
+
+    /** The last query args passed to {@link #queryChildDocuments()}. */
+    private @Nullable Bundle mLastQueryArgs = null;
+
+    /** Sets the summaries that should be emulated. */
+    public void setDocumentSummaries(Map<String, String> summaries) {
+        mNextSummaries.clear();
+        mNextSummaries.putAll(summaries);
+    }
+
+    public String getAuthority() {
+        return mAuthority;
+    }
+
+    @Nullable
+    public Bundle getLastQueryArgs() {
+        return mLastQueryArgs;
+    }
+
+    public void setLastQueryArgs(@Nullable Bundle lastQueryArgs) {
+        mLastQueryArgs = lastQueryArgs;
+    }
+
+    /**
+     * A latch that will be decremented when a query is about to be delayed. This allows tests to
+     * synchronize with the start of the delay.
+     */
+    @Nullable private CountDownLatch mQueryDelayLatch = null;
     private final String mAuthority;
 
     // Emulates FileSystemProvider's support for search result limiting.
@@ -86,14 +130,43 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
-        return null;
+        maybeThrowException();
+        maybeDelayQueryResults();
+
+        if (projection == null) {
+            projection = new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY};
+        }
+        final MatrixCursor result = new MatrixCursor(projection);
+
+        // This provider might be used to check for the existence of a doc.
+        // If it doesn't exist in the test model, we should return an empty cursor.
+        if (!mNextSummaries.containsKey(documentId)) {
+            Log.d(TAG, "queryDocument(): document not found: " + documentId);
+            return result;
+        }
+
+        final MatrixCursor.RowBuilder row = result.newRow();
+        row.add(Document.COLUMN_DOCUMENT_ID, documentId);
+        row.add(Document.COLUMN_SUMMARY, mNextSummaries.getOrDefault(documentId, null));
+
+        Log.d(TAG, "queryDocument(): document found: " + documentId);
+        return result;
     }
 
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection,
             String sortOrder) throws FileNotFoundException {
         maybeThrowException();
+        maybeDelayQueryResults();
         return mNextChildDocuments;
+    }
+
+    @Override
+    public Cursor queryChildDocuments(
+            String parentDocumentId, String[] projection, Bundle queryArgs)
+            throws FileNotFoundException {
+        mLastQueryArgs = queryArgs;
+        return queryChildDocuments(parentDocumentId, projection, (String) null);
     }
 
     @Override
@@ -105,6 +178,13 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor queryRecentDocuments(String rootId, String[] projection) {
         return mNextRecentDocuments;
+    }
+
+    @Nullable
+    @Override
+    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+        maybeThrowException();
+        return mNextTrashDocuments;
     }
 
     private String getStringColumn(Cursor cursor, String name) {
@@ -208,10 +288,24 @@ public class TestDocumentsProvider extends DocumentsProvider {
         mQueryDelayMs = queryDelayMs;
     }
 
+    /**
+     * Sets a latch to be activated when the query delay is about to be triggered. If the set
+     * `latch` is null, the latch is cleared and no latch count down is called.
+     * @param latch Either a latch to be used or null.
+     */
+    public void setQueryDelayLatch(@Nullable CountDownLatch latch) {
+        Log.d(TAG, "Setting query delay latch to " + latch);
+        mQueryDelayLatch = latch;
+    }
+
     private void maybeDelayQueryResults() {
         if (mQueryDelayMs <= 0) {
             Log.d(TAG, "Immediate delivery of results for " + mAuthority);
             return;
+        }
+        if (mQueryDelayLatch != null) {
+            Log.d(TAG, "Decrementing count on the queryDealyLatch " + mQueryDelayLatch);
+            mQueryDelayLatch.countDown();
         }
         Log.d(TAG, "Delaying query results by " + mQueryDelayMs + "ms for " + mAuthority);
         SystemClock.sleep(mQueryDelayMs);
@@ -241,6 +335,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
         mNextRecentDocuments = createDocumentsCursor(docs);
     }
 
+    /**
+     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String[])}.
+     *
+     * @param docs The documents to be returned in the cursor.
+     */
+    public void setNextTrashDocumentsReturns(DocumentInfo... docs) {
+        mNextTrashDocuments = createDocumentsCursor(docs);
+    }
+
     private Cursor createDocumentsCursor(DocumentInfo... docs) {
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);
         for (DocumentInfo doc : docs) {
@@ -250,7 +353,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
                     .add(Document.COLUMN_DISPLAY_NAME, doc.displayName)
                     .add(Document.COLUMN_LAST_MODIFIED, doc.lastModified)
                     .add(Document.COLUMN_FLAGS, doc.flags)
-                    .add(Document.COLUMN_SUMMARY, doc.summary)
+                    .add(
+                            Document.COLUMN_SUMMARY,
+                            mNextSummaries.getOrDefault(doc.documentId, doc.summary))
                     .add(Document.COLUMN_SIZE, doc.size)
                     .add(Document.COLUMN_ICON, doc.icon);
         }

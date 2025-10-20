@@ -36,6 +36,7 @@ import android.provider.DocumentsProvider;
 import android.util.Log;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.documentsui.R;
@@ -48,18 +49,22 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Provides basic implementation for creating, extracting and accessing
- * files within archives exposed by a document provider.
+ * Provides basic implementation for creating, extracting and accessing files within archives
+ * exposed by a document provider.
  *
- * <p>This class is thread safe. All methods can be called on any thread without
- * synchronization.
+ * This class is thread safe. All methods can be called on any thread without synchronization.
  */
 public class ArchivesProvider extends DocumentsProvider {
     public static final String AUTHORITY = "com.android.documentsui.archives";
 
-    private static final String[] DEFAULT_ROOTS_PROJECTION = new String[]{
-            Root.COLUMN_ROOT_ID, Root.COLUMN_DOCUMENT_ID, Root.COLUMN_TITLE, Root.COLUMN_FLAGS,
-            Root.COLUMN_ICON};
+    private static final String[] DEFAULT_ROOTS_PROJECTION =
+            new String[] {
+                Root.COLUMN_ROOT_ID,
+                Root.COLUMN_DOCUMENT_ID,
+                Root.COLUMN_TITLE,
+                Root.COLUMN_FLAGS,
+                Root.COLUMN_ICON
+            };
     private static final String TAG = "ArchivesProvider";
     private static final String METHOD_ACQUIRE_ARCHIVE = "acquireArchive";
     private static final String METHOD_RELEASE_ARCHIVE = "releaseArchive";
@@ -94,8 +99,8 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public Cursor queryChildDocuments(String documentId, @Nullable String[] projection,
-            @Nullable String sortOrder)
+    public Cursor queryChildDocuments(
+            @NonNull String documentId, @Nullable String[] projection, @Nullable String sortOrder)
             throws FileNotFoundException {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         final Loader loader = getLoaderOrThrow(documentId);
@@ -105,8 +110,8 @@ public class ArchivesProvider extends DocumentsProvider {
             return loader.get().queryChildDocuments(documentId, projection, sortOrder);
         }
 
-        final MatrixCursor cursor = new MatrixCursor(
-                projection != null ? projection : Archive.DEFAULT_PROJECTION);
+        final MatrixCursor cursor =
+                new MatrixCursor(projection != null ? projection : Archive.DEFAULT_PROJECTION);
         final Bundle bundle = new Bundle();
 
         switch (status) {
@@ -125,21 +130,22 @@ public class ArchivesProvider extends DocumentsProvider {
         }
 
         cursor.setExtras(bundle);
-        cursor.setNotificationUri(getContext().getContentResolver(),
+        cursor.setNotificationUri(
+                getContext().getContentResolver(),
                 buildUriForArchive(archiveId.mArchiveUri, archiveId.mAccessMode));
         return cursor;
     }
 
     /** Overrides a hidden API. */
-    public Cursor queryChildDocumentsForManage(String parentDocumentId,
-            @Nullable String[] projection, @Nullable String sortOrder)
+    public Cursor queryChildDocumentsForManage(
+            String parentDocumentId, @Nullable String[] projection, @Nullable String sortOrder)
             throws FileNotFoundException {
         // No special handling of Archives in managed mode.
         return queryChildDocuments(parentDocumentId, projection, sortOrder);
     }
 
     @Override
-    public String getDocumentType(String documentId) throws FileNotFoundException {
+    public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         if (archiveId.mPath.equals("/")) {
             return Document.MIME_TYPE_DIR;
@@ -156,8 +162,7 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public @Nullable Bundle getDocumentMetadata(String documentId)
-            throws FileNotFoundException {
+    public @Nullable Bundle getDocumentMetadata(String documentId) throws FileNotFoundException {
 
         final Archive archive = getLoaderOrThrow(documentId).get();
         final String mimeType = archive.getDocumentType(documentId);
@@ -168,8 +173,9 @@ public class ArchivesProvider extends DocumentsProvider {
 
         InputStream stream = null;
         try {
-            stream = new ParcelFileDescriptor.AutoCloseInputStream(
-                    openDocument(documentId, "r", null));
+            stream =
+                    new ParcelFileDescriptor.AutoCloseInputStream(
+                            openDocument(documentId, "r", null));
             final Bundle metadata = new Bundle();
             MetadataReader.getMetadata(metadata, stream, mimeType, null);
             return metadata;
@@ -182,23 +188,30 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public Cursor queryDocument(String documentId, @Nullable String[] projection)
+    public Cursor queryDocument(@NonNull String documentId, @Nullable String[] projection)
             throws FileNotFoundException {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         if (archiveId.mPath.equals("/")) {
-            try (final Cursor archiveCursor = getContext().getContentResolver().query(
-                    archiveId.mArchiveUri,
-                    new String[]{Document.COLUMN_DISPLAY_NAME},
-                    null, null, null, null)) {
+            try (Cursor archiveCursor =
+                    getContext()
+                            .getContentResolver()
+                            .query(
+                                    archiveId.mArchiveUri,
+                                    new String[] {Document.COLUMN_DISPLAY_NAME},
+                                    null,
+                                    null,
+                                    null,
+                                    null)) {
                 if (archiveCursor == null || !archiveCursor.moveToFirst()) {
-                    throw new FileNotFoundException(
-                            "Cannot resolve display name of the archive.");
+                    throw new FileNotFoundException("Cannot resolve display name of the archive.");
                 }
-                final String displayName = archiveCursor.getString(
-                        archiveCursor.getColumnIndex(Document.COLUMN_DISPLAY_NAME));
+                final String displayName =
+                        archiveCursor.getString(
+                                archiveCursor.getColumnIndex(Document.COLUMN_DISPLAY_NAME));
 
-                final MatrixCursor cursor = new MatrixCursor(
-                        projection != null ? projection : Archive.DEFAULT_PROJECTION);
+                final MatrixCursor cursor =
+                        new MatrixCursor(
+                                projection != null ? projection : Archive.DEFAULT_PROJECTION);
                 final RowBuilder row = cursor.newRow();
                 row.add(Document.COLUMN_DOCUMENT_ID, documentId);
                 row.add(Document.COLUMN_DISPLAY_NAME, displayName);
@@ -213,8 +226,7 @@ public class ArchivesProvider extends DocumentsProvider {
     }
 
     @Override
-    public String createDocument(
-            String parentDocumentId, String mimeType, String displayName)
+    public String createDocument(String parentDocumentId, String mimeType, String displayName)
             throws FileNotFoundException {
         final Loader loader = getLoaderOrThrow(parentDocumentId);
         return loader.get().createDocument(parentDocumentId, mimeType, displayName);
@@ -247,16 +259,16 @@ public class ArchivesProvider extends DocumentsProvider {
      * @see ParcelFileDescriptor#MODE_READ
      * @see ParcelFileDescriptor#MODE_WRITE
      */
-    public static Uri buildUriForArchive(Uri externalUri, int accessMode) {
-        return DocumentsContract.buildDocumentUri(AUTHORITY,
-                new ArchiveId(externalUri, accessMode, "/").toDocumentId());
+    public static Uri buildUriForArchive(@NonNull Uri externalUri, int accessMode) {
+        return DocumentsContract.buildDocumentUri(
+                AUTHORITY, new ArchiveId(externalUri, accessMode, "/").toDocumentId());
     }
 
-    /**
-     * Acquires an archive.
-     */
+    /** Acquires an archive. */
     public static void acquireArchive(ContentProviderClient client, Uri archiveUri) {
-        Archive.MorePreconditions.checkArgumentEquals(AUTHORITY, archiveUri.getAuthority(),
+        Archive.MorePreconditions.checkArgumentEquals(
+                AUTHORITY,
+                archiveUri.getAuthority(),
                 "Mismatching authority. Expected: %s, actual: %s.");
         final String documentId = DocumentsContract.getDocumentId(archiveUri);
 
@@ -267,11 +279,11 @@ public class ArchivesProvider extends DocumentsProvider {
         }
     }
 
-    /**
-     * Releases an archive.
-     */
+    /** Releases an archive. */
     public static void releaseArchive(ContentProviderClient client, Uri archiveUri) {
-        Archive.MorePreconditions.checkArgumentEquals(AUTHORITY, archiveUri.getAuthority(),
+        Archive.MorePreconditions.checkArgumentEquals(
+                AUTHORITY,
+                archiveUri.getAuthority(),
                 "Mismatching authority. Expected: %s, actual: %s.");
         final String documentId = DocumentsContract.getDocumentId(archiveUri);
 
@@ -282,18 +294,17 @@ public class ArchivesProvider extends DocumentsProvider {
         }
     }
 
-    /**
-     * The archive won't close until all clients release it.
-     */
-    private void acquireArchive(String documentId) {
+    /** The archive won't close until all clients release it. */
+    private void acquireArchive(@NonNull String documentId) {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         synchronized (mArchives) {
             final Key key = Key.fromArchiveId(archiveId);
             Loader loader = mArchives.get(key);
             if (loader == null) {
                 // TODO: Pass parent Uri so the loader can acquire the parent's notification Uri.
-                loader = new Loader(getContext(), archiveId.mArchiveUri, archiveId.mAccessMode,
-                        null);
+                loader =
+                        new Loader(
+                                getContext(), archiveId.mArchiveUri, archiveId.mAccessMode, null);
                 mArchives.put(key, loader);
             }
             loader.acquire();
@@ -301,10 +312,8 @@ public class ArchivesProvider extends DocumentsProvider {
         }
     }
 
-    /**
-     * If all clients release the archive, then it will be closed.
-     */
-    private void releaseArchive(String documentId) {
+    /** If all clients release the archive, then it will be closed. */
+    private void releaseArchive(@NonNull String documentId) {
         final ArchiveId archiveId = ArchiveId.fromDocumentId(documentId);
         final Key key = Key.fromArchiveId(archiveId);
         synchronized (mArchives) {
@@ -317,7 +326,7 @@ public class ArchivesProvider extends DocumentsProvider {
         }
     }
 
-    private Loader getLoaderOrThrow(String documentId) {
+    private Loader getLoaderOrThrow(@NonNull String documentId) {
         final ArchiveId id = ArchiveId.fromDocumentId(documentId);
         final Key key = Key.fromArchiveId(id);
         synchronized (mArchives) {
@@ -350,8 +359,8 @@ public class ArchivesProvider extends DocumentsProvider {
             if (!(other instanceof Key)) {
                 return false;
             }
-            return archiveUri.equals(((Key) other).archiveUri) &&
-                    accessMode == ((Key) other).accessMode;
+            return archiveUri.equals(((Key) other).archiveUri)
+                    && accessMode == ((Key) other).accessMode;
         }
 
         @Override

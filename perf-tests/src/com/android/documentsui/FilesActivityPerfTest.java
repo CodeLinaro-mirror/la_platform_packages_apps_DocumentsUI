@@ -29,6 +29,7 @@ import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.BaseActivity.EventListener;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 
 import java.util.ArrayList;
@@ -114,7 +115,7 @@ public class FilesActivityPerfTest extends ActivityTest<FilesActivity> {
 
             try {
                 activity.addEventListener(listener);
-                bots.roots.openRoot(STRESS_ROOT_1_ID);
+                EspressoBotsKt.openRoot(context, STRESS_ROOT_1_ID);
                 signal.await();
             } finally {
                 activity.removeEventListener(listener);
@@ -123,7 +124,7 @@ public class FilesActivityPerfTest extends ActivityTest<FilesActivity> {
             assertEquals(i + 1, measurements.size());
 
             // Go back to the empty root.
-            bots.roots.openRoot(STRESS_ROOT_0_ID);
+            EspressoBotsKt.openRoot(context, STRESS_ROOT_0_ID);
         }
 
         assertEquals(NUM_MEASUREMENTS, measurements.size());

@@ -50,21 +50,22 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Provides basic implementation for creating, extracting and accessing
- * files within archives exposed by a document provider.
+ * Provides basic implementation for creating, extracting and accessing files within archives
+ * exposed by a document provider.
  *
  * <p>This class is thread safe.
  */
 public abstract class Archive implements Closeable {
     private static final String TAG = "Archive";
 
-    public static final String[] DEFAULT_PROJECTION = new String[]{
-            Document.COLUMN_DOCUMENT_ID,
-            Document.COLUMN_DISPLAY_NAME,
-            Document.COLUMN_MIME_TYPE,
-            Document.COLUMN_SIZE,
-            Document.COLUMN_FLAGS
-    };
+    public static final String[] DEFAULT_PROJECTION =
+            new String[] {
+                Document.COLUMN_DOCUMENT_ID,
+                Document.COLUMN_DISPLAY_NAME,
+                Document.COLUMN_MIME_TYPE,
+                Document.COLUMN_SIZE,
+                Document.COLUMN_FLAGS
+            };
 
     final Context mContext;
     final Uri mArchiveUri;
@@ -79,11 +80,7 @@ public abstract class Archive implements Closeable {
     @GuardedBy("mEntries")
     final Map<String, List<ArchiveEntry>> mTree;
 
-    Archive(
-            Context context,
-            Uri archiveUri,
-            int accessMode,
-            @Nullable Uri notificationUri) {
+    Archive(Context context, Uri archiveUri, int accessMode, @Nullable Uri notificationUri) {
         mContext = context;
         mArchiveUri = archiveUri;
         mAccessMode = accessMode;
@@ -176,28 +173,29 @@ public abstract class Archive implements Closeable {
      */
     public static boolean canSeek(ParcelFileDescriptor descriptor) {
         try {
-            return Os.lseek(descriptor.getFileDescriptor(), 0,
-                    OsConstants.SEEK_CUR) == 0;
+            return Os.lseek(descriptor.getFileDescriptor(), 0, OsConstants.SEEK_CUR) == 0;
         } catch (ErrnoException e) {
             return false;
         }
     }
 
     /**
-     * Lists child documents of an archive or a directory within an
-     * archive. Must be called only for archives with supported mime type,
-     * or for documents within archives.
+     * Lists child documents of an archive or a directory within an archive. Must be called only for
+     * archives with supported mime type, or for documents within archives.
      *
      * @see DocumentsProvider.queryChildDocuments(String, String[], String)
      */
-    public Cursor queryChildDocuments(String documentId, @Nullable String[] projection,
-            @Nullable String sortOrder) throws FileNotFoundException {
+    public Cursor queryChildDocuments(
+            @NonNull String documentId, @Nullable String[] projection, @Nullable String sortOrder)
+            throws FileNotFoundException {
         final ArchiveId parsedParentId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedParentId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedParentId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
-        final MatrixCursor result = new MatrixCursor(
-                projection != null ? projection : DEFAULT_PROJECTION);
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_PROJECTION);
         if (mNotificationUri != null) {
             result.setNotificationUri(mContext.getContentResolver(), mNotificationUri);
         }
@@ -219,9 +217,11 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.getDocumentType(String)
      */
-    public String getDocumentType(String documentId) throws FileNotFoundException {
+    public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
         synchronized (mEntries) {
@@ -239,10 +239,12 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.isChildDocument(String, String)
      */
-    public boolean isChildDocument(String parentDocumentId, String documentId) {
+    public boolean isChildDocument(@NonNull String parentDocumentId, @NonNull String documentId) {
         final ArchiveId parsedParentId = ArchiveId.fromDocumentId(parentDocumentId);
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedParentId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedParentId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
         synchronized (mEntries) {
@@ -258,11 +260,11 @@ public abstract class Archive implements Closeable {
 
             // Add a trailing slash even if it's not a directory, so it's easy to check if the
             // entry is a descendant.
-            String pathWithSlash = entry.isDirectory() ? getEntryPath(entry)
-                    : getEntryPath(entry) + "/";
+            String pathWithSlash =
+                    entry.isDirectory() ? getEntryPath(entry) : getEntryPath(entry) + "/";
 
-            return pathWithSlash.startsWith(parsedParentId.mPath) &&
-                    !parsedParentId.mPath.equals(pathWithSlash);
+            return pathWithSlash.startsWith(parsedParentId.mPath)
+                    && !parsedParentId.mPath.equals(pathWithSlash);
         }
     }
 
@@ -271,10 +273,12 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.queryDocument(String, String[])
      */
-    public Cursor queryDocument(String documentId, @Nullable String[] projection)
+    public Cursor queryDocument(@NonNull String documentId, @Nullable String[] projection)
             throws FileNotFoundException {
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
         synchronized (mEntries) {
@@ -283,8 +287,8 @@ public abstract class Archive implements Closeable {
                 throw new FileNotFoundException();
             }
 
-            final MatrixCursor result = new MatrixCursor(
-                    projection != null ? projection : DEFAULT_PROJECTION);
+            final MatrixCursor result =
+                    new MatrixCursor(projection != null ? projection : DEFAULT_PROJECTION);
             if (mNotificationUri != null) {
                 result.setNotificationUri(mContext.getContentResolver(), mNotificationUri);
             }
@@ -325,16 +329,12 @@ public abstract class Archive implements Closeable {
         throw new UnsupportedOperationException("Thumbnails not supported.");
     }
 
-    /**
-     * Creates an archive id for the passed path.
-     */
-    public ArchiveId createArchiveId(String path) {
+    /** Creates an archive id for the passed path. */
+    public ArchiveId createArchiveId(@NonNull String path) {
         return new ArchiveId(mArchiveUri, mAccessMode, path);
     }
 
-    /**
-     * Not thread safe.
-     */
+    /** Not thread safe. */
     void addCursorRow(MatrixCursor cursor, ArchiveEntry entry) {
         final MatrixCursor.RowBuilder row = cursor.newRow();
         final ArchiveId parsedId = createArchiveId(getEntryPath(entry));
@@ -374,16 +374,14 @@ public abstract class Archive implements Closeable {
     // TODO: Upstream to the Preconditions class.
     // TODO: Move to a separate file.
     public static class MorePreconditions {
-        static void checkArgumentEquals(String expected, @Nullable String actual,
-                String message) {
+        static void checkArgumentEquals(String expected, @Nullable String actual, String message) {
             if (!TextUtils.equals(expected, actual)) {
-                throw new IllegalArgumentException(String.format(message,
-                        String.valueOf(expected), String.valueOf(actual)));
+                throw new IllegalArgumentException(
+                        String.format(message, String.valueOf(expected), String.valueOf(actual)));
             }
         }
 
-        static void checkArgumentEquals(Uri expected, @Nullable Uri actual,
-                String message) {
+        static void checkArgumentEquals(Uri expected, @Nullable Uri actual, String message) {
             checkArgumentEquals(expected.toString(), actual.toString(), message);
         }
     }

@@ -20,9 +20,12 @@ import static android.provider.DocumentsContract.QUERY_ARG_MIME_TYPES;
 
 import static androidx.core.util.Preconditions.checkNotNull;
 
+import static com.android.documentsui.base.Providers.TRASH_ROOT_ID;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.content.BroadcastReceiver.PendingResult;
 import android.content.ContentProviderClient;
@@ -33,6 +36,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
+import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
@@ -47,7 +51,9 @@ import android.provider.DocumentsContract.Root;
 import android.util.Log;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.documentsui.DocumentsApplication;
@@ -57,6 +63,7 @@ import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.LookupApplicationName;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.modules.utils.build.SdkLevel;
@@ -106,6 +113,9 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     @GuardedBy("mRecentsRoots")
     private final Map<UserId, RootInfo> mRecentsRoots = new HashMap<>();
 
+    @GuardedBy("mTrashRoots")
+    private final Map<UserId, RootInfo> mTrashRoots = new HashMap<>();
+
     private final Object mLock = new Object();
     private final CountDownLatch mFirstLoad = new CountDownLatch(1);
 
@@ -117,7 +127,11 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     @GuardedBy("mLock")
     private Multimap<UserAuthority, RootInfo> mRoots = ArrayListMultimap.create();
     @GuardedBy("mLock")
+    private Multimap<UserId, ShortcutInfo> mShortcuts = ArrayListMultimap.create();
+    @GuardedBy("mLock")
     private HashSet<UserAuthority> mStoppedAuthorities = new HashSet<>();
+    @GuardedBy("mLock")
+    private Collection<ShortcutResourceValues> mShortcutResources = new ArrayList<>();
     private final Semaphore mMultiProviderUpdateTaskSemaphore = new Semaphore(1);
 
     @GuardedBy("mObservedAuthoritiesDetails")
@@ -125,6 +139,32 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
 
     public ProvidersCache(Context context) {
         mContext = context;
+    }
+
+    /**
+     * Used for testing - sets the mRoots to unit test other methods.
+     * @param roots - the document provider roots.
+     */
+    @VisibleForTesting
+    public void setRoots(List<RootInfo> roots) {
+        synchronized (mLock) {
+            mRoots.clear();
+            for (RootInfo root : roots) {
+                UserAuthority userAuthority = new UserAuthority(root.userId, root.authority);
+                mRoots.put(userAuthority, root);
+            }
+        }
+    }
+
+    /**
+     * Used for testing - sets the mRoots and mShortcutResources to unit test other methods.
+     * @param shortcutResources - the shortcut resources.
+     */
+    @VisibleForTesting
+    public void setShortcutResources(Collection<ShortcutResourceValues> shortcutResources) {
+        synchronized (mLock) {
+            mShortcutResources = shortcutResources;
+        }
     }
 
     /**
@@ -148,8 +188,38 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         };
     }
 
+    /**
+     * Generates {@link RootInfo} for the trash root for a given user.
+     *
+     * @param rootUserId The {@link UserId} for which to generate the trash root info.
+     * @return A {@link RootInfo} object representing the trash root.
+     */
+    private @Nullable RootInfo generateTrashRoot(UserId rootUserId) {
+        if (!isTrashFlowEnabled()) {
+            return null;
+        }
+        return new RootInfo() {
+            {
+                // Special root for trash
+                userId = rootUserId;
+                derivedIcon = getRes(R.drawable.ic_menu_delete);
+                derivedType = RootInfo.TYPE_TRASH;
+                rootId = TRASH_ROOT_ID;
+                flags = Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_IS_CHILD;
+                title = mContext.getString(getRes(R.string.root_trash));
+                availableBytes = -1;
+            }
+        };
+    }
+
     private RootInfo createOrGetRecentsRoot(UserId userId) {
         return createOrGetByUserId(mRecentsRoots, userId, user -> generateRecentsRoot(user));
+    }
+
+    private @Nullable RootInfo createOrGetTrashRoot(UserId userId) {
+        synchronized (mTrashRoots) {
+            return createOrGetByUserId(mTrashRoots, userId, this::generateTrashRoot);
+        }
     }
 
     private RootsChangedObserver createOrGetRootsChangedObserver(UserId userId) {
@@ -219,6 +289,24 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
             assert (recentRoot.availableBytes == -1);
         }
 
+        if (isHomeScreenFilesFlagEnabled()) {
+            try {
+                synchronized (mLock) {
+                    // Resources don't change, so only compute this the first time.
+                    // TODO: b/446566923 - add a boolean value to check if resources have been
+                    //  loaded or not so that the method does not have to be called every time if
+                    //  shortcut resources are actually empty.
+                    if (mShortcutResources.isEmpty()) {
+                        mShortcutResources = getShortcutResources();
+                    }
+                }
+            } catch (Exception e) {
+                // There should be no errors from trying to read the resources,
+                // but catch just in case.
+                Log.w(TAG, "Unable to properly get the resource values. " + e);
+            }
+        }
+
         new MultiProviderUpdateTask(forceRefreshAll, null, callback).executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -237,6 +325,44 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         if (info != null) {
             updatePackageAsync(userId, info.packageName);
         }
+    }
+
+    /**
+     * Retrieves all the available shortcut resource values.
+     */
+    @VisibleForTesting
+    public Collection<ShortcutResourceValues> getShortcutResources() {
+        List<ShortcutResourceValues> shortcutResources = new ArrayList<>();
+        // Get values from the RRO.
+        List<String> authorities = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_authorities));
+        List<String> rootIds = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_root_ids));
+        List<String> parentDocIds = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
+        List<String> folderTitles = List.of(
+                mContext.getResources().getStringArray(R.array.shortcut_titles));
+        TypedArray shortcutIcons =
+                mContext.getResources().obtainTypedArray(R.array.shortcut_icons);
+
+        int shortcutArraySize = authorities.size();
+        if (shortcutArraySize != rootIds.size() || shortcutArraySize != parentDocIds.size()
+                || shortcutArraySize != folderTitles.size()
+                || shortcutArraySize != shortcutIcons.length()) {
+            // Early return an empty list if there is a mismatch in size.
+            return shortcutResources;
+        }
+
+        for (int i = 0; i < shortcutArraySize; i++) {
+            ShortcutResourceValues shortcutResource = new ShortcutResourceValues(
+                    authorities.get(i),
+                    rootIds.get(i),
+                    parentDocIds.get(i),
+                    folderTitles.get(i),
+                    shortcutIcons.getResourceId(i, ShortcutResourceValues.INVALID_ICON_REF));
+            shortcutResources.add(shortcutResource);
+        }
+        return shortcutResources;
     }
 
     void setBootCompletedResult(PendingResult result) {
@@ -441,6 +567,11 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         return createOrGetRecentsRoot(userId);
     }
 
+    @Override
+    public @Nullable RootInfo getTrashRoot(@NonNull UserId userId) {
+        return createOrGetTrashRoot(userId);
+    }
+
     public boolean isRecentsRoot(RootInfo root) {
         return mRecentsRoots.containsValue(root);
     }
@@ -478,6 +609,58 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     public RootInfo getDefaultRootBlocking(State state) {
         RootInfo root = ProvidersAccess.getDefaultRoot(getRootsBlocking(), state);
         return root != null ? root : createOrGetRecentsRoot(UserId.CURRENT_USER);
+    }
+
+    /**
+     * Loads all the shortcuts that were provided by the RRO.
+     * @return a list of all the shortcuts
+     */
+    public Collection<ShortcutInfo> loadShortcutsForUser(UserId userId) {
+        synchronized (mLock) {
+            Collection<ShortcutInfo> shortcuts = new ArrayList<>();
+            for (ShortcutResourceValues shortcutRes : mShortcutResources) {
+                final ShortcutInfo shortcut = generateShortcut(userId, shortcutRes);
+                if (shortcut != null) {
+                    shortcuts.add(shortcut);
+                }
+            }
+            mShortcuts.replaceValues(userId, shortcuts);
+            return shortcuts;
+        }
+    }
+
+    @Override
+    public Collection<ShortcutInfo> getShortcutsForUser(UserId userId) {
+        synchronized (mLock) {
+            return mShortcuts.get(userId);
+        }
+    }
+
+
+    @GuardedBy("mLock")
+    private @Nullable ShortcutInfo generateShortcut(
+            UserId userId, ShortcutResourceValues shortcutRes) {
+        UserAuthority userAuthority = new UserAuthority(userId, shortcutRes.getAuthority());
+        // Get the documents provider root of the parent to verify the shortcut can be created.
+        RootInfo parentRoot = mRoots.get(userAuthority)
+                .stream()
+                .filter(root -> Objects.equals(root.rootId, shortcutRes.getRootId()))
+                .findFirst()
+                .orElse(null);
+        if (parentRoot == null) {
+            Log.w(TAG, "Cannot create shortcut root folder " + shortcutRes.getFolderTitle()
+                    + ". The parent DocumentsProvider root not found.");
+            return null;
+        }
+
+        // Creates the shortcut info instance. Leave out the URI and the document ID for now.
+        // These will be set later.
+        return new ShortcutInfo(
+            shortcutRes.getIconReference() != ShortcutResourceValues.INVALID_ICON_REF
+                ? shortcutRes.getIconReference() : parentRoot.derivedIcon,
+            shortcutRes.getFolderTitle(),
+            parentRoot,
+            shortcutRes.getParentDocumentId());
     }
 
     public void logCache() {
@@ -550,6 +733,13 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 final RootInfo recents = createOrGetRecentsRoot(userId);
                 synchronized (mLock) {
                     mLocalRoots.put(new UserAuthority(recents.userId, recents.authority), recents);
+                }
+                if (isTrashFlowEnabled()) {
+                    final RootInfo trashRoot = createOrGetTrashRoot(userId);
+                    synchronized (mLock) {
+                        mLocalRoots.put(new UserAuthority(trashRoot.userId, trashRoot.authority),
+                                trashRoot);
+                    }
                 }
             }
 

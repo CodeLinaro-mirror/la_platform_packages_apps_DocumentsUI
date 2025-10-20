@@ -576,7 +576,7 @@ public final class MenuManagerTest {
 
     @Test
     public void testRootContextMenu() {
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertDisabledAndInvisible();
@@ -587,7 +587,7 @@ public final class MenuManagerTest {
     @Test
     public void testRootContextMenu_hasRootSettings() {
         testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootSettings.assertDisabledAndInvisible();
     }
@@ -595,7 +595,7 @@ public final class MenuManagerTest {
     @Test
     public void testRootContextMenu_nonWritableRoot() {
         dirDetails.hasItemsToPaste = true;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootPasteIntoFolder.assertDisabledAndInvisible();
     }
@@ -604,7 +604,7 @@ public final class MenuManagerTest {
     public void testRootContextMenu_nothingToPaste() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_CREATE;
         dirDetails.hasItemsToPaste = false;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootPasteIntoFolder.assertDisabledAndInvisible();
     }
@@ -612,7 +612,7 @@ public final class MenuManagerTest {
     @Test
     public void testRootContextMenu_canEject() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_EJECT;
-        mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
     }

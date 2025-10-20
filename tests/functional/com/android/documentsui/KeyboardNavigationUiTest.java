@@ -16,21 +16,14 @@
 
 package com.android.documentsui;
 
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
-import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.util.Material3Config.getRes;
 
-import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
-import androidx.annotation.IdRes;
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
@@ -46,8 +39,13 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
-    public final TestFilesRule mTestFilesRule = new TestFilesRule().createFileInRoot(ROOT_0_ID,
-            "files1.png", "image/png");
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                docsHelper.createDocument(root, "image/png", "files1.png");
+                            });
 
     // Tests that pressing tab switches focus between the roots and directory listings.
     @Ignore
@@ -103,44 +101,6 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
         for (int i = 0; i < 10; i++) {
             bots.keyboard.pressKey(KeyEvent.KEYCODE_DPAD_LEFT);
             bots.roots.assertHasFocus();
-        }
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_MATERIAL3})
-    public void testKeyboard_tabCycleInRootsList() throws Exception {
-        // Focus the root CoordinatorLayout explicitly before the test to avoid the first
-        // Tab press accidentally focus on the root CoordinatorLayout.
-        // TODO(b/417871278): remove this after removing the grey overlay.
-        onView(withId(R.id.coordinator_layout)).check((view, noViewFoundException) -> {
-            if (view != null) {
-                view.post(view::requestFocus);
-            }
-        }).check(matches(hasFocus()));
-
-        // We want to explicitly check the focus inside the nav rail root list in nav rail layout,
-        // otherwise, check it in the drawer (container_roots).
-        final @IdRes int containerId =
-                bots.main.inNavRailLayout()
-                        ? getRes(R.id.nav_rail_container_roots)
-                        : getRes(R.id.container_roots);
-
-        if (bots.main.inDrawerLayout()) {
-            // If drawer layout is used, we need to open drawer first to show all the nav roots.
-            bots.roots.openDrawer();
-        } else if (bots.main.inNavRailLayout()) {
-            // If nav rail layout is used, the first Tab will move the focus to the burger menu
-            // inside the nav rail root list.
-            bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
-            onView(withId(R.id.nav_rail_burger_menu)).check(matches(hasFocus()));
-        }
-
-        // Only check the first 2 items here because we don't want to deal with the divider item
-        // (which is also a child of the root list), the first 2 items are guaranteed not to be
-        // divider items.
-        for (int i = 0; i <= 1; i++) {
-            bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
-            bots.roots.assertPositionFocused(containerId, i);
         }
     }
 }

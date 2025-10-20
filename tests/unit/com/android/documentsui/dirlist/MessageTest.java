@@ -16,6 +16,8 @@
 
 package com.android.documentsui.dirlist;
 
+import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.OUTLINE;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_OFF_ICON;
 import static com.android.documentsui.DevicePolicyResources.Strings.CANT_SELECT_WORK_FILES_MESSAGE;
@@ -29,6 +31,7 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
 
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -39,11 +42,17 @@ import android.app.admin.DevicePolicyResourcesManager;
 import android.content.Context;
 import android.content.pm.UserProperties;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.util.Log;
 
 import androidx.core.util.Preconditions;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -54,16 +63,21 @@ import com.android.documentsui.R;
 import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestModel;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.UserManagers;
+import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.collect.Lists;
 
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -88,6 +102,11 @@ public final class MessageTest {
     private TestActionHandler mTestActionHandler;
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
     private DocumentsAdapter.Environment mEnv;
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
@@ -296,5 +315,38 @@ public final class MessageTest {
             expectedDrawable = mContext.getDrawable(R.drawable.empty);
         }
         assertDrawablesEqual(mInflateMessage.getIcon(), expectedDrawable);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testInflateMessage_updateToEmptyMessage_InTrashPage() {
+        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
+        // The Trash feature under test relies on DocumentsContract APIs introduced in the
+        // Android release after Baklava (SDK 36).
+        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
+        // older Android base builds to verify backward compatibility. However, this specific
+        // Trash feature lacks backward compatibility with platforms at or below Baklava.
+        // This assumption prevents failures when the test runs on an older base OS
+        // without the necessary APIs.
+        assumeTrue(VersionUtils.isGreaterThanB());
+        // Set model to empty.
+        ((TestModel) mEnv.getModel()).clearIds();
+        // Set is on trash page.
+        ((TestEnvironment) mEnv).setIsOnTrashPage(true);
+
+        mInflateMessage.update(Model.Update.UPDATE);
+
+        final Drawable expectedDrawable;
+        if (isUseMaterial3FlagEnabled()) {
+            expectedDrawable = mContext.getDrawable(R.drawable.ic_empty_trash);
+        } else {
+            expectedDrawable = mContext.getDrawable(R.drawable.empty);
+        }
+        assertDrawablesEqual(mInflateMessage.getIcon(), expectedDrawable);
+        Assert.assertNotNull(mInflateMessage.getMessageString());
+        assertThat(mInflateMessage.getMessageString().toString())
+                .isEqualTo(mContext.getString(R.string.trash_page_empty_title));
     }
 }

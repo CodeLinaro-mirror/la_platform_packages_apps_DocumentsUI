@@ -136,7 +136,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         return DocumentsApplication.getUserManagerState(context).getUserIds();
                     }
                 });
-
+        initInjector();
         super.onCreate(icicle);
 
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
@@ -170,6 +170,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =
                     new SelectionBarController(
+                            findViewById(getRes(R.id.toolbar)),
                             findViewById(getRes(R.id.selection_bar)),
                             mInjector.menuManager,
                             mInjector.selectionMgr);
@@ -241,7 +242,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         mInjector.appsRowManager = mAppsRowManager;
 
         mActivityInputHandler =
-                new ActivityInputHandler(mInjector.actions::showDeleteDialog);
+                new ActivityInputHandler(mInjector.actions::runDeleteOrTrashHandler);
         mSharedInputHandler =
                 new SharedInputHandler(
                         mInjector.focusManager,

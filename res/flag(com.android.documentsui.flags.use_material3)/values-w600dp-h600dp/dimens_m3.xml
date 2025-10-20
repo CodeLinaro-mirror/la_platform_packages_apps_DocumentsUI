@@ -18,6 +18,7 @@
     <dimen name="main_container_padding_start">@dimen/space_medium_1</dimen>
     <dimen name="main_container_padding_end">@dimen/space_medium_1</dimen>
     <dimen name="main_container_padding_top">@dimen/space_extra_small_4</dimen>
+    <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
     <!-- Main margin is set by main_container_padding_start for the menu button, here is for
     the space between the button the text/title, but since on this layout we don't have the button,
     we zero here, to avoid pushing the title further. -->
@@ -34,8 +35,11 @@
 
     <dimen name="breadcrumb_padding_horizontal">@dimen/space_small_3</dimen>
 
-    <dimen name="picker_saver_padding_bottom">0dp</dimen>
-
     <dimen name="snackbar_max_width">840dp</dimen>
+
+    <dimen name="pick_dialog_window_margin_horizontal">@dimen/space_medium_5</dimen>
+    <dimen name="pick_dialog_window_margin_vertical">@dimen/space_medium_1</dimen>
+
+    <integer name="dialog_width_percentage">50</integer>
 </resources>
 

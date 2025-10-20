@@ -37,6 +37,9 @@
     <string name="menu_save" msgid="5195367497138965168">"Stoor"</string>
     <string name="menu_share" msgid="4307140947108068356">"Deel"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Vee uit"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Vee permanent uit"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Skuif asblik toe"</string>
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Stel terug"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Kies almal"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Ontkies alles"</string>
     <string name="menu_select" msgid="1366061076507142387">"Kies"</string>
@@ -116,6 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Hierdie handeling word nie toegelaat nie"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Kontak jou IT-administrateur om meer te wete te kom"</string>
     <string name="root_recent" msgid="1080156975424341623">"Onlangs"</string>
+    <string name="root_trash" msgid="1869929519939073178">"Asblik"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> gratis"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Bergingdienste"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Kortpaaie"</string>
@@ -134,9 +138,12 @@
     <string name="share_via" msgid="8725082736005677161">"Deel via"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopieer tans lêers"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Pers tans lêers saam"</string>
+    <string name="zip_notification_title" msgid="2858653527172763548">"Rits tans lêers"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Onttrek tans lêers"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Skuif tans lêers"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Vee tans lêers uit"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Skuif lêers na asblik"</string>
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Stel tans lêers terug"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> oor"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other">Kopieer tans <xliff:g id="COUNT_1">%1$d</xliff:g> items.</item>
@@ -158,66 +165,91 @@
       <item quantity="other">Vee tans <xliff:g id="COUNT_1">%1$d</xliff:g> items uit.</item>
       <item quantity="one">Vee tans <xliff:g id="COUNT_0">%1$d</xliff:g> item uit.</item>
     </plurals>
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{Skuif tans # lêer na asblik}other{Skuif tans # lêers na asblik}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{Stel tans # lêer terug}other{Stel tans # lêers terug}}"</string>
     <string name="undo" msgid="2902438994196400565">"Ontdoen"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Berei tans voor …"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Berei tans voor …"</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Berei tans voor …"</string>
     <string name="move_preparing" msgid="6504239656430530761">"Berei tans voor …"</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Berei tans voor …"</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Berei tans voor …"</string>
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Berei tans voor …"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item kopieer nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items kopieer nie}}"</string>
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Kon nie # lêer kopieer nie}other{Kon nie # lêers kopieer nie}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item saampers nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items saampers nie}}"</string>
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Kon nie # lêer rits nie}other{Kon # lêers nie rits nie}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Kon nie # lêer onttrek nie}other{Kon nie # lêers onttrek nie}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item skuif nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items skuif nie}}"</string>
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Kon nie # lêer skuif nie}other{Kon nie # lêers skuif nie}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Kon nie <xliff:g id="COUNT_0">{count}</xliff:g> item uitvee nie}other{Kon nie <xliff:g id="COUNT_1">{count}</xliff:g> items uitvee nie}}"</string>
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Kon nie # lêer uitvee nie}other{Kon nie # lêers uitvee nie}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Kon nie # lêer na asblik toe skuif nie}other{Kon nie # lêers na asblik toe skuif nie}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Kon nie # lêer terugstel nie}other{Kon nie # lêers terugstel nie}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tik om besonderhede te bekyk"</string>
     <string name="close" msgid="905969391788869975">"Maak toe"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">Hierdie lêers is nie gekopieer nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie gekopieer nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Hierdie lêer is nie gekopieer nie: <xliff:g id="LIST_0">{list}</xliff:g>}other{Hierdie lêers is nie gekopieer nie: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Hierdie lêers is nie saamgepers nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie saamgepers nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Hierdie lêer is nie gerits nie: <xliff:g id="LIST_0">{list}</xliff:g>}other{Hierdie lêers is nie gerits nie: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Hierdie lêers is nie onttrek nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie onttrek nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Hierdie lêer is nie onttrek nie: <xliff:g id="LIST_0">{list}</xliff:g>}other{Hierdie lêers is nie onttrek nie: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Hierdie lêers is nie geskuif nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie geskuif nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Hierdie lêer is nie geskuif nie: <xliff:g id="LIST_0">{list}</xliff:g>}other{Hierdie lêers is nie geskuif nie: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Hierdie lêers is nie uitgevee nie: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is nie uitgevee nie: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Hierdie lêer is nie uitgevee nie: <xliff:g id="LIST_0">{list}</xliff:g>}other{Hierdie lêers is nie uitgevee nie: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Hierdie lêers is in \'n ander formaat omgeskakel: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Hierdie lêer is in \'n ander formaat omgeskakel: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Hierdie lêer is in ’n ander formaat omgeskakel: <xliff:g id="LIST_0">{list}</xliff:g>}other{Hierdie lêers is in ’n ander formaat omgeskakel: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">Het <xliff:g id="COUNT_1">%1$d</xliff:g> items na knipbord gekopieer.</item>
       <item quantity="one">Het <xliff:g id="COUNT_0">%1$d</xliff:g> item na knipbord gekopieer.</item>
     </plurals>
+    <string name="read_only_label" msgid="894442752344379606">"Leesalleen"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Jy kan hierdie lêers bekyk, maar sommige handelinge word nie gesteun nie"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Hierdie argief is in ’n slegs-lees-ligging en kan nie hier onttrek word nie."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Lêerbewerking word nie gesteun nie."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Lêerbewerking het misluk."</string>
     <string name="rename_error" msgid="6700093173508118635">"Kon nie dokument hernoem nie"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Maak los"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Sommige lêers is omgeskakel"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Kopieer tans “<xliff:g id="FILENAME">{filename}</xliff:g>“ na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Kopieer tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
-    <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Onttrek tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Onttrek tans # argiewe na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Skuif tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Skuif tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Vee tans “<xliff:g id="FILENAME">{filename}</xliff:g>” uit}other{Vee tans # lêers uit}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Zip tans “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Zip tans # lêers}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Kopieer tans “<xliff:g id="FILENAME">{filename}</xliff:g>“ na “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Kopieer tans # lêer na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Kopieer tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Onttrek tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Onttrek tans # lêer na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Onttrek tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Skuif tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Skuif tans # lêer na “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Skuif tans # lêers na “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Vee tans “<xliff:g id="FILENAME">{filename}</xliff:g>” uit"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Vee tans # lêer uit}other{Vee tans # lêers uit}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Skuif tans “<xliff:g id="FILENAME">{filename}</xliff:g>” na asblik"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{Skuif tans # lêer na asblik}other{Skuif tans # lêers na asblik}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Stel tans “<xliff:g id="FILENAME">{filename}</xliff:g>” terug"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Stel tans # lêer terug}other{Stel tans # lêers terug}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Rits tans “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Rits tans # lêers}other{Rits tans # lêers}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Wys lêervordering"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Lêervordering"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Maak almal toe"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Voltooi"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Gekanselleer"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Sien besonderhede"</string>
@@ -274,6 +306,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Kan nie inhoud wys nie"</string>
     <string name="sign_in" msgid="6253762676723505592">"Meld aan"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"argief<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Argief"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Skryf oor <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Gaan op die agtergrond voort"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
@@ -343,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Prentvoorskou van <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Versteek inligtingpaneel"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Wys inligtingpaneel"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Niks in asblik nie"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Lêers wat meer as 30 dae lank in die asblik is, sal outomaties uitgevee word."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Maak asblik nou leeg"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Maak asblik leeg?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Hierdie handeling kan nie ontdoen word nie, en die lêers sal nie meer teruggestel kan word nie."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Maak asblik leeg"</string>
 </resources>

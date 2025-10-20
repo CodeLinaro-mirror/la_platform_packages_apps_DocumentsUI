@@ -82,9 +82,41 @@ flag {
 }
 
 flag {
-    name: "home_screen_files"
+    name: "home_screen_files_ro"
     namespace: "documentsui"
     description: "Enables the home screen folder and its files."
-    bug: "TODO"
+    bug: "438288106"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "single_click_to_select"
+    namespace: "documentsui"
+    description: "Enables single mouse-click to select files"
+    bug: "389814214"
+    is_fixed_read_only: true
+}
+
+flag {
+ name: "use_file_summary"
+ namespace: "documentsui"
+ description: "Enables displaying the file summary for local files in the directory list."
+ bug: "436732697"
+ is_fixed_read_only: true
+}
+
+flag {
+    name: "use_local_search_provider"
+    namespace: "documentsui"
+    description: "Enables local search provider feature"
+    bug: "436732697"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "use_allfiles_root_for_recents"
+    namespace: "documentsui"
+    description: "Enables use of MediaDocumentProvider files_root for the Recents view"
+    bug: "444316005"
     is_fixed_read_only: true
 }

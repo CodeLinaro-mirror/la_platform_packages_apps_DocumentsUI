@@ -16,21 +16,17 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.widget.TextView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -38,6 +34,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
+import com.android.documentsui.services.JobProgress;
 import com.android.documentsui.ui.MessageBuilder;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -47,10 +44,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Alert dialog for operation dialogs.
- */
-public class OperationDialogFragment extends DialogFragment {
+/** Alert dialog for operation dialogs. */
+public class OperationDialogFragment extends DocumentsUIDialogFragment {
 
     public static final int DIALOG_TYPE_UNKNOWN = 0;
     public static final int DIALOG_TYPE_FAILURE = 1;
@@ -67,6 +62,9 @@ public class OperationDialogFragment extends DialogFragment {
 
     private static final String TAG = "OperationDialogFragment";
 
+    /**
+     * Displays a dialog showing the details of warnings/errors that happened during an operation.
+     */
     public static void show(
             FragmentManager fm,
             @DialogType int dialogType,
@@ -91,6 +89,22 @@ public class OperationDialogFragment extends DialogFragment {
         ft.commitAllowingStateLoss();
     }
 
+    /**
+     * Same as {@link #show(FragmentManager, int, ArrayList, ArrayList, ArrayList, DocumentStack,
+     * int)} but takes in a {@link JobProgress} struct to see the operation details.
+     */
+    public static void show(
+            FragmentManager fm, @DialogType int dialogType, JobProgress jobProgress) {
+        show(
+                fm,
+                dialogType,
+                jobProgress.failedDocs,
+                jobProgress.failedUris,
+                jobProgress.failedPaths,
+                jobProgress.destination,
+                jobProgress.operationType);
+    }
+
     @Override
     public @NonNull Dialog onCreateDialog(Bundle inState) {
         super.onCreate(inState);
@@ -99,10 +113,12 @@ public class OperationDialogFragment extends DialogFragment {
               getArguments().getInt(FileOperationService.EXTRA_DIALOG_TYPE);
         final @OpType int operationType =
               getArguments().getInt(FileOperationService.EXTRA_OPERATION_TYPE);
-        final List<DocumentInfo> failedDocs = getArguments().getParcelableArrayList(
-                FileOperationService.EXTRA_FAILED_DOCS, DocumentInfo.class);
-        final List<Uri> failedUris = getArguments().getParcelableArrayList(
-                FileOperationService.EXTRA_FAILED_URIS, Uri.class);
+        final List<DocumentInfo> failedDocs =
+                BundleCompat.getParcelableArrayList(
+                        getArguments(), FileOperationService.EXTRA_FAILED_DOCS, DocumentInfo.class);
+        final List<Uri> failedUris =
+                BundleCompat.getParcelableArrayList(
+                        getArguments(), FileOperationService.EXTRA_FAILED_URIS, Uri.class);
         final List<String> failedPaths = getArguments().getStringArrayList(
                 FileOperationService.EXTRA_FAILED_PATHS);
 
@@ -120,31 +136,6 @@ public class OperationDialogFragment extends DialogFragment {
                     }
                 });
 
-        Dialog dialog = builder.create();
-        // message content returned by `Html.fromHtml()` above doesn't inherit the theme level
-        // dialog body text style, we need to manually apply it. In addition, set the same padding
-        // as other dialogs.
-        if (isUseMaterial3FlagEnabled()) {
-            final Resources resources = getResources();
-            dialog.setOnShowListener(
-                    dialogInterface -> {
-                        TextView body =
-                                ((AlertDialog) dialogInterface).findViewById(android.R.id.message);
-                        if (body != null) {
-                            body.setTextAppearance(getRes(R.style.MaterialAlertDialogBodyStyle));
-                            body.setPadding(
-                                    resources.getDimensionPixelSize(
-                                            getRes(R.dimen.dialog_content_padding_horizontal)),
-                                    resources.getDimensionPixelSize(
-                                            getRes(R.dimen.dialog_content_padding_top)),
-                                    resources.getDimensionPixelSize(
-                                            getRes(R.dimen.dialog_content_padding_horizontal)),
-                                    resources.getDimensionPixelSize(
-                                            getRes(R.dimen.dialog_content_padding_bottom)));
-                        }
-                    });
-        }
-
-        return dialog;
+        return builder.create();
     }
 }

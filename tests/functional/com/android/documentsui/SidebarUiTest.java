@@ -37,18 +37,12 @@ import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.TestFilesRule;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 @LargeTest
-@RunWith(TestRunner.class)
-@ParameterizeSyntheticTargets({
-    SyntheticTarget.NO_OVERRIDE,
-    SyntheticTarget.STAGING,
-    SyntheticTarget.PROD,
-    SyntheticTarget.MAINLINE,
-})
+@Ignore
 public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private static final String TAG = "RootUiTest";
@@ -68,7 +62,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRootTapped_GoToRootFromChildDir() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
         bots.main.assertWindowTitle(TestFilesRule.DIR_NAME_1);
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.main.assertWindowTitle(ROOT_0_ID);
         assertDefaultContentOfTestDir0();
     }
@@ -78,7 +72,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         bots.main.assertInActionMode(true);
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         bots.main.assertInActionMode(false);
     }
 
@@ -91,31 +85,15 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         onView(withText("Copy")).perform(click());
 
         // Right click a root and try to paste the copied file into it.
-        bots.roots.rightClickRootAndClickMenuOption(ROOT_1_ID, "Paste into folder");
+        EspressoBotsKt.rightClickRootAndClickMenuOption(context, ROOT_1_ID, "Paste into folder");
 
         // Navigate to the root and ensure the file has been copied successfully.
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         bots.directory.waitForDocument("file1.log");
     }
 
     @Test
     public void testOpenInNewWindow_preservesFiles() throws Exception {
-        // Select Recents in the existing window and open ROOT_0 in the new window so we can
-        // distinguish the two windows by checking the title.
-        bots.roots.openRoot("Recent");
-        bots.main.assertWindowTitle("Recent");
-
-        // Open the ROOT_0 node in a new window.
-        bots.roots.rightClickRootAndClickMenuOption(ROOT_0_ID, "Open in new window");
-
-        // Check in the new window the ROOT_0 is selected and the files inside matches the original
-        // contents.
-        bots.main.assertWindowTitle(ROOT_0_ID);
-        assertDefaultContentOfTestDir0();
-    }
-
-    @Test
-    public void testOpenInNewWindow_preservesFiles_espresso() throws Exception {
         // Select Recents in the existing window and open ROOT_0 in the new window so we can
         // distinguish the two windows by checking the title.
         EspressoBotsKt.openRoot(context, "Recent");

@@ -16,41 +16,55 @@
 
 package com.android.documentsui.services
 
+import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.os.ParcelCompat
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.DocumentStack
 
 /**
  * Represents the current progress on an individual job owned by the FileOperationService.
  * JobProgress objects are broadcast from the service to activities in order to update the UI.
  */
-data class JobProgress @JvmOverloads constructor(
+data class JobProgress
+@JvmOverloads
+constructor(
     @JvmField val id: String,
     @JvmField @FileOperationService.OpType val operationType: Int,
     @JvmField @Job.State val state: Int,
     @JvmField val msg: String?,
     @JvmField val hasFailures: Boolean,
+    @JvmField val failedDocs: ArrayList<DocumentInfo> = ArrayList(),
+    @JvmField val failedUris: ArrayList<Uri> = ArrayList(),
+    @JvmField val failedPaths: ArrayList<String> = ArrayList(),
     @JvmField val destination: DocumentStack? = null,
     @JvmField val currentBytes: Long = -1,
     @JvmField val requiredBytes: Long = -1,
     @JvmField val msRemaining: Long = -1,
 ) : Parcelable {
 
-    val isIndeterminate get() =
-        state == Job.STATE_SET_UP &&
+    val isIndeterminate
+        get() =
+            state == Job.STATE_SET_UP &&
                 (currentBytes == -1L || requiredBytes == -1L || requiredBytes == 0L)
 
-    fun toPercent(): Float = when (state) {
-        Job.STATE_CREATED, Job.STATE_STARTED -> 0f
-        Job.STATE_COMPLETED, Job.STATE_CANCELED -> 100f
-        else -> 100f * currentBytes / requiredBytes
-    }
+    fun toPercent(): Float =
+        when (state) {
+            Job.STATE_CREATED,
+            Job.STATE_STARTED -> 0f
+            Job.STATE_COMPLETED,
+            Job.STATE_CANCELED -> 100f
+            else -> 100f * currentBytes / requiredBytes
+        }
 
-    val isFinal get() = when (state) {
-        Job.STATE_COMPLETED, Job.STATE_CANCELED -> true
-        else -> false
-    }
+    val isFinal
+        get() =
+            when (state) {
+                Job.STATE_COMPLETED,
+                Job.STATE_CANCELED -> true
+                else -> false
+            }
 
     override fun describeContents(): Int {
         return 0
@@ -63,6 +77,9 @@ data class JobProgress @JvmOverloads constructor(
             writeInt(state)
             writeString(msg)
             writeBoolean(hasFailures)
+            writeTypedList(failedDocs)
+            writeTypedList(failedUris)
+            writeStringList(failedPaths)
             writeParcelable(destination, flags)
             writeLong(currentBytes)
             writeLong(requiredBytes)
@@ -78,10 +95,13 @@ data class JobProgress @JvmOverloads constructor(
                 parcel.readInt(),
                 parcel.readString(),
                 parcel.readBoolean(),
+                parcel.createTypedArrayList(DocumentInfo.CREATOR)!!,
+                parcel.createTypedArrayList(Uri.CREATOR)!!,
+                parcel.createStringArrayList()!!,
                 ParcelCompat.readParcelable(
                     parcel,
                     DocumentStack::class.java.classLoader,
-                    DocumentStack::class.java
+                    DocumentStack::class.java,
                 ),
                 parcel.readLong(),
                 parcel.readLong(),

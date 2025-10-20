@@ -21,8 +21,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/coordinator_layout"
     android:background="?attr/colorSurfaceContainer"
-    android:id="@+id/coordinator_layout">
+    android:focusable="false">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -37,7 +38,6 @@
             android:baselineAligned="false"
             android:paddingTop="@dimen/layout_padding_top"
             android:paddingEnd="@dimen/layout_padding_end"
-            android:paddingBottom="@dimen/layout_padding_bottom"
             android:background="?attr/colorSurfaceContainer">
 
             <!-- Navigation rail: left hand side. -->
@@ -73,6 +73,7 @@
 
             <!-- Main container for the right hand side. -->
             <LinearLayout
+                android:id="@+id/main_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -95,6 +96,19 @@
                             android:layout_height="?attr/actionBarSize"
                             android:layout_marginTop="@dimen/action_bar_margin_m3"
                             android:touchscreenBlocksFocus="false">
+
+                            <com.google.android.material.textview.MaterialTextView
+                                android:id="@+id/read_only_label"
+                                android:background="@drawable/read_only_label_background"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:layout_marginStart="@dimen/space_extra_small_4"
+                                android:paddingHorizontal="@dimen/space_extra_small_6"
+                                android:text="@string/read_only_label"
+                                android:textAppearance="@style/TextAppearance.DocumentsUI.LabelSmall"
+                                android:textColor="?attr/colorOnSurfaceVariant"
+                                android:tooltipText="@string/read_only_explanation"
+                                android:visibility="gone" />
 
                             <TextView
                                 android:id="@+id/searchbar_title"
@@ -157,12 +171,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_container_section_gap"
+                    android:orientation="vertical"
                     android:background="@drawable/main_container_bottom_section_background">
 
                     <com.android.documentsui.HorizontalBreadcrumb
                         android:id="@+id/horizontal_breadcrumb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
+
+                    <com.android.documentsui.breadcrumbs.BreadcrumbView
+                        android:id="@+id/breadcrumb_view_v2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/colorSurfaceBright"
                         android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
                 </LinearLayout>
 

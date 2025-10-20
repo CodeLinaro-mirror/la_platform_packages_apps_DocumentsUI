@@ -21,8 +21,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/coordinator_layout"
     android:background="?attr/colorSurfaceContainer"
-    android:id="@+id/coordinator_layout">
+    android:focusable="false">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -35,7 +36,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingTop="@dimen/main_container_padding_top"
             android:background="?attr/colorSurfaceBright">
 
             <!-- Main list area (file list/grid or search results), full height -->
@@ -83,6 +83,13 @@
 
                 <com.android.documentsui.HorizontalBreadcrumb
                     android:id="@+id/horizontal_breadcrumb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/colorSurfaceBright"
+                    android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
+
+                <com.android.documentsui.breadcrumbs.BreadcrumbView
+                    android:id="@+id/breadcrumb_view_v2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/colorSurfaceBright"

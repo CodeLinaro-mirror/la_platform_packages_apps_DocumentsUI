@@ -16,8 +16,14 @@
 
 package com.android.documentsui;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.res.Resources;
@@ -38,9 +44,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.breadcrumbs.BreadcrumbController;
+import com.android.documentsui.breadcrumbs.BreadcrumbModel;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -48,6 +57,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import java.util.Objects;
 import java.util.function.IntConsumer;
 
 /** A facade over the portions of the app and drawer toolbars. */
@@ -62,6 +72,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     private final State mState;
     private final NavigationViewManager.Environment mEnv;
     private final Breadcrumb mBreadcrumb;
+    @Nullable private BreadcrumbController mBreadcrumbController;
     private final ProfileTabs mProfileTabs;
     private final View mSearchBarView;
     private final CollapsingToolbarLayout mCollapsingBarLayout;
@@ -202,6 +213,35 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
     }
 
+    /**
+     * Sets the breadcrumb controller. This controller is an alternative, that should replace
+     * the HorizontalBreadcrumb. For pre-material 3 documentsUI this is not a functioning component.
+     */
+    public void setBreadcrumbController(BreadcrumbController controller) {
+        if (isSearchV2Enabled()) {
+            this.mBreadcrumbController = controller;
+        }
+    }
+
+    /** Provides access to breadcrumb model v2 if one has been set */
+    public @Nullable BreadcrumbModel getBreadcrumbModel() {
+        if (isSearchV2Enabled()) {
+            if (mBreadcrumbController != null) {
+                return mBreadcrumbController.getModel();
+            }
+        }
+        return null;
+    }
+
+    /** Updates the visibility of the breadcrumb v2 */
+    private void setBreadcrumbV2Visible(boolean visible) {
+        if (isSearchV2Enabled()) {
+            if (mBreadcrumbController != null) {
+                mBreadcrumbController.setVisible(visible);
+            }
+        }
+    }
+
     /** Called when a child view of the parent view is focused. */
     public void onChildViewFocused(View parentView, View childView) {
         // Only expand when the child view get focused and the layout is in collapsed
@@ -305,7 +345,12 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         boolean changed = false;
         while (mState.stack.size() > position + 1) {
             changed = true;
-            mState.stack.pop();
+            DocumentInfo popped = mState.stack.pop();
+            if (isHomeScreenFilesFlagEnabled() && mState.shortcut != null &&
+                    Objects.equals(popped.documentId, mState.shortcut.getDocumentId())) {
+                // Only reset the shortcut to null if it gets popped off the stack.
+                mState.shortcut = null;
+            }
         }
         if (changed) {
             mEnv.refreshCurrentRootAndDirectory(AnimationView.ANIM_LEAVE);
@@ -328,11 +373,11 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         // When the search view is expanded, most of the toolbar is hidden. Except when docked
         // search is enabled, in which case the toolbar is shown as normal.
-        boolean showDockedSearch =
-                mActivity.getResources().getBoolean(getRes(R.bool.show_docked_search));
+        boolean showDockedSearch = mActivity.isSearchDocked();
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
+            setBreadcrumbV2Visible(true);
             return;
         }
 
@@ -353,17 +398,32 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
+            setBreadcrumbV2Visible(true);
             mToolbar.setTitle(null);
-            mSearchBarView.setVisibility(View.VISIBLE);
+            mSearchBarView.setVisibility(VISIBLE);
             return;
         }
 
-        mSearchBarView.setVisibility(View.GONE);
+        boolean showBreadcrumbV2 = mActivity.isSearching() || mActivity.isInRecents();
+        if (isSearchV2Enabled() && showDockedSearch && showBreadcrumbV2) {
+            // Special case: if the search is docked we need to add new breadcrumb handling code
+            // as the old shouldShowSearchBar() method returns false, preventing the pre SearchV2
+            // code for adjusting breadcrumb visibility.
+            mBreadcrumb.show(false);
+            setBreadcrumbV2Visible(true);
+            if (mActivity.isSearching()) {
+                mToolbar.setTitle(null);
+            }
+            return;
+        }
+
+        mSearchBarView.setVisibility(GONE);
         String title =
                 mState.stack.size() <= 1 ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
+        setBreadcrumbV2Visible(false);
         mBreadcrumb.postUpdate();
     }
 
@@ -380,6 +440,15 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     }
 
     private void updateToolbar() {
+        // Hide or show the "Read-only" label.
+        if (isZipNgFlagEnabled()) {
+            final View label = mToolbar.findViewById(getRes(R.id.read_only_label));
+            if (label != null) {
+                final DocumentInfo dir = mActivity.getCurrentDirectory();
+                label.setVisibility(dir != null && dir.isInArchive() ? VISIBLE : GONE);
+            }
+        }
+
         if (mCollapsingBarLayout == null) {
             // Tablet mode does not use CollapsingBarLayout
             // (res/layout-sw720dp/directory_app_bar.xml or res/layout/fixed_layout.xml)

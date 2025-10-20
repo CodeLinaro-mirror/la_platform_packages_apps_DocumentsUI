@@ -21,10 +21,12 @@ import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 
@@ -55,6 +57,14 @@ public interface ProvidersAccess {
 
     RootInfo getRecentsRoot(UserId userId);
 
+    /**
+     * Retrieves the root representing the trash documents for a specific user.
+     *
+     * @param userId The user for which to retrieve the trash root.
+     * @return The {@link RootInfo} for the trash folder.
+     */
+    @Nullable RootInfo getTrashRoot(@NonNull UserId userId);
+
     String getApplicationName(UserId userId, String authority);
 
     String getPackageName(UserId userId, String authority);
@@ -65,6 +75,12 @@ public interface ProvidersAccess {
      */
     Collection<RootInfo> getRootsForAuthorityBlocking(UserId userId, String authority);
 
+    /**
+     * Returns a collection of all the shortcuts for the specified user.
+     * Returns an empty collection if none found.
+     */
+    Collection<ShortcutInfo> getShortcutsForUser(UserId userId);
+
     public static List<RootInfo> getMatchingRoots(Collection<RootInfo> roots, State state) {
 
         final String tag = "ProvidersAccess";
@@ -73,6 +89,19 @@ public interface ProvidersAccess {
         for (RootInfo root : roots) {
 
             if (VERBOSE) Log.v(tag, "Evaluationg root: " + root);
+
+            // Exclude the trash root for actions that involve opening or picking content.
+            // The trash root contains the soft deleted items and does not represent a real,
+            // browsable location for opening files, getting content, or opening a directory tree.
+            if (root.isTrash() && (state.action == State.ACTION_OPEN_TREE
+                    || state.action == State.ACTION_OPEN
+                    || state.action == State.ACTION_GET_CONTENT)
+            ) {
+                if (VERBOSE) {
+                    Log.v(tag, "Excluding trash root for action: " + state.action);
+                }
+                continue;
+            }
 
             if (state.action == State.ACTION_CREATE && !root.supportsCreate()) {
                 if (VERBOSE) Log.v(tag, "Excluding read-only root because: ACTION_CREATE.");

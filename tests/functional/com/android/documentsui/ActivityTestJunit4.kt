@@ -16,11 +16,12 @@
 package com.android.documentsui
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.app.UiAutomation
+import android.app.WindowConfiguration
 import android.content.Context
 import android.content.Intent
 import android.os.RemoteException
-import android.platform.test.microbenchmark.Functional
 import android.provider.DocumentsContract
 import android.util.Log
 import android.view.KeyEvent
@@ -52,56 +53,47 @@ import org.junit.runner.RunWith
  * - Creates and gives access to test root directories and test files
  * - Cleans up the test environment
  */
-@RunWith(Functional::class)
+@RunWith(TestRunner::class)
 abstract class ActivityTestJunit4<T : Activity?> {
     lateinit var bots: Bots
 
-    @JvmField
-    var device: UiDevice? = null
+    @JvmField var device: UiDevice? = null
 
-    @JvmField
-    var context: Context? = null
+    @JvmField var context: Context? = null
 
-    @JvmField
-    protected var userId: UserId? = null
+    @JvmField protected var userId: UserId? = null
     var automation: UiAutomation? = null
 
-    @JvmField
-    var features: Features? = null
+    @JvmField var features: Features? = null
 
     /**
-     * Returns the root that will be opened within the activity.
-     * By default tests are started with one of the test roots.
-     * Override the method if you want to open different root on start.
+     * Returns the root that will be opened within the activity. By default tests are started with
+     * one of the test roots. Override the method if you want to open different root on start.
+     *
      * @return Root that will be opened. Return null if you want to open activity's default root.
      */
     protected open var initialRoot: RootInfo? = null
 
-    @JvmField
-    var rootDir0: RootInfo? = null
+    @JvmField var rootDir0: RootInfo? = null
 
-    @JvmField
-    var rootDir1: RootInfo? = null
+    @JvmField var rootDir1: RootInfo? = null
 
-    @JvmField
-    protected var mDocsHelper: DocumentsProviderHelper? = null
+    @JvmField protected var mDocsHelper: DocumentsProviderHelper? = null
 
-    @JvmField
-    protected var mActivityScenario: ActivityScenario<T?>? = null
+    @JvmField protected var mActivityScenario: ActivityScenario<T?>? = null
     private var initialScreenOffTimeoutValue: String? = null
     private var initialSleepTimeoutValue: String? = null
 
     protected val testingProviderAuthority: String
         /**
-         * Returns the authority of the testing provider begin used.
-         * By default it's StubProvider's authority.
+         * Returns the authority of the testing provider begin used. By default it's StubProvider's
+         * authority.
+         *
          * @return Authority of the provider.
          */
         get() = StubProvider.DEFAULT_AUTHORITY
 
-    /**
-     * Resolves testing roots.
-     */
+    /** Resolves testing roots. */
     @Throws(RemoteException::class)
     protected fun setupTestingRoots() {
         rootDir0 = mDocsHelper!!.getRoot(StubProvider.ROOT_0_ID)
@@ -122,10 +114,13 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
         Configurator.getInstance().toolType = MotionEvent.TOOL_TYPE_MOUSE
 
-        mDocsHelper = DocumentsProviderHelper(
-            userId, this.testingProviderAuthority, context,
-            this.testingProviderAuthority
-        )
+        mDocsHelper =
+            DocumentsProviderHelper(
+                userId,
+                this.testingProviderAuthority,
+                context,
+                this.testingProviderAuthority,
+            )
 
         device!!.setOrientationNatural()
         device!!.pressKeyCode(KeyEvent.KEYCODE_WAKEUP)
@@ -161,19 +156,27 @@ abstract class ActivityTestJunit4<T : Activity?> {
             intent.setAction(Intent.ACTION_VIEW)
             intent.setDataAndType(root.uri, DocumentsContract.Root.MIME_TYPE_ITEM)
         }
-        mActivityScenario = ActivityScenario.launch(intent)
+
+        // If the TestRunner is running tests with different screen sizes, we need to launch the
+        // activity in fullscreen mode so that the activity takes up the full device screen.
+        if (System.getProperty("documentsui_fullscreen") != null) {
+            Log.d(TAG, "using launchWindowingMode=FULLSCREEN")
+            val options = ActivityOptions.makeBasic()
+            options.setLaunchWindowingMode(WindowConfiguration.WINDOWING_MODE_FULLSCREEN)
+            mActivityScenario = ActivityScenario.launch(intent, options.toBundle())
+        } else {
+            mActivityScenario = ActivityScenario.launch(intent)
+        }
     }
 
     protected fun setNotificationAccess(enabled: Boolean) {
-        mActivityScenario?.onActivity(
-            { activity ->
-                try {
-                    bots.notifications.setNotificationAccess(activity, enabled)
-                } catch (e: Exception) {
-                    Log.d(TAG, "Cannot set notification access. ", e)
-                }
+        mActivityScenario?.onActivity({ activity ->
+            try {
+                bots.notifications.setNotificationAccess(activity, enabled)
+            } catch (e: Exception) {
+                Log.d(TAG, "Cannot set notification access. ", e)
             }
-        )
+        })
     }
 
     @Throws(IOException::class)
@@ -190,12 +193,12 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     @Throws(IOException::class)
     private fun restoreScreenOffAndSleepTimeouts() {
-        requireNotNull(
-            initialScreenOffTimeoutValue
-        ) { "Require the initial screen off timeout value to be non-null" }
-        requireNotNull(
-            initialSleepTimeoutValue
-        ) { "Require the sleep timeout value to be non-null" }
+        requireNotNull(initialScreenOffTimeoutValue) {
+            "Require the initial screen off timeout value to be non-null"
+        }
+        requireNotNull(initialSleepTimeoutValue) {
+            "Require the sleep timeout value to be non-null"
+        }
         try {
             device!!.executeShellCommand(
                 "settings put system screen_off_timeout $initialScreenOffTimeoutValue"
@@ -210,15 +213,16 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     private fun logLayout() {
-        val layoutType = if (bots.main.inFixedLayout()) {
-            "Fixed layout"
-        } else if (bots.main.inNavRailLayout()) {
-            "Nav rail layout"
-        } else if (bots.main.inDrawerLayout()) {
-            "Drawer layout"
-        } else {
-            "Unknown layout (should not happen)"
-        }
+        val layoutType =
+            if (bots.main.inFixedLayout()) {
+                "Fixed layout"
+            } else if (bots.main.inNavRailLayout()) {
+                "Nav rail layout"
+            } else if (bots.main.inDrawerLayout()) {
+                "Drawer layout"
+            } else {
+                "Unknown layout (should not happen)"
+            }
         Log.d(TAG, "Test is running with layout: $layoutType.")
     }
 
@@ -226,7 +230,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         Log.d(TAG, "Flag isUseMaterial3FlagEnabled() = ${isUseMaterial3FlagEnabled()}")
         Log.d(
             TAG,
-            "Flag isDesktopFileHandlingFlagEnabled() = ${isDesktopFileHandlingFlagEnabled()}"
+            "Flag isDesktopFileHandlingFlagEnabled() = ${isDesktopFileHandlingFlagEnabled()}",
         )
         Log.d(TAG, "Flag isSearchV2Enabled() = ${isSearchV2Enabled()}")
         Log.d(TAG, "Flag isUsePeekPreviewFlagEnabled() = ${isUsePeekPreviewFlagEnabled()}")

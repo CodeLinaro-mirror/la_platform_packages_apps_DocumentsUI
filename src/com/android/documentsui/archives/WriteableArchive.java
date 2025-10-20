@@ -27,12 +27,15 @@ import android.provider.DocumentsContract.Document;
 import android.util.Log;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,9 +43,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 /**
  * Provides basic implementation for creating archives.
@@ -54,14 +54,15 @@ public class WriteableArchive extends Archive {
 
     @GuardedBy("mEntries")
     private final Set<String> mPendingEntries = new HashSet<>();
+
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+
     @GuardedBy("mEntries")
     private final ZipArchiveOutputStream mZipOutputStream;
+
     private final AutoCloseOutputStream mOutputStream;
 
-    /**
-     * Takes ownership of the passed file descriptor.
-     */
+    /** Takes ownership of the passed file descriptor. */
     private WriteableArchive(
             Context context,
             ParcelFileDescriptor fd,
@@ -74,7 +75,7 @@ public class WriteableArchive extends Archive {
             throw new IllegalStateException("Unsupported access mode.");
         }
 
-        addEntry(null /* no parent */, new ZipArchiveEntry("/"));  // Root entry.
+        addEntry(null /* no parent */, new ZipArchiveEntry("/")); // Root entry.
         mOutputStream = new AutoCloseOutputStream(fd);
         mZipOutputStream = new ZipArchiveOutputStream(mOutputStream);
     }
@@ -102,11 +103,11 @@ public class WriteableArchive extends Archive {
     }
 
     /**
-     * Creates a DocumentsArchive instance for writing into an archive file passed
-     * as a file descriptor.
+     * Creates a DocumentsArchive instance for writing into an archive file passed as a file
+     * descriptor.
      *
-     * This method takes ownership for the passed descriptor. The caller must
-     * not use it after passing.
+     * This method takes ownership for the passed descriptor. The caller must not use it after
+     * passing.
      *
      * @param context Context of the provider.
      * @param descriptor File descriptor for the archive's contents.
@@ -116,12 +117,15 @@ public class WriteableArchive extends Archive {
      */
     @VisibleForTesting
     public static WriteableArchive createForParcelFileDescriptor(
-            Context context, ParcelFileDescriptor descriptor, Uri archiveUri, int accessMode,
+            Context context,
+            ParcelFileDescriptor descriptor,
+            Uri archiveUri,
+            int accessMode,
             @Nullable Uri notificationUri)
             throws IOException {
         try {
-            return new WriteableArchive(context, descriptor, archiveUri, accessMode,
-                    notificationUri);
+            return new WriteableArchive(
+                    context, descriptor, archiveUri, accessMode, notificationUri);
         } catch (Exception e) {
             // Since the method takes ownership of the passed descriptor, close it
             // on exception.
@@ -132,10 +136,13 @@ public class WriteableArchive extends Archive {
 
     @Override
     @VisibleForTesting
-    public String createDocument(String parentDocumentId, String mimeType, String displayName)
+    public String createDocument(
+            @NonNull String parentDocumentId, String mimeType, String displayName)
             throws FileNotFoundException {
         final ArchiveId parsedParentId = ArchiveId.fromDocumentId(parentDocumentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedParentId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedParentId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
         final boolean isDirectory = Document.MIME_TYPE_DIR.equals(mimeType);
@@ -150,7 +157,8 @@ public class WriteableArchive extends Archive {
                 throw new FileNotFoundException();
             }
 
-            if (displayName.indexOf("/") != -1 || ".".equals(displayName)
+            if (displayName.indexOf("/") != -1
+                    || ".".equals(displayName)
                     || "..".equals(displayName)) {
                 throw new IllegalStateException("Display name contains invalid characters.");
             }
@@ -159,10 +167,9 @@ public class WriteableArchive extends Archive {
                 throw new IllegalStateException("Display name cannot be empty.");
             }
 
-
-            assert(parentEntry.getName().endsWith("/"));
-            final String parentName = "/".equals(parentEntry.getName())
-                    ? "" : parentEntry.getName();
+            assert parentEntry.getName().endsWith("/");
+            final String parentName =
+                    "/".equals(parentEntry.getName()) ? "" : parentEntry.getName();
             final String entryName = parentName + displayName + (isDirectory ? "/" : "");
             entry = new ZipArchiveEntry(entryName);
             entryPath = getEntryPath(entry);
@@ -199,12 +206,14 @@ public class WriteableArchive extends Archive {
 
     @Override
     public ParcelFileDescriptor openDocument(
-            String documentId, String mode, @Nullable final CancellationSignal signal)
+            @NonNull String documentId, String mode, @Nullable final CancellationSignal signal)
             throws FileNotFoundException {
-        MorePreconditions.checkArgumentEquals("w", mode,
-                "Invalid mode. Only writing \"w\" supported, but got: \"%s\".");
+        MorePreconditions.checkArgumentEquals(
+                "w", mode, "Invalid mode. Only writing \"w\" supported, but got: \"%s\".");
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
-        MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
+        MorePreconditions.checkArgumentEquals(
+                mArchiveUri,
+                parsedId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
 
         final ZipArchiveEntry entry;
@@ -279,17 +288,15 @@ public class WriteableArchive extends Archive {
         return pipe[1];
     }
 
-    /**
-     * Closes the archive. Blocks until all enqueued pipes are completed.
-     */
+    /** Closes the archive. Blocks until all enqueued pipes are completed. */
     @Override
     public void close() {
         // Waits until all enqueued pipe requests are completed.
         mExecutor.shutdown();
         try {
-            final boolean result = mExecutor.awaitTermination(
-                    Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-            assert(result);
+            final boolean result =
+                    mExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            assert result;
         } catch (InterruptedException e) {
             Log.e(TAG, "Opened files failed to be fullly written.", e);
         }

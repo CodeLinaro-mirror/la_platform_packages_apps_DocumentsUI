@@ -34,41 +34,20 @@ import android.net.Uri;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.filters.LargeTest;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.picker.PickActivity;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.UUID;
 
-
 @LargeTest
-@RunWith(AndroidJUnit4.class)
-public class ActionCreateDocumentUiTest extends DocumentsUiTestBase {
+public class ActionCreateDocumentUiTest extends ActivityTestJunit4<PickActivity> {
 
-    @Rule
-    public final ActivityTestRule<PickActivity> mRule =
-            new ActivityTestRule<>(PickActivity.class, false, false);
-
-    @Before
-    public void setup() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    @Test
-    public void testActionCreate_TextFile() throws Exception {
+    @Override
+    protected void launchActivity() {
         final Intent intent = new Intent(ACTION_CREATE_DOCUMENT);
         intent.addCategory(CATEGORY_DEFAULT);
         intent.addCategory(CATEGORY_OPENABLE);
@@ -76,8 +55,11 @@ public class ActionCreateDocumentUiTest extends DocumentsUiTestBase {
         intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI,
                 DocumentsContract.buildRootUri(AUTHORITY_STORAGE, "primary"));
 
-        mRule.launchActivity(intent);
+        mActivityScenario = ActivityScenario.launchActivityForResult(intent);
+    }
 
+    @Test
+    public void testActionCreate_TextFile() throws Exception {
         final String fileName = UUID.randomUUID() + ".txt";
 
         bots.main.setDialogText(fileName);
@@ -85,7 +67,7 @@ public class ActionCreateDocumentUiTest extends DocumentsUiTestBase {
         bots.picker.clickSaveButton();
         SystemClock.sleep(3000);
 
-        final Instrumentation.ActivityResult activityResult = mRule.getActivityResult();
+        final Instrumentation.ActivityResult activityResult = mActivityScenario.getResult();
         assertThat(activityResult.getResultCode()).isEqualTo(RESULT_OK);
 
         final Intent resultData = activityResult.getResultData();

@@ -18,37 +18,38 @@ package com.android.documentsui.archives;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
 public class ArchiveId {
-    private final static char DELIMITER = '#';
+    private static final char DELIMITER = '#';
 
-    public final Uri mArchiveUri;
+    public final @NonNull Uri mArchiveUri;
     public final int mAccessMode;
-    public final String mPath;
+    public final @NonNull String mPath;
 
-    public ArchiveId(Uri archiveUri, int accessMode, String path) {
-        assert(archiveUri.toString().indexOf(DELIMITER) == -1);
-        assert(!path.isEmpty());
+    public ArchiveId(@NonNull Uri archiveUri, int accessMode, @NonNull String path) {
+        assert archiveUri.toString().indexOf(DELIMITER) == -1;
+        assert !path.isEmpty();
 
         mArchiveUri = archiveUri;
         mAccessMode = accessMode;
         mPath = path;
     }
 
-    static public ArchiveId fromDocumentId(String documentId) {
+    public static ArchiveId fromDocumentId(@NonNull String documentId) {
         final int delimiterPosition = documentId.indexOf(DELIMITER);
-        assert(delimiterPosition != -1);
+        assert delimiterPosition != -1;
 
         final int secondDelimiterPosition = documentId.indexOf(DELIMITER, delimiterPosition + 1);
-        assert(secondDelimiterPosition != -1);
+        assert secondDelimiterPosition != -1;
 
         final String archiveUriPart = documentId.substring(0, delimiterPosition);
-        final String accessModePart = documentId.substring(delimiterPosition + 1,
-                secondDelimiterPosition);
+        final String accessModePart =
+                documentId.substring(delimiterPosition + 1, secondDelimiterPosition);
 
         final String pathPart = documentId.substring(secondDelimiterPosition + 1);
 
-        return new ArchiveId(Uri.parse(archiveUriPart), Integer.parseInt(accessModePart),
-                pathPart);
+        return new ArchiveId(Uri.parse(archiveUriPart), Integer.parseInt(accessModePart), pathPart);
     }
 
     public String toDocumentId() {

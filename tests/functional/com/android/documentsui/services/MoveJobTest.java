@@ -16,13 +16,23 @@
 
 package com.android.documentsui.services;
 
+import static android.app.Notification.CATEGORY_ERROR;
+import static android.app.Notification.CATEGORY_PROGRESS;
+import static android.app.Notification.EXTRA_PROGRESS_INDETERMINATE;
+import static android.app.Notification.EXTRA_TEXT;
+import static android.app.Notification.EXTRA_TITLE;
+
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.truth.Truth.assertThat;
 
+import android.app.Notification;
 import android.net.Uri;
+import android.os.Bundle;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract.Document;
 
@@ -42,6 +52,59 @@ public class MoveJobTest extends AbstractCopyJobTest<MoveJob> {
 
     public MoveJobTest() {
         super(OPERATION_MOVE);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
+    public void failsOnInvalidParent() throws Exception {
+        // Create a source file to be moved.
+        Uri testFile = mDocs.createDocument(mSrcRoot, "text/plain", "test.txt");
+        mDocs.writeDocument(testFile, HAM_BYTES);
+
+        // A URI that is guaranteed to fail when resolving.
+        Uri invalidParentUri = Uri.parse("content://i.do.not.exist/doc/ghost");
+
+        // Create and run the job with the invalid source parent.
+        final MoveJob job = createJob(newArrayList(testFile), invalidParentUri);
+
+        {
+            final Notification notification = job.getSetupNotification();
+            assertThat(notification.category).isEqualTo(CATEGORY_PROGRESS);
+            final Bundle extras = notification.extras;
+            assertThat(extras.getCharSequence(EXTRA_TITLE)).isEqualTo("Moving files");
+            assertThat(extras.getCharSequence(EXTRA_TEXT)).isEqualTo("Preparing...");
+            assertThat(extras.getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isTrue();
+        }
+
+        job.run();
+
+        {
+            final Notification notification = job.getProgressNotification();
+            assertThat(notification.category).isEqualTo(CATEGORY_PROGRESS);
+            final Bundle extras = notification.extras;
+            assertThat(extras.getCharSequence(EXTRA_TITLE)).isEqualTo("Moving files");
+            assertThat(extras.getCharSequence(EXTRA_TEXT)).isNull();
+            assertThat(extras.getBoolean(EXTRA_PROGRESS_INDETERMINATE)).isFalse();
+        }
+
+        mJobListener.assertFailed();
+        mJobListener.assertFailureCount(1);
+
+        {
+            final Notification notification = job.getFailureNotification();
+            assertThat(notification.category).isEqualTo(CATEGORY_ERROR);
+            final Bundle extras = notification.extras;
+            assertThat(extras.getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t move 1 file");
+            assertThat(extras.getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details");
+        }
+
+        // The job should fail during setUp, so no files should be moved or deleted.
+        // Verify the source file still exists.
+        mDocs.assertChildCount(mSrcRoot, 1);
+        mDocs.assertHasFile(mSrcRoot, "test.txt");
+
+        // Verify the destination is still empty.
+        mDocs.assertChildCount(mDestRoot, 0);
     }
 
     @Test
@@ -177,6 +240,12 @@ public class MoveJobTest extends AbstractCopyJobTest<MoveJob> {
 
         // should have failed, source not deleted
         mDocs.assertChildCount(mSrcRoot, 1);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO})
+    public void testMoveFileWithFileNotFound() throws Exception {
+        runCopyFileWithFileNotFoundTest();
     }
 
     // TODO: Add test cases for moving when multi-parented.

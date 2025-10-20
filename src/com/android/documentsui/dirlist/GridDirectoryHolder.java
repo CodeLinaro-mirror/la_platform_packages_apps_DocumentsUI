@@ -19,6 +19,7 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLID_COLORED;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
@@ -34,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
@@ -41,6 +43,7 @@ import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
+import com.android.documentsui.base.Events;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.ui.Views;
@@ -132,6 +135,9 @@ final class GridDirectoryHolder extends DocumentHolder {
 
         } else if (Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
             return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+
+        } else if (Events.isMousyEvent(event) && isSingleClickToSelectEnabled()) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO;
         }
 
         return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
@@ -140,11 +146,11 @@ final class GridDirectoryHolder extends DocumentHolder {
     /**
      * Bind this view to the given document for display.
      *
-     * @param cursor  Pointing to the item to be bound.
+     * @param cursor Pointing to the item to be bound.
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId) {
+    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
         assert (cursor != null);
 
         this.mModelId = modelId;

@@ -16,6 +16,7 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
@@ -48,6 +49,7 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
@@ -74,6 +76,15 @@ public class SearchBot extends Bots.BaseBot {
 
     public SearchBot(UiDevice device, Context context, int timeout) {
         super(device, context, timeout);
+    }
+
+    /**
+     * @return Whether or not the search icon (magnifying glass) is present and enabled.
+     */
+    public UiObject2 getSearchIcon() {
+        String resId = mTargetPackage + (showsDockedSearch() ? ":id/docked_search_toolbar"
+                : ":id/option_menu_search");
+        return find(By.res(resId));
     }
 
     public void expand() throws UiObjectNotFoundException {
@@ -285,5 +296,15 @@ public class SearchBot extends Bots.BaseBot {
             onView(allOf(withContentDescription("Collapse"), isDescendantOfA(withId(R.id.toolbar))))
                     .perform(click());
         }
+    }
+
+    /**
+     * Performs a search with the given query.
+     */
+    public void doSearch(String query) throws UiObjectNotFoundException {
+        expand();
+        setInputText(query);
+        // Try to hide the virtual keyboard: on small devices it can hide some files.
+        closeSoftKeyboard();
     }
 }

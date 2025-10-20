@@ -96,4 +96,14 @@
 
     <!-- Indicate if we want to move the Search chip position when it's selected/unselected. -->
     <bool name="move_search_chip_when_selected">true</bool>
+
+    <!-- The authority of a DocumentsProvider that provides summaries/description for local files.
+    If it's empty or the package isn't installed it will just disable the summary for local files.
+    It should be a valid root URI, i.e. `content://<com.android.provider.authority>/root/<root_id>`
+     -->
+    <string name="local_summary_provider" translatable="false" />
+
+    <!-- The custom search provider that provides search results for local files, e.g. to perform semantic search.
+    It should be a valid root URI, i.e. `content://<com.android.provider.authority>/root/<root_id>` -->
+    <string name="local_search_provider" translatable="false"></string>
 </resources>

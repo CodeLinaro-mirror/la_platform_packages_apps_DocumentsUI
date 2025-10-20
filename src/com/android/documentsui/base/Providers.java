@@ -19,7 +19,6 @@ import android.net.Uri;
 
 import com.android.documentsui.archives.ArchivesProvider;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,9 +39,13 @@ public final class Providers {
     public static final String ROOT_ID_VIDEOS = "videos_root";
     public static final String ROOT_ID_AUDIO = "audio_root";
     public static final String ROOT_ID_DOCUMENTS = "documents_root";
+    public static final String ROOT_ID_FILES = "files_root";
 
     public static final String AUTHORITY_MTP = "com.android.mtp.documents";
     public static final String AUTHORITY_BUGREPORT = "com.android.shell.documents";
+
+    public static final String TRASH_ROOT_ID = "trash_root";
+    public static final String HOME_SCREEN_SHORTCUT_TITLE = "Home screen";
 
     private static final String DOCSUI_PACKAGE = "com.android.documentsui";
     private static final Set<String> SYSTEM_AUTHORITIES = Set.of(

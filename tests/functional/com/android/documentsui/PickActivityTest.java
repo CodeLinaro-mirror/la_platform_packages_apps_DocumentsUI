@@ -44,7 +44,9 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.Bots;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.picker.PickActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -94,8 +96,14 @@ public class PickActivityTest {
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule()
-                    .createFileInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1, "text/plain")
-                    .createFileInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_2, "image/png");
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                docsHelper.createDocument(
+                                        root, "text/plain", TestFilesRule.FILE_NAME_1);
+                                docsHelper.createDocument(
+                                        root, "image/png", TestFilesRule.FILE_NAME_2);
+                            });
 
     @Rule
     public final ActivityTestRule<PickActivity> mRule =
@@ -205,7 +213,7 @@ public class PickActivityTest {
     public void testOptionMenuWorksWhileOptionSelected() throws UiObjectNotFoundException {
         // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
         mRule.launchActivity(mIntentGetContent);
-        mBots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
 
         // Switch to list mode and select the test document.
         mBots.main.switchToListMode();
@@ -226,7 +234,7 @@ public class PickActivityTest {
         intentOpenDocument.addCategory(Intent.CATEGORY_OPENABLE);
         intentOpenDocument.setType("*/*");
         PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        mBots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
@@ -265,7 +273,7 @@ public class PickActivityTest {
         mIntentGetContent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
 
-        mBots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
@@ -320,7 +328,7 @@ public class PickActivityTest {
 
         PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
 
-        mBots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
 
         // There should be a Cancel (button2) and Select (button1) button.
         mBots.picker.checkCancelButtonDisplayed();
@@ -346,7 +354,7 @@ public class PickActivityTest {
     public void testPickFilesFragment_FlagDisabled() throws UiObjectNotFoundException {
         mRule.launchActivity(mIntentGetContent);
 
-        mBots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
 
         mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 

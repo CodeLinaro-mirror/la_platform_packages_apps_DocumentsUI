@@ -26,6 +26,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 
@@ -36,6 +37,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.TestUserManagerState;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -55,6 +57,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,6 +75,7 @@ public class RootsFragmentTest {
     private TestEnv mEnv;
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
     private TestUserManagerState mTestUserManagerState;
+    private Resources mResources;
 
     private static final String[] EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE = {
         TestProvidersAccess.RECENTS.title,
@@ -80,6 +84,24 @@ public class RootsFragmentTest {
         TestProvidersAccess.AUDIO.title,
         TestProvidersAccess.DOCUMENT.title,
         TestProvidersAccess.DOWNLOADS.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.EXTERNALSTORAGE.title,
+        TestProvidersAccess.HAMMY.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.INSPECTOR.title,
+        TestProvidersAccess.PICKLES.title
+    };
+
+    private static final String[] EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_TRUE = {
+        TestProvidersAccess.RECENTS.title,
+        TestProvidersAccess.HOME_SCREEN_SHORTCUT.getTitle(),
+        TestProvidersAccess.IMAGE.title,
+        TestProvidersAccess.VIDEO.title,
+        TestProvidersAccess.AUDIO.title,
+        TestProvidersAccess.DOCUMENT.title,
+        TestProvidersAccess.DOWNLOADS.title,
+        TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getTitle(),
+        TestProvidersAccess.TEST_SHORTCUT.getTitle(),
         "" /* SpacerItem */,
         TestProvidersAccess.EXTERNALSTORAGE.title,
         TestProvidersAccess.HAMMY.title,
@@ -98,6 +120,21 @@ public class RootsFragmentTest {
         TestProvidersAccess.INSPECTOR.title,
         TestProvidersAccess.PICKLES.title
     };
+
+    private static final String[]
+        EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_FALSE = {
+            TestProvidersAccess.RECENTS.title,
+            TestProvidersAccess.HOME_SCREEN_SHORTCUT.getTitle(),
+            TestProvidersAccess.DOWNLOADS.title,
+            TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getTitle(),
+            TestProvidersAccess.TEST_SHORTCUT.getTitle(),
+            "" /* SpacerItem */,
+            TestProvidersAccess.EXTERNALSTORAGE.title,
+            TestProvidersAccess.HAMMY.title,
+            "" /* SpacerItem */,
+            TestProvidersAccess.INSPECTOR.title,
+            TestProvidersAccess.PICKLES.title
+        };
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
@@ -122,8 +159,8 @@ public class RootsFragmentTest {
         mContext = mock(Context.class);
         mDevicePolicyManager = mock(DevicePolicyManager.class);
         mPackageManager = mock(PackageManager.class);
-        when(mContext.getResources()).thenReturn(
-                InstrumentationRegistry.getInstrumentation().getTargetContext().getResources());
+        mResources = mock(Resources.class);
+        when(mContext.getResources()).thenReturn(mResources);
         when(mContext.getSystemService(Context.DEVICE_POLICY_SERVICE))
                 .thenReturn(mDevicePolicyManager);
         when(mContext.getApplicationContext()).thenReturn(
@@ -140,12 +177,13 @@ public class RootsFragmentTest {
     }
 
     @Test
-    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_HOME_SCREEN_FILES_RO})
     public void testSortLoadResult_WithCorrectOrder_useMaterial3FlagDisabled() {
         List<Item> items = mRootsFragment.sortLoadResult(
                 mContext,
                 mEnv.state,
                 createFakeRootInfoList(),
+                createFakeShortcutInfoList(),
                 null /* excludePackage */, null /* handlerAppIntent */, new TestProvidersAccess(),
                 UserId.DEFAULT_USER,
                 Collections.singletonList(UserId.DEFAULT_USER),
@@ -155,11 +193,13 @@ public class RootsFragmentTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
     public void testSortLoadResult_WithCorrectOrder_showMediaRoots() {
         List<Item> items = mRootsFragment.sortLoadResult(
                 mContext,
                 mEnv.state,
                 createFakeRootInfoList(),
+                createFakeShortcutInfoList(),
                 null /* excludePackage */, null /* handlerAppIntent */, new TestProvidersAccess(),
                 UserId.DEFAULT_USER,
                 Collections.singletonList(UserId.DEFAULT_USER),
@@ -168,6 +208,82 @@ public class RootsFragmentTest {
             assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE));
         } else {
             assertTrue(assertSortedResult(items, EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_FALSE));
+        }
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+        Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER
+    })
+    public void testSortLoadResult_localSearchConfigured() {
+        final List<RootInfo> rootInfoList =
+                Collections.singletonList(TestProvidersAccess.LOCAL_SEARCH);
+        when(mResources.getString(R.string.local_search_provider))
+                .thenReturn(TestProvidersAccess.LOCAL_SEARCH.getUri().toString());
+
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        rootInfoList,
+                        List.of(),
+                        null /* excludePackage */,
+                        null /* handlerAppIntent */,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        /* maybeShowBadge */ false,
+                        mTestUserManagerState);
+
+        assertEquals(0, items.size());
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER})
+    public void testSortLoadResult_localSearchNotConfigured() {
+        final List<RootInfo> rootInfoList =
+                Collections.singletonList(TestProvidersAccess.LOCAL_SEARCH);
+        when(mResources.getString(R.string.local_search_provider)).thenReturn("");
+
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        rootInfoList,
+                        List.of(),
+                        null /* excludePackage */,
+                        null /* handlerAppIntent */,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        /* maybeShowBadge */ false,
+                        mTestUserManagerState);
+
+        assertEquals(1, items.size());
+        RootItem item = (RootItem) items.get(0);
+        assertEquals(TestProvidersAccess.LOCAL_SEARCH.title, item.root.title);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testSortLoadResult_WithCorrectOrder_showMediaRoots_shortcutsEnabled() {
+        List<Item> items = mRootsFragment.sortLoadResult(
+                mContext,
+                mEnv.state,
+                createFakeRootInfoList(),
+                createFakeShortcutInfoList(),
+                null /* excludePackage */, null /* handlerAppIntent */, new TestProvidersAccess(),
+                UserId.DEFAULT_USER,
+                Collections.singletonList(UserId.DEFAULT_USER),
+                /* maybeShowBadge */ false, mTestUserManagerState);
+        if (mContext.getResources().getBoolean(R.bool.show_media_roots)) {
+            assertTrue(assertSortedResult(items,
+                    EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_TRUE));
+        } else {
+            assertTrue(assertSortedResult(items,
+                    EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_FALSE));
         }
     }
 
@@ -220,6 +336,9 @@ public class RootsFragmentTest {
                 assertEquals(expectedSortedResult[i], ((RootItem) item).root.title);
             } else if (item instanceof SpacerItem) {
                 assertTrue(expectedSortedResult[i].isEmpty());
+            } else if (item instanceof ShortcutItem) {
+                assertEquals(expectedSortedResult[i],
+                        ((ShortcutItem) item).getShortcut().getTitle());
             } else {
                 return false;
             }
@@ -240,5 +359,12 @@ public class RootsFragmentTest {
         fakeRootInfoList.add(TestProvidersAccess.EXTERNALSTORAGE);
         fakeRootInfoList.add(TestProvidersAccess.DOCUMENT);
         return fakeRootInfoList;
+    }
+
+    private List<ShortcutInfo> createFakeShortcutInfoList() {
+        return Arrays.asList(
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT,
+                TestProvidersAccess.LIVE_IMAGES_SHORTCUT,
+                TestProvidersAccess.TEST_SHORTCUT);
     }
 }

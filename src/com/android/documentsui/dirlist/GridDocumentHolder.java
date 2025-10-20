@@ -21,6 +21,8 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFI
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -30,6 +32,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.provider.DocumentsContract.Document;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,6 +48,7 @@ import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.Events;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
@@ -235,6 +239,9 @@ final class GridDocumentHolder extends DocumentHolder {
 
         } else if (Views.isEventOver(event, itemView.getParent(), mSelectionCircle)) {
             return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+
+        } else if (Events.isMousyEvent(event) && isSingleClickToSelectEnabled()) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO;
         }
 
         return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
@@ -248,11 +255,11 @@ final class GridDocumentHolder extends DocumentHolder {
     /**
      * Bind this view to the given document for display.
      *
-     * @param cursor  Pointing to the item to be bound.
+     * @param cursor Pointing to the item to be bound.
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId) {
+    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
         assert (cursor != null);
 
         mModelId = modelId;
@@ -290,34 +297,45 @@ final class GridDocumentHolder extends DocumentHolder {
         // Show the full name in a tooltip.
         itemView.setTooltipText(mDoc.displayName);
 
-        // If file is partial, we want to show summary field as that's more relevant than fileSize
-        // and date
-        if (mDoc.isPartial()) {
-            final String docSummary = getCursorString(cursor, Document.COLUMN_SUMMARY);
+        // For the second row, when the summary is enabled and it has something, display only the
+        // summary.
+        if (isUseFileSummaryEnabled() && !TextUtils.isEmpty(summary)) {
             mDetails.setVisibility(View.VISIBLE);
-            if (isUseMaterial3FlagEnabled()) {
-                mDate.setVisibility(View.GONE);
-            } else {
-                mDate.setText(null);
+            mDetails.setText(summary);
+            mDate.setVisibility(View.GONE);
+            if (mBullet != null) {
+                mBullet.setVisibility(View.GONE);
             }
-            mDetails.setText(docSummary);
         } else {
-            if (mDoc.lastModified == -1) {
+            // If file is partial, we want to show summary field as that's more relevant than
+            // fileSize and date.
+            if (mDoc.isPartial() && !isUseFileSummaryEnabled()) {
+                final String docSummary = getCursorString(cursor, Document.COLUMN_SUMMARY);
+                mDetails.setVisibility(View.VISIBLE);
                 if (isUseMaterial3FlagEnabled()) {
                     mDate.setVisibility(View.GONE);
                 } else {
                     mDate.setText(null);
                 }
+                mDetails.setText(docSummary);
             } else {
-                mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
-            }
+                if (mDoc.lastModified == -1) {
+                    if (isUseMaterial3FlagEnabled()) {
+                        mDate.setVisibility(View.GONE);
+                    } else {
+                        mDate.setText(null);
+                    }
+                } else {
+                    mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
+                }
 
-            final long docSize = getCursorLong(cursor, Document.COLUMN_SIZE);
-            if (mDoc.isDirectory() || docSize == -1) {
-                mDetails.setVisibility(View.GONE);
-            } else {
-                mDetails.setVisibility(View.VISIBLE);
-                mDetails.setText(Formatter.formatFileSize(mContext, docSize));
+                final long docSize = getCursorLong(cursor, Document.COLUMN_SIZE);
+                if (mDoc.isDirectory() || docSize == -1) {
+                    mDetails.setVisibility(View.GONE);
+                } else {
+                    mDetails.setVisibility(View.VISIBLE);
+                    mDetails.setText(Formatter.formatFileSize(mContext, docSize));
+                }
             }
         }
 

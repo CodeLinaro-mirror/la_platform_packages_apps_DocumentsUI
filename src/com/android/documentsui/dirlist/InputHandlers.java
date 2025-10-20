@@ -17,11 +17,6 @@ package com.android.documentsui.dirlist;
 
 import static androidx.core.util.Preconditions.checkArgument;
 
-import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
-import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
-import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
-import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-
 import android.view.KeyEvent;
 
 import androidx.recyclerview.selection.SelectionTracker;
@@ -69,34 +64,21 @@ final class InputHandlers {
         KeyInputHandler.Callbacks<DocumentItemDetails> callbacks =
                 new KeyInputHandler.Callbacks<DocumentItemDetails>() {
             @Override
-            public boolean isInteractiveItem(DocumentItemDetails item, KeyEvent e) {
-                switch (item.getItemViewType()) {
-                    case DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE:
-                    case DocumentsAdapter.ITEM_TYPE_INFLATED_MESSAGE:
-                    case DocumentsAdapter.ITEM_TYPE_SECTION_BREAK:
-                        return false;
-                    case DocumentsAdapter.ITEM_TYPE_DOCUMENT:
-                    case DocumentsAdapter.ITEM_TYPE_DIRECTORY:
-                        return true;
-                    default:
-                        throw new RuntimeException(
-                                "Unsupported item type: " + item.getItemViewType());
-                }
-            }
-
-            @Override
             public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
                 // Handle enter key events
                 switch (e.getKeyCode()) {
                     case KeyEvent.KEYCODE_ENTER:
                     case KeyEvent.KEYCODE_DPAD_CENTER:
                     case KeyEvent.KEYCODE_BUTTON_A:
-                        if (isDesktopFileHandlingFlagEnabled()) {
-                            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-                        }
-                        return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+                        return mActions.openItem(
+                                item,
+                                ActionHandler.VIEW_TYPE_REGULAR,
+                                ActionHandler.VIEW_TYPE_PREVIEW);
                     case KeyEvent.KEYCODE_SPACE:
-                        return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_NONE);
+                        return mActions.openItem(
+                                item,
+                                ActionHandler.VIEW_TYPE_PREVIEW,
+                                ActionHandler.VIEW_TYPE_NONE);
                 }
 
                 return false;

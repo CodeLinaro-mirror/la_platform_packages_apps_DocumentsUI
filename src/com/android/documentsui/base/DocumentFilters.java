@@ -17,6 +17,7 @@ package com.android.documentsui.base;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
@@ -39,6 +40,7 @@ public final class DocumentFilters {
     public static final Predicate<Cursor> ANY = (Cursor c) -> { return true; };
     public static final Predicate<Cursor> VIRTUAL  = DocumentFilters::isVirtual;
     public static final Predicate<Cursor> NOT_MOVABLE = DocumentFilters::isNotMovable;
+    public static final Predicate<Cursor> NOT_SUPPORT_TRASH = DocumentFilters::isNotSupportTrash;
     private static final Predicate<Cursor> O_SHARABLE = DocumentFilters::isSharableInO;
     private static final Predicate<Cursor> PREO_SHARABLE = DocumentFilters::isSharablePreO;
 
@@ -82,5 +84,16 @@ public final class DocumentFilters {
     private static final boolean isNotMovable(Cursor c) {
         int flags = getCursorInt(c, Document.COLUMN_FLAGS);
         return (flags & MOVABLE_MASK) == 0;
+    }
+
+    /**
+     * Filter that passes (returns true) for files that can not be trashed.
+     */
+    private static boolean isNotSupportTrash(Cursor c) {
+        if (!isTrashFlowEnabled()) {
+            return true;
+        }
+        int flags = getCursorInt(c, Document.COLUMN_FLAGS);
+        return (flags & Document.FLAG_SUPPORTS_TRASH) == 0;
     }
 }

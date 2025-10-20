@@ -18,6 +18,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/job_progress_toolbar_container"
+    android:background="?attr/actionBarItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_width="48dp"
     android:layout_height="48dp">
     <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -26,8 +30,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/job_progress_icon_label"
-        android:clickable="true"
-        android:focusable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

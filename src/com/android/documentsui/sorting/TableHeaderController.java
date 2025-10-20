@@ -16,6 +16,8 @@
 
 package com.android.documentsui.sorting;
 
+import static com.android.documentsui.ui.Views.setWeight;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -54,10 +56,32 @@ public final class TableHeaderController implements SortController.WidgetControl
         mSizeCell = tableHeader.findViewById(getRes(R.id.size));
         mFileTypeCell = tableHeader.findViewById(getRes(R.id.file_type));
         mDateCell = tableHeader.findViewById(getRes(R.id.date));
-
+        adjustColumnWidthForSummary();
         onModelUpdate(mModel, SortModel.UPDATE_TYPE_UNSPECIFIED);
 
         mModel.addListener(mModelListener);
+    }
+
+    /**
+     * If summary column needs to be displayed or hidden, adjust the width of all columns.
+     *
+     * <p>NOTE: These values are matched in {@link
+     * com.android.documentsui.dirlist.ListDocumentHolder#adjustColumnWidthForSummary()}
+     */
+    private void adjustColumnWidthForSummary() {
+        if (isUseFileSummaryEnabled()) {
+            setWeight(mTitleCell, 0.35f);
+            setWeight(mSummaryCell, 0.25f);
+            setWeight(mDateCell, 0.15f);
+            setWeight(mSizeCell, 0.15f);
+            setWeight(mFileTypeCell, 0.15f);
+        } else {
+            setWeight(mTitleCell, 0.4f);
+            setWeight(mSummaryCell, 0f);
+            setWeight(mDateCell, 0.2f);
+            setWeight(mSizeCell, 0.2f);
+            setWeight(mFileTypeCell, 0.2f);
+        }
     }
 
     /** Creates a TableHeaderController. */

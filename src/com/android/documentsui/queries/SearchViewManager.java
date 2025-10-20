@@ -21,6 +21,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -155,10 +156,10 @@ public class SearchViewManager implements
         }
 
         if (savedState != null) {
-            mCurrentSearch = savedState.getString(Shared.EXTRA_QUERY);
+            setCurrentSearchInternal(savedState.getString(Shared.EXTRA_QUERY));
             mChipViewManager.restoreCheckedChipItems(savedState);
         } else {
-            mCurrentSearch = null;
+            setCurrentSearchInternal(null);
         }
     }
 
@@ -431,7 +432,7 @@ public class SearchViewManager implements
         }
 
         if (!supportsSearch) {
-            mCurrentSearch = null;
+            setCurrentSearch(null);
         }
 
         if (mShowDockedSearch && !mShowSearchBar) {
@@ -603,8 +604,7 @@ public class SearchViewManager implements
 
             // Clear checked chips
             mChipViewManager.clearCheckedChips();
-            mCurrentSearch = null;
-            mListener.onSearchChanged(mCurrentSearch);
+            setCurrentSearch(null);
         }
 
         if (mFullBar && mMenuItem != null) {
@@ -627,7 +627,7 @@ public class SearchViewManager implements
                 && mDockedSearchEditText.hasFocus() : mSearchView != null && mSearchView.hasFocus();
         if (hasFocus && mCurrentSearch == null) {
             // Restore focus even if no text was input before screen rotation.
-            mCurrentSearch = "";
+            setCurrentSearch("");
         }
         state.putString(Shared.EXTRA_QUERY, mCurrentSearch);
         mChipViewManager.onSaveInstanceState(state);
@@ -653,10 +653,7 @@ public class SearchViewManager implements
         } else {
             cancelQueuedSearch();
             // Don't kick off a search if we've already finished it.
-            if (!TextUtils.equals(mCurrentSearch, query)) {
-                mCurrentSearch = query;
-                mListener.onSearchChanged(mCurrentSearch);
-            }
+            setCurrentSearch(query);
             recordHistory();
             if (!mShowDockedSearch && mSearchView != null) {
                 mSearchView.clearFocus();
@@ -693,14 +690,17 @@ public class SearchViewManager implements
             public void run() {
                 // Do the actual work on the main looper.
                 synchronized (mSearchLock) {
-                    mQueuedSearchRunnable = () -> {
-                        mCurrentSearch = newText;
-                        if (mCurrentSearch != null && mCurrentSearch.isEmpty()) {
-                            mCurrentSearch = null;
-                        }
-                        logTextSearchMetric();
-                        mListener.onSearchChanged(mCurrentSearch);
-                    };
+                    mQueuedSearchRunnable =
+                            () -> {
+                                boolean notified = setCurrentSearch(newText);
+                                logTextSearchMetric();
+                                // If options change, the setCurrentSearch does not notify the
+                                // listener. We amend this here.
+                                // TODO(b:450381836): Unify text and option change notifications.
+                                if (!notified) {
+                                    mListener.onSearchChanged(newText);
+                                }
+                            };
                     mUiHandler.post(mQueuedSearchRunnable);
                 }
             }
@@ -843,8 +843,38 @@ public class SearchViewManager implements
         return mQueryContentFromIntent;
     }
 
-    public void setCurrentSearch(String queryString) {
+    /**
+     * Updates the current search to the specified query. If the search query has changed the
+     * SearchManagerListener is notified about it.
+     *
+     * @param queryString The new current search query.
+     * @return If a onSearchChanged notification was posted.
+     */
+    public boolean setCurrentSearch(String queryString) {
+        if (setCurrentSearchInternal(queryString) && mListener != null) {
+            mListener.onSearchChanged(queryString);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Updates the search query without posting any updates about it.
+     *
+     * @param queryString The new current search query.
+     * @return Whether or not the search query has been changed.
+     */
+    private boolean setCurrentSearchInternal(String queryString) {
+        if (TextUtils.equals(mCurrentSearch, queryString)) {
+            return false;
+        }
         mCurrentSearch = queryString;
+        if (mCurrentSearch != null && mCurrentSearch.isEmpty()) {
+            // Due isSearching() method checking for null query only, if the query is empty we
+            // force it to null, so that isSearching() returns false.
+            mCurrentSearch = null;
+        }
+        return true;
     }
 
     /**
@@ -877,9 +907,16 @@ public class SearchViewManager implements
      * @return The subset of roots to be queried about recent files.
      */
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
+        if (isUseAllfilesRootForRecentsEnabled()) {
+            return roots.filter(r -> r.isLocalOnly()
+                    && r.supportsRecents() && r.userId.equals(userId)
+                    && r.isFiles()).collect(
+                    Collectors.toList());
+        }
+
         return roots.filter(r -> r.isLocalOnly()
                 && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isExternalStorage()).collect(
+                && !r.isExternalStorage() && !r.isFiles()).collect(
                 Collectors.toList());
     }
 

@@ -20,6 +20,9 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
@@ -32,6 +35,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.FileUtils;
+import android.os.Trace;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.util.Log;
@@ -64,6 +68,8 @@ import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.ClipStore;
@@ -133,7 +139,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public boolean dropOn(DragEvent event, RootInfo root) {
-        if (!root.supportsCreate() || root.isLibrary()) {
+        if (!root.isValidDropTarget()) {
+            return false;
+        }
+
+        // Except trash root, other library roots do not support drag & drop operations.
+        if (root.isLibrary() && !root.isTrash()) {
             return false;
         }
 
@@ -144,7 +155,22 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         final Object localState = event.getLocalState();
 
         return mDragAndDropManager.drop(
-                clipData, localState, root, this, mDialogs::showFileOperationStatus);
+                clipData, localState, root, this, mDialogs::showFileOperationStatus,
+                mDragAndDropManager.getInvalidDestinations());
+    }
+
+    @Override
+    public boolean dropOn(DragEvent event, ShortcutInfo shortcut) {
+        if (!shortcut.supportsCreate()) {
+            return false;
+        }
+
+        final ClipData clipData = event.getClipData();
+        final Object localState = event.getLocalState();
+
+        return mDragAndDropManager.drop(
+                clipData, localState, shortcut, this,
+                mDialogs::showFileOperationStatus, mDragAndDropManager.getInvalidDestinations());
     }
 
     @Override
@@ -169,11 +195,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
-    public void pasteIntoFolder(RootInfo root) {
-        this.getRootDocument(
-                root,
+    public void pasteIntoFolder(SidebarEntryItemInfo itemInfo) {
+        this.getDocument(
+                itemInfo.getRoot().authority,
+                itemInfo.getDocumentId(),
+                itemInfo.getRoot().userId,
                 TimeoutTask.DEFAULT_TIMEOUT,
-                (DocumentInfo doc) -> pasteIntoFolder(root, doc));
+                (DocumentInfo doc) -> pasteIntoFolder(itemInfo.getRoot(), doc));
     }
 
     private void pasteIntoFolder(RootInfo root, @Nullable DocumentInfo doc) {
@@ -183,6 +211,14 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public @Nullable DocumentInfo renameDocument(String name, DocumentInfo document) {
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(List.of(document.derivedUri), document.userId)) {
+            // This should have been blocked earlier before the popup appears, but leave here
+            // just in case.
+            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+            return null;
+        }
+
         ContentResolver resolver = document.userId.getContentResolver(mActivity);
         ContentProviderClient client = null;
 
@@ -207,17 +243,26 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
+    public void openShortcut(ShortcutInfo shortcut) {
+        mActivity.onShortcutPicked(shortcut);
+    }
+
+    @Override
     public boolean openItem(ItemDetails<String> details, @ViewType int type,
             @ViewType int fallback) {
+        Trace.beginSection("documentsui.files.ActionHandler#openItem");
         DocumentInfo doc = mModel.getDocument(details.getSelectionKey());
         if (doc == null) {
             Log.w(TAG, "Can't view item. No Document available for modeId: "
                     + details.getSelectionKey());
+            Trace.endSection();
             return false;
         }
         mInjector.searchManager.recordHistory();
 
-        return openDocument(doc, type, fallback);
+        boolean result = openDocument(doc, type, fallback);
+        Trace.endSection();
+        return result;
     }
 
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
@@ -274,6 +319,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        if (isHomeScreenFilesFlagEnabled()) {
+            List<DocumentInfo> docs = mModel.getDocuments(selection);
+            if (docs == null || docs.isEmpty()) {
+                mDialogs.showOperationUnsupported();
+                return;
+            }
+
+            List<Uri> uris = new ArrayList<>();
+            for (DocumentInfo doc : docs) {
+                uris.add(doc.derivedUri);
+            }
+
+            if (blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+                Log.e(TAG, "Failed to cut because a protected folder is selected.");
+                return;
+            }
+        }
+
         mSelectionMgr.clearSelection();
 
         mClipper.clipDocumentsForCut(mModel::getItemUri, selection, mState.stack.peek());
@@ -324,14 +387,133 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        // The DocumentInfo of the parent of the document(s) to be deleted is used to send the URI
+        // of that parent to FileOperationService for the DeleteJob. If specified, DeleteJob will
+        // try to remove the document from the parent rather than deleting the document, this
+        // distinction is important if the DocumentProvider supports the document appearing under
+        // multiple parents.
+        //
+        // When viewing the "Recent" root, it is considered the parent, however it's a synthetic
+        // root and not the actual parent of the documents. Its URI, when passed to
+        // FileOperationService, is meaningless and causes DeleteJob to unnecessarily fail for
+        // documents in Recents.
+        //
+        // If the user is in the "Recent" view, pass a null DocumentInfo as parent, causing a null
+        // parentUri to be specified for DeleteJob.
+        DocumentInfo parentDocumentInfo = mState.stack.peek();
+        if (isSearchV2Enabled() && mState.stack.isRecents()) {
+            parentDocumentInfo = null;
+        }
         DeleteDocumentFragment.show(mActivity.getSupportFragmentManager(),
                 mModel.getDocuments(selection),
-                mState.stack.peek());
+                parentDocumentInfo);
     }
 
 
     @Override
-    public void deleteSelectedDocuments(List<DocumentInfo> docs, DocumentInfo srcParent) {
+    public void deleteSelectedDocuments(List<DocumentInfo> docs, @Nullable DocumentInfo srcParent) {
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
+
+        List<Uri> uris = new ArrayList<>(docs.size());
+        for (DocumentInfo doc : docs) {
+            uris.add(doc.derivedUri);
+        }
+
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to delete because a protected folder is selected.");
+            return;
+        }
+
+        UrisSupplier srcs;
+        try {
+            srcs = UrisSupplier.create(
+                    uris,
+                    mClipStore);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to delete a file because we were unable to get item URIs.", e);
+            mDialogs.showFileOperationStatus(
+                    FileOperations.Callback.STATUS_FAILED,
+                    FileOperationService.OPERATION_DELETE,
+                    uris.size());
+            return;
+        }
+
+        // srcParent can be null, such as when the user is viewing the "Recent" root.
+        FileOperation operation = new FileOperation.Builder()
+                .withOpType(FileOperationService.OPERATION_DELETE)
+                .withDestination(mState.stack)
+                .withSrcs(srcs)
+                .withSrcParent(srcParent == null ? null : srcParent.derivedUri)
+                .build();
+
+        FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,
+                FileOperations.createJobId());
+    }
+
+    @Override
+    public void trashSelectedDocuments() {
+        Selection selection = getSelectedOrFocused();
+        if (selection.isEmpty()) {
+            return;
+        }
+
+        List<DocumentInfo> docs = mModel.getDocuments(selection);
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
+
+        List<Uri> uris = new ArrayList<>(docs.size());
+        for (DocumentInfo doc : docs) {
+            uris.add(doc.derivedUri);
+        }
+
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to trash because a protected folder is selected.");
+            return;
+        }
+
+        UrisSupplier srcs;
+        try {
+            srcs = UrisSupplier.create(
+                    uris,
+                    mClipStore);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to trash because we were unable to get item URIs.", e);
+            mDialogs.showFileOperationStatus(
+                    FileOperations.Callback.STATUS_FAILED,
+                    FileOperationService.OPERATION_TRASH,
+                    uris.size());
+            return;
+        }
+
+        FileOperation operation = new FileOperation.Builder()
+                .withOpType(FileOperationService.OPERATION_TRASH)
+                .withDestination(mState.stack)
+                .withSrcs(srcs)
+                .build();
+
+        FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,
+                FileOperations.createJobId());
+    }
+
+    @Override
+    public void restoreSelectedDocumentsFromTrash(List<DocumentInfo> docs) {
         if (docs == null || docs.isEmpty()) {
             return;
         }
@@ -353,19 +535,18 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                     uris,
                     mClipStore);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to delete a file because we were unable to get item URIs.", e);
+            Log.e(TAG, "Failed to restore a file because we were unable to get item URIs.", e);
             mDialogs.showFileOperationStatus(
                     FileOperations.Callback.STATUS_FAILED,
-                    FileOperationService.OPERATION_DELETE,
+                    FileOperationService.OPERATION_RESTORE,
                     uris.size());
             return;
         }
 
         FileOperation operation = new FileOperation.Builder()
-                .withOpType(FileOperationService.OPERATION_DELETE)
+                .withOpType(FileOperationService.OPERATION_RESTORE)
                 .withDestination(mState.stack)
                 .withSrcs(srcs)
-                .withSrcParent(srcParent == null ? null : srcParent.derivedUri)
                 .build();
 
         FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,
@@ -486,6 +667,42 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         loadHomeDir();
     }
 
+    @Override
+    public void showEmptyTrashConfirmationDialog() {
+        if (!mState.stack.isTrash()) {
+            return;
+        }
+
+        // If there are no trash documents, don't show the dialog.
+        if (mModel.getModelIds().length == 0) {
+            return;
+        }
+
+        EmptyTrashDialogFragment.show(mActivity.getSupportFragmentManager());
+    }
+
+    @Override
+    public void permanentlyDeleteTrashDocuments() {
+        // If this is not the trash page then ignore.
+        if (!mState.stack.isTrash()) {
+            return;
+        }
+
+        // Select all documents in the trash and then perform the permanent delete operation.
+        selectAllFiles();
+        Selection<String> selection = getSelectedOrFocused();
+        if (selection.isEmpty()) {
+            return;
+        }
+
+        List<DocumentInfo> docs = mModel.getDocuments(selection);
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        deleteSelectedDocuments(docs, /* srcParent */ null);
+    }
+
     // If EXTRA_STACK is not null in intent, we'll skip other means of loading
     // or restoring the stack (like URI).
     //
@@ -557,6 +774,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
 
         return false;
+    }
+
+    /**
+     * Trashes the selected documents if the trash feature is enabled and all documents support it.
+     * Otherwise, it initiates the delete flow for the selected documents.
+     */
+    public void runDeleteOrTrashHandler() {
+        Selection<String> selection = getSelectedOrFocused();
+        if (selection.isEmpty()) {
+            return;
+        }
+
+        if (isTrashFlowEnabled()
+                && !mModel.hasDocuments(selection, DocumentFilters.NOT_SUPPORT_TRASH)) {
+            trashSelectedDocuments();
+        } else {
+            showDeleteDialog();
+        }
     }
 
     @Override

@@ -16,17 +16,25 @@
 
 package com.android.documentsui.bots;
 
-import android.content.Context;
 
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.ViewAssertion;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -38,6 +46,57 @@ import java.util.function.Predicate;
 public class BreadBot extends Bots.BaseBot {
 
     private final String mBreadCrumbId;
+
+    /** A view assertion that extract the path and checks it against the given predicate. */
+    private static class PathViewAssertion implements ViewAssertion {
+        private final String[] mExpectedPath;
+        private final BiPredicate<String, String> mMatcher;
+
+        PathViewAssertion(String[] expectedPath, BiPredicate<String, String> matcher) {
+            mExpectedPath = expectedPath;
+            mMatcher = matcher;
+        }
+
+        private List<String> getBreadcrumbV2Path(ViewGroup parent) {
+            List<String> path = new ArrayList<>();
+            for (int i = 0; i < parent.getChildCount(); ++i) {
+                View child = parent.getChildAt(i);
+                if (child instanceof TextView) {
+                    path.add(((TextView) child).getText().toString());
+                }
+            }
+            return path;
+        }
+
+        @Override
+        public void check(View view, NoMatchingViewException noViewFoundException) {
+            if (!(view instanceof ViewGroup) || noViewFoundException != null) {
+                throw new AssertionFailedError("Failed to locate the view");
+            }
+            List<String> shownPath = getBreadcrumbV2Path((ViewGroup) view);
+            String got = String.join("/", shownPath);
+            String want = String.join("/", mExpectedPath);
+            if (!mMatcher.test(got, want)) {
+                throw new AssertionFailedError("Path '" + want + "' does not match '" + got + "'");
+            }
+        }
+    }
+
+    /**
+     * @param expectedPath Path to be compared with the one shown in the breadcrumbs.
+     * @return A view assertion that checks if the path is equal to the expected.
+     */
+    public ViewAssertion pathEqualsTo(String... expectedPath) {
+        return new PathViewAssertion(expectedPath, (String got, String want) -> want.equals(got));
+    }
+
+    /**
+     * @param expectedPath Path to be compared with the one shown in the breadcrumbs.
+     * @return A view assertion that checks if the path starts with the expected path.
+     */
+    public ViewAssertion pathStartsWith(String... expectedPath) {
+        return new PathViewAssertion(expectedPath, String::startsWith);
+    }
 
     public BreadBot(UiDevice device, Context context, int timeout) {
         super(device, context, timeout);
