@@ -233,7 +233,7 @@ public class PickActivityTest {
         Intent intentOpenDocument = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intentOpenDocument.addCategory(Intent.CATEGORY_OPENABLE);
         intentOpenDocument.setType("*/*");
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        PickActivity pickActivity = mRule.launchActivity(intentOpenDocument);
         EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
 
         // There should be a Cancel (button2) and Select (button1) button.
