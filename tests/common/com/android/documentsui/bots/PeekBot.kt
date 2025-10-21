@@ -54,12 +54,12 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
     private val coplanarMetadataSheetContainerMatcher =
         allOf(
             withId(R.id.peek_coplanar_metadata_sheet_container),
-            isDescendantOfA(peekContainerMatcher)
+            isDescendantOfA(peekContainerMatcher),
         )
     private val bottomMetadataSheetContainerMatcher =
         allOf(
             withId(R.id.peek_bottom_metadata_sheet_container),
-            isDescendantOfA(peekContainerMatcher)
+            isDescendantOfA(peekContainerMatcher),
         )
 
     /**
@@ -80,7 +80,7 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                 } else {
                     SideSheetBehavior.STATE_HIDDEN
                 },
-                metadataSheetBehavior.state
+                metadataSheetBehavior.state,
             )
         }
     }
@@ -106,7 +106,7 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                     previewContainer.width + metadataContainer.width
                 } else {
                     previewContainer.width
-                }
+                },
             )
         }
     }
@@ -127,14 +127,14 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                 } else {
                     BottomSheetBehavior.STATE_HIDDEN
                 },
-                metadataSheetBehavior.state
+                metadataSheetBehavior.state,
             )
         }
     }
 
     /**
-     * Validates that if the bottom metadata sheet is expanded, the preview container is resized
-     * so that it doesn't overlap with the metadata sheet. Assertion made on the root of the Peek
+     * Validates that if the bottom metadata sheet is expanded, the preview container is resized so
+     * that it doesn't overlap with the metadata sheet. Assertion made on the root of the Peek
      * fragment.
      */
     private fun bottomMetadataSheetHeightAssertion(expectExpanded: Boolean): ViewAssertion {
@@ -187,9 +187,9 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                         } else {
                             R.string.a11y_peek_show_info_button
                         }
-                    )
+                    ),
                 )
-        )
+            )
             .check(matches(isDisplayed()))
     }
 
@@ -222,9 +222,9 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
         onView(
                 allOf(
                     withId(R.id.peek_side_sheet_close_button),
-                    isDescendantOfA(coplanarMetadataSheetContainerMatcher)
+                    isDescendantOfA(coplanarMetadataSheetContainerMatcher),
                 )
-        )
+            )
             .perform(ViewActions.click())
     }
 }

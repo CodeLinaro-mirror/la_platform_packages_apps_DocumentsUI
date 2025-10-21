@@ -22,7 +22,7 @@ import com.android.documentsui.R
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.Material3Config.Companion.getRes
 
-/** Check if the app is running in fixed_layout.  */
+/** Check if the app is running in fixed_layout. */
 fun inFixedLayout(context: Context): Boolean {
     val value = TypedValue()
     // We alias files_activity to either fixed or drawer or nav_rail layouts based on screen
@@ -32,7 +32,7 @@ fun inFixedLayout(context: Context): Boolean {
     return value.resourceId == getRes(R.layout.fixed_layout)
 }
 
-/** Check if the app is running in nav_rail_layout.  */
+/** Check if the app is running in nav_rail_layout. */
 fun inNavRailLayout(context: Context): Boolean {
     if (!isUseMaterial3FlagEnabled()) {
         // NavRail is only enabled for material3, so the resource `nav_rail_layout` might
@@ -44,7 +44,7 @@ fun inNavRailLayout(context: Context): Boolean {
     return value.resourceId == getRes(R.layout.nav_rail_layout)
 }
 
-/** Check if the app is running in drawer_layout.  */
+/** Check if the app is running in drawer_layout. */
 fun inDrawerLayout(context: Context): Boolean {
     val value = TypedValue()
     context.getResources().getValue(getRes(R.layout.files_activity), value, true)
