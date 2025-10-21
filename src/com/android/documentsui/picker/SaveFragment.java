@@ -16,6 +16,7 @@
 
 package com.android.documentsui.picker;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -39,6 +40,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.documentsui.FocusManager;
 import com.android.documentsui.IconUtils;
 import com.android.documentsui.Injector;
 import com.android.documentsui.R;
@@ -136,6 +138,9 @@ public class SaveFragment extends Fragment {
         mSave = (Button) view.findViewById(android.R.id.button1);
         mSave.setOnClickListener(mSaveListener);
         mSave.setEnabled(false);
+        if (isDesktopUxPhase2FlagEnabled()) {
+            FocusManager.setButtonFocusStyle((Button) mSave);
+        }
 
         mCancel = (MaterialButton) view.findViewById(android.R.id.button2);
         // The "Cancel" button is default gone, however, if the "show_picker_cancel_button" is set
@@ -147,6 +152,9 @@ public class SaveFragment extends Fragment {
             mCancel.setOnClickListener(mCancelListener);
             mCancel.setVisibility(View.VISIBLE);
             mCancel.setEnabled(true);
+            if (isDesktopUxPhase2FlagEnabled()) {
+                FocusManager.setButtonFocusStyle(mCancel);
+            }
         }
 
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);

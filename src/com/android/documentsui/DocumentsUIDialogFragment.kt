@@ -16,6 +16,7 @@
 package com.android.documentsui
 
 import android.view.WindowManager
+import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.UnitUtils.Companion.dpToPx
@@ -38,7 +39,11 @@ abstract class DocumentsUIDialogFragment : DialogFragment() {
             return
         }
 
-        // Customize the dialog window width.
+        customizeWindowWidth()
+        setButtonsFocusStyle()
+    }
+
+    private fun customizeWindowWidth() {
         dialog?.window?.let { w ->
             val params = WindowManager.LayoutParams()
             params.copyFrom(w.attributes)
@@ -57,6 +62,21 @@ abstract class DocumentsUIDialogFragment : DialogFragment() {
                 )
 
             w.attributes = params
+        }
+    }
+
+    private fun setButtonsFocusStyle() {
+        // Button IDs are from the Material library m3_alert_dialog_actions.xml.
+        val buttonIds =
+            intArrayOf(
+                android.R.id.button1, // positive button
+                android.R.id.button2, // negative button
+                android.R.id.button3, // neutral button
+            )
+
+        for (buttonId in buttonIds) {
+            val button: Button? = dialog?.findViewById(buttonId)
+            FocusManager.setButtonFocusStyle(button)
         }
     }
 }

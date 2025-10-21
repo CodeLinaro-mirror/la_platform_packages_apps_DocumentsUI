@@ -25,12 +25,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import com.android.documentsui.ActionHandler
+import com.android.documentsui.FocusManager
 import com.android.documentsui.IconUtils
 import com.android.documentsui.MenuManager
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.SidebarEntryItemInfo
 import com.android.documentsui.base.UserId
+import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.button.MaterialButton
@@ -63,14 +65,22 @@ abstract class BaseSidebarEntryItem(
                     null
                 }
             )
-            actionIcon.onFocusChangeListener =
+            if (isDesktopUxPhase2FlagEnabled()) {
                 if (visibility == View.VISIBLE) {
-                    View.OnFocusChangeListener { view: View?, hasFocus: Boolean ->
-                        this.onActionIconFocusChange(view, hasFocus)
-                    }
+                    FocusManager.setButtonFocusStyle(actionIcon)
                 } else {
-                    null
+                    actionIcon.onFocusChangeListener = null
                 }
+            } else {
+                actionIcon.onFocusChangeListener =
+                    if (visibility == View.VISIBLE) {
+                        View.OnFocusChangeListener { view: View?, hasFocus: Boolean ->
+                            this.onActionIconFocusChange(view, hasFocus)
+                        }
+                    } else {
+                        null
+                    }
+            }
             if (description != null) {
                 actionIcon.setContentDescription(description)
             }
