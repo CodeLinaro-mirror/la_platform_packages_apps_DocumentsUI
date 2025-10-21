@@ -247,6 +247,7 @@ public class StubProvider extends DocumentsProvider {
         getContext().getContentResolver().notifyChange(
                 DocumentsContract.buildDocumentUri(mAuthority, document.documentId),
                 null, false);
+        notifyTrashChanged();
     }
 
     @Override
@@ -287,12 +288,7 @@ public class StubProvider extends DocumentsProvider {
         }
         Log.d(TAG, "Document trashed: " + documentId + " moved to " + trashedFile.getPath());
         notifyParentChanged(document.parentId);
-        getContext().getContentResolver().notifyChange(
-                DocumentsContract.buildDocumentUri(mAuthority, document.documentId),
-                null, false);
-        getContext().getContentResolver().notifyChange(
-                DocumentsContract.buildDocumentUri(mAuthority, trashedFileDocument.documentId),
-                null, false);
+        notifyTrashChanged();
         return trashedFileDocument.documentId;
     }
 
@@ -365,6 +361,7 @@ public class StubProvider extends DocumentsProvider {
             }
         }
 
+        notifyTrashChanged();
         return restoredPath;
     }
 
@@ -434,6 +431,8 @@ public class StubProvider extends DocumentsProvider {
                 includeTrashDocuments(result, trashDirDocument);
             }
         }
+        Uri trashUri = DocumentsContract.buildTrashDocumentsUri(mAuthority);
+        result.setNotificationUri(getContext().getContentResolver(), trashUri);
         return result;
     }
 
@@ -822,6 +821,16 @@ public class StubProvider extends DocumentsProvider {
         }
     }
 
+    /** Notifies a change in the trash. */
+    private void notifyTrashChanged() {
+        if (!isTrashApiEnabled()) {
+            return;
+        }
+        getContext()
+                .getContentResolver()
+                .notifyChange(DocumentsContract.buildTrashDocumentsUri(mAuthority), null, false);
+    }
+
     private void includeDocument(MatrixCursor result, StubDocument document) {
         final RowBuilder row = result.newRow();
         int flags = document.flags;
@@ -835,8 +844,7 @@ public class StubProvider extends DocumentsProvider {
         // Trash feature lacks backward compatibility with platforms at or below Baklava.
         // This assumption prevents failures when the test runs on an older base OS
         // without the necessary APIs.
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.BAKLAVA
-                && Flags.enableDocumentsTrashApi()) {
+        if (isTrashApiEnabled()) {
             if (TrashDocumentHelper.INSTANCE.isTrashFile(document.file)) {
                 flags |= Document.FLAG_SUPPORTS_RESTORE;
                 displayName = RestoreDocumentHelper.INSTANCE.cleanSegment(displayName);
@@ -877,9 +885,6 @@ public class StubProvider extends DocumentsProvider {
         for (File file : parentDocument.file.listFiles()) {
             StubDocument document = mStorage.get(getDocumentIdForFile(file));
             if (TrashDocumentHelper.INSTANCE.isTrashFile(file)) {
-                result.setNotificationUri(
-                        getContext().getContentResolver(),
-                        DocumentsContract.buildChildDocumentsUri(mAuthority, document.documentId));
                 includeDocument(result, document);
                 continue;
             }
@@ -975,6 +980,16 @@ public class StubProvider extends DocumentsProvider {
             }
         }
         return file;
+    }
+
+    /**
+     * Checks if the platform supports the trash API and the feature is enabled.
+     *
+     * @return {@code true} if the trash API is available and enabled, {@code false} otherwise.
+     */
+    private boolean isTrashApiEnabled() {
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.BAKLAVA
+                && Flags.enableDocumentsTrashApi();
     }
 
     final static class RootInfo {
