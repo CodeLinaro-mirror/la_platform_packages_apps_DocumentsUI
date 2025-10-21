@@ -20,6 +20,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.pressImeActionButton;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 
+import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -31,8 +32,9 @@ import androidx.test.uiautomator.UiDevice;
  */
 public class KeyboardBot extends Bots.BaseBot {
 
-    public KeyboardBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public KeyboardBot(
+            UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
     }
 
     public void dismissKeyboardIfPresent() {

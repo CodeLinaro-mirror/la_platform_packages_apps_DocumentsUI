@@ -153,8 +153,6 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
         automation = getInstrumentation().getUiAutomation();
         features = new Features.RuntimeFeatures(context.getResources(), null);
 
-        bots = new Bots(device, automation, context, TIMEOUT);
-
         Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_MOUSE);
 
         mResolver = context.getContentResolver();
@@ -171,6 +169,15 @@ public abstract class ActivityTest<T extends Activity> extends ActivityInstrumen
         closeNonDocsUiWindows(context, device);
 
         launchActivity();
+
+        bots =
+                new Bots(
+                        device,
+                        automation,
+                        context,
+                        TIMEOUT,
+                        ((BaseActivity) getActivity()).getLayoutId());
+
         resetStorage();
 
         // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will

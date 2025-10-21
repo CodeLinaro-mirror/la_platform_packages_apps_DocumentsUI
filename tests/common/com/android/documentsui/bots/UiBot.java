@@ -40,6 +40,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
 
+import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
 
@@ -90,8 +91,8 @@ public class UiBot extends Bots.BaseBot {
 
     public static String targetPackageName;
 
-    public UiBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public UiBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         targetPackageName =
                 InstrumentationRegistry.getInstrumentation().getTargetContext().getPackageName();
     }

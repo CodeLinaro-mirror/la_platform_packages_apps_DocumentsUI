@@ -39,6 +39,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 
+import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
 
@@ -74,8 +75,8 @@ public class SearchBot extends Bots.BaseBot {
             withId(R.id.option_menu_search),
             anyOf(isClickable(), hasDescendant(isClickable())));
 
-    public SearchBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public SearchBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
     }
 
     /**

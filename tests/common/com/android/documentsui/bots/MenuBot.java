@@ -19,6 +19,7 @@ package com.android.documentsui.bots;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import android.annotation.LayoutRes;
 import android.content.Context;
 
 import androidx.test.uiautomator.By;
@@ -34,9 +35,8 @@ import java.util.Map;
  */
 public class MenuBot extends Bots.BaseBot {
 
-    public MenuBot(
-            UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public MenuBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
     }
 
     public boolean hasMenuItem(String menuLabel) {

@@ -101,7 +101,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags(FLAG_USE_MATERIAL3)
     public void testClickRecent() throws Exception {
-        EspressoBotsKt.openRoot(context, "Recent");
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
 
         boolean showSearchBar = context.getResources().getBoolean(R.bool.show_search_bar);
         if (showSearchBar) {
@@ -116,7 +116,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
     public void testClickRecentM3() throws Exception {
-        EspressoBotsKt.openRoot(context, "Recent");
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
 
         bots.main.assertSearchBarGone();
         boolean showDockedSearch = context.getResources().getBoolean(
@@ -151,7 +151,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private void cleanupFile(String fileName, String primaryRootTitle,
             @Nullable String parentDirName) throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, primaryRootTitle);
+        EspressoBotsKt.openRoot(context, primaryRootTitle, getActivityLayoutId());
         if (parentDirName != null) {
             bots.directory.openDocument(parentDirName);
         }
@@ -170,7 +170,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootClick_SetsWindowTitle() throws Exception {
-        EspressoBotsKt.openRoot(context, "Images");
+        EspressoBotsKt.openRoot(context, "Images", getActivityLayoutId());
         bots.main.assertWindowTitle("Images");
     }
 
@@ -211,12 +211,14 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     public void testNavigate_inFixedLayout_whileHasSelection() throws Exception {
         if (bots.main.inFixedLayout()) {
-            EspressoBotsKt.openRoot(context, mTestFilesRule.getRoot(ROOT_0_ID).title);
+            EspressoBotsKt.openRoot(
+                    context, mTestFilesRule.getRoot(ROOT_0_ID).title, getActivityLayoutId());
             device.waitForIdle();
             bots.directory.selectDocument("file0.log", 1);
 
             // ensure no exception is thrown while navigating to a different root
-            EspressoBotsKt.openRoot(context, mTestFilesRule.getRoot(ROOT_1_ID).title);
+            EspressoBotsKt.openRoot(
+                    context, mTestFilesRule.getRoot(ROOT_1_ID).title, getActivityLayoutId());
         }
     }
 
@@ -240,20 +242,20 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         // switch to separate display modes for two separate roots. Each
         // mode has its own distinct sort header. This should be remembered
         // by files app.
-        EspressoBotsKt.openRoot(context, "Images");
+        EspressoBotsKt.openRoot(context, "Images", getActivityLayoutId());
         bots.main.switchToGridMode();
-        EspressoBotsKt.openRoot(context, "Videos");
+        EspressoBotsKt.openRoot(context, "Videos", getActivityLayoutId());
         bots.main.switchToListMode();
 
         // Now switch back and assert the correct mode sort header mode
         // is restored when we load the root with that display mode.
-        EspressoBotsKt.openRoot(context, "Images");
+        EspressoBotsKt.openRoot(context, "Images", getActivityLayoutId());
         bots.sort.assertHeaderHide();
         if (bots.main.inFixedLayout()) {
-            EspressoBotsKt.openRoot(context, "Videos");
+            EspressoBotsKt.openRoot(context, "Videos", getActivityLayoutId());
             bots.sort.assertHeaderShow();
         } else {
-            EspressoBotsKt.openRoot(context, "Videos");
+            EspressoBotsKt.openRoot(context, "Videos", getActivityLayoutId());
             bots.sort.assertHeaderHide();
         }
     }
@@ -264,35 +266,35 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         // Assign different view modes across "Images" and "Videos" roots.
         // Images root --> grid mode
         // Videos root --> list mode
-        EspressoBotsKt.openRoot(context, "Images");
+        EspressoBotsKt.openRoot(context, "Images", getActivityLayoutId());
         bots.main.switchToGridMode();
         bots.main.assertInGridMode();
-        EspressoBotsKt.openRoot(context, "Videos");
+        EspressoBotsKt.openRoot(context, "Videos", getActivityLayoutId());
         bots.main.switchToListMode();
         bots.main.assertInListMode();
 
         // Assert that the different roots maintain their respective view modes.
-        EspressoBotsKt.openRoot(context, "Images");
+        EspressoBotsKt.openRoot(context, "Images", getActivityLayoutId());
         bots.main.assertInGridMode();
-        EspressoBotsKt.openRoot(context, "Videos");
+        EspressoBotsKt.openRoot(context, "Videos", getActivityLayoutId());
         bots.main.assertInListMode();
     }
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
     public void testRootChange_M3GlobalViewModeState() throws Exception {
-        EspressoBotsKt.openRoot(context, "Recent");
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
         bots.main.switchToGridMode();
         bots.main.assertInGridMode();
 
         // Switch to a different root and assert still in grid mode.
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.main.assertInGridMode();
 
         // Switch back to list mode and assert still in list mode on a different root.
         bots.main.switchToListMode();
         bots.main.assertInListMode();
-        EspressoBotsKt.openRoot(context, "Recent");
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
         bots.main.assertInListMode();
     }
 
@@ -310,12 +312,12 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Navigate to "Download" and ensure the file exists (this should ensure it also exists in
         // Recent).
-        EspressoBotsKt.openRoot(context, primaryRoot.title);
+        EspressoBotsKt.openRoot(context, primaryRoot.title, getActivityLayoutId());
         bots.directory.openDocument("Download");
         bots.directory.waitForDocument(fileName);
 
         // Open Recent and wait for the document to appear.
-        EspressoBotsKt.openRoot(context, "Recent");
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
         bots.directory.waitForDocument(fileName);
 
         try {
@@ -358,7 +360,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Open Recent and wait for the newly created files to appear. We limit searches to just
             // this week to make the test run more efficiently.
-            EspressoBotsKt.openRoot(context, "Recent");
+            EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
 
             // Verify that just created zip file appears among recent files. It should appear on top
             // so no scrolling.
@@ -444,7 +446,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         );
         setUpShortcuts(List.of(resource), storageDocsHelper);
 
-        EspressoBotsKt.openRoot(context, SHORTCUT_ID);
+        EspressoBotsKt.openRoot(context, SHORTCUT_ID, getActivityLayoutId());
         bots.main.assertSearchBarGone();
         boolean showDockedSearch = context.getResources().getBoolean(
                 getRes(R.bool.show_docked_search));
@@ -493,7 +495,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                         R.drawable.ic_root_smartphone));
         setUpShortcuts(resources, storageDocsHelper);
 
-        EspressoBotsKt.openRoot(context, "Folder 3");
+        EspressoBotsKt.openRoot(context, "Folder 3", getActivityLayoutId());
         bots.main.assertWindowTitle("Folder 3");
         bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
         bots.roots.assertItemSelected("Folder 3");
@@ -530,7 +532,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         setUpShortcuts(resources, storageDocsHelper);
 
         // We will have a chain of folders like so: storage -> 1 -> 2 (shortcut) -> 3 -> 4
-        EspressoBotsKt.openRoot(context, "Folder 2");
+        EspressoBotsKt.openRoot(context, "Folder 2", getActivityLayoutId());
         bots.main.assertWindowTitle("Folder 2");
         bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2");
         bots.roots.assertItemSelected("Folder 2");
@@ -586,11 +588,11 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                 R.drawable.ic_root_smartphone));
         setUpShortcuts(resources, storageDocsHelper);
 
-        EspressoBotsKt.openRoot(context, "Folder 3");
+        EspressoBotsKt.openRoot(context, "Folder 3", getActivityLayoutId());
         bots.main.assertWindowTitle("Folder 3");
         bots.breadcrumb.assertItemsPresent("Folder 1", "Folder 2", "Folder 3");
 
-        EspressoBotsKt.openRoot(context, "Folder C");
+        EspressoBotsKt.openRoot(context, "Folder C", getActivityLayoutId());
         bots.main.assertWindowTitle("Folder C");
         bots.breadcrumb.assertItemsPresent("Folder A", "Folder B", "Folder C");
     }

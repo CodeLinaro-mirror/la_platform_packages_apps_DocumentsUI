@@ -35,6 +35,7 @@ import static junit.framework.Assert.fail;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 
+import android.annotation.LayoutRes;
 import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Point;
@@ -127,8 +128,12 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public DirectoryListBot(
-            UiDevice device, UiAutomation automation, Context context, int timeout) {
-        super(device, context, timeout);
+            UiDevice device,
+            UiAutomation automation,
+            Context context,
+            int timeout,
+            @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mAutomation = automation;
         mDirContainerId = mTargetPackage + ":id/container_directory";
         mDirListId = mTargetPackage + ":id/dir_list";

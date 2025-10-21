@@ -60,7 +60,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
                 Providers.AUTHORITY_STORAGE);
         rootPrimary = mDocsHelper.getRoot(Providers.ROOT_ID_DEVICE);
 
-        EspressoBotsKt.openRoot(context, rootPrimary.title);
+        EspressoBotsKt.openRoot(context, rootPrimary.title, getActivityLayoutId());
         deleteTestFiles();
     }
 

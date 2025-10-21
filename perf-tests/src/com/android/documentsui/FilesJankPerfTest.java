@@ -48,7 +48,6 @@ public class FilesJankPerfTest extends JankTestBase {
         final UiDevice device = UiDevice.getInstance(getInstrumentation());
         final Context context = getInstrumentation().getTargetContext();
         final UiAutomation automation = getInstrumentation().getUiAutomation();
-        mDirListBot = new DirectoryListBot(device, automation, context, BOT_TIMEOUT);
 
         final Intent intent = new Intent(context, FilesActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -57,6 +56,14 @@ public class FilesJankPerfTest extends JankTestBase {
             device.setOrientationNatural();
         } catch (RemoteException e) {
         }
+
+        mDirListBot =
+                new DirectoryListBot(
+                        device,
+                        automation,
+                        context,
+                        BOT_TIMEOUT,
+                        ((BaseActivity) mActivity).getLayoutId());
     }
 
     public void tearDownInLoop() {
@@ -77,7 +84,10 @@ public class FilesJankPerfTest extends JankTestBase {
     }
 
     public void openRoot() throws Exception {
-        EspressoBotsKt.openRoot(getInstrumentation().getTargetContext(), STRESS_ROOT_2_ID);
+        EspressoBotsKt.openRoot(
+                getInstrumentation().getTargetContext(),
+                STRESS_ROOT_2_ID,
+                ((BaseActivity) mActivity).getLayoutId());
     }
 
     @JankTest(expectedFrames=0, beforeLoop="setUpInLoop", afterLoop="tearDownInLoop")
