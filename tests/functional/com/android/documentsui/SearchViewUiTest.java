@@ -424,11 +424,12 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchV2RootNameIsAdjusted() throws Exception {
         // The test starts in TEST_ROOT_0
         bots.search.expand();
-        bots.search.setInputText("-no-such-file-");
+        bots.search.doSearch("-no-such-file-");
+        device.waitForIdle();
+
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
         // Check that the text in the dropdown window.
-        bots.search.findMenuItem(R.string.search_location_everywhere).check(
-                matches(isDisplayed()));
+        bots.search.findMenuItem(R.string.search_location_everywhere).check(matches(isDisplayed()));
         onView(withText("TEST_ROOT_0")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
         // Click the "Everywhere" entry to hide the popup. This is needed for the bots to be able
         // to open the new root. But we also test that user choices are remembered.
@@ -438,10 +439,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.closeSearch();
         // Move to a different root.
         EspressoBotsKt.openRoot(context, "Paging Root");
+        // Make sure the directory is loaded.
+        bots.directory.waitForDocument("00000");
 
         // Start search, again.
         bots.search.expand();
-        bots.search.setInputText("-no-such-file-");
+        bots.search.doSearch("-no-such-file-");
+        device.waitForIdle();
 
         // Verify that that the location still shows "Everywhere".
         bots.search.findDropdownTrigger(R.id.search_location_trigger).check(
@@ -450,8 +454,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Click location trigger, and check that the root folder option is updated to Downloads.
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
         // Verify the dropdown menu to be updated.
-        bots.search.findMenuItem(R.string.search_location_everywhere).check(
-                matches(isDisplayed()));
+        bots.search.findMenuItem(R.string.search_location_everywhere).check(matches(isDisplayed()));
         onView(withText("Paging Root")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
     }
 
