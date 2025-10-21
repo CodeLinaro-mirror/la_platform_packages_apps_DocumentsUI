@@ -45,6 +45,9 @@ public class TestDocumentClipper implements DocumentClipper {
     public final TestEventListener<Pair<DocumentStack, ClipData>> trashFromClip =
             new TestEventListener<>();
 
+    public final TestEventListener<Pair<DocumentStack, ClipData>> restoreFromClipData =
+            new TestEventListener<>();
+
     public final TestEventListener<Integer> opType = new TestEventListener<>();
 
     @Override
@@ -118,5 +121,12 @@ public class TestDocumentClipper implements DocumentClipper {
     public void trashFromClipData(DocumentStack dstStack, ClipData clipData, Callback callback) {
         this.trashFromClip.accept(Pair.create(dstStack, clipData));
         this.opType.accept(FileOperationService.OPERATION_TRASH);
+    }
+
+    @Override
+    public void restoreFromTrashClipData(DocumentStack dstStack, ClipData clipData,
+            Callback callback) {
+        this.restoreFromClipData.accept(Pair.create(dstStack, clipData));
+        this.opType.accept(FileOperationService.OPERATION_RESTORE);
     }
 }

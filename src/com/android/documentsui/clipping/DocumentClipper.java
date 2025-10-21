@@ -151,4 +151,14 @@ public interface DocumentClipper {
      */
     void trashFromClipData(
             DocumentStack dstStack, ClipData clipData, FileOperations.Callback callback);
+
+    /**
+     * Restores the trashed documents from a given clip data.
+     *
+     * @param dstStack the document stack to the destination.
+     * @param clipData the clipData to trash from
+     * @param callback callback to notify when operation is scheduled or rejected.
+     */
+    void restoreFromTrashClipData(
+            DocumentStack dstStack, ClipData clipData, FileOperations.Callback callback);
 }

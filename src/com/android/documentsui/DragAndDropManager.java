@@ -17,6 +17,7 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -51,7 +52,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Manager that tracks control key state, calculates the default file operation (move or copy)
@@ -59,7 +59,14 @@ import java.util.Random;
  */
 public interface DragAndDropManager {
 
-    @IntDef({ STATE_NOT_ALLOWED, STATE_UNKNOWN, STATE_MOVE, STATE_COPY, STATE_TRASH })
+    @IntDef({
+        STATE_NOT_ALLOWED,
+        STATE_UNKNOWN,
+        STATE_MOVE,
+        STATE_COPY,
+        STATE_TRASH,
+        STATE_RESTORES_FROM_TRASH
+    })
     @Retention(RetentionPolicy.SOURCE)
     @interface State {}
     int STATE_UNKNOWN = 0;
@@ -67,6 +74,7 @@ public interface DragAndDropManager {
     int STATE_MOVE = 2;
     int STATE_COPY = 3;
     int STATE_TRASH = 4;
+    int STATE_RESTORES_FROM_TRASH = 5;
 
     /**
      * Intercepts and handles a {@link KeyEvent}. Used to track the state of Ctrl key state.
@@ -211,6 +219,12 @@ public interface DragAndDropManager {
         // Track whether the set of files support trash operation or not.
         private boolean mIsFilesSupportTrash;
 
+        // Tracks if the source of the drag operation is the trash root.
+        private boolean mIsSrcRootTrash;
+
+        // The authority to restore to. Null if not a restore operation.
+        private String mAuthorityToRestore;
+
         private RuntimeDragAndDropManager(Context context, DocumentClipper clipper) {
             this(
                     context.getApplicationContext(),
@@ -268,12 +282,25 @@ public interface DragAndDropManager {
             mView = v;
             mInvalidDest = invalidDest;
             mMustBeCopied = !selectionDetails.canDelete();
+            if (isTrashFlowEnabled()) {
+                mIsSrcRootTrash = itemInfo.getRoot().isTrash();
+            }
 
             List<Uri> uris = new ArrayList<>(srcs.size());
-            boolean isFilesSupportTrash = true;
+            boolean isFilesSupportTrash = isTrashFlowEnabled();
             for (DocumentInfo doc : srcs) {
                 isFilesSupportTrash &= doc.isTrashSupported();
                 uris.add(doc.derivedUri);
+
+                if (isTrashFlowEnabled() && mIsSrcRootTrash && doc.isRestoreSupported()) {
+                    if (mAuthorityToRestore == null) {
+                        mAuthorityToRestore = doc.authority;
+                    } else if (!mAuthorityToRestore.equals(doc.authority)) {
+                        // All documents must be from the same authority to be restored together.
+                        mAuthorityToRestore = null;
+                        break;
+                    }
+                }
             }
             mIsFilesSupportTrash = isFilesSupportTrash;
             mClipData = (parent == null)
@@ -372,6 +399,13 @@ public interface DragAndDropManager {
                     return STATE_UNKNOWN;
                 }
 
+                if (isTrashFlowEnabled()
+                        && mIsSrcRootTrash
+                        && !isValidDestination(destItemInfo, destDoc.derivedUri, mInvalidDest)) {
+                    updateState(STATE_NOT_ALLOWED);
+                    return STATE_NOT_ALLOWED;
+                }
+
                 assert (destDoc.isDirectory());
 
                 if (!destDoc.isCreateSupported() || mInvalidDest.contains(destDoc.derivedUri)) {
@@ -380,7 +414,7 @@ public interface DragAndDropManager {
                 }
             }
 
-            @State int state;
+            @State int state = STATE_NOT_ALLOWED;
             final @OpType int opType = calculateOpType(mClipData, mDestRoot);
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
@@ -390,7 +424,14 @@ public interface DragAndDropManager {
                     state = STATE_MOVE;
                     break;
                 case FileOperationService.OPERATION_TRASH:
-                    state = STATE_TRASH;
+                    if (isTrashFlowEnabled()) {
+                        state = STATE_TRASH;
+                    }
+                    break;
+                case FileOperationService.OPERATION_RESTORE:
+                    if (isTrashFlowEnabled()) {
+                        state = STATE_RESTORES_FROM_TRASH;
+                    }
                     break;
                 default:
                     // Should never happen
@@ -521,7 +562,12 @@ public interface DragAndDropManager {
                     localState == null ? MetricConsts.USER_ACTION_DRAG_N_DROP_MULTI_WINDOW
                             : MetricConsts.USER_ACTION_DRAG_N_DROP);
 
-            if (dstStack.getRoot().isTrash()) {
+            if (isTrashFlowEnabled() && mIsSrcRootTrash) {
+                mClipper.restoreFromTrashClipData(dstStack, clipData, callback);
+                return;
+            }
+
+            if (isTrashFlowEnabled() && dstStack.getRoot().isTrash()) {
                 mClipper.trashFromClipData(dstStack, clipData, callback);
                 return;
             }
@@ -545,6 +591,8 @@ public interface DragAndDropManager {
             mMustBeCopied = false;
             mDragInitiated = false;
             mIsFilesSupportTrash = false;
+            mIsSrcRootTrash = false;
+            mAuthorityToRestore = null;
             Trace.endAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
                     DRAG_EVENT_COOKIE);
         }
@@ -555,8 +603,13 @@ public interface DragAndDropManager {
         }
 
         private @OpType int calculateOpType(ClipData clipData, RootInfo destRoot) {
+            // If the src root is Trash, then it will be the restore operation.
+            if (isTrashFlowEnabled() && mIsSrcRootTrash) {
+                return FileOperationService.OPERATION_RESTORE;
+            }
+
             // If the destination root is Trash, then it will be the trash operation.
-            if (destRoot.isTrash()) {
+            if (isTrashFlowEnabled() && destRoot.isTrash()) {
                 return FileOperationService.OPERATION_TRASH;
             }
 
@@ -592,16 +645,48 @@ public interface DragAndDropManager {
             // A destination is invalid if the drop is on a folder inside the trash root.
             // A non-null authority on the destination URI indicates a drop on a specific
             // document (a folder in this case), which is not allowed for the trash root.
-            if (sidebarEntryItemInfo.getRoot().isTrash()
+            if (isTrashFlowEnabled()
+                    && sidebarEntryItemInfo.getRoot().isTrash()
                     && dstUri.getAuthority() != null
                     && !mIsFilesSupportTrash) {
                 return false;
             }
+
+            // Restore case
+            if (isTrashFlowEnabled() && mIsSrcRootTrash) {
+                return isValidRestoreDestination(sidebarEntryItemInfo, dstUri);
+            }
+
             // We pass in the invalid destinations since this check can also be called from an
             // asynchronous task. This method needs to maintain the same invalid destination
             // values as when the asynchronous task starts, but mInvalidDest can be mutated in the
             // meantime.
             return sidebarEntryItemInfo.isValidDropTarget() && !invalidDest.contains(dstUri);
+        }
+
+        /**
+         * A restore destination is valid if the destination authority is the same as the source
+         * authority. This is to prevent restoring files to a different authority. We only allow
+         * restoring to the same authority from which the files were trashed.
+         *
+         * @param sidebarEntryItemInfo The destination sidebar entry item info.
+         * @param dstUri The destination URI.
+         * @return true if the destination is valid for restore.
+         */
+        private boolean isValidRestoreDestination(
+                SidebarEntryItemInfo sidebarEntryItemInfo, Uri dstUri) {
+            if (!isTrashFlowEnabled()) {
+                return false;
+            }
+
+            final String destAuthority = dstUri.getAuthority();
+            if (destAuthority == null || mAuthorityToRestore == null) {
+                return false;
+            }
+
+            final boolean isSameAuthority =
+                    sidebarEntryItemInfo.getRoot().authority.equals(destAuthority);
+            return mAuthorityToRestore.equals(destAuthority) && isSameAuthority;
         }
     }
 }
