@@ -113,7 +113,7 @@ class FolderLoader(
 
         val filteredCursor = FilteringCursorWrapper(cursor)
         filteredCursor.filterHiddenFiles(mOptions.showHidden)
-        filteredCursor.filterMimes(mOptions.acceptableMimeTypes, null)
+        filteredCursor.filterMimes(computeAcceptableMimeTypes(mOptions), null)
         if (rejectBeforeTimestamp > 0L) {
             filteredCursor.filterLastModified(rejectBeforeTimestamp)
         }

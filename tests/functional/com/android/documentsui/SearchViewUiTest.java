@@ -547,8 +547,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @DisableFlags(
-            FLAG_USE_MATERIAL3) // TODO(b/412895530): Enable for `use_material3` once fixed.
+    @DisableFlags(FLAG_USE_MATERIAL3) // TODO(b/412895530): Enable for `use_material3` once fixed.
     public void testSelectionWhileSearchingHidesSearchBar() throws UiObjectNotFoundException {
         String pkg = bots.directory.mTargetPackage;
 
@@ -832,5 +831,49 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.assertInputEquals("file");
     }
 
-    // TODO(b:450381836): Add tests that check that options change trigger search.
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testOptionsChangeTriggersSearch() throws Exception {
+        // Check that we have .log, .png, and .txt files visible.
+        bots.directory.assertDocumentsPresent(
+                TestFilesRule.FILE_NAME_1,
+                TestFilesRule.FILE_NAME_2,
+                TestFilesRule.FILE_NAME_NO_RENAME);
+
+        // Trigger search for images only.
+        bots.search
+                .clickChip(R.string.chip_title_images)
+                .perform(new WaitForCheckState(true, mTimeout));
+
+        bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).waitUntilGone(mTimeout);
+        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+
+        // Uncheck images chip.
+        bots.search
+                .clickChip(R.string.chip_title_images)
+                .perform(new WaitForCheckState(false, mTimeout));
+        // Wait for other files to re-appear (just checking one of the files that is gone).
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
+
+        // Start a regular search.
+        bots.search.expand();
+        bots.search.doSearch("file");
+        // Wait for search to complete ("Dir1" should disappear).
+        bots.directory.findDocument(TestFilesRule.DIR_NAME_1).waitUntilGone(mTimeout);
+
+        // Check that .log, .png, and .txt files are again visible.
+        bots.directory.assertDocumentsPresent(
+                TestFilesRule.FILE_NAME_1,
+                TestFilesRule.FILE_NAME_2,
+                TestFilesRule.FILE_NAME_NO_RENAME);
+
+        // Trigger a type dropdown and select images.
+        bots.search.clickDropdownTrigger(R.id.search_file_type_trigger);
+        bots.search.clickMenuItem(R.string.chip_title_images);
+
+        // Wait for .txt file to be gone and check that png file is present.
+        bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).waitUntilGone(mTimeout);
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_NO_RENAME);
+        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+    }
 }
