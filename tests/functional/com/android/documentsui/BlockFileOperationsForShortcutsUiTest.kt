@@ -69,6 +69,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                     primaryRoot.rootId,
                     primaryRoot.documentId,
                     SHORTCUT_ID,
+                    SHORTCUT_ID,
                     R.drawable.ic_root_homescreen,
                 )
             setUpShortcuts(listOf(resource))
@@ -109,7 +110,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 getOrCreateFolderDocId(
                     storageDocsHelper!!,
                     shortcut.parentDirDocumentId!!,
-                    shortcut.title!!,
+                    shortcut.folderTitle!!,
                 )
         }
 

@@ -23,6 +23,7 @@ class ShortcutResourceValues(
     val rootId: String,
     val parentDocumentId: String,
     val folderTitle: String,
+    val localizedDisplayTitle: String,
     val iconReference: Int,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -42,7 +43,8 @@ class ShortcutResourceValues(
 
     override fun toString(): String {
         return "authority=$authority, rootId=$rootId, iconRef=$iconReference, " +
-            "parentDocumentId=$parentDocumentId, title=$folderTitle"
+            "parentDocumentId=$parentDocumentId, title=$folderTitle, " +
+            "localizedDisplayTitle=$localizedDisplayTitle"
     }
 
     companion object {
