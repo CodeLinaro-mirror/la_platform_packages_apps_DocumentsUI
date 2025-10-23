@@ -65,7 +65,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
     /** Faked result for {@link #queryRecentDocuments(String, String[])}. */
     private Cursor mNextRecentDocuments;
 
-    /** Faked result for {@link #queryTrashDocuments(String[])}. */
+    /**
+     * Faked result for {@link #queryTrashDocuments(String, String[], Bundle, CancellationSignal)}.
+     */
     private Cursor mNextTrashDocuments;
 
     /** Runtime exception thrown in either querySearchDocuments() or queryChildDocuments(). */
@@ -182,7 +184,12 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     @Nullable
     @Override
-    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+    public Cursor queryTrashDocuments(
+            @NonNull String rootId,
+            @Nullable String[] projection,
+            @Nullable Bundle queryArgs,
+            @Nullable CancellationSignal signal)
+            throws FileNotFoundException {
         maybeThrowException();
         return mNextTrashDocuments;
     }
@@ -336,7 +343,8 @@ public class TestDocumentsProvider extends DocumentsProvider {
     }
 
     /**
-     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String[])}.
+     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String,
+     * String[], Bundle, CancellationSignal)}.
      *
      * @param docs The documents to be returned in the cursor.
      */

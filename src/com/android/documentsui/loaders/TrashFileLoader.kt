@@ -50,7 +50,6 @@ class TrashFileLoader(
     fileTypeMap: Lookup<String?, String?>?,
     private val mUserId: UserId,
 ) : MultiRootDocumentsLoader(context, providers, state, executors, fileTypeMap) {
-    private val mCalledAuthoritiesSet: MutableSet<String> = HashSet()
 
     /**
      * <p>Before loading, this method checks if interaction with the specified user is permitted and
@@ -76,24 +75,16 @@ class TrashFileLoader(
     /**
      * Determines whether a root should be ignored to avoid redundant queries for trashed documents.
      *
-     * <p>The trash content is fetched per-authority using {@link
-     * android.provider.DocumentsContract#buildTrashDocumentsUri(String)}. If a single authority
-     * provides multiple roots, querying each would result in the same set of trashed documents
-     * being returned, leading to duplicate entries. This method prevents this by ensuring that each
-     * authority is queried only once.
+     * <p>This method filters roots to ensure that only those supporting the trash feature and
+     * matching the loader's target user ID are considered for querying. This prevents loading trash
+     * from irrelevant roots or users.
      *
      * @param root The {@link RootInfo} to check.
-     * @return {@code true} if the root's authority is null or has already been queried, {@code
-     *   false} otherwise.
+     * @return {@code true} if the root does not support trash or belongs to a different user,
+     *   {@code false} otherwise.
      */
     public override fun shouldIgnoreRoot(root: RootInfo): Boolean {
-        // A single provider may have multiple roots, but trashed documents are queried
-        // at the authority level. We track called authorities to avoid duplicate queries.
-        if (root.authority == null || mCalledAuthoritiesSet.contains(root.authority)) {
-            return true
-        }
-        mCalledAuthoritiesSet.add(root.authority)
-        return false
+        return !root.supportsQueryTrash() || mUserId != root.userId
     }
 
     /**
@@ -129,7 +120,7 @@ class TrashFileLoader(
 
         /** Returns the URI for querying trashed documents for the given authority. */
         override fun getQueryUri(rootInfo: RootInfo): Uri {
-            return DocumentsContract.buildTrashDocumentsUri(authority)
+            return DocumentsContract.buildTrashDocumentsUri(authority, rootInfo.rootId)
         }
 
         override fun generateResultCursor(

@@ -418,6 +418,16 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
         return (flags & Root.FLAG_SUPPORTS_RECENTS) != 0;
     }
 
+    /**
+     * Returns true if the DocumentsProvider supports querying trashed files.
+     *
+     * @return {@code true} if the provider supports querying trashed files, {@code false}
+     *     otherwise.
+     */
+    public boolean supportsQueryTrash() {
+        return (flags & Root.FLAG_SUPPORTS_QUERY_TRASH) != 0;
+    }
+
     public boolean supportsSearch() {
         return (flags & Root.FLAG_SUPPORTS_SEARCH) != 0;
     }
