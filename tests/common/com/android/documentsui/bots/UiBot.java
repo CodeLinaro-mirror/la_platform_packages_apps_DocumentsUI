@@ -51,6 +51,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.BySelector;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
@@ -256,13 +257,19 @@ public class UiBot extends Bots.BaseBot {
     }
 
     UiObject2 menuGridMode() {
-        // Note that we're using By.desc rather than By.res, because of b/25285770
-        return find(By.desc("Grid view"));
+        return menuGridOrListMode()[0];
     }
 
     UiObject2 menuListMode() {
+        return menuGridOrListMode()[1];
+    }
+
+    private UiObject2[] menuGridOrListMode() {
         // Note that we're using By.desc rather than By.res, because of b/25285770
-        return find(By.desc("List view"));
+        return findAny(
+                new BySelector[] {
+                    By.desc("Grid view"), By.desc("List view"),
+                });
     }
 
     public void clickToolbarItem(int id) {

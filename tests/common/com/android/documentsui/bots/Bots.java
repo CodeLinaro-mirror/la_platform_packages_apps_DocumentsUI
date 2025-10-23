@@ -193,6 +193,46 @@ public final class Bots {
             return mDevice.findObject(selector);
         }
 
+        /**
+         * Attempts to find any of the given selectors, retrying until timeout.
+         *
+         * @param selectors The selectors to search for.
+         * @return An array of UiObject2, with each element corresponding to the selector at the
+         *     same index in the input array. If a selector is not found, the corresponding element
+         *     in the result array will be null.
+         */
+        protected UiObject2[] findAny(BySelector[] selectors) {
+            int n = selectors.length;
+            UiObject2[] result = new UiObject2[n];
+            if (n > 0) {
+                int remaining = mTimeout;
+                // 1048576 is (1 << 20), a power of two close to one million. The value is
+                // basically arbitrary. We just want our sleeps to start as a small fraction of
+                // mTimeout, but double in length each iteration.
+                int retryTimeout = mTimeout / 1048576;
+                if (retryTimeout < 1) {
+                    retryTimeout = 1;
+                }
+                for (int retry = 0; true; retry++) {
+                    mDevice.wait(Until.findObject(selectors[retry % n]), retryTimeout);
+                    boolean found = false;
+                    for (int j = 0; j < n; j++) {
+                        result[j] = mDevice.findObject(selectors[j]);
+                        found = found || (result[j] != null);
+                    }
+                    remaining -= retryTimeout;
+                    retryTimeout *= 2;
+                    if ((retryTimeout > remaining) || (retryTimeout <= 0)) {
+                        retryTimeout = remaining;
+                    }
+                    if (found || (remaining <= 0)) {
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
         protected UiObject findObject(String resourceId) {
             final UiSelector object = new UiSelector().resourceId(resourceId);
             return mDevice.findObject(object);
