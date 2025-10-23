@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.days
  * Enumerates possible options for the last modified filters. These values correspond directly
  * to the values of hte search_last_modified_menu.
  */
-enum class LastModifiedOption(val value: Int, val millis: Long, @StringRes val textId: Int) {
+enum class LastModifiedOption(val value: Int, val millis: Long, @param:StringRes val textId: Int) {
     ANY_TIME(getRes(R.id.last_modified_any_time_option), 0, R.string.search_last_modified_any_time),
     LAST_DAY(
         getRes(R.id.last_modified_1_day_option),
