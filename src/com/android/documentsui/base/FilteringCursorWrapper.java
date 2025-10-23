@@ -94,24 +94,30 @@ public class FilteringCursorWrapper extends AbstractCursor {
 
         filterByCondition(
                 (cursor) -> {
+                    // TODO(b/454477915): We shouldn't rely on the documentId when handling file
+                    //  path related logic, it only works with ExternalStorageProvider right now.
                     // Judge by name and documentId separately because for some providers
                     // e.g. DownloadProvider, documentId may not contain file name.
                     final String name = getCursorString(cursor, Document.COLUMN_DISPLAY_NAME);
                     final String documentId = getCursorString(cursor, Document.COLUMN_DOCUMENT_ID);
-                    if (name == null || documentId == null) {
-                        return true;
-                    }
-                    // Filter dot files.
-                    if (name.startsWith(".") || documentId.contains("/.")) {
+                    // Filter dot files and its sub folders/files.
+                    boolean documentIdHidden = documentId != null && documentId.contains("/.");
+                    boolean fileNameHidden = name != null && name.startsWith(".");
+                    if (documentIdHidden || fileNameHidden) {
                         return false;
                     }
-                    if (isDesktopUxPhase2FlagEnabled()) {
+                    if (isDesktopUxPhase2FlagEnabled() && documentId != null) {
                         // Filter desktop folders and their sub folders/files.
                         final int firstSlashIndex = documentId.indexOf('/');
-                        final String rootDocumentId = firstSlashIndex != -1
-                                ? documentId.substring(0, firstSlashIndex)
-                                : documentId;
-                        if (NON_DESKTOP_FOLDERS.contains(rootDocumentId)) {
+                        final String topLevelFolderId =
+                                firstSlashIndex != -1
+                                        ? documentId.substring(0, firstSlashIndex)
+                                        : documentId;
+                        if (NON_DESKTOP_FOLDERS.contains(topLevelFolderId)) {
+                            return false;
+                        }
+                        // Filter sub folder/files under top level dot folder like "primary:.xxx".
+                        if (topLevelFolderId.contains(":.")) {
                             return false;
                         }
                     }
