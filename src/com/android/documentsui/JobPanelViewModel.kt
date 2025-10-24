@@ -17,19 +17,16 @@ package com.android.documentsui
 
 import android.os.Parcelable
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.services.JobProgress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 /**
  * Manages the UI state for the [JobPanelController].
@@ -40,10 +37,6 @@ import kotlinx.coroutines.launch
 class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
     companion object {
         private const val TAG = "JobPanelViewModel"
-        private const val AUTO_DISMISS_DELAY = 3000L
-
-        @VisibleForTesting
-        var disableAutoDismiss = false
     }
 
     /**
@@ -128,17 +121,6 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
             seen.add(jobProgress.id)
             _currentJobs.merge(jobProgress.id, ProgressViewModel(jobProgress)) { old, new ->
                 ProgressViewModel(new.jobProgress, old.expanded)
-            }
-
-            if (jobProgress.isFinal && !jobProgress.hasFailures &&
-                !pendingRemoves.contains(jobProgress.id)) {
-                if (!disableAutoDismiss) {
-                    scope.launch {
-                        delay(AUTO_DISMISS_DELAY)
-                        dismissProgress(jobProgress.id)
-                        pendingRemoves.remove(jobProgress.id)
-                    }
-                }
             }
         }
         _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }

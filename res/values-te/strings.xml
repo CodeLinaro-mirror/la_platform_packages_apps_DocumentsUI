@@ -37,6 +37,9 @@
     <string name="menu_save" msgid="5195367497138965168">"సేవ్ చేయండి"</string>
     <string name="menu_share" msgid="4307140947108068356">"షేర్ చేయండి"</string>
     <string name="menu_delete" msgid="1022254131543256626">"తొలగించండి"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"శాశ్వతంగా తొలగించండి"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"ట్రాష్‌కు తరలించండి"</string>
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"రీస్టోర్ చేయండి"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"అన్నింటినీ ఎంచుకోండి"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"అన్నింటి ఎంపికను తీసివేయండి"</string>
     <string name="menu_select" msgid="1366061076507142387">"ఎంచుకోండి"</string>
@@ -116,10 +119,11 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"ఈ చర్య అనుమతించబడదు"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"మరింత తెలుసుకోవడానికి, మీ IT అడ్మిన్‌ను కాంటాక్ట్ చేయండి"</string>
     <string name="root_recent" msgid="1080156975424341623">"ఇటీవలివి"</string>
+    <string name="root_trash" msgid="1869929519939073178">"ట్రాష్"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> ఖాళీగా ఉంది"</string>
     <string name="root_type_service" msgid="6521366147466512289">"స్టోరేజ్‌ పరికరాలు"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"షార్ట్‌కట్స్"</string>
-    <string name="root_type_device" msgid="1713604128005476585">"పరికరాలు"</string>
+    <string name="root_type_device" msgid="1713604128005476585">"డివైజ్‌లు"</string>
     <string name="root_type_apps" msgid="8646073235029886342">"మరిన్ని యాప్‌లు"</string>
     <string name="empty" msgid="5300254272613103004">"అంశాలు లేవు"</string>
     <string name="no_results" msgid="2371026325236359209">"%1$sలో సరిపోలినవి లేవు"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"ఫైళ్లను సంగ్రహిస్తోంది"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ఫైళ్లను తరలిస్తోంది"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ఫైళ్లను తొలగిస్తోంది"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"ఫైళ్లను తొలగిస్తోంది"</string>
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"ఫైల్స్ రీస్టోరింగ్"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> మిగిలి ఉంది"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలను కాపీ చేస్తోంది.</item>
@@ -158,23 +164,26 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలను తొలగిస్తోంది.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> అంశాన్ని తొలగిస్తోంది.</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను ట్రాష్‌కు తరలిస్తోంది}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను ట్రాష్‌కు తరలిస్తోంది}}"</string>
+    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను రీస్టోర్ చేస్తోంది}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను రీస్టోర్ చేస్తోంది}}"</string>
     <string name="undo" msgid="2902438994196400565">"చర్య రద్దు చేయండి"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"సిద్ధం చేస్తోంది..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"సిద్ధం చేస్తోంది..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"సిద్ధం చేస్తోంది..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"సిద్ధం చేస్తోంది..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"సిద్ధం చేస్తోంది..."</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"సిద్ధం చేస్తోంది..."</string>
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"సిద్ధం చేస్తోంది..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"మొత్తం <xliff:g id="TOTALCOUNT">%2$d</xliff:g>‌లో <xliff:g id="COUNT_0">%1$d</xliff:g>"</string>
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను కాపీ చేయడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను కాపీ చేయడం సాధ్యపడలేదు}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను కుదించడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను కుదించడం సాధ్యపడలేదు}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడలేదు}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను తరలించడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను తరలించడం సాధ్యపడలేదు}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను తొలగించడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను తొలగించడం సాధ్యపడలేదు}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను ట్రాష్‌కు తరలించడం సాధ్యం కాలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను ట్రాష్‌కు తరలించడం సాధ్యం కాలేదు}}"</string>
+    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ఐటెమ్‌ను రీస్టోర్ చేయడం సాధ్యపడలేదు}other{<xliff:g id="COUNT_1">{count}</xliff:g> ఐటెమ్‌లను రీస్టోర్ చేయడం సాధ్యపడలేదు}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"వివరాలను చూడటానికి నొక్కండి"</string>
     <string name="close" msgid="905969391788869975">"మూసివేయండి"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -205,10 +214,8 @@
       <item quantity="other">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలు కాపీ చేయబడ్డాయి.</item>
       <item quantity="one">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_0">%1$d</xliff:g> అంశం కాపీ చేయబడింది.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"చదవడానికి మాత్రమే"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"మీరు ఈ ఫైళ్లను చూడవచ్చు, కానీ కొన్ని చర్యలకు సపోర్ట్ లేదు"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ఈ ఆర్కైవ్, రీడ్-ఓన్లీ లొకేషన్‌లో ఉంది, దాన్ని ఇక్కడ ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడదు."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ఫైల్ చర్యకు మద్దతు లేదు."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ఫైల్ చర్య విఫలమైంది."</string>
@@ -219,7 +226,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"కు ఎక్స్‌ట్రాక్ట్ చేస్తోంది}other{# ఆర్కైవ్‌లను “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”కు ఎక్స్‌ట్రాక్ట్ చేస్తోంది}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను \"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\"కు తరలిస్తోంది}other{# ఫైళ్లను \"<xliff:g id="DIRECTORY_1">{directory}</xliff:g>\"కు తరలిస్తోంది}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను తొలగిస్తోంది}other{# ఫైళ్లను తొలగిస్తోంది}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{\"<xliff:g id="FILENAME">{filename}</xliff:g>\"ను జిప్ చేస్తోంది}other{# ఫైళ్లను జిప్ చేస్తోంది}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g>‌ను ట్రాష్‌కు తరలిస్తోంది}other{# ఫైళ్లను ట్రాష్‌కు తరలిస్తోంది}}"</string>
+    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> రీస్టోర్ చేస్తోంది}other{# ఫైళ్లను రీస్టోర్ చేస్తోంది}}"</string>
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>”‌ను జిప్ చేస్తోంది}other{# ఫైల్స్‌ను జిప్ చేస్తోంది}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ఫైల్ ప్రోగ్రెస్‌లో ఉంది"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ఫైల్ ప్రోగ్రెస్"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"పూర్తయింది"</string>
@@ -278,6 +287,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"కంటెంట్‌లను ప్రదర్శించడం సాధ్యం కాదు"</string>
     <string name="sign_in" msgid="6253762676723505592">"సైన్ ఇన్ చేయండి"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"ఆర్కైవ్ చేయండి<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"ఆర్కైవ్ చేయండి"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g>ని భర్తీ చేయాలా?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"బ్యాక్‌గ్రౌండ్‌లో కొనసాగించండి"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

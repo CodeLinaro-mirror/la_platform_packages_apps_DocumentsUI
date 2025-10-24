@@ -70,11 +70,13 @@ public interface ActionHandler {
     void ejectRoot(RootInfo root, BooleanConsumer listener);
 
     /**
-     * Attempts to fetch the DocumentInfo for the supplied root. Returns the DocumentInfo to the
-     * callback. If the task times out, callback will be called with null DocumentInfo. Supply
-     * {@link TimeoutTask#DEFAULT_TIMEOUT} if you don't want to the task to ever time out.
+     * Attempts to fetch the DocumentInfo for the supplied authority, documentId and userId.
+     * Returns the DocumentInfo to the callback. If the task times out, callback will be called
+     * with null DocumentInfo. Supply {@link TimeoutTask#DEFAULT_TIMEOUT} if you don't want to the
+     * task to ever time out.
      */
-    void getRootDocument(RootInfo root, int timeout, Consumer<DocumentInfo> callback);
+    void getDocument(String authority, String documentId, UserId userId, int timeout,
+            Consumer<DocumentInfo> callback);
 
     /**
      * Attempts to refresh the given DocumentInfo, which should be at the top of the state stack.
@@ -167,6 +169,16 @@ public interface ActionHandler {
      * Delete the selected document(s)
      */
     void deleteSelectedDocuments(List<DocumentInfo> docs, DocumentInfo srcParent);
+
+    /**
+     * Trash the selected document(s)
+     */
+    void trashSelectedDocuments(List<DocumentInfo> docs);
+
+    /**
+     * Restore the selected document(s)
+     */
+    void restoreSelectedDocumentsFromTrash(List<DocumentInfo> docs);
 
     void shareSelectedDocuments();
 

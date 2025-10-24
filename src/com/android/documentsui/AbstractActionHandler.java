@@ -70,8 +70,9 @@ import com.android.documentsui.files.QuickViewIntentBuilder;
 import com.android.documentsui.loaders.FolderLoader;
 import com.android.documentsui.loaders.QueryOptions;
 import com.android.documentsui.loaders.SearchLoader;
+import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.queries.SearchViewManager;
-import com.android.documentsui.roots.GetRootDocumentTask;
+import com.android.documentsui.roots.GetDocumentTask;
 import com.android.documentsui.roots.LoadFirstRootTask;
 import com.android.documentsui.roots.LoadRootTask;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -214,15 +215,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void getRootDocument(RootInfo root, int timeout, Consumer<DocumentInfo> callback) {
-        GetRootDocumentTask task = new GetRootDocumentTask(
-                root,
+    public void getDocument(String authority, String documentId, UserId userId, int timeout,
+            Consumer<DocumentInfo> callback) {
+        GetDocumentTask task = new GetDocumentTask(
+                authority,
+                documentId,
+                userId,
                 mActivity,
                 timeout,
                 mDocs,
                 callback);
 
-        task.executeOnExecutor(mExecutors.lookup(root.authority));
+        task.executeOnExecutor(mExecutors.lookup(authority));
     }
 
     @Override
@@ -750,6 +754,16 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         throw new UnsupportedOperationException("Share not supported!");
     }
 
+    @Override
+    public void trashSelectedDocuments(List<DocumentInfo> docs) {
+        throw new UnsupportedOperationException("Trash document not supported!");
+    }
+
+    @Override
+    public void restoreSelectedDocumentsFromTrash(List<DocumentInfo> docs) {
+        throw new UnsupportedOperationException("Restore document not supported!");
+    }
+
     protected final void loadDocument(Uri uri, UserId userId, LoadDocStackCallback callback) {
         new LoadDocStackTask(
                 mActivity,
@@ -881,6 +895,31 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         }
     }
 
+    /**
+     * Creates a new {@link TrashFileLoader} for a specific user.
+     *
+     * <p>The returned loader is configured with a {@link LockingContentObserver} to automatically
+     * reload the document list when the underlying content changes.
+     *
+     * @param context The {@link Context} to use.
+     * @param userId User whose trashed documents to load.
+     * @return A new instance of {@link TrashFileLoader}.
+     */
+    private TrashFileLoader createTrashFileLoader(Context context, UserId userId) {
+        final LockingContentObserver observer = new LockingContentObserver(
+                mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
+        TrashFileLoader loader = new TrashFileLoader(
+                context,
+                mProviders,
+                mState,
+                mExecutors,
+                mInjector.fileTypeLookup,
+                userId);
+        loader.setObserver(observer);
+        return loader;
+    }
+
+
     protected abstract void launchToDefaultLocation();
 
     protected void restoreRootAndDirectory() {
@@ -951,7 +990,15 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                         && !allowedUsers.isEmpty()) {
                     // start with the next available user. This could be any user.
                     initialUser = allowedUsers.get(0);
+
+                    RootInfo newRoot = RootInfo.copyRootInfo(mState.stack.getRoot());
+                    newRoot.userId = initialUser;
+                    mState.stack.changeRoot(newRoot);
                 }
+            }
+
+            if (mState.stack.isTrash()) {
+                return createTrashFileLoader(context, initialUser);
             }
 
             if (mState.stack.isRecents()) {
@@ -1041,16 +1088,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
             RootInfo root = stack.getRoot();
 
+            UserId initialUser = root.userId;
+
             if (isMovingContentIntoPrivateSpaceEnabled()) {
                 List<UserId> allowedUsers = UserId.nonExcludedUsers(mState,
                         mInjector.userManagerProvider.getUserIds(mActivity));
 
                 // If the current root's user is excluded and there are other users available
                 if (root.userId.isExcluded(mState) && !allowedUsers.isEmpty()) {
-                    UserId newUserId = allowedUsers.get(0);
+                    initialUser = allowedUsers.get(0);
 
                     RootInfo newRoot = RootInfo.copyRootInfo(root);
-                    newRoot.userId = newUserId;
+                    newRoot.userId = initialUser;
 
                     stack.changeRoot(newRoot);
 
@@ -1063,6 +1112,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // manager with the current root. Search view manager then is ready to act
             // appropriately, once it gets notified about search starting.
             mSearchMgr.setCurrentRoot(root);
+
+            if (mState.stack.isTrash()) {
+                return createTrashFileLoader(mActivity, initialUser);
+            }
 
             Duration lastModifiedDelta = stack.isRecents()
                     ? Duration.ofMillis(RecentsLoader.REJECT_OLDER_THAN)

@@ -36,6 +36,7 @@ import android.util.Log;
 import com.android.documentsui.base.DocumentInfo;
 
 import java.io.FileNotFoundException;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Test doubles of {@link DocumentsProvider} to isolate document providers. This is not registered
@@ -58,8 +59,14 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     private Cursor mNextChildDocuments;
     private Cursor mNextRecentDocuments;
+    private Cursor mNextTrashDocuments;
     private String mRuntimeMessage;
     private long mQueryDelayMs = 0;
+    /**
+     * A latch that will be decremented when a query is about to be delayed. This allows tests to
+     * synchronize with the start of the delay.
+     */
+    @Nullable private CountDownLatch mQueryDelayLatch = null;
     private final String mAuthority;
 
     // Emulates FileSystemProvider's support for search result limiting.
@@ -93,6 +100,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection,
             String sortOrder) throws FileNotFoundException {
         maybeThrowException();
+        maybeDelayQueryResults();
         return mNextChildDocuments;
     }
 
@@ -105,6 +113,13 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor queryRecentDocuments(String rootId, String[] projection) {
         return mNextRecentDocuments;
+    }
+
+    @Nullable
+    @Override
+    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+        maybeThrowException();
+        return mNextTrashDocuments;
     }
 
     private String getStringColumn(Cursor cursor, String name) {
@@ -208,10 +223,24 @@ public class TestDocumentsProvider extends DocumentsProvider {
         mQueryDelayMs = queryDelayMs;
     }
 
+    /**
+     * Sets a latch to be activated when the query delay is about to be triggered. If the set
+     * `latch` is null, the latch is cleared and no latch count down is called.
+     * @param latch Either a latch to be used or null.
+     */
+    public void setQueryDelayLatch(@Nullable CountDownLatch latch) {
+        Log.d(TAG, "Setting query delay latch to " + latch);
+        mQueryDelayLatch = latch;
+    }
+
     private void maybeDelayQueryResults() {
         if (mQueryDelayMs <= 0) {
             Log.d(TAG, "Immediate delivery of results for " + mAuthority);
             return;
+        }
+        if (mQueryDelayLatch != null) {
+            Log.d(TAG, "Decrementing count on the queryDealyLatch " + mQueryDelayLatch);
+            mQueryDelayLatch.countDown();
         }
         Log.d(TAG, "Delaying query results by " + mQueryDelayMs + "ms for " + mAuthority);
         SystemClock.sleep(mQueryDelayMs);
@@ -239,6 +268,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     public void setNextRecentDocumentsReturns(DocumentInfo... docs) {
         mNextRecentDocuments = createDocumentsCursor(docs);
+    }
+
+    /**
+     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String[])}.
+     *
+     * @param docs The documents to be returned in the cursor.
+     */
+    public void setNextTrashDocumentsReturns(DocumentInfo... docs) {
+        mNextTrashDocuments = createDocumentsCursor(docs);
     }
 
     private Cursor createDocumentsCursor(DocumentInfo... docs) {

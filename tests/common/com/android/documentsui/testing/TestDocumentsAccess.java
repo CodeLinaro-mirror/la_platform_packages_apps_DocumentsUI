@@ -25,7 +25,6 @@ import android.util.Pair;
 
 import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.base.DocumentInfo;
-import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 
 import java.util.List;
@@ -33,8 +32,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class TestDocumentsAccess implements DocumentsAccess {
-
-    public @Nullable DocumentInfo nextRootDocument;
     public @Nullable DocumentInfo nextDocument;
     public @Nullable List<DocumentInfo> nextDocuments;
 
@@ -46,8 +43,8 @@ public class TestDocumentsAccess implements DocumentsAccess {
     private Pair<DocumentInfo, DocumentInfo> mLastCreatedDoc;
 
     @Override
-    public DocumentInfo getRootDocument(RootInfo root) {
-        return nextRootDocument;
+    public DocumentInfo getDocument(String authority, String documentId, UserId userId) {
+        return nextDocument;
     }
 
     @Override

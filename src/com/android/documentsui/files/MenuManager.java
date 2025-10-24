@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -232,7 +233,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     protected void updateCopyTo(MenuItem copyTo, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(copyTo, !selectionDetails.containsPartialFiles()
-                && !selectionDetails.canExtract());
+                && !selectionDetails.canExtract() && !selectionDetails.canRestore());
     }
 
     @Override
@@ -305,7 +306,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateShare(MenuItem share, SelectionDetails selectionDetails) {
         boolean enabled = !selectionDetails.containsDirectories()
                 && !selectionDetails.containsPartialFiles()
-                && !selectionDetails.canExtract();
+                && !selectionDetails.canExtract()
+                && !selectionDetails.canRestore();
         Menus.setEnabledAndVisible(share, enabled);
     }
 
@@ -313,6 +315,12 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
         boolean enabled = selectionDetails.canDelete();
         Menus.setEnabledAndVisible(delete, enabled);
+        // The delete menu item's visibility is tied to the trash flow's status.
+        // Since the XML defaults to never showing this action, we must manually make it visible
+        // when trash is disabled to give users a direct way to delete items.
+        if (!isTrashFlowEnabled()) {
+            delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
     }
 
     @Override
@@ -356,4 +364,18 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         launcher.setTitle(Shared.isLauncherEnabled(mContext)
                 ? "Hide launcher icon" : "Show launcher icon");
     }
+
+    @Override
+    protected void updateMoveToTrash(MenuItem moveToTrash, SelectionDetails selectionDetails) {
+        final boolean visible = selectionDetails.canTrash() && isTrashFlowEnabled();
+        Menus.setEnabledAndVisible(moveToTrash, visible);
+    }
+
+    @Override
+    protected void updateRestoreFromTrash(MenuItem restoreFromTrash,
+            SelectionDetails selectionDetails) {
+        final boolean visible = selectionDetails.canRestore() && isTrashFlowEnabled();
+        Menus.setEnabledAndVisible(restoreFromTrash, visible);
+    }
+
 }

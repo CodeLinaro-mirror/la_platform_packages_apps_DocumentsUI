@@ -190,7 +190,7 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.queryChildDocuments(String, String[], String)
      */
-    public Cursor queryChildDocuments(String documentId, @Nullable String[] projection,
+    public Cursor queryChildDocuments(@NonNull String documentId, @Nullable String[] projection,
             @Nullable String sortOrder) throws FileNotFoundException {
         final ArchiveId parsedParentId = ArchiveId.fromDocumentId(documentId);
         MorePreconditions.checkArgumentEquals(mArchiveUri, parsedParentId.mArchiveUri,
@@ -219,7 +219,7 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.getDocumentType(String)
      */
-    public String getDocumentType(String documentId) throws FileNotFoundException {
+    public String getDocumentType(@NonNull String documentId) throws FileNotFoundException {
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
         MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
                 "Mismatching archive Uri. Expected: %s, actual: %s.");
@@ -239,7 +239,7 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.isChildDocument(String, String)
      */
-    public boolean isChildDocument(String parentDocumentId, String documentId) {
+    public boolean isChildDocument(@NonNull String parentDocumentId, @NonNull String documentId) {
         final ArchiveId parsedParentId = ArchiveId.fromDocumentId(parentDocumentId);
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
         MorePreconditions.checkArgumentEquals(mArchiveUri, parsedParentId.mArchiveUri,
@@ -271,7 +271,7 @@ public abstract class Archive implements Closeable {
      *
      * @see DocumentsProvider.queryDocument(String, String[])
      */
-    public Cursor queryDocument(String documentId, @Nullable String[] projection)
+    public Cursor queryDocument(@NonNull String documentId, @Nullable String[] projection)
             throws FileNotFoundException {
         final ArchiveId parsedId = ArchiveId.fromDocumentId(documentId);
         MorePreconditions.checkArgumentEquals(mArchiveUri, parsedId.mArchiveUri,
@@ -328,7 +328,7 @@ public abstract class Archive implements Closeable {
     /**
      * Creates an archive id for the passed path.
      */
-    public ArchiveId createArchiveId(String path) {
+    public ArchiveId createArchiveId(@NonNull String path) {
         return new ArchiveId(mArchiveUri, mAccessMode, path);
     }
 

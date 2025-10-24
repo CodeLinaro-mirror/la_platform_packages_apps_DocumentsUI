@@ -86,7 +86,8 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     }
 
     @Override
-    public void getRootDocument(RootInfo root, int timeout, Consumer<DocumentInfo> callback) {
+    public void getDocument(String authority, String documentId, UserId userId, int timeout,
+            Consumer<DocumentInfo> callback) {
         mEnv.mExecutor.submit(() -> {
             callback.accept(nextRootDocument);
         });

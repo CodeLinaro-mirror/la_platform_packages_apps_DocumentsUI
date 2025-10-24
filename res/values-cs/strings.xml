@@ -37,6 +37,9 @@
     <string name="menu_save" msgid="5195367497138965168">"Uložit"</string>
     <string name="menu_share" msgid="4307140947108068356">"Sdílet"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Smazat"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"Trvale smazat"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"Přesunout do koše"</string>
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"Obnovit"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Vybrat vše"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"Zrušit výběr všech"</string>
     <string name="menu_select" msgid="1366061076507142387">"Vybrat"</string>
@@ -116,6 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Tato akce není povolena"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Další informace vám poskytne administrátor IT"</string>
     <string name="root_recent" msgid="1080156975424341623">"Nedávné"</string>
+    <string name="root_trash" msgid="1869929519939073178">"Koš"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"Volný prostor: <xliff:g id="SIZE">%1$s</xliff:g>"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Služby úložiště"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Zkratky"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"Rozbalování souborů"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Přesouvání souborů"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Mazání souborů"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"Přesouvání do koše"</string>
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"Obnovování souborů"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> do stažení"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="few">Kopírování <xliff:g id="COUNT_1">%1$d</xliff:g> položek</item>
@@ -168,23 +174,26 @@
       <item quantity="other">Mazání <xliff:g id="COUNT_1">%1$d</xliff:g> položek</item>
       <item quantity="one">Mazání <xliff:g id="COUNT_0">%1$d</xliff:g> položky</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{Přesouvání <xliff:g id="COUNT_0">{count}</xliff:g> položky do koše}few{Přesouvání <xliff:g id="COUNT_1">{count}</xliff:g> položek do koše}many{Přesouvání <xliff:g id="COUNT_1">{count}</xliff:g> položky do koše}other{Přesouvání <xliff:g id="COUNT_1">{count}</xliff:g> položek do koše}}"</string>
+    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{Obnovování <xliff:g id="COUNT_0">{count}</xliff:g> položky}few{Obnovování <xliff:g id="COUNT_1">{count}</xliff:g> položek}many{Obnovování <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Obnovování <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
     <string name="undo" msgid="2902438994196400565">"Vrátit zpět"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Příprava..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Příprava..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"Příprava..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"Příprava..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"Příprava..."</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"Příprava…"</string>
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"Příprava…"</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Nepodařilo se zkopírovat <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodařilo se zkopírovat <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Nepodařilo se zkopírovat <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Nepodařilo se zkopírovat <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nepodařilo se zkomprimovat <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodařilo se zkomprimovat <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Nepodařilo se zkomprimovat <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Nepodařilo se zkomprimovat <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{Nepodařilo se extrahovat <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodařilo se extrahovat <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Nepodařilo se extrahovat <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Nepodařilo se extrahovat <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Nepodařilo se přesunout <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodařilo se přesunout <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Nepodařilo se přesunout <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Nepodařilo se přesunout <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nepodařilo se smazat <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodařilo se smazat <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Nepodařilo se smazat <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Nepodařilo se smazat <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{Do koše se nepodařilo přesunout <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Do koše se nepodařilo přesunout <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Do koše se nepodařilo přesunout <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Do koše se nepodařilo přesunout <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
+    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{Nepodařilo se obnovit <xliff:g id="COUNT_0">{count}</xliff:g> položku}few{Nepodařilo se obnovit <xliff:g id="COUNT_1">{count}</xliff:g> položky}many{Nepodařilo se obnovit <xliff:g id="COUNT_1">{count}</xliff:g> položky}other{Nepodařilo se obnovit <xliff:g id="COUNT_1">{count}</xliff:g> položek}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Klepnutím zobrazíte podrobnosti"</string>
     <string name="close" msgid="905969391788869975">"Zavřít"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -229,10 +238,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> položek bylo zkopírováno do schránky</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> položka byla zkopírována do schránky</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"Pouze pro čtení"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"Tyhle soubory můžete zobrazit, ale některé akce nejsou podporovány"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archiv je v umístění jen pro čtení a nelze ho tu rozbalit."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"Operace se souborem není podporována."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"Operace se souborem se nezdařila."</string>
@@ -243,7 +250,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{Rozbalování souboru <xliff:g id="FILENAME">{filename}</xliff:g> do složky <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Rozbalování # archivů do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Rozbalování # archivu do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Rozbalování # archivů do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Přesouvání souboru <xliff:g id="FILENAME">{filename}</xliff:g> do složky <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}few{Přesouvání # souborů do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}many{Přesouvání # souboru do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}other{Přesouvání # souborů do složky <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Mazání souboru <xliff:g id="FILENAME">{filename}</xliff:g>}few{Mazání # souborů}many{Mazání # souboru}other{Mazání # souborů}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{Komprimování souboru <xliff:g id="FILENAME">{filename}</xliff:g>}few{Komprimování # souborů}many{Komprimování # souboru}other{Komprimování # souborů}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{Přesouvání souboru <xliff:g id="FILENAME">{filename}</xliff:g> do koše}few{Přesouvání # souborů do koše}many{Přesouvání # souboru do koše}other{Přesouvání # souborů do koše}}"</string>
+    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{Obnovování souboru <xliff:g id="FILENAME">{filename}</xliff:g>}few{Obnovování # souborů}many{Obnovování # souboru}other{Obnovování # souborů}}"</string>
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Komprimování souboru <xliff:g id="FILENAME">{filename}</xliff:g>}few{Komprimování # souborů}many{Komprimování # souboru}other{Komprimování # souborů}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Zobrazit průběh zpracování souboru"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Průběh"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Dokončeno"</string>
@@ -312,6 +321,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"Obsah nelze zobrazit"</string>
     <string name="sign_in" msgid="6253762676723505592">"Přihlásit se"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archiv<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"Archivovat"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Přepsat soubor <xliff:g id="NAME">%1$s</xliff:g>?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Pokračovat na pozadí"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">

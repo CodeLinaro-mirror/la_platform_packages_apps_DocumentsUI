@@ -22,11 +22,13 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.DocumentsContract;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.filters.LargeTest;
 
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.picker.PickActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
@@ -42,10 +44,15 @@ public class PickerPreviewAllTypeUiTest extends ActivityTestJunit4<PickActivity>
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule()
-                    .createFolderInRoot(ROOT_0_ID, TestFilesRule.DIR_NAME_1)
-                    .createFolderWithParent(TestFilesRule.DIR_NAME_1, TestFilesRule.CHILD_DIR_1)
-                    .createFileInRoot(ROOT_0_ID, "file0.log", "text/plain")
-                    .createFileInRoot(ROOT_0_ID, "file1.png", "image/png");
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                final Uri dir1 =
+                                        docsHelper.createFolder(root, TestFilesRule.DIR_NAME_1);
+                                docsHelper.createFolder(dir1, TestFilesRule.CHILD_DIR_1);
+                                docsHelper.createDocument(root, "text/plain", "file0.log");
+                                docsHelper.createDocument(root, "image/png", "file1.png");
+                            });
 
     @Override
     protected void launchActivity() {

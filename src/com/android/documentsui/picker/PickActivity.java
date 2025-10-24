@@ -21,6 +21,7 @@ import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -43,6 +44,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.MarginLayoutParams;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
@@ -112,8 +114,22 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     }
 
     @Override
+    protected void setContainer() {
+        if (isDesktopUxPhase2FlagEnabled()) {
+            // Intentionally doing nothing because PickActivity is not rendered as a full window
+            // activity, no need to do window insets setup as done by BaseActivity.
+        } else {
+            super.setContainer();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle icicle) {
-        setTheme(getRes(R.style.DocumentsTheme));
+        // With desktop UX phase 2 enabled, PickActivity uses PickDialogTheme in the manifest which
+        // we don't want to override here.
+        if (!isDesktopUxPhase2FlagEnabled()) {
+            setTheme(getRes(R.style.DocumentsTheme));
+        }
         Features features = Features.create(this);
 
         mInjector = new Injector<>(
@@ -132,6 +148,31 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 });
 
         super.onCreate(icicle);
+
+        // The customizations here plus the PickDialogTheme style PickActivity styled as a dialog.
+        // * Margins: by default the root view (coordinator_layout) will occupy the whole activity
+        //            window, adding additional margins here between the root view and the window
+        //            so we can show the overlay and a visual border around the root view.
+        // * Dialog corner radius: this is achieved by the custom background, ClipToOutline
+        //                         makes sure the content inside the root view will be clipped
+        //                         to the corner radius.
+        // * Semi-transparent overlay: this is handled by the window side, check PickDialogTheme.
+        // * Dialog shadow: this is achieved by the elevation.
+        if (isDesktopUxPhase2FlagEnabled()) {
+            View coordinatorLayout = findViewById(getRes(R.id.coordinator_layout));
+            final int horizontalMargin =
+                    getResources()
+                            .getDimensionPixelSize(R.dimen.pick_dialog_window_margin_horizontal);
+            final int verticalMargin =
+                    getResources()
+                            .getDimensionPixelSize(R.dimen.pick_dialog_window_margin_vertical);
+            ((MarginLayoutParams) coordinatorLayout.getLayoutParams())
+                    .setMargins(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
+            int elevation = getResources().getInteger(R.integer.pick_dialog_window_elevation);
+            coordinatorLayout.setElevation(elevation);
+            coordinatorLayout.setBackgroundResource(R.drawable.pick_dialog_background);
+            coordinatorLayout.setClipToOutline(true);
+        }
 
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
@@ -152,6 +193,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =
                     new SelectionBarController(
+                            findViewById(getRes(R.id.toolbar)),
                             findViewById(getRes(R.id.selection_bar)),
                             mInjector.menuManager,
                             mInjector.selectionMgr);

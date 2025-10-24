@@ -30,6 +30,7 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
 
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.TestFilesRule;
 
@@ -43,8 +44,13 @@ public class ShareDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String TEST_FILE_NAME = "amazingchair.pdf";
 
     @Rule
-    public final TestFilesRule mTestFilesRule = new TestFilesRule()
-            .createFileInRoot(ROOT_0_ID, TEST_FILE_NAME, "application/pdf");
+    public final TestFilesRule mTestFilesRule =
+            new TestFilesRule()
+                    .createTestFiles(
+                            (docsHelper) -> {
+                                final RootInfo root = docsHelper.getRoot(ROOT_0_ID);
+                                docsHelper.createDocument(root, "application/pdf", TEST_FILE_NAME);
+                            });
 
     @Before
     public void setUpTest() {

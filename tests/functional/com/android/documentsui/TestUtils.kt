@@ -15,6 +15,8 @@
  */
 package com.android.documentsui
 
+import android.app.Activity
+import android.graphics.Rect
 import android.util.DisplayMetrics
 import android.util.TypedValue
 
@@ -26,6 +28,18 @@ class TestUtils {
 
         fun pxToDp(px: Float, metrics: DisplayMetrics): Float {
             return TypedValue.deriveDimension(TypedValue.COMPLEX_UNIT_DIP, px, metrics)
+        }
+
+        /** Returns the bounds of the activity window in device independent pixels (dp). */
+        fun getActivityBounds(activity: Activity): Rect {
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            val bounds = windowMetrics.bounds
+            val displayMetrics: DisplayMetrics = activity.resources.displayMetrics
+            val density = displayMetrics.density
+
+            val windowWidthDp = bounds.width() / density
+            val windowHeightDp = bounds.height() / density
+            return Rect(0, 0, windowWidthDp.toInt(), windowHeightDp.toInt())
         }
     }
 }

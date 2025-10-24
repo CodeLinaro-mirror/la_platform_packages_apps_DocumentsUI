@@ -840,12 +840,11 @@ public class RootsFragment extends Fragment {
     }
 
     private void getRootDocument(RootItem rootItem, RootUpdater updater) {
-        // We need to start a GetRootDocumentTask so we can know whether items can be directly
+        // We need to start a GetDocumentTask so we can know whether items can be directly
         // pasted into root
-        mActionHandler.getRootDocument(
-                rootItem.root,
-                CONTEXT_MENU_ITEM_TIMEOUT,
-                (DocumentInfo doc) -> {
+        mActionHandler.getDocument(
+                rootItem.root.authority, rootItem.root.documentId, rootItem.root.userId,
+                CONTEXT_MENU_ITEM_TIMEOUT, (DocumentInfo doc) -> {
                     updater.updateDocInfoForRoot(doc);
                 });
     }

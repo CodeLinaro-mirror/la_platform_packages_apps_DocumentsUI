@@ -73,18 +73,26 @@ abstract class BaseFileLoader(
     protected val mimeTypeLookup: Lookup<String, String>,
 ) : AsyncTaskLoader<DirectoryResult>(context) {
 
-    private var signal: CancellationSignal? = null
+    /**
+     * The cancellation signal passed to the `client.query()` method that allows us to notify the
+     * client about the query being cancelled while it is still being run. Extending classes need to
+     * set it to a non-null value if they wish to be able to cancel queries in progress.
+     */
+    protected var cancelNotifier: CancellationSignal? = null
     private var storedResult: DirectoryResult? = null
 
+    /**
+     * Overrides the default implementation to notify content provider clients with still running
+     * queries that the loading has been cancelled. This only takes place if the cancelNotifier
+     * instance variable has been initialized by extending classes.
+     */
     override fun cancelLoadInBackground() {
         if (DEBUG) {
             Log.d(TAG, "${this::class.simpleName}.cancelLoadInBackground")
         }
         super.cancelLoadInBackground()
 
-        synchronized(this) {
-            signal?.cancel()
-        }
+        synchronized(this) { cancelNotifier?.cancel() }
     }
 
     override fun deliverResult(result: DirectoryResult?) {
@@ -223,7 +231,8 @@ abstract class BaseFileLoader(
             if (client == null) {
                 return null
             }
-            val cursor = client.query(locationUri, null, queryArgs, signal) ?: return null
+            // TODO(b:440453094): Fix handling of cancel signal is documents providers.
+            val cursor = client.query(locationUri, null, queryArgs, cancelNotifier) ?: return null
             return RootCursorWrapper(
                 rootInfo.userId,
                 authority,

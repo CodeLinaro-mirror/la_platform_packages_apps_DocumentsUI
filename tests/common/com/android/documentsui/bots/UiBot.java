@@ -27,6 +27,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibilit
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.assertEquals;
@@ -38,6 +39,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -55,6 +57,8 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+
+import com.google.android.material.appbar.MaterialToolbar;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -75,9 +79,6 @@ public class UiBot extends Bots.BaseBot {
             isAssignableFrom(Toolbar.class),
             withId(R.id.toolbar));
     @SuppressWarnings("unchecked")
-    private static final Matcher<View> ACTIONBAR = allOf(
-            withClassName(endsWith("ActionBarContextView")));
-    @SuppressWarnings("unchecked")
     private static final Matcher<View> TEXT_ENTRY = allOf(
             withClassName(endsWith("EditText")));
     @SuppressWarnings("unchecked")
@@ -85,9 +86,6 @@ public class UiBot extends Bots.BaseBot {
             withClassName(endsWith("OverflowMenuButton")),
             ViewMatchers.isDescendantOfA(TOOLBAR));
     @SuppressWarnings("unchecked")
-    private static final Matcher<View> ACTIONBAR_OVERFLOW = allOf(
-            withClassName(endsWith("OverflowMenuButton")),
-            ViewMatchers.isDescendantOfA(ACTIONBAR));
 
     public static String targetPackageName;
 
@@ -269,19 +267,18 @@ public class UiBot extends Bots.BaseBot {
         onView(withId(id)).perform(clickAndRetryOnLongPress());
     }
 
-    public void clickNewFolder() {
-        onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-
-        // Click the item by label, since Espresso doesn't support lookup by id on overflow.
-        onView(withText("New folder")).perform(click());
+    private Matcher<View> getActionbarOverflow() {
+        final Matcher<View> actionBar =
+                isUseMaterial3FlagEnabled()
+                        ? allOf(isAssignableFrom(MaterialToolbar.class), withId(R.id.selection_bar))
+                        : allOf(withClassName(endsWith("ActionBarContextView")));
+        return allOf(
+                withClassName(endsWith("OverflowMenuButton")),
+                ViewMatchers.isDescendantOfA(actionBar));
     }
 
     public void clickActionbarOverflowItem(String label) {
-        if (isUseMaterial3FlagEnabled()) {
-            onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-        } else {
-            onView(ACTIONBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-        }
+        onView(getActionbarOverflow()).perform(clickAndRetryOnLongPress());
         mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
         onView(withText(label)).perform(click());
@@ -294,7 +291,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public boolean waitForActionModeBarToAppear() {
-        String actionModeId = isUseMaterial3FlagEnabled() ? "toolbar" : "action_mode_bar";
+        String actionModeId = isUseMaterial3FlagEnabled() ? "selection_bar" : "action_mode_bar";
         UiObject2 bar =
                 mDevice.wait(
                         Until.findObject(By.res(mTargetPackage + ":id/" + actionModeId)), mTimeout);
@@ -323,7 +320,11 @@ public class UiBot extends Bots.BaseBot {
         if (!waitForActionModeBarToAppear()) {
             throw new UiObjectNotFoundException("ActionMode bar not found");
         }
-        clickToolbarItem(R.id.action_menu_delete);
+        if (isTrashFlowEnabled()) {
+            clickActionItem("Delete permanently");
+        } else {
+            clickToolbarItem(R.id.action_menu_delete);
+        }
         mDevice.waitForIdle();
     }
 
@@ -354,7 +355,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /** Clicks the OK button on a dialog. */
-    public void clickDialogOkButton(boolean closeSoftKeyboard) {
+    public void clickDialogOkButton(boolean closeSoftKeyboard) throws UiObjectNotFoundException {
         // On dialogs with no text input, a soft keyboard doesn't show up at all and attempting to
         // close it causes failures. Let's be intentional about the closure only on dialogs which
         // have text input.
@@ -363,12 +364,16 @@ public class UiBot extends Bots.BaseBot {
             // before trying to click on any dialog button
             Espresso.closeSoftKeyboard();
         }
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button1"));
-        okButton.click();
+
+        final UiObject2 button = mDevice.wait(Until.findObject(By.res("android:id/button1")),
+                mTimeout);
+        if (button == null) throw new UiObjectNotFoundException("Cannot find an 'OK' button");
+        button.click();
     }
 
     /** Clicks the Cancel button on a dialog. */
-    public void clickDialogCancelButton(boolean closeSoftKeyboard) {
+    public void clickDialogCancelButton(boolean closeSoftKeyboard)
+            throws UiObjectNotFoundException {
         // On dialogs with no text input, a soft keyboard doesn't show up at all and attempting to
         // close it causes failures. Let's be intentional about the closure only on dialogs which
         // have text input.
@@ -377,8 +382,11 @@ public class UiBot extends Bots.BaseBot {
             // before trying to click on any dialog button
             Espresso.closeSoftKeyboard();
         }
-        UiObject2 okButton = mDevice.findObject(By.res("android:id/button2"));
-        okButton.click();
+
+        final UiObject2 button = mDevice.wait(Until.findObject(By.res("android:id/button2")),
+                mTimeout);
+        if (button == null) throw new UiObjectNotFoundException("Cannot find a 'Cancel' button");
+        button.click();
     }
 
     public UiObject findMenuLabelWithName(String label) {
@@ -411,5 +419,40 @@ public class UiBot extends Bots.BaseBot {
                 .descriptionContains("More options");
         // TODO: use the system string ? android.R.string.action_menu_overflow_description
         return mDevice.findObject(selector);
+    }
+
+    /**
+     * Hides hidden files if the current settings is to show hidden files.
+     */
+    public void hideHiddenFilesIfNeeded() throws Exception {
+        openOverflowMenu();
+        UiObject2 hideHiddenFilesMenu = mDevice.findObject(
+                By.text(mContext.getResources().getString(
+                        R.string.menu_hide_hidden_files)));
+        if (hideHiddenFilesMenu != null) {
+            hideHiddenFilesMenu.click();
+            mDevice.waitForIdle();
+        } else {
+            // Close the menu popup via ESC key.
+            mDevice.pressKeyCode(KeyEvent.KEYCODE_ESCAPE);
+        }
+    }
+
+    /**
+     * Click the toolbar menu to show hidden files.
+     */
+    public void showHiddenFiles() {
+        clickToolbarOverflowItem(
+                mContext.getResources().getString(R.string.menu_show_hidden_files));
+        mDevice.waitForIdle();
+    }
+
+    /**
+     * Click the toolbar menu to hide hidden files.
+     */
+    public void hideHiddenFiles() {
+        clickToolbarOverflowItem(
+                mContext.getResources().getString(R.string.menu_hide_hidden_files));
+        mDevice.waitForIdle();
     }
 }

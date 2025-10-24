@@ -281,6 +281,21 @@ public class ActionHandlerTest {
     }
 
     @Test
+    public void testRestoreSelectedDocumentsFromTrashFromTrash() {
+        mEnv.populateStack();
+
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PNG);
+
+        List<DocumentInfo> docs = new ArrayList<>();
+        docs.add(TestEnv.FILE_PNG);
+        mHandler.restoreSelectedDocumentsFromTrash(docs);
+
+        mActivity.startService.assertCalled();
+        assertSelectionContainerClosed();
+    }
+
+    @Test
     public void testShareSelectedDocuments_ShowsChooser() {
         mActivity.resources.strings.put(R.string.share_via, "Sharezilla!");
         mHandler.shareSelectedDocuments();

@@ -26,6 +26,7 @@ import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -256,7 +257,13 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertSelection(1);
     }
 
+    /** Finds a list item's (whose text has the given label) selection hotspot. */
     public UiObject2 findSelectionHotspot(String label) throws UiObjectNotFoundException {
+        return findItemAndSelectionHotspot(label)[1];
+    }
+
+    /** Finds a list item (whose text has the given label) and the selection hotspot within it. */
+    public UiObject2[] findItemAndSelectionHotspot(String label) throws UiObjectNotFoundException {
         final BySelector list = By.res(mDirListId);
 
         BySelector selector = By.hasChild(By.text(label));
@@ -274,7 +281,7 @@ public class DirectoryListBot extends Bots.BaseBot {
                 break;
             }
         }
-        return selectionHotspot;
+        return new UiObject2[]{ parent, selectionHotspot };
     }
 
     /**
@@ -367,6 +374,14 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertHasFocus(mDirListId);
     }
 
+    /** Assert that 0 things are selected. */
+    public void assertNoSelection() {
+        UiObject2 selectionText = mDevice.wait(
+                Until.findObject(By.textContains("selected")), mTimeout / 10);
+        assertNull(selectionText);
+    }
+
+    /** Assert that N things are selected, for positive N. */
     public void assertSelection(int numSelected) {
         String assertSelectionText = numSelected + " selected";
         UiObject2 selectionText = mDevice.wait(

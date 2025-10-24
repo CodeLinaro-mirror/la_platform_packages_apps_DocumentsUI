@@ -19,7 +19,9 @@ package com.android.documentsui.services;
 import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
@@ -87,14 +89,10 @@ final class MoveJob extends CopyJob {
     }
 
     @Override
-    public Notification getProgressNotification() {
-        return getProgressNotification(getRes(R.string.copy_remaining));
-    }
-
-    @Override
     public Notification getFailureNotification() {
-        return getFailureNotification(
-                getFailureContentTitle(getRes(R.string.move_error_notification_title)),
+        return getFailureNotification(getFailureContentTitle(
+                        getRes(isDesktopUxPhase2FlagEnabled() ? R.string.move_error_2
+                                : R.string.move_error_notification_title)),
                 getRes(R.drawable.ic_menu_copy));
     }
 
@@ -107,18 +105,20 @@ final class MoveJob extends CopyJob {
 
     @Override
     public boolean setUp() {
+        if (!super.setUp()) return false;
+
         if (mSrcParentUri != null) {
             try {
                 mSrcParent = DocumentInfo.fromUri(appContext.getContentResolver(), mSrcParentUri,
                         UserId.DEFAULT_USER);
-            } catch (FileNotFoundException e) {
-                Log.e(TAG, "Failed to create srcParent.", e);
-                failureCount = mResourceUris.getItemCount();
+            } catch (Exception e) {
+                Log.e(TAG, "Cannot resolve parent URI " + redact(mSrcParentUri), e);
+                onFileFailed(mResolvedDocs);
                 return false;
             }
         }
 
-        return super.setUp();
+        return true;
     }
 
     /**
@@ -137,8 +137,8 @@ final class MoveJob extends CopyJob {
                 if (src.isDirectory()) {
                     try {
                         size += calculateFileSizesRecursively(getClient(src), src.derivedUri);
-                    } catch (RemoteException|ResourceException e) {
-                        Log.w(TAG, "Failed to obtain client for %s" + src.derivedUri + ".", e);
+                    } catch (Exception e) {
+                        Log.w(TAG, "Cannot get size of " + redact(src), e);
 
                         // Failed to calculate size, but move may still succeed.
                         return true;
@@ -194,7 +194,7 @@ final class MoveJob extends CopyJob {
         byteCopyDocument(src, dest);
 
         // Remove the source document.
-        if(!isCanceled()) {
+        if (!isCanceled()) {
             deleteDocument(src, srcParent);
         }
     }

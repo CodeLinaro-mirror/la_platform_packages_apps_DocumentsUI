@@ -82,9 +82,17 @@ flag {
 }
 
 flag {
-    name: "home_screen_files"
+    name: "home_screen_files_ro"
     namespace: "documentsui"
     description: "Enables the home screen folder and its files."
     bug: "438288106"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "single_click_to_select"
+    namespace: "documentsui"
+    description: "Enables single mouse-click to select files"
+    bug: "389814214"
     is_fixed_read_only: true
 }

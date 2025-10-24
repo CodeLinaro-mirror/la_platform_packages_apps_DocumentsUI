@@ -29,17 +29,25 @@ import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasMoreThanOneChild;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasNoChildren;
 import static com.android.documentsui.conditions.HasChildCountCondition.hasOneChild;
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import android.graphics.Rect;
+import android.net.Uri;
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.provider.DocumentsContract;
 import android.provider.Settings;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
@@ -49,6 +57,7 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.WaitForCheckState;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -56,10 +65,12 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.UUID;
 
 @LargeTest
 public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
@@ -72,6 +83,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     // UI timeout to wait for elements to appear, set to 5 seconds.
     private final int mTimeout = 5000;
+
+    private String getDeviceLabel() {
+        return Settings.Global.getString(context.getContentResolver(), Settings.Global.DEVICE_NAME);
+    }
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException, RemoteException {
@@ -513,9 +528,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchView_TogglingASearchChipClearsSelection() throws Exception {
         // Get the label of the device (this will be used to navigate to the ExternalStorageProvider
         // as the custom roots added for test do not show the search chips).
-        String deviceLabel =
-                Settings.Global.getString(
-                        context.getContentResolver(), Settings.Global.DEVICE_NAME);
+        String deviceLabel = getDeviceLabel();
 
         // Open the root and select the DCIM folder for selection.
         bots.roots.openRoot(deviceLabel);
@@ -540,7 +553,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
         directoryList.wait(hasMoreThanOneChild(), mTimeout);
 
-        // Click the search icon and wait until the only result is the file that was searced for.
+        // Click the search icon and wait until the only result is the file that was searched for.
         bots.search.expand();
         bots.search.setInputText(TestFilesRule.FILE_NAME_1);
         directoryList.wait(hasOneChild(), mTimeout);
@@ -572,8 +585,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         device.wait(Until.gone(By.displayId(R.id.progressbar)), mTimeout);
     }
 
+    /**
+     * Checks that we do not start searching until a non-null, not empty query is entered. This test
+     * is limited to Search V2, as V1 shows a view with past search queries that hides the directory
+     * listing. So while both searches behave in the same way, we can reliably verify it only in V2.
+     */
     @Test
-    @Ignore
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testEmptyQueryShowsDirectoryListing() throws UiObjectNotFoundException {
         // Assert that we are in the correct location.
         bots.breadcrumb.assertItemsPresent(ROOT_0_ID);
@@ -582,11 +600,119 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Open search, make sure query input field has focus.
         bots.search.expand();
         bots.search.assertInputFocused(true);
+        // Try to hide the virtual keyboard; on small devices it can hide some files.
+        Espresso.closeSoftKeyboard();
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
         // Enter an empty query.
         bots.search.setInputText("");
+        Espresso.closeSoftKeyboard();
         // Check that the content of the current directory has not changed.
         assertDefaultContentOfTestDir0();
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchVisibleInSearchableRootsOnly() throws UiObjectNotFoundException {
+        // Starting in ROOT_ID_0, which is searchable.
+        assertNotNull("Icon should be visible in ROOT_0_ID", bots.search.getSearchIcon());
+        // Broken root cannot be searched.
+        bots.roots.openRoot("Broken Root Doc");
+        assertNull("Icon should not be visible ini Broken Root Doc", bots.search.getSearchIcon());
+        // Device root should be searchable.
+        String deviceLabel = getDeviceLabel();
+        bots.roots.openRoot(deviceLabel);
+        assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchViewCollapsedOnSmallScreen() {
+        assertNotNull(mActivityScenario);
+        mActivityScenario.onActivity(activity -> {
+            assertNotNull(activity);
+            Rect bounds = TestUtils.Companion.getActivityBounds(activity);
+            Assume.assumeTrue(
+                    "Skipping test: window size " + bounds.width() + "dp x " + bounds.height()
+                            + "dp  is larger than 900dp x 600dp",
+                    bounds.width() < 900.0 && bounds.height() < 600.0
+            );
+        });
+
+        String pkg = bots.directory.mTargetPackage;
+        UiObject2 searchBar = device.findObject(By.res(pkg + ":id/search_bar"));
+        assertNull(searchBar);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testSearchViewExpandedOnLargeScreen() {
+        assertNotNull(mActivityScenario);
+        mActivityScenario.onActivity(activity -> {
+            assertNotNull(activity);
+            Rect bounds = TestUtils.Companion.getActivityBounds(activity);
+            Assume.assumeTrue(
+                    "Skipping test: window size " + bounds.width() + "dp x " + bounds.height()
+                            + "dp  is smaller than 1000dp x 700dp",
+                    bounds.width() >= 1000.0 && bounds.height() >= 700.0
+            );
+        });
+
+        String pkg = bots.directory.mTargetPackage;
+        UiObject2 searchBar = device.findObject(By.res(pkg + ":id/docked_search_text"));
+        assertNotNull(searchBar);
+        assertTrue(searchBar.isEnabled());
+    }
+
+    @Test
+    @EnableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testSearchResultHidesNonDesktopFolders() throws Exception {
+        DocumentsProviderHelper rootStorageDocsHelper = new DocumentsProviderHelper(userId,
+                Providers.AUTHORITY_STORAGE, context,
+                Providers.AUTHORITY_STORAGE);
+        String testFileName = "showHideTest-" + UUID.randomUUID() + ".txt";
+        Uri androidFolderUri = DocumentsContract.buildDocumentUri(Providers.AUTHORITY_STORAGE,
+                Providers.ROOT_ID_DEVICE + ":Android");
+        Uri testFileUri = null;
+        try {
+            // Create a test file inside the Android folder.
+            testFileUri = rootStorageDocsHelper.createDocument(androidFolderUri, "text/plain",
+                    testFileName);
+
+            // Reset show/hide state to hide hidden files before the test.
+            bots.main.hideHiddenFilesIfNeeded();
+
+            // Open device root: the internal storage.
+            String deviceRootLabel = getDeviceLabel();
+            bots.roots.openRoot(deviceRootLabel);
+
+            // Search the test file.
+            bots.search.expand();
+            bots.search.setInputText(testFileName);
+            bots.keyboard.pressEnter();
+
+            // Assert there's no search result because the Android folder and its content are
+            // hidden.
+            String noSearchResults = String.format(context.getString(R.string.no_results),
+                    deviceRootLabel);
+            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+
+            // Now show hidden files, the test file should show.
+            bots.main.showHiddenFiles();
+            bots.directory.waitForDocument(testFileName);
+
+            // Now hide hidden files, the test file should disappear.
+            bots.main.hideHiddenFiles();
+            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+        } finally {
+            // Delete the created test file if it exists.
+            if (testFileUri != null) {
+                try {
+                    DocumentsContract.deleteDocument(context.getContentResolver(), testFileUri);
+                } catch (Exception e) {
+                    // Ignore cleanup errors.
+                }
+            }
+        }
     }
 }

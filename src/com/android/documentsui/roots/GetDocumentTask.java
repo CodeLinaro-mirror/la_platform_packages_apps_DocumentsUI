@@ -16,53 +16,61 @@
 
 package com.android.documentsui.roots;
 
-import androidx.annotation.Nullable;
 import android.app.Activity;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.TimeoutTask;
 import com.android.documentsui.base.CheckedTask;
 import com.android.documentsui.base.DocumentInfo;
-import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.UserId;
 
 import java.util.function.Consumer;
 
 /**
- * A {@link CheckedTask} that takes {@link RootInfo} and query SAF to obtain the
- * {@link DocumentInfo} of its root document and call supplied callback to handle the
+ * A {@link CheckedTask} that takes in an authority, document id and a user id then
+ * queries SAF to obtain the {@link DocumentInfo} and call supplied callback to handle the
  * {@link DocumentInfo}.
  */
-public class GetRootDocumentTask extends TimeoutTask<Void, DocumentInfo> {
+public class GetDocumentTask extends TimeoutTask<Void, DocumentInfo> {
 
-    private final static String TAG = "GetRootDocumentTask";
+    private static final String TAG = "GetDocumentTask";
 
-    private final RootInfo mRootInfo;
+    private final String mAuthority;
+    private final String mDocumentId;
+    private final UserId mUserId;
     private final Consumer<DocumentInfo> mCallback;
     private final DocumentsAccess mDocs;
 
-    public GetRootDocumentTask(
-            RootInfo rootInfo,
+    public GetDocumentTask(
+            String authority,
+            String documentId,
+            UserId userId,
             Activity activity,
             long timeout,
             DocumentsAccess docs,
             Consumer<DocumentInfo> callback) {
         super(activity::isDestroyed, timeout);
-        mRootInfo = rootInfo;
+        mAuthority = authority;
+        mDocumentId = documentId;
+        mUserId = userId;
         mDocs = docs;
         mCallback = callback;
     }
 
     @Override
     public @Nullable DocumentInfo run(Void... args) {
-        return mDocs.getRootDocument(mRootInfo);
+        return mDocs.getDocument(mAuthority, mDocumentId, mUserId);
     }
 
     @Override
     public void finish(@Nullable DocumentInfo documentInfo) {
         if (documentInfo == null) {
             Log.e(TAG,
-                    "Cannot find document info for root: " + mRootInfo);
+                    "Cannot find document info for authority: " + mAuthority
+                    + ", documentId: " + mDocumentId + ", userId: " + mUserId);
         }
 
         mCallback.accept(documentInfo);

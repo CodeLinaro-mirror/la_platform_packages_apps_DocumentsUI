@@ -16,25 +16,32 @@
 
 package com.android.documentsui.files;
 
+import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import static junit.framework.Assert.assertEquals;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -55,6 +62,7 @@ import com.android.documentsui.testing.TestMenuInflater;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
+import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -110,6 +118,8 @@ public final class MenuManagerTest {
     private TestMenuItem actionModeSort;
     private TestMenuItem mActionExtractHere;
     private TestMenuItem mActionBrowse;
+    private TestMenuItem mActionModeTrash;
+    private TestMenuItem mActionModeRestoreFromTrash;
 
     /* Option Menu items */
     private TestMenuItem optionSearch;
@@ -143,6 +153,10 @@ public final class MenuManagerTest {
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule =
+            DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
     public void setUp() {
@@ -195,6 +209,8 @@ public final class MenuManagerTest {
         actionModeSort = testMenu.findItem(R.id.action_menu_sort);
         mActionExtractHere = testMenu.findItem(R.id.action_menu_extract_here);
         mActionBrowse = testMenu.findItem(R.id.action_menu_browse);
+        mActionModeTrash = testMenu.findItem(R.id.action_menu_move_to_trash);
+        mActionModeRestoreFromTrash = testMenu.findItem(R.id.action_menu_restore_from_trash);
 
         // Menu actions (including overflow) when action mode is not active.
         optionSearch = testMenu.findItem(R.id.option_menu_search);
@@ -255,6 +271,19 @@ public final class MenuManagerTest {
 
     private int getFilesCount() {
         return mFilesCount;
+    }
+
+    /**
+     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
+     * The Trash feature under test relies on DocumentsContract APIs introduced in the
+     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
+     * subject to MTS testing, which runs on older Android base builds to verify backward
+     * compatibility. However, this specific Trash feature lacks backward compatibility
+     * with platforms at or below Baklava. This assumption prevents failures when the
+     * test runs on an older base OS without the necessary APIs.
+     */
+    private void assumeTrashApiIsAvailable() {
+        assumeTrue(VersionUtils.isGreaterThanB());
     }
 
     @Test
@@ -996,5 +1025,66 @@ public final class MenuManagerTest {
         mgr.updateRootContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testActionMenu_canTrash_enabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canTrash = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canTrash = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeTrash.assertEnabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @DisableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testActionMenu_canTrash_disabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canTrash = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canTrash = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        // If the flag is disabled, the menu item will not be visible
+        mActionModeTrash.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testActionMenu_canRestoreFromTrash_enabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canRestore = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canRestore = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertEnabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @DisableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testActionMenu_canRestoreFromTrash_disabled() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.canRestore = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+
+        selectionDetails.canRestore = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        mActionModeRestoreFromTrash.assertDisabledAndInvisible();
     }
 }

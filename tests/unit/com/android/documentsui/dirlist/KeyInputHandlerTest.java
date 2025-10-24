@@ -75,11 +75,6 @@ public final class KeyInputHandlerTest {
         private @Nullable DocumentItemDetails mActivated;
 
         @Override
-        public boolean isInteractiveItem(DocumentItemDetails item, KeyEvent e) {
-            return true;
-        }
-
-        @Override
         public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
             mActivated = item;
             return false;

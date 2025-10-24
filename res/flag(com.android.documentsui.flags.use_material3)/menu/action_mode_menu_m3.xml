@@ -44,12 +44,6 @@
         android:showAsAction="always"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_menu_delete"
-        android:icon="@drawable/ic_menu_delete_m3"
-        android:title="@string/menu_delete"
-        android:showAsAction="always"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_menu_sort"
         android:icon="@drawable/ic_sort_m3"
         android:title="@string/menu_sort"
@@ -70,6 +64,23 @@
         android:title="@string/menu_deselect_all"
         android:showAsAction="never"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_menu_move_to_trash"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/menu_move_to_trash"
+        android:showAsAction="always"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_menu_restore_from_trash"
+        android:title="@string/menu_restore_from_trash"
+        android:showAsAction="never"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_menu_delete"
+        android:icon="@drawable/ic_menu_delete"
+        android:title="@string/menu_permanently_delete"
+        android:showAsAction="never"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/action_menu_copy_to"
         android:title="@string/menu_copy"

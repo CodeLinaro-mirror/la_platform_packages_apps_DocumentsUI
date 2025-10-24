@@ -29,6 +29,7 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_UN
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager;
@@ -1146,7 +1147,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // It won't end action mode if user cancels the delete.
             mActions.showDeleteDialog();
             return true;
-        } else if (id == getRes(R.id.action_menu_copy_to)) {
+        } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
+            trashSelectedDocuments(selection);
+            return true;
+        } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
+            restoreDocumentsFromTrash(selection);
+            return true;
+        }  else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
@@ -1281,6 +1288,26 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         } else {
             mActivity.onDocumentPicked(docs.get(0));
         }
+    }
+
+    private void trashSelectedDocuments(final Selection selected) {
+        if (selected.isEmpty()) {
+            return;
+        }
+
+        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
+        List<DocumentInfo> docs = mModel.getDocuments(selected);
+        mActions.trashSelectedDocuments(docs);
+    }
+
+    private void restoreDocumentsFromTrash(final Selection selected) {
+        if (selected.isEmpty()) {
+            return;
+        }
+
+        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
+        List<DocumentInfo> docs = mModel.getDocuments(selected);
+        mActions.restoreSelectedDocumentsFromTrash(docs);
     }
 
     private void showChooserForDoc(final Selection<String> selected) {
@@ -1642,10 +1669,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         // If we can reload the root doc successfully, we will push it to the stack and load the
         // stack.
         final RootInfo emptyDocRoot = mActivity.getCurrentRoot();
-        mInjector.actions.getRootDocument(
-                emptyDocRoot,
-                TimeoutTask.DEFAULT_TIMEOUT,
-                rootDoc -> {
+        mInjector.actions.getDocument(
+                emptyDocRoot.authority,
+                emptyDocRoot.documentId,
+                emptyDocRoot.userId,
+                TimeoutTask.DEFAULT_TIMEOUT, rootDoc -> {
                     mRefreshLayout.setRefreshing(false);
                     if (rootDoc != null && mActivity.getCurrentDirectory() == null) {
                         // Make sure the stack does not change during task was running.
@@ -1653,8 +1681,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         mActivity.updateNavigator();
                         mActions.loadDocumentsForCurrentStack();
                     }
-                }
-        );
+                });
     }
 
     private final class ModelUpdateListener implements EventListener<Model.Update> {

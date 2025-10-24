@@ -170,8 +170,10 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void pasteIntoFolder(RootInfo root) {
-        this.getRootDocument(
-                root,
+        this.getDocument(
+                root.authority,
+                root.documentId,
+                root.userId,
                 TimeoutTask.DEFAULT_TIMEOUT,
                 (DocumentInfo doc) -> pasteIntoFolder(root, doc));
     }
@@ -366,6 +368,88 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 .withDestination(mState.stack)
                 .withSrcs(srcs)
                 .withSrcParent(srcParent == null ? null : srcParent.derivedUri)
+                .build();
+
+        FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,
+                FileOperations.createJobId());
+    }
+
+    @Override
+    public void trashSelectedDocuments(List<DocumentInfo> docs) {
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
+
+        List<Uri> uris = new ArrayList<>(docs.size());
+        for (DocumentInfo doc : docs) {
+            uris.add(doc.derivedUri);
+        }
+
+        UrisSupplier srcs;
+        try {
+            srcs = UrisSupplier.create(
+                    uris,
+                    mClipStore);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to trash because we were unable to get item URIs.", e);
+            mDialogs.showFileOperationStatus(
+                    FileOperations.Callback.STATUS_FAILED,
+                    FileOperationService.OPERATION_TRASH,
+                    uris.size());
+            return;
+        }
+
+        FileOperation operation = new FileOperation.Builder()
+                .withOpType(FileOperationService.OPERATION_TRASH)
+                .withDestination(mState.stack)
+                .withSrcs(srcs)
+                .build();
+
+        FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,
+                FileOperations.createJobId());
+    }
+
+    @Override
+    public void restoreSelectedDocumentsFromTrash(List<DocumentInfo> docs) {
+        if (docs == null || docs.isEmpty()) {
+            return;
+        }
+
+        if (isUseMaterial3FlagEnabled()) {
+            mCloseSelectionBar.run();
+        } else {
+            mActionModeAddons.finishActionMode();
+        }
+
+        List<Uri> uris = new ArrayList<>(docs.size());
+        for (DocumentInfo doc : docs) {
+            uris.add(doc.derivedUri);
+        }
+
+        UrisSupplier srcs;
+        try {
+            srcs = UrisSupplier.create(
+                    uris,
+                    mClipStore);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to restore a file because we were unable to get item URIs.", e);
+            mDialogs.showFileOperationStatus(
+                    FileOperations.Callback.STATUS_FAILED,
+                    FileOperationService.OPERATION_RESTORE,
+                    uris.size());
+            return;
+        }
+
+        FileOperation operation = new FileOperation.Builder()
+                .withOpType(FileOperationService.OPERATION_RESTORE)
+                .withDestination(mState.stack)
+                .withSrcs(srcs)
                 .build();
 
         FileOperations.start(mActivity, operation, mDialogs::showFileOperationStatus,

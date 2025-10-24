@@ -37,6 +37,9 @@
     <string name="menu_save" msgid="5195367497138965168">"சேமி"</string>
     <string name="menu_share" msgid="4307140947108068356">"பகிர்"</string>
     <string name="menu_delete" msgid="1022254131543256626">"நீக்கு"</string>
+    <string name="menu_permanently_delete" msgid="1177349666644056627">"நிரந்தரமாக நீக்கு"</string>
+    <string name="menu_move_to_trash" msgid="1809017212900920775">"நீக்கியவற்றிற்கு நகர்த்து"</string>
+    <string name="menu_restore_from_trash" msgid="6335501796145576127">"மீட்டெடுத்தல்"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"எல்லாம் தேர்ந்தெடு"</string>
     <string name="menu_deselect_all" msgid="7729916068862742979">"அனைத்தையும் தேர்வுநீக்கு"</string>
     <string name="menu_select" msgid="1366061076507142387">"தேர்ந்தெடு"</string>
@@ -116,6 +119,7 @@
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"இந்தச் செயலுக்கு அனுமதியில்லை"</string>
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"மேலும் அறிய IT நிர்வாகியைத் தொடர்புகொள்ளவும்"</string>
     <string name="root_recent" msgid="1080156975424341623">"சமீபத்தியவை"</string>
+    <string name="root_trash" msgid="1869929519939073178">"நீக்கியவை"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"பயன்படுத்தாத அளவு: <xliff:g id="SIZE">%1$s</xliff:g>"</string>
     <string name="root_type_service" msgid="6521366147466512289">"சேமிப்பகச் சேவைகள்"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"ஷார்ட்கட்கள்"</string>
@@ -137,6 +141,8 @@
     <string name="extract_notification_title" msgid="5067393961754430469">"ஃபைல்களைப் பிரிக்கிறது"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ஃபைல்களை நகர்த்துதல்"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ஃபைல்களை நீக்குதல்"</string>
+    <string name="move_to_trash_notification_title" msgid="6134372996525273852">"ஃபைல்களை நீக்குகிறது"</string>
+    <string name="restore_from_trash_notification_title" msgid="6818405564188548805">"ஃபைல்களை மீட்டெடுக்கிறது"</string>
     <string name="copy_remaining" msgid="5390517377265177727">"<xliff:g id="DURATION">%s</xliff:g> மீதமுள்ளன"</string>
     <plurals name="copy_begin" formatted="false" msgid="151184708996738192">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> கோப்புகளை நகலெடுக்கிறது.</item>
@@ -158,23 +164,26 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> கோப்புகளை நீக்குகிறது.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ஃபைலை நீக்குகிறது.</item>
     </plurals>
+    <string name="trashing" msgid="4643112474465979863">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தை நீக்குகிறது}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களை நீக்குகிறது}}"</string>
+    <string name="restoring_from_trash" msgid="6346617909485060438">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஃபைலை மீட்டெடுக்கிறது}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஃபைல்களை மீட்டெடுக்கிறது}}"</string>
     <string name="undo" msgid="2902438994196400565">"செயல்தவிர்"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"தயாராகிறது..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"தயாராகிறது..."</string>
     <string name="extract_preparing" msgid="4796626960061745796">"தயாராகிறது..."</string>
     <string name="move_preparing" msgid="6504239656430530761">"தயாராகிறது..."</string>
     <string name="delete_preparing" msgid="7339349837842802508">"தயாராகிறது..."</string>
+    <string name="move_to_trash_preparing" msgid="6180195603212537441">"தயாராகிறது..."</string>
+    <string name="restore_from_trash_preparing" msgid="2829747628222239861">"தயாராகிறது..."</string>
     <string name="delete_progress" msgid="2627631054702306423">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
-    <!-- no translation found for copy_error_notification_title (5426120176307563562) -->
-    <skip />
-    <!-- no translation found for compress_error_notification_title (7238511273511460182) -->
-    <skip />
-    <!-- no translation found for extract_error_notification_title (2644824788957108658) -->
-    <skip />
-    <!-- no translation found for move_error_notification_title (7094494564254143696) -->
-    <skip />
-    <!-- no translation found for delete_error_notification_title (6510460288416352803) -->
-    <skip />
+    <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
+    <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தை நகலெடுக்க முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களை நகலெடுக்க முடியவில்லை}}"</string>
+    <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தைச் சுருக்க முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களைச் சுருக்க முடியவில்லை}}"</string>
+    <string name="extract_error_notification_title" msgid="2644824788957108658">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தைப் பிரித்தெடுக்க முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களைப் பிரித்தெடுக்க முடியவில்லை}}"</string>
+    <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தை நகர்த்த முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களை நகர்த்த முடியவில்லை}}"</string>
+    <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தை நீக்க முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களை நீக்க முடியவில்லை}}"</string>
+    <string name="move_to_trash_error_notification_title" msgid="2766270864756812690">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஆவணத்தை நீக்க முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஆவணங்களை நீக்க முடியவில்லை}}"</string>
+    <string name="restore_from_trash_error_notification_title" msgid="5097907450416686866">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ஃபைலை மீட்டெடுக்க முடியவில்லை}other{<xliff:g id="COUNT_1">{count}</xliff:g> ஃபைல்களை மீட்டெடுக்க முடியவில்லை}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"விவரங்களைப் பார்க்க, தட்டவும்"</string>
     <string name="close" msgid="905969391788869975">"மூடு"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -205,10 +214,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ஃபைல்கள் , கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டன.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ஃபைல், கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது.</item>
     </plurals>
-    <!-- no translation found for read_only_label (894442752344379606) -->
-    <skip />
-    <!-- no translation found for read_only_explanation (213951358525192590) -->
-    <skip />
+    <string name="read_only_label" msgid="894442752344379606">"படிக்க மட்டும்"</string>
+    <string name="read_only_explanation" msgid="213951358525192590">"நீங்கள் இந்த ஃபைல்களைப் பார்க்கலாம் ஆனால் சில செயல்களைச் செய்ய முடியாது"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"இந்தக் காப்பகம் படிக்க மட்டுமேயான இடத்தில் உள்ளது, அதை இங்கே பிரித்தெடுக்க முடியாது."</string>
     <string name="file_operation_rejected" msgid="4301554203329008794">"ஃபைல் செயல்பாடு ஆதரிக்கப்படவில்லை."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"ஃபைல் செயல்பாடு தோல்வியடைந்தது."</string>
@@ -219,7 +226,9 @@
     <string name="extract_in_progress" msgid="519951867474301835">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” இல் பிரித்தெடுக்கிறது}other{# காப்பகங்களை “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” இல் பிரித்தெடுக்கிறது}}"</string>
     <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”க்கு நகர்த்துகிறது}other{# ஃபைல்களை “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”க்கு நகர்த்துகிறது}}"</string>
     <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை நீக்குகிறது}other{# ஃபைல்களை நீக்குகிறது}}"</string>
-    <string name="compress_in_progress" msgid="7768916918745485546">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ ஃபைலை ஜிப் செய்கிறது}other{# ஃபைல்களை ஜிப் செய்கிறது}}"</string>
+    <string name="trash_in_progress" msgid="6889113199087672853">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ஃபைலை நீக்குகிறது}other{# ஃபைல்களை நீக்குகிறது}}"</string>
+    <string name="restore_in_progress" msgid="6756221866797865046">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> ஐ மீட்டெடுக்கிறது}other{# ஃபைல்களை மீட்டெடுக்கிறது}}"</string>
+    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ஃபைலை ஜிப் செய்கிறது}other{# ஃபைல்களை ஜிப் செய்கிறது}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ஃபைலின் செயல்நிலையைக் காட்டும்"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ஃபைல் செயல்நிலை"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"முடிந்தது"</string>
@@ -278,6 +287,7 @@
     <string name="cant_display_content" msgid="8633226333229417237">"உள்ளடக்கத்தைக் காட்ட முடியவில்லை"</string>
     <string name="sign_in" msgid="6253762676723505592">"உள்நுழைக"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"காப்பகம்<xliff:g id="EXTENSION">%s</xliff:g>"</string>
+    <string name="new_archive_file_name_2" msgid="6787685985722032255">"காப்பகம்"</string>
     <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g>ஐ மேலெழுதவா?"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"பின்னணியில் தொடர்க"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
