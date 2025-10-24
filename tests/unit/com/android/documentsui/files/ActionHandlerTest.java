@@ -1013,7 +1013,7 @@ public class ActionHandlerTest {
      */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testShowEmptyTrashConfirmationDialog_NoDialog() {
         assumeTrashApiIsAvailable();
@@ -1035,7 +1035,7 @@ public class ActionHandlerTest {
      */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testPermanentlyDeleteTrashDocuments() {
         assumeTrashApiIsAvailable();
@@ -1063,7 +1063,7 @@ public class ActionHandlerTest {
     /** Verifies that the permanent delete action does nothing if the trash is already empty. */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testPermanentlyDeleteTrashDocuments_NoItems() {
         assumeTrashApiIsAvailable();
