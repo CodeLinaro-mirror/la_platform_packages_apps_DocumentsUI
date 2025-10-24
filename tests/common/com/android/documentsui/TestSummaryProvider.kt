@@ -22,6 +22,7 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
 import android.util.Log
+import androidx.core.os.BundleCompat
 
 internal class TestSummaryProvider :
     TestRootProvider("Test Summary Provider", ROOT_ID, 0, ROOT_ID) {
@@ -137,7 +138,8 @@ internal class TestSummaryProvider :
 
             val summariesSerializable = mutableMapOf<String, String>()
             for ((key, value) in
-                extras.getSerializable(EXTRA_SUMMARIES, HashMap::class.java) as HashMap<*, *>) {
+                BundleCompat.getSerializable(extras, EXTRA_SUMMARIES, HashMap::class.java)
+                    as HashMap<*, *>) {
                 if (key is String && value is String) {
                     summariesSerializable[key] = value
                 } else {
