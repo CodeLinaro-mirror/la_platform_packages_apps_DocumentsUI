@@ -79,9 +79,9 @@ public final class Bots {
             @LayoutRes Integer layoutId) {
         main = new UiBot(device, context, TIMEOUT, layoutId);
         breadcrumb = new BreadBot(device, context, TIMEOUT, layoutId);
-        roots = new SidebarBot(device, automation, context, main, TIMEOUT, layoutId);
+        roots = new SidebarBot(device, automation, context, TIMEOUT, layoutId);
         directory = new DirectoryListBot(device, automation, context, TIMEOUT, layoutId);
-        sort = new SortBot(device, context, TIMEOUT, main, layoutId);
+        sort = new SortBot(device, context, TIMEOUT, layoutId);
         keyboard = new KeyboardBot(device, context, TIMEOUT, layoutId);
         search = new SearchBot(device, context, TIMEOUT, layoutId);
         gesture = new GestureBot(device, automation, context, TIMEOUT, layoutId);
@@ -89,6 +89,21 @@ public final class Bots {
         inspector = new InspectorBot(device, context, TIMEOUT, layoutId);
         notifications = new NotificationsBot(device, context, TIMEOUT, layoutId);
         picker = new PickerBot(device, context, TIMEOUT, layoutId);
+
+        // Set the Bots instance to each sub bot so inside each sub bot they can access other sub
+        // bot.
+        main.setBots(this);
+        breadcrumb.setBots(this);
+        roots.setBots(this);
+        directory.setBots(this);
+        sort.setBots(this);
+        keyboard.setBots(this);
+        search.setBots(this);
+        gesture.setBots(this);
+        menu.setBots(this);
+        inspector.setBots(this);
+        notifications.setBots(this);
+        picker.setBots(this);
     }
 
     /**
@@ -101,6 +116,7 @@ public final class Bots {
         final Context mContext;
         final int mTimeout;
         @LayoutRes protected Integer mLayoutId;
+        public Bots mBots;
 
         BaseBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
             mDevice = device;
@@ -110,6 +126,15 @@ public final class Bots {
                     InstrumentationRegistry.getInstrumentation()
                             .getTargetContext().getPackageName();
             mLayoutId = layoutId;
+        }
+
+        /**
+         * Set the main bots so all sub class has access to it.
+         *
+         * @param bots the Bots instance
+         */
+        public void setBots(Bots bots) {
+            mBots = bots;
         }
 
         /**

@@ -56,7 +56,6 @@ public class SidebarBot extends Bots.BaseBot {
 
     private final String mRootListId;
     private final UiAutomation mAutomation;
-    private final UiBot mUiBot;
 
     /**
      * Root list exists in both drawer and navigation rail. With this enum the
@@ -77,12 +76,10 @@ public class SidebarBot extends Bots.BaseBot {
             UiDevice device,
             UiAutomation automation,
             Context context,
-            UiBot uiBot,
             int timeout,
             @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mAutomation = automation;
-        mUiBot = uiBot;
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
@@ -108,7 +105,7 @@ public class SidebarBot extends Bots.BaseBot {
 
     private boolean toolbarHasTitle(String title) {
         try {
-            mUiBot.assertWindowTitle(title);
+            mBots.main.assertWindowTitle(title);
             return true;
         } catch (AssertionFailedError e) {
             return false;
@@ -146,7 +143,7 @@ public class SidebarBot extends Bots.BaseBot {
         assertTrue(
                 "Failed to click on root: " + label,
                 findRoot(label, RootListContainerType.FOLLOW_LAYOUT).click());
-        mUiBot.assertWindowTitle(label);
+        mBots.main.assertWindowTitle(label);
     }
 
     /**
@@ -160,7 +157,7 @@ public class SidebarBot extends Bots.BaseBot {
         assertTrue(
                 "Failed to click on nav rail root: " + label,
                 findRoot(label, RootListContainerType.FORCE_NAV_RAIL).click());
-        mUiBot.assertWindowTitle(label);
+        mBots.main.assertWindowTitle(label);
     }
 
     /** Open navigation drawer from the burger menu button within the navigation rail layout. */
