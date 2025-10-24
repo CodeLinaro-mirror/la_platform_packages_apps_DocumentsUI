@@ -17,8 +17,8 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -44,8 +44,8 @@ import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.LookupApplicationName;
 import com.android.documentsui.base.Menus;
-import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.queries.SearchViewManager;
@@ -173,13 +173,13 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    protected void updateSettings(MenuItem settings, RootInfo root) {
-        Menus.setEnabledAndVisible(settings, root.hasSettings());
+    protected void updateSettings(MenuItem settings, SidebarEntryItemInfo itemInfo) {
+        Menus.setEnabledAndVisible(settings, itemInfo.hasSettings());
     }
 
     @Override
-    protected void updateEject(MenuItem eject, RootInfo root) {
-        Menus.setEnabledAndVisible(eject, root.supportsEject() && !root.ejecting);
+    protected void updateEject(MenuItem eject, SidebarEntryItemInfo itemInfo) {
+        Menus.setEnabledAndVisible(eject, itemInfo.supportsEject() && !itemInfo.isEjecting());
     }
 
     @Override
@@ -220,7 +220,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    protected void updateOpenInNewWindow(MenuItem openInNewWindow, RootInfo root) {
+    protected void updateOpenInNewWindow(MenuItem openInNewWindow, SidebarEntryItemInfo itemInfo) {
         assert openInNewWindow.isVisible() && openInNewWindow.isEnabled();
     }
 
@@ -268,8 +268,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    protected void updatePasteInto(MenuItem pasteInto, RootInfo root, DocumentInfo docInfo) {
-        Menus.setEnabledAndVisible(pasteInto, root.supportsCreate()
+    protected void updatePasteInto(MenuItem pasteInto, SidebarEntryItemInfo itemInfo,
+            DocumentInfo docInfo) {
+        Menus.setEnabledAndVisible(pasteInto, itemInfo.supportsCreate()
                 && docInfo != null
                 && docInfo.isCreateSupported()
                 && mDirDetails.hasItemsToPaste());
@@ -339,6 +340,15 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
         boolean visible = mFeatures.isInspectorEnabled() && selectionDetails.size() <= 1;
         Menus.setEnabledAndVisible(inspect, visible);
+    }
+
+    /**
+     * This method is called during a sidebar context menu click with a reference to the
+     * item's information.
+     */
+    @Override
+    protected void updateInspect(MenuItem inspect, SidebarEntryItemInfo itemInfo) {
+        Menus.setEnabledAndVisible(inspect, itemInfo.supportsInspect());
     }
 
     @Override

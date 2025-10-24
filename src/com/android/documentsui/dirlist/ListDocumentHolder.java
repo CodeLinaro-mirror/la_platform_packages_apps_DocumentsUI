@@ -349,6 +349,10 @@ final class ListDocumentHolder extends DocumentHolder {
                 // Non-tablets
                 boolean hasDetails = false;
                 ArrayList<String> metadataList = new ArrayList<>();
+                if (isUseFileSummaryEnabled() && !TextUtils.isEmpty(summary)) {
+                    hasDetails = true;
+                    metadataList.add(summary);
+                }
                 if (mDoc.lastModified > 0) {
                     hasDetails = true;
                     metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));

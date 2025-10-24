@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Fela upplýsingaglugga"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Sýna upplýsingaglugga"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"Ekkert í ruslinu"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Skrám verður sjálfkrafa eytt úr ruslinu eftir 30 daga."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Tæma ruslið núna"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Tæma ruslið?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ekki er hægt að afturkalla þessa aðgerð né endurheimta skrárnar."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tæma ruslið"</string>
 </resources>

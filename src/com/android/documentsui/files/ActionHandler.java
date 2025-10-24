@@ -20,6 +20,7 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -68,6 +69,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.ClipStore;
@@ -137,7 +139,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public boolean dropOn(DragEvent event, RootInfo root) {
-        if (!root.supportsCreate() || root.isLibrary()) {
+        if (!root.isValidDropTarget()) {
+            return false;
+        }
+
+        // Except trash root, other library roots do not support drag & drop operations.
+        if (root.isLibrary() && !root.isTrash()) {
             return false;
         }
 
@@ -188,13 +195,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
-    public void pasteIntoFolder(RootInfo root) {
+    public void pasteIntoFolder(SidebarEntryItemInfo itemInfo) {
         this.getDocument(
-                root.authority,
-                root.documentId,
-                root.userId,
+                itemInfo.getRoot().authority,
+                itemInfo.getDocumentId(),
+                itemInfo.getRoot().userId,
                 TimeoutTask.DEFAULT_TIMEOUT,
-                (DocumentInfo doc) -> pasteIntoFolder(root, doc));
+                (DocumentInfo doc) -> pasteIntoFolder(itemInfo.getRoot(), doc));
     }
 
     private void pasteIntoFolder(RootInfo root, @Nullable DocumentInfo doc) {
@@ -204,6 +211,14 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public @Nullable DocumentInfo renameDocument(String name, DocumentInfo document) {
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(List.of(document.derivedUri), document.userId)) {
+            // This should have been blocked earlier before the popup appears, but leave here
+            // just in case.
+            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+            return null;
+        }
+
         ContentResolver resolver = document.userId.getContentResolver(mActivity);
         ContentProviderClient client = null;
 
@@ -304,6 +319,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
+        if (isHomeScreenFilesFlagEnabled()) {
+            List<DocumentInfo> docs = mModel.getDocuments(selection);
+            if (docs == null || docs.isEmpty()) {
+                mDialogs.showOperationUnsupported();
+                return;
+            }
+
+            List<Uri> uris = new ArrayList<>();
+            for (DocumentInfo doc : docs) {
+                uris.add(doc.derivedUri);
+            }
+
+            if (blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+                Log.e(TAG, "Failed to cut because a protected folder is selected.");
+                return;
+            }
+        }
+
         mSelectionMgr.clearSelection();
 
         mClipper.clipDocumentsForCut(mModel::getItemUri, selection, mState.stack.peek());
@@ -394,6 +427,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             uris.add(doc.derivedUri);
         }
 
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to delete because a protected folder is selected.");
+            return;
+        }
+
         UrisSupplier srcs;
         try {
             srcs = UrisSupplier.create(
@@ -441,6 +480,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         List<Uri> uris = new ArrayList<>(docs.size());
         for (DocumentInfo doc : docs) {
             uris.add(doc.derivedUri);
+        }
+
+        if (isHomeScreenFilesFlagEnabled()
+                && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            Log.e(TAG, "Failed to trash because a protected folder is selected.");
+            return;
         }
 
         UrisSupplier srcs;

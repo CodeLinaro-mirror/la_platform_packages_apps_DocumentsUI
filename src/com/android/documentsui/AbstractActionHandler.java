@@ -27,7 +27,6 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -63,6 +62,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
@@ -78,7 +78,6 @@ import com.android.documentsui.loaders.SummaryLoader;
 import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.GetDocumentTask;
-import com.android.documentsui.roots.GetShortcutUriTask;
 import com.android.documentsui.roots.LoadFirstRootTask;
 import com.android.documentsui.roots.LoadRootTask;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -243,24 +242,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void getShortcutDocument(ShortcutInfo shortcut, int timeout,
-            Consumer<Uri> callback) {
-        Context context = mActivity.getApplicationContext();
-        ContentResolver resolver = shortcut.getRoot().userId.getContentResolver(context);
-
-        // Create the shortcut folder and get its URI first if it doesn't exist. Then call
-        // and execute the next task to open the shortcut folder.
-        GetShortcutUriTask task = new GetShortcutUriTask(
-                shortcut,
-                resolver,
-                mActivity,
-                timeout,
-                callback);
-
-        task.executeOnExecutor(mExecutors.lookup(shortcut.getRoot().authority));
-    }
-
-    @Override
     public void refreshDocument(DocumentInfo doc, BooleanConsumer callback) {
         RefreshTask task = new RefreshTask(
                 mInjector.features,
@@ -354,7 +335,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void pasteIntoFolder(RootInfo root) {
+    public void pasteIntoFolder(SidebarEntryItemInfo itemInfo) {
         throw new UnsupportedOperationException("Can't paste into folder.");
     }
 
@@ -810,6 +791,24 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public void shareSelectedDocuments() {
         throw new UnsupportedOperationException("Share not supported!");
+    }
+
+    @Override
+    public boolean blockOperationForShortcuts(Collection<Uri> uris, UserId userId) {
+        Collection<ShortcutInfo> shortcuts = mProviders.getShortcutsForUser(userId);
+        if (shortcuts == null) {
+            return false;
+        }
+        for (ShortcutInfo shortcut : shortcuts) {
+            // Prevent special folders (i.e. system-defined shortcuts) from getting deleted.
+            for (Uri uri : uris) {
+                if (uri.equals(shortcut.getUri())) {
+                    mDialogs.showOperationUnsupported();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

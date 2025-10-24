@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Infofeld ausblenden"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Infofeld einblenden"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"Der Papierkorb ist leer"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Dateien im Papierkorb werden nach 30 Tagen automatisch gelöscht."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Papierkorb jetzt leeren"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Papierkorb leeren?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Diese Aktion kann nicht rückgängig gemacht werden und die Dateien können nicht mehr wiederhergestellt werden."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Papierkorb leeren"</string>
 </resources>

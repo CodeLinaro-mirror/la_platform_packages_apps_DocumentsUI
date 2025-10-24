@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
@@ -25,18 +27,31 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
+import static org.junit.Assume.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.PersistableBundle;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.DragAndDropManager.RuntimeDragAndDropManager;
@@ -59,6 +74,7 @@ import com.android.documentsui.testing.TestIconHelper;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.testing.Views;
+import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -103,8 +119,10 @@ public class DragAndDropManagerTests {
 
     private DragAndDropManager mManager;
 
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
     @Rule
-    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
     public void setUp() {
@@ -974,7 +992,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.HAMMY, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
     }
 
     @Test
@@ -993,7 +1011,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1015,7 +1033,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
@@ -1037,7 +1055,7 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mCallback));
+        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1124,9 +1142,226 @@ public class DragAndDropManagerTests {
                 mCallback, mManager.getInvalidDestinations()));
     }
 
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testDrop_MoveAShortcut_OperationBlocked() throws Exception {
+        TestActionHandler spyActionHandler = spy(mActions);
+        TestDocumentClipper spyClipper = spy(mClipper);
+        DragAndDropManager newManager = createNewManagerWithSpyClipper(spyClipper);
+
+        newManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.EXTERNALSTORAGE,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
+        newManager.onKeyEvent(event);
+
+        // Mock the shortcut URI item for the clip data.
+        Mockito.when(mClipData.getItemCount()).thenReturn(1);
+        Mockito.when(mClipData.getItemAt(0)).thenReturn(
+                new ClipData.Item(TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri()));
+
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.DOWNLOADS.getUri();
+        newManager.drop(mClipData, newManager, new DocumentStack(
+                TestProvidersAccess.DOWNLOADS, docInfo), spyActionHandler, mCallback);
+
+        mEnv.beforeAsserts();
+        // Verify that the block operation was called.
+        verify(spyActionHandler).blockOperationForShortcuts(any(), any());
+        // If the file operation is blocked, copyFromClipData should never have been called.
+        verify(spyClipper, never()).copyFromClipData(
+                any(), any(), anyInt(), any());
+    }
+
+    @SuppressLint("VisibleForTests")
+    private DragAndDropManager createNewManagerWithSpyClipper(TestDocumentClipper spyClipper) {
+        DragAndDropManager newManager = new RuntimeDragAndDropManager(
+                mActivity, spyClipper, mShadowBuilder, mDefaultIcon) {
+            @Override
+            void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
+                    Object localState, int flag) {
+                assertSame(mStartDragView, v);
+                assertSame(mShadowBuilder, builder);
+                assertNotNull(localState);
+
+                mFlagListener.accept(flag);
+                mStartDragListener.accept(clipData);
+            }
+
+            @Override
+            void updateDragShadow(View v) {
+                assertSame(mUpdateShadowView, v);
+
+                mShadowUpdateListener.accept(null);
+            }
+        };
+        return newManager;
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testDrop_Trashes_DropOnTrashRoot() throws Exception {
+        assumeTrashApiIsAvailable();
+
+        mActions.nextRootDocument = null;
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_TRASH),
+                TestProvidersAccess.HOME,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_SUPPORTS_TRASH.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
+
+        mManager.drop(
+                mClipData,
+                mManager,
+                TestProvidersAccess.TRASH_ROOT,
+                mActions,
+                mCallback,
+                mManager.getInvalidDestinations());
+
+        mEnv.beforeAsserts();
+        final DocumentStack expect = new DocumentStack(TestProvidersAccess.TRASH_ROOT);
+        mClipper.trashFromClip.assertLastArgument(Pair.create(expect, mClipData));
+        mClipper.opType.assertLastArgument(FileOperationService.OPERATION_TRASH);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testDrop_Rejects_DropOnDocumentInTrash() {
+        assumeTrashApiIsAvailable();
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
+
+        final DocumentStack stack =
+                new DocumentStack(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
+        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testUpdateState_UpdatesToTrash_WhenDropOnTrashRoot() {
+        assumeTrashApiIsAvailable();
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_SUPPORTS_TRASH),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_SUPPORTS_TRASH.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        final @State int state =
+                mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
+
+        assertEquals(DragAndDropManager.STATE_TRASH, state);
+        assertStateUpdated(DragAndDropManager.STATE_TRASH);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testUpdateState_UpdatesToNotAllowed_WhenDropOnDocumentInTrash() {
+        assumeTrashApiIsAvailable();
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        final @State int state =
+                mManager.updateState(
+                        mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, TestEnv.FOLDER_0);
+
+        assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
+        assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testUpdateState_UpdatesToNotAllowed_WhenFileDoesNotSupportTrash() {
+        assumeTrashApiIsAvailable();
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        final @State int state =
+                mManager.updateState(
+                        mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
+
+        assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
+        assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testCanSpringOpen_ReturnsFalse_ForTrashRoot() {
+        assumeTrashApiIsAvailable();
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        assertFalse(mManager.canSpringOpen(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_APK));
+    }
+
     private void assertStateUpdated(@State int expected) {
         mShadowBuilder.state.assertLastArgument(expected);
         mShadowUpdateListener.assertCalled();
+    }
+
+    /**
+     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
+     * The Trash feature under test relies on DocumentsContract APIs introduced in the
+     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
+     * subject to MTS testing, which runs on older Android base builds to verify backward
+     * compatibility. However, this specific Trash feature lacks backward compatibility
+     * with platforms at or below Baklava. This assumption prevents failures when the
+     * test runs on an older base OS without the necessary APIs.
+     */
+    private void assumeTrashApiIsAvailable() {
+        assumeTrue(VersionUtils.isGreaterThanB());
     }
 
     public static class TestDragShadowBuilder extends DragShadowBuilder {

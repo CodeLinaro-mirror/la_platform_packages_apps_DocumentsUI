@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 
@@ -73,6 +74,12 @@ public interface ProvidersAccess {
      * an empty list is returned.
      */
     Collection<RootInfo> getRootsForAuthorityBlocking(UserId userId, String authority);
+
+    /**
+     * Returns a collection of all the shortcuts for the specified user.
+     * Returns an empty collection if none found.
+     */
+    Collection<ShortcutInfo> getShortcutsForUser(UserId userId);
 
     public static List<RootInfo> getMatchingRoots(Collection<RootInfo> roots, State state) {
 

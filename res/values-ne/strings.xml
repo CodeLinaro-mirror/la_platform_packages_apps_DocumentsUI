@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"जानकारी दिने प्यानल लुकाउनुहोस्"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"जानकारी दिने प्यानल देखाउनुहोस्"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"ट्र्यासमा केही पनि छैन"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"३० दिनभन्दा बढी समयदेखि ट्र्यासमा रहेका फाइलहरू स्वतः मेटाइने छन्।"</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"अहिले नै ट्र्यास खाली गर्नुहोस्"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ट्र्यास खाली गर्ने हो?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"यो कार्य अन्डू गर्न मिल्दैन र फाइलहरू रिकभर गर्न मिल्ने छैन।"</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ट्र्यास खाली गर्नुहोस्"</string>
 </resources>

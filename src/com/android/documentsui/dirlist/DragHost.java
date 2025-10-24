@@ -145,6 +145,6 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
                 ? mState.stack
                 : new DocumentStack(mState.stack, dst);
         return mDragAndDropManager.drop(event.getClipData(), event.getLocalState(), dstStack,
-                mDialogs::showFileOperationStatus);
+                mActions, mDialogs::showFileOperationStatus);
     }
 }

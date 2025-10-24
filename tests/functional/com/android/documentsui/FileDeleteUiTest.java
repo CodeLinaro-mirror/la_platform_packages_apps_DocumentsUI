@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static android.content.Context.RECEIVER_EXPORTED;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -32,6 +33,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.LargeTest;
@@ -171,6 +173,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @HugeLongTest
     @Test
+    @DisableFlags(FLAG_HOME_SCREEN_FILES_RO)
     public void testDeleteAllDocument() throws Exception {
         EspressoBotsKt.openRoot(context, ROOT_0_ID);
         bots.main.clickToolbarOverflowItem(

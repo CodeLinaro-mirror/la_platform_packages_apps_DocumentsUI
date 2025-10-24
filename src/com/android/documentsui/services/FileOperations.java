@@ -134,7 +134,7 @@ public final class FileOperations {
     @FunctionalInterface
     public interface Callback {
         @Retention(RetentionPolicy.SOURCE)
-        @IntDef({STATUS_ACCEPTED, STATUS_REJECTED})
+        @IntDef({STATUS_ACCEPTED, STATUS_REJECTED, STATUS_FAILED})
         @interface Status {}
         static final int STATUS_ACCEPTED = 0;
         static final int STATUS_REJECTED = 1;
