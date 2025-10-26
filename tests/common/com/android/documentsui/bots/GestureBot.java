@@ -114,11 +114,7 @@ public class GestureBot extends Bots.BaseBot {
                 new UiSelector().resourceId(mDirListId));
 
         // Wait for the first list item to appear
-        boolean exists =
-                new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
-        if (!exists) {
-            throw new UiObjectNotFoundException("First list item not found after timeout");
-        }
+        new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
 
         return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
     }
