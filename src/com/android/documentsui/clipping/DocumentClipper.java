@@ -33,6 +33,10 @@ import java.util.function.Function;
 
 public interface DocumentClipper {
 
+    // A clip is the list of files passed to the FileOperationService when starting a file
+    // operation. A "jumbo clip" is when this list is too big to pass via IPC, so the URIs are
+    // written to a temp file on disk and this file is read by the FileOperationService instead.
+
     static final String OP_JUMBO_SELECTION_SIZE = "jumboSelection-size";
     static final String OP_JUMBO_SELECTION_TAG = "jumboSelection-tag";
 
@@ -137,4 +141,14 @@ public interface DocumentClipper {
             DocumentStack dstStack,
             ClipData clipData,
             FileOperations.Callback callback);
+
+    /**
+     * Trashes documents from a given clip data.
+     *
+     * @param dstStack the document stack to the destination.
+     * @param clipData the clipData to trash from.
+     * @param callback callback to notify when operation is scheduled or rejected.
+     */
+    void trashFromClipData(
+            DocumentStack dstStack, ClipData clipData, FileOperations.Callback callback);
 }

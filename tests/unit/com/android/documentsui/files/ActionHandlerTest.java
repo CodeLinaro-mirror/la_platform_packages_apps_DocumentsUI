@@ -1078,6 +1078,15 @@ public class ActionHandlerTest {
         mActivity.startService.assertNotCalled();
     }
 
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testRenameOnShortcut() {
+        DocumentInfo docInfo = new DocumentInfo();
+        docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
+        docInfo.userId = TestProvidersAccess.USER_ID;
+        assertNull(mHandler.renameDocument("new name", docInfo));
+    }
+
     private void assertRootPicked(Uri expectedUri) throws Exception {
         mEnv.beforeAsserts();
 

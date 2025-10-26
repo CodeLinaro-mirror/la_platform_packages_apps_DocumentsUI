@@ -91,7 +91,6 @@ class JobPanelController(
 ) : BroadcastReceiver(), DefaultLifecycleObserver {
     companion object {
         private const val TAG = "JobPanelController"
-        private const val MAX_PROGRESS = 100
     }
 
     private class ProgressItemHolder(
@@ -381,8 +380,7 @@ class JobPanelController(
     @Suppress("ktlint:standard:comment-wrapping")
     fun setMenuItem(newMenuItem: MenuItem) {
         val progressIcon =
-            newMenuItem.actionView!!.findViewById<ProgressBar>(R.id.job_progress_toolbar_indicator)
-        progressIcon.max = MAX_PROGRESS
+            newMenuItem.actionView!!.findViewById<View>(R.id.job_progress_toolbar_container)
         progressIcon.setOnClickListener { view ->
             val panel =
                 LayoutInflater.from(activityContext)

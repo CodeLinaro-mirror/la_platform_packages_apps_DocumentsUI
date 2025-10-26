@@ -821,8 +821,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 };
 
         // Search and expect 3 files to match.
-        bots.search.expand();
-        bots.search.setInputText("file");
+        bots.search.doSearch("file");
         device.waitForIdle();
         bots.directory.assertDocumentsPresent(expectedMatches);
 
@@ -832,4 +831,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.assertDocumentsPresent(expectedMatches);
         bots.search.assertInputEquals("file");
     }
+
+    // TODO(b:450381836): Add tests that check that options change trigger search.
 }

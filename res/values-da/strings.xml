@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Skjul infopanel"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Vis infopanel"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"Papirkurven er tom"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Filer i papirkurven slettes automatisk efter 30 dage."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Tøm papirkurv nu"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vil du tømme papirkurven?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Denne handling kan ikke fortrydes, og filerne kan ikke længere gendannes."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tøm papirkurv"</string>
 </resources>

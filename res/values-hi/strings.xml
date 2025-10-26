@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"जानकारी वाला पैनल छिपाएं"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"जानकारी वाला पैनल दिखाएं"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"ट्रैश खाली है"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"ट्रैश फ़ोल्डर में मौजूद फ़ाइलें, 30 दिनों के बाद अपने-आप मिट जाएंगी."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ट्रैश अभी खाली करें"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"क्या आपको ट्रैश खाली करना है?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"इस कार्रवाई को पहले जैसा नहीं किया जा सकता और फ़ाइलें वापस नहीं लाई जा सकतीं."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ट्रैश खाली करें"</string>
 </resources>

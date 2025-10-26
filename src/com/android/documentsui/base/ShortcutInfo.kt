@@ -101,6 +101,26 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         return root.supportsCreate()
     }
 
+    override fun supportsEject(): Boolean {
+        return false
+    }
+
+    override fun isEjecting(): Boolean {
+        return false
+    }
+
+    override fun supportsInspect(): Boolean {
+        return documentId != null
+    }
+
+    override fun hasSettings(): Boolean {
+        return root.hasSettings()
+    }
+
+    override fun isValidDropTarget(): Boolean {
+        return supportsCreate() || root.isTrash()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) {
             return false
@@ -181,5 +201,16 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         override fun newArray(size: Int): Array<ShortcutInfo?> {
             return kotlin.arrayOfNulls<ShortcutInfo?>(size)
         }
+    }
+
+    /** Returns a new shortcut info copied from the existing ShortcutInfo instance. */
+    fun copyShortcutInfo(): ShortcutInfo {
+        val newShortcut = ShortcutInfo()
+        newShortcut.icon = this.icon
+        newShortcut.title = this.title
+        newShortcut.root = RootInfo.copyRootInfo(this.root)
+        newShortcut.parentDirDocumentId = this.parentDirDocumentId
+        newShortcut.documentId = this.documentId
+        return newShortcut
     }
 }

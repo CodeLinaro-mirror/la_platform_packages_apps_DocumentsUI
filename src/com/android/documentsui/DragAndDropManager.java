@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -23,7 +24,9 @@ import android.content.ClipData;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Trace;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.View;
@@ -48,6 +51,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Manager that tracks control key state, calculates the default file operation (move or copy)
@@ -55,13 +59,14 @@ import java.util.List;
  */
 public interface DragAndDropManager {
 
-    @IntDef({ STATE_NOT_ALLOWED, STATE_UNKNOWN, STATE_MOVE, STATE_COPY })
+    @IntDef({ STATE_NOT_ALLOWED, STATE_UNKNOWN, STATE_MOVE, STATE_COPY, STATE_TRASH })
     @Retention(RetentionPolicy.SOURCE)
     @interface State {}
     int STATE_UNKNOWN = 0;
     int STATE_NOT_ALLOWED = 1;
     int STATE_MOVE = 2;
     int STATE_COPY = 3;
+    int STATE_TRASH = 4;
 
     /**
      * Intercepts and handles a {@link KeyEvent}. Used to track the state of Ctrl key state.
@@ -154,7 +159,7 @@ public interface DragAndDropManager {
      * @return true if target accepts this drop; false otherwise
      */
     boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-            FileOperations.Callback callback);
+            ActionHandler actions, FileOperations.Callback callback);
 
     /**
      * Called when drag and drop ended.
@@ -176,6 +181,7 @@ public interface DragAndDropManager {
 
     class RuntimeDragAndDropManager implements DragAndDropManager {
         private static final String SRC_ROOT_KEY = "dragAndDropMgr:srcRoot";
+        private static final String TAG = "DragAndDropManager";
 
         private final Context mContext;
         private final DocumentClipper mClipper;
@@ -200,6 +206,10 @@ public interface DragAndDropManager {
         // Boolean flag for current drag and drop operation. Returns true if the files can only
         // be copied (ie. files that don't support delete or remove).
         private boolean mMustBeCopied;
+        private static final int DRAG_EVENT_COOKIE = 478919;
+
+        // Track whether the set of files support trash operation or not.
+        private boolean mIsFilesSupportTrash;
 
         private RuntimeDragAndDropManager(Context context, DocumentClipper clipper) {
             this(
@@ -252,15 +262,20 @@ public interface DragAndDropManager {
                 IconHelper iconHelper,
                 @Nullable DocumentInfo parent) {
 
+            Trace.beginAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
+                    DRAG_EVENT_COOKIE);
             mDragInitiated = true;
             mView = v;
             mInvalidDest = invalidDest;
             mMustBeCopied = !selectionDetails.canDelete();
 
             List<Uri> uris = new ArrayList<>(srcs.size());
+            boolean isFilesSupportTrash = true;
             for (DocumentInfo doc : srcs) {
+                isFilesSupportTrash &= doc.isTrashSupported();
                 uris.add(doc.derivedUri);
             }
+            mIsFilesSupportTrash = isFilesSupportTrash;
             mClipData = (parent == null)
                     ? mClipper.getClipDataForDocuments(uris, FileOperationService.OPERATION_UNKNOWN)
                     : mClipper.getClipDataForDocuments(
@@ -339,32 +354,43 @@ public interface DragAndDropManager {
             mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
 
-            if (!destItemInfo.supportsCreate()) {
+            if (!destItemInfo.isValidDropTarget()) {
                 updateState(STATE_NOT_ALLOWED);
                 return STATE_NOT_ALLOWED;
             }
 
-            if (destDoc == null) {
-                updateState(STATE_UNKNOWN);
-                return STATE_UNKNOWN;
-            }
+            if (mDestRoot.isTrash()) {
+                // If it's a trash root then check whether files are allowed to be trashed.
+                if (destDoc != null
+                        && !isValidDestination(destItemInfo, destDoc.derivedUri, mInvalidDest)) {
+                    updateState(STATE_NOT_ALLOWED);
+                    return STATE_NOT_ALLOWED;
+                }
+            } else {
+                if (destDoc == null) {
+                    updateState(STATE_UNKNOWN);
+                    return STATE_UNKNOWN;
+                }
 
-            assert(destDoc.isDirectory());
+                assert (destDoc.isDirectory());
 
-            if (!destDoc.isCreateSupported() || mInvalidDest.contains(destDoc.derivedUri)) {
-                updateState(STATE_NOT_ALLOWED);
-                return STATE_NOT_ALLOWED;
+                if (!destDoc.isCreateSupported() || mInvalidDest.contains(destDoc.derivedUri)) {
+                    updateState(STATE_NOT_ALLOWED);
+                    return STATE_NOT_ALLOWED;
+                }
             }
 
             @State int state;
-            final @OpType int opType = calculateOpType(
-                    mClipData, destItemInfo.getRoot().getUri());
+            final @OpType int opType = calculateOpType(mClipData, mDestRoot);
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
                     state = STATE_COPY;
                     break;
                 case FileOperationService.OPERATION_MOVE:
                     state = STATE_MOVE;
+                    break;
+                case FileOperationService.OPERATION_TRASH:
+                    state = STATE_TRASH;
                     break;
                 default:
                     // Should never happen
@@ -404,7 +430,7 @@ public interface DragAndDropManager {
 
         @Override
         public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
-                ActionHandler action, FileOperations.Callback callback, List<Uri> invalidDest) {
+                ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest) {
             final Uri rootDocUri = DocumentsContract.buildDocumentUri(
                     itemInfo.getRoot().authority, itemInfo.getDocumentId());
 
@@ -414,15 +440,15 @@ public interface DragAndDropManager {
 
             // Calculate the op type now just in case user releases Ctrl key while we're obtaining
             // root document in the background.
-            final @OpType int opType = calculateOpType(clipData, itemInfo.getRoot().getUri());
-            action.getDocument(
+            final @OpType int opType = calculateOpType(clipData, itemInfo.getRoot());
+            actions.getDocument(
                     itemInfo.getRoot().authority,
                     itemInfo.getDocumentId(),
                     itemInfo.getRoot().userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     (DocumentInfo doc) -> {
                         dropOnRootDocument(clipData, localState, itemInfo.getRoot(), doc,
-                                opType, callback);
+                                opType, actions, callback);
                     });
 
             return true;
@@ -434,27 +460,30 @@ public interface DragAndDropManager {
                 RootInfo destRoot,
                 @Nullable DocumentInfo destRootDoc,
                 @OpType int opType,
+                ActionHandler actions,
                 FileOperations.Callback callback) {
-            if (destRootDoc == null) {
-                callback.onOperationResult(
-                        FileOperations.Callback.STATUS_FAILED,
-                        opType,
-                        0);
-            } else {
-                dropChecked(
-                        clipData,
-                        localState,
-                        new DocumentStack(destRoot, destRootDoc),
-                        opType,
-                        callback);
+
+            // Fail early: A drop onto a root is disallowed if the destination
+            // is a non-trash root and its corresponding document is missing.
+            if (destRootDoc == null && !destRoot.isTrash()) {
+                callback.onOperationResult(FileOperations.Callback.STATUS_FAILED, opType, 0);
+                return;
             }
+
+            // For all valid cases, create the appropriate destination stack and proceed.
+            final DocumentStack destination =
+                    (destRootDoc == null)
+                            ? new DocumentStack(destRoot)
+                            : new DocumentStack(destRoot, destRootDoc);
+
+            dropChecked(clipData, localState, destination, opType, actions, callback);
         }
 
         @Override
         public boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-                FileOperations.Callback callback) {
+                ActionHandler actions, FileOperations.Callback callback) {
 
-            if (!canCopyTo(dstStack)) {
+            if (!isValidDocumentStack(dstStack)) {
                 return false;
             }
 
@@ -462,13 +491,26 @@ public interface DragAndDropManager {
                     clipData,
                     localState,
                     dstStack,
-                    calculateOpType(clipData, dstStack.getRoot().getUri()),
+                    calculateOpType(clipData, dstStack.getRoot()),
+                    actions,
                     callback);
             return true;
         }
 
         private void dropChecked(ClipData clipData, Object localState, DocumentStack dstStack,
-                @OpType int opType, FileOperations.Callback callback) {
+                @OpType int opType, ActionHandler actions, FileOperations.Callback callback) {
+
+            // System-defined shortcuts should be protected against the file move operation.
+            if (isHomeScreenFilesFlagEnabled() && opType == FileOperationService.OPERATION_MOVE) {
+                List<Uri> uris = new ArrayList<>();
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    uris.add(clipData.getItemAt(i).getUri());
+                }
+                if (actions.blockOperationForShortcuts(uris, dstStack.getRoot().userId)) {
+                    Log.e(TAG, "Failed to move because a protected folder is selected.");
+                    return;
+                }
+            }
 
             // Recognize multi-window drag and drop based on the fact that localState is not
             // carried between processes. It will stop working when the localsState behavior
@@ -478,6 +520,11 @@ public interface DragAndDropManager {
             Metrics.logUserAction(
                     localState == null ? MetricConsts.USER_ACTION_DRAG_N_DROP_MULTI_WINDOW
                             : MetricConsts.USER_ACTION_DRAG_N_DROP);
+
+            if (dstStack.getRoot().isTrash()) {
+                mClipper.trashFromClipData(dstStack, clipData, callback);
+                return;
+            }
 
             mClipper.copyFromClipData(dstStack, clipData, opType, callback);
         }
@@ -497,6 +544,9 @@ public interface DragAndDropManager {
             mDestRoot = null;
             mMustBeCopied = false;
             mDragInitiated = false;
+            mIsFilesSupportTrash = false;
+            Trace.endAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
+                    DRAG_EVENT_COOKIE);
         }
 
         @Override
@@ -504,17 +554,23 @@ public interface DragAndDropManager {
             return mInvalidDest;
         }
 
-        private @OpType int calculateOpType(ClipData clipData, Uri destUri) {
+        private @OpType int calculateOpType(ClipData clipData, RootInfo destRoot) {
+            // If the destination root is Trash, then it will be the trash operation.
+            if (destRoot.isTrash()) {
+                return FileOperationService.OPERATION_TRASH;
+            }
+
             if (mMustBeCopied) {
                 return FileOperationService.OPERATION_COPY;
             }
 
             final String srcRootUri = clipData.getDescription().getExtras().getString(SRC_ROOT_KEY);
+            final String destUri = destRoot.getUri().toString();
 
             assert (srcRootUri != null);
             assert (destUri != null);
 
-            if (srcRootUri.equals(destUri.toString())) {
+            if (srcRootUri.equals(destUri)) {
                 return mIsCtrlPressed
                         ? FileOperationService.OPERATION_COPY
                         : FileOperationService.OPERATION_MOVE;
@@ -525,19 +581,27 @@ public interface DragAndDropManager {
             }
         }
 
-        private boolean canCopyTo(DocumentStack dstStack) {
+        private boolean isValidDocumentStack(DocumentStack dstStack) {
             final RootInfo root = dstStack.getRoot();
             final DocumentInfo dst = dstStack.peek();
             return isValidDestination(root, dst.derivedUri, mInvalidDest);
         }
 
-        private boolean isValidDestination(SidebarEntryItemInfo root, Uri dstUri,
-                List<Uri> invalidDest) {
+        private boolean isValidDestination(
+                SidebarEntryItemInfo sidebarEntryItemInfo, Uri dstUri, List<Uri> invalidDest) {
+            // A destination is invalid if the drop is on a folder inside the trash root.
+            // A non-null authority on the destination URI indicates a drop on a specific
+            // document (a folder in this case), which is not allowed for the trash root.
+            if (sidebarEntryItemInfo.getRoot().isTrash()
+                    && dstUri.getAuthority() != null
+                    && !mIsFilesSupportTrash) {
+                return false;
+            }
             // We pass in the invalid destinations since this check can also be called from an
             // asynchronous task. This method needs to maintain the same invalid destination
             // values as when the asynchronous task starts, but mInvalidDest can be mutated in the
             // meantime.
-            return root.supportsCreate() && !invalidDest.contains(dstUri);
+            return sidebarEntryItemInfo.isValidDropTarget() && !invalidDest.contains(dstUri);
         }
     }
 }

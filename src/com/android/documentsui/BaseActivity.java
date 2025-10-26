@@ -85,7 +85,6 @@ import com.android.documentsui.queries.SearchChipData;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
-import com.android.documentsui.roots.GetDocumentTask;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.sorting.SortController;
@@ -826,35 +825,31 @@ public abstract class BaseActivity
         mState.sortModel.setDimensionVisibility(
                 SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
 
-        mInjector.actions.loadDocument(shortcut.getParentDirectoryUri(), shortcut.getRoot().userId,
-            (@Nullable DocumentStack stack) -> {
-                if (stack != null) {
-                    // Create the shortcut folder if it does not exist yet, then open this
-                    // shortcut folder.
-                    mInjector.actions.getShortcutDocument(
-                        shortcut,
-                        TimeoutTask.DEFAULT_TIMEOUT,
-                        uri -> {
-                            shortcut.setDocumentId(DocumentsContract.getDocumentId(uri));
-                            new GetDocumentTask(
+        buildStackToParentShortcutFolder(
+                shortcut,
+                (@Nullable DocumentStack stack) -> {
+                    if (stack != null) {
+                        mInjector.actions.getDocument(
                                 shortcut.getRoot().authority,
                                 shortcut.getDocumentId(),
                                 shortcut.getRoot().userId,
-                                this,
                                 TimeoutTask.DEFAULT_TIMEOUT,
-                                mDocs,
                                 doc -> {
                                     // Reset the stack and store the shortcut reference.
                                     mState.stack.reset(stack);
                                     mState.shortcut = shortcut;
                                     mInjector.actions.openRootDocument(doc);
-                                }
-                            ).execute();
-                        });
-                }
-            });
+                                });
+                    }
+        });
         expandAppBar();
         updateHeaderTitle();
+    }
+
+    public void buildStackToParentShortcutFolder(ShortcutInfo shortcut,
+            LoadDocStackTask.LoadDocStackCallback callback) {
+        mInjector.actions.loadDocument(
+                shortcut.getParentDirectoryUri(), shortcut.getRoot().userId, callback);
     }
 
     protected ProfileTabsAddons getProfileTabsAddon() {

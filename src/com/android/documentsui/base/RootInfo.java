@@ -433,6 +433,11 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
         return (flags & Root.FLAG_SUPPORTS_EJECT) != 0;
     }
 
+    @Override
+    public boolean isEjecting() {
+        return ejecting;
+    }
+
     public boolean isAdvanced() {
         return (flags & Root.FLAG_ADVANCED) != 0;
     }
@@ -582,5 +587,17 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
     @Override
     public void setTitle(String s) {
         title = s;
+    }
+
+    @Override
+    public boolean supportsInspect() {
+        return false;
+    }
+
+    @Override
+    public boolean isValidDropTarget() {
+        // A root is considered a valid drop target if it supports creating new files or if it
+        // is the trash root.
+        return supportsCreate() || isTrash();
     }
 }

@@ -305,6 +305,39 @@ final class RuntimeDocumentClipper implements DocumentClipper {
         }
     }
 
+    @Override
+    public void trashFromClipData(
+            DocumentStack dstStack, ClipData clipData, FileOperations.Callback callback) {
+        if (clipData == null || clipData.getItemCount() == 0) {
+            return;
+        }
+
+        List<Uri> uris = new ArrayList<>(clipData.getItemCount());
+        for (int i = 0; i < clipData.getItemCount(); i++) {
+            uris.add(clipData.getItemAt(i).getUri());
+        }
+
+        UrisSupplier srcs;
+        try {
+            srcs = UrisSupplier.create(uris, mClipStore);
+        } catch (Exception e) {
+            callback.onOperationResult(
+                    FileOperations.Callback.STATUS_FAILED,
+                    FileOperationService.OPERATION_TRASH,
+                    uris.size());
+            return;
+        }
+
+        FileOperation operation =
+                new FileOperation.Builder()
+                        .withOpType(FileOperationService.OPERATION_TRASH)
+                        .withSrcs(srcs)
+                        .withDestination(dstStack)
+                        .build();
+
+        FileOperations.start(mContext, operation, callback, FileOperations.createJobId());
+    }
+
     /**
      * Returns true if the list of files can be copied to destination. Note that this
      * is a policy check only. Currently the method does not attempt to verify

@@ -32,11 +32,13 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.services.JobProgress;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -87,14 +89,6 @@ public interface ActionHandler {
             Consumer<DocumentInfo> callback);
 
     /**
-     * Attempts to create the shortcut folder first if it doesn't exist. Once finished, it will
-     * call GetDocumentTask to get the shortcut's document and open DocumentsUI to this document.
-     * If the task times out, callback will be called with null Uri. Supply
-     * {@link TimeoutTask#DEFAULT_TIMEOUT} if you don't want to the task to ever time out.
-     */
-    void getShortcutDocument(ShortcutInfo shortcut, int timeout, Consumer<Uri> callback);
-
-    /**
      * Attempts to refresh the given DocumentInfo, which should be at the top of the state stack.
      * Returns a boolean answer to the callback, given by {@link ContentProvider#refresh}.
      */
@@ -130,7 +124,11 @@ public interface ActionHandler {
 
     void openInNewWindow(DocumentStack path);
 
-    void pasteIntoFolder(RootInfo root);
+    /**
+     * Pastes the selected items into a sidebar item entry.
+     * @param itemInfo - the destination sidebar item entry
+     */
+    void pasteIntoFolder(SidebarEntryItemInfo itemInfo);
 
     void selectAllFiles();
 
@@ -258,4 +256,12 @@ public interface ActionHandler {
      * #showEmptyTrashConfirmationDialog()}.
      */
     void permanentlyDeleteTrashDocuments();
+
+    /**
+     * Retrieves the list of shortcuts for the given user and compares the shortcuts'
+     * URIs against the provided collection of URIs. If there is a match, the file operation
+     * should be blocked and a dialog should be shown to inform the user of this block.
+     * @return boolean value on whether or not the file operation should be blocked.
+     */
+    boolean blockOperationForShortcuts(Collection<Uri> uris, UserId userId);
 }

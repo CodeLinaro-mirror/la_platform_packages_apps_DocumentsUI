@@ -34,7 +34,7 @@ import androidx.fragment.app.Fragment;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Menus;
-import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DirectoryFragment;
 import com.android.documentsui.queries.SearchViewManager;
@@ -294,16 +294,19 @@ public abstract class MenuManager {
     /**
      * @see RootsFragment#onCreateContextMenu
      */
-    public void updateRootContextMenu(Menu menu, RootInfo root, DocumentInfo docInfo) {
+    public void updateSidebarItemContextMenu(Menu menu, SidebarEntryItemInfo itemInfo,
+            DocumentInfo docInfo) {
         MenuItem eject = menu.findItem(getRes(R.id.root_menu_eject_root));
         MenuItem pasteInto = menu.findItem(getRes(R.id.root_menu_paste_into_folder));
         MenuItem openInNewWindow = menu.findItem(getRes(R.id.root_menu_open_in_new_window));
         MenuItem settings = menu.findItem(getRes(R.id.root_menu_settings));
+        MenuItem getInfo = menu.findItem(getRes(R.id.root_menu_inspect));
 
-        updateEject(eject, root);
-        updatePasteInto(pasteInto, root, docInfo);
-        updateOpenInNewWindow(openInNewWindow, root);
-        updateSettings(settings, root);
+        updateEject(eject, itemInfo);
+        updatePasteInto(pasteInto, itemInfo, docInfo);
+        updateOpenInNewWindow(openInNewWindow, itemInfo);
+        updateSettings(settings, itemInfo);
+        updateInspect(getInfo, itemInfo);
     }
 
     public abstract void updateKeyboardShortcutsMenu(
@@ -349,11 +352,11 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(settings, false);
     }
 
-    protected void updateSettings(MenuItem settings, RootInfo root) {
+    protected void updateSettings(MenuItem settings, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(settings, false);
     }
 
-    protected void updateEject(MenuItem eject, RootInfo root) {
+    protected void updateEject(MenuItem eject, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(eject, false);
     }
 
@@ -374,8 +377,7 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(openInNewWindow, false);
     }
 
-    protected void updateOpenInNewWindow(
-            MenuItem openInNewWindow, RootInfo root) {
+    protected void updateOpenInNewWindow(MenuItem openInNewWindow, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(openInNewWindow, false);
     }
 
@@ -403,6 +405,14 @@ public abstract class MenuManager {
      * This method is called for action mode, when a selection exists.
      */
     protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
+        Menus.setEnabledAndVisible(inspect, false);
+    }
+
+    /**
+     * This method is called during a sidebar context menu click with a reference to the
+     * item's information.
+     */
+    protected void updateInspect(MenuItem inspect, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(inspect, false);
     }
 
@@ -438,7 +448,8 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 
-    protected void updatePasteInto(MenuItem pasteInto, RootInfo root, DocumentInfo docInfo) {
+    protected void updatePasteInto(MenuItem pasteInto, SidebarEntryItemInfo itemInfo,
+            DocumentInfo docInfo) {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 

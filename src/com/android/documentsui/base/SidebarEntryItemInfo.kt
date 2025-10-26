@@ -80,4 +80,11 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
     // For sidebar item appearance/view
     fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable?
     fun supportsCreate(): Boolean
+    fun supportsEject(): Boolean
+    fun isEjecting(): Boolean
+    fun supportsInspect(): Boolean
+    fun hasSettings(): Boolean
+
+    /** Returns true if this root can be a target for a drag and drop operation. */
+    fun isValidDropTarget(): Boolean
 }

@@ -377,14 +377,9 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Sembunyikan panel info"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Tampilkan panel info"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"Sampah kosong"</string>
-    <!-- no translation found for empty_trash_banner_message (8201073314528791202) -->
-    <skip />
-    <!-- no translation found for empty_trash_banner_button (2299477085950182090) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_title (4514618908297336521) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_message (5459370127970240825) -->
-    <skip />
-    <!-- no translation found for empty_trash_dialog_action_button (1252219459020699916) -->
-    <skip />
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"File yang ada di sampah selama lebih dari 30 hari akan otomatis dihapus."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Kosongkan sampah sekarang"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Kosongkan sampah?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Tindakan ini tidak dapat diurungkan, dan file tidak akan dapat dipulihkan lagi."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Kosongkan sampah"</string>
 </resources>
