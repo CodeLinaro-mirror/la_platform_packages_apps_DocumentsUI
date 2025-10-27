@@ -289,7 +289,7 @@ class SearchLoader(
         val filteringCursor = FilteringCursorWrapper(mergedCursor)
         filteringCursor.filterHiddenFiles(options.showHidden)
         filteringCursor.filterMimes(
-            options.acceptableMimeTypes,
+            computeAcceptableMimeTypes(options),
             if (TextUtils.isEmpty(query)) arrayOf(Document.MIME_TYPE_DIR) else null,
         )
         if (rejectBeforeTimestamp > 0L) {

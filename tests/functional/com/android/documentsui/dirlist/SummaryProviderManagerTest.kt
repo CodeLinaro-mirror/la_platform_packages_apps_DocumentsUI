@@ -20,6 +20,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Bundle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -74,7 +75,7 @@ class SummaryProviderManagerTest {
     @Test
     fun testStart_withNoProvider_isDisabled() = runTest {
         `when`(mockResources.getString(R.string.local_summary_provider)).thenReturn("")
-        val manager = SummaryProviderManager(context, this)
+        val manager = SummaryProviderManager(context, this, Uri.parse(""))
         manager.start()
 
         assertThat(manager.state.value).isEqualTo(SummaryState.DISABLED)
@@ -86,7 +87,7 @@ class SummaryProviderManagerTest {
         `when`(mockResources.getString(R.string.local_summary_provider))
             .thenReturn(TEST_SUMMARY_PROVIDER)
         setIsEmpty(true)
-        val manager = SummaryProviderManager(context, this)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
         manager.start()
 
         // Wait for the state update to complete.
@@ -101,7 +102,7 @@ class SummaryProviderManagerTest {
         `when`(mockResources.getString(R.string.local_summary_provider))
             .thenReturn(TEST_SUMMARY_PROVIDER)
         setIsEmpty(false)
-        val manager = SummaryProviderManager(context, this)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
         manager.start()
 
         // Suspend and wait until the state becomes ENABLED.
@@ -118,7 +119,7 @@ class SummaryProviderManagerTest {
 
             // Emulate the provider being disabled.
             setIsEmpty(true)
-            val manager = SummaryProviderManager(context, this)
+            val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
             manager.start()
 
             // Wait for it to initialize as disabled.

@@ -39,6 +39,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.anyOf;
 
+import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
 
@@ -74,8 +75,8 @@ public class SearchBot extends Bots.BaseBot {
             withId(R.id.option_menu_search),
             anyOf(isClickable(), hasDescendant(isClickable())));
 
-    public SearchBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public SearchBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
     }
 
     /**
@@ -299,12 +300,18 @@ public class SearchBot extends Bots.BaseBot {
     }
 
     /**
-     * Performs a search with the given query.
+     * Performs a search with the given query. Note: do not use this function if the test case wants
+     * to assert the search input focus, because pressEnter() will make the search input lose focus.
      */
     public void doSearch(String query) throws UiObjectNotFoundException {
         expand();
         setInputText(query);
-        // Try to hide the virtual keyboard: on small devices it can hide some files.
+        // Pressing enter is essential to save the search query to the search history.
+        mBots.keyboard.pressEnter();
+        // TODO(b/454187483): Revisit this after fixing the Enter key press issue for the docked
+        //  search bar.
+        // pressEnter() only hides the soft keyboard for drawer layout and nav rail layout (when
+        // docked search bar is not used), so we still need to explicitly close the keyboard here.
         closeSoftKeyboard();
     }
 }

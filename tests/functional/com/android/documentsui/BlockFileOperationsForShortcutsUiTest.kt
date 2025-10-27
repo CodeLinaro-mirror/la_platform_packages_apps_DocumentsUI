@@ -69,6 +69,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                     primaryRoot.rootId,
                     primaryRoot.documentId,
                     SHORTCUT_ID,
+                    SHORTCUT_ID,
                     R.drawable.ic_root_homescreen,
                 )
             setUpShortcuts(listOf(resource))
@@ -109,7 +110,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 getOrCreateFolderDocId(
                     storageDocsHelper!!,
                     shortcut.parentDirDocumentId!!,
-                    shortcut.title!!,
+                    shortcut.folderTitle!!,
                 )
         }
 
@@ -139,7 +140,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     @Throws(Exception::class)
     fun testMoveDocumentBlocked() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
-        openRoot(context!!, primaryRoot!!.title)
+        openRoot(context!!, primaryRoot!!.title, activityLayoutId)
 
         bots.directory.findDocument(SHORTCUT_ID)
         device!!.waitForIdle()
@@ -162,7 +163,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     @Throws(java.lang.Exception::class)
     fun testRenameOnShortcutFolder() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
-        openRoot(context!!, primaryRoot!!.title)
+        openRoot(context!!, primaryRoot!!.title, activityLayoutId)
         bots.directory.selectDocument(SHORTCUT_ID, 1)
         clickRename()
 
@@ -185,7 +186,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     @Throws(Exception::class)
     fun testCutDocumentBlocked() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
-        openRoot(context!!, primaryRoot!!.title)
+        openRoot(context!!, primaryRoot!!.title, activityLayoutId)
 
         bots.directory.findDocument(SHORTCUT_ID)
         device!!.waitForIdle()
@@ -209,7 +210,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     @DisableFlags(FLAG_ENABLE_TRASH_FLOW_RO)
     fun testDeleteDocumentBlocked() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
-        openRoot(context!!, primaryRoot!!.title)
+        openRoot(context!!, primaryRoot!!.title, activityLayoutId)
 
         bots.directory.findDocument(SHORTCUT_ID)
         device!!.waitForIdle()
@@ -233,7 +234,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     @EnableFlags(FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3, FLAG_ENABLE_TRASH_FLOW_RO)
     fun testTrashDocumentBlocked() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
-        openRoot(context!!, primaryRoot!!.title)
+        openRoot(context!!, primaryRoot!!.title, activityLayoutId)
 
         bots.directory.findDocument(SHORTCUT_ID)
         device!!.waitForIdle()
@@ -258,7 +259,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     @Throws(java.lang.Exception::class)
     fun testKeyboardCutDocumentShortcutFolderSelected() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
-        openRoot(context!!, primaryRoot!!.title)
+        openRoot(context!!, primaryRoot!!.title, activityLayoutId)
 
         bots.directory.selectDocument(SHORTCUT_ID, 1)
         device!!.waitForIdle()

@@ -17,6 +17,7 @@ package com.android.documentsui.bots
 
 import android.content.Context
 import android.widget.FrameLayout
+import androidx.annotation.LayoutRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewAssertion
@@ -44,8 +45,8 @@ import org.hamcrest.CoreMatchers.allOf
  * A test helper class that provides support for controlling the peek overlay and making assertions
  * against the state of it.
  */
-class PeekBot(device: UiDevice, context: Context, timeout: Int) :
-    Bots.BaseBot(device, context, timeout) {
+class PeekBot(device: UiDevice, context: Context, timeout: Int, @LayoutRes layoutId: Int) :
+    Bots.BaseBot(device, context, timeout, layoutId) {
     private val peekOverlayMatcher = withId(R.id.peek_overlay)
     private val peekContainerMatcher =
         allOf(withId(R.id.peek_container), isDescendantOfA(peekOverlayMatcher))
@@ -54,12 +55,12 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
     private val coplanarMetadataSheetContainerMatcher =
         allOf(
             withId(R.id.peek_coplanar_metadata_sheet_container),
-            isDescendantOfA(peekContainerMatcher)
+            isDescendantOfA(peekContainerMatcher),
         )
     private val bottomMetadataSheetContainerMatcher =
         allOf(
             withId(R.id.peek_bottom_metadata_sheet_container),
-            isDescendantOfA(peekContainerMatcher)
+            isDescendantOfA(peekContainerMatcher),
         )
 
     /**
@@ -80,7 +81,7 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                 } else {
                     SideSheetBehavior.STATE_HIDDEN
                 },
-                metadataSheetBehavior.state
+                metadataSheetBehavior.state,
             )
         }
     }
@@ -106,7 +107,7 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                     previewContainer.width + metadataContainer.width
                 } else {
                     previewContainer.width
-                }
+                },
             )
         }
     }
@@ -127,14 +128,14 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                 } else {
                     BottomSheetBehavior.STATE_HIDDEN
                 },
-                metadataSheetBehavior.state
+                metadataSheetBehavior.state,
             )
         }
     }
 
     /**
-     * Validates that if the bottom metadata sheet is expanded, the preview container is resized
-     * so that it doesn't overlap with the metadata sheet. Assertion made on the root of the Peek
+     * Validates that if the bottom metadata sheet is expanded, the preview container is resized so
+     * that it doesn't overlap with the metadata sheet. Assertion made on the root of the Peek
      * fragment.
      */
     private fun bottomMetadataSheetHeightAssertion(expectExpanded: Boolean): ViewAssertion {
@@ -187,9 +188,9 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
                         } else {
                             R.string.a11y_peek_show_info_button
                         }
-                    )
+                    ),
                 )
-        )
+            )
             .check(matches(isDisplayed()))
     }
 
@@ -222,9 +223,9 @@ class PeekBot(device: UiDevice, context: Context, timeout: Int) :
         onView(
                 allOf(
                     withId(R.id.peek_side_sheet_close_button),
-                    isDescendantOfA(coplanarMetadataSheetContainerMatcher)
+                    isDescendantOfA(coplanarMetadataSheetContainerMatcher),
                 )
-        )
+            )
             .perform(ViewActions.click())
     }
 }

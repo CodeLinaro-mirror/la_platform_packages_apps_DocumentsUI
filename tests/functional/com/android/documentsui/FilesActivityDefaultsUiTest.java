@@ -55,7 +55,8 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
     public void testNavigate_FromEmptyDirectory() throws Exception {
         device.waitForIdle();
 
-        EspressoBotsKt.openRoot(context, mTestFilesRule.getRoot(ROOT_0_ID).title);
+        EspressoBotsKt.openRoot(
+                context, mTestFilesRule.getRoot(ROOT_0_ID).title, getActivityLayoutId());
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
 
         // Check to make sure back button is properly handled by non-Doc type DocHolders

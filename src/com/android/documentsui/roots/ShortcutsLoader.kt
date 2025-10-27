@@ -61,7 +61,7 @@ class ShortcutsLoader(
             cursor = client.query(childrenUri, projection, null, null, null)
             while (cursor!!.moveToNext()) {
                 val title = getCursorString(cursor, DocumentsContract.Document.COLUMN_DISPLAY_NAME)
-                if (shortcut.title.equals(title)) {
+                if (shortcut.folderTitle.equals(title)) {
                     return getCursorString(cursor, DocumentsContract.Document.COLUMN_DOCUMENT_ID)
                 }
             }
@@ -78,7 +78,7 @@ class ShortcutsLoader(
                     wrap(client),
                     parentDocUri,
                     DocumentsContract.Document.MIME_TYPE_DIR,
-                    shortcut.title!!,
+                    shortcut.folderTitle!!,
                 )
             if (folderUri != null) {
                 Log.i(TAG, "Successfully created folder " + folderUri)

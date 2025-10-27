@@ -128,12 +128,14 @@ class RecyclerRootsAdapter(
         val item = mItems[position]
         return when (item) {
             is NavRailRootItem,
+            is NavRailShortcutItem,
             is NavRailAppItem,
             is NavRailRootAndAppItem,
             is NavRailProfileItem -> TYPE_NAV_RAIL_ROOT
             is RootAndAppItem,
             is ProfileItem,
             is RootItem,
+            is ShortcutItem,
             is AppItem -> TYPE_ROOT
             is SpacerItem -> TYPE_SPACER
             is HeaderItem -> TYPE_HEADER

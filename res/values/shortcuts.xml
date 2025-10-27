@@ -15,9 +15,12 @@
 -->
 
 <resources>
-    <string-array name="shortcut_authorities"/>
-    <string-array name="shortcut_parent_doc_ids"/>
-    <string-array name="shortcut_root_ids"/>
-    <string-array name="shortcut_titles"/>
+    <string-array name="shortcut_authorities" translatable="false"/>
+    <string-array name="shortcut_parent_doc_ids" translatable="false"/>
+    <string-array name="shortcut_root_ids" translatable="false"/>
+    <!-- shortcut_titles are the actual folder titles, shortcut_localized_titles would be the
+         display and localized titles for shortcut sidebar items. -->
+    <string-array name="shortcut_titles" translatable="false"/>
+    <string-array name="shortcut_localized_titles"/>
     <array name="shortcut_icons"/>
 </resources>

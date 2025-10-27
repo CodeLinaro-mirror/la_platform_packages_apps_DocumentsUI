@@ -31,17 +31,31 @@ import java.io.DataOutputStream
 import java.util.Objects
 
 class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
-    constructor(icon: Int, title: String?, root: RootInfo, parentDirDocumentId: String?) : this() {
-        this.icon = icon
-        this.title = title
+    constructor(
+        root: RootInfo,
+        parentDirDocumentId: String?,
+        folderTitle: String?,
+        localizedDisplayTitle: String?,
+        icon: Int,
+    ) : this() {
         this.root = root
         this.parentDirDocumentId = parentDirDocumentId
+        this.folderTitle = folderTitle
+        this.localizedDisplayTitle = localizedDisplayTitle
+        this.icon = icon
     }
 
-    var icon: Int = ShortcutResourceValues.INVALID_ICON_REF
-    override var title: String? = null
     override var root: RootInfo = RootInfo()
     var parentDirDocumentId: String? = null
+    var folderTitle: String? = null
+    var localizedDisplayTitle: String? = null
+    override var title: String?
+        get() = localizedDisplayTitle
+        set(title) {
+            localizedDisplayTitle = title
+        }
+
+    var icon: Int = ShortcutResourceValues.INVALID_ICON_REF
     override var documentId: String? = null
     override val uri: Uri?
         get() = DocumentsContract.buildDocumentUri(root.authority, documentId)
@@ -50,7 +64,7 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
     override val derivedType: Int
         get() {
             if (
-                title.equals(Providers.HOME_SCREEN_SHORTCUT_TITLE) &&
+                folderTitle.equals(Providers.HOME_SCREEN_SHORTCUT_TITLE) &&
                     parentDirDocumentId.equals("primary:") &&
                     root.authority.equals(Providers.AUTHORITY_STORAGE)
             ) {
@@ -129,7 +143,8 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         if (other is ShortcutInfo) {
             val o = other
 
-            return Objects.equals(title, o.title) &&
+            return Objects.equals(folderTitle, o.folderTitle) &&
+                Objects.equals(localizedDisplayTitle, o.localizedDisplayTitle) &&
                 Objects.equals(documentId, o.documentId) &&
                 Objects.equals(root, o.root) &&
                 Objects.equals(parentDirDocumentId, o.parentDirDocumentId)
@@ -141,6 +156,8 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         return ("ShortcutInfo{" +
             "title=" +
             title +
+            ", folderTitle=" +
+            folderTitle +
             ", documentId=" +
             documentId +
             ", root=" +
@@ -157,18 +174,21 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
         // If comparing a shortcut info with a root info, the score should have already been
         // returned since the derived types would be different.
         val o: ShortcutInfo = other as ShortcutInfo
-        return compareToIgnoreCaseNullable(title, o.title)
+        // Compare against the folder title rather than the localized title.
+        return compareToIgnoreCaseNullable(folderTitle, o.folderTitle)
     }
 
     override fun reset() {
-        title = null
+        localizedDisplayTitle = null
+        folderTitle = null
         documentId = null
         root = RootInfo()
     }
 
     override fun read(input: DataInputStream?) {
         icon = input!!.readInt()
-        title = DurableUtils.readNullableString(input)
+        folderTitle = DurableUtils.readNullableString(input)
+        localizedDisplayTitle = DurableUtils.readNullableString(input)
         root = RootInfo()
         root.read(input)
         parentDirDocumentId = DurableUtils.readNullableString(input)
@@ -177,7 +197,8 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
 
     override fun write(out: DataOutputStream?) {
         out!!.writeInt(icon)
-        DurableUtils.writeNullableString(out, title)
+        DurableUtils.writeNullableString(out, folderTitle)
+        DurableUtils.writeNullableString(out, localizedDisplayTitle)
         root.write(out)
         DurableUtils.writeNullableString(out, parentDirDocumentId)
         DurableUtils.writeNullableString(out, documentId)
@@ -207,7 +228,8 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
     fun copyShortcutInfo(): ShortcutInfo {
         val newShortcut = ShortcutInfo()
         newShortcut.icon = this.icon
-        newShortcut.title = this.title
+        newShortcut.folderTitle = this.folderTitle
+        newShortcut.localizedDisplayTitle = this.localizedDisplayTitle
         newShortcut.root = RootInfo.copyRootInfo(this.root)
         newShortcut.parentDirDocumentId = this.parentDirDocumentId
         newShortcut.documentId = this.documentId

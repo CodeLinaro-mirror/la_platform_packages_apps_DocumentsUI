@@ -16,37 +16,47 @@
 
 package com.android.documentsui.utils
 
+import android.annotation.LayoutRes
 import android.content.Context
 import android.util.TypedValue
 import com.android.documentsui.R
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.Material3Config.Companion.getRes
 
-/** Check if the app is running in fixed_layout.  */
-fun inFixedLayout(context: Context): Boolean {
+/** Check if the app is running in fixed_layout. */
+fun inFixedLayout(context: Context, @LayoutRes layoutId: Int?): Boolean {
+    if (layoutId == null) {
+        throw IllegalArgumentException("layoutId cannot be null.")
+    }
     val value = TypedValue()
-    // We alias files_activity to either fixed or drawer or nav_rail layouts based on screen
-    // dimensions. In order to determine which layout has been selected, we check the
-    // resolved value.
-    context.getResources().getValue(getRes(R.layout.files_activity), value, true)
+    // We alias files_activity and documents_activity to either fixed or drawer or nav_rail layouts
+    // based on screen dimensions. In order to determine which layout has been selected, we check
+    // the resolved value.
+    context.getResources().getValue(layoutId, value, true)
     return value.resourceId == getRes(R.layout.fixed_layout)
 }
 
-/** Check if the app is running in nav_rail_layout.  */
-fun inNavRailLayout(context: Context): Boolean {
+/** Check if the app is running in nav_rail_layout. */
+fun inNavRailLayout(context: Context, @LayoutRes layoutId: Int?): Boolean {
     if (!isUseMaterial3FlagEnabled()) {
         // NavRail is only enabled for material3, so the resource `nav_rail_layout` might
         // not exist in the apk.
         return false
     }
+    if (layoutId == null) {
+        throw IllegalArgumentException("layoutId cannot be null.")
+    }
     val value = TypedValue()
-    context.getResources().getValue(getRes(R.layout.files_activity), value, true)
+    context.getResources().getValue(layoutId, value, true)
     return value.resourceId == getRes(R.layout.nav_rail_layout)
 }
 
-/** Check if the app is running in drawer_layout.  */
-fun inDrawerLayout(context: Context): Boolean {
+/** Check if the app is running in drawer_layout. */
+fun inDrawerLayout(context: Context, @LayoutRes layoutId: Int?): Boolean {
+    if (layoutId == null) {
+        throw IllegalArgumentException("layoutId cannot be null.")
+    }
     val value = TypedValue()
-    context.getResources().getValue(getRes(R.layout.files_activity), value, true)
+    context.getResources().getValue(layoutId, value, true)
     return value.resourceId == getRes(R.layout.drawer_layout)
 }

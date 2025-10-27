@@ -378,7 +378,7 @@
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"የመረጃ ፓነልን አሳይ"</string>
     <string name="trash_page_empty_title" msgid="1277047027818824150">"በመጣያ ውስጥ ምንም የለም"</string>
     <string name="empty_trash_banner_message" msgid="8201073314528791202">"ከ30 ቀናት በላይ በመጣያ ያሉ ፋይሎች በራስ-ሰር ይሰረዛሉ።"</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"የቆሻሻ ማጠራቀሚያውን አሁኑኑ አጽዳ"</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"መጣያውን አሁኑኑ አጽዳ"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"መጣያው ይጽዳ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ይህ እርምጃ ሊቀለበስ አይችልም እና ፋይሎቹ ከእንግዲህ መልሰው መገኘት የሚችሉ አይሆኑም።"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"መጣያውን አጽዳ"</string>

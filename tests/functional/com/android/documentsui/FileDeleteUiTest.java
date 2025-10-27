@@ -35,6 +35,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.util.Log;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObject;
@@ -78,25 +79,31 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private final List<String> mCopyFileList = new ArrayList<String>();
 
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (TestNotificationService.ACTION_PONG.equals(action)) {
-                sRendezvousCountDownLatch.countDown();
-            } else if (TestNotificationService.ACTION_OPERATION_RESULT.equals(action)) {
-                mOperationExecuted = intent.getBooleanExtra(
-                        TestNotificationService.EXTRA_RESULT, false);
-                if (!mOperationExecuted) {
-                    mErrorReason = intent.getStringExtra(
-                            TestNotificationService.EXTRA_ERROR_REASON);
+    private final BroadcastReceiver mReceiver =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (TestNotificationService.ACTION_PONG.equals(action)) {
+                        sRendezvousCountDownLatch.countDown();
+                    } else if (TestNotificationService.ACTION_OPERATION_RESULT.equals(action)) {
+                        mOperationExecuted =
+                                intent.getBooleanExtra(TestNotificationService.EXTRA_RESULT, false);
+                        if (!mOperationExecuted) {
+                            mErrorReason =
+                                    intent.getStringExtra(
+                                            TestNotificationService.EXTRA_ERROR_REASON);
+                        }
+                        if (mCountDownLatch != null) {
+                            mCountDownLatch.countDown();
+                        }
+                    } else if (TestNotificationService.ACTION_RECENT_NOTIFICATIONS.equals(action)) {
+                        mRecentNotificationsAsText =
+                                intent.getStringExtra(
+                                        TestNotificationService.EXTRA_RECENT_NOTIFICATIONS_AS_TEXT);
+                    }
                 }
-                if (mCountDownLatch != null) {
-                    mCountDownLatch.countDown();
-                }
-            }
-        }
-    };
+            };
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -114,6 +121,8 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
     private String mErrorReason;
 
+    private String mRecentNotificationsAsText;
+
     @Before
     public void setUpTest() throws Exception {
         setNotificationAccess(true);
@@ -121,6 +130,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         IntentFilter filter = new IntentFilter();
         filter.addAction(TestNotificationService.ACTION_OPERATION_RESULT);
         filter.addAction(TestNotificationService.ACTION_PONG);
+        filter.addAction(TestNotificationService.ACTION_RECENT_NOTIFICATIONS);
         context.registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
         if (!TestNotificationService.rendezvous(context, sRendezvousCountDownLatch)) {
             fail("TestNotificationService.rendezvous failed");
@@ -175,7 +185,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags(FLAG_HOME_SCREEN_FILES_RO)
     public void testDeleteAllDocument() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.main.clickToolbarOverflowItem(
                 context.getResources().getString(R.string.menu_select_all));
         device.waitForIdle();
@@ -190,9 +200,12 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
             fail("Cannot wait because of error." + e.toString());
         }
 
-        assertTrue(mErrorReason, mOperationExecuted);
+        if (!mOperationExecuted) {
+            Log.e(TAG, "Recent notifications: " + mRecentNotificationsAsText);
+            fail(mErrorReason);
+        }
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         device.waitForIdle();
 
         List<DocumentInfo> root1 = mDocsHelper.listChildren(rootDir0.documentId, 1000);

@@ -136,6 +136,40 @@ public class RootsFragmentTest {
             TestProvidersAccess.PICKLES.title
         };
 
+    private static final String[]
+            EXPECTED_SORTED_RESULT_LOCALIZED_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_TRUE = {
+        TestProvidersAccess.RECENTS.title,
+        TestProvidersAccess.HOME_SCREEN_GERMAN_TITLE,
+        TestProvidersAccess.IMAGE.title,
+        TestProvidersAccess.VIDEO.title,
+        TestProvidersAccess.AUDIO.title,
+        TestProvidersAccess.DOCUMENT.title,
+        TestProvidersAccess.DOWNLOADS.title,
+        TestProvidersAccess.LIVE_IMAGES_GERMAN_TITLE,
+        TestProvidersAccess.TEST_SHORTCUT_GERMAN_TITLE,
+        "" /* SpacerItem */,
+        TestProvidersAccess.EXTERNALSTORAGE.title,
+        TestProvidersAccess.HAMMY.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.INSPECTOR.title,
+        TestProvidersAccess.PICKLES.title
+    };
+
+    private static final String[]
+            EXPECTED_SORTED_RESULT_LOCALIZED_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_FALSE = {
+        TestProvidersAccess.RECENTS.title,
+        TestProvidersAccess.HOME_SCREEN_GERMAN_TITLE,
+        TestProvidersAccess.DOWNLOADS.title,
+        TestProvidersAccess.LIVE_IMAGES_GERMAN_TITLE,
+        TestProvidersAccess.TEST_SHORTCUT_GERMAN_TITLE,
+        "" /* SpacerItem */,
+        TestProvidersAccess.EXTERNALSTORAGE.title,
+        TestProvidersAccess.HAMMY.title,
+        "" /* SpacerItem */,
+        TestProvidersAccess.INSPECTOR.title,
+        TestProvidersAccess.PICKLES.title
+    };
+
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
@@ -288,6 +322,31 @@ public class RootsFragmentTest {
     }
 
     @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testSortLoadResult_WithCorrectOrder_localizedShortcutsTitles() {
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        createFakeRootInfoList(),
+                        createFakeLocalizedShortcutInfoList(),
+                        null /* excludePackage */,
+                        null /* handlerAppIntent */,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        /* maybeShowBadge */ false,
+                        mTestUserManagerState);
+        if (mContext.getResources().getBoolean(R.bool.show_media_roots)) {
+            assertTrue(assertSortedResult(items,
+                    EXPECTED_SORTED_RESULT_LOCALIZED_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_TRUE));
+        } else {
+            assertTrue(assertSortedResult(items,
+                    EXPECTED_SORTED_RESULT_LOCALIZED_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_FALSE));
+        }
+    }
+
+    @Test
     public void testItemComparator_WithCorrectOrder() {
         final String testPackageName = "com.test1";
         final String errorTestPackageName = "com.test2";
@@ -366,5 +425,15 @@ public class RootsFragmentTest {
                 TestProvidersAccess.HOME_SCREEN_SHORTCUT,
                 TestProvidersAccess.LIVE_IMAGES_SHORTCUT,
                 TestProvidersAccess.TEST_SHORTCUT);
+    }
+
+    private List<ShortcutInfo> createFakeLocalizedShortcutInfoList() {
+        ShortcutInfo homeScreen = TestProvidersAccess.HOME_SCREEN_SHORTCUT.copyShortcutInfo();
+        homeScreen.setLocalizedDisplayTitle(TestProvidersAccess.HOME_SCREEN_GERMAN_TITLE);
+        ShortcutInfo liveImages = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.copyShortcutInfo();
+        liveImages.setLocalizedDisplayTitle(TestProvidersAccess.LIVE_IMAGES_GERMAN_TITLE);
+        ShortcutInfo testShortcut = TestProvidersAccess.TEST_SHORTCUT.copyShortcutInfo();
+        testShortcut.setLocalizedDisplayTitle(TestProvidersAccess.TEST_SHORTCUT_GERMAN_TITLE);
+        return Arrays.asList(homeScreen, liveImages, testShortcut);
     }
 }
