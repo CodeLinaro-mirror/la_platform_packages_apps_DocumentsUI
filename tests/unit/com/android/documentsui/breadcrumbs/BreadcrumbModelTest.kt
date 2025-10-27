@@ -60,17 +60,22 @@ class BreadcrumbModelTest {
     @get:Rule val setFlags = OverrideFlagsRule()
 
     private val breadcrumbModel = BreadcrumbModel()
-    private val root = RootInfo().apply { title = "root" }
+    private val root =
+        RootInfo().apply {
+            title = "root"
+            authority = "some"
+        }
     private val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.STARTED)
 
     @Test
     fun testSetFromStack() {
         val testBreadcrumbObserver = mock<Observer<List<String>>>()
-        val stack = DocumentStack()
-        stack.changeRoot(root)
         breadcrumbModel.pathData.observe(lifecycleOwner, testBreadcrumbObserver)
         verify(testBreadcrumbObserver).onChanged(eq(listOf()))
 
+        val stack = DocumentStack()
+        stack.changeRoot(root)
+        stack.push(createDir("root"))
         breadcrumbModel.setFromStack(stack)
         verify(testBreadcrumbObserver).onChanged(eq(listOf("root")))
 

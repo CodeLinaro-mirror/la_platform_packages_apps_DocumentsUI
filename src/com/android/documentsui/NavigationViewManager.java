@@ -49,7 +49,6 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.breadcrumbs.BreadcrumbController;
-import com.android.documentsui.breadcrumbs.BreadcrumbModel;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -72,7 +71,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     private final State mState;
     private final NavigationViewManager.Environment mEnv;
     private final Breadcrumb mBreadcrumb;
-    @Nullable private BreadcrumbController mBreadcrumbController;
     private final ProfileTabs mProfileTabs;
     private final View mSearchBarView;
     private final CollapsingToolbarLayout mCollapsingBarLayout;
@@ -213,31 +211,12 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
     }
 
-    /**
-     * Sets the breadcrumb controller. This controller is an alternative, that should replace
-     * the HorizontalBreadcrumb. For pre-material 3 documentsUI this is not a functioning component.
-     */
-    public void setBreadcrumbController(BreadcrumbController controller) {
-        if (isSearchV2Enabled()) {
-            this.mBreadcrumbController = controller;
-        }
-    }
-
-    /** Provides access to breadcrumb model v2 if one has been set */
-    public @Nullable BreadcrumbModel getBreadcrumbModel() {
-        if (isSearchV2Enabled()) {
-            if (mBreadcrumbController != null) {
-                return mBreadcrumbController.getModel();
-            }
-        }
-        return null;
-    }
-
     /** Updates the visibility of the breadcrumb v2 */
     private void setBreadcrumbV2Visible(boolean visible) {
         if (isSearchV2Enabled()) {
-            if (mBreadcrumbController != null) {
-                mBreadcrumbController.setVisible(visible);
+            BreadcrumbController controller = mActivity.getInjector().getBreadcrumbController();
+            if (controller != null) {
+                controller.setVisible(visible);
             }
         }
     }
@@ -338,6 +317,17 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     private void onNavigationIconClicked() {
         if (mDrawer.isPresent()) {
             mDrawer.setOpen(true);
+        }
+    }
+
+    /**
+     * Forces directory change to the current stack. This is method used by search breadcrumb to
+     * force change to a directory on the breadcrumb of the currently selected search result. New
+     * for search V2 only.
+     */
+    public void forceDirectoryToCurrentStack() {
+        if (isSearchV2Enabled()) {
+            mEnv.refreshCurrentRootAndDirectory(AnimationView.ANIM_LEAVE);
         }
     }
 
