@@ -24,11 +24,15 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.kotlin.VerificationKt.never;
+import static org.mockito.kotlin.VerificationKt.verify;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.test.AndroidTestCase;
 
@@ -37,6 +41,8 @@ import androidx.test.rule.provider.ProviderTestRule;
 
 import com.android.documentsui.InspectorProvider;
 import com.android.documentsui.archives.ArchivesProvider;
+import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.util.VersionUtils;
 
@@ -44,11 +50,18 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 @SmallTest
 public class DocumentInfoTest extends AndroidTestCase {
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private static final DocumentInfo TEST_DOC
             = createDocInfo("authority.a", "doc.1", "text/plain");
@@ -263,6 +276,59 @@ public class DocumentInfoTest extends AndroidTestCase {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testUpdateFromCursor_syncStateFlags_flagEnabled() {
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+        int value = 2;
+
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getInt(index)).thenReturn(value);
+        DocumentInfo info = new DocumentInfo();
+        info.updateFromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testUpdateFromCursor_syncStateFlags_flagDisabled() {
+        Cursor cursor = mock(Cursor.class);
+        verify(cursor, never()).getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS);
+    }
+
+    @Test
+    public void testWriteRead_syncStateFlags_null() throws IOException {
+        // Write info to output.
+        DocumentInfo info = new DocumentInfo();
+        info.displayName = "file";
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        info.write(new DataOutputStream(out));
+
+        // Read input to info2.
+        DocumentInfo info2 = new DocumentInfo();
+        DataInputStream input = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        info2.read(input);
+
+        assert (info.equals(info2));
+    }
+
+    @Test
+    public void testWriteRead_syncStateFlags_nonNull() throws IOException {
+        // Write info to output.
+        DocumentInfo info = new DocumentInfo();
+        info.displayName = "file";
+        info.syncStateFlags = 1;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        info.write(new DataOutputStream(out));
+
+        // Read input to info2.
+        DocumentInfo info2 = new DocumentInfo();
+        DataInputStream input = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        info2.read(input);
+
+        assert (info.equals(info2));
+    }
+
+    @Test
     public void testGetCursorInt() {
         Cursor cursor = mock(Cursor.class);
         String columnName = "column";
@@ -271,20 +337,38 @@ public class DocumentInfoTest extends AndroidTestCase {
 
         // When cursor is null, the default value value should be returned.
         assertThat(DocumentInfo.getCursorInt(null, columnName)).isEqualTo(0);
-        assertThat(DocumentInfo.getCursorInt(null, columnName, /*returnIfMissingOrNull=*/
-                -10)).isEqualTo(-10);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                null, columnName, /* returnIfMissingOrNull= */ -10))
+                .isEqualTo(-10);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                null, columnName, /* returnIfMissingOrNull= */ null))
+                .isEqualTo(null);
 
         // When the column has no index (-1), the default value value should be returned.
         when(cursor.getColumnIndex(columnName)).thenReturn(-1);
         assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(0);
-        assertThat(DocumentInfo.getCursorInt(cursor, columnName, /*returnIfMissingOrNull=*/
-                -10)).isEqualTo(-10);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ -10))
+                .isEqualTo(-10);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                null, columnName, /* returnIfMissingOrNull= */ null))
+                .isEqualTo(null);
 
         // When the column has a valid, the column's value should be returned.
         when(cursor.getColumnIndex(columnName)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(value);
         assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(value);
-        assertThat(DocumentInfo.getCursorInt(cursor, columnName, /*returnIfMissingOrNull=*/
-                -10)).isEqualTo(value);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ -10))
+                .isEqualTo(value);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ null))
+                .isEqualTo(value);
     }
 }
