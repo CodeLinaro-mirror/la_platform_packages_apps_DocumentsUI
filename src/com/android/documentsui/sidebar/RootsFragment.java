@@ -288,8 +288,7 @@ public class RootsFragment extends Fragment {
                         public boolean handleDropEventChecked(View v, DragEvent event) {
                             final Item item = getItem(v);
 
-                            // TODO: b/441194501 - implement `isShortcut()` check in here
-                            assert (item.isRoot());
+                            assert (item.isRoot() || item.isShortcut());
 
                             return item.dropOn(event);
                         }

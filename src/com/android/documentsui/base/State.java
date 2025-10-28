@@ -148,8 +148,6 @@ public class State implements android.os.Parcelable {
      * Stores a ShortcutInfo reference of the currently selected shortcut. If a root is selected
      * instead, this value will be null.
      */
-    // TODO: b/447024807 - Make ShortcutInfo Parcelable and Durable for persisting state
-    //  configurations.
     @Nullable
     public ShortcutInfo shortcut;
 
