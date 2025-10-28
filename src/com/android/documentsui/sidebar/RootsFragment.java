@@ -937,17 +937,12 @@ public class RootsFragment extends Fragment {
             return true;
         } else if (id == getRes(R.id.root_menu_open_in_new_window)) {
             if (sidebarItem instanceof RootItem) {
-                mActionHandler.openInNewWindow(
-                        new DocumentStack(sidebarItem.getItemInfo().getRoot()));
+                mActionHandler.openInNewWindow(new DocumentStack(
+                        sidebarItem.getItemInfo().getRoot(), sidebarItem.getDocInfo()), null);
             } else if (isHomeScreenFilesFlagEnabled() && sidebarItem instanceof ShortcutItem) {
                 ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
-                getBaseActivity().buildStackToParentShortcutFolder(shortcut,
-                    (@Nullable DocumentStack stack) -> {
-                        if (stack != null) {
-                            stack.push(sidebarItem.getDocInfo());
-                            mActionHandler.openInNewWindow(stack);
-                        }
-                    });
+                mActionHandler.openInNewWindow(
+                        new DocumentStack(shortcut.getRoot(), sidebarItem.getDocInfo()), shortcut);
                 return true;
             }
             return true;

@@ -194,6 +194,17 @@ public class State implements android.os.Parcelable {
         return true;
     }
 
+    public String getTitleAtPosition(int pos) {
+        if (pos == 0 && shortcut != null) {
+            return shortcut.getTitle();
+        } else if ((pos == 0 || stack.isEmpty()) && stack.getRoot() != null) {
+            return stack.getRoot().title;
+        } else if (!stack.isEmpty() && pos < stack.size()) {
+            return stack.get(pos).displayName;
+        }
+        return null;
+    }
+
     /**
      * Returns true if DocsUI supports cross-profile for this {@link State}.
      */

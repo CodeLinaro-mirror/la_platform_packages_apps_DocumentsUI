@@ -20,6 +20,7 @@ import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -845,23 +846,18 @@ public abstract class BaseActivity
         mState.sortModel.setDimensionVisibility(
                 SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
 
-        buildStackToParentShortcutFolder(
-                shortcut,
-                (@Nullable DocumentStack stack) -> {
-                    if (stack != null) {
-                        mInjector.actions.getDocument(
-                                shortcut.getRoot().authority,
-                                shortcut.getDocumentId(),
-                                shortcut.getRoot().userId,
-                                TimeoutTask.DEFAULT_TIMEOUT,
-                                doc -> {
-                                    // Reset the stack and store the shortcut reference.
-                                    mState.stack.reset(stack);
-                                    mState.shortcut = shortcut;
-                                    mInjector.actions.openRootDocument(doc);
-                                });
-                    }
-        });
+        mInjector.actions.getDocument(
+                shortcut.getRoot().authority,
+                shortcut.getDocumentId(),
+                shortcut.getRoot().userId,
+                TimeoutTask.DEFAULT_TIMEOUT,
+                doc -> {
+                    // Reset the stack and store the shortcut reference.
+                    mState.stack.changeRoot(shortcut.getRoot());
+                    mState.shortcut = shortcut;
+                    mInjector.actions.openRootDocument(doc);
+                });
+
         expandAppBar();
         updateHeaderTitle();
     }
@@ -997,7 +993,12 @@ public abstract class BaseActivity
             getWindow().getDecorView().announceForAccessibility(appName);
         }
 
-        String newTitle = mState.stack.getTitle();
+        String newTitle;
+        if (isHomeScreenFilesFlagEnabled()) {
+            newTitle = mState.getTitleAtPosition(mState.stack.size() - 1);
+        } else {
+            newTitle = mState.stack.getTitle();
+        }
         if (newTitle != null) {
             // Causes talkback to announce the activity's new title
             setTitle(newTitle);

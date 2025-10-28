@@ -408,8 +408,13 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
 
         mSearchBarView.setVisibility(GONE);
-        String title =
-                mState.stack.size() <= 1 ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
+        String title;
+        if (isHomeScreenFilesFlagEnabled()) {
+            title = mState.getTitleAtPosition(mState.stack.size() - 1);
+        } else {
+            title = mState.stack.size() <= 1
+                    ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
+        }
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
