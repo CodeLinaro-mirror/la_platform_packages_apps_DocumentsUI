@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -1071,6 +1072,12 @@ public class RootsFragment extends Fragment {
             }
             return rhs instanceof RootItem ? -1 : 0;
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        reloadRootsAndShortcuts();
     }
 
     @FunctionalInterface
