@@ -704,16 +704,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 }
                             }
                             if (selectedId == null) {
+                                controller.getModel().setPath(mEmptyPath);
                                 return;
                             }
-                            final DocumentStack stack = new DocumentStack();
                             DocumentInfo info = mModel.getDocument(selectedId);
                             if (info == null) {
                                 return;
                             }
                             try {
                                 // TODO(b/447678204): Use handler.post(...) to not run on UI thread.
-                                stack.reset(mPathExtractor.getDocumentStack(info));
+                                DocumentStack stack = mPathExtractor.getDocumentStack(info);
                                 controller.setClickConsumer(
                                         (i) -> {
                                             // Remove items after the i-th element.
@@ -724,13 +724,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                             mState.stack.reset(stack);
                                             mActivity.getNavigator().forceDirectoryToCurrentStack();
                                         });
+                                controller.getModel().setFromStack(stack);
                             } catch (Exception e) {
                                 if (DEBUG) {
                                     Log.d(TAG, "Failed to get stack for " + info, e);
                                 }
+                                controller.getModel().setPath(mEmptyPath);
                                 controller.setClickConsumer(null);
                             }
-                            controller.getModel().setFromStack(stack);
                         }
                     });
         }
