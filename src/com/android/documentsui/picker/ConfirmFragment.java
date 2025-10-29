@@ -68,13 +68,15 @@ public class ConfirmFragment extends DocumentsUIDialogFragment {
         final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
         switch (mType) {
             case TYPE_OVERWRITE:
+                String title = getString(getRes(R.string.overwrite_file_confirmation_title));
                 String message =
                         String.format(
                                 getString(getRes(R.string.overwrite_file_confirmation_message)),
                                 mTarget.displayName);
+                builder.setTitle(title);
                 builder.setMessage(message);
                 builder.setPositiveButton(
-                        android.R.string.ok,
+                        getRes(R.string.overwrite_file_confirmation_positive_button),
                         (DialogInterface dialog, int id) -> {
                             pickResult.increaseActionCount();
                             mActions.finishPicking(mTarget.getDocumentUri());
@@ -84,16 +86,16 @@ public class ConfirmFragment extends DocumentsUIDialogFragment {
                 final Uri treeUri = mTarget.getTreeDocumentUri();
                 final BaseActivity activity = (BaseActivity) getActivity();
                 final String target = activity.getCurrentTitle();
+                // TODO(b/456014591): Remove the empty string once the translation is done.
+                //  We remove one argument during the string update but still pass the empty string
+                //  below, otherwise it will crash before the translation is done for other
+                //  languages.
                 final String text =
                         getString(
                                 getRes(R.string.open_tree_dialog_title),
                                 getCallingAppName(getActivity()),
-                                target);
-                message =
-                        getString(
-                                getRes(R.string.open_tree_dialog_message),
-                                getCallingAppName(getActivity()),
-                                target);
+                                "");
+                message = getString(getRes(R.string.open_tree_dialog_message), target, "");
 
                 builder.setTitle(text);
                 builder.setMessage(message);

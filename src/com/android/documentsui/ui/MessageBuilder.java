@@ -99,9 +99,15 @@ public class MessageBuilder {
         final int count = docCount + uriCount + pathCount;
 
         if (isZipNgFlagEnabled()) {
+            // When ZipNg is ON, the message is being used as the dialog title (in getResourceId()
+            // below), and the list content will be used as the dialog message separately.
+            // TODO(b/456014591): Remove the empty string once the translation is done.
+            //  We remove one argument during the string update but still pass the empty string
+            //  below, otherwise it will crash before the translation is done for other
+            //  languages.
             return new MessageFormat(
                             mContext.getResources().getString(resourceId), Locale.getDefault())
-                    .format(Map.of("count", count, "list", list));
+                    .format(Map.of("count", count, "list", ""));
         }
 
         return mContext.getResources().getQuantityString(resourceId, count, list);
@@ -112,7 +118,7 @@ public class MessageBuilder {
             case DIALOG_TYPE_CONVERTED:
                 return getRes(
                         isZipNgFlagEnabled()
-                                ? R.string.copy_converted_warning_content
+                                ? R.string.copy_converted_warning_title
                                 : R.plurals.copy_converted_warning_content);
 
             case DIALOG_TYPE_FAILURE:
@@ -120,28 +126,28 @@ public class MessageBuilder {
                     case FileOperationService.OPERATION_COPY:
                         return getRes(
                                 isZipNgFlagEnabled()
-                                        ? R.string.copy_failure_alert_content
+                                        ? R.string.copy_failure_alert_title
                                         : R.plurals.copy_failure_alert_content);
                     case FileOperationService.OPERATION_COMPRESS:
                         return getRes(
                                 isZipNgFlagEnabled()
-                                        ? R.string.compress_failure_alert_content
+                                        ? R.string.compress_failure_alert_title
                                         : R.plurals.compress_failure_alert_content);
                     case FileOperationService.OPERATION_EXTRACT:
                     case FileOperationService.OPERATION_UNPACK:
                         return getRes(
                                 isZipNgFlagEnabled()
-                                        ? R.string.extract_failure_alert_content
+                                        ? R.string.extract_failure_alert_title
                                         : R.plurals.extract_failure_alert_content);
                     case FileOperationService.OPERATION_DELETE:
                         return getRes(
                                 isZipNgFlagEnabled()
-                                        ? R.string.delete_failure_alert_content
+                                        ? R.string.delete_failure_alert_title
                                         : R.plurals.delete_failure_alert_content);
                     case FileOperationService.OPERATION_MOVE:
                         return getRes(
                                 isZipNgFlagEnabled()
-                                        ? R.string.move_failure_alert_content
+                                        ? R.string.move_failure_alert_title
                                         : R.plurals.move_failure_alert_content);
                     default:
                         throw new UnsupportedOperationException();
@@ -159,25 +165,26 @@ public class MessageBuilder {
 
         if (docs != null) {
             for (DocumentInfo doc : docs) {
-                list.append("&#8226; ");
+                // Bullet and quotation mark.
+                list.append("&#8226; &#34;");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(doc.displayName)));
-                list.append("<br>");
+                list.append("&#34;<br>");
             }
         }
 
         if (uris != null) {
             for (Uri uri : uris) {
-                list.append("&#8226; ");
+                list.append("&#8226; &#34;");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(uri.toString())));
-                list.append("<br>");
+                list.append("&#34;<br>");
             }
         }
 
         if (paths != null) {
             for (String path : paths) {
-                list.append("&#8226; ");
+                list.append("&#8226; &#34;");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(new File(path).getName())));
-                list.append("<br>");
+                list.append("&#34;<br>");
             }
         }
 
