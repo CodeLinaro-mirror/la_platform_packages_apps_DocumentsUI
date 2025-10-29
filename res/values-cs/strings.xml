@@ -283,11 +283,11 @@
     <string name="delete_completed" msgid="4149401155614626199">"Smazáno"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Zkomprimováno"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Rozbaleno"</string>
-    <string name="copy_failed" msgid="3700193913993844675">"Kopírování nelze zahájit"</string>
-    <string name="move_failed" msgid="7692364307225994220">"Nelze přesunout"</string>
-    <string name="delete_failed" msgid="2642684566325252513">"Smazání se nezdařilo"</string>
-    <string name="compress_failed" msgid="7397502181042157261">"Nelze zkomprimovat"</string>
-    <string name="extract_failed" msgid="8372397499452831323">"Nelze rozbalit"</string>
+    <string name="copy_failed" msgid="3700193913993844675">"Nepodařilo se zkopírovat"</string>
+    <string name="move_failed" msgid="7692364307225994220">"Nepodařilo se přesunout"</string>
+    <string name="delete_failed" msgid="2642684566325252513">"Nepodařilo se smazat"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"Nepodařilo se zkomprimovat"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"Nepodařilo se rozbalit"</string>
     <string name="expand_label" msgid="5683357671239615207">"Rozbalit"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Sbalit"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Chcete aplikaci <xliff:g id="APPNAME"><b>^1</b></xliff:g> udělit přístup k adresáři <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> v úložišti <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>

@@ -262,7 +262,7 @@
     <string name="copy_failed" msgid="3700193913993844675">"کپی نشد"</string>
     <string name="move_failed" msgid="7692364307225994220">"انتقال داده نشد"</string>
     <string name="delete_failed" msgid="2642684566325252513">"حذف نشد"</string>
-    <string name="compress_failed" msgid="7397502181042157261">"امکان فشرده‌سازی وجود ندارد"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"فشرده‌سازی نشد"</string>
     <string name="extract_failed" msgid="8372397499452831323">"استخراج نشد"</string>
     <string name="expand_label" msgid="5683357671239615207">"ازهم باز کردن"</string>
     <string name="collapse_label" msgid="4530974883269531062">"جمع کردن"</string>
