@@ -24,6 +24,7 @@ import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
@@ -1939,6 +1940,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean isOnTrashPage() {
             return mState.stack.isTrash();
+        }
+
+        @Override
+        public boolean shouldDisplaySummary() {
+            return displaySummaryForRoot(
+                    mInjector.getSummaryProviderManager(), mState.stack.getRoot());
         }
     }
 }

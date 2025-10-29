@@ -21,7 +21,9 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Root
 import android.util.Log
+import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
+import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -165,4 +167,23 @@ class SummaryProviderManager(
     fun isEnabled(): Boolean {
         return state.value == SummaryState.ENABLED
     }
+}
+
+/** Whether the given root should show the summary column. It defaults to false. */
+fun displaySummaryForRoot(
+    summaryProviderManager: SummaryProviderManager?,
+    root: RootInfo?,
+): Boolean {
+    if (!isUseFileSummaryEnabled()) {
+        // The condition before this flag was to display for Downloads and Recents.
+        return root != null && (root.isRecents() || root.isDownloads())
+    }
+    // Defaults to false.
+    if (root == null || summaryProviderManager == null) {
+        return false
+    }
+    if (summaryProviderManager.isEnabled() && (root.isLocalProvider || root.isRecents)) {
+        return true
+    }
+    return false
 }

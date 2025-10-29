@@ -20,7 +20,6 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
-import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
@@ -97,11 +96,19 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                     case ITEM_TYPE_DIRECTORY:
                         // Under the Material3 flag, the GridDocumentHolder is the holder for all
                         // grid items.
-                        holder = isUseMaterial3FlagEnabled()
-                                ? new GridDocumentHolder(
-                                mEnv.getContext(), parent, mIconHelper, mConfigStore)
-                                : new GridDirectoryHolder(
-                                        mEnv.getContext(), parent, mIconHelper, mConfigStore);
+                        holder =
+                                isUseMaterial3FlagEnabled()
+                                        ? new GridDocumentHolder(
+                                                mEnv.getContext(),
+                                                parent,
+                                                mIconHelper,
+                                                mConfigStore,
+                                                mEnv)
+                                        : new GridDirectoryHolder(
+                                                mEnv.getContext(),
+                                                parent,
+                                                mIconHelper,
+                                                mConfigStore);
                         break;
                     case ITEM_TYPE_DOCUMENT:
                         holder =
@@ -115,15 +122,22 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                                                 mEnv.getContext(),
                                                 parent,
                                                 mIconHelper,
-                                                mConfigStore);
+                                                mConfigStore,
+                                                mEnv);
                         break;
                     default:
                         throw new IllegalStateException("Unsupported layout type.");
                 }
                 break;
             case MODE_LIST:
-                holder = new ListDocumentHolder(
-                        mEnv.getContext(), parent, mIconHelper, mFileTypeLookup, mConfigStore);
+                holder =
+                        new ListDocumentHolder(
+                                mEnv.getContext(),
+                                parent,
+                                mIconHelper,
+                                mFileTypeLookup,
+                                mConfigStore,
+                                mEnv);
                 break;
             default:
                 throw new IllegalStateException("Unsupported layout mode.");
@@ -150,7 +164,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
 
         String summary = getCursorString(cursor, Document.COLUMN_SUMMARY);
 
-        if (isUseFileSummaryEnabled()) {
+        if (mEnv.shouldDisplaySummary()) {
             String displayName = getCursorString(cursor, Document.COLUMN_DISPLAY_NAME);
 
             // For Download provider, the summary is set to the display name.

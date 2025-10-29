@@ -22,17 +22,24 @@ import android.content.ContextWrapper
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
+import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.R
 import com.android.documentsui.TestSummaryProvider
+import com.android.documentsui.base.RootInfo
+import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
+import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.testing.TestProvidersAccess
 import com.google.common.truth.Truth.assertThat
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito
@@ -42,6 +49,8 @@ import org.mockito.Mockito.`when`
 @RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
 class SummaryProviderManagerTest {
+    @get:Rule val setFlags = OverrideFlagsRule()
+
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var mockResources: Resources
@@ -134,4 +143,35 @@ class SummaryProviderManagerTest {
             assertThat(manager.state.value).isEqualTo(SummaryState.ENABLED)
             manager.stop()
         }
+
+    @Test
+    @EnableFlags(FLAG_USE_FILE_SUMMARY, FLAG_USE_MATERIAL3)
+    fun testDisplaySummaryForRoot() = runTest {
+        // Start it with empty, should not display summary.
+        setIsEmpty(true)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
+
+        // Non-local root.
+        val testRoot =
+            RootInfo().apply {
+                authority = TestSummaryProvider.AUTHORITY
+                rootId = "summary-root"
+            }
+
+        manager.state.first { it == SummaryState.DISABLED }
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isFalse()
+
+        // When provider is not empty, should display summary.
+        setIsEmpty(false)
+        manager.state.first { it == SummaryState.ENABLED }
+
+        // Something that isn't local shouldn't display it.
+        assertThat(displaySummaryForRoot(manager, testRoot)).isFalse()
+
+        // Test with roots that are local.
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS)).isTrue()
+    }
 }

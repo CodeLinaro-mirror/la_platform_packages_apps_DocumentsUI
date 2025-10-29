@@ -93,6 +93,11 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     }
 
     @Override
+    public boolean shouldDisplaySummary() {
+        return false;
+    }
+
+    @Override
     public boolean isOnTrashPage() {
         return mIsOnTrashPage;
     }

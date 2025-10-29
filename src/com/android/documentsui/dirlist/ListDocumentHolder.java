@@ -92,11 +92,18 @@ final class ListDocumentHolder extends DocumentHolder {
     private final Lookup<String, String> mFileTypeLookup;
     // This is used in as a convenience in our bind method.
     private final DocumentInfo mDoc;
+    private final DocumentsAdapter.Environment mEnv;
 
-    public ListDocumentHolder(Context context, ViewGroup parent, IconHelper iconHelper,
-            Lookup<String, String> fileTypeLookup, ConfigStore configStore) {
+    ListDocumentHolder(
+            Context context,
+            ViewGroup parent,
+            IconHelper iconHelper,
+            Lookup<String, String> fileTypeLookup,
+            ConfigStore configStore,
+            DocumentsAdapter.Environment environment) {
         super(context, parent, getRes(R.layout.item_doc_list), configStore);
 
+        mEnv = environment;
         mIconLayout = itemView.findViewById(getRes(R.id.icon));
         mIconMime = (ImageView) itemView.findViewById(getRes(R.id.icon_mime));
         mIconThumb = (ImageView) itemView.findViewById(getRes(R.id.icon_thumb));
@@ -284,7 +291,7 @@ final class ListDocumentHolder extends DocumentHolder {
             return;
         }
 
-        if (isUseFileSummaryEnabled()) {
+        if (useSummary()) {
             if (summary == null) {
                 mSummary.setText("--");
                 mSummary.setTooltipText(summary);
@@ -294,8 +301,12 @@ final class ListDocumentHolder extends DocumentHolder {
             }
             mSummary.setVisibility(View.VISIBLE);
         } else {
-            mSummary.setVisibility(View.INVISIBLE);
+            mSummary.setVisibility(View.GONE);
         }
+    }
+
+    private boolean useSummary() {
+        return mEnv.shouldDisplaySummary();
     }
 
     /**
@@ -349,7 +360,7 @@ final class ListDocumentHolder extends DocumentHolder {
                 // Non-tablets
                 boolean hasDetails = false;
                 ArrayList<String> metadataList = new ArrayList<>();
-                if (isUseFileSummaryEnabled() && !TextUtils.isEmpty(summary)) {
+                if (useSummary() && !TextUtils.isEmpty(summary)) {
                     hasDetails = true;
                     metadataList.add(summary);
                 }
