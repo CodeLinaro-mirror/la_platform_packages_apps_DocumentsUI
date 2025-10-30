@@ -720,7 +720,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                             while (stack.size() > i + 1) {
                                                 stack.pop();
                                             }
-                                            mInjector.searchManager.cancelSearch();
+                                            mInjector.searchManager.onClose();
                                             mState.stack.reset(stack);
                                             mActivity.getNavigator().forceDirectoryToCurrentStack();
                                         });
