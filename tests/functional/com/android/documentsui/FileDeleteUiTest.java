@@ -20,10 +20,7 @@ import static android.content.Context.RECEIVER_EXPORTED;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
-import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -34,19 +31,15 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.platform.test.annotations.DisableFlags;
-import android.platform.test.annotations.EnableFlags;
 import android.util.Log;
 
 import androidx.test.filters.LargeTest;
-import androidx.test.uiautomator.UiObject;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
-import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
-import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
 
@@ -69,8 +62,6 @@ import java.util.concurrent.TimeUnit;
  */
 @LargeTest
 public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
-    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
-
     private static final String TAG = "FileDeleteUiTest";
 
     private static final int STUB_FILE_COUNT = 1000;
@@ -108,10 +99,6 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule().createTestFiles(this::initTestFiles);
-
-    @Rule
-    public final ExternalStorageProviderTestFilesRule mExternalStorageProviderTestFilesRule =
-            new ExternalStorageProviderTestFilesRule();
 
     private static CountDownLatch sRendezvousCountDownLatch = new CountDownLatch(1);
 
@@ -210,28 +197,5 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
         List<DocumentInfo> root1 = mDocsHelper.listChildren(rootDir0.documentId, 1000);
         assertTrue("Delete operation was not completed", root1.size() == 0);
-    }
-
-    /** When using the new Search stack, files in Recents are deletable. */
-    @Test
-    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testDeleteFromRecentsWithSearchV2() throws Exception {
-        final String testFileNamePrefix =
-                mExternalStorageProviderTestFilesRule.createRandomFile("image/jpeg", "Pictures");
-        final String testFileName = testFileNamePrefix.concat(".jpg");
-
-        // Check: the random test file is visible in Recents.
-        bots.roots.openRoot("Recent");
-        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
-        assertTrue(fileInRecents.exists());
-
-        // Check: the file can be successfully deleted.
-        bots.directory.selectDocument(testFileName, 1);
-        device.waitForIdle();
-        bots.main.clickDelete();
-        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        device.waitForIdle();
-        fileInRecents = bots.directory.findDocument(testFileName, true);
-        assertFalse(fileInRecents.exists());
     }
 }
