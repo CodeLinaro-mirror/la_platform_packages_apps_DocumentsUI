@@ -631,7 +631,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         SelectionPredicate<String> selectionPredicate =
-                new DocsSelectionPredicate(mInjector.config, mState, mModel, mRecView);
+                new DocsSelectionPredicate(mInjector.config, mState, mModel, mRecView, mAdapterEnv);
 
         mFocusManager = mInjector.getFocusManager(mRecView, mModel);
         mActions = mInjector.getActionHandler(mContentLock);
@@ -1975,8 +1975,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         @Override
-        public boolean isDocumentEnabled(String mimeType, int flags) {
-            return mInjector.config.isDocumentEnabled(mimeType, flags, mState);
+        public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
+            return mInjector.config.isDocumentEnabled(
+                    mimeType, flags, syncStateFlags, mState, isOnline());
         }
 
         @Override

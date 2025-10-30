@@ -17,8 +17,10 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
+import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
@@ -364,7 +366,19 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             String docMimeType = getCursorString(
                     cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
             int docFlags = getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
-            if (mInjector.config.isDocumentEnabled(docMimeType, docFlags, mState)) {
+            final Integer syncStateFlags =
+                    isCloudFeaturesFlagEnabled()
+                            ? getCursorInteger(
+                                    cursor,
+                                    DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                                    /* returnIfMissingOrNull= */ null)
+                            : null;
+            if (mInjector.config.isDocumentEnabled(
+                    docMimeType,
+                    docFlags,
+                    syncStateFlags,
+                    mState,
+                    mInjector.networkMonitor.isOnline())) {
                 enabled.add(id);
             }
         }
