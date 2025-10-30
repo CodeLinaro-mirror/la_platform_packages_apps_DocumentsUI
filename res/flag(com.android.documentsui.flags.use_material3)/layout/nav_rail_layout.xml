@@ -73,7 +73,6 @@
 
             <!-- Main container for the right hand side. -->
             <LinearLayout
-                android:id="@+id/main_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -125,7 +124,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="?attr/actionBarSize"
                             android:touchscreenBlocksFocus="false"
-                            android:background="?attr/colorSurfaceBright"
                             android:visibility="gone"/>
 
                     </FrameLayout>

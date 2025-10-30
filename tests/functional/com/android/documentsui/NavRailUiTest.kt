@@ -107,7 +107,7 @@ class NavRailUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.roots.openDrawerFromNavRail()
         // Both navigation rail's root list and drawer's root list are visible, we want to
         // explicitly test opening the root from the drawer.
-        openRoot(context!!, StubProvider.ROOT_1_ID)
+        openRoot(context!!, StubProvider.ROOT_1_ID, activityLayoutId)
         bots.main.assertWindowTitle(StubProvider.ROOT_1_ID)
     }
 }

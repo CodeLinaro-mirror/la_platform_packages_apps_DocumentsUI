@@ -127,10 +127,11 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     @Override
     protected void setContainer() {
         if (isDesktopUxPhase2FlagEnabled()) {
-            // Set bottom padding for the main container (i.e. right section) only because we don't
-            // need bottom padding for the navigation tree area.
-            View mainContainer = findViewById(getRes(R.id.main_container));
-            mainContainer.setPadding(0, 0, 0, getBottomPadding());
+            // Set the bottom padding for the picker saver container (i.e. which is located at the
+            // bottom of the right section) because we don't want bottom padding on the navigation
+            // tree area.
+            View pickerSaverContainer = findViewById(getRes(R.id.container_save));
+            pickerSaverContainer.setPadding(0, 0, 0, getBottomPadding());
 
             // PickActivity is not rendered as a full window activity, instead the UI was wrapped
             // in a dialog with margins (check onCreate()), so no need to cater root container

@@ -554,12 +554,18 @@ public class RootsFragment extends Fragment {
             final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
             librariesAndShortcuts.addAll(libraries);
             for (final ShortcutInfo shortcut : shortcuts) {
-                final ShortcutItem item;
-                item = new ShortcutItem(
-                        shortcut,
-                        mActionHandler,
-                        /* packageName= */ "",
-                        maybeShowBadge);
+                final ShortcutItem item =
+                        mUseRailAsContainer
+                                ? new NavRailShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge)
+                                : new ShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge);
                 librariesAndShortcuts.add(item);
             }
             final SidebarEntryItemComparator sidebarItemComp = new SidebarEntryItemComparator();

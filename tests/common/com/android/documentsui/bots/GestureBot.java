@@ -16,6 +16,7 @@
 
 package com.android.documentsui.bots;
 
+import android.annotation.LayoutRes;
 import android.app.UiAutomation;
 import android.content.Context;
 import android.graphics.Point;
@@ -49,8 +50,13 @@ public class GestureBot extends Bots.BaseBot {
     private final UiAutomation mAutomation;
     private long mDownTime = 0;
 
-    public GestureBot(UiDevice device, UiAutomation automation, Context context, int timeout) {
-        super(device, context, timeout);
+    public GestureBot(
+            UiDevice device,
+            UiAutomation automation,
+            Context context,
+            int timeout,
+            @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mDirContainerId = mTargetPackage + ":id/container_directory";
         mDirListId = mTargetPackage + ":id/dir_list";
         mAutomation = automation;

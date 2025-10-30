@@ -31,6 +31,10 @@ import com.android.documentsui.R
 import com.android.documentsui.base.Features
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
+import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_HEADER
+import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_NAV_RAIL_ROOT
+import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_ROOT
+import com.android.documentsui.sidebar.RecyclerRootsAdapter.Companion.TYPE_SPACER
 import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.common.truth.Expect
@@ -90,6 +94,21 @@ class RecyclerRootsAdapterTest {
         val mockAction = mock(ActionHandler::class.java)
         val shortcutItem = ShortcutItem(shortcutInfo, mockAction, "", false)
         val spyItem = spy(shortcutItem)
+        items.add(spyItem)
+        val viewHolder = adapter.onCreateViewHolder(parent, 0)
+
+        adapter.onBindViewHolder(viewHolder, 0)
+
+        verify(spyItem).bindView(viewHolder.itemView)
+        expect.that(viewHolder.itemView.getTag(R.id.item_position_tag)).isEqualTo(0)
+    }
+
+    @Test
+    fun testOnBindViewHolderNavRailShortcutItem() {
+        val shortcutInfo = TestProvidersAccess.HOME_SCREEN_SHORTCUT
+        val mockAction = mock(ActionHandler::class.java)
+        val item = NavRailShortcutItem(shortcutInfo, mockAction, "", false)
+        val spyItem = spy(item)
         items.add(spyItem)
         val viewHolder = adapter.onCreateViewHolder(parent, 0)
 
@@ -190,25 +209,37 @@ class RecyclerRootsAdapterTest {
     @Test
     fun testGetItemViewType_withRootItem() {
         items.add(mock(RootItem::class.java))
-        expect.that(adapter.getItemViewType(0)).isEqualTo(0)
+        expect.that(adapter.getItemViewType(0)).isEqualTo(TYPE_ROOT)
+    }
+
+    @Test
+    fun testGetItemViewType_withShortcutItem() {
+        items.add(mock(ShortcutItem::class.java))
+        expect.that(adapter.getItemViewType(0)).isEqualTo(TYPE_ROOT)
     }
 
     @Test
     fun testGetItemViewType_withNavRailRootItem() {
         items.add(mock(NavRailRootItem::class.java))
-        expect.that(adapter.getItemViewType(0)).isEqualTo(1)
+        expect.that(adapter.getItemViewType(0)).isEqualTo(TYPE_NAV_RAIL_ROOT)
+    }
+
+    @Test
+    fun testGetItemViewType_withNavRailShortcutItem() {
+        items.add(mock(NavRailShortcutItem::class.java))
+        expect.that(adapter.getItemViewType(0)).isEqualTo(TYPE_NAV_RAIL_ROOT)
     }
 
     @Test
     fun testGetItemViewType_withSpacerItem() {
         items.add(SpacerItem())
-        expect.that(adapter.getItemViewType(0)).isEqualTo(2)
+        expect.that(adapter.getItemViewType(0)).isEqualTo(TYPE_SPACER)
     }
 
     @Test
     fun testGetItemViewType_withHeaderItem() {
         items.add(HeaderItem("Test"))
-        expect.that(adapter.getItemViewType(0)).isEqualTo(3)
+        expect.that(adapter.getItemViewType(0)).isEqualTo(TYPE_HEADER)
     }
 
     @Test
