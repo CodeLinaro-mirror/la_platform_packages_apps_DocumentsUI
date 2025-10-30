@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
@@ -132,7 +133,8 @@ public class PickActivityTest {
                         UiDevice.getInstance(instrumentation),
                         instrumentation.getUiAutomation(),
                         mTargetContext,
-                        5000);
+                        5000,
+                        getRes(R.layout.documents_activity));
     }
 
     @Test
@@ -212,8 +214,8 @@ public class PickActivityTest {
     @Test
     public void testOptionMenuWorksWhileOptionSelected() throws UiObjectNotFoundException {
         // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
 
         // Switch to list mode and select the test document.
         mBots.main.switchToListMode();
@@ -233,8 +235,8 @@ public class PickActivityTest {
         Intent intentOpenDocument = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intentOpenDocument.addCategory(Intent.CATEGORY_OPENABLE);
         intentOpenDocument.setType("*/*");
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
+        PickActivity pickActivity = mRule.launchActivity(intentOpenDocument);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
@@ -273,7 +275,7 @@ public class PickActivityTest {
         mIntentGetContent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
 
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
@@ -328,7 +330,7 @@ public class PickActivityTest {
 
         PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
 
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         mBots.picker.checkCancelButtonDisplayed();
@@ -352,9 +354,8 @@ public class PickActivityTest {
     @Test
     @DisableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_FlagDisabled() throws UiObjectNotFoundException {
-        mRule.launchActivity(mIntentGetContent);
-
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID);
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
 
         mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 

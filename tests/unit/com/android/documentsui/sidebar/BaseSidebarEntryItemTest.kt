@@ -140,4 +140,118 @@ class BaseSidebarEntryItemTest {
 
         assertEquals(shortcutItem.itemInfo.root, rootItem.itemInfo.root)
     }
+
+    @Test
+    fun testEqualsNavRailShortcutItem() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
+        val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
+
+        assertEquals(item1, item2)
+    }
+
+    @Test
+    fun testEqualsNavRailShortcutItemDiffMaybeShowBadge() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
+        val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "", true)
+
+        assertEquals(item1, item2)
+    }
+
+    @Test
+    fun testNotEqualsNavRailShortcutItemDiffPackageName() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "name1", false)
+        val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "name2", false)
+
+        assertNotEquals(item1, item2)
+    }
+
+    @Test
+    fun testNotEqualsNavRailShortcutItemDiffActionHandler() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val item1 = NavRailShortcutItem(shortcutInfo, null, "", false)
+        val item2 = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
+
+        assertNotEquals(item1, item2)
+    }
+
+    @Test
+    fun testNotEqualsNavRailShortcutItemDiffShortcutInfo() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val shortcutInfo2 = ShortcutInfo(0, "diff title", rootInfo, "diff parent document id")
+
+        val item1 = NavRailShortcutItem(shortcutInfo, actionHandler, "", true)
+        val item2 = NavRailShortcutItem(shortcutInfo2, actionHandler, "", true)
+
+        assertNotEquals(item1, item2)
+    }
+
+    @Test
+    fun testEqualsNavRailShortcutItemAndRootItemGetRoot() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val navRailShortcutItem = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
+        val rootItem = RootItem(rootInfo, actionHandler, false)
+
+        assertEquals(navRailShortcutItem.itemInfo.root, rootItem.itemInfo.root)
+    }
+
+    @Test
+    fun testEqualsNavRailShortcutItemAndShortcutItem() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "authority"
+                rootId = "root"
+            }
+        val shortcutInfo = ShortcutInfo(0, "title", rootInfo, "parentDocumentId")
+
+        val navRailShortcutItem = NavRailShortcutItem(shortcutInfo, actionHandler, "", false)
+        val shortcutItem = ShortcutItem(shortcutInfo, actionHandler, "", false)
+
+        assertEquals(navRailShortcutItem, shortcutItem)
+    }
 }

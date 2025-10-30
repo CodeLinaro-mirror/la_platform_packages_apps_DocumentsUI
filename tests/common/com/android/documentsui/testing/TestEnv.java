@@ -64,6 +64,7 @@ public class TestEnv {
     public static DocumentInfo FILE_VIRTUAL;
     public static DocumentInfo FILE_READ_ONLY;
     public static DocumentInfo FILE_SUPPORTS_TRASH;
+    public static DocumentInfo FILE_SUPPORTS_RESTORE;
 
     public static class OtherUser {
         public static DocumentInfo FOLDER_0;
@@ -194,6 +195,8 @@ public class TestEnv {
                         | Document.FLAG_SUPPORTS_DELETE
                         | Document.FLAG_SUPPORTS_RENAME);
         FILE_SUPPORTS_TRASH = model.createFile("trash_file.txt", Document.FLAG_SUPPORTS_TRASH);
+        FILE_SUPPORTS_RESTORE =
+                model.createFile("trashed_file.txt", Document.FLAG_SUPPORTS_RESTORE);
 
         OtherUser.FOLDER_0 = modelOtherUser.createFolder("folder 0");
         OtherUser.FILE_PNG = modelOtherUser.createFile("work.png");

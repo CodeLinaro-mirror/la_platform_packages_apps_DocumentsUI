@@ -115,7 +115,7 @@ public class FilesActivityPerfTest extends ActivityTest<FilesActivity> {
 
             try {
                 activity.addEventListener(listener);
-                EspressoBotsKt.openRoot(context, STRESS_ROOT_1_ID);
+                EspressoBotsKt.openRoot(context, STRESS_ROOT_1_ID, activity.getLayoutId());
                 signal.await();
             } finally {
                 activity.removeEventListener(listener);
@@ -124,7 +124,7 @@ public class FilesActivityPerfTest extends ActivityTest<FilesActivity> {
             assertEquals(i + 1, measurements.size());
 
             // Go back to the empty root.
-            EspressoBotsKt.openRoot(context, STRESS_ROOT_0_ID);
+            EspressoBotsKt.openRoot(context, STRESS_ROOT_0_ID, activity.getLayoutId());
         }
 
         assertEquals(NUM_MEASUREMENTS, measurements.size());

@@ -16,6 +16,7 @@
 
 package com.android.documentsui.bots;
 
+import android.annotation.LayoutRes;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,8 +34,9 @@ import java.io.IOException;
 public class NotificationsBot extends Bots.BaseBot {
     private final ComponentName mComponent;
 
-    public NotificationsBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public NotificationsBot(
+            UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mComponent = new ComponentName(InstrumentationRegistry.getContext(),
                 TestNotificationService.class);
     }

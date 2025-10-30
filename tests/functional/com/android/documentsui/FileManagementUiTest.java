@@ -109,7 +109,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("file1.png");
         bots.directory.assertDocumentsVisible("file1.png");
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.assertDocumentsAbsent("file1.png");
     }
 
@@ -130,7 +130,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.directory.waitForDocument("file1.png");
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.waitForDocument("file1.png");
     }
 
@@ -181,7 +181,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             nameOfLastFile = nameOfLastFile.compareTo(name) < 0 ? name : nameOfLastFile;
         }
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.openDocument("test");
         bots.sort.sortBy(
                 SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_ASCENDING);

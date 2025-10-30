@@ -174,8 +174,9 @@ public class SearchViewManager implements
     }
 
     /**
-     * Parse the query content from Intent. If the action is not {@link State#ACTION_GET_CONTENT}
-     * or {@link State#ACTION_OPEN}, don't perform search.
+     * Parse the query content from Intent. If the action is not {@link State#ACTION_GET_CONTENT} or
+     * {@link State#ACTION_OPEN}, don't perform search.
+     *
      * @param intent the intent to parse.
      * @param action the action to check.
      * @return True, if get the query content from the intent. Otherwise, false.

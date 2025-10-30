@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -127,8 +128,7 @@ public abstract class BaseActivity
     private final List<EventListener> mEventListeners = new ArrayList<>();
     private final String mTag;
 
-    @LayoutRes
-    private int mLayoutId;
+    @LayoutRes private int mLayoutId;
 
     private RootsMonitor<BaseActivity> mRootsMonitor;
 
@@ -171,6 +171,11 @@ public abstract class BaseActivity
     protected abstract void onDirectoryCreated(DocumentInfo doc);
 
     public abstract Injector<?> getInjector();
+
+    @VisibleForTesting
+    public @LayoutRes int getLayoutId() {
+        return mLayoutId;
+    }
 
     @VisibleForTesting
     protected void initConfigStore() {
@@ -248,7 +253,11 @@ public abstract class BaseActivity
                 // Bind event listener for the burger menu on nav rail.
                 MaterialButton burgerMenu = findViewById(getRes(R.id.nav_rail_burger_menu));
                 burgerMenu.setOnClickListener(v -> mDrawer.setOpen(true));
-                burgerMenu.setOnFocusChangeListener(this::onBurgerMenuFocusChange);
+                if (isDesktopUxPhase2FlagEnabled()) {
+                    FocusManager.setButtonFocusStyle(burgerMenu);
+                } else {
+                    burgerMenu.setOnFocusChangeListener(this::onBurgerMenuFocusChange);
+                }
             }
         }
 
@@ -664,7 +673,10 @@ public abstract class BaseActivity
 
     protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
-        View mainContainer = findViewById(getRes(R.id.main_container));
+        // Picker saver container always shows even when it's not in picker/saver mode (in which
+        // case it just shows as an empty container), so it's safe to rely on this container to add
+        // bottom padding for the right section of the layout.
+        View pickerSaverContainer = findViewById(getRes(R.id.container_save));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
@@ -686,23 +698,26 @@ public abstract class BaseActivity
                         // otherwise (i.e. in window mode) they will all be 0.
                         Insets systemBarInsets =
                                 insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                        // When Gesture navigation is used, we use its height (i.e.
-                        // systemBarInsets.bottom) as the bottom padding for the whole root
-                        // container (root container by default doesn't have bottom padding) without
-                        // adding additional "getBottomPadding()" so avoid the total bottom padding
-                        // looks too big (because gesture navigation area is transparent).
+                        // Bottom padding for the root container is always 0, we only add bottom
+                        // padding for the picker saver container (i.e. which is located at the
+                        // bottom of the right section) because we don't want bottom padding on the
+                        // navigation tree area.
                         v.setPadding(
                                 systemBarInsets.left,
                                 systemBarInsets.top,
                                 systemBarInsets.right,
-                                isGestureNav ? systemBarInsets.bottom : 0);
-                        // When Gesture navigation is not used, we only add bottom padding to the
-                        // main container (i.e. right section) because we don't want bottom padding
-                        // on the navigation tree area.
-                        if (!isGestureNav) {
-                            mainContainer.setPadding(
-                                    0, 0, 0, systemBarInsets.bottom + getBottomPadding());
-                        }
+                                0);
+                        // When Gesture navigation is used, we use its height (i.e.
+                        // systemBarInsets.bottom) as the bottom padding for the picker saver
+                        // without adding additional "getBottomPadding()" so avoid the total bottom
+                        // padding looks too big (because gesture navigation area is transparent).
+                        pickerSaverContainer.setPadding(
+                                0,
+                                0,
+                                0,
+                                isGestureNav
+                                        ? systemBarInsets.bottom
+                                        : (systemBarInsets.bottom + getBottomPadding()));
                         return WindowInsetsCompat.CONSUMED;
                     });
         } else {

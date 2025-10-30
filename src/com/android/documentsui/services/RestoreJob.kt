@@ -154,11 +154,15 @@ class RestoreJob(
      * @throws ResourceException if the document fails to restore.
      */
     fun restoreDocument(doc: DocumentInfo) {
+        // The explicit destination for the restored document. If the destination has a null docId,
+        // it's treated as no specific destination, and the document is restored to its original
+        // parent.
+        val destinationUri = stack?.peek()?.takeIf { it.documentId != null }?.derivedUri
         try {
             DocumentsContract.restoreDocumentFromTrash(
                 ContentResolver.wrap(getClient(doc)),
                 doc.derivedUri,
-                null,
+                destinationUri,
             )
         } catch (e: java.lang.Exception) {
             if (e is DeadObjectException) {

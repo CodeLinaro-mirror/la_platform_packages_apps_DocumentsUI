@@ -16,7 +16,7 @@
 
 package com.android.documentsui.bots;
 
-
+import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,8 +98,8 @@ public class BreadBot extends Bots.BaseBot {
         return new PathViewAssertion(expectedPath, String::startsWith);
     }
 
-    public BreadBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public BreadBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mBreadCrumbId = mTargetPackage + ":id/horizontal_breadcrumb";
     }
 

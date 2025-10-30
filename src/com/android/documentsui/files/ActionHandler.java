@@ -161,7 +161,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public boolean dropOn(DragEvent event, ShortcutInfo shortcut) {
-        if (!shortcut.supportsCreate()) {
+        if (!shortcut.isValidDropTarget()) {
             return false;
         }
 
@@ -404,6 +404,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         if (isSearchV2Enabled() && mState.stack.isRecents()) {
             parentDocumentInfo = null;
         }
+
+        // The document in trash folder can not be removed from the parent, since it will be
+        // permanently deleted. Pass a null parent so that DeleteJob can do a permanent delete.
+        if (isTrashFlowEnabled() && mState.stack.isTrash()) {
+            parentDocumentInfo = null;
+        }
+
         DeleteDocumentFragment.show(mActivity.getSupportFragmentManager(),
                 mModel.getDocuments(selection),
                 parentDocumentInfo);

@@ -25,6 +25,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import android.annotation.LayoutRes;
 import android.app.UiAutomation;
 import android.content.Context;
 import android.os.SystemClock;
@@ -73,8 +74,13 @@ public class SidebarBot extends Bots.BaseBot {
     }
 
     public SidebarBot(
-            UiDevice device, UiAutomation automation, Context context, UiBot uiBot, int timeout) {
-        super(device, context, timeout);
+            UiDevice device,
+            UiAutomation automation,
+            Context context,
+            UiBot uiBot,
+            int timeout,
+            @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mAutomation = automation;
         mUiBot = uiBot;
         mRootListId = mTargetPackage + ":id/roots_list";

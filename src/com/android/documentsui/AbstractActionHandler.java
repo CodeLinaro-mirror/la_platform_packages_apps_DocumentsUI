@@ -1135,6 +1135,22 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
         }
 
+        /**
+         * If mState.acceptMimes do not limit file types, returns null, otherwise returns the
+         * acceptable MIME types. This is done to prevent acceptMimes to override the choices of
+         * files specified by dropdowns or chips.
+         *
+         * @return Acceptable MIME types or null, if any type is acceptable.
+         */
+        private String[] getAcceptMimesFilter() {
+            for (String type : mState.acceptMimes) {
+                if ("*/*".equals(type)) {
+                    return null;
+                }
+            }
+            return mState.acceptMimes;
+        }
+
         private Loader<DirectoryResult> onCreateLoaderV2(int id, Bundle args) {
             if (mExecutorService == null) {
                 // TODO(b:388130971): Fine tune the size of the thread pool.
@@ -1185,15 +1201,19 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // itself, as otherwise directories containing only directories appear empty.
             String[] acceptMimes = null;
             if (stack.isRecents() || mSearchMgr.isSearching()) {
-                acceptMimes = mState.acceptMimes;
+                acceptMimes = getAcceptMimesFilter();
             } else if (mState.isPhotoPicking()) {
                 acceptMimes = new String[]{
                         DocumentsContract.Document.MIME_TYPE_DIR, MimeTypes.IMAGE_MIME,
                 };
             } else if (mState.acceptMimes != null) {
-                int mimeCount = mState.acceptMimes.length;
-                acceptMimes = Arrays.copyOf(mState.acceptMimes, mimeCount + 1);
-                acceptMimes[mimeCount - 1] = DocumentsContract.Document.MIME_TYPE_DIR;
+                acceptMimes = getAcceptMimesFilter();
+                if (acceptMimes != null) {
+                    // Add folders, so that we show something in folders that contain only folders.
+                    String[] expanded = Arrays.copyOf(acceptMimes, acceptMimes.length + 1);
+                    expanded[acceptMimes.length] = DocumentsContract.Document.MIME_TYPE_DIR;
+                    acceptMimes = expanded;
+                }
             }
             QueryOptions options = new QueryOptions(maxResults, maxResults, lastModifiedDelta,
                     Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles, acceptMimes,

@@ -18,6 +18,7 @@ package com.android.documentsui.bots;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import android.annotation.LayoutRes;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
@@ -37,8 +38,9 @@ import java.util.Map;
 
 public class InspectorBot extends Bots.BaseBot {
 
-    public InspectorBot(UiDevice device, Context context, int timeout) {
-        super(device, context, timeout);
+    public InspectorBot(
+            UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
     }
 
     public void assertTitle(String expected) throws Exception {

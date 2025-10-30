@@ -175,7 +175,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags(FLAG_HOME_SCREEN_FILES_RO)
     public void testDeleteAllDocument() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.main.clickToolbarOverflowItem(
                 context.getResources().getString(R.string.menu_select_all));
         device.waitForIdle();
@@ -192,7 +192,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
 
         assertTrue(mErrorReason, mOperationExecuted);
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         device.waitForIdle();
 
         List<DocumentInfo> root1 = mDocsHelper.listChildren(rootDir0.documentId, 1000);

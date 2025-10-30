@@ -36,7 +36,7 @@ public class DirectoryMessagesUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, "Demo Root");
+        EspressoBotsKt.openRoot(context, "Demo Root", getActivityLayoutId());
         bots.main.switchToListMode();
     }
 
