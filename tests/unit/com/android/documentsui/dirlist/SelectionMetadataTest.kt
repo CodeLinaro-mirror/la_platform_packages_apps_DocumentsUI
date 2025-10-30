@@ -41,15 +41,15 @@ const val TestUserId = 0
 class SelectionMetadataTest {
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     @get:Rule
-    val testModelRule = TestModelRule(TestAuthority, TestUserId)
-        .createFile("noOpeningApp.pdf", "application/pdf")
-        .createFile("oneOpeningApp.txt", "text/plain")
-        .createFile("twoOpeningApp.jpg", "image/jpg")
-        .createFile("twoOpeningApp.png", "image/png")
+    val testModelRule =
+        TestModelRule(TestAuthority, TestUserId)
+            .createFile("noOpeningApp.pdf", "application/pdf")
+            .createFile("oneOpeningApp.txt", "text/plain")
+            .createFile("twoOpeningApp.jpg", "image/jpg")
+            .createFile("twoOpeningApp.png", "image/png")
 
     @Before
     fun setUp() {
@@ -57,11 +57,11 @@ class SelectionMetadataTest {
         testPackageManager.queryIntentActivitiesResults.put("text/plain", listOf(ResolveInfo()))
         testPackageManager.queryIntentActivitiesResults.put(
             "image/jpg",
-            listOf(ResolveInfo(), ResolveInfo())
+            listOf(ResolveInfo(), ResolveInfo()),
         )
         testPackageManager.queryIntentActivitiesResults.put(
             "image/png",
-            listOf(ResolveInfo(), ResolveInfo())
+            listOf(ResolveInfo(), ResolveInfo()),
         )
     }
 
@@ -108,7 +108,7 @@ class SelectionMetadataTest {
     }
 
     fun makeId(docId: String): String {
-        return ModelId.build(UserId.of(TestUserId), TestAuthority, docId)
+        return ModelId.build(UserId.of(TestUserId), TestAuthority, docId)!!
     }
 
     fun createSelectionMetadata(): SelectionMetadata {
@@ -117,7 +117,7 @@ class SelectionMetadataTest {
             { modelId ->
                 val doc = testModelRule.model.getDocument(modelId)
                 FileUtils.countOpeningApps(doc, testPackageManager)
-            }
+            },
         )
     }
 }

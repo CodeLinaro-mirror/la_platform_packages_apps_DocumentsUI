@@ -57,7 +57,7 @@ class FolderLoader(
     contentLock: ContentLock,
     private val mRoot: RootInfo,
     private val mListedDir: DocumentInfo?,
-    private val mOptions: QueryOptions,
+    private val options: QueryOptions,
     private val mSortModel: SortModel,
 ) : BaseFileLoader(context, mimeTypeLookup) {
 
@@ -81,7 +81,7 @@ class FolderLoader(
             }
             cancelNotifier = CancellationSignal()
         }
-        val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
+        val rejectBeforeTimestamp = options.getRejectBeforeTimestamp()
         val folderChildrenUri =
             if (mListedDir == null) {
                 DocumentsContract.buildChildDocumentsUri(mRoot.authority, mRoot.documentId)
@@ -92,6 +92,7 @@ class FolderLoader(
                 )
             }
         val result = DirectoryResult()
+        result.queryOptions = options
         // If we are listing an archive, in the current approach, we cache the client as part of
         // DirectoryResult. This way, when the loader is closed, we can close the archive client.
         if (mListedDir != null && mListedDir.isInArchive) {
@@ -99,7 +100,7 @@ class FolderLoader(
         }
         var cursor: Cursor? = null
         try {
-            cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs)
+            cursor = queryLocation(mRoot, folderChildrenUri, options.otherQueryArgs)
         } catch (e: Exception) {
             result.exception = e
         } finally {
@@ -112,8 +113,8 @@ class FolderLoader(
         cursor.registerContentObserver(mObserver)
 
         val filteredCursor = FilteringCursorWrapper(cursor)
-        filteredCursor.filterHiddenFiles(mOptions.showHidden)
-        filteredCursor.filterMimes(computeAcceptableMimeTypes(mOptions), null)
+        filteredCursor.filterHiddenFiles(options.showHidden)
+        filteredCursor.filterMimes(computeAcceptableMimeTypes(options), null)
         if (rejectBeforeTimestamp > 0L) {
             filteredCursor.filterLastModified(rejectBeforeTimestamp)
         }

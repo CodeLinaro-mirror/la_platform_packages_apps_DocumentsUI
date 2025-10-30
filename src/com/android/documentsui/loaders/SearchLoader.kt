@@ -245,6 +245,8 @@ class SearchLoader(
         // TODO(b:378590632): If root list has one root use it to construct result.doc
         result.doc = DocumentInfo()
         result.cursor = emptyCursor()
+        result.queryOptions = options
+        result.query = query
 
         if (!firstPassDone) {
             try {
