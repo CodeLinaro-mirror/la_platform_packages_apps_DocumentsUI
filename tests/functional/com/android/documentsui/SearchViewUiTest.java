@@ -644,6 +644,20 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testNoDirectoryChangedOnRecentsBreadcrumbClick() throws Exception {
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.directory.selectFirstDocument();
+        bots.directory.assertSelection(1);
+
+        // Click the first item of the path, which should take us to the directory listing.
+        onView(allOf(withText("Recent"), isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
+                .perform(click());
+        // No directory change and the selection remains.
+        bots.directory.assertSelection(1);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultMultipleSelection() throws Exception {
         bots.search.doSearch("file");
         device.waitForIdle();
