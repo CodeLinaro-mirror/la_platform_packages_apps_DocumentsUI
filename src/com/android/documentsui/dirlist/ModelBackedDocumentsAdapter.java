@@ -36,6 +36,7 @@ import com.android.documentsui.Model;
 import com.android.documentsui.Model.Update;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Lookup;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.State;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.modules.utils.build.SdkLevel;
@@ -61,6 +62,9 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
      */
     private List<String> mModelIds = new ArrayList<>();
     private EventListener<Model.Update> mModelUpdateListener;
+    private NetworkMonitor.NetworkListener mNetworkListener = isOnline -> {
+        // Do nothing. Logic is handled in DirectoryAddonsAdapter.java.
+    };
 
     public ModelBackedDocumentsAdapter(
             Environment env, IconHelper iconHelper, Lookup<String, String> fileTypeLookup,
@@ -85,6 +89,11 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     @Override
     EventListener<Update> getModelUpdateListener() {
         return mModelUpdateListener;
+    }
+
+    @Override
+    NetworkMonitor.NetworkListener getNetworkListener() {
+        return mNetworkListener;
     }
 
     @Override

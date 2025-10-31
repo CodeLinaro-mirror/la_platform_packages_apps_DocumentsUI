@@ -1019,4 +1019,7 @@
 
     <!-- Action button text in the dialog to confirm emptying the trash. [CHAR_LIMIT=48] -->
     <string name="empty_trash_dialog_action_button">Empty trash</string>
+
+    <!-- Message shown in a banner when offline for roots that have limited functionality when offline. [CHAR_LIMIT=NONE] -->
+    <string name="you_are_offline_banner_message">You are currently offline. Some files may not available and syncing will resume when you are connected to the internet. </string>
 </resources>

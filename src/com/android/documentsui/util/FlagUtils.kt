@@ -29,6 +29,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
         @Volatile private var instance: FlagUtils = FlagUtils()
         private val overridableFlags =
             listOf(
+                Flags.FLAG_CLOUD_FEATURES,
                 Flags.FLAG_DESKTOP_FILE_HANDLING_RO,
                 Flags.FLAG_DESKTOP_UX_PHASE_2_RO,
                 Flags.FLAG_ENABLE_TRASH_FLOW_RO,
@@ -74,6 +75,13 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                     .overrides
                     .getOrDefault(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.useSearchV2ReadOnly())
             return flag && isUseMaterial3FlagEnabled()
+        }
+
+        @JvmStatic
+        fun isCloudFeaturesFlagEnabled(): Boolean {
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_CLOUD_FEATURES, Flags.cloudFeatures())
         }
 
         @JvmStatic

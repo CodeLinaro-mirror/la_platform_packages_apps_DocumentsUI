@@ -33,6 +33,7 @@ import com.android.documentsui.base.DebugHelper;
 import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Lookup;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.breadcrumbs.BreadcrumbController;
 import com.android.documentsui.dirlist.AppsRowManager;
@@ -87,6 +88,8 @@ public class Injector<T extends ActionHandler> {
     public DocsSelectionHelper selectionMgr;
 
     private final Model mModel;
+
+    public NetworkMonitor networkMonitor;
 
     /** The Document Provider to use to fetch summary for local files. */
     @Nullable private SummaryProviderManager mSummaryProviderManager = null;

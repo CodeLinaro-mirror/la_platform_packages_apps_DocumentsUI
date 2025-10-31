@@ -41,6 +41,7 @@ java_defaults {
         "guava",
         "kotlinx_coroutines_test",
         "mockito-kotlin-nodeps",
+        "mockito-kotlin2",
         "mockito-target",
         "microbenchmark-device-lib",
         "platform-test-annotations",
