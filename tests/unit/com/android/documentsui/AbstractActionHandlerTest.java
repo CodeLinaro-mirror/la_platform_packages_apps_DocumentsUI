@@ -570,6 +570,7 @@ public class AbstractActionHandlerTest {
                 TestProvidersAccess.EXTERNALSTORAGE.getUri()
         ));
         assertTrue(mHandler.blockOperationForShortcuts(uris, TestProvidersAccess.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsShown();
     }
 
     @Test
@@ -580,6 +581,7 @@ public class AbstractActionHandlerTest {
                 TestProvidersAccess.IMAGE.getUri()
         ));
         assertFalse(mHandler.blockOperationForShortcuts(uris, TestProvidersAccess.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsNotShown();
     }
 
     @Test
@@ -591,6 +593,7 @@ public class AbstractActionHandlerTest {
         ));
         assertTrue(mHandler.blockOperationForShortcuts(
                 uris, TestProvidersAccess.OtherUser.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsShown();
     }
 
     @Test
@@ -603,5 +606,6 @@ public class AbstractActionHandlerTest {
         ));
         assertFalse(mHandler.blockOperationForShortcuts(
                 uris, TestProvidersAccess.OtherUser.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsNotShown();
     }
 }

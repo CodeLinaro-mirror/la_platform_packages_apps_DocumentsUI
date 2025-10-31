@@ -803,7 +803,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // Prevent special folders (i.e. system-defined shortcuts) from getting deleted.
             for (Uri uri : uris) {
                 if (uri.equals(shortcut.getUri())) {
-                    mDialogs.showOperationUnsupported();
+                    mDialogs.showOperationNotAllowedForShortcuts();
                     return true;
                 }
             }
