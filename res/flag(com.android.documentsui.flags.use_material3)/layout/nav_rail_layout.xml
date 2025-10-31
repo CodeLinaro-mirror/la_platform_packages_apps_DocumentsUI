@@ -182,7 +182,6 @@
                         android:id="@+id/breadcrumb_view_v2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="?attr/colorSurfaceBright"
                         android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
                 </LinearLayout>
 
