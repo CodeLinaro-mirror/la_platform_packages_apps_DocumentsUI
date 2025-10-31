@@ -22,7 +22,6 @@ import static android.app.Notification.EXTRA_PROGRESS_INDETERMINATE;
 import static android.app.Notification.EXTRA_TEXT;
 import static android.app.Notification.EXTRA_TITLE;
 
-import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
@@ -54,7 +53,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Test
-    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
+    @EnableFlags({FLAG_USE_MATERIAL3})
     public void failsOnInvalidParent() throws Exception {
         // Create a source file to be moved.
         Uri testFile = mDocs.createDocument(mSrcRoot, "text/plain", "test.txt");

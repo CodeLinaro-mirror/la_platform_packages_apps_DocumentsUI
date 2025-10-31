@@ -18,7 +18,7 @@ package com.android.documentsui
 import android.view.WindowManager
 import android.widget.Button
 import androidx.fragment.app.DialogFragment
-import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.UnitUtils.Companion.dpToPx
 import kotlin.math.roundToInt
 
@@ -35,7 +35,7 @@ abstract class DocumentsUIDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        if (!isDesktopUxPhase2FlagEnabled()) {
+        if (!isUseMaterial3FlagEnabled()) {
             return
         }
 
