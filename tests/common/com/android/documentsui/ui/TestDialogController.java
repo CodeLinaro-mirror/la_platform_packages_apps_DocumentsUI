@@ -28,6 +28,7 @@ public class TestDialogController implements DialogController {
 
     private int mFileOpStatus;
     private boolean mActionNotAllowed;
+    private boolean mOperationNotAllowedForShortcuts;
     private boolean mNoApplicationFound;
     private boolean mDocumentsClipped;
     private boolean mViewInArchivesUnsupported;
@@ -52,6 +53,11 @@ public class TestDialogController implements DialogController {
     @Override
     public void showActionNotAllowed() {
         mActionNotAllowed = true;
+    }
+
+    @Override
+    public void showOperationNotAllowedForShortcuts() {
+        mOperationNotAllowedForShortcuts = true;
     }
 
     @Override
@@ -133,5 +139,13 @@ public class TestDialogController implements DialogController {
     public void assertDocumentTreeConfirmed(DocumentInfo expected) {
         Assert.assertEquals(expected, mTarget);
         Assert.assertEquals(ConfirmFragment.TYPE_OEPN_TREE, mConfrimType);
+    }
+
+    public void assertOperationNotAllowedForShortcutsShown() {
+        Assert.assertTrue(mOperationNotAllowedForShortcuts);
+    }
+
+    public void assertOperationNotAllowedForShortcutsNotShown() {
+        Assert.assertFalse(mOperationNotAllowedForShortcuts);
     }
 }
