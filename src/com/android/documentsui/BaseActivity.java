@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
@@ -798,18 +799,7 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        if (isUseFileSummaryEnabled()) {
-            // Summary is only enabled for local roots.
-            mState.sortModel.setDimensionVisibility(
-                    SortModel.SORT_DIMENSION_ID_SUMMARY,
-                    root.isLocalProvider() ? View.VISIBLE : View.INVISIBLE);
-        } else {
-            // Set summary header's visibility. Only recents and downloads root may have summary in
-            // their docs.
-            mState.sortModel.setDimensionVisibility(
-                    SortModel.SORT_DIMENSION_ID_SUMMARY,
-                    root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
-        }
+        updateColumnHeaders(root);
 
         // Clear entire backstack and start in new root
         mState.stack.changeRoot(root);
@@ -848,10 +838,7 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        // Set summary header's visibility to invisible. Only recents and downloads root may have
-        // summary in their docs.
-        mState.sortModel.setDimensionVisibility(
-                SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
+        updateColumnHeaders(shortcut.getRoot());
 
         mInjector.actions.getDocument(
                 shortcut.getRoot().authority,
@@ -867,6 +854,12 @@ public abstract class BaseActivity
 
         expandAppBar();
         updateHeaderTitle();
+    }
+
+    private void updateColumnHeaders(@Nullable RootInfo root) {
+        boolean showSummary = displaySummaryForRoot(mInjector.getSummaryProviderManager(), root);
+        mState.sortModel.setDimensionVisibility(
+                SortModel.SORT_DIMENSION_ID_SUMMARY, showSummary ? View.VISIBLE : View.GONE);
     }
 
     public void buildStackToParentShortcutFolder(ShortcutInfo shortcut,

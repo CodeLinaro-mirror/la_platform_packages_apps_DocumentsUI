@@ -107,6 +107,8 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
         void initDocumentHolder(DocumentHolder holder);
         void onBindDocumentHolder(DocumentHolder holder, Cursor cursor);
 
+        boolean shouldDisplaySummary();
+
         /**
          * @return {@code true} if the user is on the trash page, {@code false} otherwise.
          */

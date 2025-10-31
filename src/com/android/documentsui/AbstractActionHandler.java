@@ -1298,7 +1298,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             final RootInfo root = mState.stack.getRoot();
 
             // We only fetch summaries for local files.
-            if (!(root != null && root.isLocalProvider())) {
+            if (!(root != null && (root.isLocalProvider() || root.isRecents()))) {
                 return;
             }
 
@@ -1324,6 +1324,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
             mInjector.getModel().updateSummaries(summaries);
+            mActivity.getSupportLoaderManager().destroyLoader(SUMMARY_LOADER_ID);
         }
     }
 

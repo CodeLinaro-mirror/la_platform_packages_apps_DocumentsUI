@@ -172,9 +172,10 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
 
         @JvmStatic
         fun isUseFileSummaryEnabled(): Boolean {
-            return getInstance()
-                .overrides
-                .getOrDefault(Flags.FLAG_USE_FILE_SUMMARY, Flags.useFileSummary())
+            return isUseMaterial3FlagEnabled() &&
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_USE_FILE_SUMMARY, Flags.useFileSummary())
         }
 
         @JvmStatic
