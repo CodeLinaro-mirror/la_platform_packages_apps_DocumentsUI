@@ -331,6 +331,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         try {
             DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
             assertNotNull(info);
+            EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
 
             // Create a zip file in "Download" folder. Since we are creating a file in the Download
             // folder, create a unique name that has little to no chance of colliding with actual
