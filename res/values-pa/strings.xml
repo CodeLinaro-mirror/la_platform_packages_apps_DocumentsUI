@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"ਕੁਝ ਦਸਤਾਵੇਜ਼ਾਂ ਨੂੰ ਮਿਟਾਉਣ ਦੇ ਅਯੋਗ"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> ਤੋਂ ਵੱਧ ਫ਼ਾਈਲਾਂ ਸਾਂਝੀਆਂ ਨਹੀਂ ਕੀਤੀਆਂ ਜਾ ਸਕਦੀਆਂ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ਕਾਰਵਾਈ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਹੈ"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"ਇਸ ਨਾਲ ਖੋਲ੍ਹੋ…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ਕੋਈ ਵੀ ਸਮਰਥਿਤ ਐਪ ਸਥਾਪਤ ਨਹੀਂ ਹੈ। Play Store ਤੋਂ ਕੋਈ ਐਪ ਸਥਾਪਤ ਕਰ ਕੇ ਦੇਖੋ।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store ਵਿੱਚ ਖੋਜੋ"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ਕੀ ਰੱਦੀ ਖਾਲੀ ਕਰਨੀ ਹੈ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ਇਸ ਕਾਰਵਾਈ ਨੂੰ ਅਣਕੀਤਾ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ ਅਤੇ ਫ਼ਾਈਲਾਂ ਹੁਣ ਮੁੜ-ਹਾਸਲ ਕਰਨ ਯੋਗ ਨਹੀਂ ਰਹਿਣਗੀਆਂ।"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ਰੱਦੀ ਖਾਲੀ ਕਰੋ"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>
