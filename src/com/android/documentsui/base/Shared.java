@@ -79,6 +79,8 @@ public final class Shared {
      */
     public static final String EXTRA_STACK = "com.android.documentsui.STACK";
 
+    public static final String EXTRA_SELECTED_SHORTCUT = "com.android.documentsui.SELECTED_SHORCUT";
+
     /**
      * Extra flag used to store query of type String in the bundle.
      */

@@ -19,7 +19,9 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -66,6 +68,7 @@ import com.android.documentsui.NavigationViewManager.Breadcrumb;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
@@ -86,6 +89,7 @@ import com.android.documentsui.queries.SearchChipData;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
+import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.sorting.SortController;
@@ -137,6 +141,8 @@ public abstract class BaseActivity
 
     private PreferencesMonitor mPreferencesMonitor;
 
+    private NetworkMonitor mNetworkMonitor;
+
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
 
@@ -185,18 +191,6 @@ public abstract class BaseActivity
     @VisibleForTesting
     public void setConfigStore(ConfigStore configStore) {
         mConfigStore = configStore;
-    }
-
-    /**
-     * @return A model that supports breadcrumb view v2, if one has been created.
-     */
-    public @Nullable BreadcrumbModel getBreadcrumbModel() {
-        if (isSearchV2Enabled()) {
-            if (mNavigator != null) {
-                return mNavigator.getBreadcrumbModel();
-            }
-        }
-        return null;
     }
 
     /**
@@ -295,10 +289,8 @@ public abstract class BaseActivity
             View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
             if (breadcrumbView2 != null) {
                 BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
-                BreadcrumbController breadcrumbController = new BreadcrumbController(
-                        this, model, (BreadcrumbView) breadcrumbView2);
-                // TODO(b:416108180): Connect to mNavigator directory change.
-                mNavigator.setBreadcrumbController(breadcrumbController);
+                mInjector.setBreadcrumbController(
+                        new BreadcrumbController(this, model, (BreadcrumbView) breadcrumbView2));
             }
         }
 
@@ -521,6 +513,9 @@ public abstract class BaseActivity
                 this::onPreferenceChanged);
         mPreferencesMonitor.start();
 
+        mNetworkMonitor = NetworkMonitor.create(getApplicationContext());
+        mInjector.networkMonitor = mNetworkMonitor;
+
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
         updateRecentsSetting();
@@ -640,6 +635,7 @@ public abstract class BaseActivity
         mRootsMonitor.stop();
         mPreferencesMonitor.stop();
         mSortController.destroy();
+        mNetworkMonitor.teardown();
         DocumentsApplication.invalidateUserManagerState(this);
         super.onDestroy();
     }
@@ -803,18 +799,7 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        if (isUseFileSummaryEnabled()) {
-            // Summary is only enabled for local roots.
-            mState.sortModel.setDimensionVisibility(
-                    SortModel.SORT_DIMENSION_ID_SUMMARY,
-                    root.isLocalProvider() ? View.VISIBLE : View.INVISIBLE);
-        } else {
-            // Set summary header's visibility. Only recents and downloads root may have summary in
-            // their docs.
-            mState.sortModel.setDimensionVisibility(
-                    SortModel.SORT_DIMENSION_ID_SUMMARY,
-                    root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
-        }
+        updateColumnHeaders(root);
 
         // Clear entire backstack and start in new root
         mState.stack.changeRoot(root);
@@ -853,30 +838,28 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        // Set summary header's visibility to invisible. Only recents and downloads root may have
-        // summary in their docs.
-        mState.sortModel.setDimensionVisibility(
-                SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
+        updateColumnHeaders(shortcut.getRoot());
 
-        buildStackToParentShortcutFolder(
-                shortcut,
-                (@Nullable DocumentStack stack) -> {
-                    if (stack != null) {
-                        mInjector.actions.getDocument(
-                                shortcut.getRoot().authority,
-                                shortcut.getDocumentId(),
-                                shortcut.getRoot().userId,
-                                TimeoutTask.DEFAULT_TIMEOUT,
-                                doc -> {
-                                    // Reset the stack and store the shortcut reference.
-                                    mState.stack.reset(stack);
-                                    mState.shortcut = shortcut;
-                                    mInjector.actions.openRootDocument(doc);
-                                });
-                    }
-        });
+        mInjector.actions.getDocument(
+                shortcut.getRoot().authority,
+                shortcut.getDocumentId(),
+                shortcut.getRoot().userId,
+                TimeoutTask.DEFAULT_TIMEOUT,
+                doc -> {
+                    // Reset the stack and store the shortcut reference.
+                    mState.stack.changeRoot(shortcut.getRoot());
+                    mState.shortcut = shortcut;
+                    mInjector.actions.openRootDocument(doc);
+                });
+
         expandAppBar();
         updateHeaderTitle();
+    }
+
+    private void updateColumnHeaders(@Nullable RootInfo root) {
+        boolean showSummary = displaySummaryForRoot(mInjector.getSummaryProviderManager(), root);
+        mState.sortModel.setDimensionVisibility(
+                SortModel.SORT_DIMENSION_ID_SUMMARY, showSummary ? View.VISIBLE : View.GONE);
     }
 
     public void buildStackToParentShortcutFolder(ShortcutInfo shortcut,
@@ -1010,7 +993,12 @@ public abstract class BaseActivity
             getWindow().getDecorView().announceForAccessibility(appName);
         }
 
-        String newTitle = mState.stack.getTitle();
+        String newTitle;
+        if (isHomeScreenFilesFlagEnabled()) {
+            newTitle = mState.getTitleAtPosition(mState.stack.size() - 1);
+        } else {
+            newTitle = mState.stack.getTitle();
+        }
         if (newTitle != null) {
             // Causes talkback to announce the activity's new title
             setTitle(newTitle);
@@ -1296,6 +1284,16 @@ public abstract class BaseActivity
      */
     public boolean isSearching() {
         return mSearchManager.isSearching();
+    }
+
+    /**
+     * Allows other views to inspect roots.
+     *
+     * @return ProvidersAccess for those views that need to access roots of the application.
+     */
+    // TODO(b/444316005): Remove, once MediaStore.toMediaUri works.
+    public ProvidersAccess getProvidersAccess() {
+        return mProviders;
     }
 
     @VisibleForTesting

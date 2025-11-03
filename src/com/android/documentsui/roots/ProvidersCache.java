@@ -132,6 +132,8 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     private HashSet<UserAuthority> mStoppedAuthorities = new HashSet<>();
     @GuardedBy("mLock")
     private Collection<ShortcutResourceValues> mShortcutResources = new ArrayList<>();
+    @GuardedBy("mLock")
+    private boolean mShortcutResourcesFirstLoadDone = false;
     private final Semaphore mMultiProviderUpdateTaskSemaphore = new Semaphore(1);
 
     @GuardedBy("mObservedAuthoritiesDetails")
@@ -293,11 +295,9 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
             try {
                 synchronized (mLock) {
                     // Resources don't change, so only compute this the first time.
-                    // TODO: b/446566923 - add a boolean value to check if resources have been
-                    //  loaded or not so that the method does not have to be called every time if
-                    //  shortcut resources are actually empty.
-                    if (mShortcutResources.isEmpty()) {
+                    if (!mShortcutResourcesFirstLoadDone) {
                         mShortcutResources = getShortcutResources();
+                        mShortcutResourcesFirstLoadDone = true;
                     }
                 }
             } catch (Exception e) {

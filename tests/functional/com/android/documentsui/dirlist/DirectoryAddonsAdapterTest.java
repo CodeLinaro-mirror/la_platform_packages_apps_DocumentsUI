@@ -27,8 +27,11 @@ import static org.junit.Assume.assumeTrue;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.view.ViewGroup;
 
@@ -44,6 +47,7 @@ import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFileTypeLookup;
@@ -51,6 +55,7 @@ import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -65,6 +70,11 @@ public class DirectoryAddonsAdapterTest {
     private ActionHandler mActionHandler;
     private TestConfigStore mTestConfigStore;
     private TestEnvironment mTestEnvironment;
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
     public void setUp() {
@@ -256,6 +266,86 @@ public class DirectoryAddonsAdapterTest {
         assertEquals(mEnv.model.getItemCount() + 1, mAdapter.getItemCount());
         // Verify that the first item in the adapter is the header message (the banner).
         assertHolderType(0, DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE);
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void
+            testOnNetworkStateChanged_onRootWithLimitedFunctionalityWhenOffline_modifiesHeader() {
+        // Create a file to avoid the no items inflated message showing.
+        mEnv.model.createFile("a.txt");
+
+        // Start offline, on a Cloud root which has limited functionality when offline.
+        mTestEnvironment.setIsOnline(false);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.model.update();
+
+        // Check header is shown.
+        assertEquals(mEnv.model.getItemCount() + 1, mAdapter.getItemCount());
+        assertHolderType(0, DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE);
+
+        // Go online.
+        mTestEnvironment.setIsOnline(true);
+        mAdapter.getNetworkListener().onNetworkStateChanged(true);
+
+        // Check header is removed.
+        assertEquals(mEnv.model.getItemCount(), mAdapter.getItemCount());
+
+        // Go offline.
+        mTestEnvironment.setIsOnline(false);
+        mAdapter.getNetworkListener().onNetworkStateChanged(true);
+
+        // Check header is shown.
+        assertEquals(mEnv.model.getItemCount() + 1, mAdapter.getItemCount());
+        assertHolderType(0, DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE);
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testOnNetworkStateChanged_flagDisabled_doesNotShowHeader() {
+        // Create a file to avoid the no items inflated message showing.
+        mEnv.model.createFile("a.txt");
+
+        // Start offline, on a Cloud root which has limited functionality when offline.
+        mTestEnvironment.setIsOnline(false);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+
+        // Clear any default messages set by the model update
+        mEnv.model.update();
+
+        // Check header is not shown.
+        assertEquals(mEnv.model.getItemCount(), mAdapter.getItemCount());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testUpdate_toRootWithoutLimitedFunctionalityWhenOffline_removesHeader() {
+        // Create a file to avoid the no items inflated message showing.
+        mEnv.model.createFile("a.txt");
+
+        // Start offline, on a Cloud root which has limited functionality when offline.
+        mTestEnvironment.setIsOnline(false);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.model.update();
+
+        // Check header is shown.
+        assertEquals(mEnv.model.getItemCount() + 1, mAdapter.getItemCount());
+        assertHolderType(0, DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE);
+
+        // Move to Downloads root which doesn't have limited functionality when offline.
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.DOWNLOADS);
+
+        // Send a model notification.
+        mEnv.model.update();
+
+        // Check header is hidden.
+        assertEquals(mEnv.model.getItemCount(), mAdapter.getItemCount());
+
+        // Send a network notification.
+        mAdapter.getNetworkListener().onNetworkStateChanged(false);
+
+        // Check header is still hidden.
+        assertEquals(mEnv.model.getItemCount(), mAdapter.getItemCount());
     }
 
     private static class StubAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

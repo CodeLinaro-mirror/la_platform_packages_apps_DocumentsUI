@@ -311,7 +311,7 @@
     <string name="move_failed" msgid="7692364307225994220">"تعذّر النقل"</string>
     <string name="delete_failed" msgid="2642684566325252513">"تعذَّر الحذف"</string>
     <string name="compress_failed" msgid="7397502181042157261">"تعذّر ضغط الملف"</string>
-    <string name="extract_failed" msgid="8372397499452831323">"تعذّر الاستخراج"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"تعذّر استخراج الملف"</string>
     <string name="expand_label" msgid="5683357671239615207">"توسيع"</string>
     <string name="collapse_label" msgid="4530974883269531062">"تصغير"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"هل تريد منح التطبيق <xliff:g id="APPNAME"><b>^1</b></xliff:g> الإذن بالوصول إلى الدليل <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> على <xliff:g id="STORAGE"><i>^3</i></xliff:g>؟"</string>

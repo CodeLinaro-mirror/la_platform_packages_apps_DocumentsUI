@@ -31,12 +31,14 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     private final ActionHandler mActionHandler;
     private boolean mInSearchMode;
     private boolean mIsOnTrashPage;
+    private boolean mIsOnline;
 
     public TestEnvironment(Context testContext, TestEnv env, ActionHandler actionHandler) {
         this.testContext = testContext;
         mEnv = env;
         mActionHandler = actionHandler;
         mInSearchMode = false;
+        mIsOnline = true;
     }
 
     @Override
@@ -52,6 +54,11 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     @Override
     public boolean isSelected(String id) {
         return false;
+    }
+
+    @Override
+    public boolean isOnline() {
+        return mIsOnline;
     }
 
     @Override
@@ -93,6 +100,11 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     }
 
     @Override
+    public boolean shouldDisplaySummary() {
+        return false;
+    }
+
+    @Override
     public boolean isOnTrashPage() {
         return mIsOnTrashPage;
     }
@@ -103,5 +115,9 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
 
     public void setIsOnTrashPage(boolean isOnTrashPage) {
         mIsOnTrashPage = isOnTrashPage;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        mIsOnline = isOnline;
     }
 }

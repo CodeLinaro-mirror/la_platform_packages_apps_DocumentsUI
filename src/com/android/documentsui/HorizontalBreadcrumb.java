@@ -216,8 +216,12 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
             // could be an error state screen accessible from the root info.
             final boolean isLast = position == getItemCount() - 1;
 
-            holder.mTitle.setText(
-                    isFirst ? mEnv.getCurrentRoot().title : mState.stack.get(position).displayName);
+            if (isHomeScreenFilesFlagEnabled()) {
+                holder.mTitle.setText(mState.getTitleAtPosition(position));
+            } else {
+                holder.mTitle.setText(isFirst
+                        ? mEnv.getCurrentRoot().title : mState.stack.get(position).displayName);
+            }
             if (isUseMaterial3FlagEnabled()) {
                 // The last path part in the breadcrumb is not clickable.
                 holder.itemView.setEnabled(!isLast);

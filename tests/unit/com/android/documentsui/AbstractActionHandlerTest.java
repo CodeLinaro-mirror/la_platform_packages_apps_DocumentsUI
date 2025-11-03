@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
@@ -39,10 +40,12 @@ import android.provider.DocumentsContract.Path;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.test.filters.MediumTest;
 
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
+import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.files.LauncherActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -147,14 +150,50 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
-    public void testOpenNewWindow() {
+    public void testOpenInNewWindow() {
         DocumentStack path = new DocumentStack(Roots.create("123"));
-        mHandler.openInNewWindow(path);
+        mHandler.openInNewWindow(path, null);
 
         Intent expected = LauncherActivity.createLaunchIntent(mActivity);
         expected.putExtra(Shared.EXTRA_STACK, (Parcelable) path);
         Intent actual = mActivity.startActivity.getLastValue();
         assertEquals(expected.toString(), actual.toString());
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
+    public void testOpenInNewWindowWithShortcut() {
+        ShortcutInfo shortcut = TestProvidersAccess.TEST_SHORTCUT;
+        DocumentStack path = new DocumentStack(Roots.create("123"));
+        mHandler.openInNewWindow(path, shortcut);
+
+        Intent expected = LauncherActivity.createLaunchIntent(mActivity);
+        expected.putExtra(Shared.EXTRA_STACK, (Parcelable) path);
+        expected.putExtra(Shared.EXTRA_SELECTED_SHORTCUT, (Parcelable) shortcut);
+        Intent actual = mActivity.startActivity.getLastValue();
+        assertEquals(expected.toString(), actual.toString());
+        assertEquals(shortcut, actual.getParcelableExtra(Shared.EXTRA_SELECTED_SHORTCUT));
+        assertEquals(path, actual.getParcelableExtra(Shared.EXTRA_STACK));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
+    public void testOpenInNewWindowWithShortcutNotEmptyStack() {
+        ShortcutInfo shortcut = TestProvidersAccess.TEST_SHORTCUT;
+        DocumentInfo doc1 = new DocumentInfo();
+        doc1.derivedUri = Uri.parse("uri 1");
+        DocumentInfo doc2 = new DocumentInfo();
+        doc2.derivedUri = Uri.parse("uri 2");
+        DocumentStack path = new DocumentStack(Roots.create("123"), doc1, doc2);
+        mHandler.openInNewWindow(path, shortcut);
+
+        Intent expected = LauncherActivity.createLaunchIntent(mActivity);
+        expected.putExtra(Shared.EXTRA_STACK, (Parcelable) path);
+        expected.putExtra(Shared.EXTRA_SELECTED_SHORTCUT, (Parcelable) shortcut);
+        Intent actual = mActivity.startActivity.getLastValue();
+        assertEquals(expected.toString(), actual.toString());
+        assertEquals(shortcut, actual.getParcelableExtra(Shared.EXTRA_SELECTED_SHORTCUT));
+        assertEquals(path, actual.getParcelableExtra(Shared.EXTRA_STACK));
     }
 
     @Test
@@ -570,6 +609,7 @@ public class AbstractActionHandlerTest {
                 TestProvidersAccess.EXTERNALSTORAGE.getUri()
         ));
         assertTrue(mHandler.blockOperationForShortcuts(uris, TestProvidersAccess.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsShown();
     }
 
     @Test
@@ -580,6 +620,7 @@ public class AbstractActionHandlerTest {
                 TestProvidersAccess.IMAGE.getUri()
         ));
         assertFalse(mHandler.blockOperationForShortcuts(uris, TestProvidersAccess.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsNotShown();
     }
 
     @Test
@@ -591,6 +632,7 @@ public class AbstractActionHandlerTest {
         ));
         assertTrue(mHandler.blockOperationForShortcuts(
                 uris, TestProvidersAccess.OtherUser.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsShown();
     }
 
     @Test
@@ -603,5 +645,6 @@ public class AbstractActionHandlerTest {
         ));
         assertFalse(mHandler.blockOperationForShortcuts(
                 uris, TestProvidersAccess.OtherUser.USER_ID));
+        mEnv.dialogs.assertOperationNotAllowedForShortcutsNotShown();
     }
 }

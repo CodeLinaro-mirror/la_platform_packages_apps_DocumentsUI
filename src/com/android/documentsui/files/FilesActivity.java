@@ -426,7 +426,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
             assert (canCreateDirectory());
             mInjector.actions.showCreateDirectoryDialog();
         } else if (id == getRes(R.id.option_menu_new_window)) {
-            mInjector.actions.openInNewWindow(mState.stack);
+            mInjector.actions.openInNewWindow(mState.stack, mState.shortcut);
         } else if (id == getRes(R.id.option_menu_settings)) {
             mInjector.actions.openSettings(getCurrentRoot());
         } else if (id == getRes(R.id.option_menu_extract_all)) {

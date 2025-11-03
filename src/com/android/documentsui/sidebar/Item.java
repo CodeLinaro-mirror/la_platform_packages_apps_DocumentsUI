@@ -93,8 +93,7 @@ public abstract class Item {
     }
 
     boolean isDropTarget() {
-        // TODO: b/441194501 - implement `isShortcut()` check in here
-        return isRoot();
+        return false;
     }
 
     boolean dropOn(DragEvent event) {

@@ -18,6 +18,7 @@ package com.android.documentsui.base;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.content.ContentProviderClient;
@@ -58,6 +59,9 @@ public class DocumentInfo implements Durable, Parcelable {
     private static final int VERSION_INIT = 1;
     private static final int VERSION_SPLIT_URI = 2;
     private static final int VERSION_USER_ID = 3;
+    // TODO(b/451775371): Delete this and use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when
+    // it exists in the SDK.
+    public static final String COLUMN_CONTENT_SYNC_STATE_FLAGS = "content_sync_state_flags";
 
     public UserId userId;
     public String authority;
@@ -69,6 +73,7 @@ public class DocumentInfo implements Durable, Parcelable {
     public String summary;
     public long size;
     public int icon;
+    public Integer syncStateFlags;
 
     /** Derived fields that aren't persisted */
     public Uri derivedUri;
@@ -90,6 +95,7 @@ public class DocumentInfo implements Durable, Parcelable {
         size = -1;
         icon = 0;
         derivedUri = null;
+        syncStateFlags = null;
     }
 
     @Override
@@ -111,6 +117,7 @@ public class DocumentInfo implements Durable, Parcelable {
                 summary = DurableUtils.readNullableString(in);
                 size = in.readLong();
                 icon = in.readInt();
+                syncStateFlags = DurableUtils.readNullableInteger(in);
                 deriveFields();
                 break;
             case VERSION_INIT:
@@ -133,6 +140,7 @@ public class DocumentInfo implements Durable, Parcelable {
         DurableUtils.writeNullableString(out, summary);
         out.writeLong(size);
         out.writeInt(icon);
+        DurableUtils.writeNullableInteger(out, syncStateFlags);
     }
 
     @Override
@@ -185,6 +193,15 @@ public class DocumentInfo implements Durable, Parcelable {
         this.summary = getCursorString(cursor, Document.COLUMN_SUMMARY);
         this.size = getCursorLong(cursor, Document.COLUMN_SIZE);
         this.icon = getCursorInt(cursor, Document.COLUMN_ICON);
+        if (isCloudFeaturesFlagEnabled()) {
+            // TODO(b/451775371): Use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when it
+            // exists in the SDK.
+            this.syncStateFlags =
+                    getCursorInteger(
+                            cursor,
+                            COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            /* returnIfMissingOrNull= */ null);
+        }
         this.deriveFields();
     }
 
@@ -435,23 +452,24 @@ public class DocumentInfo implements Durable, Parcelable {
      * cursor is null or the column is missing.
      */
     public static int getCursorInt(Cursor cursor, String columnName) {
-        return getCursorInt(cursor, columnName, 0);
+        return getCursorInteger(cursor, columnName, 0);
     }
 
     /**
-     * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns
-     * {@code returnIfMissingOrNull} if the cursor is null or the column is missing.
+     * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns {@code
+     * returnIfMissingOrNull} if the cursor is null or the column is missing.
      *
      * @param returnIfMissingOrNull The value to return if the cursor is null or the column is
-     *                              missing.
+     *     missing.
      */
-    public static int getCursorInt(Cursor cursor, String columnName, int returnIfMissingOrNull) {
+    public static Integer getCursorInteger(
+            Cursor cursor, String columnName, Integer returnIfMissingOrNull) {
         if (cursor == null) {
             return returnIfMissingOrNull;
         }
 
         final int index = cursor.getColumnIndex(columnName);
-        return (index != -1) ? cursor.getInt(index) : returnIfMissingOrNull;
+        return (index != -1) ? Integer.valueOf(cursor.getInt(index)) : returnIfMissingOrNull;
     }
 
     public static FileNotFoundException asFileNotFoundException(Throwable t)

@@ -60,6 +60,8 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo VIDEO;
     public static final RootInfo DOCUMENT;
     public static final RootInfo EXTERNALSTORAGE;
+
+    public static final RootInfo CLOUD;
     public static final RootInfo NO_TREE_ROOT;
     public static final RootInfo SD_CARD;
     public static final RootInfo LOCAL_SEARCH;
@@ -194,6 +196,16 @@ public class TestProvidersAccess implements ProvidersAccess {
         EXTERNALSTORAGE.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
         EXTERNALSTORAGE.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_IS_CHILD;
+
+        CLOUD = new RootInfo();
+        CLOUD.userId = userId;
+        CLOUD.authority = "cloud.provider.authority";
+        CLOUD.rootId = Providers.ROOT_ID_DEVICE;
+        CLOUD.title = "Cloud";
+        CLOUD.derivedType = SidebarEntryItemInfo.TYPE_ROOT_OTHER;
+        // TODO(b/451775371): Use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead when it
+        //  exists in the SDK.
+        CLOUD.flags = RootInfo.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE;
 
         NO_TREE_ROOT = new RootInfo();
         NO_TREE_ROOT.userId = userId;

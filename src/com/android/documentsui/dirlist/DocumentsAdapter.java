@@ -30,6 +30,7 @@ import com.android.documentsui.Model;
 import com.android.documentsui.SummaryUpdateListener;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Features;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.State;
 
 import java.util.List;
@@ -59,6 +60,8 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
     public abstract int getPosition(String id);
 
     abstract EventListener<Model.Update> getModelUpdateListener();
+
+    abstract NetworkMonitor.NetworkListener getNetworkListener();
 
     /**
      * Called when summaries for items in the model have been updated.
@@ -98,10 +101,13 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
         State getDisplayState();
         boolean isInSearchMode();
         boolean isSelected(String id);
+        boolean isOnline();
         Model getModel();
         boolean isDocumentEnabled(String mimeType, int flags);
         void initDocumentHolder(DocumentHolder holder);
         void onBindDocumentHolder(DocumentHolder holder, Cursor cursor);
+
+        boolean shouldDisplaySummary();
 
         /**
          * @return {@code true} if the user is on the trash page, {@code false} otherwise.

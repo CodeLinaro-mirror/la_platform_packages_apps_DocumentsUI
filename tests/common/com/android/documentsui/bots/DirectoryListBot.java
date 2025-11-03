@@ -305,9 +305,7 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void waitForHolderMessage() throws UiObjectNotFoundException {
-        if (!findPlaceholderMessageTextView().waitForExists(mTimeout)) {
-            throw new UiObjectNotFoundException("Holder message not found after timeout");
-        }
+        findPlaceholderMessageTextView().waitForExists(mTimeout);
     }
 
     public void openDocument(String label) throws UiObjectNotFoundException {
@@ -400,10 +398,7 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void waitForDocument(String label) throws UiObjectNotFoundException {
-        if (!findDocument(label).waitForExists(mTimeout)) {
-            throw new UiObjectNotFoundException(
-                    "Document with label \"" + label + "\" not found after timeout");
-        }
+        findDocument(label).waitForExists(mTimeout);
     }
 
     public UiObject findDocument(String label) throws UiObjectNotFoundException {
@@ -415,11 +410,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         final UiSelector docList = findDocumentsListSelector();
 
         // Wait for the first list item to appear
-        boolean exists =
-                new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
-        if (!exists) {
-            throw new UiObjectNotFoundException("First list item not found after timeout");
-        }
+        new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
 
         if (withScroll) {
             UiScrollable docListView = new UiScrollable(docList);
@@ -479,9 +470,7 @@ public class DirectoryListBot extends Bots.BaseBot {
 
         // Wait for the first list item to appear
         UiObject doc = new UiObject(docList.childSelector(new UiSelector()));
-        if (!doc.waitForExists(mTimeout)) {
-            throw new UiObjectNotFoundException("First document not found after timeout");
-        }
+        doc.waitForExists(mTimeout);
 
         assertTrue(doc.isFocused());
     }

@@ -242,7 +242,7 @@ internal class TrashJobTest : AbstractJobTest<TrashJob>() {
         with(job.getFailureNotification()) {
             assertThat(category).isEqualTo(CATEGORY_ERROR)
             with(extras) {
-                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t trash 1 item")
+                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t trash 1 file")
                 assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details")
             }
         }
