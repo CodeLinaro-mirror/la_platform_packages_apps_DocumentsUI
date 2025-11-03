@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"کچھ دستاویزات کو حذف کرنے سے قاصر"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> سے زیادہ فائلز کا اشتراک نہیں کر سکتے"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"کارروائی کی اجازت نہیں ہے"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"ان کے ساتھ کھولیں…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏کوئی تعاون یافتہ ایپ انسٹال نہیں ہے۔ ‫Play اسٹور سے کوئی ایپ انسٹال کرنے کی کوشش کریں۔"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏‫Play اسٹور میں تلاش کریں"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"کوڑے دان خالی کریں؟"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"اس کارروائی کو کالعدم نہیں کیا جا سکتا اور فائلیں مزید بازیافت نہیں ہو سکیں گی۔"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"کوڑے دان خالی کریں"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

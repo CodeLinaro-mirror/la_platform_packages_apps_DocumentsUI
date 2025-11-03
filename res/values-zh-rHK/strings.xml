@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"無法刪除部分文件"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"無法分享超過 <xliff:g id="COUNT">%1$d</xliff:g> 個檔案"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"不允許此操作"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"開啟方式"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"未有安裝任何支援的應用程式，請嘗試透過「Play 商店」安裝。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"搜尋「Play 商店」"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"要清空垃圾桶嗎？"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"此操作無法復原，有關檔案亦無法復原。"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"清空垃圾桶"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

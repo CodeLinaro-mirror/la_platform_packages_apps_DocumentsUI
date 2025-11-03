@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"केही कागजातहरूलाई मेट्न सकिएन"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> भन्दा बढी फाइलहरू आदान प्रदान गर्न सकिँदैन"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"कारबाही गर्ने अनुमति छैन"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"यसमार्फत खोल्नुहोस्…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"प्रयोग गर्न मिल्ने कुनै पनि एप इन्स्टल गरिएको छैन। Google Play स्टोरबाट एउटा एप इन्स्टल गरी हेर्नुहोस्।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play स्टोरमा खोज्नुहोस्"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ट्र्यास खाली गर्ने हो?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"यो कार्य अन्डू गर्न मिल्दैन र फाइलहरू रिकभर गर्न मिल्ने छैन।"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ट्र्यास खाली गर्नुहोस्"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"No es poden suprimir alguns documents"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Es poden compartir com a màxim <xliff:g id="COUNT">%1$d</xliff:g> fitxers"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acció no permesa"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"Obre amb…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"No hi ha cap aplicació admesa instal·lada. Prova d\'instal·lar-ne una des de Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Cerca a Play Store"</string>
@@ -400,4 +402,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vols buidar la paperera?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Aquesta acció no es pot desfer i els fitxers ja no es podran recuperar."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Buida la paperera"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

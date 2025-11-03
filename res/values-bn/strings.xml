@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"কিছু দস্তাবেজ মোছা গেল না"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>টির বেশি ফাইল শেয়ার করতে পারবেন না"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"অ্যাকশনটি অনুমোদন করা হয়নি"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"এর মাধ্যমে খুলুন…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"কাজ করে এমন কোনও অ্যাপ ইনস্টল করা নেই। Play Store থেকে একটি ইনস্টল করার চেষ্টা করুন।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store-এ সার্চ করুন"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ট্র্যাশ খালি করবেন?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"এই অ্যাকশন আগের অবস্থায় ফেরানো যাবে না এবং ফাইলগুলি আর ফিরিয়ে আনা যাবে না।"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ট্র্যাশ খালি করুন"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

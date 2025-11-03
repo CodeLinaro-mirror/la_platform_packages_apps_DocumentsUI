@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"ບໍ່ສາມາດລຶບບາງເອກະສານໄດ້"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ບໍ່ສາມາດແບ່ງປັນໄດ້ຫຼາຍກວ່າ <xliff:g id="COUNT">%1$d</xliff:g> ໄຟລ໌"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ບໍ່ອະນຸຍາດໃຫ້ໃຊ້ຄຳສັ່ງ"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"ເປີດດ້ວຍ…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ບໍ່ມີການຕິດຕັ້ງແອັບທີ່ຮອງຮັບ. ລອງຕິດຕັ້ງແອັບຈາກ Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"ຊອກຫາໃນ Play Store"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ລ້າງຖັງຂີ້ເຫຍື້ອບໍ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ຄຳສັ່ງນີ້ບໍ່ສາມາດຍົກເລີກໄດ້ ແລະ ໄຟລ໌ຕ່າງໆຈະບໍ່ສາມາດກູ້ຄືນໄດ້."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ລຶບທຸກຢ່າງໃນຖັງຂີ້ເຫຍື້ອ"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>
