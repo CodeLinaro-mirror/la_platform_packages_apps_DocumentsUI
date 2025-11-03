@@ -147,6 +147,7 @@
 
                 <com.android.documentsui.breadcrumbs.BreadcrumbView
                     android:id="@+id/breadcrumb_view_v2"
+                    android:background="?attr/colorSurfaceBright"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
