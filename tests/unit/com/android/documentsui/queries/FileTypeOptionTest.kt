@@ -23,6 +23,7 @@ import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,9 +45,19 @@ class FileTypeOptionTest {
 
     @Test
     fun testEnumText() {
+        assertEquals(FileTypeOption.ANY_TYPE.textId, getRes(R.string.search_file_type_all))
         assertEquals(FileTypeOption.DOCUMENTS.textId, getRes(R.string.chip_title_documents))
         assertEquals(FileTypeOption.AUDIO.textId, getRes(R.string.chip_title_audio))
         assertEquals(FileTypeOption.VIDEO.textId, getRes(R.string.chip_title_videos))
         assertEquals(FileTypeOption.IMAGES.textId, getRes(R.string.chip_title_images))
+    }
+
+    @Test
+    fun testFileTypeOptionFor_invalidValue_returnsNull() {
+        // Scenario: Call fileTypeOptionFor with a value that does not map to any enum constant.
+        val invalidValue = -1
+
+        // Expected: The function should return null.
+        assertNull(fileTypeOptionFor(invalidValue))
     }
 }
