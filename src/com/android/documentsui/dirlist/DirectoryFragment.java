@@ -119,7 +119,7 @@ import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.breadcrumbs.BreadcrumbModel;
+import com.android.documentsui.breadcrumbs.BreadcrumbController;
 import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
@@ -237,7 +237,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private Runnable mProviderTestRunnable;
 
     private @Nullable PathExtractor mPathExtractor;
-    private @Nullable BreadcrumbModel mBreadcrumbModel;
 
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
@@ -471,8 +470,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mHandler = new Handler(Looper.getMainLooper());
         mActivity = getBaseActivity();
         if (isSearchV2Enabled()) {
-            mPathExtractor = new PathExtractor(mActivity);
-            mBreadcrumbModel = mActivity.getBreadcrumbModel();
+            mPathExtractor = new PathExtractor(mActivity, mActivity.getProvidersAccess());
         }
         mRootView =
                 (AnimationView)
@@ -560,7 +558,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (isUseMaterial3FlagEnabled()) {
             mRootView.removeOnSizeChangedListener(mOnSizeChangedListener);
         }
-        mBreadcrumbModel = null;
 
         if (mItemDecorationInvalidator != null) {
             mItemDecorationInvalidator.teardown();
@@ -692,9 +689,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                             // selected files. The extracted path is used only in recent and search
                             // results to show the location of the selected file.
                             if (mPathExtractor == null
-                                    || mBreadcrumbModel == null
                                     || mActivity == null
                                     || !(mActivity.isSearching() || mActivity.isInRecents())) {
+                                return;
+                            }
+                            BreadcrumbController controller = mInjector.getBreadcrumbController();
+                            if (controller == null) {
                                 return;
                             }
                             String selectedId = null;
@@ -703,20 +703,34 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                     selectedId = id;
                                 }
                             }
-                            String[] path = mEmptyPath;
-                            if (selectedId != null) {
-                                DocumentInfo info = mModel.getDocument(selectedId);
-                                if (info != null) {
-                                    try {
-                                        path = mPathExtractor.getDocumentInfoPath(info);
-                                    } catch (Exception e) {
-                                        if (DEBUG) {
-                                            Log.d(TAG, "Failed to get path for " + info, e);
-                                        }
-                                    }
-                                }
+                            if (selectedId == null) {
+                                return;
                             }
-                            mBreadcrumbModel.setPath(path);
+                            final DocumentStack stack = new DocumentStack();
+                            DocumentInfo info = mModel.getDocument(selectedId);
+                            if (info == null) {
+                                return;
+                            }
+                            try {
+                                // TODO(b/447678204): Use handler.post(...) to not run on UI thread.
+                                stack.reset(mPathExtractor.getDocumentStack(info));
+                                controller.setClickConsumer(
+                                        (i) -> {
+                                            // Remove items after the i-th element.
+                                            while (stack.size() > i + 1) {
+                                                stack.pop();
+                                            }
+                                            mInjector.searchManager.cancelSearch();
+                                            mState.stack.reset(stack);
+                                            mActivity.getNavigator().forceDirectoryToCurrentStack();
+                                        });
+                            } catch (Exception e) {
+                                if (DEBUG) {
+                                    Log.d(TAG, "Failed to get stack for " + info, e);
+                                }
+                                controller.setClickConsumer(null);
+                            }
+                            controller.getModel().setFromStack(stack);
                         }
                     });
         }

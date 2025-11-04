@@ -24,6 +24,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
@@ -59,6 +60,9 @@ public class TestNotificationService extends NotificationListenerService {
     public static final String ACTION_PONG =
             "com.android.documentsui.services.TestNotificationService.ACTION_PONG";
 
+    public static final String ACTION_RECENT_NOTIFICATIONS =
+            "com.android.documentsui.services.TestNotificationService.ACTION_RECENT_NOTIFICATIONS";
+
     public static final String ANDROID_PACKAGENAME = "android";
 
     public static final String CANCEL_RES_NAME = "cancel";
@@ -68,6 +72,10 @@ public class TestNotificationService extends NotificationListenerService {
 
     public static final String EXTRA_ERROR_REASON =
             "com.android.documentsui.services.TestNotificationService.EXTRA_ERROR_REASON";
+
+    public static final String EXTRA_RECENT_NOTIFICATIONS_AS_TEXT =
+            "com.android.documentsui.services.TestNotificationService."
+                    + "EXTRA_RECENT_NOTIFICATIONS_AS_TEXT";
 
     public enum MODE {
         CANCEL_MODE,
@@ -83,6 +91,8 @@ public class TestNotificationService extends NotificationListenerService {
     private FrameLayout mFrameLayout = null;
 
     private ProgressBar mProgressBar = null;
+
+    private String[] mRecentNotifications = new String[10];
 
     /**
      * Waits for the TestNotificationService (which may be in a different process to the caller) to
@@ -153,6 +163,7 @@ public class TestNotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        recordRecentNotification(sbn, "Posted");
         String pkgName = sbn.getPackageName();
         Log.i(TAG, "Entering notification posted cancelMode = " + MODE.CANCEL_MODE
                 .equals(mCurrentMode) + " targetPackageName " + mTargetPackageName + " packageName "
@@ -170,6 +181,7 @@ public class TestNotificationService extends NotificationListenerService {
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
+        recordRecentNotification(sbn, "Removed");
         Log.i(TAG, "Entering notification removed cancelMode = " + MODE.CANCEL_MODE
                 .equals(mCurrentMode));
         String pkgName = sbn.getPackageName();
@@ -274,5 +286,31 @@ public class TestNotificationService extends NotificationListenerService {
         intent.setType("*/*");
         final ResolveInfo ri = pm.resolveActivity(intent, 0);
         return ri.activityInfo.packageName;
+    }
+
+    private void recordRecentNotification(StatusBarNotification sbn, String verb) {
+        if (!MODE.EXECUTION_MODE.equals(mCurrentMode)) {
+            return;
+        }
+
+        // Move each mRecentNotifications element back by one, dropping the last one,...
+        for (int i = mRecentNotifications.length - 1; i > 0; i--) {
+            mRecentNotifications[i] = mRecentNotifications[i - 1];
+        }
+
+        // ...and set mRecentNotifications[0].
+        Bundle extras = sbn.getNotification().extras;
+        mRecentNotifications[0] =
+                String.join(
+                        ":",
+                        verb,
+                        extras.getString(Notification.EXTRA_TITLE),
+                        extras.getString(Notification.EXTRA_TEXT),
+                        extras.getString(Notification.EXTRA_SUB_TEXT));
+
+        Intent intent = new Intent(ACTION_RECENT_NOTIFICATIONS);
+        intent.putExtra(
+                EXTRA_RECENT_NOTIFICATIONS_AS_TEXT, String.join(" ¶ ", mRecentNotifications));
+        sendBroadcast(intent);
     }
 }

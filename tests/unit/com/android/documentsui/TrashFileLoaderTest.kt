@@ -17,16 +17,19 @@
 package com.android.documentsui
 
 import android.os.Build
+import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
-import android.provider.Flags
+import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import com.android.documentsui.base.State
 import com.android.documentsui.base.UserId
+import com.android.documentsui.flags.Flags
 import com.android.documentsui.loaders.TrashFileLoader
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.ActivityManagers
 import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.TestFileTypeLookup
@@ -48,12 +51,15 @@ import org.mockito.Mockito.`when` as whenever
 
 @RunWith(Parameterized::class)
 @MediumTest
-@RequiresFlagsEnabled(Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API)
+@RequiresFlagsEnabled(FLAG_ENABLE_DOCUMENTS_TRASH_API)
+@EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
 internal class TrashFileLoaderTest {
     private lateinit var mEnv: TestEnv
     private lateinit var mActivity: TestActivity
     private lateinit var mTestConfigStore: TestConfigStore
+
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     @get:Rule val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 

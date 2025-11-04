@@ -25,7 +25,7 @@ import com.android.documentsui.util.Material3Config.Companion.getRes
  */
 enum class FileTypeOption(
     private val rawValueId: Int,
-    @StringRes private val rawTextId: Int
+    @param:StringRes private val rawTextId: Int
 ) {
     ANY_TYPE(R.id.file_type_all_option, R.string.search_file_type_all),
     AUDIO(R.id.file_type_audio_option, R.string.chip_title_audio),

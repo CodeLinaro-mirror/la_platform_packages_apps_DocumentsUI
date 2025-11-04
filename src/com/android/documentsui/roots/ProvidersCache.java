@@ -24,8 +24,8 @@ import static com.android.documentsui.base.Providers.TRASH_ROOT_ID;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
-import static com.android.documentsui.util.Material3Config.getRes;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.BroadcastReceiver.PendingResult;
 import android.content.ContentProviderClient;
@@ -342,24 +342,31 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 mContext.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
         List<String> folderTitles = List.of(
                 mContext.getResources().getStringArray(R.array.shortcut_titles));
+        List<String> localizedTitles =
+                List.of(mContext.getResources().getStringArray(R.array.shortcut_localized_titles));
         TypedArray shortcutIcons =
                 mContext.getResources().obtainTypedArray(R.array.shortcut_icons);
 
         int shortcutArraySize = authorities.size();
-        if (shortcutArraySize != rootIds.size() || shortcutArraySize != parentDocIds.size()
+        if (shortcutArraySize != rootIds.size()
+                || shortcutArraySize != parentDocIds.size()
                 || shortcutArraySize != folderTitles.size()
+                || shortcutArraySize != localizedTitles.size()
                 || shortcutArraySize != shortcutIcons.length()) {
             // Early return an empty list if there is a mismatch in size.
             return shortcutResources;
         }
 
         for (int i = 0; i < shortcutArraySize; i++) {
-            ShortcutResourceValues shortcutResource = new ShortcutResourceValues(
-                    authorities.get(i),
-                    rootIds.get(i),
-                    parentDocIds.get(i),
-                    folderTitles.get(i),
-                    shortcutIcons.getResourceId(i, ShortcutResourceValues.INVALID_ICON_REF));
+            ShortcutResourceValues shortcutResource =
+                    new ShortcutResourceValues(
+                            authorities.get(i),
+                            rootIds.get(i),
+                            parentDocIds.get(i),
+                            folderTitles.get(i),
+                            localizedTitles.get(i),
+                            shortcutIcons.getResourceId(
+                                    i, ShortcutResourceValues.INVALID_ICON_REF));
             shortcutResources.add(shortcutResource);
         }
         return shortcutResources;
@@ -648,19 +655,24 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 .findFirst()
                 .orElse(null);
         if (parentRoot == null) {
-            Log.w(TAG, "Cannot create shortcut root folder " + shortcutRes.getFolderTitle()
-                    + ". The parent DocumentsProvider root not found.");
+            Log.w(
+                    TAG,
+                    "Cannot create shortcut root folder "
+                            + shortcutRes.getFolderTitle()
+                            + ". The parent DocumentsProvider root not found.");
             return null;
         }
 
         // Creates the shortcut info instance. Leave out the URI and the document ID for now.
         // These will be set later.
         return new ShortcutInfo(
-            shortcutRes.getIconReference() != ShortcutResourceValues.INVALID_ICON_REF
-                ? shortcutRes.getIconReference() : parentRoot.derivedIcon,
-            shortcutRes.getFolderTitle(),
-            parentRoot,
-            shortcutRes.getParentDocumentId());
+                parentRoot,
+                shortcutRes.getParentDocumentId(),
+                shortcutRes.getFolderTitle(),
+                shortcutRes.getLocalizedDisplayTitle(),
+                shortcutRes.getIconReference() != ShortcutResourceValues.INVALID_ICON_REF
+                        ? shortcutRes.getIconReference()
+                        : parentRoot.derivedIcon);
     }
 
     public void logCache() {

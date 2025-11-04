@@ -60,17 +60,14 @@ public class SortBot extends Bots.BaseBot {
 
     private final SortModel mSortModel = SortModel.createModel();
     private final ColumnSortBot mColumnBot;
-    private final UiBot mUiBot;
 
     public SortBot(
             UiDevice device,
             Context context,
             int timeout,
-            UiBot uiBot,
             @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mColumnBot = new ColumnSortBot();
-        mUiBot = uiBot;
     }
 
     public void sortBy(int id, @SortDirection int direction) {
@@ -141,7 +138,7 @@ public class SortBot extends Bots.BaseBot {
     }
 
     private void clickMenuSort() {
-        mUiBot.clickToolbarOverflowItem(mContext.getString(R.string.menu_sort));
+        mBots.main.clickToolbarOverflowItem(mContext.getString(R.string.menu_sort));
     }
 
     private static class ColumnSortBot {

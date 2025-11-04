@@ -29,6 +29,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.view.ViewGroup;
 
@@ -44,6 +46,7 @@ import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFileTypeLookup;
@@ -51,6 +54,7 @@ import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -65,6 +69,11 @@ public class DirectoryAddonsAdapterTest {
     private ActionHandler mActionHandler;
     private TestConfigStore mTestConfigStore;
     private TestEnvironment mTestEnvironment;
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Before
     public void setUp() {

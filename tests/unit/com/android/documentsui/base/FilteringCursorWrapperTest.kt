@@ -49,6 +49,14 @@ class FilteringCursorWrapperTest {
         cursor.addRow(arrayOf("file3.txt", "primary:Alarms/file3.txt"))
         cursor.addRow(arrayOf(".hidden_file", "primary:folder2/.hidden_file"))
         cursor.addRow(arrayOf("another_file", "primary:folder2/another_file"))
+        cursor.addRow(arrayOf(null, "primary:folder2/.dotfile_without_name"))
+        cursor.addRow(arrayOf(null, "primary:folder2/file4.txt"))
+        cursor.addRow(arrayOf(".dotfile_without_id", null))
+        cursor.addRow(arrayOf("file5.txt", null))
+        cursor.addRow(arrayOf("file1_inside_dot_folder", "primary:.folder/file_inside_dot_folder"))
+        cursor.addRow(
+            arrayOf("file2_inside_dot_folder", "primary:folder2/.dot_folder/file_inside_dot_folder")
+        )
     }
 
     @Test
@@ -57,7 +65,7 @@ class FilteringCursorWrapperTest {
         wrapper = FilteringCursorWrapper(cursor)
         wrapper.filterHiddenFiles(/* showHiddenFiles= */ true)
 
-        assertEquals(7, wrapper.count)
+        assertEquals(13, wrapper.count)
     }
 
     @Test
@@ -67,7 +75,7 @@ class FilteringCursorWrapperTest {
         wrapper = FilteringCursorWrapper(cursor)
         wrapper.filterHiddenFiles(/* showHiddenFiles= */ false)
 
-        assertEquals(6, wrapper.count)
+        assertEquals(9, wrapper.count)
 
         wrapper.moveToFirst()
         assertEquals("file1.txt", wrapper.getString(0))
@@ -81,6 +89,13 @@ class FilteringCursorWrapperTest {
         assertEquals("file3.txt", wrapper.getString(0))
         wrapper.moveToNext()
         assertEquals("another_file", wrapper.getString(0))
+        wrapper.moveToNext()
+        assertEquals("primary:folder2/file4.txt", wrapper.getString(1))
+        wrapper.moveToNext()
+        assertEquals("file5.txt", wrapper.getString(0))
+        // When Desktop UX phase 2 is off, it doesn't filter the files under root dot folder.
+        wrapper.moveToNext()
+        assertEquals("file1_inside_dot_folder", wrapper.getString(0))
     }
 
     @Test
@@ -90,7 +105,7 @@ class FilteringCursorWrapperTest {
         wrapper = FilteringCursorWrapper(cursor)
         wrapper.filterHiddenFiles(/* showHiddenFiles= */ false)
 
-        assertEquals(3, wrapper.count)
+        assertEquals(5, wrapper.count)
 
         wrapper.moveToFirst()
         assertEquals("file1.txt", wrapper.getString(0))
@@ -98,5 +113,9 @@ class FilteringCursorWrapperTest {
         assertEquals("Android1", wrapper.getString(0))
         wrapper.moveToNext()
         assertEquals("another_file", wrapper.getString(0))
+        wrapper.moveToNext()
+        assertEquals("primary:folder2/file4.txt", wrapper.getString(1))
+        wrapper.moveToNext()
+        assertEquals("file5.txt", wrapper.getString(0))
     }
 }
