@@ -32,7 +32,7 @@ import com.android.documentsui.base.State;
  */
 public abstract class ActivityConfig {
 
-    // TODO(b/451775371): Delete this and use Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY instead
+    // TODO(b/458129770): Delete this and use Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY instead
     // when it exists in the SDK.
     public static final int SYNC_STATE_FLAG_AVAILABLE_LOCALLY = 1 << 0;
 
@@ -86,7 +86,7 @@ public abstract class ActivityConfig {
             return true;
         }
 
-        // TODO(b/451775371): Update to using Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY when it
+        // TODO(b/458129770): Update to using Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY when it
         // exists in the SDK.
         if ((syncStateFlags & SYNC_STATE_FLAG_AVAILABLE_LOCALLY) != 0) {
             // The file's content is available locally, so it is enabled.
