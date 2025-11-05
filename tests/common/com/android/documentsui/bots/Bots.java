@@ -79,9 +79,9 @@ public final class Bots {
             @LayoutRes Integer layoutId) {
         main = new UiBot(device, context, TIMEOUT, layoutId);
         breadcrumb = new BreadBot(device, context, TIMEOUT, layoutId);
-        roots = new SidebarBot(device, automation, context, main, TIMEOUT, layoutId);
+        roots = new SidebarBot(device, automation, context, TIMEOUT, layoutId);
         directory = new DirectoryListBot(device, automation, context, TIMEOUT, layoutId);
-        sort = new SortBot(device, context, TIMEOUT, main, layoutId);
+        sort = new SortBot(device, context, TIMEOUT, layoutId);
         keyboard = new KeyboardBot(device, context, TIMEOUT, layoutId);
         search = new SearchBot(device, context, TIMEOUT, layoutId);
         gesture = new GestureBot(device, automation, context, TIMEOUT, layoutId);
@@ -89,6 +89,21 @@ public final class Bots {
         inspector = new InspectorBot(device, context, TIMEOUT, layoutId);
         notifications = new NotificationsBot(device, context, TIMEOUT, layoutId);
         picker = new PickerBot(device, context, TIMEOUT, layoutId);
+
+        // Set the Bots instance to each sub bot so inside each sub bot they can access other sub
+        // bot.
+        main.setBots(this);
+        breadcrumb.setBots(this);
+        roots.setBots(this);
+        directory.setBots(this);
+        sort.setBots(this);
+        keyboard.setBots(this);
+        search.setBots(this);
+        gesture.setBots(this);
+        menu.setBots(this);
+        inspector.setBots(this);
+        notifications.setBots(this);
+        picker.setBots(this);
     }
 
     /**
@@ -101,6 +116,7 @@ public final class Bots {
         final Context mContext;
         final int mTimeout;
         @LayoutRes protected Integer mLayoutId;
+        public Bots mBots;
 
         BaseBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
             mDevice = device;
@@ -110,6 +126,15 @@ public final class Bots {
                     InstrumentationRegistry.getInstrumentation()
                             .getTargetContext().getPackageName();
             mLayoutId = layoutId;
+        }
+
+        /**
+         * Set the main bots so all sub class has access to it.
+         *
+         * @param bots the Bots instance
+         */
+        public void setBots(Bots bots) {
+            mBots = bots;
         }
 
         /**
@@ -191,6 +216,46 @@ public final class Bots {
         protected UiObject2 find(BySelector selector) {
             mDevice.wait(Until.findObject(selector), mTimeout);
             return mDevice.findObject(selector);
+        }
+
+        /**
+         * Attempts to find any of the given selectors, retrying until timeout.
+         *
+         * @param selectors The selectors to search for.
+         * @return An array of UiObject2, with each element corresponding to the selector at the
+         *     same index in the input array. If a selector is not found, the corresponding element
+         *     in the result array will be null.
+         */
+        protected UiObject2[] findAny(BySelector[] selectors) {
+            int n = selectors.length;
+            UiObject2[] result = new UiObject2[n];
+            if (n > 0) {
+                int remaining = mTimeout;
+                // 1048576 is (1 << 20), a power of two close to one million. The value is
+                // basically arbitrary. We just want our sleeps to start as a small fraction of
+                // mTimeout, but double in length each iteration.
+                int retryTimeout = mTimeout / 1048576;
+                if (retryTimeout < 1) {
+                    retryTimeout = 1;
+                }
+                for (int retry = 0; true; retry++) {
+                    mDevice.wait(Until.findObject(selectors[retry % n]), retryTimeout);
+                    boolean found = false;
+                    for (int j = 0; j < n; j++) {
+                        result[j] = mDevice.findObject(selectors[j]);
+                        found = found || (result[j] != null);
+                    }
+                    remaining -= retryTimeout;
+                    retryTimeout *= 2;
+                    if ((retryTimeout > remaining) || (retryTimeout <= 0)) {
+                        retryTimeout = remaining;
+                    }
+                    if (found || (remaining <= 0)) {
+                        break;
+                    }
+                }
+            }
+            return result;
         }
 
         protected UiObject findObject(String resourceId) {

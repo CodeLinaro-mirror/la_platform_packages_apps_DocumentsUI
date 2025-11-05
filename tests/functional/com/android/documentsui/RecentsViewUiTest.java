@@ -107,7 +107,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRecentsDoesNotContainEntriesFromAllFilesRootWithSearchV1() throws Exception {
         bots.roots.openRoot("Recent");
 
-        // When Searchv2 is disabled, the old loaders are used: check that they're not picking up
+        // When SearchV2 is disabled, the old loaders are used: check that they're not picking up
         // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
         // we could see two copies of each file.
         onView(withId(R.id.dir_list))
@@ -165,9 +165,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = mTestFilesRule.createRandomFile("application/octet-stream");
 
         bots.roots.openRoot("Recent");
-        bots.search.expand();
-        bots.search.setInputText(testFileName);
-        bots.keyboard.pressEnter();
+        bots.search.doSearch(testFileName);
 
         bots.directory.waitForDocument(testFileName);
         onView(withId(R.id.dir_list))
@@ -194,7 +192,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText(testFileName);
         bots.keyboard.pressEnter();
 
-        // When Searchv2 is disabled, the old loaders are used: check that they're not picking up
+        // When SearchV2 is disabled, the old loaders are used: check that they're not picking up
         // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
         // we could see two copies of the file.
         bots.directory.waitForDocument(testFileName);

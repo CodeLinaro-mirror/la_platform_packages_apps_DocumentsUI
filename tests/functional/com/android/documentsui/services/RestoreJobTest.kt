@@ -25,14 +25,16 @@ import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.CheckFlagsRule
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
-import android.provider.DocumentsContract.buildDocumentUri
 import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import com.android.documentsui.TrashDocumentHelper
+import com.android.documentsui.base.DocumentStack
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.services.FileOperationService.OPERATION_RESTORE
+import com.android.documentsui.testing.DocsProviders
+import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.VersionUtils
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assume.assumeTrue
@@ -244,7 +246,7 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
         with(job.failureNotification) {
             assertThat(category).isEqualTo(CATEGORY_ERROR)
             with(extras) {
-                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t restore 1 item")
+                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t restore 1 file")
                 assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details")
             }
         }
@@ -286,7 +288,7 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
         with(job.failureNotification) {
             assertThat(category).isEqualTo(CATEGORY_ERROR)
             with(extras) {
-                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t restore 1 item")
+                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t restore 1 file")
                 assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details")
             }
         }
@@ -335,7 +337,7 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
         with(job.failureNotification) {
             assertThat(category).isEqualTo(CATEGORY_ERROR)
             with(extras) {
-                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t restore 1 item")
+                assertThat(getCharSequence(EXTRA_TITLE)).isEqualTo("Couldn’t restore 1 file")
                 assertThat(getCharSequence(EXTRA_TEXT)).isEqualTo("Tap to view details")
             }
         }
@@ -344,15 +346,23 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
     /**
      * Creates a test job to restore files from the trash.
      *
-     * @param src A list of URIs for the files to restore.
+     * @param srcs A list of URIs for the files to restore.
      * @return A new RestoreJob instance.
      */
-    private fun createRestoreJob(src: List<Uri>): RestoreJob {
-        // Set the destination for the restored files to always be the root directory.
-        val dest = buildDocumentUri(AUTHORITY, mSrcRoot.documentId)
+    private fun createRestoreJob(srcs: List<Uri>): RestoreJob {
+        // When a user is on the trash page and  perform a restore action either via action menu,
+        // context menu or shortcut, the currentStack is the trash root.
+        val currentStack = DocumentStack(TestProvidersAccess.TRASH_ROOT)
 
         // Create and return the RestoreJob.
-        return createJob(OPERATION_RESTORE, src, dest, dest) as RestoreJob
+        val urisSupplier = DocsProviders.createDocsProvider(srcs)
+        val operation =
+            FileOperation.Builder()
+                .withOpType(OPERATION_RESTORE)
+                .withSrcs(urisSupplier)
+                .withDestination(currentStack)
+                .build()
+        return createJob(operation) as RestoreJob
     }
 
     companion object {

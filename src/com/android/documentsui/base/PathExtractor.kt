@@ -20,77 +20,74 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.util.Log
-import com.android.documentsui.R
+import com.android.documentsui.roots.ProvidersAccess
 
 /**
  * Encapsulates functionality needed to extract full path of a DocumentInfo. Typical use would be to
- * create this class once, and call the `getDocumentInfoPath` for each document for which we wish to
- * have the path represented by a collection of directory names ending in the document display name.
+ * create this class once, and call the `getDocumentStack` for each document for which we wish to
+ * have the path represented by a DocumentStack object.
  */
-open class PathExtractor(private val context: Context) {
+open class PathExtractor(
+    private val context: Context,
+    private val providerAccess: ProvidersAccess,
+) {
     companion object {
         private const val TAG = "PathExtractor"
-        private const val NAME_COLUMN = DocumentsContract.Document.COLUMN_DISPLAY_NAME
-        private const val TITLE_COLUMN = DocumentsContract.Root.COLUMN_TITLE
     }
 
     /**
-     * Extracts a full path for the given DocumentInfo. If the path extraction fails, this method
+     * Extracts a full stack for the given DocumentInfo. If the stack extraction fails, this method
      * throws NoSuchElementException. It is the responsibility of the caller to correctly handle
      * both success and failure cases.
      *
-     * @throws NoSuchElementException if the path extraction fails.
+     * @throws NoSuchElementException if the stack extraction fails.
      */
-    fun getDocumentInfoPath(docInfo: DocumentInfo): Array<String> {
+    fun getDocumentStack(docInfo: DocumentInfo): DocumentStack {
         val uri = docInfo.derivedUri
-        val rootTitle = getRootTitle(docInfo)
+        val rootInfo = getRootInfo(docInfo)
         try {
             val path = getDocumentPath(uri)
             if (path === null || path.path === null || path.path.isEmpty()) {
                 throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}")
             }
-            val pathIdParts =
-                if (
-                    docInfo.authority == Providers.AUTHORITY_DOWNLOADS ||
-                        docInfo.authority == Providers.AUTHORITY_STORAGE
-                ) {
-                    // When resolving path for Downloads the top folder is Download. For External
-                    // storage authority, the top folder is user ID. We don't want either of those,
-                    // so drop them from the path.
-                    path.path.subList(1, path.path.size)
-                } else {
-                    path.path
-                }
-            val displayNameList = mutableListOf<String>()
-            displayNameList.add(rootTitle)
-            pathIdParts.forEach { displayNameList.add(getDisplayName(docInfo.authority, it)) }
-            return displayNameList.toTypedArray()
+            val docInfoArray = Array(path.path.size) { getDocumentInfo(docInfo, path.path[it]) }
+            return DocumentStack(rootInfo, *docInfoArray)
         } catch (e: IllegalArgumentException) {
             throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}: $e")
         } catch (e: UnsupportedOperationException) {
             Log.w(TAG, "$uri does not support path extraction: $e: ${e.stackTraceToString()}")
-            return returnApproximatePath(rootTitle, docInfo)
+            return approximateDocumentStack(rootInfo, docInfo)
+        } catch (e: Exception) {
+            throw e
         }
     }
 
     /** Fallback method if we cannot get the path for the given DocumentInfo. */
-    private fun returnApproximatePath(rootTitle: String, docInfo: DocumentInfo): Array<String> {
+    private fun approximateDocumentStack(rootInfo: RootInfo, docInfo: DocumentInfo): DocumentStack {
+        // We create a root dir as the rest of the code is not prepared to have a document stack
+        // that consists of the root and file, with no directory represented by DocumentInfo.
+        val rootDir =
+            DocumentInfo().apply {
+                userId = rootInfo.userId
+                authority = rootInfo.authority
+                displayName = rootInfo.title
+                documentId = rootInfo.documentId
+                deriveFields()
+            }
         if (docInfo.authority == Providers.AUTHORITY_MEDIA) {
-            return arrayOf(context.getString(R.string.root_recent), docInfo.displayName)
+            return DocumentStack(providerAccess.getRecentsRoot(docInfo.userId), rootDir, docInfo)
         }
-        return arrayOf(rootTitle, docInfo.displayName)
+        return DocumentStack(rootInfo, rootDir, docInfo)
     }
 
-    /** Attempts to get the root title for the given DocumentInfo. */
-    private fun getRootTitle(docInfo: DocumentInfo): String {
+    /** Attempts to get the root for the given DocumentInfo. */
+    private fun getRootInfo(docInfo: DocumentInfo): RootInfo {
         var cursor: Cursor? = null
+        val uri = DocumentsContract.buildRootsUri(docInfo.authority)
         try {
-            cursor = getTitleCursor(DocumentsContract.buildRootsUri(docInfo.authority))
+            cursor = getCursorForUri(uri)
             if (cursor != null && cursor.moveToFirst()) {
-                val index = cursor.getColumnIndex(TITLE_COLUMN)
-                if (index != -1) {
-                    return cursor.getString(index)
-                }
+                return RootInfo.fromRootsCursor(docInfo.userId, docInfo.authority, cursor)
             }
         } finally {
             cursor?.close()
@@ -98,17 +95,14 @@ open class PathExtractor(private val context: Context) {
         throw NoSuchElementException("Can't find matching root for id=${docInfo.documentId}")
     }
 
-    /** Extracts the display name of the path item with the given `itemUri`. */
-    private fun getDisplayName(authority: String, pathItemId: String): String {
+    /** Extracts the document info for the given `pathItemId` of the path of `docInfo`. */
+    private fun getDocumentInfo(docInfo: DocumentInfo, pathItemId: String): DocumentInfo {
         var cursor: Cursor? = null
-        val itemUri = DocumentsContract.buildDocumentUri(authority, pathItemId)
+        val itemUri = DocumentsContract.buildDocumentUri(docInfo.authority, pathItemId)
         try {
-            cursor = getDisplayNameCursor(itemUri)
+            cursor = getCursorForUri(itemUri)
             if (cursor != null && cursor.moveToFirst()) {
-                val index = cursor.getColumnIndex(NAME_COLUMN)
-                if (index != -1) {
-                    return cursor.getString(index)
-                }
+                return DocumentInfo.fromCursor(cursor, docInfo.userId, docInfo.authority)
             }
         } finally {
             cursor?.close()
@@ -120,11 +114,7 @@ open class PathExtractor(private val context: Context) {
     protected open fun getDocumentPath(documentUri: Uri) =
         DocumentsContract.findDocumentPath(context.contentResolver, documentUri)
 
-    /** Fetches a cursor for the given Uri that provides access to the title column. */
-    protected open fun getTitleCursor(rootUri: Uri) =
-        context.contentResolver.query(rootUri, arrayOf(TITLE_COLUMN), null, null, null)
-
-    /** Fetches a cursor for the given Uri that provides access to the display name column. */
-    protected open fun getDisplayNameCursor(itemUri: Uri) =
-        context.contentResolver.query(itemUri, arrayOf(NAME_COLUMN), null, null, null)
+    /** Fetches a cursor for the given Uri. */
+    protected open fun getCursorForUri(uri: Uri) =
+        context.contentResolver.query(uri, null, null, null, null)
 }

@@ -44,6 +44,7 @@ import com.android.documentsui.SelectionBarController
 import com.android.documentsui.base.State.MODE_GRID
 import com.android.documentsui.base.State.MODE_LIST
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.SortModels
@@ -119,6 +120,7 @@ class DirectoryFragmentTest {
         `when`(activity.selectedUser).thenReturn(env.userId)
         `when`(activity.resources).thenReturn(context.resources)
         `when`(activity.applicationContext).thenReturn(context.applicationContext)
+        `when`(activity.providersAccess).thenReturn(mock(ProvidersAccess::class.java))
 
         fragment = DirectoryFragmentWithActivity(context, activity)
         fragment.arguments = Bundle()

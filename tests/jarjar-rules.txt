@@ -16,7 +16,6 @@ zap androidx.compose.**
 zap androidx.concurrent.**
 zap androidx.constraintlayout.**
 zap androidx.coordinatorlayout.**
-zap androidx.core.**
 zap androidx.cursoradapter.**
 zap androidx.customview.**
 zap androidx.drawerlayout.**
