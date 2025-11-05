@@ -251,6 +251,10 @@ class JobPanelController(
                 FileOperationService.OPERATION_EXTRACT,
                 FileOperationService.OPERATION_UNPACK ->
                     context.getString(getRes(R.string.extract_completed))
+                FileOperationService.OPERATION_TRASH ->
+                    context.getString(getRes(R.string.trash_completed))
+                FileOperationService.OPERATION_RESTORE ->
+                    context.getString(getRes(R.string.restore_completed))
                 else -> ""
             }
         }
@@ -268,6 +272,10 @@ class JobPanelController(
                 FileOperationService.OPERATION_EXTRACT,
                 FileOperationService.OPERATION_UNPACK ->
                     context.getString(getRes(R.string.extract_failed))
+                FileOperationService.OPERATION_TRASH ->
+                    context.getString(getRes(R.string.trash_failed))
+                FileOperationService.OPERATION_RESTORE ->
+                    context.getString(getRes(R.string.restore_failed))
                 else -> ""
             }
         }
