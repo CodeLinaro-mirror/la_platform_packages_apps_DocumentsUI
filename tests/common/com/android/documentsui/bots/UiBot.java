@@ -265,10 +265,10 @@ public class UiBot extends Bots.BaseBot {
     }
 
     private UiObject2[] menuGridOrListMode() {
-        // Note that we're using By.desc rather than By.res, because of b/25285770
         return findAny(
                 new BySelector[] {
-                    By.desc("Grid view"), By.desc("List view"),
+                    By.res(mTargetPackage + ":id/sub_menu_grid"),
+                    By.res(mTargetPackage + ":id/sub_menu_list"),
                 });
     }
 

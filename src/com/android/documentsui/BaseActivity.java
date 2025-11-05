@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
@@ -904,7 +905,7 @@ public abstract class BaseActivity
             setViewMode(MODE_GRID);
             return true;
         } else if (id == getRes(R.id.sub_menu_list)) {
-            setViewMode(State.MODE_LIST);
+            setViewMode(MODE_LIST);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -968,7 +969,8 @@ public abstract class BaseActivity
             mSearchManager.setCurrentSearch(mSearchManager.getQueryContentFromIntent());
         }
 
-        mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), MODE_GRID);
+        final int fallback = isUseMaterial3FlagEnabled() ? MODE_LIST : MODE_GRID;
+        mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), fallback);
 
         mNavigator.update();
 
@@ -1057,9 +1059,9 @@ public abstract class BaseActivity
      * Set mode based on explicit user action.
      */
     void setViewMode(@ViewMode int mode) {
-        if (mode == State.MODE_GRID) {
+        if (mode == MODE_GRID) {
             Metrics.logUserAction(MetricConsts.USER_ACTION_GRID);
-        } else if (mode == State.MODE_LIST) {
+        } else if (mode == MODE_LIST) {
             Metrics.logUserAction(MetricConsts.USER_ACTION_LIST);
         }
 
