@@ -332,6 +332,16 @@ public abstract class BaseActivity
 
                     @Override
                     public void onSearchFinished() {
+                        // Always try to hide the breadcrumb view v2, which is to be active only
+                        // when search or recent results are selected. It is possible for the user
+                        // to exit search results without deselecting a file, for example, via
+                        // breadcrumb folder click.
+                        if (isSearchV2Enabled()) {
+                            BreadcrumbController controller = mInjector.getBreadcrumbController();
+                            if (controller != null) {
+                                controller.setVisible(false);
+                            }
+                        }
                         // When docked search bar is used, no need to invalidate the options menus
                         // because docked search bar won't affect the options menu, invalidating it
                         // will affect the tab navigation between the docked search bar and the
