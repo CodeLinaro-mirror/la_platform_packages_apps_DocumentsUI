@@ -41,7 +41,7 @@ import org.mockito.Spy
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-@EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+@EnableFlags(Flags.FLAG_USE_MATERIAL3)
 class DocumentsUIDialogFragmentTest {
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 

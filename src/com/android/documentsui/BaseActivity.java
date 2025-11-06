@@ -21,7 +21,6 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -266,11 +265,7 @@ public abstract class BaseActivity
                 // Bind event listener for the burger menu on nav rail.
                 MaterialButton burgerMenu = findViewById(getRes(R.id.nav_rail_burger_menu));
                 burgerMenu.setOnClickListener(v -> mDrawer.setOpen(true));
-                if (isDesktopUxPhase2FlagEnabled()) {
-                    FocusManager.setButtonFocusStyle(burgerMenu);
-                } else {
-                    burgerMenu.setOnFocusChangeListener(this::onBurgerMenuFocusChange);
-                }
+                FocusManager.setButtonFocusStyle(burgerMenu);
             }
         }
 
@@ -1434,20 +1429,5 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
-    }
-
-    /**
-     * When the burger menu is focused, adding a focus ring indicator using Stroke.
-     * TODO(b/381957932): Remove this once Material Button supports focus ring.
-     */
-    private void onBurgerMenuFocusChange(View v, boolean hasFocus) {
-        MaterialButton burgerMenu = (MaterialButton) v;
-        if (hasFocus) {
-            final int focusRingWidth =
-                    getResources().getDimensionPixelSize(getRes(R.dimen.focus_ring_width));
-            burgerMenu.setStrokeWidth(focusRingWidth);
-        } else {
-            burgerMenu.setStrokeWidth(0);
-        }
     }
 }

@@ -15,7 +15,7 @@
  */
 package com.android.documentsui.ui;
 
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
@@ -95,7 +95,7 @@ public interface DialogController {
                 return;
             }
 
-            if (isDesktopUxPhase2FlagEnabled() || shouldShowProgressDialogForOperation(opType)) {
+            if (isUseMaterial3FlagEnabled() || shouldShowProgressDialogForOperation(opType)) {
                 // The operation has a progress dialog created, so do not show a snackbar
                 // for operation start, as it would duplicate the UI.
                 return;
