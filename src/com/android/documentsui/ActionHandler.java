@@ -122,7 +122,7 @@ public interface ActionHandler {
 
     void openSelectedInNewWindow();
 
-    void openInNewWindow(DocumentStack path);
+    void openInNewWindow(DocumentStack path, ShortcutInfo shortcut);
 
     /**
      * Pastes the selected items into a sidebar item entry.

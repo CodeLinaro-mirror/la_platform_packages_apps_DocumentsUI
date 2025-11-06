@@ -24,7 +24,9 @@ import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
@@ -104,6 +106,7 @@ import com.android.documentsui.MetricConsts;
 import com.android.documentsui.Metrics;
 import com.android.documentsui.Model;
 import com.android.documentsui.ProfileTabsController;
+import com.android.documentsui.ProviderExecutor;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.ThumbnailCache;
@@ -564,6 +567,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mItemDecorationInvalidator = null;
         }
 
+        if (isCloudFeaturesFlagEnabled()) {
+            mInjector.networkMonitor.removeNetworkListener(mAdapter.getNetworkListener());
+        }
+
         super.onDestroyView();
     }
 
@@ -596,6 +603,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 mState.configStore);
 
         mAdapter = getModelBackedDocumentsAdapter();
+
+        if (isCloudFeaturesFlagEnabled()) {
+            mInjector.networkMonitor.addNetworkListener(mAdapter.getNetworkListener());
+        }
 
         mRecView.setAdapter(mAdapter);
 
@@ -678,59 +689,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mSelectionMgr.addObserver(mSelectionMetadata);
         if (isSearchV2Enabled()) {
             mSelectionMgr.addObserver(
-                    new SelectionTracker.SelectionObserver<String>() {
-                        private final String[] mEmptyPath = new String[0];
-
+                    new SelectionTracker.SelectionObserver<>() {
                         @Override
                         public void onSelectionChanged() {
-                            // If the path extractor or the breadcrumb model were not set up or the
-                            // activity is either null or indicating that it is neither in the
-                            // recents view or is searching, do not extract paths from the currently
-                            // selected files. The extracted path is used only in recent and search
-                            // results to show the location of the selected file.
-                            if (mPathExtractor == null
-                                    || mActivity == null
-                                    || !(mActivity.isSearching() || mActivity.isInRecents())) {
-                                return;
-                            }
-                            BreadcrumbController controller = mInjector.getBreadcrumbController();
-                            if (controller == null) {
-                                return;
-                            }
-                            String selectedId = null;
-                            if (mSelectionMgr.getSelection().size() == 1) {
-                                for (String id : mSelectionMgr.getSelection()) {
-                                    selectedId = id;
-                                }
-                            }
-                            if (selectedId == null) {
-                                return;
-                            }
-                            final DocumentStack stack = new DocumentStack();
-                            DocumentInfo info = mModel.getDocument(selectedId);
-                            if (info == null) {
-                                return;
-                            }
-                            try {
-                                // TODO(b/447678204): Use handler.post(...) to not run on UI thread.
-                                stack.reset(mPathExtractor.getDocumentStack(info));
-                                controller.setClickConsumer(
-                                        (i) -> {
-                                            // Remove items after the i-th element.
-                                            while (stack.size() > i + 1) {
-                                                stack.pop();
-                                            }
-                                            mInjector.searchManager.cancelSearch();
-                                            mState.stack.reset(stack);
-                                            mActivity.getNavigator().forceDirectoryToCurrentStack();
-                                        });
-                            } catch (Exception e) {
-                                if (DEBUG) {
-                                    Log.d(TAG, "Failed to get stack for " + info, e);
-                                }
-                                controller.setClickConsumer(null);
-                            }
-                            controller.getModel().setFromStack(stack);
+                            handleSearchResultSelection();
                         }
                     });
         }
@@ -885,6 +847,96 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             Log.e(TAG, "Cannot handle menu item " + item.getItemId(), e);
             return false;
         }
+    }
+
+    /**
+     * Handles a change in selection of search results. Checks if there are necessary conditions to
+     * set the path (one element is selected, the user is searching or is in recents, and the code
+     * has access to the breadcrumb controller). If so, it invokes in the background, fetching of
+     * the document stack for the currently selected result. If successfully completed, updates the
+     * path and click handler on the breadcrumb controller.
+     */
+    private void handleSearchResultSelection() {
+        if (!isSearchV2Enabled()) {
+            return;
+        }
+        // If the path extractor or the breadcrumb model were not set up or the
+        // activity is either null or indicating that it is neither in the
+        // recents view or is searching, do not extract paths from the currently
+        // selected files. The extracted path is used only in recent and search
+        // results to show the location of the selected file.
+        if (mPathExtractor == null
+                || mActivity == null
+                || !(mActivity.isSearching() || mActivity.isInRecents())) {
+            return;
+        }
+        BreadcrumbController controller = mInjector.getBreadcrumbController();
+        if (controller == null) {
+            return;
+        }
+        String selectedId = null;
+        if (mSelectionMgr.getSelection().size() == 1) {
+            for (String id : mSelectionMgr.getSelection()) {
+                selectedId = id;
+            }
+        }
+        if (selectedId == null) {
+            hideSearchResultBreadcrumb(controller);
+            return;
+        }
+        DocumentInfo info = mModel.getDocument(selectedId);
+        if (info == null) {
+            hideSearchResultBreadcrumb(controller);
+            return;
+        }
+        ProviderExecutor.forAuthority(info.authority)
+                .execute(
+                        () -> {
+                            try {
+                                DocumentStack stack = mPathExtractor.getDocumentStack(info);
+                                mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
+                            } catch (Exception e) {
+                                if (DEBUG) {
+                                    Log.d(TAG, "Failed to get stack for " + info, e);
+                                }
+                                mHandler.post(() -> hideSearchResultBreadcrumb(controller));
+                            }
+                        });
+    }
+
+    /**
+     * For the given document stack updates the controller to both display the path and react to
+     * clicks on that path.
+     *
+     * @param controller A non-null breadcrumb controller.
+     * @param stack The stack to be used to create a path.
+     */
+    private void showSearchResultBreadcrumb(BreadcrumbController controller, DocumentStack stack) {
+        controller.getModel().setFromStack(stack);
+        if (stack.getRoot() != null && stack.getRoot().isRecents()) {
+            // No click consumer for recents, as it would only take us back to recents.
+            return;
+        }
+        controller.setClickConsumer(
+                (i) -> {
+                    // Remove items after the i-th element.
+                    while (stack.size() > i + 1) {
+                        stack.pop();
+                    }
+                    mInjector.searchManager.onClose();
+                    mState.stack.reset(stack);
+                    mActivity.getNavigator().forceDirectoryToCurrentStack();
+                });
+    }
+
+    /**
+     * Hides the breadcrumb path and disables click listener on the given controller.
+     *
+     * @param controller The non-null breadcrumb controller to be adjusted.
+     */
+    private void hideSearchResultBreadcrumb(BreadcrumbController controller) {
+        controller.getModel().setPath(new String[0]);
+        controller.setClickConsumer(null);
     }
 
     private void onCopyDestinationPicked(int resultCode, Intent data) {
@@ -1915,6 +1967,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         @Override
+        public boolean isOnline() {
+            if (!isCloudFeaturesFlagEnabled()) {
+                return true;
+            }
+            return mInjector.networkMonitor.isOnline();
+        }
+
+        @Override
         public boolean isDocumentEnabled(String mimeType, int flags) {
             return mInjector.config.isDocumentEnabled(mimeType, flags, mState);
         }
@@ -1938,6 +1998,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean isOnTrashPage() {
             return mState.stack.isTrash();
+        }
+
+        @Override
+        public boolean shouldDisplaySummary() {
+            return displaySummaryForRoot(
+                    mInjector.getSummaryProviderManager(), mState.stack.getRoot());
         }
     }
 }

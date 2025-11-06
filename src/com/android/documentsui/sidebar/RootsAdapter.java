@@ -97,8 +97,7 @@ class RootsAdapter extends ArrayAdapter<Item> {
                     v -> ((ListView) parent).performItemClick(v, position, getItemId(position)));
         }
 
-        // TODO: b/441194501 - implement `isShortcut()` check in here
-        if (item.isRoot()) {
+        if (item.isRoot() || item.isShortcut()) {
             view.setTag(getRes(R.id.item_position_tag), position);
             view.setOnDragListener(mDragListener);
         } else {
