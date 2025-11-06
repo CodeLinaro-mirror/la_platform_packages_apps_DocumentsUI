@@ -194,9 +194,9 @@ abstract class BaseFileLoader(
             Log.d(TAG, "Long check of cursor staleness")
         }
         val count = cursor.count
-        if (!cursor.moveToPosition(-1)) {
-            return true
-        }
+        // Do not check if moveToPosition succeeded (returned true), as moveToPosition(-1) always
+        // returns false.
+        cursor.moveToPosition(-1)
         for (i in 1..count) {
             if (!cursor.moveToNext()) {
                 return true
