@@ -128,6 +128,7 @@ class SearchLoader(
         }
 
         override fun run() {
+            Trace.beginSection("documentsui.searchv2.SearchLoader.SearchTask#run")
             for (searchUri in searchUris) {
                 val result = tryQuery(searchUri)
                 if (result != null) {
@@ -141,6 +142,7 @@ class SearchLoader(
             cursor?.registerContentObserver(observer)
             onTaskCompleted(this)
             latch.countDown()
+            Trace.endSection()
         }
     }
 
