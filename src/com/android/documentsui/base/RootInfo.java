@@ -60,7 +60,7 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
 
     private static final String TAG = "RootInfo";
     public static final int LOAD_FROM_CONTENT_RESOLVER = -1;
-    // TODO(b/451775371): Delete this and use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead
+    // TODO(b/458129770): Delete this and use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead
     // when it exists in the SDK.
     @VisibleForTesting public static final int FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE = 1 << 20;
     // private static final int VERSION_INIT = 1; // Not used anymore
@@ -456,7 +456,7 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
         if (!isCloudFeaturesFlagEnabled()) {
             return false;
         }
-        // TODO(b/451775371): Update to using Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE when it
+        // TODO(b/458129770): Update to using Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE when it
         // exists in the SDK.
         return (flags & FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE) != 0;
     }
