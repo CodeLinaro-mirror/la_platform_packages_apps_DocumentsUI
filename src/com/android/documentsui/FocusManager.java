@@ -725,7 +725,7 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
                 button.getResources().getDimensionPixelSize(getRes(R.dimen.focus_ring_width));
         materialButton.setOnFocusChangeListener(
                 (view, hasFocus) -> {
-                    if (hasFocus) {
+                    if (hasFocus && view.hasWindowFocus()) {
                         materialButton.setStrokeColor(ColorStateList.valueOf(focusRingColor));
                         materialButton.setStrokeWidth(focusRingWidth);
                     } else {
