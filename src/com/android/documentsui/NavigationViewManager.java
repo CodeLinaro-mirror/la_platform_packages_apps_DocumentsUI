@@ -48,7 +48,6 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.breadcrumbs.BreadcrumbController;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -211,16 +210,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
     }
 
-    /** Updates the visibility of the breadcrumb v2 */
-    private void setBreadcrumbV2Visible(boolean visible) {
-        if (isSearchV2Enabled()) {
-            BreadcrumbController controller = mActivity.getInjector().getBreadcrumbController();
-            if (controller != null) {
-                controller.setVisible(visible);
-            }
-        }
-    }
-
     /** Called when a child view of the parent view is focused. */
     public void onChildViewFocused(View parentView, View childView) {
         // Only expand when the child view get focused and the layout is in collapsed
@@ -367,7 +356,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
-            setBreadcrumbV2Visible(true);
             return;
         }
 
@@ -388,7 +376,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
-            setBreadcrumbV2Visible(true);
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(VISIBLE);
             return;
@@ -397,9 +384,8 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         boolean showBreadcrumbV2 = mActivity.isSearching() || mActivity.isInRecents();
         if (isSearchV2Enabled() && showBreadcrumbV2) {
             // Special case: if search V2 is enabled and we are either searching or in recents, we
-            // need to show the breadcrumb v2. All the above if statements evaluate to false.
+            // need to hide the v1 breadcrumb.
             mBreadcrumb.show(false);
-            setBreadcrumbV2Visible(true);
             if (mActivity.isSearching()) {
                 mToolbar.setTitle(null);
             }
@@ -417,7 +403,6 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
-        setBreadcrumbV2Visible(false);
         mBreadcrumb.postUpdate();
     }
 
