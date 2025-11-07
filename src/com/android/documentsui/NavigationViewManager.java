@@ -395,10 +395,9 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
 
         boolean showBreadcrumbV2 = mActivity.isSearching() || mActivity.isInRecents();
-        if (isSearchV2Enabled() && showDockedSearch && showBreadcrumbV2) {
-            // Special case: if the search is docked we need to add new breadcrumb handling code
-            // as the old shouldShowSearchBar() method returns false, preventing the pre SearchV2
-            // code for adjusting breadcrumb visibility.
+        if (isSearchV2Enabled() && showBreadcrumbV2) {
+            // Special case: if search V2 is enabled and we are either searching or in recents, we
+            // need to show the breadcrumb v2. All the above if statements evaluate to false.
             mBreadcrumb.show(false);
             setBreadcrumbV2Visible(true);
             if (mActivity.isSearching()) {
@@ -408,8 +407,13 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
 
         mSearchBarView.setVisibility(GONE);
-        String title =
-                mState.stack.size() <= 1 ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
+        String title;
+        if (isHomeScreenFilesFlagEnabled()) {
+            title = mState.getTitleAtPosition(mState.stack.size() - 1);
+        } else {
+            title = mState.stack.size() <= 1
+                    ? mEnv.getCurrentRoot().title : mState.stack.getTitle();
+        }
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);

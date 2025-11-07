@@ -183,7 +183,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         assert(selection.size() == 1);
         DocumentInfo doc = mModel.getDocument(selection.iterator().next());
         assert(doc != null);
-        openInNewWindow(new DocumentStack(mState.stack, doc));
+        openInNewWindow(new DocumentStack(mState.stack, doc), mState.shortcut);
     }
 
     @Override
@@ -726,11 +726,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return false;
         }
 
-        if (stack.isEmpty()) {
-            mActivity.onRootPicked(stack.getRoot());
+        if (isHomeScreenFilesFlagEnabled()) {
+            ShortcutInfo shortcut = intent.getParcelableExtra(Shared.EXTRA_SELECTED_SHORTCUT);
+            if (stack.isEmpty() && shortcut == null) {
+                mActivity.onRootPicked(stack.getRoot());
+            } else if (stack.isEmpty()) {
+                mActivity.onShortcutPicked(shortcut);
+            } else {
+                mState.stack.reset(stack);
+                mState.shortcut = shortcut;
+                mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            }
         } else {
-            mState.stack.reset(stack);
-            mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            if (stack.isEmpty()) {
+                mActivity.onRootPicked(stack.getRoot());
+            } else {
+                mState.stack.reset(stack);
+                mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            }
         }
 
         return true;

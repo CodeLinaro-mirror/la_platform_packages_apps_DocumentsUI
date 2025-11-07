@@ -340,7 +340,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
     }
 
     @Override
-    public void openInNewWindow(DocumentStack path) {
+    public void openInNewWindow(DocumentStack path, ShortcutInfo shortcut) {
         // Open new window support only depends on vanilla Activity, so it is
         // implemented in our parent class. But we don't support that in
         // picking. So as a matter of defensiveness, we override that here.

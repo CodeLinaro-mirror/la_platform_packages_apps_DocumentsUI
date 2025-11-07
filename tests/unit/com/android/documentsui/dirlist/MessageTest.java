@@ -31,6 +31,8 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,6 +47,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
@@ -94,6 +97,7 @@ public final class MessageTest {
 
     private UserId mUserId = UserId.of(100);
     private Message mInflateMessage;
+    private Message mHeaderMessage;
     private Context mContext;
     private Runnable mDefaultCallback = () -> {
     };
@@ -158,6 +162,7 @@ public final class MessageTest {
         } else {
             mInflateMessage = new Message.InflateMessage(mEnv, mDefaultCallback, mTestConfigStore);
         }
+        mHeaderMessage = new Message.HeaderMessage(mEnv, mDefaultCallback, mTestConfigStore);
     }
 
     @Test
@@ -348,5 +353,61 @@ public final class MessageTest {
         Assert.assertNotNull(mInflateMessage.getMessageString());
         assertThat(mInflateMessage.getMessageString().toString())
                 .isEqualTo(mContext.getString(R.string.trash_page_empty_title));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHeaderMessage_offlineAndLimitedWhenOffline_showsOfflineBanner() {
+        // Set offline.
+        ((TestEnvironment) mEnv).setIsOnline(false);
+        // A Cloud provider limited functionality when offline.
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+
+        mHeaderMessage.update(new Model.Update(null, false));
+
+        assertTrue(mHeaderMessage.shouldShow());
+        assertThat(mHeaderMessage.getMessageString().toString())
+                .isEqualTo(mContext.getString(getRes(R.string.you_are_offline_banner_message)));
+        assertThat(mHeaderMessage.getButtonString().toString())
+                .isEqualTo(mContext.getString(getRes(R.string.button_dismiss)));
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHeaderMessage_flagDisabled_doesNotShowOfflineBanner() {
+        // Set offline.
+        ((TestEnvironment) mEnv).setIsOnline(false);
+        // A Cloud provider limited functionality when offline.
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+
+        mHeaderMessage.update(new Model.Update(null, false));
+
+        assertFalse(mHeaderMessage.shouldShow());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHeaderMessage_onlineAndLimitedWhenOffline_doesNotShowBanner() {
+        // Set online.
+        ((TestEnvironment) mEnv).setIsOnline(true);
+        // A Cloud provider limited functionality when offline.
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+
+        mHeaderMessage.update(new Model.Update(null, false));
+
+        assertFalse(mHeaderMessage.shouldShow());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHeaderMessage_offlineAndNotLimitedWhenOffline_doesNotShowBanner() {
+        // Set offline.
+        ((TestEnvironment) mEnv).setIsOnline(false);
+        // Downloads doesn't have limited functionality when offline.
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.DOWNLOADS);
+
+        mHeaderMessage.update(new Model.Update(null, false));
+
+        assertFalse(mHeaderMessage.shouldShow());
     }
 }

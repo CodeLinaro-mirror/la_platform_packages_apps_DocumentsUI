@@ -20,6 +20,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -260,11 +261,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void openInNewWindow(DocumentStack path) {
+    public void openInNewWindow(DocumentStack path, ShortcutInfo shortcut) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_NEW_WINDOW);
 
         Intent intent = LauncherActivity.createLaunchIntent(mActivity);
         intent.putExtra(Shared.EXTRA_STACK, (Parcelable) path);
+        if (isHomeScreenFilesFlagEnabled()) {
+            intent.putExtra(Shared.EXTRA_SELECTED_SHORTCUT, (Parcelable) shortcut);
+        }
 
         // Multi-window necessitates we pick how we are launched.
         // By default we'd be launched in-place above the existing app.
@@ -803,7 +807,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // Prevent special folders (i.e. system-defined shortcuts) from getting deleted.
             for (Uri uri : uris) {
                 if (uri.equals(shortcut.getUri())) {
-                    mDialogs.showOperationUnsupported();
+                    mDialogs.showOperationNotAllowedForShortcuts();
                     return true;
                 }
             }
@@ -1294,7 +1298,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             final RootInfo root = mState.stack.getRoot();
 
             // We only fetch summaries for local files.
-            if (!(root != null && root.isLocalProvider())) {
+            if (!(root != null && (root.isLocalProvider() || root.isRecents()))) {
                 return;
             }
 
@@ -1320,6 +1324,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
             mInjector.getModel().updateSummaries(summaries);
+            mActivity.getSupportLoaderManager().destroyLoader(SUMMARY_LOADER_ID);
         }
     }
 

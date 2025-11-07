@@ -305,6 +305,8 @@
 
     <!-- Toast shown when a document is not allowed to share across users. This is a last-resort toast and not expected to be shown. [CHAR LIMIT=48] -->
     <string name="toast_action_not_allowed">Action not allowed</string>
+    <!-- Toast shown when a file operation is not allowed for a system-defined shortcut. -->
+    <string name="toast_op_not_allowed_for_shortcuts">Action not allowed</string>
 
     <string name="no_application_dialog_title">Open with\u2026</string>
     <string name="no_application_dialog_message">There are no supported apps installed. Try installing one from the Play Store.</string>
@@ -1019,4 +1021,7 @@
 
     <!-- Action button text in the dialog to confirm emptying the trash. [CHAR_LIMIT=48] -->
     <string name="empty_trash_dialog_action_button">Empty trash</string>
+
+    <!-- Message shown in a banner when offline for roots that have limited functionality when offline. [CHAR_LIMIT=NONE] -->
+    <string name="you_are_offline_banner_message">You are currently offline. Some files may not available and syncing will resume when you are connected to the internet. </string>
 </resources>

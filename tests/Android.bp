@@ -41,6 +41,7 @@ java_defaults {
         "guava",
         "kotlinx_coroutines_test",
         "mockito-kotlin-nodeps",
+        "mockito-kotlin2",
         "mockito-target",
         "microbenchmark-device-lib",
         "platform-test-annotations",
@@ -81,6 +82,9 @@ android_library {
         "mockito-target",
         "ub-janktesthelper",
     ],
+    lint: {
+        baseline_filename: "lint-baseline.xml",
+    },
 }
 
 android_library {
@@ -106,6 +110,9 @@ android_library {
 
     min_sdk_version: "30",
     target_sdk_version: "33",
+    lint: {
+        baseline_filename: "lint-baseline-unit.xml",
+    },
 }
 
 android_library {

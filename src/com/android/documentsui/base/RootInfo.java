@@ -23,6 +23,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseLocalSearchProviderEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -41,6 +42,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.android.documentsui.IconUtils;
 import com.android.documentsui.R;
@@ -58,6 +60,9 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
 
     private static final String TAG = "RootInfo";
     public static final int LOAD_FROM_CONTENT_RESOLVER = -1;
+    // TODO(b/451775371): Delete this and use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead
+    // when it exists in the SDK.
+    @VisibleForTesting public static final int FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE = 1 << 20;
     // private static final int VERSION_INIT = 1; // Not used anymore
     private static final int VERSION_DROP_TYPE = 2;
     private static final int VERSION_SEARCH_TYPE = 3;
@@ -444,6 +449,16 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
 
     public boolean isLocalOnly() {
         return (flags & Root.FLAG_LOCAL_ONLY) != 0;
+    }
+
+    /** Returns true for the `DocumentsProvider`s that have limited functionality when offline. */
+    public boolean hasLimitedFunctionalityWhenOffline() {
+        if (!isCloudFeaturesFlagEnabled()) {
+            return false;
+        }
+        // TODO(b/451775371): Update to using Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE when it
+        // exists in the SDK.
+        return (flags & FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE) != 0;
     }
 
     /** Return true if the root is one of the local providers. */

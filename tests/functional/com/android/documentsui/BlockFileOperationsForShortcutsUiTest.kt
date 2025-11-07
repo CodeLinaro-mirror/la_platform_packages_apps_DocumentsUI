@@ -153,7 +153,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
 
         assertNotNull(
             bots.directory.getSnackbar(
-                context!!.resources.getString(R.string.file_operation_rejected)
+                context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
     }
@@ -168,7 +168,9 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         clickRename()
 
         assertNotNull(
-            bots.directory.getSnackbar(context!!.getString(R.string.file_operation_rejected))
+            bots.directory.getSnackbar(
+                context!!.getString(R.string.toast_op_not_allowed_for_shortcuts)
+            )
         )
     }
 
@@ -199,7 +201,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
 
         assertNotNull(
             bots.directory.getSnackbar(
-                context!!.resources.getString(R.string.file_operation_rejected)
+                context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
         bots.directory.assertDocumentsVisible(SHORTCUT_ID)
@@ -224,7 +226,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
 
         assertNotNull(
             bots.directory.getSnackbar(
-                context!!.resources.getString(R.string.file_operation_rejected)
+                context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
         bots.directory.assertDocumentsVisible(SHORTCUT_ID)
@@ -248,7 +250,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
 
         assertNotNull(
             bots.directory.getSnackbar(
-                context!!.resources.getString(R.string.file_operation_rejected)
+                context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
         bots.directory.assertDocumentsVisible(SHORTCUT_ID)
@@ -268,7 +270,9 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         device!!.waitForIdle()
 
         assertNotNull(
-            bots.directory.getSnackbar(context!!.getString(R.string.file_operation_rejected))
+            bots.directory.getSnackbar(
+                context!!.getString(R.string.toast_op_not_allowed_for_shortcuts)
+            )
         )
         bots.directory.assertDocumentsVisible(SHORTCUT_ID)
     }
