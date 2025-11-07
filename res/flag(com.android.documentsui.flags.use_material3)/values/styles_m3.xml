@@ -222,7 +222,7 @@
         <item name="android:background">?attr/colorSurfaceContainer</item>
         <item name="android:paddingHorizontal">@dimen/space_small_3</item>
         <item name="android:paddingTop">@dimen/space_extra_small_6</item>
-        <item name="android:paddingBottom">@dimen/space_small_1</item>
+        <item name="android:paddingBottom">@dimen/drawer_padding_bottom</item>
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:clipToPadding">false</item>
     </style>
