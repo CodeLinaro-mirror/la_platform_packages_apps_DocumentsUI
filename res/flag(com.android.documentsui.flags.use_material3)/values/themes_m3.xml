@@ -34,7 +34,7 @@
 
     </style>
 
-    <style name="DocumentsDefaultThemeM3" parent="@style/Theme.Material3.DayNight.NoActionBar">
+    <style name="DocumentsDefaultThemeM3" parent="@style/Theme.Material3Expressive.DayNight.NoActionBar">
 
         <!-- This only used by support lib, not allow to overlay -->
         <item name="windowActionBar">false</item>

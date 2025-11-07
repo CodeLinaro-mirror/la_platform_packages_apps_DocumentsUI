@@ -168,7 +168,7 @@
 
     <style name="NavRailItemTextAppearance" parent="@style/TextAppearance.DocumentsUI.LabelMedium" />
 
-    <style name="ListTableHeaderText" parent="@style/TextAppearance.DocumentsUI.TitleSmall.Emphasized" />
+    <style name="ListTableHeaderText" parent="@style/TextAppearance.DocumentsUI.TitleSmall" />
 
     <style name="DragBadgeText" parent="@style/TextAppearance.DocumentsUI.TitleSmall">
         <item name="android:textColor">@color/drag_content_text_color</item>
