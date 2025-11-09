@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Nije moguće izbrisati neke dokumente"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nije moguće dijeliti više od <xliff:g id="COUNT">%1$d</xliff:g> fajl(ova)"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Radnja nije dozvoljena"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Radnja nije dozvoljena"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Otvaranje uz…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nijedna podržana aplikacija nije instalirana. Instalirajte neku aplikaciju iz Google Play trgovine."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Pretražite Google Play trgovinu"</string>
@@ -417,6 +416,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Isprazniti otpad?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ova radnja se ne može opozvati i fajlovi se više neće moći oporaviti."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Isprazni otpad"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"Trenutno ste offline. Određeni fajlovi možda neće biti dostupni, a sinhronizacija će se nastaviti kada se povežete s internetom."</string>
 </resources>

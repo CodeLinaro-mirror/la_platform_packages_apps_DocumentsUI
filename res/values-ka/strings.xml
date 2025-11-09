@@ -196,38 +196,32 @@
       <item quantity="other">შემდეგი ფაილები არ დაკოპირდა: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილი არ დაკოპირდა: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{ეს ფაილი არ დაკოპირდა:}other{ეს ფაილები არ დაკოპირდა:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">შემდეგი ფაილები არ შეიკუმშა: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილი არ შეიკუმშა: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{ამ ფაილის ZIP არქივში მოთავსება ვერ მოხერხდა:}other{ამ ფაილების ZIP არქივში მოთავსება ვერ მოხერხდა:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">შემდეგი ფაილების ამოღება არ მოხერხდა: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილის ამოღება არ მოხერხდა: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{ვერ მოხერხდა ამ ფაილის ამოღება:}other{ვერ მოხერხდა ამ ფაილების ამოღება:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">შემდეგი ფაილები არ გადაადგილდა: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილი არ გადაადგილდა: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{ეს ფაილი არ არის გადატანილი:}other{ეს ფაილები არ არის გადატანილი:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">შემდეგი ფაილები არ წაიშალა: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილი არ წაიშალა: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{ეს ფაილი არ წაიშალა:}other{ეს ფაილები არ წაიშალა:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">შემდეგი ფაილები გარდაქმნილია სხვა ფორმატში: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილი გარდაქმნილია სხვა ფორმატში: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ეს ფაილი გადაყვანილია სხვა ფორმატში:}other{ეს ფაილები გადაყვანილია სხვა ფორმატში:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ერთეული დაკოპირდა გაცვლის ბუფერში.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ერთეული დაკოპირდა გაცვლის ბუფერში.</item>
@@ -314,12 +308,9 @@
     <string name="sign_in" msgid="6253762676723505592">"შესვლა"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"არქივი<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"არქივი"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"ჩანაცვლდეს ფაილი?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"ფაილი სახელად „<xliff:g id="NAME">%1$s</xliff:g>“ უკვე არსებობს."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"ჩანაცვლება"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"ფონურ რეჟიმში გაგრძელება"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other">არჩეულია <xliff:g id="COUNT_1">%1$d</xliff:g></item>
@@ -345,20 +336,16 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"დოკუმენტები"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"დიდი ფაილები"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"ამ კვირაში"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"სახელი"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"სახელი"</string>
     <string name="preview_file" msgid="4056622696305432343">"<xliff:g id="FILENAME">%1$s</xliff:g> ფაილის გადახედვა"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"სამუშაო ფაილის გადახედვა: <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"<xliff:g id="PROFILE">%1$s</xliff:g> პროფილის <xliff:g id="FILENAME">%2$s</xliff:g> ფაილისგადახედვა"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"ფაილების დათვალიერება სხვა აპებში"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"ანონიმური"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"ამ საქაღალდის გამოყენება"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"მიეცეს <xliff:g id="APPNAME">%1$s</xliff:g>-ს საქაღალდეზე წვდომის უფლება?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"წვდომის დაშვება „<xliff:g id="DIRECTORY">%1$s</xliff:g>“-ისთვის."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"ამ საქაღალდეს ვერ გამოიყენებთ"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"თქვენი კონფიდენციალურობის დასაცავად აირჩიეთ სხვა საქაღალდე"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ახალი საქაღალდის შექმნა"</string>

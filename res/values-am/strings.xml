@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"አንዳንድ ሰነዶችን መሰረዝ አልተቻለም"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ከ <xliff:g id="COUNT">%1$d</xliff:g> በላይ ፋይሎች ማጋራት አይቻልም"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"እርምጃ አይፈቀድም"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"እርምጃ አይፈቀድም"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"ክፈት በ…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ምንም የሚደገፉ የተጫኑ መተግበሪያዎች የሉም። ከPlay መደብር አንድ መጫን ይሞክሩ።"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play መደብር ላይ ፈልግ"</string>
@@ -399,6 +398,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"መጣያው ይጽዳ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ይህ እርምጃ ሊቀለበስ አይችልም እና ፋይሎቹ ከእንግዲህ መልሰው መገኘት የሚችሉ አይሆኑም።"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"መጣያውን አጽዳ"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"በአሁኑ ጊዜ ከመስመር ውጭ ነዎት። አንዳንድ ፋይሎች ላይገኙ ይችላሉ እና ከበይነመረብ ጋር ሲገናኙ ማሥመር ከቆመበት ይቀጥላል።"</string>
 </resources>
