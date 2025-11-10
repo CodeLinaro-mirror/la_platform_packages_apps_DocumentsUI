@@ -242,8 +242,7 @@
         <item name="android:textAppearance">@style/NavRailItemTextAppearance</item>
     </style>
 
-    <style name="JobProgressPanelStyle" parent="@style/Widget.Material3.CardView.Elevated">
-        <item name="cardElevation">1dp</item>
+    <style name="JobProgressPanelStyle" parent="@style/Widget.Material3.CardView.Filled">
         <item name="cardBackgroundColor">?attr/colorSurfaceDim</item>
     </style>
 
