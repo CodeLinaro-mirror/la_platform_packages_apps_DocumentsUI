@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"E pamundur të fshihen disa dokumente"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nuk mund të ndahen më shumë se <xliff:g id="COUNT">%1$d</xliff:g> skedarë"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Veprimi nuk lejohet"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"Hap me…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nuk ka aplikacione të mbështetura të instaluara. Provo të instalosh një nga \"Dyqani i Play\"."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Kërko në \"Dyqanin e Play\""</string>
@@ -195,32 +197,38 @@
       <item quantity="other">Këta skedarë nuk u kopjuan: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ky skedar nuk u kopjua: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Ky skedar nuk u kopjua: <xliff:g id="LIST_0">{list}</xliff:g>}other{Këta skedarë nuk u kopjuan: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Këta skedarë nuk u ngjeshën: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ky skedar nuk u ngjesh: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Ky skedar nuk u ngjesh: <xliff:g id="LIST_0">{list}</xliff:g>}other{Këta skedarë nuk u ngjeshën: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Këta skedarë nuk u nxorën: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ky skedar nuk u nxor: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Ky skedar nuk u nxor: <xliff:g id="LIST_0">{list}</xliff:g>}other{Këta skedarë nuk u nxorën: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Këta skedarë nuk u zhvendosën: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ky skedar nuk u zhvendos: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Ky skedar nuk u zhvendos: <xliff:g id="LIST_0">{list}</xliff:g>}other{Këta skedarë nuk u zhvendosën: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Këta skedarë nuk u fshinë: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ky skedar nuk u fshi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Ky skedar nuk u fshi: <xliff:g id="LIST_0">{list}</xliff:g>}other{Këta skedarë nuk u fshinë: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Këta skedarë u konvertuan në një format tjetër: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ky skedar u konvertua në një format tjetër: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Ky skedar u konvertua në një format tjetër: <xliff:g id="LIST_0">{list}</xliff:g>}other{Këta skedarë u konvertuan në një format tjetër: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> artikuj u kopjuan në kujtesën e fragmenteve.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> artikull u kopjua në kujtesën e fragmenteve.</item>
@@ -307,7 +315,12 @@
     <string name="sign_in" msgid="6253762676723505592">"Identifikohu"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arkiva<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Arkivo"</string>
-    <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Të mbishkruhet <xliff:g id="NAME">%1$s</xliff:g>?"</string>
+    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
+    <skip />
     <string name="continue_in_background" msgid="1974214559047793331">"Vazhdo në sfond"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> të zgjedhura</item>
@@ -333,16 +346,20 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Dokumentet"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Skedarët e mëdhenj"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Këtë javë"</string>
-    <string name="input_hint_new_folder" msgid="479672411219725677">"Emri i dosjes"</string>
-    <string name="input_hint_rename" msgid="8390711744270994452">"Emri i ri"</string>
+    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
+    <skip />
+    <!-- no translation found for input_hint_rename (4501630494874065128) -->
+    <skip />
     <string name="preview_file" msgid="4056622696305432343">"Shiko paraprakisht skedarin <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Shiko paraprakisht skedarin e punës <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Shiko paraprakisht skedarin e profilit \"<xliff:g id="PROFILE">%1$s</xliff:g>\": <xliff:g id="FILENAME">%2$s</xliff:g>"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Shfleto skedarët në aplikacionet e tjera"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Anonim"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Përdor këtë dosje"</string>
-    <string name="open_tree_dialog_title" msgid="6339509533852318569">"Dëshiron ta lejosh <xliff:g id="APPNAME">%1$s</xliff:g> të ketë qasje në skedarët në <xliff:g id="DIRECTORY">%2$s</xliff:g>?"</string>
-    <string name="open_tree_dialog_message" msgid="4120695398430659628">"Kjo do ta lejojë <xliff:g id="APPNAME">%1$s</xliff:g> të ketë qasje në përmbajtjen aktuale dhe të ardhshme të ruajtur në <xliff:g id="DIRECTORY">%2$s</xliff:g>."</string>
+    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
+    <skip />
+    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
+    <skip />
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Kjo dosje nuk mund të përdoret"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Për të mbrojtur privatësinë tënde, zgjidh një dosje tjetër"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Krijo dosje të re"</string>
@@ -382,4 +399,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Të boshatiset koshi?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ky veprim nuk mund të zhbëhet dhe skedarët nuk do të mund të rikuperohen më."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Boshatis koshin"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

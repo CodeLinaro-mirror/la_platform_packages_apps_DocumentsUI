@@ -78,6 +78,7 @@ import javax.annotation.Nullable;
 public class DirectoryListBot extends Bots.BaseBot {
 
     private static final int MAX_LAYOUT_LEVEL = 10;
+    private static final int MAX_SEARCH_SWIPES = 1000;
 
     private final String mDirContainerId;
     private final String mDirListId;
@@ -305,7 +306,9 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void waitForHolderMessage() throws UiObjectNotFoundException {
-        findPlaceholderMessageTextView().waitForExists(mTimeout);
+        if (!findPlaceholderMessageTextView().waitForExists(mTimeout)) {
+            throw new UiObjectNotFoundException("Holder message not found after timeout");
+        }
     }
 
     public void openDocument(String label) throws UiObjectNotFoundException {
@@ -398,7 +401,32 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void waitForDocument(String label) throws UiObjectNotFoundException {
-        findDocument(label).waitForExists(mTimeout);
+        if (!findDocument(label).waitForExists(mTimeout)) {
+            throw new UiObjectNotFoundException(
+                    "Document with label \"" + label + "\" not found after timeout");
+        }
+    }
+
+    /**
+     * Waits for a document with the specified {@code label} to become visible.
+     *
+     * <p>Attempts to find a document element using {@link #findDocument(String, boolean)} with the
+     * given {@code label} and {@code withScroll} parameters. Execution is paused until either the
+     * element is found, or the duration defined by {@code mTimeout} passes.
+     *
+     * @param label the name of the document to wait for
+     * @param withScroll {@code true} to enable scrolling the view area to find the document; {@code
+     *     false} to only search the currently visible screen area
+     * @throws UiObjectNotFoundException if a document matching the given {@code label} is not found
+     *     and does not appear on the screen within the configured {@code mTimeout} period
+     * @see #findDocument(String, boolean)
+     * @see #mTimeout
+     */
+    public void waitForDocument(String label, boolean withScroll) throws UiObjectNotFoundException {
+        if (!findDocument(label, withScroll).waitForExists(mTimeout)) {
+            throw new UiObjectNotFoundException(
+                    "Document with label \"" + label + "\" not found after timeout");
+        }
     }
 
     public UiObject findDocument(String label) throws UiObjectNotFoundException {
@@ -410,7 +438,11 @@ public class DirectoryListBot extends Bots.BaseBot {
         final UiSelector docList = findDocumentsListSelector();
 
         // Wait for the first list item to appear
-        new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
+        boolean exists =
+                new UiObject(docList.childSelector(new UiSelector())).waitForExists(mTimeout);
+        if (!exists) {
+            throw new UiObjectNotFoundException("First list item not found after timeout");
+        }
 
         if (withScroll) {
             UiScrollable docListView = new UiScrollable(docList);
@@ -427,10 +459,17 @@ public class DirectoryListBot extends Bots.BaseBot {
             if (docListCoveredByOtherViews) {
                 docListView.setSwipeDeadZonePercentage(0.2);
             }
+            // scrollIntoView will only attempt to scroll MaxSearchSwipes number of times.
+            // For directories containing a large number of files this default value is inadequate.
+            // Replace the default value with a larger one that will ensure the file
+            // is found if it is present.
+            final int defaultMaxSwipe = docListView.getMaxSearchSwipes();
+            docListView.setMaxSearchSwipes(MAX_SEARCH_SWIPES);
             docListView.scrollIntoView(new UiSelector().text(label));
             if (docListCoveredByOtherViews) {
                 docListView.setSwipeDeadZonePercentage(originalPercent);
             }
+            docListView.setMaxSearchSwipes(defaultMaxSwipe);
         }
         return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
     }
@@ -470,7 +509,9 @@ public class DirectoryListBot extends Bots.BaseBot {
 
         // Wait for the first list item to appear
         UiObject doc = new UiObject(docList.childSelector(new UiSelector()));
-        doc.waitForExists(mTimeout);
+        if (!doc.waitForExists(mTimeout)) {
+            throw new UiObjectNotFoundException("First document not found after timeout");
+        }
 
         assertTrue(doc.isFocused());
     }

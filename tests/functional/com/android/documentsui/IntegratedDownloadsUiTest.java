@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
@@ -63,7 +64,9 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
 
         EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         UiObject doc = bots.directory.findDocument("Unsuccessful");
-        doc.waitForExists(TIMEOUT);
+        if (!doc.waitForExists(TIMEOUT)) {
+            throw new UiObjectNotFoundException("Unsuccessful document not found after timeout");
+        }
 
         int toolType = Configurator.getInstance().getToolType();
         Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);

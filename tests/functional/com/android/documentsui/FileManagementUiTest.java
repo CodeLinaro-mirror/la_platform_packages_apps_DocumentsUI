@@ -197,11 +197,14 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.openDocument("target");
         bots.directory.pasteFilesFromClipboard();
 
+        // Switch to list mode to avoid files being partially in view
+        bots.main.switchToListMode();
+
         // Use these 2 events as a signal that many files have already been copied. Only considering
         // Android devices a more reliable way is to wait until notification goes away, but ARC++
         // uses Chrome OS notifications so it isn't even an option.
         bots.directory.waitForDocument("0.txt");
-        bots.directory.waitForDocument(nameOfLastFile);
+        bots.directory.waitForDocument(nameOfLastFile, true);
 
         final int expectedCount = Shared.MAX_DOCS_IN_INTENT + 1;
         List<DocumentInfo> children = mDocsHelper.listChildren(target, -1);

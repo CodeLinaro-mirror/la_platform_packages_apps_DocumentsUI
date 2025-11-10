@@ -16,7 +16,14 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+
+import android.provider.DocumentsContract;
+
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.base.DocumentStack;
+import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
 
 /**
@@ -25,15 +32,69 @@ import com.android.documentsui.base.State;
  */
 public abstract class ActivityConfig {
 
-    // Subtly different from isDocumentEnabled. The reason may be illuminated as follows.
-    // A folder is enabled such that it may be double clicked, even in settings
-    // when the folder itself cannot be selected. This may also be true of container types.
-    public boolean canSelectType(String docMimeType, int docFlags, State state) {
+    // TODO(b/458129770): Delete this and use Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY instead
+    // when it exists in the SDK.
+    public static final int SYNC_STATE_FLAG_AVAILABLE_LOCALLY = 1 << 0;
+
+    /**
+     * Subtly different from isDocumentEnabled. The reason may be illuminated as follows. A folder
+     * is enabled such that it may be double clicked, even in settings when the folder itself cannot
+     * be selected. This may also be true of container types.
+     */
+    public boolean canSelectType(
+            String docMimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
         return true;
     }
 
-    public boolean isDocumentEnabled(String docMimeType, int docFlags, State state) {
-        return true;
+    /** Returns whether a document is enabled. */
+    public boolean isDocumentEnabled(
+            String docMimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
+        if (!isCloudFeaturesFlagEnabled()) {
+            return true;
+        }
+
+        if (MimeTypes.isDirectoryType(docMimeType)) {
+            // Directories don't have content, so they are enabled.
+            return true;
+        }
+
+        if ((docFlags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) != 0) {
+            return true;
+        }
+
+        if (!state.stack.getRoot().hasLimitedFunctionalityWhenOffline()) {
+            // Documents on roots that are not affected by the online status should always be
+            // enabled.
+            return true;
+        }
+
+        if (isOnline) {
+            // The content should be downloadable, so it is enabled.
+            return true;
+        }
+
+        if (syncStateFlags == null) {
+            // When the availability is unknown, we default to available and thus return true.
+            return true;
+        }
+
+        // TODO(b/458129770): Update to using Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY when it
+        // exists in the SDK.
+        if ((syncStateFlags & SYNC_STATE_FLAG_AVAILABLE_LOCALLY) != 0) {
+            // The file's content is available locally, so it is enabled.
+            return true;
+        }
+
+        // The file is definitely unavailable locally, so it should be disabled.
+        return false;
     }
 
     /**

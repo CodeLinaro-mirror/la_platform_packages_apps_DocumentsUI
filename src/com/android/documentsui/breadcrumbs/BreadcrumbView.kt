@@ -19,6 +19,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
@@ -73,6 +75,7 @@ class BreadcrumbView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
     /** Sets visibility of this view */
     fun setVisible(visible: Boolean) {
         visibility = if (visible) VISIBLE else GONE
+        getDivider()?.visibility = visibility
     }
 
     /** Updates the view with the new path. */
@@ -139,6 +142,12 @@ class BreadcrumbView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
             val maxScrollX = max(0, child.width - visibleWidth)
             horizontalScrollView.smoothScrollTo(maxScrollX, 0)
         }
+    }
+
+    private fun getDivider(): View? {
+        // The top divider exists in drawer layout only. May be null.
+        val parentViewGroup = parent as? ViewGroup
+        return parentViewGroup?.findViewById(getRes(R.id.breadcrumb_top_divider))
     }
 
     /** Returns the current length of the path shown by this view. */

@@ -170,6 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_container_section_gap"
                     android:orientation="vertical"
+                    android:clipToOutline="true"
                     android:background="@drawable/main_container_bottom_section_background">
 
                     <com.android.documentsui.HorizontalBreadcrumb
@@ -182,6 +183,7 @@
                         android:id="@+id/breadcrumb_view_v2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="?attr/colorSurfaceBright"
                         android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
                 </LinearLayout>
 

@@ -90,91 +90,106 @@ public class MessageBuilder {
     public String generateListMessage(
             @DialogType int dialogType, @OpType int operationType, List<DocumentInfo> docs,
             List<Uri> uris, List<String> paths) {
-        final int resourceId;
+        final int resourceId = getResourceId(dialogType, operationType);
+        final String list = getListContent(docs, uris, paths);
 
+        final int docCount = docs != null ? docs.size() : 0;
+        final int uriCount = uris != null ? uris.size() : 0;
+        final int pathCount = paths != null ? paths.size() : 0;
+        final int count = docCount + uriCount + pathCount;
+
+        if (isZipNgFlagEnabled()) {
+            // When ZipNg is ON, the message is being used as the dialog title (in getResourceId()
+            // below), and the list content will be used as the dialog message separately.
+            // TODO(b/456014591): Remove the empty string once the translation is done.
+            //  We remove one argument during the string update but still pass the empty string
+            //  below, otherwise it will crash before the translation is done for other
+            //  languages.
+            return new MessageFormat(
+                            mContext.getResources().getString(resourceId), Locale.getDefault())
+                    .format(Map.of("count", count, "list", ""));
+        }
+
+        return mContext.getResources().getQuantityString(resourceId, count, list);
+    }
+
+    private static int getResourceId(int dialogType, int operationType) {
         switch (dialogType) {
             case DIALOG_TYPE_CONVERTED:
-                resourceId = getRes(isZipNgFlagEnabled()
-                        ? R.string.copy_converted_warning_content
-                        : R.plurals.copy_converted_warning_content);
-                break;
+                return getRes(
+                        isZipNgFlagEnabled()
+                                ? R.string.copy_converted_warning_title
+                                : R.plurals.copy_converted_warning_content);
 
             case DIALOG_TYPE_FAILURE:
                 switch (operationType) {
                     case FileOperationService.OPERATION_COPY:
-                        resourceId = getRes(isZipNgFlagEnabled()
-                                ? R.string.copy_failure_alert_content
-                                : R.plurals.copy_failure_alert_content);
-                        break;
+                        return getRes(
+                                isZipNgFlagEnabled()
+                                        ? R.string.copy_failure_alert_title
+                                        : R.plurals.copy_failure_alert_content);
                     case FileOperationService.OPERATION_COMPRESS:
-                        resourceId = getRes(isZipNgFlagEnabled()
-                                ? R.string.compress_failure_alert_content
-                                : R.plurals.compress_failure_alert_content);
-                        break;
+                        return getRes(
+                                isZipNgFlagEnabled()
+                                        ? R.string.compress_failure_alert_title
+                                        : R.plurals.compress_failure_alert_content);
                     case FileOperationService.OPERATION_EXTRACT:
                     case FileOperationService.OPERATION_UNPACK:
-                        resourceId = getRes(isZipNgFlagEnabled()
-                                ? R.string.extract_failure_alert_content
-                                : R.plurals.extract_failure_alert_content);
-                        break;
+                        return getRes(
+                                isZipNgFlagEnabled()
+                                        ? R.string.extract_failure_alert_title
+                                        : R.plurals.extract_failure_alert_content);
                     case FileOperationService.OPERATION_DELETE:
-                        resourceId = getRes(isZipNgFlagEnabled()
-                                ? R.string.delete_failure_alert_content
-                                : R.plurals.delete_failure_alert_content);
-                        break;
+                        return getRes(
+                                isZipNgFlagEnabled()
+                                        ? R.string.delete_failure_alert_title
+                                        : R.plurals.delete_failure_alert_content);
                     case FileOperationService.OPERATION_MOVE:
-                        resourceId = getRes(isZipNgFlagEnabled()
-                                ? R.string.move_failure_alert_content
-                                : R.plurals.move_failure_alert_content);
-                        break;
+                        return getRes(
+                                isZipNgFlagEnabled()
+                                        ? R.string.move_failure_alert_title
+                                        : R.plurals.move_failure_alert_content);
                     default:
                         throw new UnsupportedOperationException();
                 }
-                break;
-
             default:
                 throw new UnsupportedOperationException();
         }
+    }
 
+    /** Get the file list string based on the passed in documents, URIs and paths. */
+    public static String getListContent(
+            List<DocumentInfo> docs, List<Uri> uris, List<String> paths) {
         final StringBuilder list = new StringBuilder("<p>");
         final BidiFormatter bdf = BidiFormatter.getInstance();
-        int count = 0;
 
         if (docs != null) {
-            count += docs.size();
             for (DocumentInfo doc : docs) {
-                list.append("&#8226; ");
+                // Bullet and quotation mark.
+                list.append("&#8226; &#34;");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(doc.displayName)));
-                list.append("<br>");
+                list.append("&#34;<br>");
             }
         }
 
         if (uris != null) {
-            count += uris.size();
             for (Uri uri : uris) {
-                list.append("&#8226; ");
+                list.append("&#8226; &#34;");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(uri.toString())));
-                list.append("<br>");
+                list.append("&#34;<br>");
             }
         }
 
         if (paths != null) {
-            count += paths.size();
             for (String path : paths) {
-                list.append("&#8226; ");
+                list.append("&#8226; &#34;");
                 list.append(Html.escapeHtml(bdf.unicodeWrap(new File(path).getName())));
-                list.append("<br>");
+                list.append("&#34;<br>");
             }
         }
 
         list.append("</p>");
-
-        if (isZipNgFlagEnabled()) {
-            return new MessageFormat(mContext.getResources().getString(resourceId),
-                    Locale.getDefault()).format(Map.of("count", count, "list", list));
-        }
-
-        return mContext.getResources().getQuantityString(resourceId, count, list);
+        return list.toString();
     }
 
     /**

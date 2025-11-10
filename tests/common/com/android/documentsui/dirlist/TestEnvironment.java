@@ -62,7 +62,7 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     }
 
     @Override
-    public boolean isDocumentEnabled(String mimeType, int flags) {
+    public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
         return true;
     }
 

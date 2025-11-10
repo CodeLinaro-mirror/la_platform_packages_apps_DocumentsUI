@@ -16,7 +16,6 @@
 
 package com.android.documentsui.picker;
 
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -138,7 +137,7 @@ public class SaveFragment extends Fragment {
         mSave = (Button) view.findViewById(android.R.id.button1);
         mSave.setOnClickListener(mSaveListener);
         mSave.setEnabled(false);
-        if (isDesktopUxPhase2FlagEnabled()) {
+        if (isUseMaterial3FlagEnabled()) {
             FocusManager.setButtonFocusStyle((Button) mSave);
         }
 
@@ -152,9 +151,7 @@ public class SaveFragment extends Fragment {
             mCancel.setOnClickListener(mCancelListener);
             mCancel.setVisibility(View.VISIBLE);
             mCancel.setEnabled(true);
-            if (isDesktopUxPhase2FlagEnabled()) {
-                FocusManager.setButtonFocusStyle(mCancel);
-            }
+            FocusManager.setButtonFocusStyle(mCancel);
         }
 
         mProgress = (ProgressBar) view.findViewById(android.R.id.progress);

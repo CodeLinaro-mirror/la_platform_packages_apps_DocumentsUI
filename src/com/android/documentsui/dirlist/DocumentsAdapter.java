@@ -103,7 +103,9 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
         boolean isSelected(String id);
         boolean isOnline();
         Model getModel();
-        boolean isDocumentEnabled(String mimeType, int flags);
+
+        boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags);
+
         void initDocumentHolder(DocumentHolder holder);
         void onBindDocumentHolder(DocumentHolder holder, Cursor cursor);
 
