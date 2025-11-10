@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"काही दस्‍तऐवज हटविण्‍यात अक्षम"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> हून अधिक फाइल शेअर करू शकत नाही"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"कृतीस अनुमती नाही"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"कृतीला अनुमती नाही"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"हे वापरून उघडा…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"सपोर्ट करत असलेली कोणतीही ॲप्स इंस्टॉल केलेली नाहीत. Google Play Store वरून एखादे इंस्टॉल करून पहा."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Store मध्ये शोधा"</string>
@@ -399,6 +398,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ट्रॅश रिकामा करायचा आहे का?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ही कृती पहिल्यासारखी केली जाऊ शकत नाही आणि फाइल रिकव्हर करता येणार नाहीत."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ट्रॅश रिकामा करा"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"तुम्ही सध्या ऑफलाइन आहात. काही फाइल उपलब्ध नसू शकतात आणि तुम्ही इंटरनेटशी कनेक्ट केल्यावर सिंक करणे पुन्हा सुरू होईल."</string>
 </resources>
