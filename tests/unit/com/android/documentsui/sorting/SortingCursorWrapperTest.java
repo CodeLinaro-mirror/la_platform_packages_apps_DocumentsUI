@@ -55,7 +55,7 @@ import java.util.Set;
 public class SortingCursorWrapperTest {
     private static final boolean ENABLE_MANUAL_BENCHMARKS = false;
 
-    private static final int ITEM_COUNT = 10;
+    private static final int ITEM_COUNT = 13;
     private static final String AUTHORITY = "test_authority";
 
     private static final String[] COLUMNS = new String[]{
@@ -68,44 +68,56 @@ public class SortingCursorWrapperTest {
             Document.COLUMN_MIME_TYPE
     };
 
-    private static final String[] NAMES = new String[] {
-            "4",
-            "foo",
-            "1",
-            "bar",
-            "*(Ljifl;a",
-            "0",
-            "baz",
-            "2",
-            "3",
-            "%$%VD"
-    };
+    private static final String[] NAMES =
+            new String[] {
+                "4",
+                "foo",
+                "1",
+                "bar",
+                "*(Ljifl;a",
+                "0",
+                "baz",
+                "2",
+                "3",
+                "%$%VD",
+                "Chapter (9)",
+                "Chapter (1)",
+                "Chapter (10)"
+            };
 
-    private static final String[] MIMES = new String[] {
-            "application/zip",
-            "video/3gp",
-            "image/png",
-            "text/plain",
-            "application/msword",
-            "text/html",
-            "application/pdf",
-            "image/png",
-            "audio/flac",
-            "audio/mp3"
-    };
+    private static final String[] MIMES =
+            new String[] {
+                "application/zip",
+                "video/3gp",
+                "image/png",
+                "text/plain",
+                "application/msword",
+                "text/html",
+                "application/pdf",
+                "image/png",
+                "audio/flac",
+                "audio/mp3",
+                "text/plain",
+                "text/plain",
+                "text/plain"
+            };
 
-    private static final String[] TYPES = new String[] {
-            "Zip archive",
-            "3GP video",
-            "PNG image",
-            "Plain text",
-            "Word document",
-            "HTML document",
-            "PDF document",
-            "PNG image",
-            "FLAC audio",
-            "MP3 audio"
-    };
+    private static final String[] TYPES =
+            new String[] {
+                "Zip archive",
+                "3GP video",
+                "PNG image",
+                "Plain text",
+                "Word document",
+                "HTML document",
+                "PDF document",
+                "PNG image",
+                "FLAC audio",
+                "MP3 audio",
+                "Plain text",
+                "Plain text",
+                "Plain text"
+            };
 
     private TestFileTypeLookup fileTypeLookup;
     private SortModel sortModel;
