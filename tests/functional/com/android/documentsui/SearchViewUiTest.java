@@ -415,6 +415,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchV2LastModifiedDropdownVisibility() throws Exception {
         // Starts in TEST_ROOT_0. Start search and expect last modified dropdown to be visible.
         bots.search.doSearch("-no-such-file-");
+        device.waitForIdle();
         bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
                 matches(isDisplayed()));
 
@@ -423,6 +424,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Move to the Recents view and expect the last modified to be gone.
         EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
         bots.search.doSearch("-no-such-file-");
+        device.waitForIdle();
         onView(withId(R.id.search_last_modified_trigger)).check(matches(withEffectiveVisibility(
                 ViewMatchers.Visibility.GONE)));
 
@@ -431,8 +433,47 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
         EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         bots.search.doSearch("-no-such-file-");
-        bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
-                matches(isDisplayed()));
+        device.waitForIdle();
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(
+                        matches(
+                                allOf(
+                                        isDisplayed(),
+                                        withText(R.string.search_last_modified_any_time))));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2LastModifiedOptionKeepsUserChoice() throws Exception {
+        // Move to the Recents view and expect the last modified to be gone.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.search.doSearch("1");
+        device.waitForIdle();
+
+        // Click Everywhere, so that the recency choices are revealed.
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
+
+        // Now simulate the user choosing "Last week" for the modified option.
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_7_days);
+
+        // Close the search view, to make sure that the directory drawer button becomes visible.
+        bots.search.closeSearch();
+        // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
+        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        device.waitForIdle();
+        bots.search.doSearch("2");
+        device.waitForIdle();
+
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(
+                        matches(
+                                allOf(
+                                        isDisplayed(),
+                                        withText(R.string.search_last_modified_7_days))));
     }
 
     @Test

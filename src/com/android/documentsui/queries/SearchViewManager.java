@@ -552,6 +552,9 @@ public class SearchViewManager implements
     public void setCurrentRoot(RootInfo root) {
         if (isSearchV2Enabled()) {
             mCurrentRoot = root;
+            if (mSearchOptionsController != null) {
+                mSearchOptionsController.updateUiForRoot(root);
+            }
         }
     }
 
