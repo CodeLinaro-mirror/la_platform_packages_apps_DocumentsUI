@@ -122,13 +122,15 @@ public interface DragAndDropManager {
 
     /**
      * Updates the state according to the destination passed.
+     *
      * @param v the view which {@link View#updateDragShadow(View.DragShadowBuilder)} will be called.
      * @param destItemInfo the root or shortcut of the destination document.
      * @param destDoc the destination document. Can be null if this is TBD. Must be a folder.
      * @return the new state. Can be any state in {@link State}.
      */
-    @State int updateState(
-            View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc);
+    @State
+    int updateState(
+            View v, @Nullable SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc);
 
     /**
      * Resets state back to {@link #STATE_UNKNOWN}. This is used when user drags items leaving a UI
@@ -208,8 +210,8 @@ public interface DragAndDropManager {
         private View mView;
         private List<Uri> mInvalidDest;
         private ClipData mClipData;
-        private RootInfo mDestRoot;
-        private DocumentInfo mDestDoc;
+        private @Nullable RootInfo mDestRoot;
+        private @Nullable DocumentInfo mDestDoc;
 
         // Boolean flag for current drag and drop operation. Returns true if the files can only
         // be copied (ie. files that don't support delete or remove).
@@ -376,7 +378,16 @@ public interface DragAndDropManager {
 
         @Override
         public @State int updateState(
-                View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc) {
+                View v,
+                @Nullable SidebarEntryItemInfo destItemInfo,
+                @Nullable DocumentInfo destDoc) {
+            // Due to drag and drop's async nature, this can unfortunately be null. Given at this
+            // stage the destination is effectively unknown, it's not feasible to continue
+            // calculating the state here.
+            if (destItemInfo == null) {
+                return STATE_UNKNOWN;
+            }
+
             mView = v;
             mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;

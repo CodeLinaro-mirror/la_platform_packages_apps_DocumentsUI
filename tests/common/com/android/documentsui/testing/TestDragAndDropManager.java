@@ -30,7 +30,6 @@ import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
-import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.dirlist.IconHelper;
 import com.android.documentsui.services.FileOperations;
@@ -64,8 +63,8 @@ public class TestDragAndDropManager implements DragAndDropManager {
     public void updateStateToNotAllowed(View v) {}
 
     @Override
-    public int updateState(View v, SidebarEntryItemInfo destItemInfo,
-            @Nullable DocumentInfo destDoc) {
+    public int updateState(
+            View v, @Nullable SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc) {
         return 0;
     }
 
