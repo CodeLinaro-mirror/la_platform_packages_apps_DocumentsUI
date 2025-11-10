@@ -21,11 +21,15 @@ import static junit.framework.Assert.assertTrue;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
+import android.widget.TextView;
 
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiScrollable;
+import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import java.util.Map;
@@ -37,6 +41,26 @@ public class MenuBot extends Bots.BaseBot {
 
     public MenuBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
+    }
+
+    /** Attempts to find the menu item by also scrolling it into view if necessary. */
+    private boolean scrollMenuItemIntoView(String label) throws UiObjectNotFoundException {
+        final UiObject2 item = mDevice.wait(Until.findObject(By.text(label)), mTimeout);
+        if (item != null) {
+            return true;
+        }
+
+        // Can't find the item, attempt to scroll to it instead.
+        UiSelector scrollableView = new UiSelector().scrollable(true);
+        final UiObject scrollableViewObject = mDevice.findObject(scrollableView);
+        if (!scrollableViewObject.exists()) {
+            // If there is no scrollable view available then the menu item is just not visible.
+            return false;
+        }
+
+        UiScrollable contextScroller = new UiScrollable(scrollableView);
+        return contextScroller.getChildByText(new UiSelector().className(TextView.class), label)
+                != null;
     }
 
     public boolean hasMenuItem(String menuLabel) {
@@ -55,12 +79,15 @@ public class MenuBot extends Bots.BaseBot {
         item.click();
     }
 
-    public void assertPresentMenuItems(Map<String, Boolean> menuStates) throws Exception {
+    /** Asserts that some menu items are present (and attempts to scroll to them if not). */
+    public void assertPresentMenuItems(Map<String, Boolean> menuStates)
+            throws UiObjectNotFoundException {
         for (String key : menuStates.keySet()) {
+            boolean exists = scrollMenuItemIntoView(key);
             if (menuStates.get(key)) {
-                assertTrue(key + " expected to be shown", hasMenuItem(key));
+                assertTrue(key + " expected to be shown", exists);
             } else {
-                assertFalse(key + " expected not to be shown", hasMenuItem(key));
+                assertFalse(key + " expected not to be shown", exists);
             }
         }
     }
