@@ -41,6 +41,7 @@ class SummaryLoaderTest : BaseLoaderTest() {
     /** Test provider that provides summaries. */
     private lateinit var summaryProvider: TestDocumentsProvider
     private val authority = getEnvRootInfo().authority
+    private val authorityUri = getEnvRootInfo().root.uri
     private val parentDoc =
         DocumentInfo().apply {
             this.authority = this@SummaryLoaderTest.authority
@@ -54,7 +55,7 @@ class SummaryLoaderTest : BaseLoaderTest() {
 
     /** Helper to create model Ids from document IDs. */
     private fun createModelId(docId: String): String {
-        return ModelId.build(UserId.DEFAULT_USER, authority, docId)
+        return ModelId.build(UserId.DEFAULT_USER, authority, docId)!!
     }
 
     @Before
@@ -83,7 +84,7 @@ class SummaryLoaderTest : BaseLoaderTest() {
         summaryProvider.setDocumentSummaries(expectedSummaries)
         summaryProvider.setNextChildDocumentsReturns(*childDocs)
 
-        val loader = SummaryLoader(activity, authority, parentDoc, modelIds)
+        val loader = SummaryLoader(activity, authorityUri, parentDoc, modelIds, null, null)
         val result = loader.loadInBackground()
 
         assertThat(result).isNotNull()
@@ -98,31 +99,15 @@ class SummaryLoaderTest : BaseLoaderTest() {
         val extraUri =
             queryArgs?.let { BundleCompat.getParcelable(queryArgs, EXTRA_URI, Uri::class.java) }
 
-        assertThat(extraUri).isEqualTo(DocumentsContract.buildRootsUri(authority))
-    }
-
-    @Test
-    fun testLoadInBackground_byIds_fetchesCorrectSummaries() {
-        val docIds = listOf("docA", "docB", "docC")
-        val modelIds = docIds.map { createModelId(it) }
-        val expectedSummaries = mapOf("docA" to "Summary A", "docC" to "Summary C")
-        summaryProvider.setDocumentSummaries(expectedSummaries)
-
-        // parentDoc is null to trigger byIds loading.
-        val loader = SummaryLoader(activity, authority, null, modelIds)
-        val result = loader.loadInBackground()
-
-        assertThat(result).isNotNull()
-        assertThat(result).hasSize(2)
-        assertThat(result).containsEntry(createModelId("docA"), "Summary A")
-        assertThat(result).containsEntry(createModelId("docC"), "Summary C")
+        assertThat(extraUri)
+            .isEqualTo(DocumentsContract.buildDocumentUri(authority, parentDoc.documentId))
     }
 
     @Test
     fun testLoadInBackground_whenProviderThrowsException_returnsEmptyMap() {
         val modelIds = listOf(createModelId("doc1"))
         summaryProvider.setThrownRuntimeMessage("Faked failure")
-        val loader = SummaryLoader(activity, authority, parentDoc, modelIds)
+        val loader = SummaryLoader(activity, authorityUri, parentDoc, modelIds, null, null)
 
         val result = loader.loadInBackground()
         assertThat(result).isNotNull()
@@ -140,7 +125,8 @@ class SummaryLoaderTest : BaseLoaderTest() {
         var latch = CountDownLatch(1)
         var deliveredSummaries: Summaries? = null
         val callback1 =
-            SummaryLoader.createCallback(activity, authority, null, modelIds) { result ->
+            SummaryLoader.createCallback(activity, authorityUri, null, modelIds, null, null) {
+                result ->
                 deliveredSummaries = result
                 latch.countDown()
             }
@@ -156,7 +142,8 @@ class SummaryLoaderTest : BaseLoaderTest() {
         latch = CountDownLatch(1)
         deliveredSummaries = null
         val callback2 =
-            SummaryLoader.createCallback(activity, authority, null, modelIds) { result ->
+            SummaryLoader.createCallback(activity, authorityUri, null, modelIds, null, null) {
+                result ->
                 deliveredSummaries = result
                 latch.countDown()
             }

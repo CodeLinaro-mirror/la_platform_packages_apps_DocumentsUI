@@ -227,7 +227,7 @@ class FolderLoaderTest() {
                     // Try listing an archive file inside the external storage.
                     mRoot = TestProvidersAccess.EXTERNALSTORAGE,
                     mListedDir = archiveFile,
-                    mOptions = queryOptions,
+                    options = queryOptions,
                     mSortModel = environment.state.sortModel,
                 )
 
