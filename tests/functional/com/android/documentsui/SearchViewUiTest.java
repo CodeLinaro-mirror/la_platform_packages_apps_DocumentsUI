@@ -43,6 +43,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.graphics.Rect;
 import android.net.Uri;
@@ -611,6 +612,15 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         UiObject2 searchBar = device.findObject(By.res(pkg + ":id/docked_search_text"));
         assertNotNull(searchBar);
         assertTrue(searchBar.isEnabled());
+
+        // In an expanded search view, when searching, we should see "Search results".
+        try {
+            bots.search.doSearch("a");
+            device.waitForIdle();
+            onView(withText(R.string.search_results)).check(matches(isDisplayed()));
+        } catch (UiObjectNotFoundException e) {
+            fail("Failed to execute a search for 'a' due to " + e.getMessage());
+        }
     }
 
     @Test

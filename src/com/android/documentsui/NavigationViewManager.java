@@ -387,7 +387,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             // need to hide the v1 breadcrumb.
             mBreadcrumb.show(false);
             if (mActivity.isSearching()) {
-                mToolbar.setTitle(null);
+                mToolbar.setTitle(R.string.search_results);
             }
             return;
         }

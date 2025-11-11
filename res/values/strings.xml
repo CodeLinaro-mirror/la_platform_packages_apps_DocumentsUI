@@ -920,6 +920,9 @@
     <!-- Search hint on search view. [CHAR LIMIT=48] -->
     <string name="search_bar_hint">Search this device</string>
 
+    <!-- Text shown on the application bar when search is active and search results are shown. -->
+    <string name="search_results">Search results</string>
+
     <!-- Content description for the X button to clear text [CHAR_LIMIT=NONE] -->
     <string name="search_bar_clear">Clear text</string>
 
