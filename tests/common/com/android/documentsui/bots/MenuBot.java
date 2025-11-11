@@ -45,7 +45,7 @@ public class MenuBot extends Bots.BaseBot {
 
     /** Attempts to find the menu item by also scrolling it into view if necessary. */
     private boolean scrollMenuItemIntoView(String label) throws UiObjectNotFoundException {
-        final UiObject2 item = mDevice.wait(Until.findObject(By.text(label)), mTimeout);
+        final UiObject2 item = mDevice.wait(Until.findObject(By.text(label)), /* timeout= */ 3000);
         if (item != null) {
             return true;
         }
