@@ -711,6 +711,15 @@
          [CHAR_LIMIT=24] -->
     <string name="extract_completed">Extracted</string>
 
+    <!-- Success message shown by the Android File Manager when one or more
+         files were successfully moved to the trash. [CHAR_LIMIT=24]
+         [SCREENSHOT=screen/AmocUgSPjjgkyUb] -->
+    <string name="trash_completed">In trash</string>
+
+    <!-- Success message shown by the Android File Manager when one or more
+         files were successfully restored from trash. [CHAR_LIMIT=24] -->
+    <string name="restore_completed">Restored</string>
+
     <!-- Error message shown by the Android File Manager when one or more files
          failed to be copied.  [CHAR_LIMIT=24] -->
     <string name="copy_failed">Couldn\u2019t copy</string>
@@ -731,6 +740,14 @@
     <!-- Error message shown by the Android File Manager when one or more files
          failed to be extracted from an archive.  [CHAR_LIMIT=24] -->
     <string name="extract_failed">Couldn\u2019t extract</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be moved to trash. [CHAR_LIMIT=24] -->
+    <string name="trash_failed">Couldn\u2019t trash</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be restored from trash. [CHAR_LIMIT=24] -->
+    <string name="restore_failed">Couldn\u2019t restore</string>
 
     <!-- Accessibility label for a button to expand a notification. -->
     <string name="expand_label">Expand</string>
