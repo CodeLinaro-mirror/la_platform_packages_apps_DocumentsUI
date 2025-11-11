@@ -225,10 +225,10 @@ class FolderLoaderTest() {
                     mimeTypeLookup = TestFileTypeLookup(),
                     contentLock = contentLock,
                     // Try listing an archive file inside the external storage.
-                    mRoot = TestProvidersAccess.EXTERNALSTORAGE,
-                    mListedDir = archiveFile,
+                    root = TestProvidersAccess.EXTERNALSTORAGE,
+                    listedDir = archiveFile,
                     options = queryOptions,
-                    mSortModel = environment.state.sortModel,
+                    sortModel = environment.state.sortModel,
                 )
 
             val result = loader.loadInBackground()
