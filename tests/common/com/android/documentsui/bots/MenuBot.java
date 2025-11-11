@@ -44,7 +44,7 @@ public class MenuBot extends Bots.BaseBot {
     }
 
     /** Attempts to find the menu item by also scrolling it into view if necessary. */
-    private boolean scrollMenuItemIntoView(String label) throws UiObjectNotFoundException {
+    private boolean scrollMenuItemIntoView(String label) {
         final UiObject2 item = mDevice.wait(Until.findObject(By.text(label)), /* timeout= */ 3000);
         if (item != null) {
             return true;
@@ -59,8 +59,14 @@ public class MenuBot extends Bots.BaseBot {
         }
 
         UiScrollable contextScroller = new UiScrollable(scrollableView);
-        return contextScroller.getChildByText(new UiSelector().className(TextView.class), label)
-                != null;
+        try {
+            final UiObject menuItem =
+                    contextScroller.getChildByText(
+                            new UiSelector().className(TextView.class), label);
+            return menuItem != null;
+        } catch (UiObjectNotFoundException e) {
+            return false;
+        }
     }
 
     public boolean hasMenuItem(String menuLabel) {
