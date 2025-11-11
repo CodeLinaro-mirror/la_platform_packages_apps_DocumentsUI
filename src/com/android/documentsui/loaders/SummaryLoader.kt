@@ -20,6 +20,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Trace
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document.COLUMN_DOCUMENT_ID
 import android.provider.DocumentsContract.Document.COLUMN_SUMMARY
@@ -93,9 +94,12 @@ class SummaryLoader(
 
     override fun loadInBackground(): Summaries {
         try {
+            Trace.beginSection("documentsui.loaders.SummaryLoader#loadInBackground")
             return loadInBackgroundByFolder()
         } catch (e: Exception) {
             Log.w(TAG, "Failed to fetch summaries from provider: $summaryAuthority", e)
+        } finally {
+            Trace.endSection()
         }
         return mutableMapOf()
     }
