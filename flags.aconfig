@@ -136,3 +136,11 @@ flag {
     bug: "440196110"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "use_trusted_apps"
+    namespace: "documentsui"
+    description: "Enables trusted apps on DocumentsUI."
+    bug: "440464827"
+    is_fixed_read_only: true
+}
