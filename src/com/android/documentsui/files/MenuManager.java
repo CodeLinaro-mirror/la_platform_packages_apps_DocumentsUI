@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -34,6 +35,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.selection.SelectionTracker;
 
@@ -138,6 +140,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     public void inflateContextMenuForContainer(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
         inflater.inflate(getRes(R.menu.container_context_menu), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
         updateContextMenuForContainer(menu, selectionDetails);
     }
 
@@ -150,17 +155,26 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         assert hasDir || hasFile;
         if (!hasDir) {
             inflater.inflate(getRes(R.menu.file_context_menu), menu);
+            if (isUseMaterial3FlagEnabled()) {
+                MenuCompat.setGroupDividerEnabled(menu, true);
+            }
             updateContextMenuForFiles(menu, selectionDetails);
             return;
         }
 
         if (!hasFile) {
             inflater.inflate(getRes(R.menu.dir_context_menu), menu);
+            if (isUseMaterial3FlagEnabled()) {
+                MenuCompat.setGroupDividerEnabled(menu, true);
+            }
             updateContextMenuForDirs(menu, selectionDetails);
             return;
         }
 
         inflater.inflate(getRes(R.menu.mixed_context_menu), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
         updateContextMenu(menu, selectionDetails);
     }
 
