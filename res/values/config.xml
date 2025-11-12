@@ -45,6 +45,10 @@
     <!-- Indicates if showing as search bar design -->
     <bool name="show_search_bar">false</bool>
 
+    <!-- Indicates if selected files and folders bear a checkmark. The value has no effect (and is
+    effectively hard-coded to "show") unless the single_click_to_select flag is also enabled. -->
+    <bool name="show_selection_checkmark">true</bool>
+
     <string name="default_root_uri" translatable="false">content://com.android.providers.downloads.documents/root/downloads</string>
     <!-- The value is used in sorting process on Drawer menu. If the root's package name
      start with it, the item will have higher order than others.-->

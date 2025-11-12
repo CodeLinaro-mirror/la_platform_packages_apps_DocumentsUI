@@ -200,6 +200,15 @@ public abstract class DocumentHolder
         return (V) inflater.inflate(layout, parent, false);
     }
 
+    static View conditionalView(boolean b, View view) {
+        if (b) {
+            return view;
+        } else if (view != null) {
+            view.setVisibility(View.GONE);
+        }
+        return null;
+    }
+
     static ViewPropertyAnimator fade(ImageView view, float alpha) {
         return view.animate().setDuration(Shared.CHECK_ANIMATION_DURATION).alpha(alpha);
     }

@@ -73,7 +73,7 @@ final class GridDocumentHolder extends DocumentHolder {
     final ImageView mIconThumb;
     // Non-null only when useMaterial3 flag is ON.
     final @Nullable ImageView mSelectionCircle;
-    final ImageView mIconCheck;
+    final @Nullable ImageView mIconCheck;
     final ImageView mIconBadge;
     final IconHelper mIconHelper;
     // Null when useMaterial3 flag is ON.
@@ -96,11 +96,21 @@ final class GridDocumentHolder extends DocumentHolder {
             DocumentsAdapter.Environment environment) {
         super(context, parent, getRes(R.layout.item_doc_grid), configStore);
 
+        boolean singleClickToSelect = isSingleClickToSelectEnabled();
+        boolean showSelectionCircle = !singleClickToSelect && isUseMaterial3FlagEnabled();
+        boolean showSelectionCheckmark =
+                !singleClickToSelect
+                        || itemView.getResources().getBoolean(R.bool.show_selection_checkmark);
+
         mEnv = environment;
         if (isUseMaterial3FlagEnabled()) {
             mBullet = itemView.findViewById(getRes(R.id.bullet));
             mIconWrapper = itemView.findViewById(getRes(R.id.icon_wrapper));
-            mSelectionCircle = (ImageView) itemView.findViewById(getRes(R.id.selection_circle));
+            mSelectionCircle =
+                    (ImageView)
+                            conditionalView(
+                                    showSelectionCircle,
+                                    itemView.findViewById(getRes(R.id.selection_circle)));
             mIconLayout = null;
             mIconMimeSm = null;
         } else {
@@ -114,7 +124,11 @@ final class GridDocumentHolder extends DocumentHolder {
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
         mDate = (TextView) itemView.findViewById(getRes(R.id.date));
         mDetails = (TextView) itemView.findViewById(getRes(R.id.details));
-        mIconCheck = (ImageView) itemView.findViewById(getRes(R.id.icon_check));
+        mIconCheck =
+                (ImageView)
+                        conditionalView(
+                                showSelectionCheckmark,
+                                itemView.findViewById(getRes(R.id.icon_check)));
         mIconMimeLg = (ImageView) itemView.findViewById(getRes(R.id.icon_mime_lg));
         mIconThumb = (ImageView) itemView.findViewById(getRes(R.id.icon_thumb));
         mIconBadge = (ImageView) itemView.findViewById(getRes(R.id.icon_profile_badge));
@@ -140,27 +154,29 @@ final class GridDocumentHolder extends DocumentHolder {
 
     @Override
     public void setSelected(boolean selected, boolean animate) {
+        boolean showSelectionCheckmark = mIconCheck != null;
+
         float checkAlpha = selected ? 1f : 0f;
         float circleAlpha = (selected || !isUseMaterial3FlagEnabled()) ? 0f : 1f;
         // We always want to make sure our check box disappears if we're not selected,
         // even if the item is disabled. This is because this object can be reused
         // and this method will be called to setup initial state.
-        if (animate) {
+        if (!showSelectionCheckmark) {
+            // No-op.
+        } else if (animate) {
             if (!isUseMaterial3FlagEnabled()) {
                 fade(mIconMimeSm, checkAlpha).start();
             }
-            if (mHasSelectionRegion) {
+            if (mHasSelectionRegion && (mSelectionCircle != null)) {
                 fade(mSelectionCircle, circleAlpha).start();
             }
             fade(mIconCheck, checkAlpha).start();
         } else {
-            if (mHasSelectionRegion) {
+            if (mHasSelectionRegion && (mSelectionCircle != null)) {
                 mSelectionCircle.setAlpha(circleAlpha);
             }
             mIconCheck.setAlpha(checkAlpha);
-
         }
-
 
         // But it should be an error to be set to selected && be disabled.
         if (!itemView.isEnabled()) {
@@ -170,7 +186,9 @@ final class GridDocumentHolder extends DocumentHolder {
         super.setSelected(selected, animate);
 
         if (!isUseMaterial3FlagEnabled()) {
-            if (animate) {
+            if (!showSelectionCheckmark) {
+                // No-op.
+            } else if (animate) {
                 fade(mIconMimeSm, 1f - checkAlpha).start();
             } else {
                 mIconMimeSm.setAlpha(1f - checkAlpha);
@@ -236,13 +254,14 @@ final class GridDocumentHolder extends DocumentHolder {
     public int classifySelectionHotspot(MotionEvent event) {
         if (!isUseMaterial3FlagEnabled()) {
             return Views.isEventOver(event, itemView.getParent(), mIconLayout)
-                ? ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI
-                : ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
+                    ? ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI
+                    : ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
 
         } else if (!mHasSelectionRegion) {
             return ItemDetails.SELECTION_HOTSPOT_OUTSIDE;
 
-        } else if (Views.isEventOver(event, itemView.getParent(), mSelectionCircle)) {
+        } else if ((mSelectionCircle != null)
+                && Views.isEventOver(event, itemView.getParent(), mSelectionCircle)) {
             return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
 
         } else if (Events.isMousyEvent(event) && isSingleClickToSelectEnabled()) {
@@ -279,7 +298,7 @@ final class GridDocumentHolder extends DocumentHolder {
                 isUseMaterial3FlagEnabled() && (!mDoc.isDirectory()
                         || mAction == State.ACTION_BROWSE);
 
-        if (isUseMaterial3FlagEnabled() && !mHasSelectionRegion) {
+        if ((mSelectionCircle != null) && !mHasSelectionRegion) {
             mSelectionCircle.setVisibility(View.GONE);
         }
 
