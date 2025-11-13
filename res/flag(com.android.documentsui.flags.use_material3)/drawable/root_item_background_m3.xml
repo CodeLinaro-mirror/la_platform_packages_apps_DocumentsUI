@@ -61,7 +61,10 @@
                     </item>
                 </layer-list>
             </item>
-            <item android:state_activated="true" android:state_focused="true">
+            <item
+                android:state_activated="true"
+                android:state_focused="true"
+                android:state_window_focused="true">
                 <layer-list>
                     <item>
                         <shape>
@@ -108,7 +111,7 @@
                     <solid android:color="@color/overlay_hover_color_percentage"/>
                 </shape>
             </item>
-            <item android:state_focused="true">
+            <item android:state_focused="true" android:state_window_focused="true">
                 <shape>
                     <corners android:radius="@dimen/drawer_item_height"/>
                     <stroke android:width="@dimen/focus_ring_width" android:color="?attr/colorSecondary"/>

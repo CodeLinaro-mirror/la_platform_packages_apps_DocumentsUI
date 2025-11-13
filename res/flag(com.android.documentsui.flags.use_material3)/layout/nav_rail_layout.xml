@@ -170,6 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_container_section_gap"
                     android:orientation="vertical"
+                    android:clipToOutline="true"
                     android:background="@drawable/main_container_bottom_section_background">
 
                     <com.android.documentsui.HorizontalBreadcrumb

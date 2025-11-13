@@ -22,7 +22,6 @@ import static com.android.documentsui.services.FileOperationService.OPERATION_DE
 import static com.android.documentsui.services.FileOperationService.OPERATION_EXTRACT;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -122,7 +121,7 @@ public class PickDirectoryFragment extends Fragment {
         mCancel = (Button) mContainer.findViewById(android.R.id.button2);
         mCancel.setOnClickListener(mCancelListener);
 
-        if (isDesktopUxPhase2FlagEnabled()) {
+        if (isUseMaterial3FlagEnabled()) {
             FocusManager.setButtonFocusStyle(mPick);
             FocusManager.setButtonFocusStyle(mCancel);
         }

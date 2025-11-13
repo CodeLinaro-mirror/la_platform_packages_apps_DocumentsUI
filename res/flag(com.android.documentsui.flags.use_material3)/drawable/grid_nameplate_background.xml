@@ -27,7 +27,8 @@
             <item
                 android:state_focused="true"
                 android:state_hovered="true"
-                android:state_selected="true">
+                android:state_selected="true"
+                android:state_window_focused="true">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -59,7 +60,10 @@
                     </item>
                 </layer-list>
             </item>
-            <item android:state_selected="true" android:state_focused="true">
+            <item
+                android:state_selected="true"
+                android:state_focused="true"
+                android:state_window_focused="true">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -127,7 +131,8 @@
             <!-- unselected -->
             <item
                 android:state_focused="true"
-                android:state_hovered="true">
+                android:state_hovered="true"
+                android:state_window_focused="true">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -149,7 +154,7 @@
                     </item>
                 </layer-list>
             </item>
-            <item android:state_focused="true">
+            <item android:state_focused="true" android:state_window_focused="true">
                 <shape>
                     <corners android:radius="@dimen/grid_item_nameplate_radius" />
                     <stroke

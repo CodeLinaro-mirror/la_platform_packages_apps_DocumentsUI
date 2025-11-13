@@ -141,7 +141,7 @@
             app:flow_horizontalStyle="packed"
             app:flow_horizontalBias="0"
             app:constraint_referenced_ids="job_progress_item_cancel,job_progress_item_show_in_folder,job_progress_item_see_details,job_progress_item_dismiss"
-            app:layout_constraintStart_toStartOf="@id/job_progress_item_button_margin"
+            app:layout_constraintStart_toEndOf="@id/job_progress_item_button_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/job_progress_item_button_margin" />
     </androidx.constraintlayout.widget.ConstraintLayout>

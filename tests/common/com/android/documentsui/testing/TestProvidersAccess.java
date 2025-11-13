@@ -203,7 +203,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         CLOUD.rootId = Providers.ROOT_ID_DEVICE;
         CLOUD.title = "Cloud";
         CLOUD.derivedType = SidebarEntryItemInfo.TYPE_ROOT_OTHER;
-        // TODO(b/451775371): Use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead when it
+        // TODO(b/458129770): Use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead when it
         //  exists in the SDK.
         CLOUD.flags = RootInfo.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE;
 

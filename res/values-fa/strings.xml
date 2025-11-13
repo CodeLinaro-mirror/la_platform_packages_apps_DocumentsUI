@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"برخی از اسناد حذف نمی‌شوند"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"نمی‌توان بیش از <xliff:g id="COUNT">%1$d</xliff:g> فایل هم‌رسانی کرد"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"کنش مجاز نیست"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"کنش مجاز نیست"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"باز کردن با…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏هیچ برنامه پشتیبانی‌شده‌ای نصب نشده است. برنامه‌ای را از «فروشگاه Play» نصب کنید."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏جستجو در «فروشگاه Play»"</string>
@@ -197,32 +196,38 @@
       <item quantity="one">این فایل‌ها کپی نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">این فایل‌ها کپی نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{این فایل کپی نشد: <xliff:g id="LIST_0">{list}</xliff:g>}one{این فایل کپی نشد: <xliff:g id="LIST_1">{list}</xliff:g>}other{این فایل‌ها کپی نشدند: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">این فایل‌ها فشرده نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">این فایل‌ها فشرده نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{این فایل فشرده نشد: <xliff:g id="LIST_0">{list}</xliff:g>}one{این فایل فشرده نشد: <xliff:g id="LIST_1">{list}</xliff:g>}other{این فایل‌ها فشرده نشدند: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">این فایل‌ها استخراج نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">این فایل‌ها استخراج نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{این فایل استخراج نشد: <xliff:g id="LIST_0">{list}</xliff:g>}one{این فایل استخراج نشد: <xliff:g id="LIST_1">{list}</xliff:g>}other{این فایل‌ها استخراج نشدند: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">این فایل‌ها منتقل نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">این فایل‌ها منتقل نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{این فایل منتقل نشد: <xliff:g id="LIST_0">{list}</xliff:g>}one{این فایل منتقل نشد: <xliff:g id="LIST_1">{list}</xliff:g>}other{این فایل‌ها منتقل نشدند: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">این فایل‌ها حذف نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">این فایل‌ها حذف نشدند: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{این فایل حذف نشد: <xliff:g id="LIST_0">{list}</xliff:g>}one{این فایل حذف نشد: <xliff:g id="LIST_1">{list}</xliff:g>}other{این فایل‌ها حذف نشدند: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">قالب این فایل‌ها تغییر داده شد: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">قالب این فایل‌ها تغییر داده شد: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{قالب این فایل تغییر داده شد: <xliff:g id="LIST_0">{list}</xliff:g>}one{قالب این فایل تغییر داده شد: <xliff:g id="LIST_1">{list}</xliff:g>}other{قالب این فایل‌ها تغییر داده شد: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
@@ -279,7 +284,7 @@
     </plurals>
     <string name="clear_selection" msgid="5965968983023105329">"پاک کردن انتخاب"</string>
     <string name="document_click_action" msgid="8073338575301415356">"باز کردن"</string>
-    <string name="selected_document_click_action" msgid="792826130200234885">"لغو انتخاب کردن"</string>
+    <string name="selected_document_click_action" msgid="792826130200234885">"لغو انتخاب"</string>
     <string name="document_long_click_action" msgid="3789836661597702666">"انتخاب کردن"</string>
     <string name="selected_document_long_click_action" msgid="666372407184527109">"کشیدن"</string>
     <string name="document_long_click_action_picker" msgid="943888101827856784">"انتخاب کردن چند مورد"</string>
@@ -309,7 +314,12 @@
     <string name="sign_in" msgid="6253762676723505592">"ورود به سیستم"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"بایگانی <xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"بایگانی کردن"</string>
-    <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g> رونویسی شود؟"</string>
+    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
+    <skip />
     <string name="continue_in_background" msgid="1974214559047793331">"ادامه در پس‌زمینه"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="one">‏<xliff:g id="COUNT_1">%1$d</xliff:g> مورد انتخاب شد</item>
@@ -335,16 +345,20 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"اسناد"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"فایل‌های بزرگ"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"این هفته"</string>
-    <string name="input_hint_new_folder" msgid="479672411219725677">"نام پوشه"</string>
-    <string name="input_hint_rename" msgid="8390711744270994452">"نام جدید"</string>
+    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
+    <skip />
+    <!-- no translation found for input_hint_rename (4501630494874065128) -->
+    <skip />
     <string name="preview_file" msgid="4056622696305432343">"پیش‌نمایش فایل <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"پیش‌نمایش فایل کاری <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"پیش‌دید کردن فایل <xliff:g id="FILENAME">%2$s</xliff:g> در <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"مرور فایل‌ها در سایر برنامه‌ها"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"ناشناس"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"استفاده از این پوشه"</string>
-    <string name="open_tree_dialog_title" msgid="6339509533852318569">"به <xliff:g id="APPNAME">%1$s</xliff:g> اجازه می‌دهید به فایل‌های موجود در <xliff:g id="DIRECTORY">%2$s</xliff:g> دسترسی داشته باشد؟"</string>
-    <string name="open_tree_dialog_message" msgid="4120695398430659628">"این کار به <xliff:g id="APPNAME">%1$s</xliff:g> امکان می‌دهد به محتوای کنونی و آتی ذخیره‌شده در <xliff:g id="DIRECTORY">%2$s</xliff:g> دسترسی داشته باشد."</string>
+    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
+    <skip />
+    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
+    <skip />
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"نمی‌توانید از این پوشه استفاده کنید"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"برای محافظت از حریم‌خصوصی‌تان، پوشه دیگری را انتخاب کنید"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ایجاد پوشه جدید"</string>
@@ -384,6 +398,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"حذف‌شده‌ها خالی شود؟"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"این کنش واگردشدنی نیست و فایل‌ها دیگر قابل‌بازیابی نیستند."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"خالی کردن حذف‌شده‌ها"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"درحال‌حاضر آفلاين هستید. برخی‌از فایل‌ها ممکن است دردسترس نباشند و هرگاه به اینترنت متصل شدید، همگام‌سازی ازسر گرفته خواهد شد."</string>
 </resources>

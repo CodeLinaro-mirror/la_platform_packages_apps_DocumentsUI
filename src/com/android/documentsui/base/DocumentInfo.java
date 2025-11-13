@@ -59,7 +59,7 @@ public class DocumentInfo implements Durable, Parcelable {
     private static final int VERSION_INIT = 1;
     private static final int VERSION_SPLIT_URI = 2;
     private static final int VERSION_USER_ID = 3;
-    // TODO(b/451775371): Delete this and use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when
+    // TODO(b/458129770): Delete this and use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when
     // it exists in the SDK.
     public static final String COLUMN_CONTENT_SYNC_STATE_FLAGS = "content_sync_state_flags";
 
@@ -194,7 +194,7 @@ public class DocumentInfo implements Durable, Parcelable {
         this.size = getCursorLong(cursor, Document.COLUMN_SIZE);
         this.icon = getCursorInt(cursor, Document.COLUMN_ICON);
         if (isCloudFeaturesFlagEnabled()) {
-            // TODO(b/451775371): Use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when it
+            // TODO(b/458129770): Use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when it
             // exists in the SDK.
             this.syncStateFlags =
                     getCursorInteger(

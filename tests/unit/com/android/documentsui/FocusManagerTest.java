@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -181,6 +182,7 @@ public class FocusManagerTest {
         int originalWidth = 50; // a random big number
         button.setStrokeColor(originalColor);
         button.setStrokeWidth(originalWidth);
+        when(button.hasWindowFocus()).thenReturn(true);
 
         FocusManager.setButtonFocusStyle(button);
 
