@@ -1245,6 +1245,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
+    /**
+     * This handles both selection bar menu and context menu item click, but it doesn't handle the
+     * option menu (normal app bar) menu item click.
+     */
     private boolean handleMenuItemClick(MenuItem item) {
         if (mInjector.pickResult != null) {
             mInjector.pickResult.increaseActionCount();
@@ -1384,6 +1388,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         } else if (id == getRes(R.id.action_menu_sort)) {
             mActions.showSortDialog();
             return true;
+        }
+        if (isUseMaterial3FlagEnabled()) {
+            if (isDesktopFileHandlingFlagEnabled() && id == getRes(R.id.action_menu_open)) {
+                viewDocument(selection);
+                return true;
+            }
+            if (id == getRes(R.id.action_menu_open_in_new_window)) {
+                mActions.openSelectedInNewWindow();
+                return true;
+            }
+            if (id == getRes(R.id.action_menu_paste_into_folder)) {
+                pasteIntoFolder();
+                return true;
+            }
         }
 
         if (DEBUG) {

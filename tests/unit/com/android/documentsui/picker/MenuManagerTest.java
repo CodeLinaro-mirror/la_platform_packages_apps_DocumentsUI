@@ -208,17 +208,35 @@ public final class MenuManagerTest {
     @Test
     public void testActionMenu() {
         mgr.updateActionMenu(testMenu, selectionDetails);
-        actionModeSelect.assertDisabledAndInvisible();
         actionModeDelete.assertDisabledAndInvisible();
         actionModeShare.assertDisabledAndInvisible();
         actionModeRename.assertDisabledAndInvisible();
-        actionModeSelectAll.assertEnabledAndVisible();
-        mActionModeDeselectAll.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
-        actionModeSort.assertEnabledAndVisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
+    public void testActionMenu_showSortAndSelect() {
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertEnabledAndVisible();
+        actionModeSelectAll.assertEnabledAndVisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSortAndSelect() {
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
     }
 
     @Test
@@ -253,6 +271,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_selectActionTitle() {
         state.action = ACTION_OPEN;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -279,6 +298,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_getContentActionTitle() {
         state.action = ACTION_GET_CONTENT;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -287,6 +307,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_notAllowMultiple() {
         state.allowMultiple = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -296,6 +317,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_AllowMultiple() {
         state.allowMultiple = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -305,6 +327,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_CanDeselectAll() {
         state.allowMultiple = true;
         selectionDetails.size = 1;

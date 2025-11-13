@@ -20,12 +20,16 @@
     <group
         android:id="@+id/menu_open_group">
         <item
-            android:id="@+id/action_menu_select"
-            android:title="@string/menu_select"
-            app:showAsAction="always" />
+            android:id="@+id/action_menu_open"
+            android:title="@string/menu_open"
+            app:showAsAction="never"/>
         <item
             android:id="@+id/action_menu_open_with"
             android:title="@string/menu_open_with"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_menu_open_in_new_window"
+            android:title="@string/menu_open_in_new_window"
             app:showAsAction="never" />
         <item
             android:id="@+id/action_menu_extract_here"
@@ -41,15 +45,13 @@
             android:title="@string/menu_share"
             app:showAsAction="always" />
     </group>
-    <group android:id="@+id/menu_folder_manage_group">
-        <item
-            android:id="@+id/action_menu_sort"
-            android:icon="@drawable/ic_sort_m3"
-            android:title="@string/menu_sort"
-            app:showAsAction="never" />
-    </group>
     <group
         android:id="@+id/menu_clipboard_group">
+        <item
+            android:id="@+id/action_menu_paste_into_folder"
+            android:title="@string/menu_paste_into_folder"
+            android:visible="false"
+            app:showAsAction="never" />
         <item
             android:id="@+id/action_menu_copy_to"
             android:title="@string/menu_copy"
@@ -63,14 +65,6 @@
     </group>
     <group
         android:id="@+id/menu_modifier_group">
-        <item
-            android:id="@+id/action_menu_select_all"
-            android:title="@string/menu_select_all"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/action_menu_deselect_all"
-            android:title="@string/menu_deselect_all"
-            app:showAsAction="never" />
         <item
             android:id="@+id/action_menu_inspect"
             android:title="@string/menu_inspect"

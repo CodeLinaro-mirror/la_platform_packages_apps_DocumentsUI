@@ -18,7 +18,9 @@ package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -42,9 +44,9 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
@@ -126,6 +128,9 @@ public final class MenuManagerTest {
     private TestMenuItem mActionBrowse;
     private TestMenuItem mActionModeTrash;
     private TestMenuItem mActionModeRestoreFromTrash;
+    private TestMenuItem mActionModeSelect;
+    private TestMenuItem mActionModeOpenInNewWindow;
+    private TestMenuItem mActionModePasteIntoFolder;
 
     /* Option Menu items */
     private TestMenuItem optionSearch;
@@ -204,9 +209,11 @@ public final class MenuManagerTest {
         mRootInspector = testMenu.findItem(R.id.root_menu_inspect);
 
         // Menu actions (including overflow) when action mode *is* active.
+        actionModeOpen = testMenu.findItem(R.id.action_menu_open);
         actionModeOpenWith = testMenu.findItem(R.id.action_menu_open_with);
         actionModeShare = testMenu.findItem(R.id.action_menu_share);
         actionModeDelete = testMenu.findItem(R.id.action_menu_delete);
+        mActionModeSelect = testMenu.findItem(R.id.action_menu_select);
         actionModeSelectAll = testMenu.findItem(R.id.action_menu_select_all);
         mActionModeDeselectAll = testMenu.findItem(R.id.action_menu_deselect_all);
         actionModeCopyTo = testMenu.findItem(R.id.action_menu_copy_to);
@@ -221,6 +228,8 @@ public final class MenuManagerTest {
         mActionBrowse = testMenu.findItem(R.id.action_menu_browse);
         mActionModeTrash = testMenu.findItem(R.id.action_menu_move_to_trash);
         mActionModeRestoreFromTrash = testMenu.findItem(R.id.action_menu_restore_from_trash);
+        mActionModeOpenInNewWindow = testMenu.findItem(R.id.action_menu_open_in_new_window);
+        mActionModePasteIntoFolder = testMenu.findItem(R.id.action_menu_paste_into_folder);
 
         // Menu actions (including overflow) when action mode is not active.
         optionSearch = testMenu.findItem(R.id.option_menu_search);
@@ -315,14 +324,42 @@ public final class MenuManagerTest {
         actionModeExtractTo.assertDisabledAndInvisible();
         actionModeMoveTo.assertEnabledAndVisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
-        actionModeSort.assertEnabledAndVisible();
-        actionModeSelectAll.assertEnabledAndVisible();
-        mActionModeDeselectAll.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
         mActionModeTrash.assertDisabledAndInvisible();
         mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_showSortAndSelect() {
+        selectionDetails.canDelete = true;
+        selectionDetails.canRename = true;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Select is only shown in picker mode.
+        mActionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertEnabledAndVisible();
+        actionModeSelectAll.assertEnabledAndVisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSortAndSelect() {
+        selectionDetails.canDelete = true;
+        selectionDetails.canRename = true;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
     }
 
     @Test
@@ -340,6 +377,9 @@ public final class MenuManagerTest {
         } else {
             mActionExtractHere.assertDisabledAndInvisible();
             mActionBrowse.assertDisabledAndInvisible();
+        }
+        if (isUseMaterial3FlagEnabled()) {
+            mActionModeOpenInNewWindow.assertDisabledAndInvisible();
         }
 
         // On archive in read-only directory (but not a nested archive)
@@ -509,6 +549,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled() && isDesktopFileHandlingFlagEnabled()) {
+            actionModeOpen.assertEnabledAndVisible();
+        }
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
@@ -518,6 +561,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled() && isDesktopFileHandlingFlagEnabled()) {
+            actionModeOpen.assertDisabledAndInvisible();
+        }
         actionModeOpenWith.assertDisabledAndInvisible();
     }
 
@@ -528,6 +574,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled()) {
+            actionModeOpen.assertDisabledAndInvisible();
+        }
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
@@ -538,6 +587,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled()) {
+            actionModeOpen.assertEnabledAndVisible();
+        }
         actionModeOpenWith.assertDisabledAndInvisible();
     }
 
@@ -560,6 +612,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testActionMenu_CanDeselectAll() {
         selectionDetails.size = 1;
         mFilesCount = 1;
@@ -568,6 +621,45 @@ public final class MenuManagerTest {
 
         actionModeSelectAll.assertDisabledAndInvisible();
         mActionModeDeselectAll.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_onWritableDirectory() {
+        selectionDetails.size = 1;
+        selectionDetails.containDirectories = true;
+        selectionDetails.canPasteInto = true;
+        dirDetails.hasItemsToPaste = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeOpenInNewWindow.assertEnabledAndVisible();
+        mActionModePasteIntoFolder.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_OnNonWritableDirectory() {
+        selectionDetails.size = 1;
+        selectionDetails.containDirectories = true;
+        selectionDetails.canPasteInto = false;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeOpenInNewWindow.assertEnabledAndVisible();
+        mActionModePasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_OnMultipleDirectories() {
+        selectionDetails.size = 3;
+        selectionDetails.containDirectories = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeOpenInNewWindow.assertDisabledAndInvisible();
+        mActionModePasteIntoFolder.assertDisabledAndInvisible();
     }
 
     @Test
@@ -623,6 +715,11 @@ public final class MenuManagerTest {
         } else {
             mOptionExtractAll.assertDisabledAndInvisible();
         }
+        if (isUseMaterial3FlagEnabled()) {
+            optionNewWindow.assertDisabledAndInvisible();
+        } else {
+            optionNewWindow.assertEnabledAndVisible();
+        }
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
@@ -676,6 +773,7 @@ public final class MenuManagerTest {
 
     @SuppressLint("VisibleForTests")
     @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_EmptyArea_CanDeselectAll() {
         selectionDetails.size = 1;
         mFilesCount = 1;
@@ -827,6 +925,7 @@ public final class MenuManagerTest {
     public void testContextMenu_OnWritableDirectory() {
         selectionDetails.size = 1;
         selectionDetails.canPasteInto = true;
+        selectionDetails.containDirectories = true;
         dirDetails.hasItemsToPaste = true;
         mgr.updateContextMenuForDirs(testMenu, selectionDetails);
         dirOpenInNewWindow.assertEnabledAndVisible();
@@ -845,6 +944,7 @@ public final class MenuManagerTest {
     public void testContextMenu_OnNonWritableDirectory() {
         selectionDetails.size = 1;
         selectionDetails.canPasteInto = false;
+        selectionDetails.containDirectories = true;
         mgr.updateContextMenuForDirs(testMenu, selectionDetails);
         dirOpenInNewWindow.assertEnabledAndVisible();
         dirCutToClipboard.assertDisabledAndInvisible();

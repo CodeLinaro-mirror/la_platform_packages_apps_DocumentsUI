@@ -67,20 +67,32 @@ public abstract class MenuManager {
 
     /** @see ActionModeController */
     public void updateActionMenu(Menu menu, SelectionDetails selection) {
+        Menus.disableHiddenItems(menu);
+
         updateOpenWith(menu.findItem(getRes(R.id.action_menu_open_with)), selection);
         updateDelete(menu.findItem(getRes(R.id.action_menu_delete)), selection);
         updateShare(menu.findItem(getRes(R.id.action_menu_share)), selection);
         updateRename(menu.findItem(getRes(R.id.action_menu_rename)), selection);
-        updateSelect(menu.findItem(getRes(R.id.action_menu_select)), selection);
-        updateSelectAll(menu.findItem(getRes(R.id.action_menu_select_all)), selection);
-        updateDeselectAll(menu.findItem(getRes(R.id.action_menu_deselect_all)), selection);
         updateMoveTo(menu.findItem(getRes(R.id.action_menu_move_to)), selection);
         updateCopyTo(menu.findItem(getRes(R.id.action_menu_copy_to)), selection);
         updateCompress(menu.findItem(getRes(R.id.action_menu_compress)), selection);
         updateExtractTo(menu.findItem(getRes(R.id.action_menu_extract_to)), selection);
         updateInspect(menu.findItem(getRes(R.id.action_menu_inspect)), selection);
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
-        updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+
+        if (isUseMaterial3FlagEnabled()) {
+            updateOpen(menu.findItem(getRes(R.id.action_menu_open)), selection);
+            MenuItem pasteInto = menu.findItem(getRes(R.id.action_menu_paste_into_folder));
+            MenuItem openInNewWindow = menu.findItem(getRes(R.id.action_menu_open_in_new_window));
+            updatePasteInto(pasteInto, selection);
+            updateOpenInNewWindow(openInNewWindow, selection);
+        } else {
+            // These menu items are deleted when user_material3 is ON.
+            updateSelect(menu.findItem(getRes(R.id.action_menu_select)), selection);
+            updateSelectAll(menu.findItem(getRes(R.id.action_menu_select_all)), selection);
+            updateDeselectAll(menu.findItem(getRes(R.id.action_menu_deselect_all)), selection);
+            updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+        }
 
         if (isZipNgFlagEnabled()) {
             updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
@@ -92,8 +104,6 @@ public abstract class MenuManager {
             updateRestoreFromTrash(
                     menu.findItem(getRes(R.id.action_menu_restore_from_trash)), selection);
         }
-
-        Menus.disableHiddenItems(menu);
     }
 
     /** @see BaseActivity#onPrepareOptionsMenu */
@@ -106,6 +116,8 @@ public abstract class MenuManager {
         if (mOptionMenu == null) {
             return;
         }
+        Menus.disableHiddenItems(mOptionMenu);
+
         updateCreateDir(mOptionMenu.findItem(getRes(R.id.option_menu_create_dir)));
         if (isZipNgFlagEnabled()) {
             updateExtractAll(mOptionMenu.findItem(getRes(R.id.option_menu_extract_all)));
@@ -125,7 +137,6 @@ public abstract class MenuManager {
                     mOptionMenu.findItem(getRes(R.id.sub_menu_list)));
         }
 
-        Menus.disableHiddenItems(mOptionMenu);
         mSearchManager.updateMenu();
     }
 
@@ -194,7 +205,7 @@ public abstract class MenuManager {
         MenuItem viewInOwner = menu.findItem(getRes(R.id.dir_menu_view_in_owner));
 
         updateShare(share, selectionDetails);
-        updateOpenInContextMenu(open, selectionDetails);
+        updateOpen(open, selectionDetails);
         updateOpenWith(openWith, selectionDetails);
         updateRename(rename, selectionDetails);
         updateViewInOwner(viewInOwner, selectionDetails);
@@ -453,7 +464,7 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 
-    protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
+    protected void updateOpen(MenuItem open, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(open, false);
     }
 
