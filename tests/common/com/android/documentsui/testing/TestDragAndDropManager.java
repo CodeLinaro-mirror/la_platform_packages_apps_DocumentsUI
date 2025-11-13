@@ -43,6 +43,11 @@ public class TestDragAndDropManager implements DragAndDropManager {
             new TestEventHandler<>();
     public final TestEventHandler<Pair<ClipData, DocumentStack>> dropOnDocumentHandler =
             new TestEventHandler<>();
+    public final TestEventHandler<Void> isDragFromSameAppHandler = new TestEventHandler<>();
+
+    public TestDragAndDropManager() {
+        isDragFromSameAppHandler.nextReturn(true);
+    }
 
     @Override
     public void onKeyEvent(KeyEvent event) {}
@@ -73,7 +78,7 @@ public class TestDragAndDropManager implements DragAndDropManager {
 
     @Override
     public boolean isDragFromSameApp() {
-        return true;
+        return isDragFromSameAppHandler.accept(null);
     }
 
     @Override
