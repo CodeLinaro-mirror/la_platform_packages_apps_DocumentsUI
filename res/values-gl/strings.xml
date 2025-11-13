@@ -196,38 +196,32 @@
       <item quantity="other">Non se copiaron estes ficheiros: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Non se copiou este ficheiro: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{Este ficheiro non se copiou:}other{Estes ficheiros non se copiaron:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Non se comprimiron estes ficheiros: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Non se comprimiu este ficheiro: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{Este ficheiro non se comprimiu:}other{Estes ficheiros non se comprimiron:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Non se extraeron estes ficheiros: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Non se extraeu este ficheiro: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{Este ficheiro non se extraeu:}other{Estes ficheiros non se extraeron:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Non se moveron estes ficheiros: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Non se moveu este ficheiro: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{Este ficheiro non se moveu:}other{Estes ficheiros non se moveron:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Non se eliminaron estes ficheiros: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Non se eliminou este ficheiro: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Este ficheiro non se eliminou:}other{Estes ficheiros non se eliminaron:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Estes ficheiros convertéronse a outro formato: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Este ficheiro converteuse a outro formato: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Este ficheiro converteuse a outro formato:}other{Estes ficheiros convertéronse a outro formato:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">Copiáronse <xliff:g id="COUNT_1">%1$d</xliff:g> elementos no portapapeis.</item>
       <item quantity="one">Copiouse <xliff:g id="COUNT_0">%1$d</xliff:g> elemento no portapapeis.</item>
@@ -266,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"Eliminación completada"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Comprimiuse o contido"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extracción completada"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"Non se puido copiar o contido"</string>
     <string name="move_failed" msgid="7692364307225994220">"Non se puido mover o contido"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Non se puido eliminar o contido"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Non se puido comprimir o contido"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Non se puido extraer o contido"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"Despregar"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Contraer"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Queres outorgar acceso a <xliff:g id="APPNAME"><b>^1</b></xliff:g> ao directorio <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> no almacenamento de <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
@@ -314,12 +316,9 @@
     <string name="sign_in" msgid="6253762676723505592">"Iniciar sesión"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arquivo<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Arquivar"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"Queres substituír o ficheiro?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"Xa existe un ficheiro denominado \"<xliff:g id="NAME">%1$s</xliff:g>\"."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"Substituír"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Continuar coa operación en segundo plano"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other">Seleccionáronse <xliff:g id="COUNT_1">%1$d</xliff:g></item>
@@ -345,24 +344,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Documentos"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Ficheiros grandes"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Esta semana"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"Nome"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"Nome"</string>
     <string name="preview_file" msgid="4056622696305432343">"Vista previa do ficheiro <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Vista previa do ficheiro do traballo <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Previsualizar o ficheiro <xliff:g id="FILENAME">%2$s</xliff:g> deste perfil (<xliff:g id="PROFILE">%1$s</xliff:g>)"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Consultar ficheiros noutras aplicacións"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Aplicación anónima"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Usar este cartafol"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"Queres permitir que <xliff:g id="APPNAME">%1$s</xliff:g> acceda ao cartafol?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"Permitir o acceso a \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\"."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Non se pode utilizar este cartafol"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Para protexer a túa privacidade, escolle outro cartafol"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Crear novo cartafol"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Busca contido neste dispositivo"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"Borrar o texto"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Cartafol raíz"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"En calquera lugar"</string>
