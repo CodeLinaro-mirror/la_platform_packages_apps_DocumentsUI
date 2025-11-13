@@ -34,13 +34,18 @@
         <item name="android:maxHeight">@dimen/icon_size_headline_large</item>
     </style>
 
-    <style name="JobProgressToolbarIndicatorStyle" parent="@style/Widget.Material3.CircularProgressIndicator.ExtraSmall">
+    <style name="JobProgressToolbarIndicatorStyle" parent="@style/Widget.Material3Expressive.CircularProgressIndicator">
         <item name="android:max">100</item>
         <item name="indicatorSize">@dimen/job_progress_toolbar_indicator_size</item>
         <item name="indicatorInset">0dp</item>
+        <!-- Right now there's no ExtraSmall variant for Expressive circular progress indicator, so
+             we manually override the thickness attribute here with the value from the style
+             "Widget.Material3.CircularProgressIndicator.ExtraSmall".
+        -->
+        <item name="trackThickness">2.5dp</item>
     </style>
 
-    <style name="ToolbarStyles" parent="@style/Widget.Material3.Toolbar">
+    <style name="ToolbarStyles" parent="@style/Widget.Material3Expressive.Toolbar">
         <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
         <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>
         <item name="contentInsetStart">@dimen/toolbar_content_inset_start</item>
@@ -115,15 +120,15 @@
         <item name="android:overlapAnchor">false</item>
     </style>
 
-    <style name="MaterialButtonM3" parent="@style/Widget.Material3.Button.UnelevatedButton">
+    <style name="MaterialButtonM3" parent="@style/Widget.Material3Expressive.Button">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearanceM3</item>
     </style>
 
-    <style name="MaterialTonalButton" parent="@style/Widget.Material3.Button.TonalButton">
+    <style name="MaterialTonalButton" parent="@style/Widget.Material3Expressive.Button.TonalButton">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearanceM3</item>
     </style>
 
-    <style name="MaterialOutlinedButtonM3" parent="@style/Widget.Material3.Button.OutlinedButton">
+    <style name="MaterialOutlinedButtonM3" parent="@style/Widget.Material3Expressive.Button.OutlinedButton">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearanceM3</item>
     </style>
 
@@ -131,15 +136,15 @@
         <item name="android:layout_marginStart">8dp</item>
     </style>
 
-    <style name="DialogTextButtonM3" parent="@style/Widget.Material3.Button.TextButton.Dialog">
+    <style name="DialogTextButtonM3" parent="@style/Widget.Material3Expressive.Button.TextButton.Dialog">
         <item name="android:textAppearance">@style/MaterialButtonTextAppearanceM3</item>
     </style>
 
-    <style name="DialogTitlePanel" parent="@style/MaterialAlertDialog.Material3.Title.Panel">
+    <style name="DialogTitlePanel" parent="@style/MaterialAlertDialog.Material3Expressive.Title.Panel">
         <item name="android:paddingBottom">@dimen/space_small_1</item>
     </style>
 
-    <style name="MaterialAlertDialogThemeM3" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">
+    <style name="MaterialAlertDialogThemeM3" parent="@style/ThemeOverlay.Material3Expressive.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/DialogFilledButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/MaterialOutlinedButtonM3</item>
         <item name="buttonBarNeutralButtonStyle">@style/DialogTextButtonM3</item>
@@ -217,7 +222,7 @@
         <item name="android:background">?attr/colorSurfaceContainer</item>
         <item name="android:paddingHorizontal">@dimen/space_small_3</item>
         <item name="android:paddingTop">@dimen/space_extra_small_6</item>
-        <item name="android:paddingBottom">@dimen/space_small_1</item>
+        <item name="android:paddingBottom">@dimen/drawer_padding_bottom</item>
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:clipToPadding">false</item>
     </style>
@@ -255,11 +260,15 @@
         <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="JobProgressItemExpandButtonStyle" parent="@style/Widget.Material3.Button.IconButton.Filled">
+    <style name="JobProgressItemExpandButtonStyle" parent="@style/Widget.Material3Expressive.Button.IconButton.Filled">
         <item name="android:insetBottom">0dp</item>
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:insetTop">0dp</item>
+        <!-- Expressive version of IconButton's default minWidth is too wide, the following value
+             is copied from the style "Widget.Material3.Button.IconButton".
+        -->
+        <item name="android:minWidth">20dp</item>
         <item name="android:minHeight">0dp</item>
         <item name="android:paddingHorizontal">6dp</item>
         <item name="android:paddingVertical">1dp</item>
@@ -270,12 +279,12 @@
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Full</item>
     </style>
 
-    <style name="JobProgressItemActionButtonStyle" parent="@style/Widget.Material3.Button.TextButton">
+    <style name="JobProgressItemActionButtonStyle" parent="@style/Widget.Material3Expressive.Button.TextButton">
         <item name="android:minWidth">0dp</item>
         <item name="android:textAppearance">@style/JobProgressItemActionButtonText</item>
     </style>
 
-    <style name="JobProgressItemProgressStyle" parent="@style/Widget.Material3.LinearProgressIndicator">
+    <style name="JobProgressItemProgressStyle" parent="@style/Widget.Material3Expressive.LinearProgressIndicator">
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
     </style>
