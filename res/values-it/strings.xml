@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Impossibile eliminare alcuni documenti."</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Impossibile condividere più di <xliff:g id="COUNT">%1$d</xliff:g> file."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Azione non consentita"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"Apri con…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Non sono installate app supportate. Prova a installarne una dal Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Cerca nel Play Store"</string>
@@ -400,4 +402,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vuoi svuotare il cestino?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Quest\'azione non può essere annullata e i file non saranno più recuperabili."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Svuota cestino"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

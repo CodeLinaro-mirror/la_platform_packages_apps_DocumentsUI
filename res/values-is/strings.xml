@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Ekki hægt að eyða einhverjum skjölum"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ekki er hægt að deila meira en <xliff:g id="COUNT">%1$d</xliff:g> skrám"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Aðgerð ekki leyfileg"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"Opna með …"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Það eru engin studd forrit uppsett. Prófaðu að setja eitt forrit frá Play Store upp."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Leita í Play Store"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Tæma ruslið?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ekki er hægt að afturkalla þessa aðgerð né endurheimta skrárnar."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tæma ruslið"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

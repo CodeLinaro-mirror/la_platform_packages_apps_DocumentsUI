@@ -45,4 +45,10 @@ class LastModifiedOptionTest {
         assertEquals(LastModifiedOption.ANY_TIME.millis, 0L)
         assertEquals(LastModifiedOption.ANY_TIME.ordinal, 0)
     }
+
+    @Test
+    fun lastModifiedOptionFor_withInvalidValue_returnsNull() {
+        val nonExistentValue = -1
+        assertEquals(null, lastModifiedOptionFor(nonExistentValue))
+    }
 }

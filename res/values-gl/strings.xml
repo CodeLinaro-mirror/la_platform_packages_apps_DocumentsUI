@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Non se poden eliminar algúns documentos"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Non se poden compartir máis de <xliff:g id="COUNT">%1$d</xliff:g> ficheiros"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acción non permitida"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"Abrir con…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Non hai instalada ningunha aplicación compatible. Proba a instalar unha desde Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buscar en Play Store"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Queres baleirar a papeleira?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Esta acción non se pode desfacer e os ficheiros xa non se poderán recuperar."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Baleirar papeleira"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

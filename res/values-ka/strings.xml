@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"ზოგიერთი დოკუმენტის წაშლა ვერ ხერხდება"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>-ზე მეტი ფაილი ვერ გაზიარდება"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"მოქმედება არ არის დაშვებული"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"გახსნა აპით:"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"მხარდაჭერილი აპები არ არის დაყენებული. ცადეთ Play Store-დან რომელიმეს დაყენება."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store-ში ძიება"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"გსურთ წაშლილების გასუფთავება?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ამ მოქმედების გაუქმება ვეღარ მოხერხდება და ფაილების აღდგენა შეუძლებელი იქნება."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"წაშლილების გასუფთავება"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

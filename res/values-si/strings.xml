@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"සමහර ලේඛන මැකීමට නොහැකිය"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ගොනු <xliff:g id="COUNT">%1$d</xliff:g>කට වඩා බෙදා ගත නොහැකිය"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ක්‍රියාව ඉඩ නොදේ"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"සමඟ විවෘත කරන්න…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"සහාය දක්වන යෙදුම් කිසිවක් ස්ථාපනය කර නැත. Play Store වෙතින් එකක් ස්ථාපනය කිරීමට උත්සාහ කරන්න."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store සෙවීම"</string>
@@ -382,4 +384,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"කුණු කූඩය හිස් කරන්න ද?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"මෙම ක්‍රියාව අහෝසි කළ නොහැකි අතර, ගොනු තවදුරටත් ප්‍රතිසාධනය කළ නොහැක."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"කුණු කුඩය හිස් කරන්න"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>
