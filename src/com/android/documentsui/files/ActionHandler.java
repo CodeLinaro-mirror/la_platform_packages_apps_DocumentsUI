@@ -268,7 +268,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
     @VisibleForTesting
     public boolean openDocument(DocumentInfo doc, @ViewType int type, @ViewType int fallback) {
-        if (mConfig.isDocumentEnabled(doc.mimeType, doc.flags, mState)) {
+        if (mConfig.isDocumentEnabled(
+                doc.mimeType,
+                doc.flags,
+                doc.syncStateFlags,
+                mState,
+                mInjector.networkMonitor.isOnline())) {
             onDocumentOpened(doc, type, fallback, false);
             mSelectionMgr.clearSelection();
             return !doc.isContainer();

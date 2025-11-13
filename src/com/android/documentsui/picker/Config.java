@@ -24,6 +24,8 @@ import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 
 import android.provider.DocumentsContract.Document;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.ActivityConfig;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
@@ -34,8 +36,13 @@ import com.android.documentsui.base.State;
 final class Config extends ActivityConfig {
 
     @Override
-    public boolean canSelectType(String docMimeType, int docFlags, State state) {
-        if (!isDocumentEnabled(docMimeType, docFlags, state)) {
+    public boolean canSelectType(
+            String docMimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
+        if (!isDocumentEnabled(docMimeType, docFlags, syncStateFlags, state, isOnline)) {
             return false;
         }
 
@@ -54,7 +61,16 @@ final class Config extends ActivityConfig {
     }
 
     @Override
-    public boolean isDocumentEnabled(String mimeType, int docFlags, State state) {
+    public boolean isDocumentEnabled(
+            String mimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
+        if (!super.isDocumentEnabled(mimeType, docFlags, syncStateFlags, state, isOnline)) {
+            return false;
+        }
+
         // Directories are always enabled.
         if (MimeTypes.isDirectoryType(mimeType)) {
             return true;

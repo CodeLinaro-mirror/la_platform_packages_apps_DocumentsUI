@@ -18,9 +18,12 @@ package com.android.documentsui.dirlist;
 import static androidx.core.util.Preconditions.checkArgument;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
+import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 
 import android.database.Cursor;
+import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.util.Log;
 
@@ -41,9 +44,14 @@ final class DocsSelectionPredicate extends SelectionPredicate<String> {
     private Model mModel;
     private RecyclerView mRecView;
     private State mState;
+    private DocumentsAdapter.Environment mEnv;
 
     DocsSelectionPredicate(
-            ActivityConfig config, State state, Model model, RecyclerView recView) {
+            ActivityConfig config,
+            State state,
+            Model model,
+            RecyclerView recView,
+            DocumentsAdapter.Environment env) {
 
         checkArgument(config != null);
         checkArgument(state != null);
@@ -54,7 +62,7 @@ final class DocsSelectionPredicate extends SelectionPredicate<String> {
         mState = state;
         mModel = model;
         mRecView = recView;
-
+        mEnv = env;
     }
 
     @Override
@@ -69,7 +77,15 @@ final class DocsSelectionPredicate extends SelectionPredicate<String> {
 
             final String docMimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
             final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
-            return mConfig.canSelectType(docMimeType, docFlags, mState);
+            final Integer syncStateFlags =
+                    isCloudFeaturesFlagEnabled()
+                            ? getCursorInteger(
+                                    cursor,
+                                    DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                                    /* returnIfMissingOrNull= */ null)
+                            : null;
+            return mConfig.canSelectType(
+                    docMimeType, docFlags, syncStateFlags, mState, mEnv.isOnline());
         }
 
         // Right now all selected items can be deselected.
