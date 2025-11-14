@@ -18,7 +18,6 @@ package com.android.documentsui
 import android.content.Intent
 import android.content.Intent.ACTION_GET_CONTENT
 import android.os.Build.VERSION_CODES
-import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -27,7 +26,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import com.android.documentsui.flags.Flags.FLAG_REDIRECT_GET_CONTENT_RO
 import com.android.documentsui.picker.TrampolineActivity
 import com.android.documentsui.util.getPhotopickerGetContentComponentNameForType
 import com.google.common.truth.TruthJUnit.assume
@@ -50,17 +48,18 @@ import org.junit.runners.Suite.SuiteClasses
 @RunWith(Suite::class)
 @SuiteClasses(
     TrampolineActivityTest.ShouldLaunchCorrectPackageTest::class,
-    TrampolineActivityTest.RedirectTest::class
+    TrampolineActivityTest.RedirectTest::class,
 )
 class TrampolineActivityTest() {
     companion object {
         const val UI_TIMEOUT = 5000L
         val PHOTOPICKER_PACKAGE_REGEX: Pattern = Pattern.compile(".*(photopicker|media\\.module).*")
         val DOCUMENTSUI_PACKAGE_REGEX: Pattern = Pattern.compile(".*documentsui.*")
-        val STACK_LIST_REGEX: Pattern = Pattern.compile(
-            "taskId=(?<taskId>[0-9]+):(.+?)(photopicker|media\\.module|documentsui)",
-            Pattern.MULTILINE
-        )
+        val STACK_LIST_REGEX: Pattern =
+            Pattern.compile(
+                "taskId=(?<taskId>[0-9]+):(.+?)(photopicker|media\\.module|documentsui)",
+                Pattern.MULTILINE,
+            )
 
         private lateinit var device: UiDevice
 
@@ -104,9 +103,6 @@ class TrampolineActivityTest() {
 
     @LargeTest
     @RunWith(Parameterized::class)
-    // FLAG_REDIRECT_GET_CONTENT_RO cannot use @EnableFlags because the flag evaluation occurs in
-    // AndroidManifest and we cannot override the flag when it's used there.
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class ShouldLaunchCorrectPackageTest {
         enum class AppType {
             PHOTOPICKER,
@@ -131,18 +127,9 @@ class TrampolineActivityTest() {
             @JvmStatic
             fun parameters() =
                 listOf(
-                    GetContentIntentData(
-                        mimeType = "*/*",
-                        expectedApp = AppType.DOCUMENTSUI,
-                    ),
-                    GetContentIntentData(
-                        mimeType = "image/*",
-                        expectedApp = AppType.PHOTOPICKER,
-                    ),
-                    GetContentIntentData(
-                        mimeType = "video/*",
-                        expectedApp = AppType.PHOTOPICKER,
-                    ),
+                    GetContentIntentData(mimeType = "*/*", expectedApp = AppType.DOCUMENTSUI),
+                    GetContentIntentData(mimeType = "image/*", expectedApp = AppType.PHOTOPICKER),
+                    GetContentIntentData(mimeType = "video/*", expectedApp = AppType.PHOTOPICKER),
                     GetContentIntentData(
                         mimeType = "image/*",
                         extraMimeTypes = Optional.of(arrayOf("video/*")),
@@ -172,21 +159,17 @@ class TrampolineActivityTest() {
                         mimeType = "image/*",
                         extraMimeTypes = Optional.of(arrayOf()),
                         expectedApp = AppType.DOCUMENTSUI,
-                    )
+                    ),
                 )
         }
 
-        @Parameterized.Parameter(0)
-        lateinit var testData: GetContentIntentData
+        @Parameterized.Parameter(0) lateinit var testData: GetContentIntentData
 
-        @get:Rule
-        val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
         @Before
         fun setUp() {
-            runBlocking {
-                removePhotopickerAndDocumentsUITasks()
-            }
+            runBlocking { removePhotopickerAndDocumentsUITasks() }
         }
 
         @Test
@@ -204,30 +187,33 @@ class TrampolineActivityTest() {
 
             val isPhotopickerGetContentComponentAvailable =
                 getPhotopickerGetContentComponentNameForType(
-                    context.packageManager, testData.mimeType) != null
-            val bySelector = when {
-                testData.expectedApp == AppType.PHOTOPICKER &&
-                        isPhotopickerGetContentComponentAvailable -> By.pkg(
-                    PHOTOPICKER_PACKAGE_REGEX
-                )
-                else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
-            }
+                    context.packageManager,
+                    testData.mimeType,
+                ) != null
+            val bySelector =
+                when {
+                    testData.expectedApp == AppType.PHOTOPICKER &&
+                        isPhotopickerGetContentComponentAvailable ->
+                        By.pkg(PHOTOPICKER_PACKAGE_REGEX)
+                    else -> By.pkg(DOCUMENTSUI_PACKAGE_REGEX)
+                }
 
             val builder = StringBuilder()
             builder.append("Intent with mimetype ${testData.mimeType}")
             if (testData.extraMimeTypes.isPresent) {
-                val extraMimeTypes = when {
-                    testData.extraMimeTypes.get().isNotEmpty() -> {
-                        testData.extraMimeTypes.get().joinToString(", ")
+                val extraMimeTypes =
+                    when {
+                        testData.extraMimeTypes.get().isNotEmpty() -> {
+                            testData.extraMimeTypes.get().joinToString(", ")
+                        }
+                        else -> "empty array"
                     }
-                    else -> "empty array"
-                }
-                builder.append(
-                    " and EXTRA_MIME_TYPES of ($extraMimeTypes)"
-                )
+                builder.append(" and EXTRA_MIME_TYPES of ($extraMimeTypes)")
             }
-            if (testData.expectedApp == AppType.PHOTOPICKER &&
-                !isPhotopickerGetContentComponentAvailable) {
+            if (
+                testData.expectedApp == AppType.PHOTOPICKER &&
+                    !isPhotopickerGetContentComponentAvailable
+            ) {
                 builder.append(
                     " didn't cause ${AppType.DOCUMENTSUI} to appear " +
                         "(${AppType.PHOTOPICKER} is expected, but is not available in this " +
@@ -239,35 +225,28 @@ class TrampolineActivityTest() {
                 )
             }
 
-            assertNotNull(
-                builder.toString(),
-                device.wait(Until.findObject(bySelector), UI_TIMEOUT)
-            )
+            assertNotNull(builder.toString(), device.wait(Until.findObject(bySelector), UI_TIMEOUT))
         }
     }
 
     @LargeTest
     @RunWith(AndroidJUnit4::class)
-    // FLAG_REDIRECT_GET_CONTENT_RO cannot use @EnableFlags because the flag evaluation occurs in
-    // AndroidManifest and we cannot override the flag when it's used there.
-    @RequiresFlagsEnabled(FLAG_REDIRECT_GET_CONTENT_RO)
     class RedirectTest {
-        @get:Rule
-        val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
         @Before
         fun setUp() {
-            runBlocking {
-                removePhotopickerAndDocumentsUITasks()
-            }
+            runBlocking { removePhotopickerAndDocumentsUITasks() }
         }
 
         @Test
         fun testReferredGetContentFromPhotopickerShouldNotRedirectBack() {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
-            assume().that(
-                getPhotopickerGetContentComponentNameForType(context.packageManager, "image/*")
-            ).isNotNull()
+            assume()
+                .that(
+                    getPhotopickerGetContentComponentNameForType(context.packageManager, "image/*")
+                )
+                .isNotNull()
 
             val intent = Intent(ACTION_GET_CONTENT)
             intent.setClass(context, TrampolineActivity::class.java)
@@ -284,7 +263,7 @@ class TrampolineActivityTest() {
 
             assertNotNull(
                 "DocumentsUI has not launched",
-                device.wait(Until.findObject(By.pkg(DOCUMENTSUI_PACKAGE_REGEX)), UI_TIMEOUT)
+                device.wait(Until.findObject(By.pkg(DOCUMENTSUI_PACKAGE_REGEX)), UI_TIMEOUT),
             )
         }
 
