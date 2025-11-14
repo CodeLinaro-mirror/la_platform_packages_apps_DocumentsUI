@@ -68,9 +68,11 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
     protected void runCopyFilesTest() throws Exception {
         Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
         mDocs.writeDocument(testFile1, HAM_BYTES);
+        mDocs.waitForWrite();
 
         Uri testFile2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
         mDocs.writeDocument(testFile2, FRUITY_BYTES);
+        mDocs.waitForWrite();
 
         createJob(newArrayList(testFile1, testFile2)).run();
         mJobListener.waitForFinished();

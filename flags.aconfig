@@ -128,3 +128,11 @@ flag {
     bug: "451775371"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "drags_from_other_apps"
+    namespace: "documentsui"
+    description: "Enables handling of system-level drag events from other apps."
+    bug: "440196110"
+    is_fixed_read_only: true
+}

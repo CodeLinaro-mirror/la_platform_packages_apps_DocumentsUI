@@ -19,7 +19,7 @@ package com.android.documentsui.services;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
@@ -89,9 +89,12 @@ final class DeleteJob extends ResolvedResourcesJob {
 
     @Override
     public Notification getFailureNotification() {
-        return getFailureNotification(getFailureContentTitle(
-                        getRes(isDesktopUxPhase2FlagEnabled() ? R.string.delete_error_2
-                                : R.string.delete_error_notification_title)),
+        return getFailureNotification(
+                getFailureContentTitle(
+                        getRes(
+                                isUseMaterial3FlagEnabled()
+                                        ? R.string.delete_error_2
+                                        : R.string.delete_error_notification_title)),
                 getRes(R.drawable.ic_menu_delete));
     }
 

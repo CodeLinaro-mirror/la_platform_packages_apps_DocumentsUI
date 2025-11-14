@@ -340,6 +340,10 @@
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }
 
+-keep class com.android.documentsui.BaseActivity {
+  public int getLayoutId();
+}
+
 -keep class com.android.documentsui.base.RootInfo { *; }
 
 -keep class com.android.documentsui.base.ShortcutInfo { *; }

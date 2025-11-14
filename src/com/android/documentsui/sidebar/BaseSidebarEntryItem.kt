@@ -32,7 +32,6 @@ import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.SidebarEntryItemInfo
 import com.android.documentsui.base.UserId
-import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.button.MaterialButton
@@ -65,7 +64,7 @@ abstract class BaseSidebarEntryItem(
                     null
                 }
             )
-            if (isDesktopUxPhase2FlagEnabled()) {
+            if (isUseMaterial3FlagEnabled()) {
                 if (visibility == View.VISIBLE) {
                     FocusManager.setButtonFocusStyle(actionIcon)
                 } else {

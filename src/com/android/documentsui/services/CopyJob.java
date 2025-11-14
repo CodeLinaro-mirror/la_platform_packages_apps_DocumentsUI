@@ -36,7 +36,7 @@ import static com.android.documentsui.services.FileOperationService.EXTRA_OPERAT
 import static com.android.documentsui.services.FileOperationService.MESSAGE_FINISH;
 import static com.android.documentsui.services.FileOperationService.MESSAGE_PROGRESS;
 import static com.android.documentsui.services.FileOperationService.OPERATION_COPY;
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -171,9 +171,12 @@ class CopyJob extends ResolvedResourcesJob {
 
     @Override
     public Notification getFailureNotification() {
-        return getFailureNotification(getFailureContentTitle(
-                        getRes(isDesktopUxPhase2FlagEnabled() ? R.string.copy_error_2
-                                : R.string.copy_error_notification_title)),
+        return getFailureNotification(
+                getFailureContentTitle(
+                        getRes(
+                                isUseMaterial3FlagEnabled()
+                                        ? R.string.copy_error_2
+                                        : R.string.copy_error_notification_title)),
                 getRes(R.drawable.ic_menu_copy));
     }
 

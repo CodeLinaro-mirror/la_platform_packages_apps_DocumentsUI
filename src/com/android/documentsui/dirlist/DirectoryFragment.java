@@ -631,7 +631,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         SelectionPredicate<String> selectionPredicate =
-                new DocsSelectionPredicate(mInjector.config, mState, mModel, mRecView);
+                new DocsSelectionPredicate(mInjector.config, mState, mModel, mRecView, mAdapterEnv);
 
         mFocusManager = mInjector.getFocusManager(mRecView, mModel);
         mActions = mInjector.getActionHandler(mContentLock);
@@ -913,6 +913,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     private void showSearchResultBreadcrumb(BreadcrumbController controller, DocumentStack stack) {
         controller.getModel().setFromStack(stack);
+        controller.setVisible(true);
         if (stack.getRoot() != null && stack.getRoot().isRecents()) {
             // No click consumer for recents, as it would only take us back to recents.
             return;
@@ -935,6 +936,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      * @param controller The non-null breadcrumb controller to be adjusted.
      */
     private void hideSearchResultBreadcrumb(BreadcrumbController controller) {
+        controller.setVisible(false);
         controller.getModel().setPath(new String[0]);
         controller.setClickConsumer(null);
     }
@@ -1975,8 +1977,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         @Override
-        public boolean isDocumentEnabled(String mimeType, int flags) {
-            return mInjector.config.isDocumentEnabled(mimeType, flags, mState);
+        public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
+            return mInjector.config.isDocumentEnabled(
+                    mimeType, flags, syncStateFlags, mState, isOnline());
         }
 
         @Override

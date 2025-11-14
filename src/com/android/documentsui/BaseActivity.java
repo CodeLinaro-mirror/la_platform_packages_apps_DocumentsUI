@@ -19,8 +19,8 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -57,6 +57,7 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwnerKt;
@@ -265,11 +266,7 @@ public abstract class BaseActivity
                 // Bind event listener for the burger menu on nav rail.
                 MaterialButton burgerMenu = findViewById(getRes(R.id.nav_rail_burger_menu));
                 burgerMenu.setOnClickListener(v -> mDrawer.setOpen(true));
-                if (isDesktopUxPhase2FlagEnabled()) {
-                    FocusManager.setButtonFocusStyle(burgerMenu);
-                } else {
-                    burgerMenu.setOnFocusChangeListener(this::onBurgerMenuFocusChange);
-                }
+                FocusManager.setButtonFocusStyle(burgerMenu);
             }
         }
 
@@ -336,6 +333,16 @@ public abstract class BaseActivity
 
                     @Override
                     public void onSearchFinished() {
+                        // Always try to hide the breadcrumb view v2, which is to be active only
+                        // when search or recent results are selected. It is possible for the user
+                        // to exit search results without deselecting a file, for example, via
+                        // breadcrumb folder click.
+                        if (isSearchV2Enabled()) {
+                            BreadcrumbController controller = mInjector.getBreadcrumbController();
+                            if (controller != null) {
+                                controller.setVisible(false);
+                            }
+                        }
                         // When docked search bar is used, no need to invalidate the options menus
                         // because docked search bar won't affect the options menu, invalidating it
                         // will affect the tab navigation between the docked search bar and the
@@ -693,8 +700,11 @@ public abstract class BaseActivity
         View pickerSaverContainer = findViewById(getRes(R.id.container_save));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        final int drawerPaddingBottom =
+                getResources().getDimensionPixelSize(getRes(R.dimen.drawer_padding_bottom));
 
         if (isUseMaterial3FlagEnabled()) {
+            WindowCompat.enableEdgeToEdge(getWindow());
             ViewCompat.setOnApplyWindowInsetsListener(
                     root,
                     (v, insets) -> {
@@ -707,31 +717,58 @@ public abstract class BaseActivity
                                         && tappableInsets.bottom < navBarInsets.bottom;
 
                         // System bars includes both status bar (top) and navigation bar (bottom)
-                        // and also others, the insets will only have non-zero values when the app
-                        // might be overlapped with these areas (i.e. in fullscreen mode),
-                        // otherwise (i.e. in window mode) they will all be 0.
-                        Insets systemBarInsets =
-                                insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                        // Bottom padding for the root container is always 0, we only add bottom
-                        // padding for the picker saver container (i.e. which is located at the
-                        // bottom of the right section) because we don't want bottom padding on the
-                        // navigation tree area.
-                        v.setPadding(
-                                systemBarInsets.left,
-                                systemBarInsets.top,
-                                systemBarInsets.right,
-                                0);
+                        // and also others, and display cutout is for the front camera cutout, the
+                        // insets will only have non-zero values when the app might be overlapped
+                        // with these areas (i.e. in fullscreen mode), otherwise (i.e. in window
+                        // mode) they will all be 0.
+                        Insets systemInsets =
+                                insets.getInsets(
+                                        WindowInsetsCompat.Type.systemBars()
+                                                | WindowInsetsCompat.Type.displayCutout());
+                        // Bottom padding for the root container is always 0, because we want
+                        // different bottom paddings for the left section (navigation tree area) and
+                        // the right section (picker saver container).
+                        v.setPadding(systemInsets.left, systemInsets.top, systemInsets.right, 0);
                         // When Gesture navigation is used, we use its height (i.e.
-                        // systemBarInsets.bottom) as the bottom padding for the picker saver
-                        // without adding additional "getBottomPadding()" so avoid the total bottom
+                        // systemInsets.bottom) as the bottom padding for the picker saver
+                        // without adding additional "getBottomPadding()" to avoid the total bottom
                         // padding looks too big (because gesture navigation area is transparent).
                         pickerSaverContainer.setPadding(
                                 0,
                                 0,
                                 0,
                                 isGestureNav
-                                        ? systemBarInsets.bottom
-                                        : (systemBarInsets.bottom + getBottomPadding()));
+                                        ? systemInsets.bottom
+                                        : (systemInsets.bottom + getBottomPadding()));
+                        // When Gesture navigation is used, we use its height (i.e.
+                        // systemInsets.bottom) as the bottom padding for the navigation tree
+                        // roots (both in drawer and nav rail) without adding additional
+                        // "drawerPaddingBottom" to avoid the total bottom padding looks too big
+                        // (because gesture navigation area is transparent). Note: the padding must
+                        // be added to the "roots_list" (the recycler view) because the bottom
+                        // padding must be part of the scrollable area.
+                        View drawerRootsList =
+                                findViewById(getRes(R.id.container_roots))
+                                        .findViewById(getRes(R.id.roots_list));
+                        int rootListBottomPadding =
+                                isGestureNav
+                                        ? systemInsets.bottom
+                                        : (systemInsets.bottom + drawerPaddingBottom);
+                        drawerRootsList.setPadding(
+                                drawerRootsList.getPaddingLeft(),
+                                drawerRootsList.getPaddingTop(),
+                                drawerRootsList.getPaddingRight(),
+                                rootListBottomPadding);
+                        View navRailContainer = findViewById(getRes(R.id.nav_rail_container_roots));
+                        if (navRailContainer != null) {
+                            View navRailRootsList =
+                                    navRailContainer.findViewById(getRes(R.id.roots_list));
+                            navRailRootsList.setPadding(
+                                    navRailRootsList.getPaddingLeft(),
+                                    navRailRootsList.getPaddingTop(),
+                                    navRailRootsList.getPaddingRight(),
+                                    rootListBottomPadding);
+                        }
                         return WindowInsetsCompat.CONSUMED;
                     });
         } else {
@@ -904,7 +941,7 @@ public abstract class BaseActivity
             setViewMode(MODE_GRID);
             return true;
         } else if (id == getRes(R.id.sub_menu_list)) {
-            setViewMode(State.MODE_LIST);
+            setViewMode(MODE_LIST);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -968,7 +1005,8 @@ public abstract class BaseActivity
             mSearchManager.setCurrentSearch(mSearchManager.getQueryContentFromIntent());
         }
 
-        mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), MODE_GRID);
+        final int fallback = isUseMaterial3FlagEnabled() ? MODE_LIST : MODE_GRID;
+        mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), fallback);
 
         mNavigator.update();
 
@@ -1057,9 +1095,9 @@ public abstract class BaseActivity
      * Set mode based on explicit user action.
      */
     void setViewMode(@ViewMode int mode) {
-        if (mode == State.MODE_GRID) {
+        if (mode == MODE_GRID) {
             Metrics.logUserAction(MetricConsts.USER_ACTION_GRID);
-        } else if (mode == State.MODE_LIST) {
+        } else if (mode == MODE_LIST) {
             Metrics.logUserAction(MetricConsts.USER_ACTION_LIST);
         }
 
@@ -1432,20 +1470,5 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
-    }
-
-    /**
-     * When the burger menu is focused, adding a focus ring indicator using Stroke.
-     * TODO(b/381957932): Remove this once Material Button supports focus ring.
-     */
-    private void onBurgerMenuFocusChange(View v, boolean hasFocus) {
-        MaterialButton burgerMenu = (MaterialButton) v;
-        if (hasFocus) {
-            final int focusRingWidth =
-                    getResources().getDimensionPixelSize(getRes(R.dimen.focus_ring_width));
-            burgerMenu.setStrokeWidth(focusRingWidth);
-        } else {
-            burgerMenu.setStrokeWidth(0);
-        }
     }
 }

@@ -17,12 +17,15 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
+import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
+import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -190,8 +193,15 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
         final String docMimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
         final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
         final int userIdIdentifier = getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID);
+        final Integer syncStateFlags =
+                isCloudFeaturesFlagEnabled()
+                        ? getCursorInteger(
+                                cursor,
+                                DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                                /* returnIfMissingOrNull= */ null)
+                        : null;
 
-        boolean enabled = mEnv.isDocumentEnabled(docMimeType, docFlags);
+        boolean enabled = mEnv.isDocumentEnabled(docMimeType, docFlags, syncStateFlags);
         boolean selected = mEnv.isSelected(modelId);
         if (!enabled) {
             assert (!selected);

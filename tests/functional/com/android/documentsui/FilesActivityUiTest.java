@@ -31,18 +31,24 @@ import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.annotation.Nullable;
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.net.Uri;
 import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
+import android.view.View;
 
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
@@ -331,6 +337,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         try {
             DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
             assertNotNull(info);
+            EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
 
             // Create a zip file in "Download" folder. Since we are creating a file in the Download
             // folder, create a unique name that has little to no chance of colliding with actual
@@ -554,5 +561,81 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.breadcrumb.assertItemsPresent("Folder C");
         bots.roots.assertItemSelected("Folder C");
         bots.roots.assertItemNotSelected("Folder 3");
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testSetContainerPadding_gestureNav() {
+        mActivityScenario.onActivity(
+                activity -> {
+                    final int systemBarsBottom = 50;
+                    dispatchWindowInsets(activity, systemBarsBottom, 0);
+                    assertBottomPadding(activity, /* isGestureNav= */ true, systemBarsBottom);
+                });
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testSetContainerPadding_3ButtonNav() {
+        mActivityScenario.onActivity(
+                activity -> {
+                    final int systemBarsBottom = 100;
+                    dispatchWindowInsets(activity, systemBarsBottom, systemBarsBottom);
+                    assertBottomPadding(activity, /* isGestureNav= */ false, systemBarsBottom);
+                });
+    }
+
+    private void dispatchWindowInsets(
+            Activity activity, int systemBarsBottom, int tappableElementBottom) {
+        WindowInsetsCompat insets =
+                new WindowInsetsCompat.Builder()
+                        .setInsets(
+                                WindowInsetsCompat.Type.systemBars(),
+                                Insets.of(0, 0, 0, systemBarsBottom))
+                        .setInsets(
+                                WindowInsetsCompat.Type.navigationBars(),
+                                Insets.of(0, 0, 0, systemBarsBottom))
+                        .setInsets(
+                                WindowInsetsCompat.Type.tappableElement(),
+                                Insets.of(0, 0, 0, tappableElementBottom))
+                        .build();
+        ViewCompat.dispatchApplyWindowInsets(
+                activity.findViewById(getRes(R.id.coordinator_layout)), insets);
+    }
+
+    private void assertBottomPadding(
+            Activity activity, boolean isGestureNav, int systemBarsBottom) {
+        View root = activity.findViewById(getRes(R.id.coordinator_layout));
+        View pickerSaverContainer = activity.findViewById(getRes(R.id.container_save));
+        View drawerRootsList =
+                activity.findViewById(getRes(R.id.container_roots))
+                        .findViewById(getRes(R.id.roots_list));
+        assertNotNull(root);
+        assertNotNull(pickerSaverContainer);
+        assertNotNull(drawerRootsList);
+
+        // Verify root container's bottom padding.
+        assertEquals(0, root.getPaddingBottom());
+
+        // Verify picker/saver container's bottom padding.
+        int layoutPaddingBottom =
+                activity.getResources().getDimensionPixelSize(R.dimen.layout_padding_bottom);
+        int expectedBottomPaddingForPicker =
+                isGestureNav ? systemBarsBottom : systemBarsBottom + layoutPaddingBottom;
+        assertEquals(expectedBottomPaddingForPicker, pickerSaverContainer.getPaddingBottom());
+
+        // Verify navigation drawer and nav rail.
+        int drawerPaddingBottom =
+                activity.getResources().getDimensionPixelSize(R.dimen.drawer_padding_bottom);
+        int expectedBottomPaddingForNav =
+                isGestureNav ? systemBarsBottom : systemBarsBottom + drawerPaddingBottom;
+        assertEquals(expectedBottomPaddingForNav, drawerRootsList.getPaddingBottom());
+        if (bots.roots.inNavRailLayout()) {
+            View navRailContainer = activity.findViewById(getRes(R.id.nav_rail_container_roots));
+            assertNotNull(navRailContainer);
+            View navRailRootsList = navRailContainer.findViewById(R.id.roots_list);
+            assertNotNull(navRailRootsList);
+            assertEquals(expectedBottomPaddingForNav, navRailRootsList.getPaddingBottom());
+        }
     }
 }

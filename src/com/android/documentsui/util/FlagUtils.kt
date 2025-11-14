@@ -45,6 +45,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_USE_FILE_SUMMARY,
                 Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
                 Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+                Flags.FLAG_DRAGS_FROM_OTHER_APPS,
             )
 
         @JvmStatic
@@ -200,6 +201,13 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                         Flags.useAllfilesRootForRecents(),
                     )
             return flag && isSearchV2Enabled()
+        }
+
+        @JvmStatic
+        fun isDragsFromOtherAppsEnabled(): Boolean {
+            return getInstance()
+                .overrides
+                .getOrDefault(Flags.FLAG_DRAGS_FROM_OTHER_APPS, Flags.dragsFromOtherApps())
         }
     }
 
