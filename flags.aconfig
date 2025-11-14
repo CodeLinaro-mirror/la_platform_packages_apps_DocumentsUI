@@ -136,3 +136,11 @@ flag {
     bug: "440464827"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "use_new_open_with"
+    namespace: "documentsui"
+    description: "Enables the new open-with flow that relies on implicit routing to ResolverActivity."
+    bug: "459640815"
+    is_fixed_read_only: true
+}
