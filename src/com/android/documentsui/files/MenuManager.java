@@ -35,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.selection.SelectionTracker;
 
+import com.android.documentsui.Injector;
 import com.android.documentsui.JobPanelController;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
@@ -68,9 +69,17 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             SelectionTracker<String> selectionManager,
             LookupApplicationName appNameLookup,
             Lookup<String, Uri> uriLookup,
-            IntSupplier filesCountSupplier) {
+            IntSupplier filesCountSupplier,
+            Injector<?> injector) {
 
-        super(searchManager, displayState, dirDetails, filesCountSupplier, context, features);
+        super(
+                searchManager,
+                displayState,
+                dirDetails,
+                filesCountSupplier,
+                context,
+                features,
+                injector);
 
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;

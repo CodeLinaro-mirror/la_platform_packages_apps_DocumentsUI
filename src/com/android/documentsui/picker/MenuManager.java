@@ -37,6 +37,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.android.documentsui.Injector;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
 import com.android.documentsui.base.Features;
@@ -59,8 +60,16 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             DirectoryDetails dirDetails,
             IntSupplier filesCountSupplier,
             Context context,
-            Features features) {
-        super(searchManager, displayState, dirDetails, filesCountSupplier, context, features);
+            Features features,
+            Injector<?> injector) {
+        super(
+                searchManager,
+                displayState,
+                dirDetails,
+                filesCountSupplier,
+                context,
+                features,
+                injector);
     }
 
     @Override

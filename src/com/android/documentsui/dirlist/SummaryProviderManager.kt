@@ -21,8 +21,15 @@ import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Root
 import android.util.Log
+import android.view.MenuItem
+import androidx.annotation.VisibleForTesting
+import androidx.fragment.app.FragmentManager
+import com.android.documentsui.R
+import com.android.documentsui.SummaryConsentFragment
+import com.android.documentsui.base.Menus
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
+import com.android.documentsui.prefs.LocalPreferences
 import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,17 +38,43 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val TAG = "SummaryProviderManager"
-
 /**
- * Represents the state of the local summary provider. See the updateState() method below for the
- * conditions where it gets disabled.
+ * Represents the state of the file summary provider, detailing its availability and whether it's
+ * currently active for the user.
+ *
+ * This sealed interface covers all possible conditions, from the feature being globally disabled to
+ * being available and toggled by the user.
  */
-enum class SummaryState {
-    // The INITIALIZING state allow the test to wait for the start() method to complete.
-    INITIALIZING,
-    ENABLED,
-    DISABLED,
+sealed interface SummaryProviderState {
+    /**
+     * The initial state before the provider's status has been determined. The UI should typically
+     * wait or show a loading state.
+     */
+    object Initializing : SummaryProviderState
+
+    /**
+     * The state when the feature is disabled via a global feature flag (`isUseFileSummaryEnabled`).
+     * In this state, all summary-related UI and logic should be hidden and inactive.
+     */
+    object FlagDisabled : SummaryProviderState
+
+    /**
+     * The state when the summary provider APK is not installed or its component is disabled on the
+     * device. The feature is unavailable and cannot be enabled by the user. All summary-related UI
+     * should be hidden.
+     */
+    object ProviderUnavailable : SummaryProviderState
+
+    /**
+     * The state when the provider is installed and the feature flag is enabled. This means the
+     * feature is available for the user to toggle on or off.
+     *
+     * @property isUserEnabled Indicates the user's current choice. This is determined by a
+     *   combination of the provider's reported status (via `Root.FLAG_EMPTY`) and the user's
+     *   preference stored in `LocalPreferences`. If `true`, the summary is active. If `false`, the
+     *   summary is inactive, but the user can choose to enable it through the UI.
+     */
+    data class Available(val isUserEnabled: Boolean) : SummaryProviderState
 }
 
 /**
@@ -50,24 +83,36 @@ enum class SummaryState {
  * This class is responsible for determining if the summary provider is enabled and notifying
  * listeners of any state changes.
  */
-class SummaryProviderManager(
+open class SummaryProviderManager(
     private val context: Context,
     private val scope: CoroutineScope,
     val authorityUri: Uri?,
 ) {
-    private val _state = MutableStateFlow(SummaryState.INITIALIZING)
-    val state: StateFlow<SummaryState> = _state
+    private val _state = MutableStateFlow<SummaryProviderState>(SummaryProviderState.Initializing)
+    val state: StateFlow<SummaryProviderState> = _state
+
+    // Override for tests.
+    private var overrideConsentTitle: String? = null
+    private var overrideConsentMessage: String? = null
 
     val authority: String? = authorityUri?.authority
 
     private var contentObserver: ContentObserver? = null
     private val contentResolver = context.contentResolver
 
+    companion object {
+        private const val TAG = "SummaryProviderManager"
+    }
+
     /** Starts monitoring the summary provider's state. */
-    fun start() {
+    open fun start() {
+        if (!isUseFileSummaryEnabled()) {
+            _state.value = SummaryProviderState.FlagDisabled
+            return
+        }
         Log.d(TAG, "Authority: $authority - $authorityUri")
         if (authority.isNullOrEmpty() || authorityUri == Uri.EMPTY) {
-            _state.value = SummaryState.DISABLED
+            _state.value = SummaryProviderState.ProviderUnavailable
             return
         }
 
@@ -84,6 +129,8 @@ class SummaryProviderManager(
      */
     private fun startContentObserver() {
         try {
+            // Stop any potentially existing/running observer.
+            stop()
             val rootsUri = DocumentsContract.buildRootsUri(authority!!)
             val contentObserver =
                 object : ContentObserver(null) {
@@ -112,7 +159,7 @@ class SummaryProviderManager(
      */
     private suspend fun updateState() {
         if (authority.isNullOrEmpty()) {
-            _state.value = SummaryState.DISABLED
+            _state.value = SummaryProviderState.ProviderUnavailable
             return
         }
 
@@ -122,14 +169,14 @@ class SummaryProviderManager(
 
             try {
                 val rootId = DocumentsContract.getRootId(authorityUri)
-                var foundRoot = false
-
                 val cursor = contentResolver.query(rootsUri, projection, null, null, null)
                 if (cursor == null) {
                     Log.w(TAG, "Summary provider $authority returned null, assuming disabled")
-                    _state.value = SummaryState.DISABLED
+                    _state.value = SummaryProviderState.ProviderUnavailable
                     return@withContext
                 }
+                val userHasEnabledInSettings = LocalPreferences.isSummaryEnabled(context)
+
                 cursor.use {
                     while (it.moveToNext()) {
                         val currentRootId =
@@ -137,24 +184,22 @@ class SummaryProviderManager(
                         if (currentRootId != rootId) {
                             continue
                         }
-                        foundRoot = true
                         val flags = it.getInt(it.getColumnIndexOrThrow(Root.COLUMN_FLAGS))
-                        // The FLAG_EMPTY is used by the provider to signal that it's
-                        // disabled, for example, when the user has not given consent.
-                        if ((flags and Root.FLAG_EMPTY) != 0) {
-                            _state.value = SummaryState.DISABLED
-                        } else {
-                            _state.value = SummaryState.ENABLED
-                        }
-                    }
-                    if (!foundRoot) {
-                        Log.w(TAG, "Root $rootId not found in $authority, assuming disabled")
-                        _state.value = SummaryState.DISABLED
+                        // The FLAG_EMPTY is used by the provider to signal that it's available,
+                        // however it's disabled. User can enable by choosing to display the summary
+                        // column in the menu.
+                        val providerHasConsent = (flags and Root.FLAG_EMPTY) == 0
+                        val isEffectivelyEnabled = providerHasConsent && userHasEnabledInSettings
+                        _state.value =
+                            SummaryProviderState.Available(isUserEnabled = isEffectivelyEnabled)
+                        return@withContext
                     }
                 }
+                Log.w(TAG, "Root $rootId not found in $authority, assuming disabled")
+                _state.value = SummaryProviderState.ProviderUnavailable
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to query summary provider: $authority, assuming disabled", e)
-                _state.value = SummaryState.DISABLED
+                _state.value = SummaryProviderState.ProviderUnavailable
             }
         }
     }
@@ -165,7 +210,85 @@ class SummaryProviderManager(
      * collect the `state` flow.
      */
     fun isEnabled(): Boolean {
-        return state.value == SummaryState.ENABLED
+        val currentState = state.value
+        return currentState is SummaryProviderState.Available && currentState.isUserEnabled
+    }
+
+    private fun userSwitchSummaryEnabled() {
+        LocalPreferences.setSummaryEnabled(context, true)
+        _state.value = SummaryProviderState.Available(isUserEnabled = true)
+        // TODO(b/436750999): Notify summary provider.
+    }
+
+    private fun userSwitchSummaryDisabled() {
+        LocalPreferences.setSummaryEnabled(context, false)
+        _state.value = SummaryProviderState.Available(isUserEnabled = false)
+    }
+
+    /**
+     * Handles the click on the "Show summary column" menu item. If the summary is already enabled,
+     * it disables it. Otherwise, it shows the consent dialog.
+     */
+    fun onShowSummaryMenuClicked(fragmentManager: FragmentManager, refreshCallback: () -> Unit) {
+        if (LocalPreferences.isSummaryEnabled(context)) {
+            // Disabling the summary column.
+            userSwitchSummaryDisabled()
+            refreshCallback()
+            return
+        }
+
+        // Enabling the summary column.
+        val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
+        val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
+        SummaryConsentFragment.show(
+            fragmentManager,
+            context,
+            title,
+            message,
+            onPositiveButtonClick = {
+                userSwitchSummaryEnabled()
+                refreshCallback()
+            },
+            // Nothing needs to be done if user cancels.
+            onNegativeButtonClick = {},
+        )
+    }
+
+    fun updateMenuState(menuItem: MenuItem?) {
+        // This menu item maybe not be available before the flag is enabled, but if it exists we
+        // force it be hidden when the flag is disabled.
+        if (menuItem == null) {
+            return
+        }
+        val currentState = state.value
+        when (currentState) {
+            is SummaryProviderState.Initializing -> Menus.setEnabledAndVisible(menuItem, false)
+            is SummaryProviderState.FlagDisabled -> Menus.setEnabledAndVisible(menuItem, false)
+            is SummaryProviderState.ProviderUnavailable ->
+                Menus.setEnabledAndVisible(menuItem, false)
+
+            is SummaryProviderState.Available -> {
+                Menus.setEnabledAndVisible(menuItem, true)
+                if (currentState.isUserEnabled) {
+                    menuItem.setTitle(R.string.option_hide_summary_column)
+                } else {
+                    menuItem.setTitle(R.string.option_show_summary_column)
+                }
+            }
+        }
+    }
+
+    /** Force the consent dialog content to avoid relying on the RRO. */
+    @VisibleForTesting
+    fun setConsentMessage(title: String, message: String) {
+        overrideConsentTitle = title
+        overrideConsentMessage = message
+    }
+
+    /** Force the local state for unit tests. */
+    @VisibleForTesting
+    fun setStateForTest(state: SummaryProviderState) {
+        _state.value = state
     }
 }
 

@@ -499,10 +499,22 @@ public class UiBot extends Bots.BaseBot {
         onView(withText(resId)).check(matches(isDisplayed()));
     }
 
+    /** Asserts that the dialog title matches the given text. */
+    public void assertDialogTitle(String text) {
+        onView(withText(text)).check(matches(isDisplayed()));
+    }
+
     /** Asserts that the dialog message matches the given resource ID. */
     public void assertDialogMessage(int resId) {
         onView(withId(android.R.id.message))
                 .check(matches(withText(resId)))
+                .check(matches(isDisplayed()));
+    }
+
+    /** Asserts that the dialog message matches the given text. */
+    public void assertDialogMessage(String text) {
+        onView(withId(android.R.id.message))
+                .check(matches(withText(text)))
                 .check(matches(isDisplayed()));
     }
 }
