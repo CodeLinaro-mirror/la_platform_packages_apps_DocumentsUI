@@ -38,6 +38,7 @@ public class TestSelectionDetails implements SelectionDetails {
     public boolean canViewInOwner;
     public boolean canTrash;
     public boolean canRestore;
+    public boolean containsDisabledDocuments;
 
     @Override
     public boolean containsPartialFiles() {
@@ -107,6 +108,11 @@ public class TestSelectionDetails implements SelectionDetails {
     @Override
     public boolean canRestore() {
         return canRestore;
+    }
+
+    @Override
+    public boolean containsDisabledDocuments() {
+        return containsDisabledDocuments;
     }
 
     @Override
