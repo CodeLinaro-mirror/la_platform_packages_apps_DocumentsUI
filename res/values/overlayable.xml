@@ -75,11 +75,12 @@
             <item type="bool" name="force_material3"/>
             <item type="bool" name="handle_view_downloads_intent"/>
             <item type="bool" name="is_launcher_enabled"/>
+            <item type="bool" name="move_search_chip_when_selected"/>
             <item type="bool" name="show_apps_row"/>
             <item type="bool" name="show_media_roots"/>
-            <item type="bool" name="show_search_bar"/>
             <item type="bool" name="show_picker_cancel_button"/>
-            <item type="bool" name="move_search_chip_when_selected"/>
+            <item type="bool" name="show_preview_icon"/>
+            <item type="bool" name="show_search_bar"/>
             <!-- END BOOLEAN CONFIG -->
 
             <!-- START STRING CONFIG -->
