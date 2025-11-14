@@ -196,38 +196,32 @@
       <item quantity="other">无法复制以下文件：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">无法复制以下文件：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{以下文件无法复制：}other{以下文件无法复制：}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">无法压缩以下文件：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">无法压缩以下文件：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{以下文件未压缩：}other{以下文件未压缩：}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">无法解压以下文件：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">无法解压以下文件：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{以下文件未解压：}other{以下文件未解压：}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">无法移动以下文件：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">无法移动以下文件：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{以下文件未移动：}other{以下文件未移动：}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">无法删除以下文件：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">无法删除以下文件：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{以下文件未删除：}other{以下文件未删除：}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">已将以下文件转换成其他格式：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">已将以下文件转换成其他格式：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{以下文件已转换为其他格式：}other{以下文件已转换为其他格式：}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">已将 <xliff:g id="COUNT_1">%1$d</xliff:g> 个文件复制到剪贴板。</item>
       <item quantity="one">已将 <xliff:g id="COUNT_0">%1$d</xliff:g> 个文件复制到剪贴板。</item>
@@ -266,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"已删除"</string>
     <string name="compress_completed" msgid="6522047921428919799">"已压缩"</string>
     <string name="extract_completed" msgid="8824595789915249972">"已解压缩"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"无法复制"</string>
     <string name="move_failed" msgid="7692364307225994220">"无法移动"</string>
     <string name="delete_failed" msgid="2642684566325252513">"无法删除"</string>
     <string name="compress_failed" msgid="7397502181042157261">"无法压缩"</string>
     <string name="extract_failed" msgid="8372397499452831323">"无法解压缩"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"展开"</string>
     <string name="collapse_label" msgid="4530974883269531062">"收起"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"要授权<xliff:g id="APPNAME"><b>^1</b></xliff:g>访问<xliff:g id="STORAGE"><i>^3</i></xliff:g>上的“<xliff:g id="DIRECTORY"><i>^2</i></xliff:g>”目录吗？"</string>
@@ -314,12 +316,9 @@
     <string name="sign_in" msgid="6253762676723505592">"登录"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"归档<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"归档"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"要替换文件吗？"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"已有一个名为“<xliff:g id="NAME">%1$s</xliff:g>”的文件。"</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"替换"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"继续在后台执行"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other">已选择 <xliff:g id="COUNT_1">%1$d</xliff:g> 项</item>
@@ -345,24 +344,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"文档"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"大型文件"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"本周"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"名称"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"名称"</string>
     <string name="preview_file" msgid="4056622696305432343">"预览“<xliff:g id="FILENAME">%1$s</xliff:g>”文件"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"预览工作文件“<xliff:g id="FILENAME">%1$s</xliff:g>”"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"预览<xliff:g id="PROFILE">%1$s</xliff:g>文件“<xliff:g id="FILENAME">%2$s</xliff:g>”"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"浏览其他应用中的文件"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"匿名"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"使用此文件夹"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"要允许“<xliff:g id="APPNAME">%1$s</xliff:g>”访问文件夹吗？"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"允许访问“<xliff:g id="DIRECTORY">%1$s</xliff:g>”。"</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"无法使用此文件夹"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"为保护您的隐私，请选择其他文件夹"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"新建文件夹"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"在此设备上搜索"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"清除文字"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"根文件夹"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"所有位置"</string>

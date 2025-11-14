@@ -260,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"ഇല്ലാതാക്കി"</string>
     <string name="compress_completed" msgid="6522047921428919799">"സിപ്പ് ചെയ്തു"</string>
     <string name="extract_completed" msgid="8824595789915249972">"എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്തു"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"പകർത്താനായില്ല"</string>
     <string name="move_failed" msgid="7692364307225994220">"നീക്കാനായില്ല"</string>
     <string name="delete_failed" msgid="2642684566325252513">"ഇല്ലാതാക്കാനായില്ല"</string>
     <string name="compress_failed" msgid="7397502181042157261">"സിപ്പ് ചെയ്യാനായില്ല"</string>
     <string name="extract_failed" msgid="8372397499452831323">"എക്‌സ്‌ട്രാക്റ്റ് ചെയ്യാനായില്ല"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"വികസിപ്പിക്കുക"</string>
     <string name="collapse_label" msgid="4530974883269531062">"ചുരുക്കുക"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="STORAGE"><i>^3</i></xliff:g> സ്റ്റോറേജിലെ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> എന്ന ഡയറക്റ്ററിയിലേക്ക് <xliff:g id="APPNAME"><b>^1</b></xliff:g> ആപ്പിന് ആക്സസ് അനുവദിക്കണോ?"</string>
@@ -350,6 +358,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"നിങ്ങളുടെ സ്വകാര്യത പരിരക്ഷിക്കാൻ മറ്റൊരു ഫോൾഡർ തിരഞ്ഞെടുക്കുക"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"പുതിയ ഫോൾഡർ സൃഷ്‌ടിക്കുക"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ഈ ഉപകരണം തിരയുക"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"ടെക്‌സ്‌റ്റ് മായ്‌ക്കുക"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"റൂട്ട് ഫോൾഡർ"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"എല്ലായിടത്തും"</string>

@@ -272,11 +272,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"Избрисано"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Зиповано"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Издвојено"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"Копирање није успело"</string>
     <string name="move_failed" msgid="7692364307225994220">"Премештање није успело"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Брисање није успело"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Зиповање није успело"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Издвајање није успело"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"Проширите"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Скупите"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Желите ли да дозволите апликацији <xliff:g id="APPNAME"><b>^1</b></xliff:g> да приступа фолдеру <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> на меморијском простору <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
@@ -368,6 +376,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Да бисте заштитили приватност, одаберите неки други фолдер"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Направи нови фолдер"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Претражи овај уређај"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"Обриши текст"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Основни фолдер"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Свуда"</string>

@@ -196,38 +196,32 @@
       <item quantity="other">ឯកសារ​ទាំងនេះ​មិនត្រូវ​បាន​ចម្លង​ទេ៖ <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ឯកសារ​នេះ​មិនត្រូវ​បាន​ចម្លង​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{ឯកសារនេះមិនត្រូវបានចម្លងទេ៖}other{ឯកសារទាំងនេះមិនត្រូវបានចម្លងទេ៖}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">ឯកសារ​ទាំងនេះ​មិន​ត្រូវ​បាន​បង្ហាប់ទេ៖ <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ឯកសារ​នេះ​មិន​ត្រូវ​បាន​បង្ហាប់ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{ឯកសារនេះមិនត្រូវបានបង្ហាប់ទេ៖}other{ឯកសារទាំងនេះមិនត្រូវបានបង្ហាប់ទេ៖}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">ឯកសារ​ទាំងនេះ​មិន​ត្រូវ​បាន​ស្រង់​ទេ៖ <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ឯកសារ​នេះ​មិន​ត្រូវ​បាន​ស្រង់​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{ឯកសារនេះមិនត្រូវបានដកស្រង់ទេ៖}other{ឯកសារទាំងនេះមិនត្រូវបានដកស្រង់ទេ៖}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">ឯកសារ​ទាំងនេះ​មិន​ត្រូវ​បាន​ផ្លាស់ទី​ទេ៖ <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ឯកសារ​នេះ​មិន​ត្រូវ​បាន​ផ្លាស់ទី​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{ឯកសារនេះមិនត្រូវបានផ្លាស់ទីទេ៖}other{ឯកសារទាំងនេះមិនត្រូវបានផ្លាស់ទីទេ៖}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">ឯកសារ​ទាំងនេះ​មិន​ត្រូវ​បាន​លុប​ទេ៖ <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ឯកសារ​នេះ​មិន​ត្រូវ​បាន​លុប​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{ឯកសារ​នេះ​មិន​ត្រូវ​បាន​លុប​ទេ៖}other{ឯកសារ​ទាំងនេះ​មិន​ត្រូវ​បាន​លុប​ទេ៖}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">ឯកសារ​ទាំងនេះ​មិនត្រូវ​បាន​បម្លែង​ទៅ​ទម្រង់​ផ្សេង​ទេ៖ <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ឯកសារ​នេះ​មិនត្រូវ​បាន​បម្លែង​ទៅ​ទម្រង់​ផ្សេង​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ឯកសារ​នេះ​ត្រូវ​បាន​បំប្លែង​ទៅជា​ទម្រង់​ផ្សេងទៀត៖}other{ឯកសារ​ទាំងនេះ​ត្រូវ​បាន​បំប្លែង​ទៅជា​ទម្រង់​ផ្សេងទៀត៖}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">បាន​ចម្លងធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> ទៅអង្គចងចាំ។</item>
       <item quantity="one">បាន​ចម្លងធាតុ <xliff:g id="COUNT_0">%1$d</xliff:g> ទៅ​អង្គចងចាំ។</item>
@@ -266,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"បាន​លុប"</string>
     <string name="compress_completed" msgid="6522047921428919799">"បានបង្ហាប់"</string>
     <string name="extract_completed" msgid="8824595789915249972">"បានដកស្រង់"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"មិនអាច​ចម្លងបានទេ"</string>
     <string name="move_failed" msgid="7692364307225994220">"មិនអាចផ្លាស់ទីបានទេ"</string>
     <string name="delete_failed" msgid="2642684566325252513">"មិនអាច​លុប​បានទេ"</string>
     <string name="compress_failed" msgid="7397502181042157261">"មិនអាចបង្ហាប់បានទេ"</string>
     <string name="extract_failed" msgid="8372397499452831323">"មិនអាចដកស្រង់ចេញបានទេ"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"ពង្រីក"</string>
     <string name="collapse_label" msgid="4530974883269531062">"បង្រួម"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"ផ្តល់សិទ្ធិឲ្យ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ដើម្បីចូលដំណើរការថត <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> នៅលើ <xliff:g id="STORAGE"><i>^3</i></xliff:g> ឬ?"</string>
@@ -314,12 +316,9 @@
     <string name="sign_in" msgid="6253762676723505592">"ចូល"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"បណ្ណសារ<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"ទុក​ក្នុង​បណ្ណសារ"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"ជំនួសឯកសារឬ?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"ឯកសារដែលបានដាក់​ឈ្មោះថា \"<xliff:g id="NAME">%1$s</xliff:g>\" មានរួចហើយ។"</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"ជំនួស"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"បន្ត​នៅផ្ទៃ​ខាងក្រោយ"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other">បាន​ជ្រើសរើស <xliff:g id="COUNT_1">%1$d</xliff:g></item>
@@ -345,24 +344,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"ឯកសារ"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"ឯកសារទំហំធំ"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"សប្ដាហ៍​នេះ"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"ឈ្មោះ"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"ឈ្មោះ"</string>
     <string name="preview_file" msgid="4056622696305432343">"មើលឯកសារ <xliff:g id="FILENAME">%1$s</xliff:g> សាកល្បង"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"មើល​ឯកសារ​ការងារ <xliff:g id="FILENAME">%1$s</xliff:g> សាកល្បង"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"មើលឯកសារ<xliff:g id="PROFILE">%1$s</xliff:g> <xliff:g id="FILENAME">%2$s</xliff:g> សាកល្បង"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"រុករក​ឯកសារ​នៅក្នុង​កម្មវិធី​ផ្សេងទៀត"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"អនាមិក"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"ប្រើថតនេះ"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"អនុញ្ញាតឱ្យ <xliff:g id="APPNAME">%1$s</xliff:g> ចូលប្រើថតឬ?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"អនុញ្ញាតឱ្យចូលប្រើសម្រាប់ \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\"។"</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"មិនអាចប្រើ​ថតនេះ​បានទេ"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ដើម្បី​ការពារ​ឯកជនភាព​របស់អ្នក សូម​ជ្រើសរើស​ថតផ្សេងទៀត"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"បង្កើត​ថត​ថ្មី"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ស្វែងរកឧបករណ៍នេះ"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"សម្អាតអក្សរ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ថតដើម"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"គ្រប់ទីកន្លែង"</string>
