@@ -88,6 +88,8 @@ public abstract class TestMenu implements Menu {
                 R.id.action_menu_move_to_trash,
                 R.id.action_menu_restore_from_trash,
                 R.id.action_menu_open_in_new_window,
+                R.id.action_menu_cut_to_clipboard,
+                R.id.action_menu_copy_to_clipboard,
                 R.id.action_menu_paste_into_folder,
                 R.id.option_menu_search,
                 R.id.option_menu_debug,
@@ -100,6 +102,7 @@ public abstract class TestMenu implements Menu {
                 R.id.option_menu_sort,
                 R.id.option_menu_show_hidden_files,
                 R.id.option_menu_launcher,
+                R.id.option_menu_paste_from_clipboard,
                 R.id.sub_menu_grid,
                 R.id.sub_menu_list);
     }

@@ -19,6 +19,7 @@ package com.android.documentsui.files;
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
@@ -130,6 +131,8 @@ public final class MenuManagerTest {
     private TestMenuItem mActionModeRestoreFromTrash;
     private TestMenuItem mActionModeSelect;
     private TestMenuItem mActionModeOpenInNewWindow;
+    private TestMenuItem mActionModeCut;
+    private TestMenuItem mActionModeCopy;
     private TestMenuItem mActionModePasteIntoFolder;
 
     /* Option Menu items */
@@ -144,6 +147,7 @@ public final class MenuManagerTest {
     private TestMenuItem mOptionLauncher;
     private TestMenuItem mOptionShowHiddenFiles;
     private TestMenuItem mOptionExtractAll;
+    private TestMenuItem mOptionPaste;
 
     /* Sub Option Menu items */
     private TestMenuItem subOptionGrid;
@@ -229,6 +233,8 @@ public final class MenuManagerTest {
         mActionModeTrash = testMenu.findItem(R.id.action_menu_move_to_trash);
         mActionModeRestoreFromTrash = testMenu.findItem(R.id.action_menu_restore_from_trash);
         mActionModeOpenInNewWindow = testMenu.findItem(R.id.action_menu_open_in_new_window);
+        mActionModeCut = testMenu.findItem(R.id.action_menu_cut_to_clipboard);
+        mActionModeCopy = testMenu.findItem(R.id.action_menu_copy_to_clipboard);
         mActionModePasteIntoFolder = testMenu.findItem(R.id.action_menu_paste_into_folder);
 
         // Menu actions (including overflow) when action mode is not active.
@@ -243,6 +249,7 @@ public final class MenuManagerTest {
         mOptionLauncher = testMenu.findItem(R.id.option_menu_launcher);
         mOptionShowHiddenFiles = testMenu.findItem(R.id.option_menu_show_hidden_files);
         mOptionExtractAll = testMenu.findItem(R.id.option_menu_extract_all);
+        mOptionPaste = testMenu.findItem(R.id.option_menu_paste_from_clipboard);
 
         // Menu actions on root title row.
         subOptionGrid = testMenu.findItem(R.id.sub_menu_grid);
@@ -308,6 +315,11 @@ public final class MenuManagerTest {
         assumeTrue(VersionUtils.isGreaterThanB());
     }
 
+    private boolean shouldShowCopyCutMenus() {
+        return isDesktopUxPhase2FlagEnabled()
+                && !(activity.getResources().getBoolean(R.bool.show_copy_to_move_to_menus));
+    }
+
     @Test
     public void testActionMenu() {
         selectionDetails.canDelete = true;
@@ -319,16 +331,22 @@ public final class MenuManagerTest {
         actionModeRename.assertEnabledAndVisible();
         actionModeDelete.assertEnabledAndVisible();
         actionModeShare.assertEnabledAndVisible();
-        actionModeCopyTo.assertEnabledAndVisible();
         actionModeCompress.assertEnabledAndVisible();
         actionModeExtractTo.assertDisabledAndInvisible();
-        actionModeMoveTo.assertEnabledAndVisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
         mActionModeTrash.assertDisabledAndInvisible();
         mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCopy.assertEnabledAndVisible();
+            mActionModeCut.assertEnabledAndVisible();
+        } else {
+            actionModeCopyTo.assertEnabledAndVisible();
+            actionModeMoveTo.assertEnabledAndVisible();
+        }
     }
 
     @Test
@@ -408,14 +426,20 @@ public final class MenuManagerTest {
 
         actionModeRename.assertDisabledAndInvisible();
         actionModeShare.assertDisabledAndInvisible();
-        actionModeCopyTo.assertDisabledAndInvisible();
         actionModeCompress.assertDisabledAndInvisible();
         actionModeExtractTo.assertDisabledAndInvisible();
-        actionModeMoveTo.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
+
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertDisabledAndInvisible();
+            mActionModeCopy.assertDisabledAndInvisible();
+        } else {
+            actionModeMoveTo.assertDisabledAndInvisible();
+            actionModeCopyTo.assertDisabledAndInvisible();
+        }
     }
 
     @Test
@@ -458,7 +482,11 @@ public final class MenuManagerTest {
 
         actionModeDelete.assertDisabledAndInvisible();
         // We shouldn't be able to move files if we can't delete them
-        actionModeMoveTo.assertDisabledAndInvisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertDisabledAndInvisible();
+        } else {
+            actionModeMoveTo.assertDisabledAndInvisible();
+        }
     }
 
     @Test
@@ -500,7 +528,11 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeDelete.assertEnabledAndVisible();
-        actionModeMoveTo.assertEnabledAndVisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertEnabledAndVisible();
+        } else {
+            actionModeMoveTo.assertEnabledAndVisible();
+        }
     }
 
     @Test
@@ -539,7 +571,11 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeExtractTo.assertEnabledAndVisible();
-        actionModeCopyTo.assertDisabledAndInvisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertDisabledAndInvisible();
+        } else {
+            actionModeMoveTo.assertDisabledAndInvisible();
+        }
         actionModeCompress.assertDisabledAndInvisible();
     }
 
@@ -723,6 +759,45 @@ public final class MenuManagerTest {
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testOptionMenu_EmptyArea_NoItemToPaste() {
+        assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
+
+        dirDetails.hasItemsToPaste = false;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionPaste.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testOptionMenu_EmptyArea_CantCreateDoc() {
+        assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
+
+        dirDetails.hasItemsToPaste = true;
+        dirDetails.canCreateDoc = false;
+
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionPaste.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testOptionMenu_EmptyArea_CanPaste() {
+        assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
+
+        dirDetails.hasItemsToPaste = true;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionPaste.assertEnabledAndVisible();
     }
 
     @Test

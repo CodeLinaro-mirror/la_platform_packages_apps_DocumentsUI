@@ -40,9 +40,11 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
+import com.android.documentsui.files.TestActivity;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDirectoryDetails;
+import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
@@ -131,6 +133,9 @@ public final class MenuManagerTest {
 
     private int mFilesCount;
 
+    private final com.android.documentsui.files.TestActivity mActivity =
+            TestActivity.create(TestEnv.create());
+
     @Before
     public void setUp() {
         testMenu = TestMenu.create();
@@ -191,7 +196,7 @@ public final class MenuManagerTest {
         selectionDetails = new TestSelectionDetails();
         dirDetails = new TestDirectoryDetails();
         testSearchManager = new TestSearchViewManager();
-        mgr = new MenuManager(testSearchManager, state, dirDetails, this::getFilesCount);
+        mgr = new MenuManager(testSearchManager, state, dirDetails, this::getFilesCount, mActivity);
         selectionDetails.size = 1;
         mFilesCount = 10;
 

@@ -48,6 +48,16 @@
     <group
         android:id="@+id/menu_clipboard_group">
         <item
+            android:id="@+id/action_menu_cut_to_clipboard"
+            android:title="@string/menu_cut_to_clipboard"
+            android:visible="false"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/action_menu_copy_to_clipboard"
+            android:title="@string/menu_copy_to_clipboard"
+            android:visible="false"
+            app:showAsAction="never" />
+        <item
             android:id="@+id/action_menu_paste_into_folder"
             android:title="@string/menu_paste_into_folder"
             android:visible="false"

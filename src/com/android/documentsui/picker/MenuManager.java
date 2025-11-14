@@ -25,6 +25,7 @@ import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
 import android.view.KeyboardShortcutGroup;
@@ -50,8 +51,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             SearchViewManager searchManager,
             State displayState,
             DirectoryDetails dirDetails,
-            IntSupplier filesCountSupplier) {
-        super(searchManager, displayState, dirDetails, filesCountSupplier);
+            IntSupplier filesCountSupplier,
+            Context context) {
+        super(searchManager, displayState, dirDetails, filesCountSupplier, context);
     }
 
     @Override

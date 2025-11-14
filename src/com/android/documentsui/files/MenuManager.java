@@ -59,7 +59,6 @@ import java.util.function.IntSupplier;
 public final class MenuManager extends com.android.documentsui.MenuManager {
 
     private final Features mFeatures;
-    private final Context mContext;
     private final SelectionTracker<String> mSelectionManager;
     private final Lookup<String, Uri> mUriLookup;
     private final LookupApplicationName mAppNameLookup;
@@ -76,10 +75,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Lookup<String, Uri> uriLookup,
             IntSupplier filesCountSupplier) {
 
-        super(searchManager, displayState, dirDetails, filesCountSupplier);
+        super(searchManager, displayState, dirDetails, filesCountSupplier, context);
 
         mFeatures = features;
-        mContext = context;
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;
         mUriLookup = uriLookup;

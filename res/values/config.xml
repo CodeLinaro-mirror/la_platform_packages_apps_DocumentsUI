@@ -29,6 +29,10 @@
     <!-- Indicates if showing the apps row -->
     <bool name="show_apps_row">true</bool>
 
+    <!-- Dictates whether we show "Copy to" and "Move to" menu items in the 3-dot menu when files
+         are selected. -->
+    <bool name="show_copy_to_move_to_menus">true</bool>
+
     <!-- Indicates if showing hidden files by default -->
     <bool name="show_hidden_files_by_default">false</bool>
 
