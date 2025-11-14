@@ -156,7 +156,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @DisableFlags({FLAG_USE_MATERIAL3}) // Enable when b/397315793 is fixed.
     public void testSearchView_ShouldHideOptionMenuOnExpanding() throws Exception {
         bots.search.expand();
         device.waitForIdle();
@@ -167,7 +166,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         assertFalse(bots.menu.hasMenuItem("Grid view"));
         assertFalse(bots.menu.hasMenuItem("List view"));
-        assertEquals(!bots.search.isFullBarSearchViewEnabled(),
+        assertEquals(
+                !bots.search.isFullBarSearchViewEnabled(),
                 bots.menu.hasMenuItemByDesc("More options"));
     }
 
