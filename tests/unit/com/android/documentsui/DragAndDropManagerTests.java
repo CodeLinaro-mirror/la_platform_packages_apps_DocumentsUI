@@ -652,6 +652,32 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    public void testUpdateStateWithNullRootInfo() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.HOME,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0);
+
+        KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
+        mManager.onKeyEvent(event);
+
+        event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_UP);
+        mManager.onKeyEvent(event);
+
+        final @State int state =
+                mManager.updateState(mUpdateShadowView, /* destItemInfo= */ null, TestEnv.FOLDER_1);
+
+        assertEquals(DragAndDropManager.STATE_UNKNOWN, state);
+    }
+
+    @Test
     @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testUpdateStateForShortcut_UpdatesToCopyDiffRoot() {
         mManager.startDrag(

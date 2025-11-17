@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Ezin dira ezabatu dokumentu batzuk"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ezin dira partekatu <xliff:g id="COUNT">%1$d</xliff:g> fitxategi baino gehiago"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Ez da onartzen ekintza"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Ez da onartzen ekintza"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Ireki honekin…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Ez dago aplikazio bateragarririk instalatuta. Instalatu bat Google Play Store-tik."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Bilatu Play Store-n"</string>
@@ -197,38 +196,32 @@
       <item quantity="other">Ez dira kopiatu fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ez da kopiatu fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{Ez da kopiatu fitxategi hau:}other{Ez dira kopiatu fitxategi hauek:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Ez dira konprimatu fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ez da konprimatu fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{Ez da konprimatu fitxategi hau:}other{Ez dira konprimatu fitxategi hauek:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Ez dira atera fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ez da atera fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{Ez da erauzi fitxategi hau:}other{Ez dira erauzi fitxategi hauek:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Ez dira mugitu fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ez da mugitu fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{Ez da mugitu fitxategi hau:}other{Ez dira mugitu fitxategi hauek:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Ez dira ezabatu fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Ez da ezabatu fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Ez da ezabatu fitxategi hau:}other{Ez dira ezabatu fitxategi hauek:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Beste formatu batera bihurtu dira fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Beste formatu batera bihurtu da fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Beste formatu batera bihurtu da fitxategi hau:}other{Beste formatu batera bihurtu dira fitxategi hauek:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementu kopiatu dira arbelean.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elementu kopiatu da arbelean.</item>
@@ -267,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"Ezabatu da"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Konprimatu da"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Atera da"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"Ezin izan da kopiatu"</string>
     <string name="move_failed" msgid="7692364307225994220">"Ezin izan da eraman"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Ezin izan da ezabatu"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Ezin izan da konprimatu"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Ezin izan da erauzi"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"Zabaldu"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Tolestu"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> aplikazioari <xliff:g id="STORAGE"><i>^3</i></xliff:g> unitateko <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> direktoriorako sarbidea eman nahi diozu?"</string>
@@ -315,12 +316,9 @@
     <string name="sign_in" msgid="6253762676723505592">"Hasi saioa"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"artxiboa<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Artxibatu"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"Fitxategia ordeztu nahi duzu?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"Badago \"<xliff:g id="NAME">%1$s</xliff:g>\" izeneko fitxategi bat."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"Ordeztu"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Jarraitu atzeko planoan"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> hautatuta</item>
@@ -346,24 +344,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Dokumentuak"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Fitxategi handiak"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Aste honetakoak"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"Izena"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"Izena"</string>
     <string name="preview_file" msgid="4056622696305432343">"Aurreikusi <xliff:g id="FILENAME">%1$s</xliff:g> fitxategia"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Aurreikusi laneko <xliff:g id="FILENAME">%1$s</xliff:g> fitxategia"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Aurreikusi profil honetako (<xliff:g id="PROFILE">%1$s</xliff:g>) <xliff:g id="FILENAME">%2$s</xliff:g> fitxategia"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Arakatu beste aplikazio batzuetako fitxategiak"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Anonimoa"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Erabili karpeta hau"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"Karpeta erabiltzeko baimena eman nahi diozu <xliff:g id="APPNAME">%1$s</xliff:g> aplikazioari?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"Eman \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\" erabiltzeko baimena."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Ezin da erabili karpeta hori"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Pribatutasuna babesteko, aukeratu beste karpeta bat"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Sortu karpeta bat"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Bilatu gailu honetan"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"Garbitu testua"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Erroko karpeta"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Edonon"</string>
@@ -399,6 +395,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Zaborrontzia hustu nahi duzu?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ezin da desegin ekintza, eta ezingo dira berreskuratu fitxategiak."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Hustu zaborrontzia"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"Ez zaude konektatuta. Baliteke fitxategi batzuk erabilgarri ez egotea. Internetera konektatzen zarenean berrekingo zaio sinkronizazioari."</string>
 </resources>

@@ -34,9 +34,9 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 /**
- * The controller for the search option dropdowns. This controller manages the UI interactions
- * and converts them to a state of the dropdowns. It must be created with the view that contains
- * the buttons that trigger showing or hiding of the dropdowns.
+ * The controller for the search option dropdowns. This controller manages the UI interactions and
+ * converts them to a state of the dropdowns. It must be created with the view that contains the
+ * buttons that trigger showing or hiding of the dropdowns.
  */
 class SearchOptionsController(private val container: View?) {
     // The value of currently selected options. Initialized to sensible defaults.
@@ -57,17 +57,17 @@ class SearchOptionsController(private val container: View?) {
             makeTrigger(
                 getRes(R.id.search_location_trigger),
                 getRes(R.menu.search_location_menu),
-                this::onLocationSelected
+                this::onLocationSelected,
             )
             makeTrigger(
                 getRes(R.id.search_last_modified_trigger),
                 getRes(R.menu.search_last_modified_menu),
-                this::onLastModifiedSelected
+                this::onLastModifiedSelected,
             )
             makeTrigger(
                 getRes(R.id.search_file_type_trigger),
                 getRes(R.menu.search_file_type_menu),
-                this::onFileTypeSelected
+                this::onFileTypeSelected,
             )
         }
     }
@@ -81,26 +81,23 @@ class SearchOptionsController(private val container: View?) {
         }
     }
 
-    /**
-     * Explicitly sets the file type based on a MetricConsts.
-     */
+    /** Explicitly sets the file type based on a MetricConsts. */
     public fun setSelectedFileType(@MetricConsts.SearchType typeId: Int) {
-        fileTypeOption = when (typeId) {
-            MetricConsts.TYPE_CHIP_AUDIOS -> FileTypeOption.AUDIO
-            MetricConsts.TYPE_CHIP_DOCS -> FileTypeOption.DOCUMENTS
-            MetricConsts.TYPE_CHIP_IMAGES -> FileTypeOption.IMAGES
-            MetricConsts.TYPE_CHIP_VIDEOS -> FileTypeOption.VIDEO
-            else -> throw IllegalArgumentException("Cannot convert $typeId to file type")
-        }
+        fileTypeOption =
+            when (typeId) {
+                MetricConsts.TYPE_CHIP_AUDIOS -> FileTypeOption.AUDIO
+                MetricConsts.TYPE_CHIP_DOCS -> FileTypeOption.DOCUMENTS
+                MetricConsts.TYPE_CHIP_IMAGES -> FileTypeOption.IMAGES
+                MetricConsts.TYPE_CHIP_VIDEOS -> FileTypeOption.VIDEO
+                else -> throw IllegalArgumentException("Cannot convert $typeId to file type")
+            }
     }
 
-    /**
-     * Helper function that removes repetitive setup for each of the option triggers.
-     */
+    /** Helper function that removes repetitive setup for each of the option triggers. */
     private fun makeTrigger(
         @IdRes triggerId: Int,
         @MenuRes menuId: Int,
-        callback: (option: Int) -> Boolean
+        callback: (option: Int) -> Boolean,
     ) {
         val trigger = container?.findViewById<Chip>(triggerId)
         trigger?.setOnClickListener {
@@ -113,8 +110,8 @@ class SearchOptionsController(private val container: View?) {
     }
 
     /**
-     * Updates the location option based on the given resource ID. Returns true, if the option
-     * has been changed. Otherwise, returns false.
+     * Updates the location option based on the given resource ID. Returns true, if the option has
+     * been changed. Otherwise, returns false.
      */
     fun onLocationSelected(locationId: Int): Boolean {
         val selectedOption = searchLocationOptionFor(locationId) ?: return false
@@ -127,8 +124,8 @@ class SearchOptionsController(private val container: View?) {
     }
 
     /**
-     * Updates the file type option based on the given resource ID. Returns true, if the option
-     * has been changed. Otherwise, returns false.
+     * Updates the file type option based on the given resource ID. Returns true, if the option has
+     * been changed. Otherwise, returns false.
      */
     fun onFileTypeSelected(fileTypeId: Int): Boolean {
         val selectedOption = fileTypeOptionFor(fileTypeId) ?: return false
@@ -152,22 +149,16 @@ class SearchOptionsController(private val container: View?) {
         return true
     }
 
-    /**
-     * Notifies an option listener about options change, if one is registered.
-     */
+    /** Notifies an option listener about options change, if one is registered. */
     fun notifyOptionsChangeListener() {
         optionsListener?.onOptionsChanged(
-            SearchOptionsState(
-                fileTypeOption,
-                lastModifiedOption,
-                locationOption
-            )
+            SearchOptionsState(fileTypeOption, lastModifiedOption, locationOption)
         )
     }
 
     /**
-     * Sets the option change listener. Currently only one listener is supported. If the listener
-     * is set to null, that is equivalent to removing the listener.
+     * Sets the option change listener. Currently only one listener is supported. If the listener is
+     * set to null, that is equivalent to removing the listener.
      */
     fun setOptionChangeListener(listener: SearchOptionsListener) {
         optionsListener = listener
@@ -182,10 +173,8 @@ class SearchOptionsController(private val container: View?) {
         if (lastModifiedOption != LastModifiedOption.ANY_TIME) {
             bundle.putLong(
                 DocumentsContract.QUERY_ARG_LAST_MODIFIED_AFTER,
-                LocalDate.now()
-                    .atStartOfDay(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli() - lastModifiedOption.millis
+                LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() -
+                    lastModifiedOption.millis,
             )
         }
         return bundle
@@ -193,22 +182,21 @@ class SearchOptionsController(private val container: View?) {
 
     private fun getFileTypeQueryArgs(): Bundle {
         val bundle = Bundle()
-        val mimeTypes = when (fileTypeOption) {
-            FileTypeOption.AUDIO -> SearchChipViewManager.AUDIO_MIMETYPES
-            FileTypeOption.DOCUMENTS -> SearchChipViewManager.DOCUMENTS_MIMETYPES
-            FileTypeOption.IMAGES -> SearchChipViewManager.IMAGES_MIMETYPES
-            FileTypeOption.VIDEO -> SearchChipViewManager.VIDEOS_MIMETYPES
-            else -> arrayOf<String>()
-        }
+        val mimeTypes =
+            when (fileTypeOption) {
+                FileTypeOption.AUDIO -> SearchChipViewManager.AUDIO_MIMETYPES
+                FileTypeOption.DOCUMENTS -> SearchChipViewManager.DOCUMENTS_MIMETYPES
+                FileTypeOption.IMAGES -> SearchChipViewManager.IMAGES_MIMETYPES
+                FileTypeOption.VIDEO -> SearchChipViewManager.VIDEOS_MIMETYPES
+                else -> arrayOf<String>()
+            }
         if (mimeTypes.isNotEmpty()) {
             bundle.putStringArray(DocumentsContract.QUERY_ARG_MIME_TYPES, mimeTypes)
         }
         return bundle
     }
 
-    /**
-     * Creates a bundle with query arguments compliant with DocumentsContract.
-     */
+    /** Creates a bundle with query arguments compliant with DocumentsContract. */
     fun getOptionsQueryArgs(): Bundle {
         val bundle = Bundle()
         bundle.putAll(getLastModifiedQueryArgs())
@@ -219,6 +207,7 @@ class SearchOptionsController(private val container: View?) {
     /**
      * Shows the search dropdown options bar. The root must be the root to which search is limited,
      * if the user selects current root search, rather than everywhere search.
+     *
      * @param root The current root in the directory tree.
      */
     fun show(root: RootInfo?) {
@@ -237,9 +226,7 @@ class SearchOptionsController(private val container: View?) {
         container.visibility = View.VISIBLE
     }
 
-    /**
-     * Hides the dropdown bar by making it GONE.
-     */
+    /** Hides the dropdown bar by making it GONE. */
     fun hide() {
         container?.visibility = View.GONE
     }
@@ -252,9 +239,7 @@ class SearchOptionsController(private val container: View?) {
         return currentRoot?.title ?: context.getString(R.string.search_location_root_folder)
     }
 
-    /**
-     * @return A safe version for checking if the current location is the Recents view.
-     */
+    /** @return A safe version for checking if the current location is the Recents view. */
     private fun isInRecentRoot(): Boolean {
         return currentRoot?.isRecents ?: false
     }
@@ -277,14 +262,14 @@ class SearchOptionsController(private val container: View?) {
         }
         val chip = container.findViewById<Chip>(getRes(R.id.search_last_modified_trigger))
         if (chip != null) {
-           if (isInRecentRoot()) {
-               // In the Recents view last modified should be visible only when the user is
-               // searching everywhere.
-               chip.visibility = if (searchingRoot) View.GONE else View.VISIBLE
-               chip.text = container.resources.getString(lastModifiedOption.textId)
-           } else {
-               chip.visibility = View.VISIBLE
-           }
+            if (isInRecentRoot()) {
+                // In the Recents view last modified should be visible only when the user is
+                // searching everywhere.
+                chip.visibility = if (searchingRoot) View.GONE else View.VISIBLE
+                chip.text = container.resources.getString(lastModifiedOption.textId)
+            } else {
+                chip.visibility = View.VISIBLE
+            }
         }
         val typeChip = container.findViewById<Chip>(getRes(R.id.search_file_type_trigger))
         if (typeChip != null) {
@@ -292,9 +277,7 @@ class SearchOptionsController(private val container: View?) {
         }
     }
 
-    /**
-     * Returns whether or not this controller is visible.
-     */
+    /** Returns whether or not this controller is visible. */
     fun isVisible(): Boolean {
         return container?.visibility == View.VISIBLE
     }

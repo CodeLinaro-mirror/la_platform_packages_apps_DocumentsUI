@@ -24,8 +24,11 @@ import android.os.FileUtils;
 import android.provider.DocumentsContract;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.loaders.QueryOptions;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,6 +44,30 @@ public class DirectoryResult implements AutoCloseable {
     private Cursor mCursor;
     private Set<String> mFileNames;
     private String[] mModelIds;
+
+    /** The query used when searching that originated this search result. */
+    private @Nullable String mQuery;
+
+    /** The query options used that originated this search result. */
+    private @Nullable QueryOptions mQueryOptions;
+
+    @Nullable
+    public String getQuery() {
+        return mQuery;
+    }
+
+    public void setQuery(@Nullable String query) {
+        mQuery = query;
+    }
+
+    @Nullable
+    public QueryOptions getQueryOptions() {
+        return mQueryOptions;
+    }
+
+    public void setQueryOptions(@Nullable QueryOptions queryOptions) {
+        mQueryOptions = queryOptions;
+    }
 
     @Override
     public void close() {

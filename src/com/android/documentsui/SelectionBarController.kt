@@ -17,6 +17,7 @@ package com.android.documentsui
 
 import android.view.MenuItem
 import android.view.View
+import androidx.core.view.MenuCompat
 import androidx.core.view.isNotEmpty
 import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.SelectionTracker
@@ -33,7 +34,7 @@ class SelectionBarController(
     private val appBar: MaterialToolbar,
     private val selectionBar: MaterialToolbar,
     private val menuManager: MenuManager,
-    private val selectionManager: DocsSelectionHelper
+    private val selectionManager: DocsSelectionHelper,
 ) : SelectionTracker.SelectionObserver<String>() {
     // The clicker and selectionDetails are initialised in the DirectoryFragment and thus gets setup
     // each time the directory changes.
@@ -55,11 +56,12 @@ class SelectionBarController(
     /**
      * Method that is used by the DirectoryFragment to effectively "reset" the current selection and
      * menu item click function when the directory fragment is changed. This enforces the
+     *
      * @ContentScoped invariant.
      */
     fun updateSelection(
         selectionDetails: MenuManager.SelectionDetails,
-        menuItemClicker: EventHandler<MenuItem>
+        menuItemClicker: EventHandler<MenuItem>,
     ): SelectionBarController {
         this.selectionDetails = selectionDetails
         this.menuItemClicker = menuItemClicker
@@ -83,11 +85,7 @@ class SelectionBarController(
         val title: String =
             selectionBar.context
                 .getResources()
-                .getQuantityString(
-                    getRes(R.plurals.elements_selected),
-                    quantity,
-                    quantity
-                )
+                .getQuantityString(getRes(R.plurals.elements_selected), quantity, quantity)
         selectionBar.title = title
         selectionBar.setNavigationIcon(getRes(R.drawable.ic_cancel))
         selectionBar.setNavigationContentDescription(R.string.clear_selection)
@@ -101,6 +99,7 @@ class SelectionBarController(
         val isMenuInflated = selectionBar.menu != null && selectionBar.menu.isNotEmpty()
         if (!isMenuInflated) {
             selectionBar.inflateMenu(getRes(R.menu.action_mode_menu))
+            MenuCompat.setGroupDividerEnabled(selectionBar.menu, true)
         }
         menuManager.updateActionMenu(selectionBar.menu, selectionDetails)
     }

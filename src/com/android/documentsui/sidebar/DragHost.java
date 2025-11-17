@@ -58,7 +58,7 @@ class DragHost extends AbstractDragHost {
 
     @Override
     public boolean canHandleDragEvent(View v) {
-        return v instanceof RootItemView;
+        return mDragAndDropManager.isDragFromSameApp() && v instanceof RootItemView;
     }
 
     @Override
