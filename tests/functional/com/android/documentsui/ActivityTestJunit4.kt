@@ -52,6 +52,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isUseAllfilesRootForRece
 import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseNewOpenWithEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isVisualSignalsFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
@@ -278,6 +279,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
             TAG,
             "Flag isUseAllfilesRootForRecentsEnabled() = ${isUseAllfilesRootForRecentsEnabled()}",
         )
+        Log.d(TAG, "Flag isUseNewOpenWithEnabled() = ${isUseNewOpenWithEnabled()}")
     }
 
     private fun logLocales() {
