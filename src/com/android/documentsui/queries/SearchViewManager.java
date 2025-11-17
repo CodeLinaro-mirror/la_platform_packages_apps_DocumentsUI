@@ -357,7 +357,7 @@ public class SearchViewManager implements
      */
     public void updateMenu() {
         if (mMenu != null && isExpanded() && mFullBar) {
-            mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), false);
+            showNonSearchOptionMenus(false);
         }
     }
 
@@ -537,7 +537,7 @@ public class SearchViewManager implements
     private void onSearchExpanded() {
         mSearchExpanded = true;
         if (mFullBar && mMenu != null) {
-            mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), false);
+            showNonSearchOptionMenus(false);
         }
 
         mListener.onSearchViewChanged(true);
@@ -756,7 +756,7 @@ public class SearchViewManager implements
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), true);
+        showNonSearchOptionMenus(true);
 
         // Handles case when search view is collapsed by using the arrow on the left of the bar
         if (isExpanded() || isSearching()) {
@@ -964,6 +964,17 @@ public class SearchViewManager implements
         }
         // Just search current root.
         return Collections.singletonList(stack.getRoot());
+    }
+
+    private void showNonSearchOptionMenus(boolean show) {
+        if (isUseMaterial3FlagEnabled()) {
+            mMenu.setGroupVisible(getRes(R.id.menu_folder_manage_group), show);
+            mMenu.setGroupVisible(getRes(R.id.menu_modifier_group), show);
+            mMenu.setGroupVisible(getRes(R.id.menu_settings_group), show);
+            mMenu.setGroupVisible(getRes(R.id.menu_debug_group), show);
+        } else {
+            mMenu.setGroupVisible(getRes(R.id.group_hide_when_searching), show);
+        }
     }
 
     public interface SearchManagerListener {
