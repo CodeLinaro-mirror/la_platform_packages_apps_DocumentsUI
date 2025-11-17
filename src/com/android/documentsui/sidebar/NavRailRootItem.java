@@ -60,10 +60,14 @@ public class NavRailRootItem extends RootItem {
     @Override
     public String toString() {
         return "NavRailRootItem{"
-                + "id=" + stringId
-                + ", userId=" + userId
-                + ", root=" + root
-                + ", docInfo=" + docInfo
+                + "id="
+                + stringId
+                + ", userId="
+                + userId
+                + ", root="
+                + root
+                + ", docInfo="
+                + getDocInfo()
                 + "}";
     }
 
@@ -74,6 +78,6 @@ public class NavRailRootItem extends RootItem {
     public static NavRailRootItem createStubItem(NavRailRootItem item, UserId targetUser) {
         RootInfo stubRootInfo = RootInfo.copyRootInfo(item.root);
         stubRootInfo.userId = targetUser;
-        return new NavRailRootItem(stubRootInfo, item.mActionHandler, item.mMaybeShowBadge);
+        return new NavRailRootItem(stubRootInfo, item.getActionHandler(), item.getMaybeShowBadge());
     }
 }

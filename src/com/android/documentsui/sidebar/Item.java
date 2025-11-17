@@ -72,6 +72,10 @@ public abstract class Item {
 
     abstract boolean isRoot();
 
+    boolean isShortcut() {
+        return false;
+    }
+
     abstract void open();
 
     /**
@@ -89,6 +93,7 @@ public abstract class Item {
     }
 
     boolean isDropTarget() {
+        // TODO: b/441194501 - implement `isShortcut()` check in here
         return isRoot();
     }
 

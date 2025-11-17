@@ -17,7 +17,9 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
@@ -39,7 +41,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
 
 import android.content.Context;
-import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
@@ -427,14 +428,17 @@ public class UiBot extends Bots.BaseBot {
     public void hideHiddenFilesIfNeeded() throws Exception {
         openOverflowMenu();
         UiObject2 hideHiddenFilesMenu = mDevice.findObject(
-                By.text(mContext.getResources().getString(
+                By.text(mContext.getString(
                         R.string.menu_hide_hidden_files)));
         if (hideHiddenFilesMenu != null) {
             hideHiddenFilesMenu.click();
             mDevice.waitForIdle();
         } else {
-            // Close the menu popup via ESC key.
-            mDevice.pressKeyCode(KeyEvent.KEYCODE_ESCAPE);
+            // Close the menu popup via Back key.
+            pressBack();
+            // Verify the menu popup is closed by checking if "Show hidden files" menu item is gone.
+            onView(withText(mContext.getString(R.string.menu_show_hidden_files))).check(
+                    doesNotExist());
         }
     }
 
@@ -442,8 +446,7 @@ public class UiBot extends Bots.BaseBot {
      * Click the toolbar menu to show hidden files.
      */
     public void showHiddenFiles() {
-        clickToolbarOverflowItem(
-                mContext.getResources().getString(R.string.menu_show_hidden_files));
+        clickToolbarOverflowItem(mContext.getString(R.string.menu_show_hidden_files));
         mDevice.waitForIdle();
     }
 
@@ -451,8 +454,7 @@ public class UiBot extends Bots.BaseBot {
      * Click the toolbar menu to hide hidden files.
      */
     public void hideHiddenFiles() {
-        clickToolbarOverflowItem(
-                mContext.getResources().getString(R.string.menu_hide_hidden_files));
+        clickToolbarOverflowItem(mContext.getString(R.string.menu_hide_hidden_files));
         mDevice.waitForIdle();
     }
 }

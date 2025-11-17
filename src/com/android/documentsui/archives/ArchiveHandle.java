@@ -26,7 +26,6 @@ import static com.android.documentsui.archives.ArchiveRegistry.ZIP_TYPE;
 import android.os.FileUtils;
 import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -53,39 +52,36 @@ import java.util.List;
 
 /**
  * To handle to all of supported support types of archive or compressed+archive files.
+ *
  * @param <T> the archive class such as SevenZFile, ZipFile, ArchiveInputStream etc.
  */
 abstract class ArchiveHandle<T> implements Closeable {
-    private static final String TAG = ArchiveHandle.class.getSimpleName();
     /**
-     * To re-create the CommonArchive that belongs to SevenZFile, ZipFile, or
-     * ArchiveInputStream. It needs file descriptor to create the input stream or seek to the head.
+     * To re-create the CommonArchive that belongs to SevenZFile, ZipFile, or ArchiveInputStream. It
+     * needs file descriptor to create the input stream or seek to the head.
      */
-    @NonNull
-    private final ParcelFileDescriptor mParcelFileDescriptor;
+    private final @NonNull ParcelFileDescriptor mParcelFileDescriptor;
 
     /**
-     * To re-create the CommonArchive that belongs to SevenZFile, ZipFile, or
-     * ArchiveInputStream. It needs MIME type to know how to re-create.
+     * To re-create the CommonArchive that belongs to SevenZFile, ZipFile, or ArchiveInputStream. It
+     * needs MIME type to know how to re-create.
      */
-    @NonNull
-    private final String mMimeType;
+    private final @NonNull String mMimeType;
 
-    /**
-     * CommonArchive is generic type. It may be SevenZFile, ZipFile, or ArchiveInputStream.
-     */
-    @NonNull
-    private T mCommonArchive;
+    /** CommonArchive is generic type. It may be SevenZFile, ZipFile, or ArchiveInputStream. */
+    private @NonNull T mCommonArchive;
 
     /**
      * To use factory pattern ensure the only one way to create the ArchiveHandle instance.
+     *
      * @param parcelFileDescriptor the file descriptor
      * @param mimeType the mime type of the file
      * @param commonArchive the common archive instance
      */
-    private ArchiveHandle(@NonNull ParcelFileDescriptor parcelFileDescriptor,
-                          @NonNull String mimeType,
-                          @NonNull T commonArchive) {
+    private ArchiveHandle(
+            @NonNull ParcelFileDescriptor parcelFileDescriptor,
+            @NonNull String mimeType,
+            @NonNull T commonArchive) {
         mParcelFileDescriptor = parcelFileDescriptor;
         mMimeType = mimeType;
         mCommonArchive = commonArchive;
@@ -96,8 +92,7 @@ abstract class ArchiveHandle<T> implements Closeable {
      *
      * @return the file input stream
      */
-    @NonNull
-    private FileInputStream recreateCommonArchiveStream() throws IOException {
+    private @NonNull FileInputStream recreateCommonArchiveStream() throws IOException {
         FileInputStream fileInputStream =
                 new FileInputStream(mParcelFileDescriptor.getFileDescriptor());
         SeekableByteChannel seekableByteChannel = fileInputStream.getChannel();
@@ -107,10 +102,10 @@ abstract class ArchiveHandle<T> implements Closeable {
 
     /**
      * To get the MIME type of the file.
+     *
      * @return the MIME type of file
      */
-    @NonNull
-    protected String getMimeType() {
+    protected @NonNull String getMimeType() {
         return mMimeType;
     }
 
@@ -119,8 +114,7 @@ abstract class ArchiveHandle<T> implements Closeable {
      *
      * @return the common archive instance.
      */
-    @NonNull
-    public final T getCommonArchive() {
+    public final @NonNull T getCommonArchive() {
         return mCommonArchive;
     }
 
@@ -131,10 +125,10 @@ abstract class ArchiveHandle<T> implements Closeable {
     /**
      * Gets an InputStream for reading the contents of the given entry.
      *
-     * @throws IOException         if there is an error when reading the archive file, or if the
-     *                             given entry is an encrypted file (in a 7Z or a ZIP archive).
+     * @throws IOException if there is an error when reading the archive file, or if the given entry
+     *     is an encrypted file (in a 7Z or a ZIP archive).
      * @throws CompressorException if there is an error while decompressing the archive data.
-     * @throws ArchiveException    if there is an error with archive format itself.
+     * @throws ArchiveException if there is an error with archive format itself.
      */
     protected @NonNull InputStream getInputStream(@NonNull ArchiveEntry archiveEntry)
             throws IOException, CompressorException, ArchiveException {
@@ -142,13 +136,8 @@ abstract class ArchiveHandle<T> implements Closeable {
         if (!isCommonArchiveSupportGetInputStream()) {
             FileInputStream fileInputStream = recreateCommonArchiveStream();
             T commonArchive = recreateCommonArchive(fileInputStream);
-            if (commonArchive != null) {
-                closeCommonArchive();
-                setCommonArchive(commonArchive);
-            } else {
-                Log.e(TAG, "new SevenZFile or ArchiveInputStream is null");
-                fileInputStream.close();
-            }
+            closeCommonArchive();
+            setCommonArchive(commonArchive);
         }
 
         return ArchiveEntryInputStream.create(this, archiveEntry);
@@ -162,7 +151,7 @@ abstract class ArchiveHandle<T> implements Closeable {
         throw new UnsupportedOperationException("This kind of ArchiveHandle doesn't support");
     }
 
-    T recreateCommonArchive(FileInputStream fileInputStream)
+    protected @NonNull T recreateCommonArchive(FileInputStream fileInputStream)
             throws CompressorException, ArchiveException, IOException {
         throw new UnsupportedOperationException("This kind of ArchiveHandle doesn't support");
     }
@@ -173,15 +162,17 @@ abstract class ArchiveHandle<T> implements Closeable {
 
     /**
      * To get the enumeration of all of entries from archive.
+     *
      * @return the enumeration of all of entries from archive
      * @throws IOException it may raise the IOException when the archiveHandle get the next entry
      */
-    @NonNull
-    public abstract Enumeration<? extends ArchiveEntry> getEntries() throws IOException;
+    public abstract @NonNull Enumeration<? extends ArchiveEntry> getEntries() throws IOException;
 
     private static class SevenZFileHandle extends ArchiveHandle<SevenZFile> {
-        SevenZFileHandle(ParcelFileDescriptor parcelFileDescriptor, String mimeType,
-                         SevenZFile commonArchive) {
+        SevenZFileHandle(
+                ParcelFileDescriptor parcelFileDescriptor,
+                String mimeType,
+                SevenZFile commonArchive) {
             super(parcelFileDescriptor, mimeType, commonArchive);
         }
 
@@ -191,14 +182,13 @@ abstract class ArchiveHandle<T> implements Closeable {
         }
 
         @Override
-        protected SevenZFile recreateCommonArchive(@NonNull FileInputStream fileInputStream)
-                throws IOException {
+        protected @NonNull SevenZFile recreateCommonArchive(
+                @NonNull FileInputStream fileInputStream) throws IOException {
             return new SevenZFile(fileInputStream.getChannel());
         }
 
-        @NonNull
         @Override
-        public Enumeration<? extends ArchiveEntry> getEntries() {
+        public @NonNull Enumeration<? extends ArchiveEntry> getEntries() {
             if (getCommonArchive().getEntries() == null) {
                 return Collections.emptyEnumeration();
             }
@@ -209,8 +199,8 @@ abstract class ArchiveHandle<T> implements Closeable {
     }
 
     private static class ZipFileHandle extends ArchiveHandle<ZipFile> {
-        ZipFileHandle(ParcelFileDescriptor parcelFileDescriptor, String mimeType,
-                      ZipFile commonArchive) {
+        ZipFileHandle(
+                ParcelFileDescriptor parcelFileDescriptor, String mimeType, ZipFile commonArchive) {
             super(parcelFileDescriptor, mimeType, commonArchive);
         }
 
@@ -219,9 +209,8 @@ abstract class ArchiveHandle<T> implements Closeable {
             return true;
         }
 
-        @NonNull
         @Override
-        public Enumeration<? extends ArchiveEntry> getEntries() {
+        public @NonNull Enumeration<? extends ArchiveEntry> getEntries() {
             final Enumeration<ZipArchiveEntry> enumeration = getCommonArchive().getEntries();
             if (enumeration == null) {
                 return Collections.emptyEnumeration();
@@ -231,8 +220,10 @@ abstract class ArchiveHandle<T> implements Closeable {
     }
 
     private static class CommonArchiveInputHandle extends ArchiveHandle<ArchiveInputStream> {
-        CommonArchiveInputHandle(ParcelFileDescriptor parcelFileDescriptor,
-                                 String mimeType, ArchiveInputStream commonArchive) {
+        CommonArchiveInputHandle(
+                ParcelFileDescriptor parcelFileDescriptor,
+                String mimeType,
+                ArchiveInputStream commonArchive) {
             super(parcelFileDescriptor, mimeType, commonArchive);
         }
 
@@ -242,14 +233,13 @@ abstract class ArchiveHandle<T> implements Closeable {
         }
 
         @Override
-        protected ArchiveInputStream recreateCommonArchive(FileInputStream fileInputStream)
+        protected @NonNull ArchiveInputStream recreateCommonArchive(FileInputStream fileInputStream)
                 throws CompressorException, ArchiveException {
             return createCommonArchive(fileInputStream, getMimeType());
         }
 
-        @NonNull
         @Override
-        public Enumeration<? extends ArchiveEntry> getEntries() throws IOException {
+        public @NonNull Enumeration<? extends ArchiveEntry> getEntries() throws IOException {
             final ArchiveInputStream archiveInputStream = getCommonArchive();
             final List<ArchiveEntry> list = new ArrayList<>();
             ArchiveEntry entry;
@@ -261,18 +251,16 @@ abstract class ArchiveHandle<T> implements Closeable {
         }
     }
 
-    @NonNull
-    private static ArchiveInputStream createCommonArchive(
-            @NonNull FileInputStream fileInputStream,
-            @NonNull String mimeType) throws CompressorException, ArchiveException {
+    private static @NonNull ArchiveInputStream createCommonArchive(
+            @NonNull FileInputStream fileInputStream, @NonNull String mimeType)
+            throws CompressorException, ArchiveException {
         InputStream inputStream = fileInputStream;
 
         String compressName = ArchiveRegistry.getCompressName(mimeType);
         if (!TextUtils.isEmpty(compressName)) {
-            CompressorStreamFactory compressorStreamFactory =
-                    new CompressorStreamFactory();
-            inputStream = compressorStreamFactory
-                    .createCompressorInputStream(compressName, inputStream);
+            CompressorStreamFactory compressorStreamFactory = new CompressorStreamFactory();
+            inputStream =
+                    compressorStreamFactory.createCompressorInputStream(compressName, inputStream);
         }
 
         ArchiveStreamFactory archiveStreamFactory = new ArchiveStreamFactory();
@@ -281,15 +269,13 @@ abstract class ArchiveHandle<T> implements Closeable {
             throw new ArchiveException("Invalid archive name.");
         }
 
-        return archiveStreamFactory
-                .createArchiveInputStream(archiveName, inputStream);
+        return archiveStreamFactory.createArchiveInputStream(archiveName, inputStream);
     }
 
-    /**
-     * The only one way creates the instance of ArchiveHandle.
-     */
-    public static ArchiveHandle create(@NonNull ParcelFileDescriptor parcelFileDescriptor,
-            @NonNull String mimeType) throws CompressorException, ArchiveException, IOException {
+    /** The only one way creates the instance of ArchiveHandle. */
+    public static @NonNull ArchiveHandle create(
+            @NonNull ParcelFileDescriptor parcelFileDescriptor, @NonNull String mimeType)
+            throws CompressorException, ArchiveException, IOException {
         checkNotNull(parcelFileDescriptor);
         checkArgument(!TextUtils.isEmpty(mimeType));
 
@@ -305,14 +291,13 @@ abstract class ArchiveHandle<T> implements Closeable {
             case COMMON_ARCHIVE_TYPE:
                 ArchiveInputStream archiveInputStream =
                         createCommonArchive(fileInputStream, mimeType);
-                return new CommonArchiveInputHandle(parcelFileDescriptor, mimeType,
-                        archiveInputStream);
+                return new CommonArchiveInputHandle(
+                        parcelFileDescriptor, mimeType, archiveInputStream);
             case ZIP_TYPE:
                 SeekableByteChannel zipFileChannel = fileInputStream.getChannel();
                 try {
                     ZipFile zipFile = new ZipFile(zipFileChannel);
-                    return new ZipFileHandle(parcelFileDescriptor, mimeType,
-                            zipFile);
+                    return new ZipFileHandle(parcelFileDescriptor, mimeType, zipFile);
                 } catch (Exception e) {
                     FileUtils.closeQuietly(zipFileChannel);
                     throw e;
@@ -321,15 +306,13 @@ abstract class ArchiveHandle<T> implements Closeable {
                 SeekableByteChannel sevenZFileChannel = fileInputStream.getChannel();
                 try {
                     SevenZFile sevenZFile = new SevenZFile(sevenZFileChannel);
-                    return new SevenZFileHandle(parcelFileDescriptor, mimeType,
-                            sevenZFile);
+                    return new SevenZFileHandle(parcelFileDescriptor, mimeType, sevenZFile);
                 } catch (Exception e) {
                     FileUtils.closeQuietly(sevenZFileChannel);
                     throw e;
                 }
             default:
-                throw new UnsupportedOperationException("Doesn't support MIME type "
-                        + mimeType);
+                throw new UnsupportedOperationException("Doesn't support MIME type " + mimeType);
         }
     }
 }

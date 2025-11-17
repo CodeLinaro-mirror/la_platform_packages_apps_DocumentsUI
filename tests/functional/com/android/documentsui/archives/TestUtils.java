@@ -41,31 +41,28 @@ public class TestUtils {
         mExecutor = executor;
     }
 
-    /**
-     * Creates an empty temporary file.
-     */
+    /** Creates an empty temporary file. */
     public File createTemporaryFile() throws IOException {
-        return File.createTempFile("com.android.documentsui.archives.tests{",
-                "}.zip", mTargetContext.getCacheDir());
+        return File.createTempFile(
+                "com.android.documentsui.archives.tests{", "}.zip", mTargetContext.getCacheDir());
     }
 
-    /**
-     * Opens a resource and returns the contents via file descriptor to a local snapshot file.
-     */
+    /** Opens a resource and returns the contents via file descriptor to a local snapshot file. */
     public ParcelFileDescriptor getSeekableDescriptor(int resource) {
         // Extract the file from resources.
         File file = null;
         try {
-            file = File.createTempFile("com.android.documentsui.archives.tests{",
-                    "}.zip", mTargetContext.getCacheDir());
-            try (
-                    FileOutputStream outputStream =
+            file =
+                    File.createTempFile(
+                            "com.android.documentsui.archives.tests{",
+                            "}.zip",
+                            mTargetContext.getCacheDir());
+            try (FileOutputStream outputStream =
                             new ParcelFileDescriptor.AutoCloseOutputStream(
                                     ParcelFileDescriptor.open(
                                             file, ParcelFileDescriptor.MODE_WRITE_ONLY));
                     InputStream inputStream =
-                            mTestContext.getResources().openRawResource(resource);
-            ) {
+                            mTestContext.getResources().openRawResource(resource); ) {
                 byte[] buffer = new byte[32 * 1024];
                 int bytes;
                 while ((bytes = inputStream.read(buffer)) != -1) {
@@ -85,9 +82,7 @@ public class TestUtils {
         }
     }
 
-    /**
-     * Opens a resource and returns the contents via a pipe.
-     */
+    /** Opens a resource and returns the contents via a pipe. */
     public ParcelFileDescriptor getNonSeekableDescriptor(int resource) {
         ParcelFileDescriptor[] pipe = null;
         try {
@@ -97,13 +92,13 @@ public class TestUtils {
                     new Runnable() {
                         @Override
                         public void run() {
-                            try (
-                                    ParcelFileDescriptor.AutoCloseOutputStream outputStream =
+                            try (ParcelFileDescriptor.AutoCloseOutputStream outputStream =
                                             new ParcelFileDescriptor.AutoCloseOutputStream(
                                                     finalOutputPipe);
                                     InputStream inputStream =
-                                            mTestContext.getResources().openRawResource(resource);
-                            ) {
+                                            mTestContext
+                                                    .getResources()
+                                                    .openRawResource(resource); ) {
                                 byte[] buffer = new byte[32 * 1024];
                                 int bytes;
                                 while ((bytes = inputStream.read(buffer)) != -1) {
