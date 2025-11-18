@@ -22,6 +22,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
@@ -211,8 +212,18 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
         if (!isUseMaterial3FlagEnabled()) {
             holder.setAction(mEnv.getDisplayState().action);
         }
-        holder.bindPreviewIcon(mEnv.getDisplayState().shouldShowPreview() && enabled,
-                view -> mEnv.getActionHandler().previewItem(holder.getItemDetails()));
+        boolean showPreview =
+                enabled
+                        && mEnv.getDisplayState()
+                                .shouldShowPreview(
+                                        !isDesktopUxPhase2FlagEnabled()
+                                                || mEnv.getContext()
+                                                        .getResources()
+                                                        .getBoolean(
+                                                                com.android.documentsui.R.bool
+                                                                        .show_preview_icon));
+        holder.bindPreviewIcon(
+                showPreview, view -> mEnv.getActionHandler().previewItem(holder.getItemDetails()));
         if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
             holder.bindProfileIcon(mIconHelper.shouldShowBadge(userIdIdentifier), userIdIdentifier);
         } else {

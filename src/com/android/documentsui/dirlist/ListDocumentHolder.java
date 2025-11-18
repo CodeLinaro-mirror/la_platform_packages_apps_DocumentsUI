@@ -184,18 +184,16 @@ final class ListDocumentHolder extends DocumentHolder {
 
     @Override
     public void bindPreviewIcon(boolean show, Function<View, Boolean> clickCallback) {
-        if (mDoc.isDirectory()) {
+        if (mDoc.isDirectory() || !show) {
             mPreviewIcon.setVisibility(View.GONE);
         } else {
-            mPreviewIcon.setVisibility(show ? View.VISIBLE : View.GONE);
-            if (show) {
-                mPreviewIcon.setContentDescription(
-                        getPreviewIconContentDescription(
-                                mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
-                                mDoc.displayName, mDoc.userId));
-                mPreviewIcon.setAccessibilityDelegate(
-                        new PreviewAccessibilityDelegate(clickCallback));
-            }
+            mPreviewIcon.setVisibility(View.VISIBLE);
+            mPreviewIcon.setContentDescription(
+                    getPreviewIconContentDescription(
+                            mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
+                            mDoc.displayName,
+                            mDoc.userId));
+            mPreviewIcon.setAccessibilityDelegate(new PreviewAccessibilityDelegate(clickCallback));
         }
     }
 
