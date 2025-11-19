@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"無法刪除部分文件"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"最多只能分享 <xliff:g id="COUNT">%1$d</xliff:g> 個檔案"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"此操作無法進行"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"不允許執行此動作"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"選擇開啟工具…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"未安裝支援的應用程式，請嘗試從 Play 商店安裝。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"搜尋 Play 商店"</string>
@@ -197,38 +196,32 @@
       <item quantity="other">未複製以下檔案：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">未複製以下檔案：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{未複製這個檔案：}other{未複製這些檔案：}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">未壓縮以下檔案：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">未壓縮以下檔案：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{未壓縮這個檔案：}other{未壓縮這些檔案：}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">未解壓縮以下檔案：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">未解壓縮以下檔案：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{未解壓縮這個檔案：}other{未解壓縮這些檔案：}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">未移動以下檔案：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">未移動以下檔案：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{未移動這個檔案：}other{未移動這些檔案：}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">未刪除以下檔案：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">未刪除以下檔案：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{未刪除這個檔案：}other{未刪除這些檔案：}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">已將以下檔案轉換成其他格式：<xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">已將以下檔案轉換成其他格式：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{這個檔案已轉換成其他格式：}other{這些檔案已轉換成其他格式：}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">已將 <xliff:g id="COUNT_1">%1$d</xliff:g> 個項目複製到剪貼簿。</item>
       <item quantity="one">已將 <xliff:g id="COUNT_0">%1$d</xliff:g> 個項目複製到剪貼簿。</item>
@@ -267,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"已刪除"</string>
     <string name="compress_completed" msgid="6522047921428919799">"已壓縮"</string>
     <string name="extract_completed" msgid="8824595789915249972">"已解壓縮"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"無法複製"</string>
     <string name="move_failed" msgid="7692364307225994220">"無法移動"</string>
     <string name="delete_failed" msgid="2642684566325252513">"無法刪除"</string>
     <string name="compress_failed" msgid="7397502181042157261">"無法壓縮"</string>
     <string name="extract_failed" msgid="8372397499452831323">"無法解壓縮"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"展開"</string>
     <string name="collapse_label" msgid="4530974883269531062">"收合"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"要允許<xliff:g id="APPNAME"><b>^1</b></xliff:g>存取 <xliff:g id="STORAGE"><i>^3</i></xliff:g>上的「<xliff:g id="DIRECTORY"><i>^2</i></xliff:g>」目錄嗎？"</string>
@@ -315,12 +316,9 @@
     <string name="sign_in" msgid="6253762676723505592">"登入"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archive<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"封存檔"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"要取代檔案嗎？"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"已有名為「<xliff:g id="NAME">%1$s</xliff:g>」的檔案。"</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"取代"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"繼續在背景執行"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other">已選取 <xliff:g id="COUNT_1">%1$d</xliff:g> 個項目</item>
@@ -346,24 +344,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"文件"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"大型檔案"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"本週"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"名稱"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"名稱"</string>
     <string name="preview_file" msgid="4056622696305432343">"預覽 <xliff:g id="FILENAME">%1$s</xliff:g> 檔案"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"預覽工作檔案「<xliff:g id="FILENAME">%1$s</xliff:g>」"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"預覽<xliff:g id="PROFILE">%1$s</xliff:g>檔案 <xliff:g id="FILENAME">%2$s</xliff:g>"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"瀏覽其他應用程式中的檔案"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"匿名"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"使用這個資料夾"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"要允許「<xliff:g id="APPNAME">%1$s</xliff:g>」存取資料夾嗎？"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"允許存取「<xliff:g id="DIRECTORY">%1$s</xliff:g>」。"</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"無法使用這個資料夾"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"為保護你的隱私，請選擇其他資料夾"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"建立新資料夾"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"搜尋這部裝置"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"清除文字"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"根資料夾"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"不限位置"</string>
@@ -399,6 +395,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"要清空垃圾桶嗎？"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"這項操作無法復原，檔案將永久刪除。"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"清空垃圾桶"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"你目前處於離線狀態。部分檔案可能無法使用，系統會在連上網路後繼續同步處理。"</string>
 </resources>

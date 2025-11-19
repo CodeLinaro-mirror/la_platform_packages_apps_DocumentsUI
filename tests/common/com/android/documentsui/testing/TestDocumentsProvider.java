@@ -158,7 +158,27 @@ public class TestDocumentsProvider extends DocumentsProvider {
             String sortOrder) throws FileNotFoundException {
         maybeThrowException();
         maybeDelayQueryResults();
-        return mNextChildDocuments;
+
+        if (mNextChildDocuments != null) {
+            Log.d(TAG, "queryChildDocuments: returning from mNextChildDocuments");
+            return mNextChildDocuments;
+        }
+
+        // If the summaries has been set, use it.
+        if (!mNextSummaries.isEmpty()) {
+            final MatrixCursor result =
+                    new MatrixCursor(
+                            new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY});
+            final MatrixCursor.RowBuilder row = result.newRow();
+            for (String documentId : mNextSummaries.keySet()) {
+                row.add(Document.COLUMN_DOCUMENT_ID, documentId);
+                row.add(Document.COLUMN_SUMMARY, mNextSummaries.getOrDefault(documentId, null));
+            }
+            Log.d(TAG, "queryChildDocuments: returning from mNextSummaries");
+            return result;
+        }
+        Log.d(TAG, "queryChildDocuments: returning null");
+        return null;
     }
 
     @Override

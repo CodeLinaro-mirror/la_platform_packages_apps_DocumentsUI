@@ -46,6 +46,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
                 Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
                 Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+                Flags.FLAG_USE_TRUSTED_APPS,
             )
 
         @JvmStatic
@@ -208,6 +209,15 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
             return getInstance()
                 .overrides
                 .getOrDefault(Flags.FLAG_DRAGS_FROM_OTHER_APPS, Flags.dragsFromOtherApps())
+        }
+
+        @JvmStatic
+        fun isUseTrustedAppsEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_USE_TRUSTED_APPS, Flags.useTrustedApps())
+            return flag && isUseMaterial3FlagEnabled()
         }
     }
 

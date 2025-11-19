@@ -272,6 +272,15 @@ final class RuntimeDocumentClipper implements DocumentClipper {
         }
 
         PersistableBundle bundle = clipData.getDescription().getExtras();
+        if (bundle == null) {
+            Log.i(TAG, "Unable to determine operation type due to null bundle. Ignoring.");
+            callback.onOperationResult(
+                    FileOperations.Callback.STATUS_REJECTED,
+                    FileOperationService.OPERATION_UNKNOWN,
+                    0);
+            return;
+        }
+
         @OpType int opType = getOpType(bundle);
         try {
             if (!canCopy(dstStack.peek())) {

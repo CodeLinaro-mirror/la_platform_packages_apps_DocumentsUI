@@ -122,13 +122,15 @@ public interface DragAndDropManager {
 
     /**
      * Updates the state according to the destination passed.
+     *
      * @param v the view which {@link View#updateDragShadow(View.DragShadowBuilder)} will be called.
      * @param destItemInfo the root or shortcut of the destination document.
      * @param destDoc the destination document. Can be null if this is TBD. Must be a folder.
      * @return the new state. Can be any state in {@link State}.
      */
-    @State int updateState(
-            View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc);
+    @State
+    int updateState(
+            View v, @Nullable SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc);
 
     /**
      * Resets state back to {@link #STATE_UNKNOWN}. This is used when user drags items leaving a UI
@@ -208,8 +210,8 @@ public interface DragAndDropManager {
         private View mView;
         private List<Uri> mInvalidDest;
         private ClipData mClipData;
-        private RootInfo mDestRoot;
-        private DocumentInfo mDestDoc;
+        private @Nullable RootInfo mDestRoot;
+        private @Nullable DocumentInfo mDestDoc;
 
         // Boolean flag for current drag and drop operation. Returns true if the files can only
         // be copied (ie. files that don't support delete or remove).
@@ -376,7 +378,16 @@ public interface DragAndDropManager {
 
         @Override
         public @State int updateState(
-                View v, SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc) {
+                View v,
+                @Nullable SidebarEntryItemInfo destItemInfo,
+                @Nullable DocumentInfo destDoc) {
+            // Due to drag and drop's async nature, this can unfortunately be null. Given at this
+            // stage the destination is effectively unknown, it's not feasible to continue
+            // calculating the state here.
+            if (destItemInfo == null) {
+                return STATE_UNKNOWN;
+            }
+
             mView = v;
             mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
@@ -415,7 +426,9 @@ public interface DragAndDropManager {
             }
 
             @State int state = STATE_NOT_ALLOWED;
-            final @OpType int opType = calculateOpType(mClipData, mDestRoot);
+            final @OpType int opType =
+                    DropOperation.calculateOpType(
+                            mClipData, mDestRoot, mIsCtrlPressed, mIsSrcRootTrash, mMustBeCopied);
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
                     state = STATE_COPY;
@@ -479,35 +492,42 @@ public interface DragAndDropManager {
                 return false;
             }
 
-            // Calculate the op type now just in case user releases Ctrl key while we're obtaining
-            // root document in the background.
-            final @OpType int opType = calculateOpType(clipData, itemInfo.getRoot());
+            // NOTE: Create the drop operation helper early since mutable instance state could be
+            // modified/reset while we're obtaining the root document in the background.
+            final DropOperation dropOperation = createDropOperation(clipData, itemInfo.getRoot());
+
             actions.getDocument(
                     itemInfo.getRoot().authority,
                     itemInfo.getDocumentId(),
                     itemInfo.getRoot().userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
                     (DocumentInfo doc) -> {
-                        dropOnRootDocument(clipData, localState, itemInfo.getRoot(), doc,
-                                opType, actions, callback);
+                        dropOnRootDocument(
+                                localState,
+                                itemInfo.getRoot(),
+                                doc,
+                                actions,
+                                callback,
+                                dropOperation);
                     });
 
             return true;
         }
 
-        private void dropOnRootDocument(
-                ClipData clipData,
+        // TODO(440196110): Inline this method.
+        private static void dropOnRootDocument(
                 Object localState,
                 RootInfo destRoot,
                 @Nullable DocumentInfo destRootDoc,
-                @OpType int opType,
                 ActionHandler actions,
-                FileOperations.Callback callback) {
+                FileOperations.Callback callback,
+                DropOperation dropOperation) {
 
             // Fail early: A drop onto a root is disallowed if the destination
             // is a non-trash root and its corresponding document is missing.
             if (destRootDoc == null && !destRoot.isTrash()) {
-                callback.onOperationResult(FileOperations.Callback.STATUS_FAILED, opType, 0);
+                callback.onOperationResult(
+                        FileOperations.Callback.STATUS_FAILED, dropOperation.getOpType(), 0);
                 return;
             }
 
@@ -517,7 +537,7 @@ public interface DragAndDropManager {
                             ? new DocumentStack(destRoot)
                             : new DocumentStack(destRoot, destRootDoc);
 
-            dropChecked(clipData, localState, destination, opType, actions, callback);
+            dropOperation.dropChecked(localState, destination, actions, callback);
         }
 
         @Override
@@ -528,51 +548,10 @@ public interface DragAndDropManager {
                 return false;
             }
 
-            dropChecked(
-                    clipData,
-                    localState,
-                    dstStack,
-                    calculateOpType(clipData, dstStack.getRoot()),
-                    actions,
-                    callback);
+            createDropOperation(clipData, dstStack.getRoot())
+                    .dropChecked(localState, dstStack, actions, callback);
+
             return true;
-        }
-
-        private void dropChecked(ClipData clipData, Object localState, DocumentStack dstStack,
-                @OpType int opType, ActionHandler actions, FileOperations.Callback callback) {
-
-            // System-defined shortcuts should be protected against the file move operation.
-            if (isHomeScreenFilesFlagEnabled() && opType == FileOperationService.OPERATION_MOVE) {
-                List<Uri> uris = new ArrayList<>();
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    uris.add(clipData.getItemAt(i).getUri());
-                }
-                if (actions.blockOperationForShortcuts(uris, dstStack.getRoot().userId)) {
-                    Log.e(TAG, "Failed to move because a protected folder is selected.");
-                    return;
-                }
-            }
-
-            // Recognize multi-window drag and drop based on the fact that localState is not
-            // carried between processes. It will stop working when the localsState behavior
-            // is changed. The info about window should be passed in the localState then.
-            // The localState could also be null for copying from Recents in single window
-            // mode, but Recents doesn't offer this functionality (no directories).
-            Metrics.logUserAction(
-                    localState == null ? MetricConsts.USER_ACTION_DRAG_N_DROP_MULTI_WINDOW
-                            : MetricConsts.USER_ACTION_DRAG_N_DROP);
-
-            if (isTrashFlowEnabled() && mIsSrcRootTrash) {
-                mClipper.restoreFromTrashClipData(dstStack, clipData, callback);
-                return;
-            }
-
-            if (isTrashFlowEnabled() && dstStack.getRoot().isTrash()) {
-                mClipper.trashFromClipData(dstStack, clipData, callback);
-                return;
-            }
-
-            mClipper.copyFromClipData(dstStack, clipData, opType, callback);
         }
 
         @Override
@@ -600,38 +579,6 @@ public interface DragAndDropManager {
         @Override
         public List<Uri> getInvalidDestinations() {
             return mInvalidDest;
-        }
-
-        private @OpType int calculateOpType(ClipData clipData, RootInfo destRoot) {
-            // If the src root is Trash, then it will be the restore operation.
-            if (isTrashFlowEnabled() && mIsSrcRootTrash) {
-                return FileOperationService.OPERATION_RESTORE;
-            }
-
-            // If the destination root is Trash, then it will be the trash operation.
-            if (isTrashFlowEnabled() && destRoot.isTrash()) {
-                return FileOperationService.OPERATION_TRASH;
-            }
-
-            if (mMustBeCopied) {
-                return FileOperationService.OPERATION_COPY;
-            }
-
-            final String srcRootUri = clipData.getDescription().getExtras().getString(SRC_ROOT_KEY);
-            final String destUri = destRoot.getUri().toString();
-
-            assert (srcRootUri != null);
-            assert (destUri != null);
-
-            if (srcRootUri.equals(destUri)) {
-                return mIsCtrlPressed
-                        ? FileOperationService.OPERATION_COPY
-                        : FileOperationService.OPERATION_MOVE;
-            } else {
-                return mIsCtrlPressed
-                        ? FileOperationService.OPERATION_MOVE
-                        : FileOperationService.OPERATION_COPY;
-            }
         }
 
         private boolean isValidDocumentStack(DocumentStack dstStack) {
@@ -687,6 +634,122 @@ public interface DragAndDropManager {
             final boolean isSameAuthority =
                     sidebarEntryItemInfo.getRoot().authority.equals(destAuthority);
             return mAuthorityToRestore.equals(destAuthority) && isSameAuthority;
+        }
+
+        private DropOperation createDropOperation(ClipData clipData, RootInfo destRoot) {
+            return new DropOperation(
+                    clipData, mClipper, destRoot, mIsCtrlPressed, mIsSrcRootTrash, mMustBeCopied);
+        }
+
+        /**
+         * Helper class for handling system-level drop events asynchronously. Note that this class
+         * must remain static so as not to rely on mutable {@link DragAndDropManager} instance state
+         * which might otherwise be modified/reset during asynchronous execution.
+         */
+        private static final class DropOperation {
+
+            private final ClipData mClipData;
+            private final DocumentClipper mClipper;
+            private final boolean mIsSrcRootTrash;
+            private final @OpType int mOpType;
+
+            private DropOperation(
+                    ClipData clipData,
+                    DocumentClipper clipper,
+                    RootInfo destRoot,
+                    boolean isCtrlPressed,
+                    boolean isSrcRootTrash,
+                    boolean mustBeCopied) {
+                mClipData = clipData;
+                mClipper = clipper;
+                mIsSrcRootTrash = isSrcRootTrash;
+                mOpType =
+                        calculateOpType(
+                                mClipData, destRoot, isCtrlPressed, isSrcRootTrash, mustBeCopied);
+            }
+
+            public static @OpType int calculateOpType(
+                    ClipData clipData,
+                    RootInfo destRoot,
+                    boolean isCtrlPressed,
+                    boolean isSrcRootTrash,
+                    boolean mustBeCopied) {
+                // If the src root is Trash, then it will be the restore operation.
+                if (isTrashFlowEnabled() && isSrcRootTrash) {
+                    return FileOperationService.OPERATION_RESTORE;
+                }
+
+                // If the destination root is Trash, then it will be the trash operation.
+                if (isTrashFlowEnabled() && destRoot.isTrash()) {
+                    return FileOperationService.OPERATION_TRASH;
+                }
+
+                if (mustBeCopied) {
+                    return FileOperationService.OPERATION_COPY;
+                }
+
+                final String srcRootUri =
+                        clipData.getDescription().getExtras().getString(SRC_ROOT_KEY);
+                final String destUri = destRoot.getUri().toString();
+
+                assert (srcRootUri != null);
+                assert (destUri != null);
+
+                if (srcRootUri.equals(destUri)) {
+                    return isCtrlPressed
+                            ? FileOperationService.OPERATION_COPY
+                            : FileOperationService.OPERATION_MOVE;
+                } else {
+                    return isCtrlPressed
+                            ? FileOperationService.OPERATION_MOVE
+                            : FileOperationService.OPERATION_COPY;
+                }
+            }
+
+            public void dropChecked(
+                    Object localState,
+                    DocumentStack dstStack,
+                    ActionHandler actions,
+                    FileOperations.Callback callback) {
+                // System-defined shortcuts should be protected against the file move operation.
+                if (isHomeScreenFilesFlagEnabled()
+                        && mOpType == FileOperationService.OPERATION_MOVE) {
+                    List<Uri> uris = new ArrayList<>();
+                    for (int i = 0; i < mClipData.getItemCount(); i++) {
+                        uris.add(mClipData.getItemAt(i).getUri());
+                    }
+                    if (actions.blockOperationForShortcuts(uris, dstStack.getRoot().userId)) {
+                        Log.e(TAG, "Failed to move because a protected folder is selected.");
+                        return;
+                    }
+                }
+
+                // Recognize multi-window drag and drop based on the fact that localState is not
+                // carried between processes. It will stop working when the localsState behavior is
+                // changed. The info about window should be passed in the localState then. The
+                // localState could also be null for copying from Recents in single window mode, but
+                // Recents doesn't offer this functionality (no directories).
+                Metrics.logUserAction(
+                        localState == null
+                                ? MetricConsts.USER_ACTION_DRAG_N_DROP_MULTI_WINDOW
+                                : MetricConsts.USER_ACTION_DRAG_N_DROP);
+
+                if (isTrashFlowEnabled() && mIsSrcRootTrash) {
+                    mClipper.restoreFromTrashClipData(dstStack, mClipData, callback);
+                    return;
+                }
+
+                if (isTrashFlowEnabled() && dstStack.getRoot().isTrash()) {
+                    mClipper.trashFromClipData(dstStack, mClipData, callback);
+                    return;
+                }
+
+                mClipper.copyFromClipData(dstStack, mClipData, mOpType, callback);
+            }
+
+            public @OpType int getOpType() {
+                return mOpType;
+            }
         }
     }
 }

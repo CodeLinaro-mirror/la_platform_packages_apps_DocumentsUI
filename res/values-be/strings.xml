@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Немагчыма выдаліць некаторыя дакументы"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Не ўдалося абагуліць, таму што файлаў больш за <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Дзеянне забаронена"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Дзеянне забаронена"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Адкрыць з дапамогай…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Праграмы, якія падтрымліваюцца, не ўсталяваны. Усталюйце такую праграму з Крамы Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Шукаць у Краме Play"</string>
@@ -209,48 +208,42 @@
       <item quantity="many">Гэтыя файлы не былі скапіраваны: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Гэтыя файлы не былі скапіраваны: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{Не ўдалося скапіраваць гэты файл:}one{Не ўдалося скапіраваць наступныя файлы:}few{Не ўдалося скапіраваць наступныя файлы:}many{Не ўдалося скапіраваць наступныя файлы:}other{Не ўдалося скапіраваць наступныя файлы:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">Гэтыя файлы не былі сціснуты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Гэтыя файлы не былі сціснуты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Гэтыя файлы не былі сціснуты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Гэтыя файлы не былі сціснуты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{Не ўдалося сціснуць у архіў гэты файл:}one{Не ўдалося сціснуць у архіў наступныя файлы:}few{Не ўдалося сціснуць у архіў наступныя файлы:}many{Не ўдалося сціснуць у архіў наступныя файлы:}other{Не ўдалося сціснуць у архіў наступныя файлы:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">Гэтыя файлы не былі выняты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Гэтыя файлы не былі выняты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Гэтыя файлы не былі выняты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Гэтыя файлы не былі выняты: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{Не ўдалося выняць гэты файл:}one{Не ўдалося выняць наступныя файлы:}few{Не ўдалося выняць наступныя файлы:}many{Не ўдалося выняць наступныя файлы:}other{Не ўдалося выняць наступныя файлы:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">Гэтыя файлы не былі перамешчаны: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Гэтыя файлы не былі перамешчаны: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Гэтыя файлы не былі перамешчаны: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Гэтыя файлы не былі перамешчаны: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{Не ўдалося перамясціць гэты файл:}one{Не ўдалося перамясціць наступныя файлы:}few{Не ўдалося перамясціць наступныя файлы:}many{Не ўдалося перамясціць наступныя файлы:}other{Не ўдалося перамясціць наступныя файлы:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">Гэтыя файлы не былі выдалены: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Гэтыя файлы не былі выдалены: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Гэтыя файлы не былі выдалены: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Гэтыя файлы не былі выдалены: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Не ўдалося выдаліць гэты файл:}one{Не ўдалося выдаліць наступныя файлы:}few{Не ўдалося выдаліць наступныя файлы:}many{Не ўдалося выдаліць наступныя файлы:}other{Не ўдалося выдаліць наступныя файлы:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">Гэтыя файлы былі пераўтвораны ў іншы фармат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Гэтыя файлы былі пераўтвораны ў іншы фармат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Гэтыя файлы былі пераўтвораны ў іншы фармат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Гэтыя файлы былі пераўтвораны ў іншы фармат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Гэты файл быў пераўтвораны ў іншы фармат:}one{Наступныя файлы былі пераўтвораны ў іншы фармат:}few{Наступныя файлы былі пераўтвораны ў іншы фармат:}many{Наступныя файлы былі пераўтвораны ў іншы фармат:}other{Наступныя файлы былі пераўтвораны ў іншы фармат:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> элемент скапіраваны ў буфер абмену.</item>
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> элементы скапіраваны ў буфер абмену.</item>
@@ -291,11 +284,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"Выдалена"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Сціснута ў архіў"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Вынята"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"Не ўдалося скапіраваць"</string>
     <string name="move_failed" msgid="7692364307225994220">"Не ўдалося перамясціць"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Выдаліць не ўдалося"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Не ўдалося сціснуць у архіў"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Не ўдалося выняць"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"Разгарнуць"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Згарнуць"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Даць праграме <xliff:g id="APPNAME"><b>^1</b></xliff:g> доступ да каталога <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> у <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
@@ -349,12 +350,9 @@
     <string name="sign_in" msgid="6253762676723505592">"Увайсці"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"архіў<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Архіваваць"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"Замяніць файл?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"Файл з такой назвай (<xliff:g id="NAME">%1$s</xliff:g>) ужо існуе."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"Замяніць"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Працягнуць у фонавым рэжыме"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="one">Выбрана: <xliff:g id="COUNT_1">%1$d</xliff:g></item>
@@ -382,24 +380,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Дакументы"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Вялікія файлы"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"На гэтым тыдні"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"Назва"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"Назва"</string>
     <string name="preview_file" msgid="4056622696305432343">"Папярэдні прагляд файла \"<xliff:g id="FILENAME">%1$s</xliff:g>\""</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Перадпрагляд працоўнага файла \"<xliff:g id="FILENAME">%1$s</xliff:g>\""</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Папярэдні прагляд файла тыпу \"<xliff:g id="PROFILE">%1$s</xliff:g>\", які мае назву \"<xliff:g id="FILENAME">%2$s</xliff:g>\""</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Пошук файлаў у іншых праграмах"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Ананімная"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Выкарыстоўваць гэту папку"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"Дазволіць праграме \"<xliff:g id="APPNAME">%1$s</xliff:g>\" доступ да папкі?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"Дазвольце доступ да каталога \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\"."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Не ўдалося скарыстаць гэту папку"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Для аховы вашай прыватнасці выберыце іншую папку"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Стварыць новую папку"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Пошук на гэтай прыладзе"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"Ачысціць"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Каранёвая папка"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Усюды"</string>
@@ -435,6 +431,5 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Ачысціць сметніцу?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Адрабіць гэта дзеянне і аднавіць файлы будзе немагчыма."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Ачысціць сметніцу"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
-    <skip />
+    <string name="you_are_offline_banner_message" msgid="927661539025514935">"Вы цяпер па-за сеткай. Некаторыя файлы могуць быць недаступнымі. Сінхранізацыя ўзновіцца, калі вы падключыцеся да інтэрнэту."</string>
 </resources>

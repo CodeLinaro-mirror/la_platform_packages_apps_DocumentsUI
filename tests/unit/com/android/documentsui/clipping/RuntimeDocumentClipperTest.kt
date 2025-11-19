@@ -1,0 +1,75 @@
+/*
+ * Copyright (C) 2025 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.android.documentsui.clipping
+
+import android.content.ClipDescription
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
+import androidx.test.platform.app.InstrumentationRegistry
+import com.android.documentsui.base.DocumentStack
+import com.android.documentsui.services.FileOperations
+import com.android.documentsui.testing.ClipDatas
+import com.android.documentsui.testing.TestEventListener
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import org.mockito.Mockito
+
+@RunWith(AndroidJUnit4::class)
+@SmallTest
+class RuntimeDocumentClipperTest {
+
+    @get:Rule var folder: TemporaryFolder = TemporaryFolder()
+
+    private lateinit var clipper: RuntimeDocumentClipper
+    private lateinit var context: Context
+    private lateinit var pref: SharedPreferences
+
+    private lateinit var storage: ClipStorage
+
+    private val callbackListener = TestEventListener<Int>()
+    private val callback =
+        FileOperations.Callback { status, _, _ -> callbackListener.accept(status) }
+
+    @Before
+    fun setUp() {
+        pref =
+            InstrumentationRegistry.getInstrumentation()
+                .targetContext
+                .getSharedPreferences("pref", 0)
+        val clipDir = ClipStorage.prepareStorage(folder.getRoot())
+        storage = ClipStorage(clipDir, pref)
+
+        context = Mockito.mock(Context::class.java)
+        clipper = RuntimeDocumentClipper(context, storage)
+    }
+
+    @Test
+    fun whenOpTypeIndeterminableOperationIsRejected() {
+        val stack = DocumentStack()
+
+        val description = ClipDescription("", emptyArray<String>())
+        val clipData = ClipDatas.createTestClipData(description)
+
+        clipper.copyFromClipData(stack, clipData, callback)
+        callbackListener.assertLastArgument(FileOperations.Callback.STATUS_REJECTED)
+    }
+}

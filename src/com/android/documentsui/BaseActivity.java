@@ -56,6 +56,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -599,6 +600,9 @@ public abstract class BaseActivity
         boolean showMenu = super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(getRes(R.menu.activity), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
         mNavigator.update();
         boolean fullBarSearch = getResources().getBoolean(getRes(R.bool.full_bar_search_view));
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
