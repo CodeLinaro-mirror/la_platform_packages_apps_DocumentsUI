@@ -759,7 +759,11 @@ public class SearchViewManager implements
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        showNonSearchOptionMenus(true);
+        // When M3 is enabled, defer visibility changes BaseActivity's search listener as we may not
+        // want to unconditionally show every item.
+        if (!isUseMaterial3FlagEnabled()) {
+            showNonSearchOptionMenus(true);
+        }
 
         // Handles case when search view is collapsed by using the arrow on the left of the bar
         if (isExpanded() || isSearching()) {
