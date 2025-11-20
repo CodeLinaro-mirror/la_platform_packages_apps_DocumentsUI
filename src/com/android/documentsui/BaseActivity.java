@@ -952,6 +952,17 @@ public abstract class BaseActivity
             setViewMode(MODE_LIST);
             return true;
         }
+        final boolean showCopyToMoveTo =
+                getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            if (id == getRes(R.id.option_menu_paste_from_clipboard)) {
+                DirectoryFragment dir = getDirectoryFragment();
+                if (dir != null) {
+                    dir.pasteFromClipboard();
+                }
+                return true;
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 

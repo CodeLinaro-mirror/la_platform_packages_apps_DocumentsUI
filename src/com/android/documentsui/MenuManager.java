@@ -16,11 +16,13 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.content.Context;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +53,7 @@ public abstract class MenuManager {
     protected final State mState;
     protected final DirectoryDetails mDirDetails;
     protected final IntSupplier mFilesCountSupplier;
+    protected final Context mContext;
 
     protected Menu mOptionMenu;
 
@@ -58,29 +61,53 @@ public abstract class MenuManager {
             SearchViewManager searchManager,
             State displayState,
             DirectoryDetails dirDetails,
-            IntSupplier filesCountSupplier) {
+            IntSupplier filesCountSupplier,
+            Context context) {
         mSearchManager = searchManager;
         mState = displayState;
         mDirDetails = dirDetails;
         mFilesCountSupplier = filesCountSupplier;
+        mContext = context;
     }
 
     /** @see ActionModeController */
     public void updateActionMenu(Menu menu, SelectionDetails selection) {
+        Menus.disableHiddenItems(menu);
+
         updateOpenWith(menu.findItem(getRes(R.id.action_menu_open_with)), selection);
         updateDelete(menu.findItem(getRes(R.id.action_menu_delete)), selection);
         updateShare(menu.findItem(getRes(R.id.action_menu_share)), selection);
         updateRename(menu.findItem(getRes(R.id.action_menu_rename)), selection);
-        updateSelect(menu.findItem(getRes(R.id.action_menu_select)), selection);
-        updateSelectAll(menu.findItem(getRes(R.id.action_menu_select_all)), selection);
-        updateDeselectAll(menu.findItem(getRes(R.id.action_menu_deselect_all)), selection);
-        updateMoveTo(menu.findItem(getRes(R.id.action_menu_move_to)), selection);
-        updateCopyTo(menu.findItem(getRes(R.id.action_menu_copy_to)), selection);
         updateCompress(menu.findItem(getRes(R.id.action_menu_compress)), selection);
         updateExtractTo(menu.findItem(getRes(R.id.action_menu_extract_to)), selection);
         updateInspect(menu.findItem(getRes(R.id.action_menu_inspect)), selection);
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
-        updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+
+        if (isUseMaterial3FlagEnabled()) {
+            updateOpen(menu.findItem(getRes(R.id.action_menu_open)), selection);
+            MenuItem pasteInto = menu.findItem(getRes(R.id.action_menu_paste_into_folder));
+            MenuItem openInNewWindow = menu.findItem(getRes(R.id.action_menu_open_in_new_window));
+            updatePasteInto(pasteInto, selection);
+            updateOpenInNewWindow(openInNewWindow, selection);
+        } else {
+            // These menu items are deleted when user_material3 is ON.
+            updateSelect(menu.findItem(getRes(R.id.action_menu_select)), selection);
+            updateSelectAll(menu.findItem(getRes(R.id.action_menu_select_all)), selection);
+            updateDeselectAll(menu.findItem(getRes(R.id.action_menu_deselect_all)), selection);
+            updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+        }
+
+        final boolean showCopyToMoveTo =
+                mContext.getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            updateCopyAndCut(
+                    menu.findItem(getRes(R.id.action_menu_copy_to_clipboard)),
+                    menu.findItem(getRes(R.id.action_menu_cut_to_clipboard)),
+                    selection);
+        } else {
+            updateMoveTo(menu.findItem(getRes(R.id.action_menu_move_to)), selection);
+            updateCopyTo(menu.findItem(getRes(R.id.action_menu_copy_to)), selection);
+        }
 
         if (isZipNgFlagEnabled()) {
             updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
@@ -92,8 +119,6 @@ public abstract class MenuManager {
             updateRestoreFromTrash(
                     menu.findItem(getRes(R.id.action_menu_restore_from_trash)), selection);
         }
-
-        Menus.disableHiddenItems(menu);
     }
 
     /** @see BaseActivity#onPrepareOptionsMenu */
@@ -105,6 +130,13 @@ public abstract class MenuManager {
     public void updateOptionMenu() {
         if (mOptionMenu == null) {
             return;
+        }
+        Menus.disableHiddenItems(mOptionMenu);
+
+        final boolean showCopyToMoveTo =
+                mContext.getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            updatePaste(mOptionMenu.findItem(getRes(R.id.option_menu_paste_from_clipboard)));
         }
         updateCreateDir(mOptionMenu.findItem(getRes(R.id.option_menu_create_dir)));
         if (isZipNgFlagEnabled()) {
@@ -125,7 +157,6 @@ public abstract class MenuManager {
                     mOptionMenu.findItem(getRes(R.id.sub_menu_list)));
         }
 
-        Menus.disableHiddenItems(mOptionMenu);
         mSearchManager.updateMenu();
     }
 
@@ -194,7 +225,7 @@ public abstract class MenuManager {
         MenuItem viewInOwner = menu.findItem(getRes(R.id.dir_menu_view_in_owner));
 
         updateShare(share, selectionDetails);
-        updateOpenInContextMenu(open, selectionDetails);
+        updateOpen(open, selectionDetails);
         updateOpenWith(openWith, selectionDetails);
         updateRename(rename, selectionDetails);
         updateViewInOwner(viewInOwner, selectionDetails);
@@ -246,25 +277,15 @@ public abstract class MenuManager {
         MenuItem delete = menu.findItem(getRes(R.id.dir_menu_delete));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
 
-        boolean canRestore = false;
         if (isTrashFlowEnabled()) {
             MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
             MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
-            final boolean canTrash = selectionDetails.canTrash();
-            canRestore = selectionDetails.canRestore();
-            Menus.setEnabledAndVisible(moveToTrash, canTrash);
-            Menus.setEnabledAndVisible(restoreFromTrash, canRestore);
+            Menus.setEnabledAndVisible(moveToTrash, selectionDetails.canTrash());
+            Menus.setEnabledAndVisible(restoreFromTrash, selectionDetails.canRestore());
         }
 
-        final boolean canCopy =
-                selectionDetails.size() > 0
-                        && !selectionDetails.containsPartialFiles()
-                        && !canRestore;
-        final boolean canDelete = selectionDetails.canDelete();
-
-        Menus.setEnabledAndVisible(cut, canCopy && canDelete);
-        Menus.setEnabledAndVisible(copy, canCopy);
-        Menus.setEnabledAndVisible(delete, canDelete);
+        updateCopyAndCut(copy, cut, selectionDetails);
+        Menus.setEnabledAndVisible(delete, selectionDetails.canDelete());
         Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
 
         updateCompress(menu.findItem(getRes(R.id.dir_menu_compress)), selectionDetails);
@@ -283,8 +304,7 @@ public abstract class MenuManager {
         MenuItem createDir = menu.findItem(getRes(R.id.dir_menu_create_dir));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
 
-        Menus.setEnabledAndVisible(paste,
-                mDirDetails.hasItemsToPaste() && mDirDetails.canCreateDoc());
+        updatePaste(paste);
         updateSelectAll(selectAll, selectionDetails);
         updateDeselectAll(deselectAll, selectionDetails);
         updateCreateDir(createDir);
@@ -364,6 +384,11 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(newWindow, false);
     }
 
+    protected void updatePaste(MenuItem paste) {
+        Menus.setEnabledAndVisible(
+                paste, mDirDetails.hasItemsToPaste() && mDirDetails.canCreateDoc());
+    }
+
     protected void updateSelect(MenuItem select, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(select, false);
     }
@@ -428,6 +453,18 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(copyTo, false);
     }
 
+    protected void updateCopyAndCut(
+            MenuItem copy, MenuItem cut, SelectionDetails selectionDetails) {
+        final boolean canRestore = isTrashFlowEnabled() && selectionDetails.canRestore();
+        final boolean canCopy =
+                selectionDetails.size() > 0
+                        && !selectionDetails.containsPartialFiles()
+                        && !canRestore;
+        final boolean canDelete = selectionDetails.canDelete();
+        Menus.setEnabledAndVisible(copy, canCopy);
+        Menus.setEnabledAndVisible(cut, canCopy && canDelete);
+    }
+
     protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
         Menus.setEnabledAndVisible(it, false);
     }
@@ -453,7 +490,7 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 
-    protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
+    protected void updateOpen(MenuItem open, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(open, false);
     }
 
@@ -562,7 +599,12 @@ public abstract class MenuManager {
         }
 
         public boolean canCreateDoc() {
-            return isInRecents() ? false : mActivity.getCurrentDirectory().isCreateSupported();
+            return isInRecents()
+                    ? false
+                    // This can be called to evaluate the option menu "Paste" visibility, where
+                    // the navigation stack is empty, thus the non-null check below.
+                    : (mActivity.getCurrentDirectory() != null
+                            && mActivity.getCurrentDirectory().isCreateSupported());
         }
 
         public boolean isInRecents() {

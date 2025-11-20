@@ -59,7 +59,6 @@ import java.util.function.IntSupplier;
 public final class MenuManager extends com.android.documentsui.MenuManager {
 
     private final Features mFeatures;
-    private final Context mContext;
     private final SelectionTracker<String> mSelectionManager;
     private final Lookup<String, Uri> mUriLookup;
     private final LookupApplicationName mAppNameLookup;
@@ -76,10 +75,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Lookup<String, Uri> uriLookup,
             IntSupplier filesCountSupplier) {
 
-        super(searchManager, displayState, dirDetails, filesCountSupplier);
+        super(searchManager, displayState, dirDetails, filesCountSupplier, context);
 
         mFeatures = features;
-        mContext = context;
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;
         mUriLookup = uriLookup;
@@ -204,7 +202,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateNewWindow(MenuItem newWindow) {
-        Menus.setEnabledAndVisible(newWindow, true);
+        Menus.setEnabledAndVisible(
+                newWindow, !isUseMaterial3FlagEnabled() || !mDirDetails.isInArchive());
     }
 
     @Override
@@ -221,7 +220,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
+    protected void updateOpen(MenuItem open, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(
                 open, isDesktopFileHandlingFlagEnabled() && selectionDetails.canOpen());
     }
@@ -229,8 +228,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     protected void updateOpenInNewWindow(
             MenuItem openInNewWindow, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(openInNewWindow, selectionDetails.size() == 1
-                && !selectionDetails.containsPartialFiles());
+        Menus.setEnabledAndVisible(
+                openInNewWindow,
+                selectionDetails.size() == 1
+                        && !selectionDetails.containsPartialFiles()
+                        && selectionDetails.containsDirectories());
     }
 
     @Override
@@ -277,8 +279,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updatePasteInto(MenuItem pasteInto, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(pasteInto,
-                selectionDetails.canPasteInto() && mDirDetails.hasItemsToPaste());
+        Menus.setEnabledAndVisible(
+                pasteInto,
+                selectionDetails.containsDirectories()
+                        && selectionDetails.canPasteInto()
+                        && mDirDetails.hasItemsToPaste());
     }
 
     @Override

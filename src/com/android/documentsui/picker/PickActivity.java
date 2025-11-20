@@ -221,11 +221,13 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         this::focusSidebar,
                         getColor(getRes(R.color.primary)));
 
-        mInjector.menuManager = new MenuManager(
-                mSearchManager,
-                mState,
-                new DirectoryDetails(this),
-                mInjector.getModel()::getItemCount);
+        mInjector.menuManager =
+                new MenuManager(
+                        mSearchManager,
+                        mState,
+                        new DirectoryDetails(this),
+                        mInjector.getModel()::getItemCount,
+                        getApplicationContext());
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =

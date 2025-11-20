@@ -40,9 +40,11 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
+import com.android.documentsui.files.TestActivity;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDirectoryDetails;
+import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
@@ -131,6 +133,9 @@ public final class MenuManagerTest {
 
     private int mFilesCount;
 
+    private final com.android.documentsui.files.TestActivity mActivity =
+            TestActivity.create(TestEnv.create());
+
     @Before
     public void setUp() {
         testMenu = TestMenu.create();
@@ -191,7 +196,7 @@ public final class MenuManagerTest {
         selectionDetails = new TestSelectionDetails();
         dirDetails = new TestDirectoryDetails();
         testSearchManager = new TestSearchViewManager();
-        mgr = new MenuManager(testSearchManager, state, dirDetails, this::getFilesCount);
+        mgr = new MenuManager(testSearchManager, state, dirDetails, this::getFilesCount, mActivity);
         selectionDetails.size = 1;
         mFilesCount = 10;
 
@@ -208,17 +213,35 @@ public final class MenuManagerTest {
     @Test
     public void testActionMenu() {
         mgr.updateActionMenu(testMenu, selectionDetails);
-        actionModeSelect.assertDisabledAndInvisible();
         actionModeDelete.assertDisabledAndInvisible();
         actionModeShare.assertDisabledAndInvisible();
         actionModeRename.assertDisabledAndInvisible();
-        actionModeSelectAll.assertEnabledAndVisible();
-        mActionModeDeselectAll.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
-        actionModeSort.assertEnabledAndVisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
+    public void testActionMenu_showSortAndSelect() {
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertEnabledAndVisible();
+        actionModeSelectAll.assertEnabledAndVisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSortAndSelect() {
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
     }
 
     @Test
@@ -253,6 +276,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_selectActionTitle() {
         state.action = ACTION_OPEN;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -279,6 +303,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_getContentActionTitle() {
         state.action = ACTION_GET_CONTENT;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -287,6 +312,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_notAllowMultiple() {
         state.allowMultiple = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -296,6 +322,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_AllowMultiple() {
         state.allowMultiple = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -305,6 +332,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testActionMenu_CanDeselectAll() {
         state.allowMultiple = true;
         selectionDetails.size = 1;
