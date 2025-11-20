@@ -640,18 +640,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
                         (View child) -> onAccessibilityLongClick(child), mState.action));
-        mSelectionMetadata =
-                new SelectionMetadata(
-                        mModel::getItem,
-                        (String modelId) -> {
-                            DocumentInfo doc = mModel.getDocument(modelId);
-                            if (doc != null) {
-                                return FileUtils.countOpeningApps(
-                                        doc, mActivity.getPackageManager());
-                            }
-                            return 0;
-                        },
-                        mAdapterEnv::isDocumentEnabled);
+        mSelectionMetadata = new SelectionMetadata(
+                mModel::getItem,
+                (String modelId) -> {
+                    DocumentInfo doc = mModel.getDocument(modelId);
+                    if (doc != null) {
+                        return FileUtils.countOpeningApps(doc, mActivity.getPackageManager());
+                    }
+                    return 0;
+                });
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
         DragStartListener dragStartListener = mInjector.config.dragAndDropEnabled()

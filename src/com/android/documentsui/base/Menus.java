@@ -16,8 +16,6 @@
 
 package com.android.documentsui.base;
 
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
-
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,20 +25,8 @@ public final class Menus {
 
     private Menus() {}
 
-    /** Disable the item and leave it visible, if it was enabled. */
-    public static void disableAndLeaveVisible(MenuItem item) {
-        if (!isUseMaterial3FlagEnabled()) {
-            return;
-        }
-        if (item.isEnabled()) {
-            item.setEnabled(false);
-            item.setVisible(true);
-        }
-    }
-
     /**
-     * Disables hidden menu items so that they are not invokable via command shortcuts. Also enables
-     * non-hidden menu items if they are visible.
+     * Disables hidden menu items so that they are not invokable via command shortcuts
      */
     public static void disableHiddenItems(Menu menu, MenuItem... exclusions) {
         for (int i = 0; i < menu.size(); i++) {
