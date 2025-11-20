@@ -194,8 +194,9 @@ public class SidebarBot extends Bots.BaseBot {
 
     /** Attempt to close the drawer. */
     public void closeDrawer() {
-        if (inFixedLayout()) {
-            // No drawer layout.
+        // mLayoutId is null when it's not a FileActivity/PickerActivity.
+        if (mLayoutId == null || inFixedLayout()) {
+            // Not a layout with a drawer.
             return;
         }
         // Attempt to close the drawer if it's open.
