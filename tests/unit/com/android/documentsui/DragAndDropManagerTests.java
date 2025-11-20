@@ -54,6 +54,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
+import com.android.documentsui.DragAndDropManager.Permissions;
 import com.android.documentsui.DragAndDropManager.RuntimeDragAndDropManager;
 import com.android.documentsui.DragAndDropManager.State;
 import com.android.documentsui.base.DocumentInfo;
@@ -80,7 +81,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
 
@@ -119,10 +123,13 @@ public class DragAndDropManagerTests {
 
     private DragAndDropManager mManager;
 
+    @Rule public final MockitoRule mMockitoRule = MockitoJUnit.rule();
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+
+    @Mock private Permissions mMockPermissions;
 
     @Before
     public void setUp() {
@@ -865,9 +872,17 @@ public class DragAndDropManagerTests {
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_1);
 
-        assertFalse(mManager.drop(
-                mClipData, mManager, TestProvidersAccess.HAMMY, mActions, mCallback,
-                mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.HAMMY,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -888,8 +903,17 @@ public class DragAndDropManagerTests {
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_0);
 
-        assertFalse(mManager.drop(mClipData, mManager, root, mActions, mCallback,
-                mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        root,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -907,11 +931,18 @@ public class DragAndDropManagerTests {
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
         mCallbackListener.assertLastArgument(FileOperations.Callback.STATUS_FAILED);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -931,7 +962,12 @@ public class DragAndDropManagerTests {
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
@@ -939,6 +975,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -958,7 +996,12 @@ public class DragAndDropManagerTests {
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
@@ -966,6 +1009,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -989,7 +1034,12 @@ public class DragAndDropManagerTests {
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_UP);
@@ -1000,6 +1050,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1018,7 +1070,10 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.HAMMY, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1037,10 +1092,13 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1059,10 +1117,13 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1081,10 +1142,13 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1108,7 +1172,12 @@ public class DragAndDropManagerTests {
         assertEquals(DragAndDropManager.STATE_COPY, state);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.TEST_SHORTCUT, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.TEST_SHORTCUT,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
@@ -1116,6 +1185,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.PEPPER, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1138,9 +1209,17 @@ public class DragAndDropManagerTests {
 
         assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
 
-        assertFalse(mManager.drop(
-                mClipData, mManager, TestProvidersAccess.HOME_SCREEN_SHORTCUT, mActions,
-                mCallback, mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1163,9 +1242,17 @@ public class DragAndDropManagerTests {
 
         assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
 
-        assertFalse(mManager.drop(
-                mClipData, mManager, TestProvidersAccess.HOME_SCREEN_SHORTCUT, mActions,
-                mCallback, mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1195,8 +1282,13 @@ public class DragAndDropManagerTests {
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.DOWNLOADS.getUri();
-        newManager.drop(mClipData, newManager, new DocumentStack(
-                TestProvidersAccess.DOWNLOADS, docInfo), spyActionHandler, mCallback);
+        newManager.drop(
+                mMockPermissions,
+                mClipData,
+                newManager,
+                new DocumentStack(TestProvidersAccess.DOWNLOADS, docInfo),
+                spyActionHandler,
+                mCallback);
 
         mEnv.beforeAsserts();
         // Verify that the block operation was called.
@@ -1204,6 +1296,8 @@ public class DragAndDropManagerTests {
         // If the file operation is blocked, copyFromClipData should never have been called.
         verify(spyClipper, never()).copyFromClipData(
                 any(), any(), anyInt(), any());
+
+        verify(mMockPermissions).release();
     }
 
     @SuppressLint("VisibleForTests")
@@ -1251,6 +1345,7 @@ public class DragAndDropManagerTests {
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
 
         mManager.drop(
+                mMockPermissions,
                 mClipData,
                 mManager,
                 TestProvidersAccess.TRASH_ROOT,
@@ -1262,6 +1357,8 @@ public class DragAndDropManagerTests {
         final DocumentStack expect = new DocumentStack(TestProvidersAccess.TRASH_ROOT);
         mClipper.trashFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_TRASH);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1283,7 +1380,10 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1395,6 +1495,7 @@ public class DragAndDropManagerTests {
 
         // Drop the item.
         mManager.drop(
+                mMockPermissions,
                 mClipData,
                 mManager,
                 TestProvidersAccess.HOME,
@@ -1407,6 +1508,8 @@ public class DragAndDropManagerTests {
         // Verify that restoreFromTrashClipData is called with the correct parameters.
         mClipper.restoreFromClipData.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_RESTORE);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1452,7 +1555,10 @@ public class DragAndDropManagerTests {
 
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
     }
 
     @Test

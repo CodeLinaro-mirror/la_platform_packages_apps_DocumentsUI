@@ -155,7 +155,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         final Object localState = event.getLocalState();
 
         return mDragAndDropManager.drop(
-                clipData, localState, root, this, mDialogs::showFileOperationStatus,
+                DragAndDropManager.requestPermissions(mActivity, event),
+                clipData,
+                localState,
+                root,
+                this,
+                mDialogs::showFileOperationStatus,
                 mDragAndDropManager.getInvalidDestinations());
     }
 
@@ -169,8 +174,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         final Object localState = event.getLocalState();
 
         return mDragAndDropManager.drop(
-                clipData, localState, shortcut, this,
-                mDialogs::showFileOperationStatus, mDragAndDropManager.getInvalidDestinations());
+                DragAndDropManager.requestPermissions(mActivity, event),
+                clipData,
+                localState,
+                shortcut,
+                this,
+                mDialogs::showFileOperationStatus,
+                mDragAndDropManager.getInvalidDestinations());
     }
 
     @Override

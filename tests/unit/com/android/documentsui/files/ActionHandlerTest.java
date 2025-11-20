@@ -37,9 +37,12 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -57,7 +60,6 @@ import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
-import android.util.Pair;
 import android.view.DragEvent;
 
 import androidx.core.util.Preconditions;
@@ -66,6 +68,8 @@ import androidx.test.filters.MediumTest;
 import androidx.test.filters.SdkSuppress;
 
 import com.android.documentsui.AbstractActionHandler;
+import com.android.documentsui.DragAndDropManager;
+import com.android.documentsui.DragAndDropManager.Permissions;
 import com.android.documentsui.ModelId;
 import com.android.documentsui.R;
 import com.android.documentsui.TestActionModeAddons;
@@ -97,6 +101,9 @@ import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.collect.Lists;
 
+import kotlin.Triple;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -111,6 +118,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 
 @RunWith(Parameterized.class)
 @MediumTest
@@ -128,6 +136,7 @@ public class ActionHandlerTest {
     private TestConfigStore mTestConfigStore;
     private boolean refreshAnswer = false;
     @Mock private Runnable mMockCloseSelectionBar;
+    @Mock private BiFunction<Activity, DragEvent, Permissions> mMockRequestPermissionsHandler;
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
@@ -163,6 +172,9 @@ public class ActionHandlerTest {
         mTestConfigStore = new TestConfigStore();
         mEnv.state.configStore = mTestConfigStore;
 
+        DragAndDropManager.REQUEST_PERMISSIONS_HANDLER_FOR_TESTING.set(
+                mMockRequestPermissionsHandler);
+
         isPrivateSpaceEnabled &= SdkLevel.isAtLeastS();
         if (isPrivateSpaceEnabled) {
             mTestConfigStore.enablePrivateSpaceInPhotoPicker();
@@ -176,6 +188,11 @@ public class ActionHandlerTest {
         mHandler = createHandler();
 
         mEnv.selectDocument(TestEnv.FILE_GIF);
+    }
+
+    @After
+    public void tearDown() {
+        DragAndDropManager.REQUEST_PERMISSIONS_HANDLER_FOR_TESTING.set(null);
     }
 
     private void assertSelectionContainerClosed() {
@@ -784,6 +801,7 @@ public class ActionHandlerTest {
         DragEvent event = DragEvent.obtain(DragEvent.ACTION_DROP, 1, 1, 0, 0, 0, 0, null, null,
                 null, null, null, true);
         assertFalse(mHandler.dropOn(event, root));
+        verifyNoMoreInteractions(mMockRequestPermissionsHandler);
     }
 
     // Ignoring the test because it uses hidden api DragEvent#obtain() and changes to the api is
@@ -796,6 +814,7 @@ public class ActionHandlerTest {
         DragEvent event = DragEvent.obtain(DragEvent.ACTION_DROP, 1, 1, 0, 0, 0, 0, null, null,
                 null, null, null, true);
         assertFalse(mHandler.dropOn(event, TestProvidersAccess.RECENTS));
+        verifyNoMoreInteractions(mMockRequestPermissionsHandler);
     }
 
     // Ignoring the test because it uses hidden api DragEvent#obtain() and changes to the api is
@@ -813,14 +832,19 @@ public class ActionHandlerTest {
         DragEvent event = DragEvent.obtain(DragEvent.ACTION_DROP, 1, 1, 0, 0, 0, 0, localState,
                 null, clipData, null, null, true);
 
+        final Permissions permissions = mock(Permissions.class);
+        doReturn(permissions).when(mMockRequestPermissionsHandler).apply(mActivity, event);
+
         mHandler.dropOn(event, TestProvidersAccess.DOWNLOADS);
         event.recycle();
 
-        Pair<ClipData, SidebarEntryItemInfo> actual =
+        final Triple<Permissions, ClipData, SidebarEntryItemInfo> actual =
                 mDragAndDropManager.dropOnRootHandler.getLastValue();
+
         assertNotNull(actual);
-        assertSame(clipData, actual.first);
-        assertSame(TestProvidersAccess.DOWNLOADS, actual.second);
+        assertSame(permissions, actual.getFirst());
+        assertSame(clipData, actual.getSecond());
+        assertSame(TestProvidersAccess.DOWNLOADS, actual.getThird());
     }
 
     @Test
