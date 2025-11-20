@@ -94,6 +94,10 @@ public abstract class MenuManager {
         }
 
         Menus.disableHiddenItems(menu);
+
+        if (isUseMaterial3FlagEnabled() && selection.containsDisabledDocuments()) {
+            Menus.disableAndLeaveVisible(menu.findItem(getRes(R.id.action_menu_open_with)));
+        }
     }
 
     /** @see BaseActivity#onPrepareOptionsMenu */
@@ -205,6 +209,11 @@ public abstract class MenuManager {
         }
 
         updateContextMenu(menu, selectionDetails);
+
+        if (isUseMaterial3FlagEnabled() && selectionDetails.containsDisabledDocuments()) {
+            Menus.disableAndLeaveVisible(open);
+            Menus.disableAndLeaveVisible(openWith);
+        }
     }
 
     /**
@@ -504,6 +513,9 @@ public abstract class MenuManager {
 
         /** Returns whether the selection contains at least a file located in a mounted archive. */
         boolean containsFilesInArchive();
+
+        /** Returns whether the selection contains at least a document that is disabled. */
+        boolean containsDisabledDocuments();
 
         /**
          * Returns whether the selection contains exactly one file which is also a supported archive

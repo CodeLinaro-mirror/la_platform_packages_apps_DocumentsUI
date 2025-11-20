@@ -19,7 +19,7 @@
     Selection may be empty. -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/menu_open_group">
+        android:id="@+id/menu_folder_manage_group">
         <item
             android:id="@+id/dir_menu_open_in_new_window"
             android:title="@string/menu_open_in_new_window" />
@@ -34,15 +34,15 @@
             android:id="@+id/dir_menu_copy_to_clipboard"
             android:title="@string/menu_copy_to_clipboard" />
         <item
-            android:id="@+id/dir_menu_compress"
-            android:title="@string/menu_compress" />
-        <item
             android:id="@+id/dir_menu_paste_into_folder"
             android:title="@string/menu_paste_into_folder" />
     </group>
 
     <group
         android:id="@+id/menu_modifier_group">
+        <item
+            android:id="@+id/dir_menu_inspect"
+            android:title="@string/menu_inspect" />
         <item
             android:id="@+id/dir_menu_rename"
             android:title="@string/menu_rename" />
@@ -57,12 +57,8 @@
         <item
             android:id="@+id/dir_menu_delete"
             android:title="@string/menu_permanently_delete" />
-    </group>
-
-    <group
-        android:id="@+id/menu_extras_group">
         <item
-            android:id="@+id/dir_menu_inspect"
-            android:title="@string/menu_inspect" />
+            android:id="@+id/dir_menu_compress"
+            android:title="@string/menu_compress" />
     </group>
 </menu>

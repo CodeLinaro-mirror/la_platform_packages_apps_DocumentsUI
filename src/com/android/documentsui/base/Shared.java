@@ -33,6 +33,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.icu.text.Collator;
+import android.icu.text.RuleBasedCollator;
 import android.net.Uri;
 import android.os.Looper;
 import android.os.Process;
@@ -52,7 +54,6 @@ import com.android.documentsui.R;
 import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.VersionUtils;
 
-import java.text.Collator;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -146,11 +147,22 @@ public final class Shared {
      */
     public static final String LAUNCHER_TARGET_CLASS = "com.android.documentsui.LauncherActivity";
 
-    private static final Collator sCollator;
+    /**
+     * Collator used for locale-sensitive comparisons between strings.
+     */
+    private static final RuleBasedCollator sCollator = createNumericCollator();
 
-    static {
-        sCollator = Collator.getInstance();
-        sCollator.setStrength(Collator.SECONDARY);
+    /**
+     * Creates a {@link android.icu.text.RuleBasedCollator} instance configured for the default
+     * locale.
+     *
+     * @return a {@link android.icu.text.RuleBasedCollator} instance with numeric collation enabled.
+     */
+    private static RuleBasedCollator createNumericCollator() {
+        RuleBasedCollator rbCollator = (RuleBasedCollator) Collator.getInstance();
+        rbCollator.setStrength(Collator.SECONDARY);
+        rbCollator.setNumericCollation(true);
+        return rbCollator;
     }
 
     /**

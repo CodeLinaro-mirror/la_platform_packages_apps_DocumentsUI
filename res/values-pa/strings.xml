@@ -196,38 +196,32 @@
       <item quantity="one">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਦਾ ਆਕਾਰ ਛੋਟਾ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਦਾ ਆਕਾਰ ਛੋਟਾ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਜ਼ਿਪ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਜ਼ਿਪ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਜ਼ਿਪ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਅੈਕਸਟ੍ਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਅੈਕਸਟ੍ਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਗਿਆ:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਤਬਦੀਲ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਤਬਦੀਲ ਨਹੀਂ ਕੀਤਾ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਲਿਜਾਇਆ ਨਹੀਂ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਲਿਜਾਇਆ ਨਹੀਂ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਲਿਜਾਇਆ ਨਹੀਂ ਗਿਆ:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਨਹੀਂ ਮਿਟਾਇਆ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਨਹੀਂ ਮਿਟਾਇਆ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਮਿਟਾਇਆ ਨਹੀਂ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਮਿਟਾਇਆ ਨਹੀਂ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਮਿਟਾਇਆ ਨਹੀਂ ਗਿਆ:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਕਲਿੱਪਬੋਰਡ \'ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ।</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ਆਈਟਮਾਂ ਨੂੰ ਕਲਿੱਪਬੋਰਡ \'ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ।</item>
@@ -266,11 +260,19 @@
     <string name="delete_completed" msgid="4149401155614626199">"ਮਿਟਾਈ ਗਈ"</string>
     <string name="compress_completed" msgid="6522047921428919799">"ਜ਼ਿਪ ਕੀਤਾ ਗਿਆ"</string>
     <string name="extract_completed" msgid="8824595789915249972">"ਐਕਸਟ੍ਰੈਕਟ ਕੀਤੀ ਗਈ"</string>
+    <!-- no translation found for trash_completed (5527806383436622529) -->
+    <skip />
+    <!-- no translation found for restore_completed (4705296829051759784) -->
+    <skip />
     <string name="copy_failed" msgid="3700193913993844675">"ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
     <string name="move_failed" msgid="7692364307225994220">"ਲਿਜਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ"</string>
     <string name="delete_failed" msgid="2642684566325252513">"ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ"</string>
     <string name="compress_failed" msgid="7397502181042157261">"ਜ਼ਿਪ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
     <string name="extract_failed" msgid="8372397499452831323">"ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
+    <!-- no translation found for trash_failed (4655759218201171408) -->
+    <skip />
+    <!-- no translation found for restore_failed (1967876571708544126) -->
+    <skip />
     <string name="expand_label" msgid="5683357671239615207">"ਵਿਸਤਾਰ ਕਰੋ"</string>
     <string name="collapse_label" msgid="4530974883269531062">"ਸਮੇਟੋ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"ਕੀ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ਨੂੰ <xliff:g id="STORAGE"><i>^3</i></xliff:g> \'ਤੇ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ਡਾਇਰੈਕਟਰੀ \'ਤੇ ਪਹੁੰਚ ਦੇਣੀ ਹੈ?"</string>
@@ -314,12 +316,9 @@
     <string name="sign_in" msgid="6253762676723505592">"ਸਾਈਨ-ਇਨ ਕਰੋ"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"ਪੁਰਾਲੇਖ<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"ਪੁਰਾਲੇਖਬੱਧ ਕਰੋ"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"ਕੀ ਫ਼ਾਈਲ ਨੂੰ ਬਦਲਣਾ ਹੈ?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ਨਾਮ ਵਾਲੀ ਫ਼ਾਈਲ ਪਹਿਲਾਂ ਤੋਂ ਹੀ ਮੌਜੂਦ ਹੈ।"</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"ਬਦਲੋ"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"ਬੈਕਗ੍ਰਾਊਂਡ ਵਿੱਚ ਜਾਰੀ ਰੱਖੋ"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ਚੁਣਿਆ ਗਿਆ</item>
@@ -345,24 +344,22 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"ਦਸਤਾਵੇਜ਼"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"ਵੱਡੀਆਂ ਫ਼ਾਈਲਾਂ"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"ਇਸ ਹਫ਼ਤੇ"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"ਨਾਮ"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"ਨਾਮ"</string>
     <string name="preview_file" msgid="4056622696305432343">"ਫ਼ਾਈਲ <xliff:g id="FILENAME">%1$s</xliff:g> ਦੀ ਪੂਰਵ-ਝਲਕ ਦੇਖੋ"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"ਕਾਰਜ ਸੰਬੰਧੀ ਫ਼ਾਈਲ <xliff:g id="FILENAME">%1$s</xliff:g> ਦੀ ਪੂਰਵ-ਝਲਕ ਦੇਖੋ"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"<xliff:g id="PROFILE">%1$s</xliff:g> ਫ਼ਾਈਲ <xliff:g id="FILENAME">%2$s</xliff:g> ਦੀ ਪੂਰਵ-ਝਲਕ ਦੇਖੋ"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"ਹੋਰ ਐਪਾਂ ਵਿੱਚ ਫ਼ਾਈਲਾਂ ਬ੍ਰਾਊਜ਼ ਕਰੋ"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"ਗੁਮਨਾਮ"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"ਇਹ ਫੋਲਡਰ ਵਰਤੋ"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"ਕੀ <xliff:g id="APPNAME">%1$s</xliff:g> ਨੂੰ ਫੋਲਡਰ ਤੱਕ ਪਹੁੰਚ ਕਰਨ ਦੀ ਆਗਿਆ ਦੇਣੀ ਹੈ?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"\"<xliff:g id="DIRECTORY">%1$s</xliff:g>\" ਲਈ ਪਹੁੰਚ ਦੀ ਆਗਿਆ ਦਿਓ।"</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"ਇਹ ਫੋਲਡਰ ਨਹੀਂ ਵਰਤਿਆ ਜਾ ਸਕਦਾ"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ਆਪਣੀ ਪਰਦੇਦਾਰੀ ਦੀ ਸੁਰੱਖਿਆ ਲਈ, ਕੋਈ ਹੋਰ ਫੋਲਡਰ ਚੁਣੋ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ਨਵਾਂ ਫੋਲਡਰ ਬਣਾਓ"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਖੋਜੋ"</string>
+    <!-- no translation found for search_results (7662182646512984171) -->
+    <skip />
     <string name="search_bar_clear" msgid="2072000748823434188">"ਲਿਖਤ ਕਲੀਅਰ ਕਰੋ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ਰੂਟ ਫੋਲਡਰ"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"ਹਰ ਥਾਂ"</string>

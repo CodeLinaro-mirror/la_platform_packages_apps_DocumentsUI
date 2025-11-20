@@ -1284,13 +1284,12 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                                 + DocumentInfo.debugString(mState.stack.peek()));
             }
             assert (result != null);
-
             // First: Update the  file list with the new results.
             mInjector.getModel().update(result);
             mLoaderSemaphore.release();
 
             // Second: Fetch the summary for the result.
-            startLoadingSummaries();
+            startLoadingSummaries(result);
         }
 
         @Override
@@ -1298,7 +1297,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             mLoaderSemaphore.release();
         }
 
-        private void startLoadingSummaries() {
+        private void startLoadingSummaries(DirectoryResult result) {
             if (!FlagUtils.isUseFileSummaryEnabled()) {
                 return;
             }
@@ -1316,9 +1315,13 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 return;
             }
 
-            List<String> documentIds = Arrays.asList(mInjector.getModel().getModelIds());
+            List<String> documentIds = Arrays.asList(result.getModelIds());
 
-            final String summaryProviderAuthority = summaryProviderManager.getAuthority();
+            final Uri summaryProviderAuthority = summaryProviderManager.getAuthorityUri();
+            if (summaryProviderAuthority == null || Uri.EMPTY.equals(summaryProviderAuthority)) {
+                Log.e(TAG, "SummaryProvider Authority URI invalid: " + summaryProviderAuthority);
+                return;
+            }
 
             mActivity
                     .getSupportLoaderManager()
@@ -1330,6 +1333,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                                     summaryProviderAuthority,
                                     documentInfo,
                                     documentIds,
+                                    result.getQueryOptions(),
+                                    result.getQuery(),
                                     summaries -> {
                                         onSummariesLoaded(summaries);
                                         return Unit.INSTANCE;

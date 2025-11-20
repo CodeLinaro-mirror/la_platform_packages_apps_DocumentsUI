@@ -30,7 +30,6 @@ import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
-import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.dirlist.IconHelper;
 import com.android.documentsui.services.FileOperations;
@@ -44,6 +43,11 @@ public class TestDragAndDropManager implements DragAndDropManager {
             new TestEventHandler<>();
     public final TestEventHandler<Pair<ClipData, DocumentStack>> dropOnDocumentHandler =
             new TestEventHandler<>();
+    public final TestEventHandler<Void> isDragFromSameAppHandler = new TestEventHandler<>();
+
+    public TestDragAndDropManager() {
+        isDragFromSameAppHandler.nextReturn(true);
+    }
 
     @Override
     public void onKeyEvent(KeyEvent event) {}
@@ -64,8 +68,8 @@ public class TestDragAndDropManager implements DragAndDropManager {
     public void updateStateToNotAllowed(View v) {}
 
     @Override
-    public int updateState(View v, SidebarEntryItemInfo destItemInfo,
-            @Nullable DocumentInfo destDoc) {
+    public int updateState(
+            View v, @Nullable SidebarEntryItemInfo destItemInfo, @Nullable DocumentInfo destDoc) {
         return 0;
     }
 
@@ -74,7 +78,7 @@ public class TestDragAndDropManager implements DragAndDropManager {
 
     @Override
     public boolean isDragFromSameApp() {
-        return true;
+        return isDragFromSameAppHandler.accept(null);
     }
 
     @Override
