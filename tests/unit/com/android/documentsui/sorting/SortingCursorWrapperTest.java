@@ -371,11 +371,13 @@ public class SortingCursorWrapperTest {
 
         // Check that all items were accounted for
         assertEquals(ITEM_COUNT + DL_COUNT, cursor.getCount());
+        assertTrue(cursor.moveToPosition(ITEM_COUNT));
 
         // Check that active downloads are sorted to the bottom.
         for (int i = ITEM_COUNT; i < ITEM_COUNT + DL_COUNT; i++) {
             assertTrue(currentDownloads.contains(
                     DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            cursor.moveToNext();
         }
     }
 
@@ -408,11 +410,13 @@ public class SortingCursorWrapperTest {
 
         // Check that all items were accounted for
         assertEquals(ITEM_COUNT + DL_COUNT, cursor.getCount());
+        assertTrue(cursor.moveToPosition(0));
 
         // Check that active downloads are sorted to the top.
         for (int i = 0; i < DL_COUNT; i++) {
             assertTrue(currentDownloads.contains(
                     DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            cursor.moveToNext();
         }
     }
 
