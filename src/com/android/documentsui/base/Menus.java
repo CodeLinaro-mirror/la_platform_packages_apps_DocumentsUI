@@ -25,6 +25,12 @@ public final class Menus {
 
     private Menus() {}
 
+    /** Disable the item and set the visibility. */
+    public static void disableAndSetVisibility(MenuItem item, boolean visible) {
+        item.setEnabled(false);
+        item.setVisible(visible);
+    }
+
     /**
      * Disables hidden menu items so that they are not invokable via command shortcuts
      */
@@ -32,7 +38,6 @@ public final class Menus {
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
             if (item.isVisible()) {
-                item.setEnabled(true);
                 continue;
             }
             if (contains(exclusions, item)) {

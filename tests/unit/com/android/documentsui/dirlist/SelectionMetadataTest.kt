@@ -16,6 +16,7 @@
 package com.android.documentsui.dirlist
 
 import android.content.pm.ResolveInfo
+import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -39,6 +40,10 @@ const val TestUserId = 0
 @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
 @RunWith(AndroidJUnit4::class)
 class SelectionMetadataTest {
+    companion object {
+        const val IS_UNAVAILABLE_FLAG = 13
+    }
+
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
     @get:Rule val setFlags = OverrideFlagsRule()
@@ -50,6 +55,8 @@ class SelectionMetadataTest {
             .createFile("oneOpeningApp.txt", "text/plain")
             .createFile("twoOpeningApp.jpg", "image/jpg")
             .createFile("twoOpeningApp.png", "image/png")
+            .createFile("unavailableDocument1.png", "image/png", IS_UNAVAILABLE_FLAG)
+            .createFile("unavailableDocument2.png", "image/png", IS_UNAVAILABLE_FLAG)
 
     @Before
     fun setUp() {
@@ -107,6 +114,50 @@ class SelectionMetadataTest {
         assertEquals(sm.hasMultipleOpeningApps(), false)
     }
 
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_disabledDocument_cloudFeaturesEnabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), true)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_disabledDocuments_cloudFeaturesEnabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("unavailableDocument2.png"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), true)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_noDisabledDocuments_cloudFeaturesEnabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), false)
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), false)
+    }
+
     fun makeId(docId: String): String {
         return ModelId.build(UserId.of(TestUserId), TestAuthority, docId)!!
     }
@@ -117,6 +168,10 @@ class SelectionMetadataTest {
             { modelId ->
                 val doc = testModelRule.model.getDocument(modelId)
                 FileUtils.countOpeningApps(doc, testPackageManager)
+            },
+            { _, flag, _ ->
+                // Hack the `flag` to set whether the document is unavailable in this test.
+                flag != IS_UNAVAILABLE_FLAG
             },
         )
     }

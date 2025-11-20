@@ -106,6 +106,8 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
 
         boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags);
 
+        boolean isContentAvailable(String mimeType, int flags, Integer syncStateFlags);
+
         void initDocumentHolder(DocumentHolder holder);
         void onBindDocumentHolder(DocumentHolder holder, Cursor cursor);
 

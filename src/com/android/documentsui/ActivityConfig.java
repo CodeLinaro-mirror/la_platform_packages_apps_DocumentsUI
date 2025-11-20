@@ -60,9 +60,29 @@ public abstract class ActivityConfig {
         if (!isCloudFeaturesFlagEnabled()) {
             return true;
         }
-
         if (MimeTypes.isDirectoryType(docMimeType)) {
             // Directories don't have content, so they are enabled.
+            return true;
+        }
+        return isContentAvailable(docMimeType, docFlags, syncStateFlags, state, isOnline);
+    }
+
+    /**
+     * Returns whether the document has content available. If the system is offline, the document is
+     * non-virtual and on a root that has limited functionality, then the content might not be
+     * available. Otherwise content is assumed available.
+     *
+     * <p>If the former is true for files, then return false when the sync state does not include
+     * the `SYNC_STATE_FLAG_AVAILABLE_LOCALLY` flag. For folders, return false unconditionally
+     * because they may contain files that do not have content available.
+     */
+    public boolean isContentAvailable(
+            String docMimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
+        if (!isCloudFeaturesFlagEnabled()) {
             return true;
         }
 
@@ -71,18 +91,23 @@ public abstract class ActivityConfig {
         }
 
         if (!state.stack.getRoot().hasLimitedFunctionalityWhenOffline()) {
-            // Documents on roots that are not affected by the online status should always be
-            // enabled.
+            // Documents on roots that are not affected by the online status are always available.
             return true;
         }
 
         if (isOnline) {
-            // The content should be downloadable, so it is enabled.
+            // The content should be downloadable and thus available.
             return true;
         }
 
+        if (MimeTypes.isDirectoryType(docMimeType)) {
+            // Directories may contain files that don't have available content.
+            return false;
+        }
+
         if (syncStateFlags == null) {
-            // When the availability is unknown, we default to available and thus return true.
+            // When the availability of a file is unknown, we default to available and thus return
+            // true.
             return true;
         }
 

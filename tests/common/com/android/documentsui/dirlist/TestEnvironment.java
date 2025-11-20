@@ -67,6 +67,11 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     }
 
     @Override
+    public boolean isContentAvailable(String mimeType, int flags, Integer syncStateFlags) {
+        return true;
+    }
+
+    @Override
     public void initDocumentHolder(DocumentHolder holder) {
     }
 

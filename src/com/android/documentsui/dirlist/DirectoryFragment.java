@@ -641,15 +641,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
                         (View child) -> onAccessibilityLongClick(child), mState.action));
-        mSelectionMetadata = new SelectionMetadata(
-                mModel::getItem,
-                (String modelId) -> {
-                    DocumentInfo doc = mModel.getDocument(modelId);
-                    if (doc != null) {
-                        return FileUtils.countOpeningApps(doc, mActivity.getPackageManager());
-                    }
-                    return 0;
-                });
+        mSelectionMetadata =
+                new SelectionMetadata(
+                        mModel::getItem,
+                        (String modelId) -> {
+                            DocumentInfo doc = mModel.getDocument(modelId);
+                            if (doc != null) {
+                                return FileUtils.countOpeningApps(
+                                        doc, mActivity.getPackageManager());
+                            }
+                            return 0;
+                        },
+                        mAdapterEnv::isContentAvailable);
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
         DragStartListener dragStartListener = mInjector.config.dragAndDropEnabled()
@@ -2011,6 +2014,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
             return mInjector.config.isDocumentEnabled(
+                    mimeType, flags, syncStateFlags, mState, isOnline());
+        }
+
+        @Override
+        public boolean isContentAvailable(String mimeType, int flags, Integer syncStateFlags) {
+            return mInjector.config.isContentAvailable(
                     mimeType, flags, syncStateFlags, mState, isOnline());
         }
 
