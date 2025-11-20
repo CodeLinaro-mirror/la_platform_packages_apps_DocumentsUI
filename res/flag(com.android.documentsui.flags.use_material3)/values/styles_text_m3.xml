@@ -160,7 +160,7 @@
     </style>
 
     <style name="MenuItemTextAppearanceM3" parent="@style/TextAppearance.DocumentsUI.LabelLarge">
-        <item name="android:textColor">@color/menu_item_text_color_m3</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="fontFamily">@string/config_fontFamilyMedium</item>
     </style>
 

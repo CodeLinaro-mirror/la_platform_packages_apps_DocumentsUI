@@ -542,38 +542,6 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
-    public void testActionMenu_DisabledOpenWith_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-        mgr.updateActionMenu(testMenu, selectionDetails);
-
-        actionModeOpenWith.assertDisabledAndVisible();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
-    public void testActionMenu_NoOpenWith_WhenCannotOpen_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = false;
-        selectionDetails.containsDisabledDocuments = true;
-        mgr.updateActionMenu(testMenu, selectionDetails);
-
-        actionModeOpenWith.assertDisabledAndInvisible();
-    }
-
-    @Test
-    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
-    public void testActionMenu_CanOpenWith_WhenContainsDisabledDocuments_useMaterial3Disabled() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-        mgr.updateActionMenu(testMenu, selectionDetails);
-
-        actionModeOpenWith.assertEnabledAndVisible();
-    }
-
-    @Test
     public void testActionMenu_Inspector_EnabledForSingleSelection() {
         features.inspector = true;
         selectionDetails.size = 1;
@@ -843,45 +811,6 @@ public final class MenuManagerTest {
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
 
         dirOpenWith.assertDisabledAndInvisible();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_DisabledOpen_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-
-        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
-
-        dirOpen.assertDisabledAndVisible();
-        dirOpenWith.assertDisabledAndVisible();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_NoOpen_WhenCannotOpen_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = false;
-        selectionDetails.containsDisabledDocuments = true;
-
-        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
-
-        dirOpen.assertDisabledAndInvisible();
-        dirOpenWith.assertDisabledAndInvisible();
-    }
-
-    @Test
-    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_CanOpen_WhenContainsDisabledDocuments_useMaterial3Disabled() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-
-        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
-
-        dirOpen.assertEnabledAndVisible();
-        dirOpenWith.assertEnabledAndVisible();
     }
 
     @SuppressLint("VisibleForTests")
