@@ -144,6 +144,10 @@ public class StubProvider extends DocumentsProvider {
                 rootInfo.setSearchEnabled(false);
             }
 
+            if (isTrashApiEnabled()) {
+                rootInfo.flags |= Root.FLAG_SUPPORTS_QUERY_TRASH;
+            }
+
             mStorage.put(rootInfo.document.documentId, rootInfo.document);
             mRoots.put(rootId, rootInfo);
         }
@@ -247,7 +251,7 @@ public class StubProvider extends DocumentsProvider {
         getContext().getContentResolver().notifyChange(
                 DocumentsContract.buildDocumentUri(mAuthority, document.documentId),
                 null, false);
-        notifyTrashChanged(document.rootInfo.document.documentId);
+        notifyTrashChanged(document.rootInfo.name);
     }
 
     @Override
@@ -288,7 +292,7 @@ public class StubProvider extends DocumentsProvider {
         }
         Log.d(TAG, "Document trashed: " + documentId + " moved to " + trashedFile.getPath());
         notifyParentChanged(document.parentId);
-        notifyTrashChanged(document.rootInfo.document.documentId);
+        notifyTrashChanged(document.rootInfo.name);
         return trashedFileDocument.documentId;
     }
 
@@ -361,7 +365,7 @@ public class StubProvider extends DocumentsProvider {
             }
         }
 
-        notifyTrashChanged(document.rootInfo.document.documentId);
+        notifyTrashChanged(document.rootInfo.name);
         return restoredPath;
     }
 

@@ -216,6 +216,39 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertDocumentsPresent(trashedFolderName)
     }
 
+    /** Tests that restoring selected items from the Trash view works correctly. */
+    @Test
+    fun testRestoreFromTrash() {
+        val trashedFileNames = moveFilesToTrash()
+        bots.roots.openRoot(TRASH_ROOT.title)
+
+        // First, check that the trashed files are visible in the UI.
+        bots.directory.assertDocumentsPresent(*trashedFileNames.toTypedArray())
+
+        // Select the first two files to restore.
+        val filesToRestore = trashedFileNames.take(2)
+        filesToRestore.forEachIndexed { index, fileName ->
+            bots.directory.selectDocument(fileName, index + 1)
+        }
+
+        // Click the restore button in the toolbar.
+        bots.main.clickActionItem("Restore")
+        device!!.waitForIdle()
+
+        // Verify that the selected files are now gone from the trash.
+        bots.directory.assertDocumentsAbsent(*filesToRestore.toTypedArray())
+
+        // Verify that the remaining files are still in the trash.
+        val remainingFiles = trashedFileNames.drop(2)
+        bots.directory.assertDocumentsPresent(*remainingFiles.toTypedArray())
+
+        // Go back to the original directory and verify the files are restored.
+        bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        bots.directory.assertDocumentsPresent(*filesToRestore.toTypedArray())
+    }
+
     /**
      * Navigates into the test directory, selects a subset of files, and moves them to the trash.
      *
