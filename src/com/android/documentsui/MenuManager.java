@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -461,9 +462,19 @@ public abstract class MenuManager {
                         && !selectionDetails.containsPartialFiles()
                         && !canRestore;
         final boolean canDelete = selectionDetails.canDelete();
+        final boolean canCut = canCopy && canDelete;
+        if (isCloudFeaturesFlagEnabled()
+                && selectionDetails.containsDocumentsWithUnavailableContent()) {
+            // Disable actions as they are not valid right now because the required content is not
+            // available.
+            Menus.disableAndSetVisibility(copy, /* visible= */ canCopy);
+            Menus.disableAndSetVisibility(cut, /* visible= */ canCut);
+            return;
+        }
         Menus.setEnabledAndVisible(copy, canCopy);
-        Menus.setEnabledAndVisible(cut, canCopy && canDelete);
+        Menus.setEnabledAndVisible(cut, canCut);
     }
+
 
     protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
         Menus.setEnabledAndVisible(it, false);
@@ -541,6 +552,11 @@ public abstract class MenuManager {
 
         /** Returns whether the selection contains at least a file located in a mounted archive. */
         boolean containsFilesInArchive();
+
+        /**
+         * Returns whether the selection contains at least a document that has unavailable content.
+         */
+        boolean containsDocumentsWithUnavailableContent();
 
         /**
          * Returns whether the selection contains exactly one file which is also a supported archive

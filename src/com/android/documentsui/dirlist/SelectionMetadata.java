@@ -16,8 +16,11 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.base.DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
+import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -46,12 +49,34 @@ import java.util.function.Function;
 public class SelectionMetadata extends SelectionObserver<String>
         implements MenuManager.SelectionDetails {
 
+    /**
+     * Represents a function that accepts three arguments and produces a result.
+     *
+     * @param <A> the type of the first input to the function
+     * @param <B> the type of the second input to the function
+     * @param <C> the type of the third input to the function
+     * @param <R> the type of the result of the function
+     */
+    @FunctionalInterface
+    public interface TriFunction<A, B, C, R> {
+        /**
+         * Applies this function to the given arguments.
+         *
+         * @param a the first function argument
+         * @param b the second function argument
+         * @param c the third function argument
+         * @return the function result
+         */
+        R apply(A a, B b, C c);
+    }
+
     private static final String TAG = "SelectionMetadata";
     private final static int FLAG_CAN_DELETE =
             Document.FLAG_SUPPORTS_REMOVE | Document.FLAG_SUPPORTS_DELETE;
 
     private final Function<String, Cursor> mDocFinder;
     private final Function<String, Integer> mCountOpeningApps;
+    private final TriFunction<String, Integer, Integer, Boolean> mIsContentAvailable;
 
     private int mDirectoryCount = 0;
     private int mFileCount = 0;
@@ -75,6 +100,7 @@ public class SelectionMetadata extends SelectionObserver<String>
     private int mUnsupportedRestoreCount = 0;
 
     private boolean mSupportsSettings = false;
+    private int mUnavailableContentCount = 0;
 
     // For each selected file, remember the number of installed apps that support opening it. We
     // need this information to respond to hasMultipleOpeningApps.
@@ -85,13 +111,15 @@ public class SelectionMetadata extends SelectionObserver<String>
      *
      * @param docFinder A function that returns a cursor for the given document ID.
      * @param countOpeningApps A function that returns the number of installed apps that support
-     *                         opening a file given its document ID.
+     *     opening a file given its document ID.
      */
     public SelectionMetadata(
             Function<String, Cursor> docFinder,
-            Function<String, Integer> countOpeningApps) {
+            Function<String, Integer> countOpeningApps,
+            TriFunction<String, Integer, Integer, Boolean> isContentAvailable) {
         mDocFinder = docFinder;
         mCountOpeningApps = countOpeningApps;
+        mIsContentAvailable = isContentAvailable;
     }
 
     @Override
@@ -153,6 +181,19 @@ public class SelectionMetadata extends SelectionObserver<String>
         if (ArchivesProvider.AUTHORITY.equals(authority)) {
             mInArchiveCount += delta;
         }
+        Integer syncStateFlags = null;
+        if (isCloudFeaturesFlagEnabled()) {
+            // TODO(b/458129770): Use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when it
+            //  exists in the SDK.
+            syncStateFlags =
+                    getCursorInteger(
+                            cursor,
+                            COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            /* returnIfMissingOrNull= */ null);
+            if (!mIsContentAvailable.apply(mimeType, docFlags, syncStateFlags)) {
+                mUnavailableContentCount += delta;
+            }
+        }
     }
 
     @Override
@@ -167,6 +208,7 @@ public class SelectionMetadata extends SelectionObserver<String>
         mInArchiveCount = 0;
         mArchiveCount = 0;
         mUnsupportedRestoreCount = 0;
+        mUnavailableContentCount = 0;
     }
 
     @Override
@@ -192,6 +234,11 @@ public class SelectionMetadata extends SelectionObserver<String>
     @Override
     public boolean containsFilesInArchive() {
         return mInArchiveCount > 0;
+    }
+
+    @Override
+    public boolean containsDocumentsWithUnavailableContent() {
+        return mUnavailableContentCount > 0;
     }
 
     @Override
