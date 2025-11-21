@@ -21,6 +21,8 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
 import static org.mockito.Mockito.any;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -40,9 +43,12 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 
+import com.android.documentsui.DragAndDropManager;
+import com.android.documentsui.DragAndDropManager.Permissions;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.files.TestActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.ClipDatas;
@@ -55,19 +61,27 @@ import com.android.documentsui.ui.TestDialogController;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import kotlin.Triple;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DragHostTest {
     private static final List<String> ITEMS = TestData.create(100);
 
+    @Rule public final MockitoRule mMockitoRule = MockitoJUnit.rule();
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private TestEnv mEnv;
@@ -81,6 +95,8 @@ public class DragHostTest {
     private DocumentHolder mNextDocumentHolder;
     private DocumentInfo mNextDocumentInfo;
 
+    @Mock private BiFunction<Activity, DragEvent, Permissions> mMockRequestPermissionsHandler;
+
     @Before
     public void setUp() throws Exception {
         mEnv = TestEnv.create();
@@ -89,6 +105,9 @@ public class DragHostTest {
         mDragAndDropManager = new TestDragAndDropManager();
         mSelectionMgr = SelectionHelpers.createTestInstance(ITEMS);
         mActionHandler = new TestActionHandler();
+
+        DragAndDropManager.REQUEST_PERMISSIONS_HANDLER_FOR_TESTING.set(
+                mMockRequestPermissionsHandler);
 
         dragHost = new DragHost<>(
                 mActivity,
@@ -101,6 +120,11 @@ public class DragHostTest {
                 (View v) -> mNextDocumentHolder,
                 (View v) -> mNextDocumentInfo
         );
+    }
+
+    @After
+    public void tearDown() {
+        DragAndDropManager.REQUEST_PERMISSIONS_HANDLER_FOR_TESTING.set(null);
     }
 
     @Test
@@ -164,8 +188,19 @@ public class DragHostTest {
         mNextDocumentInfo = TestEnv.FOLDER_0;
         mDragAndDropManager.dropOnDocumentHandler.nextReturn(true);
 
+        final Permissions permissions = mock(Permissions.class);
+        doReturn(permissions).when(mMockRequestPermissionsHandler).apply(mActivity, dropEvent);
+
         assertTrue(dragHost.handleDropEvent(view, dropEvent));
         mDragAndDropManager.dropOnDocumentHandler.assertCalled();
+
+        final Triple<Permissions, ClipData, DocumentStack> actual =
+                mDragAndDropManager.dropOnDocumentHandler.getLastValue();
+
+        assertNotNull(actual);
+        assertSame(permissions, actual.getFirst());
+        assertSame(data, actual.getSecond());
+        assertEquals(new DocumentStack(mEnv.state.stack, mNextDocumentInfo), actual.getThird());
     }
 
     @Test
@@ -176,5 +211,6 @@ public class DragHostTest {
 
         assertFalse(dragHost.handleDropEvent(view, dropEvent));
         mDragAndDropManager.dropOnDocumentHandler.assertNotCalled();
+        verifyNoMoreInteractions(mMockRequestPermissionsHandler);
     }
 }
