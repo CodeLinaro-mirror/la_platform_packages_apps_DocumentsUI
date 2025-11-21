@@ -226,8 +226,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     /** When using the new Search stack, files in Recents are movable. */
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
-    // TODO(b/461944165): make the test work with "Cut/Paste" flow and remove the DisableFlags.
-    @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testMoveToInRecentsWithSearchV2() throws Exception {
         final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
         final String testFileName = testFileNamePrefix.concat(".jpg");

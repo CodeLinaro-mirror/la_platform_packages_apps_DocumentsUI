@@ -354,7 +354,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         mSelectionMgr.clearSelection();
 
-        mClipper.clipDocumentsForCut(mModel::getItemUri, selection, mState.stack.peek());
+        mClipper.clipDocumentsForCut(
+                mModel::getItemUri, selection, mState.stack.peek(), mState.stack.isRecents());
 
         mDialogs.showDocumentsClipped(selection.size());
     }
