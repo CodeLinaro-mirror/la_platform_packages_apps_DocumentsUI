@@ -42,6 +42,7 @@ import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.util.FlagUtils.Companion.isCloudFeaturesFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isGetInfoDialogEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isHomeScreenFilesFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isMovingContentIntoPrivateSpaceEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
@@ -284,6 +285,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
             "Flag isUseAllfilesRootForRecentsEnabled() = ${isUseAllfilesRootForRecentsEnabled()}",
         )
         Log.d(TAG, "Flag isUseNewOpenWithEnabled() = ${isUseNewOpenWithEnabled()}")
+        Log.d(TAG, "Flag isGetInfoDialogEnabled() = ${isGetInfoDialogEnabled()}")
     }
 
     private fun logLocales() {
