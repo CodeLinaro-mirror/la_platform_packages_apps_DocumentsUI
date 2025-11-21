@@ -58,15 +58,16 @@ public class SortingCursorWrapperTest {
     private static final int ITEM_COUNT = 13;
     private static final String AUTHORITY = "test_authority";
 
-    private static final String[] COLUMNS = new String[]{
-            RootCursorWrapper.COLUMN_AUTHORITY,
-            Document.COLUMN_DOCUMENT_ID,
-            Document.COLUMN_FLAGS,
-            Document.COLUMN_DISPLAY_NAME,
-            Document.COLUMN_SIZE,
-            Document.COLUMN_LAST_MODIFIED,
-            Document.COLUMN_MIME_TYPE
-    };
+    private static final String[] COLUMNS =
+            new String[] {
+                RootCursorWrapper.COLUMN_AUTHORITY,
+                Document.COLUMN_DOCUMENT_ID,
+                Document.COLUMN_FLAGS,
+                Document.COLUMN_DISPLAY_NAME,
+                Document.COLUMN_SIZE,
+                Document.COLUMN_LAST_MODIFIED,
+                Document.COLUMN_MIME_TYPE
+            };
 
     private static final String[] NAMES =
             new String[] {
@@ -151,21 +152,22 @@ public class SortingCursorWrapperTest {
         BitSet seen = new BitSet(ITEM_COUNT);
         List<String> names = new ArrayList<>();
 
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_TITLE,
-                SortDimension.SORT_DIRECTION_ASCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_ASCENDING);
 
         final Cursor cursor = createSortingCursorWrapper();
 
         for (int i = 0; i < cursor.getCount(); ++i) {
             cursor.moveToPosition(i);
-            seen.set(Integer.parseInt(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            seen.set(
+                    Integer.parseInt(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
             names.add(getCursorString(cursor, Document.COLUMN_DISPLAY_NAME));
         }
 
         assertEquals(ITEM_COUNT, seen.cardinality());
-        for (int i = 0; i < names.size()-1; ++i) {
-            assertTrue(Shared.compareToIgnoreCaseNullable(names.get(i), names.get(i+1)) <= 0);
+        for (int i = 0; i < names.size() - 1; ++i) {
+            assertTrue(Shared.compareToIgnoreCaseNullable(names.get(i), names.get(i + 1)) <= 0);
         }
     }
 
@@ -175,29 +177,30 @@ public class SortingCursorWrapperTest {
         BitSet seen = new BitSet(ITEM_COUNT);
         List<String> names = new ArrayList<>();
 
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_TITLE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_DESCENDING);
 
         final Cursor cursor = createSortingCursorWrapper();
 
         for (int i = 0; i < cursor.getCount(); ++i) {
             cursor.moveToPosition(i);
-            seen.set(Integer.parseInt(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            seen.set(
+                    Integer.parseInt(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
             names.add(getCursorString(cursor, Document.COLUMN_DISPLAY_NAME));
         }
 
         assertEquals(ITEM_COUNT, seen.cardinality());
-        for (int i = 0; i < names.size()-1; ++i) {
-            assertTrue(Shared.compareToIgnoreCaseNullable(names.get(i), names.get(i+1)) >= 0);
+        for (int i = 0; i < names.size() - 1; ++i) {
+            assertTrue(Shared.compareToIgnoreCaseNullable(names.get(i), names.get(i + 1)) >= 0);
         }
     }
 
     // Tests sorting by item size.
     @Test
     public void testSort_sizes_ascending() {
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_SIZE,
-                SortDimension.SORT_DIRECTION_ASCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_ASCENDING);
 
         final Cursor cursor = createSortingCursorWrapper();
 
@@ -205,8 +208,9 @@ public class SortingCursorWrapperTest {
         int previousSize = Integer.MIN_VALUE;
         for (int i = 0; i < cursor.getCount(); ++i) {
             cursor.moveToPosition(i);
-            seen.set(Integer.parseInt(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            seen.set(
+                    Integer.parseInt(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
             // Check sort order - descending numerical
             int size = DocumentInfo.getCursorInt(cursor, Document.COLUMN_SIZE);
             assertTrue(previousSize <= size);
@@ -219,8 +223,8 @@ public class SortingCursorWrapperTest {
     // Tests sorting by item size.
     @Test
     public void testSort_sizes_descending() {
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_SIZE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_DESCENDING);
 
         Cursor cursor = createSortingCursorWrapper();
 
@@ -228,8 +232,9 @@ public class SortingCursorWrapperTest {
         int previousSize = Integer.MAX_VALUE;
         for (int i = 0; i < cursor.getCount(); ++i) {
             cursor.moveToPosition(i);
-            seen.set(Integer.parseInt(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            seen.set(
+                    Integer.parseInt(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
             // Check sort order - descending numerical
             int size = DocumentInfo.getCursorInt(cursor, Document.COLUMN_SIZE);
             assertTrue(previousSize >= size);
@@ -250,12 +255,12 @@ public class SortingCursorWrapperTest {
             row.add(Document.COLUMN_DOCUMENT_ID, Integer.toString(i));
             row.add(Document.COLUMN_SIZE, i);
             // Interleave directories and text files.
-            String mimeType =(i % 2 == 0) ? Document.MIME_TYPE_DIR : "text/*";
+            String mimeType = (i % 2 == 0) ? Document.MIME_TYPE_DIR : "text/*";
             row.add(Document.COLUMN_MIME_TYPE, mimeType);
         }
 
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_SIZE,
-                SortDimension.SORT_DIRECTION_ASCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_ASCENDING);
 
         final Cursor cursor = createSortingCursorWrapper(c);
 
@@ -267,8 +272,9 @@ public class SortingCursorWrapperTest {
         // bucketed at the front of the list, sorted by size, followed by documents, sorted by size.
         for (int i = 0; i < cursor.getCount(); ++i) {
             cursor.moveToPosition(i);
-            seen.set(Integer.parseInt(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            seen.set(
+                    Integer.parseInt(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
 
             String mimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
             if (seenAllDirs) {
@@ -302,12 +308,12 @@ public class SortingCursorWrapperTest {
             row.add(Document.COLUMN_DOCUMENT_ID, Integer.toString(i));
             row.add(Document.COLUMN_SIZE, i);
             // Interleave directories and text files.
-            String mimeType =(i % 2 == 0) ? Document.MIME_TYPE_DIR : "text/*";
+            String mimeType = (i % 2 == 0) ? Document.MIME_TYPE_DIR : "text/*";
             row.add(Document.COLUMN_MIME_TYPE, mimeType);
         }
 
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_SIZE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_SIZE, SortDimension.SORT_DIRECTION_DESCENDING);
 
         final Cursor cursor = createSortingCursorWrapper(c);
 
@@ -364,8 +370,8 @@ public class SortingCursorWrapperTest {
             currentDownloads.add(id);
         }
 
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_DATE,
-                SortDimension.SORT_DIRECTION_ASCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_ASCENDING);
 
         final Cursor cursor = createSortingCursorWrapper(c);
 
@@ -375,8 +381,9 @@ public class SortingCursorWrapperTest {
 
         // Check that active downloads are sorted to the bottom.
         for (int i = ITEM_COUNT; i < ITEM_COUNT + DL_COUNT; i++) {
-            assertTrue(currentDownloads.contains(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            assertTrue(
+                    currentDownloads.contains(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
             cursor.moveToNext();
         }
     }
@@ -403,8 +410,8 @@ public class SortingCursorWrapperTest {
             currentDownloads.add(id);
         }
 
-        sortModel.sortByUser(SortModel.SORT_DIMENSION_ID_DATE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
 
         final Cursor cursor = createSortingCursorWrapper(c);
 
@@ -414,8 +421,9 @@ public class SortingCursorWrapperTest {
 
         // Check that active downloads are sorted to the top.
         for (int i = 0; i < DL_COUNT; i++) {
-            assertTrue(currentDownloads.contains(
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
+            assertTrue(
+                    currentDownloads.contains(
+                            DocumentInfo.getCursorString(cursor, Document.COLUMN_DOCUMENT_ID)));
             cursor.moveToNext();
         }
     }
@@ -434,8 +442,7 @@ public class SortingCursorWrapperTest {
         List<String> types = new ArrayList<>(ITEM_COUNT);
         for (int i = 0; i < ITEM_COUNT; ++i) {
             cursor.moveToPosition(i);
-            final String mime =
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_MIME_TYPE);
+            final String mime = DocumentInfo.getCursorString(cursor, Document.COLUMN_MIME_TYPE);
             final String type = fileTypeLookup.lookup(mime);
             types.add(type);
 
@@ -447,7 +454,8 @@ public class SortingCursorWrapperTest {
         for (int i = 0; i < ITEM_COUNT - 1; ++i) {
             final String lhs = types.get(i);
             final String rhs = types.get(i + 1);
-            assertTrue(lhs + " is not smaller than " + rhs,
+            assertTrue(
+                    lhs + " is not smaller than " + rhs,
                     Shared.compareToIgnoreCaseNullable(lhs, rhs) <= 0);
         }
     }
@@ -466,8 +474,7 @@ public class SortingCursorWrapperTest {
         List<String> types = new ArrayList<>(ITEM_COUNT);
         for (int i = 0; i < ITEM_COUNT; ++i) {
             cursor.moveToPosition(i);
-            final String mime =
-                    DocumentInfo.getCursorString(cursor, Document.COLUMN_MIME_TYPE);
+            final String mime = DocumentInfo.getCursorString(cursor, Document.COLUMN_MIME_TYPE);
             final String type = fileTypeLookup.lookup(mime);
             types.add(type);
 
@@ -479,30 +486,33 @@ public class SortingCursorWrapperTest {
         for (int i = 0; i < ITEM_COUNT - 1; ++i) {
             final String lhs = types.get(i);
             final String rhs = types.get(i + 1);
-            assertTrue(lhs + " is not smaller than " + rhs,
+            assertTrue(
+                    lhs + " is not smaller than " + rhs,
                     Shared.compareToIgnoreCaseNullable(lhs, rhs) >= 0);
         }
     }
 
     @Test
     public void testSort_type_descending_with_directories() {
-        do_testSort_type_descending_with_directories(new String[] {
-                // ID,     MimeType
-                "file___T, text/plain",
-                "doc____H, text/html",
-                "image__J, image/jpeg",
-                "dir____F, vnd.android.document/directory",
-                "folder_F, vnd.android.document/directory",
-        });
+        do_testSort_type_descending_with_directories(
+                new String[] {
+                    // ID,     MimeType
+                    "file___T, text/plain",
+                    "doc____H, text/html",
+                    "image__J, image/jpeg",
+                    "dir____F, vnd.android.document/directory",
+                    "folder_F, vnd.android.document/directory",
+                });
 
-        do_testSort_type_descending_with_directories(new String[] {
-                // ID,     MimeType
-                "image__J, image/jpeg",
-                "file___T, text/plain",
-                "dir____F, vnd.android.document/directory",
-                "doc____H, text/html",
-                "folder_F, vnd.android.document/directory",
-        });
+        do_testSort_type_descending_with_directories(
+                new String[] {
+                    // ID,     MimeType
+                    "image__J, image/jpeg",
+                    "file___T, text/plain",
+                    "dir____F, vnd.android.document/directory",
+                    "doc____H, text/html",
+                    "folder_F, vnd.android.document/directory",
+                });
     }
 
     // This unit test captures the sort-some-data essence of the SortDocumentUiTest
@@ -534,21 +544,23 @@ public class SortingCursorWrapperTest {
         }
 
         sortModel.sortByUser(
-                SortModel.SORT_DIMENSION_ID_FILE_TYPE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+                SortModel.SORT_DIMENSION_ID_FILE_TYPE, SortDimension.SORT_DIRECTION_DESCENDING);
 
-        final Cursor cursor = new SortingCursorWrapper(
-                c, sortModel.getDimensionById(sortModel.getSortedDimensionId()), lookup);
+        final Cursor cursor =
+                new SortingCursorWrapper(
+                        c, sortModel.getDimensionById(sortModel.getSortedDimensionId()), lookup);
 
-        String[] expectedIds = new String[]{
-            // Directories (mapped to "Folder") should sort before non-directories, even with
-            // SORT_DIRECTION_DESCENDING, and ties are broken in *ascending* ID order.
-            "dir____F", // "Folder"
-            "folder_F", // "Folder"
-            "file___T", // "TXT document"
-            "image__J", // "JPG image"
-            "doc____H", // "HTML document"
-        };
+        String[] expectedIds =
+                new String[] {
+                    // Directories (mapped to "Folder") should sort before non-directories, even
+                    // with
+                    // SORT_DIRECTION_DESCENDING, and ties are broken in *ascending* ID order.
+                    "dir____F", // "Folder"
+                    "folder_F", // "Folder"
+                    "file___T", // "TXT document"
+                    "image__J", // "JPG image"
+                    "doc____H", // "HTML document"
+                };
 
         assertEquals(expectedIds.length, cursor.getCount());
 
@@ -610,8 +622,7 @@ public class SortingCursorWrapperTest {
         }
 
         sortModel.sortByUser(
-                SortModel.SORT_DIMENSION_ID_FILE_TYPE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+                SortModel.SORT_DIMENSION_ID_FILE_TYPE, SortDimension.SORT_DIRECTION_DESCENDING);
 
         long[] timeTakenMillis = new long[5];
         for (int i = 0; i < timeTakenMillis.length; ++i) {
@@ -624,7 +635,8 @@ public class SortingCursorWrapperTest {
 
         Arrays.sort(timeTakenMillis);
         for (int i = 0; i < timeTakenMillis.length; ++i) {
-            Log.d("SortingCursorWrapperTest",
+            Log.d(
+                    "SortingCursorWrapperTest",
                     "manualBenchmarkSort_type_descending_with_directories" + timeTakenMillis[i]);
         }
     }
@@ -646,8 +658,7 @@ public class SortingCursorWrapperTest {
 
         // set sorting to avoid an NPE.
         sortModel.sortByUser(
-                SortModel.SORT_DIMENSION_ID_DATE,
-                SortDimension.SORT_DIRECTION_DESCENDING);
+                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
 
         Bundle actual = createSortingCursorWrapper(c).getExtras();
 
