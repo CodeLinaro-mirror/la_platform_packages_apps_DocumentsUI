@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Dihapus"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Di-zip"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Diekstrak"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"Di sampah"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Dipulihkan"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Tidak dapat menyalin"</string>
     <string name="move_failed" msgid="7692364307225994220">"Tidak dapat memindahkan"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Tidak dapat menghapus"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Tidak dapat membuat zip"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Tidak dapat mengekstrak"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"Gagal dipindahkan ke sampah"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Tidak dapat memulihkan"</string>
     <string name="expand_label" msgid="5683357671239615207">"Luaskan"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Ciutkan"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Beri <xliff:g id="APPNAME"><b>^1</b></xliff:g> akses ke direktori <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> di <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>

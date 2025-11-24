@@ -284,19 +284,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Видалено"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Заархівовано"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Видобуто"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"У кошику"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Відновлено"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Не вдалося скопіювати дані"</string>
     <string name="move_failed" msgid="7692364307225994220">"Не вдалося перемістити"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Не вдалося видалити"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Не вдалося заархівувати"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Не вдалося розпакувати"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"Не переміщено в кошик"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Не вдалося відновити"</string>
     <string name="expand_label" msgid="5683357671239615207">"Розгорнути"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Згорнути"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Надати додатку <xliff:g id="APPNAME"><b>^1</b></xliff:g> доступ до каталогу \"<xliff:g id="DIRECTORY"><i>^2</i></xliff:g>\" на пристрої пам’яті <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>

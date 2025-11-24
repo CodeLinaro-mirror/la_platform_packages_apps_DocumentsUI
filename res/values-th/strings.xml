@@ -221,7 +221,7 @@
       <item quantity="other">แปลงไฟล์เหล่านี้เป็นอีกรูปแบบหนึ่งแล้ว: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">แปลงไฟล์นี้เป็นอีกรูปแบบหนึ่งแล้ว: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{แปลงไฟล์นี้เป็นรูปแบบอื่น:}other{แปลงไฟล์เหล่านี้เป็นรูปแบบอื่น:}}"</string>
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{แปลงไฟล์นี้เป็นรูปแบบอื่นแล้ว:}other{แปลงไฟล์เหล่านี้เป็นรูปแบบอื่นแล้ว:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">คัดลอกไปยังคลิปบอร์ดแล้ว <xliff:g id="COUNT_1">%1$d</xliff:g> รายการ</item>
       <item quantity="one">คัดลอกไปยังคลิปบอร์ดแล้ว <xliff:g id="COUNT_0">%1$d</xliff:g> รายการ</item>
