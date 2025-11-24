@@ -203,6 +203,11 @@ final class GridDocumentHolder extends DocumentHolder {
             mIconMimeSm.setAlpha(imgAlpha);
             mIconThumb.setAlpha(imgAlpha);
         }
+
+        if (!enabled) {
+            // Hide the sync state when the user can't do anything to fix it.
+            hideSyncIcons();
+        }
     }
 
     @Override
@@ -359,5 +364,7 @@ final class GridDocumentHolder extends DocumentHolder {
             // There is no need for the bullet separating the details and date.
             mBullet.setVisibility(View.GONE);
         }
+
+        bindSyncIcons(mDoc);
     }
 }

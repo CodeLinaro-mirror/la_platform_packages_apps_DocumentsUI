@@ -15,6 +15,7 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -30,44 +31,150 @@
     android:paddingVertical="@dimen/list_item_padding_vertical">
 
     <FrameLayout
-        android:id="@+id/icon"
-        android:pointerIcon="hand"
-        android:layout_width="@dimen/list_item_icon_size"
-        android:layout_height="@dimen/list_item_icon_size"
-        android:layout_marginEnd="@dimen/list_item_icon_margin_end">
+        android:id="@+id/icon_wrapper"
+        android:layout_width="@dimen/list_item_icon_wrapper_size"
+        android:layout_height="@dimen/list_item_icon_wrapper_size"
+        android:layout_marginEnd="@dimen/list_item_icon_wrapper_margin_end">
 
-      <com.google.android.material.card.MaterialCardView
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          style="@style/ListThumbnailCardViewStyle">
+        <FrameLayout
+            android:id="@+id/icon"
+            android:pointerIcon="hand"
+            android:layout_width="@dimen/list_item_icon_size"
+            android:layout_height="@dimen/list_item_icon_size">
 
-        <ImageView
-            android:id="@+id/icon_mime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@null"
-            android:scaleType="centerInside" />
+          <com.google.android.material.card.MaterialCardView
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              style="@style/ListThumbnailCardViewStyle">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/icon_thumb"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"
-            style="@style/ListThumbnailImageViewStyle" />
+            <ImageView
+                android:id="@+id/icon_mime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:scaleType="centerInside" />
 
-        <ImageView
-            android:id="@+id/icon_check"
-            android:layout_width="@dimen/check_icon_size_m3"
-            android:layout_height="@dimen/check_icon_size_m3"
-            android:layout_gravity="center"
-            android:alpha="0"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_check_circle_m3" />
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/icon_thumb"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="centerCrop"
+                style="@style/ListThumbnailImageViewStyle" />
 
-      </com.google.android.material.card.MaterialCardView>
+            <ImageView
+                android:id="@+id/icon_check"
+                android:layout_width="@dimen/check_icon_size_m3"
+                android:layout_height="@dimen/check_icon_size_m3"
+                android:layout_gravity="center"
+                android:alpha="0"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_check_circle_m3" />
+
+          </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/download_icon"
+            android:layout_width="@dimen/list_inline_sync_cloud_icon_size"
+            android:layout_height="@dimen/list_inline_sync_cloud_icon_size"
+            android:layout_gravity="bottom|end"
+            android:focusable="false"
+            android:visibility="gone"
+            android:clickable="false">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:tint="?attr/colorSurfaceContainerLowest"
+                android:src="@drawable/ic_cloud_m3" />
+
+            <ImageView
+                android:layout_width="@dimen/list_inline_sync_inner_cloud_icon_size"
+                android:layout_height="@dimen/list_inline_sync_inner_cloud_icon_size"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_download_m3" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/upload_icon"
+            android:layout_width="@dimen/list_inline_sync_cloud_icon_size"
+            android:layout_height="@dimen/list_inline_sync_cloud_icon_size"
+            android:layout_gravity="bottom|end"
+            android:focusable="false"
+            android:visibility="gone"
+            android:clickable="false">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:tint="?attr/colorSurfaceContainerLowest"
+                android:src="@drawable/ic_cloud_m3" />
+
+            <ImageView
+                android:layout_width="@dimen/list_inline_sync_inner_cloud_icon_size"
+                android:layout_height="@dimen/list_inline_sync_inner_cloud_icon_size"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_upload_m3" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@android:id/progress"
+            android:layout_width="@dimen/list_inline_sync_progress_icon_size"
+            android:layout_height="@dimen/list_inline_sync_progress_icon_size"
+            android:layout_gravity="bottom|end"
+            android:focusable="false"
+            android:visibility="gone"
+            android:clickable="false">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sync_circle_background_m3" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                style="@style/InlineSyncProgressIndicatorStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:indeterminate="true"
+                app:indicatorSize="@dimen/list_inline_sync_progress_indicator_size"/>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/sync_error_icon"
+            android:layout_width="@dimen/list_inline_sync_error_icon_size"
+            android:layout_height="@dimen/list_inline_sync_error_icon_size"
+            android:layout_gravity="bottom|end"
+            android:visibility="gone"
+            android:focusable="false"
+            android:clickable="false">
+
+            <ImageView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sync_circle_background_m3" />
+
+            <ImageView
+                android:layout_height="@dimen/list_inline_sync_error_inner_icon_size"
+                android:layout_width="@dimen/list_inline_sync_error_inner_icon_size"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sync_error_m3" />
+
+        </FrameLayout>
 
     </FrameLayout>
 

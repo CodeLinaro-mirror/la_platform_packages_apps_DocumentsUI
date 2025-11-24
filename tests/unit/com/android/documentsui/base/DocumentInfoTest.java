@@ -20,10 +20,18 @@ import static android.provider.DocumentsContract.Document.MIME_TYPE_DIR;
 
 import static androidx.core.util.Preconditions.checkArgument;
 
+import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
+import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_ERROR;
+import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS;
+import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_LOCAL_CHANGES;
+import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_UPLOAD_ERROR;
+import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.kotlin.VerificationKt.never;
@@ -376,5 +384,150 @@ public class DocumentInfoTest {
                         DocumentInfo.getCursorInteger(
                                 cursor, columnName, /* returnIfMissingOrNull= */ null))
                 .isEqualTo(value);
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHasSyncState() {
+        // No sync state when the column doesn't exist.
+        Cursor cursor = mock(Cursor.class);
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(-1);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasSyncState());
+
+        // No sync state when the column value is null.
+        int index = 1;
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.isNull(index)).thenReturn(true);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasSyncState());
+
+        // Sync state when the column value is set.
+        when(cursor.isNull(index)).thenReturn(false);
+        when(cursor.getInt(index)).thenReturn(2);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.hasSyncState());
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHasSyncState_featureDisabled() {
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getInt(index)).thenReturn(2);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasSyncState());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHasSyncInProgress() {
+        // No sync in progress when column value doesn't contain the right flags.
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+        int value = 0;
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getInt(index)).thenReturn(value);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasSyncInProgress());
+
+        // Sync in progress when column value includes SYNC_STATE_FLAG_UPLOAD_PROGRESS.
+        value = SYNC_STATE_FLAG_UPLOAD_PROGRESS;
+        when(cursor.getInt(index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.hasSyncInProgress());
+
+        // Sync in progress when column value includes SYNC_STATE_FLAG_DOWNLOAD_PROGRESS.
+        value = SYNC_STATE_FLAG_DOWNLOAD_PROGRESS | SYNC_STATE_FLAG_LOCAL_CHANGES;
+        when(cursor.getInt(index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.hasSyncInProgress());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHasSyncError() {
+        // No sync error when column value doesn't contain the right flags.
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+        int value = 0;
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getInt(index)).thenReturn(value);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasSyncError());
+
+        // Sync error when column value includes SYNC_STATE_FLAG_UPLOAD_ERROR.
+        value = SYNC_STATE_FLAG_UPLOAD_ERROR;
+        when(cursor.getInt(index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.hasSyncError());
+
+        // Sync error when column value includes SYNC_STATE_FLAG_DOWNLOAD_ERROR.
+        value = SYNC_STATE_FLAG_DOWNLOAD_ERROR | SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
+        when(cursor.getInt(index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.hasSyncError());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHasLocalChanges() {
+        // No local changes when column value is null.
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+        int value = 0;
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.isNull(index)).thenReturn(true);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasLocalChanges());
+
+        // No local changes when column value doesn't contain the right flag.
+        when(cursor.isNull(index)).thenReturn(false);
+        when(cursor.getInt(index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasLocalChanges());
+
+        // Local changes when column value includes SYNC_STATE_FLAG_LOCAL_CHANGES.
+        value = SYNC_STATE_FLAG_LOCAL_CHANGES | SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
+        when(cursor.getInt(index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.hasLocalChanges());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testIsContentAvailableLocally() {
+        // Available locally when column value is null.
+        Cursor cursor = mock(Cursor.class);
+        int sync_index = 1;
+        int value = 0;
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS))
+                .thenReturn(sync_index);
+        when(cursor.isNull(sync_index)).thenReturn(true);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.isContentAvailableLocally());
+
+        // Not available locally when column value doesn't contain the right flag.
+        when(cursor.isNull(sync_index)).thenReturn(false);
+        when(cursor.getInt(sync_index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.isContentAvailableLocally());
+
+        // Available locally when document is virtual.
+        int flag_index = 1;
+        when(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS)).thenReturn(flag_index);
+        when(cursor.getInt(flag_index))
+                .thenReturn(DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.isContentAvailableLocally());
+
+        // Available locally when column value includes SYNC_STATE_FLAG_AVAILABLE_LOCALLY.
+        value = SYNC_STATE_FLAG_AVAILABLE_LOCALLY | SYNC_STATE_FLAG_LOCAL_CHANGES;
+        when(cursor.getInt(flag_index)).thenReturn(0);
+        when(cursor.getInt(sync_index)).thenReturn(value);
+        info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertTrue(info.isContentAvailableLocally());
     }
 }
