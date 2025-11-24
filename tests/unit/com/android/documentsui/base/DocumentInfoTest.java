@@ -334,8 +334,9 @@ public class DocumentInfoTest extends AndroidTestCase {
         String columnName = "column";
         int index = 0;
         int value = 5;
+        when(cursor.getInt(index)).thenReturn(value);
 
-        // When cursor is null, the default value value should be returned.
+        // When cursor is null, the default value should be returned.
         assertThat(DocumentInfo.getCursorInt(null, columnName)).isEqualTo(0);
         assertThat(
                         DocumentInfo.getCursorInteger(
@@ -346,7 +347,7 @@ public class DocumentInfoTest extends AndroidTestCase {
                                 null, columnName, /* returnIfMissingOrNull= */ null))
                 .isEqualTo(null);
 
-        // When the column has no index (-1), the default value value should be returned.
+        // When the column has no index (-1), the default value should be returned.
         when(cursor.getColumnIndex(columnName)).thenReturn(-1);
         assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(0);
         assertThat(
@@ -358,9 +359,22 @@ public class DocumentInfoTest extends AndroidTestCase {
                                 null, columnName, /* returnIfMissingOrNull= */ null))
                 .isEqualTo(null);
 
-        // When the column has a valid, the column's value should be returned.
+        // When the column's value is null, the default value should be returned.
         when(cursor.getColumnIndex(columnName)).thenReturn(index);
-        when(cursor.getInt(index)).thenReturn(value);
+        when(cursor.isNull(index)).thenReturn(true);
+        assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(0);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ -10))
+                .isEqualTo(-10);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ null))
+                .isEqualTo(null);
+
+        // When the column has a non-null value, the column's value should be returned.
+        when(cursor.getColumnIndex(columnName)).thenReturn(index);
+        when(cursor.isNull(index)).thenReturn(false);
         assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(value);
         assertThat(
                         DocumentInfo.getCursorInteger(
