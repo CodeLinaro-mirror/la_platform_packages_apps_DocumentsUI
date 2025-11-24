@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"মোছা হয়েছে"</string>
     <string name="compress_completed" msgid="6522047921428919799">"জিপ করা হয়েছে"</string>
     <string name="extract_completed" msgid="8824595789915249972">"এক্সট্র্যাক্ট করা হয়েছে"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"ট্র্যাশে রয়েছে"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"ফিরিয়ে আনা হয়েছে"</string>
     <string name="copy_failed" msgid="3700193913993844675">"কপি করা যায়নি"</string>
     <string name="move_failed" msgid="7692364307225994220">"সরানো যায়নি"</string>
     <string name="delete_failed" msgid="2642684566325252513">"মুছে ফেলা যায়নি"</string>
     <string name="compress_failed" msgid="7397502181042157261">"জিপ করা যায়নি"</string>
     <string name="extract_failed" msgid="8372397499452831323">"এক্সট্র্যাক্ট করা যায়নি"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"ট্র্যাশে পাঠানো যায়নি"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"ফিরিয়ে আনা যায়নি"</string>
     <string name="expand_label" msgid="5683357671239615207">"বড় করুন"</string>
     <string name="collapse_label" msgid="4530974883269531062">"আড়াল করুন"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> কে <xliff:g id="STORAGE"><i>^3</i></xliff:g> এ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> সংগ্রহ অ্যাক্সেস করার অনুমতি দেবেন?"</string>
@@ -358,8 +354,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"আপনার গোপনীয়তা সুরক্ষিত রাখতে, অন্য ফোল্ডার বেছে নিন"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"নতুন ফোল্ডার তৈরি করুন"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"এই ডিভাইসে খুঁজুন"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"সার্চ ফলাফল"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"টেক্সট মুছুন"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"রুট ফোল্ডার"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"সব জায়গায়"</string>

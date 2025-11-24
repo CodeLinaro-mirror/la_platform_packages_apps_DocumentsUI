@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"ဖျက်ပြီးပြီ"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Zip ချုံ့ပြီးပြီ"</string>
     <string name="extract_completed" msgid="8824595789915249972">"ထုတ်ယူပြီးပြီ"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"အမှိုက်ပုံးထဲတွင်"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"ပြန်ယူပြီးပါပြီ"</string>
     <string name="copy_failed" msgid="3700193913993844675">"မိတ္တူကူး၍ မရလိုက်ပါ"</string>
     <string name="move_failed" msgid="7692364307225994220">"ရွှေ့၍ မရလိုက်ပါ"</string>
     <string name="delete_failed" msgid="2642684566325252513">"ဖျက်၍မရလိုက်ပါ"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Zip ချုံ့၍ မရလိုက်ပါ"</string>
     <string name="extract_failed" msgid="8372397499452831323">"ထုတ်ယူ၍ မရလိုက်ပါ"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"အမှိုက်ပုံးသို့ ရွှေ့မရပါ"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"ပြန်ယူ၍မရလိုက်ပါ"</string>
     <string name="expand_label" msgid="5683357671239615207">"ပိုပြပါ"</string>
     <string name="collapse_label" msgid="4530974883269531062">"လျှော့ပြပါ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> အား <xliff:g id="STORAGE"><i>^3</i></xliff:g> ရှိ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ဖိုင်လမ်းညွှန်ကို အသုံးပြုခွင့်ပေးမှာလား။"</string>
@@ -358,8 +354,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"သင်၏ကိုယ်ရေးလုံခြုံမှုကို ကာကွယ်ရန် ဖိုင်တွဲနောက်တစ်ခု ရွေးပါ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ဖိုင်တွဲအသစ် ပြုလုပ်ရန်"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ဤစက်တွင် ရှာရန်"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"ရှာဖွေမှုရလဒ်များ"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"စာသား ဖယ်ရှားရန်"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"မူလဖိုင်တွဲ"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"နေရာအနှံ့"</string>

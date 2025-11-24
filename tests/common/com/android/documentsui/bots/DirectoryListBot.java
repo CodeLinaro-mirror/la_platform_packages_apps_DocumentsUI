@@ -144,8 +144,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         mPreviewId = mTargetPackage + ":id/preview_icon";
         mListSelectionRegionId = mTargetPackage + ":id/icon";
         mGridSelectionRegionId =
-                mTargetPackage
-                        + (isUseMaterial3FlagEnabled() ? ":id/selection_circle" : ":id/icon");
+                mTargetPackage + (isUseMaterial3FlagEnabled() ? ":id/thumbnail" : ":id/icon");
     }
 
     public void assertDocumentsCount(int count) throws UiObjectNotFoundException {
@@ -319,13 +318,19 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     /**
+     * Selects the given document, identified by its label, assuming that it is not already
+     * selected. It does not change the selectedness of other documents.
+     *
      * @param label The filename of the document
      * @param number Which nth document it is. The number corresponding to "n selected"
      */
     public void selectDocument(String label, int number) throws UiObjectNotFoundException {
         waitForDocument(label);
-        UiObject2 selectionHotspot = findSelectionHotspot(label);
-        selectionHotspot.click();
+
+        // Long finger-click (instead of long mouse-click and instead of regular (not-long)
+        // mouse-click) to toggle (instead of set) selection. Toggling (instead of setting) does
+        // not change the selectedness of other documents.
+        longClickWithToolTypeFinger(findSelectionHotspot(label));
 
         // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
         // also avoids a future click being registered as double clicking.
@@ -345,11 +350,15 @@ public class DirectoryListBot extends Bots.BaseBot {
     public void selectFirstDocument() throws UiObjectNotFoundException {
         final BySelector list = By.res(mDirListId);
         final BySelector selectionRegionSelector = getSelectionRegionSelector();
-
-        UiObject2 firstAvailableSelectionHotspot =
-                mDevice.findObject(list).findObject(selectionRegionSelector);
-        firstAvailableSelectionHotspot.click();
+        longClickWithToolTypeFinger(mDevice.findObject(list).findObject(selectionRegionSelector));
         assertSelection(1);
+    }
+
+    private void longClickWithToolTypeFinger(UiObject2 uiObject) {
+        int toolType = Configurator.getInstance().getToolType();
+        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
+        uiObject.longClick();
+        Configurator.getInstance().setToolType(toolType);
     }
 
     /** Finds a list item's (whose text has the given label) selection hotspot. */

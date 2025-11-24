@@ -480,8 +480,8 @@ public class DocumentsProviderHelper {
      * @return A {@link List} of {@link DocumentInfo} objects for each item in the trash.
      * @throws Exception if there is an issue querying the content provider.
      */
-    public List<DocumentInfo> getAllTrashItems() throws Exception {
-        Uri uri = DocumentsContract.buildTrashDocumentsUri(mAuthority);
+    public List<DocumentInfo> getAllTrashItems(String rootId) throws Exception {
+        Uri uri = DocumentsContract.buildTrashDocumentsUri(mAuthority, rootId);
         List<DocumentInfo> children = new ArrayList<>();
         try (Cursor cursor = mClient.query(uri, null, null, null, null, null)) {
             if (cursor == null) {

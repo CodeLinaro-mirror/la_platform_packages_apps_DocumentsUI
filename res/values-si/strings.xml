@@ -358,8 +358,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ඔබේ රහස්‍යතාව ආරක්ෂා කිරීමට, තවත් ෆෝල්ඩරයක් තෝරා ගන්න"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"නව ෆෝල්ඩරය තනන්න"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"මෙම උපාංගය සොයන්න"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"සෙවුම් ප්‍රතිඵල"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"පෙළ හිස් කරන්න"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"මූල ෆෝල්ඩරය"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"සැමතැනම"</string>

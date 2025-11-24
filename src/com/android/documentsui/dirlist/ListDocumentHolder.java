@@ -83,7 +83,7 @@ final class ListDocumentHolder extends DocumentHolder {
     private final @Nullable TextView mMetadataView;
     private final ImageView mIconMime;
     private final ImageView mIconThumb;
-    private final ImageView mIconCheck;
+    private final @Nullable ImageView mIconCheck;
     private final ImageView mIconBadge;
     private final View mIconLayout;
     final View mPreviewIcon;
@@ -103,11 +103,19 @@ final class ListDocumentHolder extends DocumentHolder {
             DocumentsAdapter.Environment environment) {
         super(context, parent, getRes(R.layout.item_doc_list), configStore);
 
+        boolean showSelectionCheckmark =
+                !isSingleClickToSelectEnabled()
+                        || itemView.getResources().getBoolean(R.bool.show_selection_checkmark);
+
         mEnv = environment;
         mIconLayout = itemView.findViewById(getRes(R.id.icon));
         mIconMime = (ImageView) itemView.findViewById(getRes(R.id.icon_mime));
         mIconThumb = (ImageView) itemView.findViewById(getRes(R.id.icon_thumb));
-        mIconCheck = (ImageView) itemView.findViewById(getRes(R.id.icon_check));
+        mIconCheck =
+                (ImageView)
+                        conditionalView(
+                                showSelectionCheckmark,
+                                itemView.findViewById(getRes(R.id.icon_check)));
         mIconBadge = (ImageView) itemView.findViewById(getRes(R.id.icon_profile_badge));
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
         mTitleContainer = (View) itemView.findViewById(R.id.title_container);
@@ -123,6 +131,11 @@ final class ListDocumentHolder extends DocumentHolder {
         mIconHelper = iconHelper;
         mFileTypeLookup = fileTypeLookup;
         mDoc = new DocumentInfo();
+
+        if (!showSelectionCheckmark) {
+            // Override android:pointerIcon="hand" in the res/**/*.xml layout.
+            mIconLayout.setPointerIcon(null);
+        }
 
         if (SdkLevel.isAtLeastT() && !mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
             setUpdatableWorkProfileIcon(context);
@@ -143,11 +156,15 @@ final class ListDocumentHolder extends DocumentHolder {
 
     @Override
     public void setSelected(boolean selected, boolean animate) {
+        boolean showSelectionCheckmark = mIconCheck != null;
+
         // We always want to make sure our check box disappears if we're not selected,
         // even if the item is disabled. But it should be an error (see assert below)
         // to be set to selected && be disabled.
         float checkAlpha = selected ? 1f : 0f;
-        if (animate) {
+        if (!showSelectionCheckmark) {
+            // No-op.
+        } else if (animate) {
             fade(mIconCheck, checkAlpha).start();
         } else {
             mIconCheck.setAlpha(checkAlpha);
@@ -159,7 +176,9 @@ final class ListDocumentHolder extends DocumentHolder {
 
         super.setSelected(selected, animate);
 
-        if (animate) {
+        if (!showSelectionCheckmark) {
+            // No-op.
+        } else if (animate) {
             fade(mIconMime, 1f - checkAlpha).start();
             fade(mIconThumb, 1f - checkAlpha).start();
         } else {
@@ -184,18 +203,16 @@ final class ListDocumentHolder extends DocumentHolder {
 
     @Override
     public void bindPreviewIcon(boolean show, Function<View, Boolean> clickCallback) {
-        if (mDoc.isDirectory()) {
+        if (mDoc.isDirectory() || !show) {
             mPreviewIcon.setVisibility(View.GONE);
         } else {
-            mPreviewIcon.setVisibility(show ? View.VISIBLE : View.GONE);
-            if (show) {
-                mPreviewIcon.setContentDescription(
-                        getPreviewIconContentDescription(
-                                mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
-                                mDoc.displayName, mDoc.userId));
-                mPreviewIcon.setAccessibilityDelegate(
-                        new PreviewAccessibilityDelegate(clickCallback));
-            }
+            mPreviewIcon.setVisibility(View.VISIBLE);
+            mPreviewIcon.setContentDescription(
+                    getPreviewIconContentDescription(
+                            mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
+                            mDoc.displayName,
+                            mDoc.userId));
+            mPreviewIcon.setAccessibilityDelegate(new PreviewAccessibilityDelegate(clickCallback));
         }
     }
 
@@ -242,10 +259,13 @@ final class ListDocumentHolder extends DocumentHolder {
 
     @Override
     public int classifySelectionHotspot(MotionEvent event) {
+        boolean showSelectionCheckmark = mIconCheck != null;
+
         if (mDoc.isDirectory() && (mAction != State.ACTION_BROWSE)) {
             // No-op.
 
-        } else if (Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
+        } else if (showSelectionCheckmark
+                && Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
             return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
 
         } else if (Events.isMousyEvent(event) && isSingleClickToSelectEnabled()) {

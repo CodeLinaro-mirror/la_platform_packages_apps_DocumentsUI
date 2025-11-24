@@ -18,7 +18,10 @@ package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -42,9 +45,9 @@ import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
@@ -126,6 +129,11 @@ public final class MenuManagerTest {
     private TestMenuItem mActionBrowse;
     private TestMenuItem mActionModeTrash;
     private TestMenuItem mActionModeRestoreFromTrash;
+    private TestMenuItem mActionModeSelect;
+    private TestMenuItem mActionModeOpenInNewWindow;
+    private TestMenuItem mActionModeCut;
+    private TestMenuItem mActionModeCopy;
+    private TestMenuItem mActionModePasteIntoFolder;
 
     /* Option Menu items */
     private TestMenuItem optionSearch;
@@ -139,6 +147,7 @@ public final class MenuManagerTest {
     private TestMenuItem mOptionLauncher;
     private TestMenuItem mOptionShowHiddenFiles;
     private TestMenuItem mOptionExtractAll;
+    private TestMenuItem mOptionPaste;
 
     /* Sub Option Menu items */
     private TestMenuItem subOptionGrid;
@@ -204,9 +213,11 @@ public final class MenuManagerTest {
         mRootInspector = testMenu.findItem(R.id.root_menu_inspect);
 
         // Menu actions (including overflow) when action mode *is* active.
+        actionModeOpen = testMenu.findItem(R.id.action_menu_open);
         actionModeOpenWith = testMenu.findItem(R.id.action_menu_open_with);
         actionModeShare = testMenu.findItem(R.id.action_menu_share);
         actionModeDelete = testMenu.findItem(R.id.action_menu_delete);
+        mActionModeSelect = testMenu.findItem(R.id.action_menu_select);
         actionModeSelectAll = testMenu.findItem(R.id.action_menu_select_all);
         mActionModeDeselectAll = testMenu.findItem(R.id.action_menu_deselect_all);
         actionModeCopyTo = testMenu.findItem(R.id.action_menu_copy_to);
@@ -221,6 +232,10 @@ public final class MenuManagerTest {
         mActionBrowse = testMenu.findItem(R.id.action_menu_browse);
         mActionModeTrash = testMenu.findItem(R.id.action_menu_move_to_trash);
         mActionModeRestoreFromTrash = testMenu.findItem(R.id.action_menu_restore_from_trash);
+        mActionModeOpenInNewWindow = testMenu.findItem(R.id.action_menu_open_in_new_window);
+        mActionModeCut = testMenu.findItem(R.id.action_menu_cut_to_clipboard);
+        mActionModeCopy = testMenu.findItem(R.id.action_menu_copy_to_clipboard);
+        mActionModePasteIntoFolder = testMenu.findItem(R.id.action_menu_paste_into_folder);
 
         // Menu actions (including overflow) when action mode is not active.
         optionSearch = testMenu.findItem(R.id.option_menu_search);
@@ -234,6 +249,7 @@ public final class MenuManagerTest {
         mOptionLauncher = testMenu.findItem(R.id.option_menu_launcher);
         mOptionShowHiddenFiles = testMenu.findItem(R.id.option_menu_show_hidden_files);
         mOptionExtractAll = testMenu.findItem(R.id.option_menu_extract_all);
+        mOptionPaste = testMenu.findItem(R.id.option_menu_paste_from_clipboard);
 
         // Menu actions on root title row.
         subOptionGrid = testMenu.findItem(R.id.sub_menu_grid);
@@ -299,6 +315,11 @@ public final class MenuManagerTest {
         assumeTrue(VersionUtils.isGreaterThanB());
     }
 
+    private boolean shouldShowCopyCutMenus() {
+        return isDesktopUxPhase2FlagEnabled()
+                && !(activity.getResources().getBoolean(R.bool.show_copy_to_move_to_menus));
+    }
+
     @Test
     public void testActionMenu() {
         selectionDetails.canDelete = true;
@@ -310,19 +331,178 @@ public final class MenuManagerTest {
         actionModeRename.assertEnabledAndVisible();
         actionModeDelete.assertEnabledAndVisible();
         actionModeShare.assertEnabledAndVisible();
-        actionModeCopyTo.assertEnabledAndVisible();
         actionModeCompress.assertEnabledAndVisible();
         actionModeExtractTo.assertDisabledAndInvisible();
-        actionModeMoveTo.assertEnabledAndVisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
-        actionModeSort.assertEnabledAndVisible();
-        actionModeSelectAll.assertEnabledAndVisible();
-        mActionModeDeselectAll.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
         mActionModeTrash.assertDisabledAndInvisible();
         mActionModeRestoreFromTrash.assertDisabledAndInvisible();
+
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCopy.assertEnabledAndVisible();
+            mActionModeCut.assertEnabledAndVisible();
+        } else {
+            actionModeCopyTo.assertEnabledAndVisible();
+            actionModeMoveTo.assertEnabledAndVisible();
+        }
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_showSortAndSelect() {
+        selectionDetails.canDelete = true;
+        selectionDetails.canRename = true;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Select is only shown in picker mode.
+        mActionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertEnabledAndVisible();
+        actionModeSelectAll.assertEnabledAndVisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSortAndSelect() {
+        selectionDetails.canDelete = true;
+        selectionDetails.canRename = true;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeSelect.assertDisabledAndInvisible();
+        actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
+    public void testActionMenu_containsDocumentsWithUnavailableContent() {
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+        selectionDetails.canDelete = true;
+        selectionDetails.containDirectories = false;
+        selectionDetails.containPartial = false;
+        selectionDetails.canExtract = false;
+        selectionDetails.canRestore = false;
+        selectionDetails.canRename = true;
+        selectionDetails.isArchive = true;
+        selectionDetails.size = 1;
+        features.archiveCreation = true;
+        features.inspector = true;
+        dirDetails.canCreateDoc = true;
+        dirDetails.canCreateDirectory = true;
+        dirDetails.isInArchive = false;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Items that are normally enabled are disabled (but visible) when the content is
+        // unavailable.
+        actionModeOpenWith.assertDisabledAndVisible();
+        actionModeDelete.assertEnabledAndVisible();
+        actionModeShare.assertDisabledAndVisible();
+        actionModeRename.assertEnabledAndVisible();
+        mActionModeSelect.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+        actionModeCompress.assertDisabledAndVisible();
+        actionModeInspector.assertEnabledAndVisible();
+        actionModeSort.assertDisabledAndInvisible();
+        mActionExtractHere.assertDisabledAndVisible();
+        mActionBrowse.assertDisabledAndVisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCopy.assertDisabledAndVisible();
+            mActionModeCut.assertDisabledAndVisible();
+        } else {
+            actionModeCopyTo.assertDisabledAndVisible();
+            actionModeMoveTo.assertDisabledAndVisible();
+        }
+
+        selectionDetails.canExtract = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeExtractTo.assertDisabledAndVisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({
+        Flags.FLAG_CLOUD_FEATURES,
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO
+    })
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testActionMenu_containsDocumentsWithUnavailableContent_trash() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.canTrash = true;
+        selectionDetails.canRestore = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // These trash items should be be disabled but remain visible as the actions are only
+        // temporarily unavailable.
+        mActionModeTrash.assertDisabledAndVisible();
+        mActionModeRestoreFromTrash.assertDisabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_ZIP_NG_RO, Flags.FLAG_USE_MATERIAL3})
+    @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
+    public void testActionMenu_containsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+        selectionDetails.canDelete = true;
+        selectionDetails.containDirectories = false;
+        selectionDetails.containPartial = false;
+        selectionDetails.canExtract = false;
+        selectionDetails.canRestore = false;
+        selectionDetails.canRename = true;
+        selectionDetails.isArchive = true;
+        selectionDetails.size = 1;
+        features.archiveCreation = true;
+        features.inspector = true;
+        dirDetails.canCreateDoc = true;
+        dirDetails.canCreateDirectory = true;
+        dirDetails.isInArchive = false;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Items that are normally enabled should remain enabled when the content is unavailable
+        // but the feature flag is off.
+        actionModeOpenWith.assertEnabledAndVisible();
+        actionModeDelete.assertEnabledAndVisible();
+        actionModeShare.assertEnabledAndVisible();
+        actionModeRename.assertEnabledAndVisible();
+        mActionModeSelect.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+        actionModeCompress.assertEnabledAndVisible();
+        actionModeInspector.assertEnabledAndVisible();
+        actionModeSort.assertDisabledAndInvisible();
+        mActionExtractHere.assertEnabledAndVisible();
+        mActionBrowse.assertEnabledAndVisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCopy.assertEnabledAndVisible();
+            mActionModeCut.assertEnabledAndVisible();
+        } else {
+            actionModeCopyTo.assertEnabledAndVisible();
+            actionModeMoveTo.assertEnabledAndVisible();
+        }
+
+        selectionDetails.canExtract = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeExtractTo.assertEnabledAndVisible();
     }
 
     @Test
@@ -340,6 +520,9 @@ public final class MenuManagerTest {
         } else {
             mActionExtractHere.assertDisabledAndInvisible();
             mActionBrowse.assertDisabledAndInvisible();
+        }
+        if (isUseMaterial3FlagEnabled()) {
+            mActionModeOpenInNewWindow.assertDisabledAndInvisible();
         }
 
         // On archive in read-only directory (but not a nested archive)
@@ -368,14 +551,20 @@ public final class MenuManagerTest {
 
         actionModeRename.assertDisabledAndInvisible();
         actionModeShare.assertDisabledAndInvisible();
-        actionModeCopyTo.assertDisabledAndInvisible();
         actionModeCompress.assertDisabledAndInvisible();
         actionModeExtractTo.assertDisabledAndInvisible();
-        actionModeMoveTo.assertDisabledAndInvisible();
         actionModeViewInOwner.assertDisabledAndInvisible();
         mOptionExtractAll.assertDisabledAndInvisible();
         mActionExtractHere.assertDisabledAndInvisible();
         mActionBrowse.assertDisabledAndInvisible();
+
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertDisabledAndInvisible();
+            mActionModeCopy.assertDisabledAndInvisible();
+        } else {
+            actionModeMoveTo.assertDisabledAndInvisible();
+            actionModeCopyTo.assertDisabledAndInvisible();
+        }
     }
 
     @Test
@@ -418,7 +607,11 @@ public final class MenuManagerTest {
 
         actionModeDelete.assertDisabledAndInvisible();
         // We shouldn't be able to move files if we can't delete them
-        actionModeMoveTo.assertDisabledAndInvisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertDisabledAndInvisible();
+        } else {
+            actionModeMoveTo.assertDisabledAndInvisible();
+        }
     }
 
     @Test
@@ -434,16 +627,17 @@ public final class MenuManagerTest {
     public void testActionsMenu_cantViewInOwner_noSelection() {
         // Simulate empty selection
         selectionManager = SelectionHelpers.createTestInstance();
-        mgr = new MenuManager(
-                features,
-                testSearchManager,
-                state,
-                dirDetails,
-                activity,
-                selectionManager,
-                this::getApplicationNameFromAuthority,
-                this::getUriFromModelId,
-                this::getFilesCount);
+        mgr =
+                new MenuManager(
+                        features,
+                        testSearchManager,
+                        state,
+                        dirDetails,
+                        activity,
+                        selectionManager,
+                        this::getApplicationNameFromAuthority,
+                        this::getUriFromModelId,
+                        this::getFilesCount);
 
         selectionDetails.canViewInOwner = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -460,7 +654,11 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeDelete.assertEnabledAndVisible();
-        actionModeMoveTo.assertEnabledAndVisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertEnabledAndVisible();
+        } else {
+            actionModeMoveTo.assertEnabledAndVisible();
+        }
     }
 
     @Test
@@ -499,7 +697,11 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         actionModeExtractTo.assertEnabledAndVisible();
-        actionModeCopyTo.assertDisabledAndInvisible();
+        if (shouldShowCopyCutMenus()) {
+            mActionModeCut.assertDisabledAndInvisible();
+        } else {
+            actionModeMoveTo.assertDisabledAndInvisible();
+        }
         actionModeCompress.assertDisabledAndInvisible();
     }
 
@@ -509,6 +711,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled() && isDesktopFileHandlingFlagEnabled()) {
+            actionModeOpen.assertEnabledAndVisible();
+        }
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
@@ -518,6 +723,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled() && isDesktopFileHandlingFlagEnabled()) {
+            actionModeOpen.assertDisabledAndInvisible();
+        }
         actionModeOpenWith.assertDisabledAndInvisible();
     }
 
@@ -528,6 +736,9 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled()) {
+            actionModeOpen.assertDisabledAndInvisible();
+        }
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
@@ -538,39 +749,10 @@ public final class MenuManagerTest {
         selectionDetails.hasMultipleOpeningApps = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
 
+        if (isUseMaterial3FlagEnabled()) {
+            actionModeOpen.assertEnabledAndVisible();
+        }
         actionModeOpenWith.assertDisabledAndInvisible();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
-    public void testActionMenu_DisabledOpenWith_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-        mgr.updateActionMenu(testMenu, selectionDetails);
-
-        actionModeOpenWith.assertDisabledAndVisible();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
-    public void testActionMenu_NoOpenWith_WhenCannotOpen_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = false;
-        selectionDetails.containsDisabledDocuments = true;
-        mgr.updateActionMenu(testMenu, selectionDetails);
-
-        actionModeOpenWith.assertDisabledAndInvisible();
-    }
-
-    @Test
-    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
-    public void testActionMenu_CanOpenWith_WhenContainsDisabledDocuments_useMaterial3Disabled() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-        mgr.updateActionMenu(testMenu, selectionDetails);
-
-        actionModeOpenWith.assertEnabledAndVisible();
     }
 
     @Test
@@ -592,6 +774,7 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testActionMenu_CanDeselectAll() {
         selectionDetails.size = 1;
         mFilesCount = 1;
@@ -600,6 +783,45 @@ public final class MenuManagerTest {
 
         actionModeSelectAll.assertDisabledAndInvisible();
         mActionModeDeselectAll.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_onWritableDirectory() {
+        selectionDetails.size = 1;
+        selectionDetails.containDirectories = true;
+        selectionDetails.canPasteInto = true;
+        dirDetails.hasItemsToPaste = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeOpenInNewWindow.assertEnabledAndVisible();
+        mActionModePasteIntoFolder.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_OnNonWritableDirectory() {
+        selectionDetails.size = 1;
+        selectionDetails.containDirectories = true;
+        selectionDetails.canPasteInto = false;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeOpenInNewWindow.assertEnabledAndVisible();
+        mActionModePasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_OnMultipleDirectories() {
+        selectionDetails.size = 3;
+        selectionDetails.containDirectories = true;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        mActionModeOpenInNewWindow.assertDisabledAndInvisible();
+        mActionModePasteIntoFolder.assertDisabledAndInvisible();
     }
 
     @Test
@@ -655,9 +877,53 @@ public final class MenuManagerTest {
         } else {
             mOptionExtractAll.assertDisabledAndInvisible();
         }
+        if (isUseMaterial3FlagEnabled()) {
+            optionNewWindow.assertDisabledAndInvisible();
+        } else {
+            optionNewWindow.assertEnabledAndVisible();
+        }
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testOptionMenu_EmptyArea_NoItemToPaste() {
+        assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
+
+        dirDetails.hasItemsToPaste = false;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionPaste.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testOptionMenu_EmptyArea_CantCreateDoc() {
+        assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
+
+        dirDetails.hasItemsToPaste = true;
+        dirDetails.canCreateDoc = false;
+
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionPaste.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
+    public void testOptionMenu_EmptyArea_CanPaste() {
+        assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
+
+        dirDetails.hasItemsToPaste = true;
+        dirDetails.canCreateDoc = true;
+
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionPaste.assertEnabledAndVisible();
     }
 
     @Test
@@ -708,6 +974,7 @@ public final class MenuManagerTest {
 
     @SuppressLint("VisibleForTests")
     @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_EmptyArea_CanDeselectAll() {
         selectionDetails.size = 1;
         mFilesCount = 1;
@@ -785,6 +1052,140 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
+    @Test
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
+    public void testContextMenu_containsDocumentsWithUnavailableContent() {
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.containPartial = false;
+        selectionDetails.canDelete = true;
+        selectionDetails.size = 1;
+        selectionDetails.canExtract = false;
+        features.archiveCreation = true;
+        dirDetails.canCreateDoc = true;
+        dirDetails.canInspectDirectory = true;
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // Items that are normally enabled are disabled (but visible) when the content is
+        // unavailable.
+        dirCutToClipboard.assertDisabledAndVisible();
+        dirCopyToClipboard.assertDisabledAndVisible();
+        dirDelete.assertEnabledAndVisible();
+        dirInspect.assertEnabledAndVisible();
+        mDirCompress.assertDisabledAndVisible();
+
+        selectionDetails.canDelete = false;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // Items that are normally disabled will remain invisible.
+        dirCutToClipboard.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({
+        Flags.FLAG_CLOUD_FEATURES,
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO
+    })
+    @SdkSuppress(minSdkVersion = 37)
+    public void testContextMenu_containsDocumentsWithUnavailableContent_trash() {
+        assumeTrashApiIsAvailable();
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.canTrash = true;
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // These trash items should be be disabled but remain visible as the actions are only
+        // temporarily unavailable.
+        mDirMoveToTrash.assertDisabledAndVisible();
+        mDirRestoreFromTrash.assertDisabledAndVisible();
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
+    public void testContextMenu_containsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.containPartial = false;
+        selectionDetails.canDelete = true;
+        selectionDetails.size = 1;
+        selectionDetails.canExtract = false;
+        features.archiveCreation = true;
+        dirDetails.canCreateDoc = true;
+        dirDetails.canInspectDirectory = true;
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // Items that are normally enabled should remain enabled when the content is unavailable
+        // but the feature flag is off.
+        dirCutToClipboard.assertEnabledAndVisible();
+        dirCopyToClipboard.assertEnabledAndVisible();
+        dirDelete.assertEnabledAndVisible();
+        dirInspect.assertEnabledAndVisible();
+        mDirCompress.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
+    public void testContextMenuForFiles_containsDocumentsWithUnavailableContent() {
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.containDirectories = false;
+        selectionDetails.containPartial = false;
+        selectionDetails.canExtract = false;
+        selectionDetails.canRestore = false;
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+        selectionDetails.canRename = true;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        // Items that are normally enabled are disabled (but visible) when the content is
+        // unavailable.
+        dirShare.assertDisabledAndVisible();
+        dirOpenWith.assertDisabledAndVisible();
+        dirRename.assertEnabledAndVisible();
+
+        selectionDetails.isArchive = true;
+        dirDetails.canCreateDirectory = true;
+        dirDetails.isInArchive = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        mDirExtractHere.assertDisabledAndVisible();
+        mDirBrowse.assertDisabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
+    @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
+    public void testContextMenuForFiles_containsDocumentsWithUnavailableContent_disabled() {
+        selectionDetails.containsDocumentsWithUnavailableContent = true;
+        selectionDetails.containDirectories = false;
+        selectionDetails.containPartial = false;
+        selectionDetails.canExtract = false;
+        selectionDetails.canRestore = false;
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = true;
+        selectionDetails.canRename = true;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        // Items that are normally enabled should remain enabled when the content is unavailable
+        // but the feature flag is off.
+        dirShare.assertEnabledAndVisible();
+        dirOpenWith.assertEnabledAndVisible();
+        dirRename.assertEnabledAndVisible();
+
+        selectionDetails.isArchive = true;
+        dirDetails.canCreateDirectory = true;
+        dirDetails.isInArchive = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        mDirExtractHere.assertEnabledAndVisible();
+        mDirBrowse.assertEnabledAndVisible();
+    }
+
     @SuppressLint("VisibleForTests")
     @Test
     @DisableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
@@ -845,45 +1246,6 @@ public final class MenuManagerTest {
         dirOpenWith.assertDisabledAndInvisible();
     }
 
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_DisabledOpen_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-
-        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
-
-        dirOpen.assertDisabledAndVisible();
-        dirOpenWith.assertDisabledAndVisible();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_NoOpen_WhenCannotOpen_WhenContainsDisabledDocuments() {
-        selectionDetails.canOpen = false;
-        selectionDetails.containsDisabledDocuments = true;
-
-        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
-
-        dirOpen.assertDisabledAndInvisible();
-        dirOpenWith.assertDisabledAndInvisible();
-    }
-
-    @Test
-    @DisableFlags({Flags.FLAG_USE_MATERIAL3})
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_CanOpen_WhenContainsDisabledDocuments_useMaterial3Disabled() {
-        selectionDetails.canOpen = true;
-        selectionDetails.hasMultipleOpeningApps = true;
-        selectionDetails.containsDisabledDocuments = true;
-
-        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
-
-        dirOpen.assertEnabledAndVisible();
-        dirOpenWith.assertEnabledAndVisible();
-    }
-
     @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnMultipleFiles() {
@@ -898,6 +1260,7 @@ public final class MenuManagerTest {
     public void testContextMenu_OnWritableDirectory() {
         selectionDetails.size = 1;
         selectionDetails.canPasteInto = true;
+        selectionDetails.containDirectories = true;
         dirDetails.hasItemsToPaste = true;
         mgr.updateContextMenuForDirs(testMenu, selectionDetails);
         dirOpenInNewWindow.assertEnabledAndVisible();
@@ -916,6 +1279,7 @@ public final class MenuManagerTest {
     public void testContextMenu_OnNonWritableDirectory() {
         selectionDetails.size = 1;
         selectionDetails.canPasteInto = false;
+        selectionDetails.containDirectories = true;
         mgr.updateContextMenuForDirs(testMenu, selectionDetails);
         dirOpenInNewWindow.assertEnabledAndVisible();
         dirCutToClipboard.assertDisabledAndInvisible();

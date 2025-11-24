@@ -148,7 +148,13 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         bots.directory.selectDocument(SHORTCUT_ID, 1)
         device!!.waitForIdle()
 
-        bots.main.clickActionbarOverflowItem(context!!.getResources().getString(R.string.menu_move))
+        val menuId =
+            if (bots.main.isUseCopyCutFlow()) {
+                R.string.menu_cut_to_clipboard
+            } else {
+                R.string.menu_move
+            }
+        bots.main.clickActionbarOverflowItem(context!!.getResources().getString(menuId))
         device!!.waitForIdle()
 
         assertNotNull(

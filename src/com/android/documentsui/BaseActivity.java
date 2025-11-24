@@ -21,6 +21,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -510,8 +511,11 @@ public abstract class BaseActivity
         if (isUseMaterial3FlagEnabled()) {
             View previewIconPlaceholder = findViewById(getRes(R.id.preview_icon_placeholder));
             if (previewIconPlaceholder != null) {
-                previewIconPlaceholder.setVisibility(
-                        mState.shouldShowPreview() ? View.VISIBLE : View.GONE);
+                boolean showPreview =
+                        mState.shouldShowPreview(
+                                !isDesktopUxPhase2FlagEnabled()
+                                        || getResources().getBoolean(R.bool.show_preview_icon));
+                previewIconPlaceholder.setVisibility(showPreview ? View.VISIBLE : View.GONE);
             }
         }
 
@@ -947,6 +951,17 @@ public abstract class BaseActivity
         } else if (id == getRes(R.id.sub_menu_list)) {
             setViewMode(MODE_LIST);
             return true;
+        }
+        final boolean showCopyToMoveTo =
+                getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            if (id == getRes(R.id.option_menu_paste_from_clipboard)) {
+                DirectoryFragment dir = getDirectoryFragment();
+                if (dir != null) {
+                    dir.pasteFromClipboard();
+                }
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }

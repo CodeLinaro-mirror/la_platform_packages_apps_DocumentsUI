@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
@@ -25,6 +26,8 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 
+import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.selection.SelectionTracker;
 
 import com.android.documentsui.AbstractActionHandler;
@@ -39,6 +42,7 @@ import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.State;
 import com.android.documentsui.ui.DialogController;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar.Duration;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.function.Predicate;
@@ -47,6 +51,11 @@ import java.util.function.Predicate;
  * Drag host for items in {@link DirectoryFragment}.
  */
 class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends AbstractDragHost {
+
+    @VisibleForTesting
+    interface SnackbarFactory {
+        Snackbar make(View view, @StringRes int resId, @Duration int duration);
+    }
 
     private static final String TAG = "dirlist.DragHost";
 
@@ -58,6 +67,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
     private final Predicate<View> mIsDocumentView;
     private final Lookup<View, DocumentHolder> mHolderLookup;
     private final Lookup<View, DocumentInfo> mDestinationLookup;
+    private SnackbarFactory mSnackbarFactory;
 
     DragHost(
             T activity,
@@ -79,6 +89,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
         mIsDocumentView = isDocumentView;
         mHolderLookup = holderLookup;
         mDestinationLookup = destinationLookup;
+        mSnackbarFactory = Snackbar::make;
     }
 
     void dragStopped(boolean result) {
@@ -111,11 +122,13 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
     }
 
     @Override
-    public boolean canHandleDragEvent(View v) {
+    public boolean canHandleDragEvent(View view) {
         boolean dragInitiatedFromDocsUI = mDragAndDropManager.isDragFromSameApp();
         Metrics.logDragInitiated(dragInitiatedFromDocsUI);
-        if (!dragInitiatedFromDocsUI) {
-            Snackbar.make(v, getRes(R.string.drag_from_another_app), Snackbar.LENGTH_LONG).show();
+        if (!isDragsFromOtherAppsEnabled() && !dragInitiatedFromDocsUI) {
+            mSnackbarFactory
+                    .make(view, getRes(R.string.drag_from_another_app), Snackbar.LENGTH_LONG)
+                    .show();
             return false;
         }
         return true;
@@ -144,7 +157,18 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
         DocumentStack dstStack = dst.equals(mState.stack.peek())
                 ? mState.stack
                 : new DocumentStack(mState.stack, dst);
-        return mDragAndDropManager.drop(event.getClipData(), event.getLocalState(), dstStack,
-                mActions, mDialogs::showFileOperationStatus);
+
+        return mDragAndDropManager.drop(
+                DragAndDropManager.requestPermissions(mActivity, event),
+                event.getClipData(),
+                event.getLocalState(),
+                dstStack,
+                mActions,
+                mDialogs::showFileOperationStatus);
+    }
+
+    @VisibleForTesting
+    void setSnackbarFactoryForTesting(SnackbarFactory snackbarFactory) {
+        mSnackbarFactory = snackbarFactory;
     }
 }

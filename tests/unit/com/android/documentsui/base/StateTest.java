@@ -78,28 +78,28 @@ public class StateTest {
     public void testShouldShowPreview_actionBrowse() {
         mState.action = State.ACTION_BROWSE;
 
-        assertFalse(mState.shouldShowPreview());
+        assertFalse(mState.shouldShowPreview(true));
     }
 
     @Test
     public void testShouldShowPreview_actionOpen() {
         mState.action = State.ACTION_OPEN;
 
-        assertTrue(mState.shouldShowPreview());
+        assertTrue(mState.shouldShowPreview(true));
     }
 
     @Test
     public void testShouldShowPreview_actionGetContent() {
         mState.action = State.ACTION_GET_CONTENT;
 
-        assertTrue(mState.shouldShowPreview());
+        assertTrue(mState.shouldShowPreview(true));
     }
 
     @Test
     public void testShouldShowPreview_actionOpenTree() {
         mState.action = State.ACTION_OPEN_TREE;
 
-        assertTrue(mState.shouldShowPreview());
+        assertTrue(mState.shouldShowPreview(true));
     }
 
     @Test

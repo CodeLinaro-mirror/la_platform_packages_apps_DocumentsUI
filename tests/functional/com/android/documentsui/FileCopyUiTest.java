@@ -405,11 +405,10 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         EspressoBotsKt.openRoot(context, sourceRoot, getActivityLayoutId());
         bots.directory.selectDocument(TARGET_FOLDER, 1);
         device.waitForIdle();
-        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
-        device.waitForIdle();
-        EspressoBotsKt.openRoot(context, targetRoot, getActivityLayoutId());
-        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        device.waitForIdle();
+        bots.main.doCopy(
+                () -> {
+                    EspressoBotsKt.openRoot(context, targetRoot, getActivityLayoutId());
+                });
 
         // Wait until copy operation finished
         try {
@@ -490,10 +489,10 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         EspressoBotsKt.openRoot(context, StubProvider.ROOT_0_ID, getActivityLayoutId());
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         device.waitForIdle();
-        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
-        device.waitForIdle();
-        EspressoBotsKt.openRoot(context, StubProvider.ROOT_0_ID, getActivityLayoutId());
-        device.waitForIdle();
+        bots.main.doCopy(
+                () -> {
+                    EspressoBotsKt.openRoot(context, StubProvider.ROOT_0_ID, getActivityLayoutId());
+                });
 
         assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
 
@@ -538,17 +537,18 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         device.waitForIdle();
 
         // Click copy button.
-        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
-        device.waitForIdle();
-
-        // Downloads folder is automatically opened, so just open the folder defined
-        // by the UUID.
-        bots.directory.openDocument(randomFolder);
-        device.waitForIdle();
-
-        // Initiate the copy operation.
-        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        device.waitForIdle();
+        bots.main.doCopy(
+                () -> {
+                    // For "Move to" flow, Downloads folder is automatically opened (because that's
+                    // the default folder for "Move to" dialog), so just open the folder defined by
+                    // the UUID, but for Cut/Paste flow, we need to manually open Downloads root
+                    // first.
+                    if (bots.main.isUseCopyCutFlow()) {
+                        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+                    }
+                    bots.directory.openDocument(randomFolder);
+                    device.waitForIdle();
+                });
 
         try {
             mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);

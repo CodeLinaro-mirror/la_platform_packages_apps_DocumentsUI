@@ -42,6 +42,7 @@ import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.util.FlagUtils.Companion.isCloudFeaturesFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isGetInfoDialogEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isHomeScreenFilesFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isMovingContentIntoPrivateSpaceEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
@@ -52,6 +53,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isUseAllfilesRootForRece
 import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseNewOpenWithEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isVisualSignalsFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
@@ -155,11 +157,15 @@ abstract class ActivityTestJunit4<T : Activity?> {
         logLocales()
         logFeatureFlags()
 
-        // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will
-        // automatically open for phone devices. Espresso register click() as (x, y) MotionEvents,
-        // so if a drawer is on top of a file we want to select, it will actually click the drawer.
-        // Thus to start a clean state, we always try to close first.
-        bots.roots!!.closeDrawer()
+        if (activityLayoutId != null) {
+            // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will
+            // automatically open for phone devices. Espresso register click() as (x, y)
+            // MotionEvents, so if a drawer is on top of a file we want to select, it will actually
+            // click the drawer. Thus to start a clean state, we always try to close first.
+            // Only attempt to close the drawer if it's an instance of BaseActivity (i.e.
+            // FilesActivity, PickerActivity), other activities don't have a drawer.
+            bots.roots!!.closeDrawer()
+        }
     }
 
     @After
@@ -278,6 +284,8 @@ abstract class ActivityTestJunit4<T : Activity?> {
             TAG,
             "Flag isUseAllfilesRootForRecentsEnabled() = ${isUseAllfilesRootForRecentsEnabled()}",
         )
+        Log.d(TAG, "Flag isUseNewOpenWithEnabled() = ${isUseNewOpenWithEnabled()}")
+        Log.d(TAG, "Flag isGetInfoDialogEnabled() = ${isGetInfoDialogEnabled()}")
     }
 
     private fun logLocales() {
