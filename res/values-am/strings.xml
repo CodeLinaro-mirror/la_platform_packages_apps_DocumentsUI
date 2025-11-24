@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"ተሰርዟል"</string>
     <string name="compress_completed" msgid="6522047921428919799">"ዚፕ ተደርጓል"</string>
     <string name="extract_completed" msgid="8824595789915249972">"ወጥቷል"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"በመጣያ ውስጥ"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"ወደነበረበት ተመልሷል"</string>
     <string name="copy_failed" msgid="3700193913993844675">"መቅዳት አልተቻለም"</string>
     <string name="move_failed" msgid="7692364307225994220">"ማንቀሳቀስ አልተቻለም"</string>
     <string name="delete_failed" msgid="2642684566325252513">"መሰረዝ አልተቻለም"</string>
     <string name="compress_failed" msgid="7397502181042157261">"ዚፕ ማድረግ አልተቻለም"</string>
     <string name="extract_failed" msgid="8372397499452831323">"ማውጣት አልተቻለም"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"ወደ መጣያ መውሰድ አልተቻለም"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"ወደነበረበት መመለስ አልተቻለም"</string>
     <string name="expand_label" msgid="5683357671239615207">"ዘርጋ"</string>
     <string name="collapse_label" msgid="4530974883269531062">"ሰብስብ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> በ<xliff:g id="STORAGE"><i>^3</i></xliff:g> ላይ የ<xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ማውጫ መዳረሻ ይሰጠው?"</string>
@@ -301,7 +297,7 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ፋይሎች ይሰረዙ?</item>
     </plurals>
     <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> አቃፊዎች እና ይዘቶቻቸው ይሰረዙ?</item>
+      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> አቃፊ እና ይዘቶቹ ይሰረዙ?</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> አቃፊዎች እና ይዘቶቻቸው ይሰረዙ?</item>
     </plurals>
     <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">

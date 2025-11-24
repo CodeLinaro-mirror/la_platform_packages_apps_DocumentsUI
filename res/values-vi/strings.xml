@@ -267,7 +267,7 @@
     <string name="delete_failed" msgid="2642684566325252513">"Không xoá được"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Không nén được"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Không giải nén được"</string>
-    <string name="trash_failed" msgid="4655759218201171408">"Không chuyển được vào thùng rác"</string>
+    <string name="trash_failed" msgid="4655759218201171408">"Không thể vào thùng rác"</string>
     <string name="restore_failed" msgid="1967876571708544126">"Không khôi phục được"</string>
     <string name="expand_label" msgid="5683357671239615207">"Mở rộng"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Thu gọn"</string>
