@@ -278,6 +278,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
     @VisibleForTesting
     public boolean openDocument(DocumentInfo doc, @ViewType int type, @ViewType int fallback) {
+        // Opening an item in the trash root is not allowed.
+        if (mState.stack.isTrashRoot() && !doc.isDirectory()) {
+            showFileOpenFromTrashDialog(doc);
+            return false;
+        }
         if (mConfig.isDocumentEnabled(
                 doc.mimeType,
                 doc.flags,
@@ -898,6 +903,21 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
         mPeekViewManager.peekDocument(doc);
+    }
+
+    private void showFileOpenFromTrashDialog(DocumentInfo doc) {
+        if (!mState.stack.isTrashRoot()) {
+            return;
+        }
+
+        // Directory is allowed to open.
+        if (doc.isDirectory()) {
+            return;
+        }
+
+        List<DocumentInfo> documentInfos = new ArrayList<>();
+        documentInfos.add(doc);
+        FileOpenFromTrashDialogFragment.show(mActivity.getSupportFragmentManager(), documentInfos);
     }
 
     @Override
