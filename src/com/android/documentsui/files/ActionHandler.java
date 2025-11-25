@@ -423,7 +423,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         // The document in trash folder can not be removed from the parent, since it will be
         // permanently deleted. Pass a null parent so that DeleteJob can do a permanent delete.
-        if (isTrashFlowEnabled() && mState.stack.isTrash()) {
+        if (isTrashFlowEnabled() && mState.stack.isTrashTopLevel()) {
             parentDocumentInfo = null;
         }
 
@@ -692,7 +692,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void showEmptyTrashConfirmationDialog() {
-        if (!mState.stack.isTrash()) {
+        if (!mState.stack.isTrashTopLevel()) {
             return;
         }
 
@@ -707,7 +707,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     @Override
     public void permanentlyDeleteTrashDocuments() {
         // If this is not the trash page then ignore.
-        if (!mState.stack.isTrash()) {
+        if (!mState.stack.isTrashTopLevel()) {
             return;
         }
 

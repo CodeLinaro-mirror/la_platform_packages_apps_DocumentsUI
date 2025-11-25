@@ -366,6 +366,8 @@ public class StubProvider extends DocumentsProvider {
         }
 
         notifyTrashChanged(document.rootInfo.name);
+        // Notify the parent if the item is getting restored from inside the trashed folder
+        notifyParentChanged(document.parentId);
         return restoredPath;
     }
 
@@ -428,17 +430,18 @@ public class StubProvider extends DocumentsProvider {
             @Nullable Bundle queryArgs,
             @Nullable CancellationSignal signal)
             throws FileNotFoundException {
-        // Return trash documents of all roots.
         final MatrixCursor result =
                 new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
-        for (Map.Entry<String, RootInfo> entry : mRoots.entrySet()) {
-            final RootInfo info = entry.getValue();
-            final File rootDocumentFile = info.document.file;
-            final File trashDir = new File(rootDocumentFile, TRASH_LOCATION);
-            if (trashDir.exists()) {
-                StubDocument trashDirDocument = mStorage.get(getDocumentIdForFile(trashDir));
-                includeTrashDocuments(result, trashDirDocument);
-            }
+        if (!mRoots.containsKey(rootId)) {
+            return null;
+        }
+
+        final RootInfo info = mRoots.get(rootId);
+        final File rootDocumentFile = info.document.file;
+        final File trashDir = new File(rootDocumentFile, TRASH_LOCATION);
+        if (trashDir.exists()) {
+            StubDocument trashDirDocument = mStorage.get(getDocumentIdForFile(trashDir));
+            includeTrashDocuments(result, trashDirDocument);
         }
         Uri trashUri = DocumentsContract.buildTrashDocumentsUri(mAuthority, rootId);
         result.setNotificationUri(getContext().getContentResolver(), trashUri);
