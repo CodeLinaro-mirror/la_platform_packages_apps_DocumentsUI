@@ -17,24 +17,31 @@
 package com.android.documentsui.sidebar
 
 import android.content.Context
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.files.TestActivity
+import com.android.documentsui.flags.Flags.FLAG_DRAGS_FROM_OTHER_APPS
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestActionHandler
 import com.android.documentsui.testing.TestDragAndDropManager
 import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.Views
+import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class DragHostTest {
+
+    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
     private lateinit var actionHandler: TestActionHandler
     private lateinit var activity: TestActivity
@@ -51,17 +58,37 @@ class DragHostTest {
     }
 
     @Test
-    fun testCanHandleDragEvent() {
+    @DisableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    fun testCanHandleDragEventFromOtherAppsWithFlagDisabled() {
+        testCanHandleDragEvent(isDragFromSameApp = false, expectHandled = false)
+    }
+
+    @Test
+    @EnableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    fun testCanHandleDragEventFromOtherAppsWithFlagEnabled() {
+        testCanHandleDragEvent(isDragFromSameApp = false, expectHandled = true)
+    }
+
+    @Test
+    @DisableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    fun testCanHandleDragEventFromSameAppWithFlagDisabled() {
+        testCanHandleDragEvent(isDragFromSameApp = true, expectHandled = true)
+    }
+
+    @Test
+    @EnableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    fun testCanHandleDragEventFromSameAppWithFlagEnabled() {
+        testCanHandleDragEvent(isDragFromSameApp = true, expectHandled = true)
+    }
+
+    private fun testCanHandleDragEvent(isDragFromSameApp: Boolean, expectHandled: Boolean) {
         val context: Context = ApplicationProvider.getApplicationContext()
         val rootItemView = RootItemView(context, null)
         val view = Views.createTestView()
 
-        dragAndDropManager.isDragFromSameAppHandler.nextReturn(true)
-        assertTrue(dragHost.canHandleDragEvent(rootItemView))
-        assertFalse(dragHost.canHandleDragEvent(view))
+        dragAndDropManager.isDragFromSameAppHandler.nextReturn(isDragFromSameApp)
 
-        dragAndDropManager.isDragFromSameAppHandler.nextReturn(false)
-        assertFalse(dragHost.canHandleDragEvent(rootItemView))
+        assertEquals(expectHandled, dragHost.canHandleDragEvent(rootItemView))
         assertFalse(dragHost.canHandleDragEvent(view))
     }
 }

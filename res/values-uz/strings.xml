@@ -358,8 +358,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Maxfiyligingizni muhofaza qilish uchun boshqa jildni tanlang"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Yangi jild yaratish"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Shu qurilmadan qidirish"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"Qidiruv natijalari"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Matnni tozalash"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Root jild"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Hamma yerda"</string>

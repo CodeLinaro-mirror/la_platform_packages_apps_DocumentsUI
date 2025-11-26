@@ -52,6 +52,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Manager that tracks control key state, calculates the default file operation (move or copy)
@@ -526,8 +527,15 @@ public interface DragAndDropManager {
             // Fail early: A drop onto a root is disallowed if the destination
             // is a non-trash root and its corresponding document is missing.
             if (destRootDoc == null && !destRoot.isTrash()) {
-                callback.onOperationResult(
-                        FileOperations.Callback.STATUS_FAILED, dropOperation.getOpType(), 0);
+                final CompletableFuture<Void> unused =
+                        dropOperation
+                                .getOpType()
+                                .thenAccept(
+                                        opType ->
+                                                callback.onOperationResult(
+                                                        FileOperations.Callback.STATUS_FAILED,
+                                                        opType,
+                                                        0));
                 return;
             }
 
@@ -648,10 +656,10 @@ public interface DragAndDropManager {
          */
         private static final class DropOperation {
 
-            private final ClipData mClipData;
+            private final CompletableFuture<ClipData> mClipData;
             private final DocumentClipper mClipper;
             private final boolean mIsSrcRootTrash;
-            private final @OpType int mOpType;
+            private final CompletableFuture<Integer> mOpType;
 
             private DropOperation(
                     ClipData clipData,
@@ -660,15 +668,13 @@ public interface DragAndDropManager {
                     boolean isCtrlPressed,
                     boolean isSrcRootTrash,
                     boolean mustBeCopied) {
-                mClipData = clipData;
+                mClipData = rewrite(clipData);
                 mClipper = clipper;
                 mIsSrcRootTrash = isSrcRootTrash;
-                mOpType =
-                        calculateOpType(
-                                mClipData, destRoot, isCtrlPressed, isSrcRootTrash, mustBeCopied);
+                mOpType = calculateOpType(destRoot, isCtrlPressed, mustBeCopied);
             }
 
-            public static @OpType int calculateOpType(
+            private static @OpType int calculateOpType(
                     ClipData clipData,
                     RootInfo destRoot,
                     boolean isCtrlPressed,
@@ -706,17 +712,50 @@ public interface DragAndDropManager {
                 }
             }
 
-            public void dropChecked(
+            // TODO(440196110): Implement flag-guarded async calculation for drags from other apps.
+            private CompletableFuture<Integer> calculateOpType(
+                    RootInfo destRoot, boolean isCtrlPressed, boolean mustBeCopied) {
+                return mClipData.thenApply(
+                        clipData ->
+                                calculateOpType(
+                                        clipData,
+                                        destRoot,
+                                        isCtrlPressed,
+                                        mIsSrcRootTrash,
+                                        mustBeCopied));
+            }
+
+            private void dropChecked(
+                    Object localState,
+                    DocumentStack dstStack,
+                    ActionHandler actions,
+                    FileOperations.Callback callback) {
+                final CompletableFuture<Void> unused =
+                        CompletableFuture.allOf(mClipData, mOpType)
+                                .thenAccept(
+                                        result ->
+                                                dropCheckedImpl(
+                                                        mClipData.join(),
+                                                        mOpType.join(),
+                                                        localState,
+                                                        dstStack,
+                                                        actions,
+                                                        callback));
+            }
+
+            private void dropCheckedImpl(
+                    ClipData clipData,
+                    @OpType int opType,
                     Object localState,
                     DocumentStack dstStack,
                     ActionHandler actions,
                     FileOperations.Callback callback) {
                 // System-defined shortcuts should be protected against the file move operation.
                 if (isHomeScreenFilesFlagEnabled()
-                        && mOpType == FileOperationService.OPERATION_MOVE) {
+                        && opType == FileOperationService.OPERATION_MOVE) {
                     List<Uri> uris = new ArrayList<>();
-                    for (int i = 0; i < mClipData.getItemCount(); i++) {
-                        uris.add(mClipData.getItemAt(i).getUri());
+                    for (int i = 0; i < clipData.getItemCount(); i++) {
+                        uris.add(clipData.getItemAt(i).getUri());
                     }
                     if (actions.blockOperationForShortcuts(uris, dstStack.getRoot().userId)) {
                         Log.e(TAG, "Failed to move because a protected folder is selected.");
@@ -735,20 +774,25 @@ public interface DragAndDropManager {
                                 : MetricConsts.USER_ACTION_DRAG_N_DROP);
 
                 if (isTrashFlowEnabled() && mIsSrcRootTrash) {
-                    mClipper.restoreFromTrashClipData(dstStack, mClipData, callback);
+                    mClipper.restoreFromTrashClipData(dstStack, clipData, callback);
                     return;
                 }
 
                 if (isTrashFlowEnabled() && dstStack.getRoot().isTrash()) {
-                    mClipper.trashFromClipData(dstStack, mClipData, callback);
+                    mClipper.trashFromClipData(dstStack, clipData, callback);
                     return;
                 }
 
-                mClipper.copyFromClipData(dstStack, mClipData, mOpType, callback);
+                mClipper.copyFromClipData(dstStack, clipData, opType, callback);
             }
 
-            public @OpType int getOpType() {
+            private CompletableFuture<Integer> getOpType() {
                 return mOpType;
+            }
+
+            // TODO(440196110): Implement flag-guarded async rewrite for drags from other apps.
+            private CompletableFuture<ClipData> rewrite(ClipData clipData) {
+                return CompletableFuture.completedFuture(clipData);
             }
         }
     }

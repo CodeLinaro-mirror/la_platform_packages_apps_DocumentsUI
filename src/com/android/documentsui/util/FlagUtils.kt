@@ -47,6 +47,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
                 Flags.FLAG_DRAGS_FROM_OTHER_APPS,
                 Flags.FLAG_USE_TRUSTED_APPS,
+                Flags.FLAG_USE_NEW_OPEN_WITH,
             )
 
         @JvmStatic
@@ -218,6 +219,15 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                     .overrides
                     .getOrDefault(Flags.FLAG_USE_TRUSTED_APPS, Flags.useTrustedApps())
             return flag && isUseMaterial3FlagEnabled()
+        }
+
+        @JvmStatic
+        fun isUseNewOpenWithEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_USE_NEW_OPEN_WITH, Flags.useNewOpenWith())
+            return flag && isDesktopFileHandlingFlagEnabled()
         }
     }
 

@@ -26,20 +26,24 @@
          layouts we reduce this to an input-box adjacent to menu actions. -->
     <bool name="full_bar_search_view">true</bool>
 
-    <!-- Indicates if showing Audio / Downloads / Images / Video roots -->
-    <bool name="show_media_roots">true</bool>
-
-    <!-- Indicates if showing as search bar design -->
-    <bool name="show_search_bar">false</bool>
-
     <!-- Indicates if showing the apps row -->
     <bool name="show_apps_row">true</bool>
+
+    <!-- Indicates if showing hidden files by default -->
+    <bool name="show_hidden_files_by_default">false</bool>
+
+    <!-- Indicates if showing Audio / Downloads / Images / Video roots -->
+    <bool name="show_media_roots">true</bool>
 
     <!-- Indicates if the "Cancel" button should show in the various pickers. -->
     <bool name="show_picker_cancel_button">false</bool>
 
-    <!-- Indicates if showing hidden files by default -->
-    <bool name="show_hidden_files_by_default">false</bool>
+    <!-- Indicates if showing the preview icon (in picker mode). The value has no effect (and is
+    effectively hard-coded to "show") unless the desktop_ux_phase_2_ro flag is also enabled. -->
+    <bool name="show_preview_icon">true</bool>
+
+    <!-- Indicates if showing as search bar design -->
+    <bool name="show_search_bar">false</bool>
 
     <string name="default_root_uri" translatable="false">content://com.android.providers.downloads.documents/root/downloads</string>
     <!-- The value is used in sorting process on Drawer menu. If the root's package name

@@ -284,19 +284,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Odstránené"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Skomprimované"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extrahované"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"V koši"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Obnovené"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Nepodarilo sa skopírovať"</string>
     <string name="move_failed" msgid="7692364307225994220">"Nepodarilo sa presunúť"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Nepodarilo sa odstrániť"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Nepodarilo sa skomprimovať"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Nepodarilo sa extrahovať"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"Nepodarilo sa presunúť do koša"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Nepodarilo sa obnoviť"</string>
     <string name="expand_label" msgid="5683357671239615207">"Rozbaliť"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Zbaliť"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Udeliť aplikácii <xliff:g id="APPNAME"><b>^1</b></xliff:g> prístup k adresáru <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> v úložisku <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>

@@ -16,20 +16,35 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.flags.Flags.FLAG_DRAGS_FROM_OTHER_APPS;
+import static com.android.documentsui.util.Material3Config.getRes;
+
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import android.content.ClipData;
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.view.DragEvent;
 import android.view.View;
 
 import androidx.recyclerview.selection.SelectionTracker;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
 
+import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.files.TestActivity;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.DragEvents;
 import com.android.documentsui.testing.TestActionHandler;
@@ -38,9 +53,13 @@ import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.Views;
 import com.android.documentsui.ui.TestDialogController;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
@@ -48,6 +67,8 @@ import java.util.List;
 @SmallTest
 public class DragHostTest {
     private static final List<String> ITEMS = TestData.create(100);
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private TestEnv mEnv;
     private TestActivity mActivity;
@@ -68,6 +89,7 @@ public class DragHostTest {
         mDragAndDropManager = new TestDragAndDropManager();
         mSelectionMgr = SelectionHelpers.createTestInstance(ITEMS);
         mActionHandler = new TestActionHandler();
+
         dragHost = new DragHost<>(
                 mActivity,
                 mDragAndDropManager,
@@ -80,6 +102,60 @@ public class DragHostTest {
                 (View v) -> mNextDocumentInfo
         );
     }
+
+    @Test
+    @DisableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testCanHandleDragEventFromOtherAppsWithFlagDisabled() {
+        testCanHandleDragEvent(/* isDragFromSameApp= */ false, /* expectHandled= */ false);
+    }
+
+    @Test
+    @EnableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testCanHandleDragEventFromOtherAppsWithFlagEnabled() {
+        testCanHandleDragEvent(/* isDragFromSameApp= */ false, /* expectHandled= */ true);
+    }
+
+    @Test
+    @DisableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testCanHandleDragEventFromSameAppWithFlagDisabled() {
+        testCanHandleDragEvent(/* isDragFromSameApp= */ true, /* expectHandled= */ true);
+    }
+
+    @Test
+    @EnableFlags(FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testCanHandleDragEventFromSameAppWithFlagEnabled() {
+        testCanHandleDragEvent(/* isDragFromSameApp= */ true, /* expectHandled= */ true);
+    }
+
+    private void testCanHandleDragEvent(boolean isDragFromSameApp, boolean expectHandled) {
+        final View view = Views.createTestView();
+        final Snackbar snackbar = mock(Snackbar.class);
+        final DragHost.SnackbarFactory snackbarFactory = mock(DragHost.SnackbarFactory.class);
+
+        doReturn(snackbar).when(snackbarFactory).make(any(), anyInt(), anyInt());
+        dragHost.setSnackbarFactoryForTesting(snackbarFactory);
+        mDragAndDropManager.isDragFromSameAppHandler.nextReturn(isDragFromSameApp);
+
+        assertEquals(expectHandled, dragHost.canHandleDragEvent(view));
+
+        if (!expectHandled) {
+            final ArgumentCaptor<Integer> durationArg = ArgumentCaptor.forClass(Integer.class);
+            final ArgumentCaptor<Integer> resIdArg = ArgumentCaptor.forClass(Integer.class);
+            final ArgumentCaptor<View> viewArg = ArgumentCaptor.forClass(View.class);
+
+            verify(snackbarFactory)
+                    .make(viewArg.capture(), resIdArg.capture(), durationArg.capture());
+
+            assertEquals(Snackbar.LENGTH_LONG, (int) durationArg.getValue());
+            assertEquals(getRes(R.string.drag_from_another_app), (int) resIdArg.getValue());
+            assertEquals(view, viewArg.getValue());
+
+            verify(snackbar).show();
+        }
+
+        verifyNoMoreInteractions(snackbar, snackbarFactory);
+    }
+
     @Test
     public void testHandleDrop_onValidView() {
         final ClipData data = ClipDatas.createTestClipData();
