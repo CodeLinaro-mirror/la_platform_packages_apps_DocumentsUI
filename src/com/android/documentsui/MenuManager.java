@@ -44,6 +44,7 @@ import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.sidebar.RootsFragment;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
@@ -597,6 +598,11 @@ public abstract class MenuManager {
          * Check whether to show the restore option on the selection.
          */
         boolean canRestore();
+
+        /**
+         * Returns a set of unique MIME types of the selected documents.
+         */
+        Set<String> mimeTypes();
     }
 
     public static class DirectoryDetails {

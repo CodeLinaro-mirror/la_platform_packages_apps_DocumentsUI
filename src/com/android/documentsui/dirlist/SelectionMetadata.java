@@ -24,6 +24,7 @@ import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
@@ -37,6 +38,7 @@ import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.roots.RootCursorWrapper;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -106,6 +108,9 @@ public class SelectionMetadata extends SelectionObserver<String>
     // need this information to respond to hasMultipleOpeningApps.
     HashMap<String, Integer> mOpeningAppCountForFile = new HashMap<>();
 
+    // Number of files for each MIME type in the current selection.
+    HashMap<String, Integer> mMimeTypeCounts = new HashMap<>();
+
     /**
      * Keeps track of different properties about the current selection.
      *
@@ -134,6 +139,17 @@ public class SelectionMetadata extends SelectionObserver<String>
         final int delta = selected ? 1 : -1;
 
         final String mimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            if (mimeType != null) {
+                int count = mMimeTypeCounts.getOrDefault(mimeType, 0);
+                count += delta;
+                if (count > 0) {
+                    mMimeTypeCounts.put(mimeType, count);
+                } else {
+                    mMimeTypeCounts.remove(mimeType);
+                }
+            }
+        }
         if (MimeTypes.isDirectoryType(mimeType)) {
             mDirectoryCount += delta;
         } else {
@@ -207,6 +223,7 @@ public class SelectionMetadata extends SelectionObserver<String>
         mNoRenameCount = 0;
         mInArchiveCount = 0;
         mArchiveCount = 0;
+        mMimeTypeCounts.clear();
         mUnsupportedRestoreCount = 0;
         mUnavailableContentCount = 0;
     }
@@ -307,5 +324,10 @@ public class SelectionMetadata extends SelectionObserver<String>
                 && (mArchiveCount == 0 || !isZipNgFlagEnabled())
                 && (mInArchiveCount == 0 || isZipNgFlagEnabled())
                 && !canRestore();
+    }
+
+    @Override
+    public Set<String> mimeTypes() {
+        return mMimeTypeCounts.keySet();
     }
 }
