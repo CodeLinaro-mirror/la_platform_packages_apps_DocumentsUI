@@ -41,53 +41,60 @@
                 android:layout_width="match_parent"
                 android:minHeight="60dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:contentDescription="@null"
-                    android:id="@+id/message_icon"
-                    android:layout_height="@dimen/icon_size_m3"
-                    android:layout_width="@dimen/icon_size_m3"
-                    android:layout_margin="8dp"
-                    android:layout_gravity="center"
-                    android:scaleType="centerInside"/>
+                android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_height="wrap_content"
                     android:layout_width="match_parent"
-                    android:minHeight="48dp"
-                    android:gravity="center_vertical"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/message_title"
+                    <ImageView
+                        android:contentDescription="@null"
+                        android:id="@+id/message_icon"
+                        android:layout_height="@dimen/icon_size_m3"
+                        android:layout_width="@dimen/icon_size_m3"
+                        android:layout_margin="8dp"
+                        android:layout_gravity="center"
+                        android:scaleType="centerInside"/>
+
+                    <LinearLayout
                         android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:textAppearance="@style/BannerTitleText"/>
+                        android:layout_width="match_parent"
+                        android:minHeight="48dp"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/message_subtitle"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:selectAllOnFocus="true"
-                        android:textAppearance="@style/BannerSubtitleText"/>
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/message_title"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:textAppearance="@style/BannerTitleText"/>
 
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/message_textview"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:selectAllOnFocus="true"
-                        android:textAppearance="@style/BannerMessageText"/>
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/message_subtitle"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:selectAllOnFocus="true"
+                            android:textAppearance="@style/BannerSubtitleText"/>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/dismiss_button"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="@android:string/ok"
-                        style="@style/DialogTextButtonM3"/>
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/message_textview"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:selectAllOnFocus="true"
+                            android:textAppearance="@style/BannerMessageText"/>
 
+                    </LinearLayout>
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dismiss_button"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="@android:string/ok"
+                    style="@style/DialogTextButtonM3"/>
+
             </LinearLayout>
 
             <LinearLayout
