@@ -860,6 +860,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             Uri uri = intent.getData();
             if (DocumentsContract.isDocumentUri(mActivity, uri)) {
                 return launchToDocument(intent.getData());
+            } else if (isHomeScreenFilesFlagEnabled() && Providers.isMediaStoreUri(uri)) {
+                // It is possible that the intent comes from the launcher home screen for which we
+                // need to convert the URI from a MediaStore URI to a DocumentsUI URI.
+                Uri documentUri = mDocs.getDocumentUri(uri);
+                if (DocumentsContract.isDocumentUri(mActivity, documentUri)) {
+                    return launchToDocument(documentUri);
+                }
             }
         }
 
