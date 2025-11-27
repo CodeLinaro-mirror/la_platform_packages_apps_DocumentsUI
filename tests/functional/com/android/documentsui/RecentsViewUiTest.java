@@ -29,8 +29,11 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.net.Uri;
+import android.os.SystemClock;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -40,8 +43,13 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObject;
 
+import com.android.documentsui.actions.WaitForCheckState;
+import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.Providers;
+import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.DirectoryListBot;
 import com.android.documentsui.files.FilesActivity;
+import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
@@ -293,5 +301,35 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Check that the breadcrumb path starts with "Recent". We don't know more about the
         // selected file, to perform a more exact comparison.
         onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathStartsWith("Recent"));
+    }
+
+    @Test
+    public void testSearchRecentUsingVideoChips() throws Exception {
+        DocumentsProviderHelper storageHelper = mTestFilesRule.docsHelper;
+        Uri fileUri = null;
+        try {
+            RootInfo primaryRoot = storageHelper.getRoot(Providers.ROOT_ID_DEVICE);
+            DocumentInfo download = storageHelper.findFile(primaryRoot.documentId, "Download");
+            assertNotNull(download);
+            String fileName = Long.toHexString(System.currentTimeMillis()) + ".mp4";
+            fileUri = storageHelper.createDocument(download.documentId, "video/mp4", fileName);
+
+            // Move to the Recent view and wait for things to quiet down.
+            bots.roots.openRoot("Recent");
+            bots.search
+                    .clickChip(R.string.chip_title_videos)
+                    .perform(new WaitForCheckState(true, 1000L));
+            device.waitForIdle();
+
+            // Search debounce delay + extra buffer to let the search settle
+            int delayMs = SearchViewManager.SEARCH_DELAY_MS + 250;
+            SystemClock.sleep(delayMs);
+            // Select the newly created file and check the expected path.
+            bots.directory.assertDocumentsPresent(fileName);
+        } finally {
+            if (fileUri != null) {
+                storageHelper.deleteDocument(fileUri);
+            }
+        }
     }
 }
