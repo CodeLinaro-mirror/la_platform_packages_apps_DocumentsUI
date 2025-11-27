@@ -145,6 +145,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         setupTestingRoots()
         ActivityTest.closeNonDocsUiWindows(context, device)
         launchActivity()
+        device!!.waitForIdle()
 
         mActivityScenario?.onActivity({ activity ->
             activityLayoutId = (activity as? BaseActivity)?.layoutId
