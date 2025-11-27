@@ -278,6 +278,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
     @VisibleForTesting
     public boolean openDocument(DocumentInfo doc, @ViewType int type, @ViewType int fallback) {
+        // Opening an item in the trash root is not allowed.
+        if (mState.stack.isTrashRoot() && !doc.isDirectory()) {
+            showFileOpenFromTrashDialog(doc);
+            return false;
+        }
         if (mConfig.isDocumentEnabled(
                 doc.mimeType,
                 doc.flags,
@@ -423,7 +428,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         // The document in trash folder can not be removed from the parent, since it will be
         // permanently deleted. Pass a null parent so that DeleteJob can do a permanent delete.
-        if (isTrashFlowEnabled() && mState.stack.isTrash()) {
+        if (isTrashFlowEnabled() && mState.stack.isTrashTopLevel()) {
             parentDocumentInfo = null;
         }
 
@@ -692,7 +697,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void showEmptyTrashConfirmationDialog() {
-        if (!mState.stack.isTrash()) {
+        if (!mState.stack.isTrashTopLevel()) {
             return;
         }
 
@@ -707,7 +712,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     @Override
     public void permanentlyDeleteTrashDocuments() {
         // If this is not the trash page then ignore.
-        if (!mState.stack.isTrash()) {
+        if (!mState.stack.isTrashTopLevel()) {
             return;
         }
 
@@ -898,6 +903,21 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
         mPeekViewManager.peekDocument(doc);
+    }
+
+    private void showFileOpenFromTrashDialog(DocumentInfo doc) {
+        if (!mState.stack.isTrashRoot()) {
+            return;
+        }
+
+        // Directory is allowed to open.
+        if (doc.isDirectory()) {
+            return;
+        }
+
+        List<DocumentInfo> documentInfos = new ArrayList<>();
+        documentInfos.add(doc);
+        FileOpenFromTrashDialogFragment.show(mActivity.getSupportFragmentManager(), documentInfos);
     }
 
     @Override

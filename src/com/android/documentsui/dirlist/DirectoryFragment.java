@@ -2041,7 +2041,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         public boolean isOnTrashPage() {
-            return mState.stack.isTrash();
+            return mState.stack.isTrashTopLevel();
         }
 
         @Override

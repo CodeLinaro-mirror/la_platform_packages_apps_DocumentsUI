@@ -1073,7 +1073,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 }
             }
 
-            if (mState.stack.isTrash()) {
+            if (mState.stack.isTrashTopLevel()) {
                 return createTrashFileLoader(context, initialUser);
             }
 
@@ -1205,7 +1205,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // appropriately, once it gets notified about search starting.
             mSearchMgr.setCurrentRoot(root);
 
-            if (mState.stack.isTrash()) {
+            if (mState.stack.isTrashTopLevel()) {
                 return createTrashFileLoader(mActivity, initialUser);
             }
 
