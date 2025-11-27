@@ -281,12 +281,16 @@
     <dimen name="empty_state_artwork_margin_bottom">@dimen/space_small_1</dimen>
     <dimen name="empty_state_message_margin_bottom">@dimen/space_medium_5</dimen>
 
-    <dimen name="banner_content_padding_vertical">16dp</dimen>
-    <dimen name="banner_content_padding_start">@dimen/space_medium_1</dimen>
-    <dimen name="banner_content_padding_end">8dp</dimen>
+    <dimen name="banner_content_padding_vertical">12dp</dimen>
+    <dimen name="banner_content_padding_start">24dp</dimen>
+    <dimen name="banner_content_padding_end">12dp</dimen>
+    <dimen name="banner_message_container_padding_start">4dp</dimen>
+    <dimen name="banner_message_icon_size">24dp</dimen>
+    <dimen name="banner_message_icon_padding_end">@dimen/space_small_1</dimen>
+    <dimen name="banner_action_button_padding_end">12dp</dimen>
 
     <dimen name="focus_ring_width">3dp</dimen>
-    <!-- 3dp focus ring width + 2dp gap between the ring and the content -->
+    <!-- 3dp focus ring width + 2dp gap between the rin g and the content -->
     <dimen name="focus_ring_gap">5dp</dimen>
     <dimen name="hover_overlay_alpha">0.08</dimen>
     <dimen name="ripple_overlay_alpha">0.10</dimen>
