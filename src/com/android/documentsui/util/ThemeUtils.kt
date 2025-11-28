@@ -18,10 +18,8 @@
 
 package com.android.documentsui.util
 
-import android.util.Log
 import androidx.annotation.AnyRes
 import com.android.documentsui.R
-import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 
 /**
@@ -359,21 +357,7 @@ abstract class Material3Config private constructor() {
                 initializeIdMapping()
             }
 
-            val newId = idMapping[originalResourceId] ?: originalResourceId
-            if (DEBUG) {
-                if (newId != originalResourceId) {
-                    Log.d(
-                        TAG,
-                        "Replacing R ID from ${
-              Integer.toHexString(
-                originalResourceId
-              )
-            } to ${Integer.toHexString(newId)}",
-                    )
-                }
-            }
-
-            return newId
+            return idMapping[originalResourceId] ?: originalResourceId
         }
 
         @JvmStatic
