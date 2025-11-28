@@ -18,6 +18,8 @@ package com.android.documentsui.sorting;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -33,12 +35,16 @@ import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.MutableTestCursor;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.testing.SortModels;
 import com.android.documentsui.testing.TestFileTypeLookup;
 
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -674,5 +680,94 @@ public class SortingCursorWrapperTest {
     private Cursor createSortingCursorWrapper(Cursor c) {
         final int id = sortModel.getSortedDimensionId();
         return new SortingCursorWrapper(c, sortModel.getDimensionById(id), fileTypeLookup);
+    }
+
+    private MutableTestCursor createSampleMutableTestCursor() {
+        MutableTestCursor cursor = new MutableTestCursor(COLUMNS);
+        cursor.addRow(
+                new Object[] {"authority", "doc-id-1", 0, "file-01.txt", 10, 1000, "text/plain"});
+        cursor.addRow(
+                new Object[] {"authority", "doc-id-2", 0, "file-02.txt", 20, 2000, "text/plain"});
+        cursor.addRow(
+                new Object[] {"authority", "doc-id-3", 0, "file-03.txt", 30, 3000, "text/plain"});
+        return cursor;
+    }
+
+    @Test
+    public void testWrappedCursorShrinks() {
+        MutableTestCursor cursor = createSampleMutableTestCursor();
+        // When the sorting cursor is about to move to position 1 (from position 0), remove the
+        // last row. This causes difference between initial getCount() value and the number of
+        // rows that we can traverse with moveToNext().
+        cursor.setMoveCallback(
+                (from, to) -> {
+                    if (to == 1 && cursor.getCount() == 3) {
+                        cursor.removeRow(2);
+                    }
+                });
+
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
+        Cursor sortedCursor = createSortingCursorWrapper(cursor);
+        sortedCursor.moveToPosition(-1);
+        List<String> names = new ArrayList<>(2);
+        while (sortedCursor.moveToNext()) {
+            names.add(sortedCursor.getString(1));
+        }
+        List<String> expected = ImmutableList.of("doc-id-2", "doc-id-1");
+        assertThat(names).containsExactlyElementsIn(expected).inOrder();
+    }
+
+    @Test
+    @Ignore("b:37116462 This test still fails, as sorting cursor relies on preallocated arrays.")
+    public void testWrappedCursorGrows() {
+        MutableTestCursor cursor = createSampleMutableTestCursor();
+        // When the sorting cursor is about to move to position 1 (from position 0), add another
+        // row. This causes difference between initial getCount() value and the number of rows that
+        // we can traverse with moveToNext().
+        cursor.setMoveCallback(
+                (from, to) -> {
+                    if (to == 1 && cursor.getCount() == 3) {
+                        cursor.addRow(
+                                new Object[] {
+                                    "authority",
+                                    "doc-id-4",
+                                    0,
+                                    "file-04.txt",
+                                    30,
+                                    4000,
+                                    "text/plain"
+                                });
+                    }
+                });
+
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
+        Cursor sortedCursor = createSortingCursorWrapper(cursor);
+        sortedCursor.moveToPosition(-1);
+        List<String> names = new ArrayList<>(2);
+        while (sortedCursor.moveToNext()) {
+            names.add(sortedCursor.getString(1));
+        }
+        List<String> expected = ImmutableList.of("doc-id-4", "doc-id-3", "doc-id-2", "doc-id-1");
+        assertThat(names).containsExactlyElementsIn(expected).inOrder();
+    }
+
+    @Test
+    public void testWrappedCursorModifiedWhileTraversed() {
+        MutableTestCursor cursor = createSampleMutableTestCursor();
+        sortModel.sortByUser(
+                SortModel.SORT_DIMENSION_ID_DATE, SortDimension.SORT_DIRECTION_DESCENDING);
+        Cursor sortedCursor = createSortingCursorWrapper(cursor);
+        sortedCursor.moveToPosition(-1);
+        List<String> names = new ArrayList<>(2);
+        while (sortedCursor.moveToNext()) {
+            names.add(sortedCursor.getString(1));
+            // Remove the rows from the wrapped cursor, as you traverse the main cursor. This must
+            // not cause a crash and should collect the first two rows.
+            cursor.removeRow(cursor.getCount() - 1);
+        }
+        List<String> expected = ImmutableList.of("doc-id-3", "doc-id-2");
+        assertThat(names).containsExactlyElementsIn(expected).inOrder();
     }
 }
