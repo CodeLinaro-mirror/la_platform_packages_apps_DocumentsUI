@@ -51,6 +51,7 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.MutableSelection;
+import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -794,6 +795,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public void copyToClipboard() {
         throw new UnsupportedOperationException("Copy not supported!");
+    }
+
+    @Override
+    public boolean sendToApprovedDocHandler(ComponentName app) {
+        throw new UnsupportedOperationException("sendToApprovedDocHandler not supported!");
     }
 
     @Override

@@ -328,6 +328,7 @@
 
 -keep class com.android.documentsui.files.ActionHandler {
   public void restoreSelectedDocumentsFromTrash(java.util.List);
+  public boolean sendToApprovedDocHandler(android.content.ComponentName);
 }
 
 -keep interface androidx.drawerlayout.widget.DrawerLayout$DrawerListener {

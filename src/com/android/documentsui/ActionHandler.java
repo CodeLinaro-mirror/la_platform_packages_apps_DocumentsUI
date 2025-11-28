@@ -17,6 +17,7 @@
 package com.android.documentsui;
 
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.ContentProvider;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -229,6 +230,13 @@ public interface ActionHandler {
      * Switch launch icon show/hide status.
      */
     void switchLauncherIcon();
+
+    /**
+     * Send the selected document(s) to the approved app.
+     * @param app - The component name of an approved app to send the document(s) to..
+     * @return true if the send was successful, false otherwise.
+     */
+    boolean sendToApprovedDocHandler(ComponentName app);
 
     /**
      * Allow action handler to be initialized in a new scope.
