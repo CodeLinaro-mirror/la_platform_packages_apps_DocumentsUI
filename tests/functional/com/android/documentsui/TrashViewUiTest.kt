@@ -177,7 +177,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         val dirDocumentId =
             mDocsHelper!!
-                .getAllTrashItems()
+                .getAllTrashItems(TRASH_ROOT.rootId)
                 .first { it.displayName == trashedFolderName }
                 .documentId
         val documents = mDocsHelper!!.listChildren(dirDocumentId)

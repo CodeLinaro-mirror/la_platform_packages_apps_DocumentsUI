@@ -247,7 +247,7 @@ public class StubProvider extends DocumentsProvider {
         getContext().getContentResolver().notifyChange(
                 DocumentsContract.buildDocumentUri(mAuthority, document.documentId),
                 null, false);
-        notifyTrashChanged();
+        notifyTrashChanged(document.rootInfo.document.documentId);
     }
 
     @Override
@@ -288,7 +288,7 @@ public class StubProvider extends DocumentsProvider {
         }
         Log.d(TAG, "Document trashed: " + documentId + " moved to " + trashedFile.getPath());
         notifyParentChanged(document.parentId);
-        notifyTrashChanged();
+        notifyTrashChanged(document.rootInfo.document.documentId);
         return trashedFileDocument.documentId;
     }
 
@@ -361,7 +361,7 @@ public class StubProvider extends DocumentsProvider {
             }
         }
 
-        notifyTrashChanged();
+        notifyTrashChanged(document.rootInfo.document.documentId);
         return restoredPath;
     }
 
@@ -418,7 +418,12 @@ public class StubProvider extends DocumentsProvider {
 
     @Nullable
     @Override
-    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+    public Cursor queryTrashDocuments(
+            @NonNull String rootId,
+            @Nullable String[] projection,
+            @Nullable Bundle queryArgs,
+            @Nullable CancellationSignal signal)
+            throws FileNotFoundException {
         // Return trash documents of all roots.
         final MatrixCursor result =
                 new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
@@ -431,7 +436,7 @@ public class StubProvider extends DocumentsProvider {
                 includeTrashDocuments(result, trashDirDocument);
             }
         }
-        Uri trashUri = DocumentsContract.buildTrashDocumentsUri(mAuthority);
+        Uri trashUri = DocumentsContract.buildTrashDocumentsUri(mAuthority, rootId);
         result.setNotificationUri(getContext().getContentResolver(), trashUri);
         return result;
     }
@@ -822,13 +827,14 @@ public class StubProvider extends DocumentsProvider {
     }
 
     /** Notifies a change in the trash. */
-    private void notifyTrashChanged() {
+    private void notifyTrashChanged(String rootId) {
         if (!isTrashApiEnabled()) {
             return;
         }
         getContext()
                 .getContentResolver()
-                .notifyChange(DocumentsContract.buildTrashDocumentsUri(mAuthority), null, false);
+                .notifyChange(
+                        DocumentsContract.buildTrashDocumentsUri(mAuthority, rootId), null, false);
     }
 
     private void includeDocument(MatrixCursor result, StubDocument document) {

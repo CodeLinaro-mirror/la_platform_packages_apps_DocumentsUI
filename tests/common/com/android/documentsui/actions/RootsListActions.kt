@@ -17,22 +17,18 @@
 package com.android.documentsui.actions
 
 import android.content.Context
-import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.android.documentsui.R
 import com.android.documentsui.sidebar.BaseSidebarEntryItem
-import com.android.documentsui.sidebar.RecyclerRootsAdapter
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.utils.inFixedLayout
 import org.hamcrest.Description
-import org.hamcrest.Matcher
 import org.hamcrest.Matchers
 import org.hamcrest.TypeSafeMatcher
 
@@ -60,46 +56,20 @@ fun actionOnRootItem(label: String, action: ViewAction) {
     // layout, another for the nav rail. We have to specify the ancestor to disambiguate which
     // roots_list we want.
     if (isUseMaterial3FlagEnabled()) {
-        Espresso.onView(
-                Matchers.allOf(
-                    ViewMatchers.withId(R.id.roots_list),
-                    ViewMatchers.isDescendantOfA(ViewMatchers.withId(R.id.container_roots)),
-                )
+        val rootsListMatcher =
+            Matchers.allOf(
+                ViewMatchers.withId(R.id.roots_list),
+                ViewMatchers.isDescendantOfA(ViewMatchers.withId(R.id.container_roots)),
+                ViewMatchers.isCompletelyDisplayed(),
             )
-            .perform(ActionOnRecyclerViewItem(label, action))
+        val itemMatcher = ViewMatchers.hasDescendant(ViewMatchers.withText(label))
+
+        Espresso.onView(rootsListMatcher)
+            .perform(RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(itemMatcher, action))
     } else {
         Espresso.onData(ListViewItemMatcher(label))
             .inAdapterView(ViewMatchers.withId(R.id.roots_list))
             .perform(action)
-    }
-}
-
-/**
- * Perform the specified action on the item with the specified label in the roots list. This action
- * must be performed on the roots list with material3 enabled using RecyclerView.
- */
-internal class ActionOnRecyclerViewItem
-internal constructor(private val mLabel: String, private val mAction: ViewAction) : ViewAction {
-    override fun getConstraints(): Matcher<View?> {
-        return Matchers.allOf<View?>(
-            ViewMatchers.isDisplayed(),
-            ViewMatchers.withClassName(Matchers.endsWith("RecyclerView")),
-        )
-    }
-
-    override fun getDescription(): String {
-        return "Find $mLabel inside roots list and perform ${mAction.getDescription()}"
-    }
-
-    override fun perform(uiController: UiController?, view: View) {
-        val adapter = (view as RecyclerView).adapter as RecyclerRootsAdapter?
-        for (i in 0..<adapter!!.itemCount) {
-            if (adapter.getItem(i)!!.title == mLabel) {
-                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder?>(i, mAction)
-                    .perform(uiController, view)
-                return
-            }
-        }
     }
 }
 
