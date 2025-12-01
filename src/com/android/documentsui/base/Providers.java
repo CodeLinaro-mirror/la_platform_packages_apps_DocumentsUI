@@ -19,6 +19,8 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.archives.ArchivesProvider;
 
 import java.util.Set;
@@ -64,6 +66,13 @@ public final class Providers {
         return uri != null
                 && ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())
                 && MediaStore.AUTHORITY.equals(uri.getAuthority());
+    }
+
+    public static boolean isSameProvider(@Nullable Uri a, @Nullable Uri b) {
+        return a != null
+                && b != null
+                && a.getScheme().equals(b.getScheme())
+                && a.getAuthority().equals(b.getAuthority());
     }
 
     public static boolean isSystemProvider(String authority) {

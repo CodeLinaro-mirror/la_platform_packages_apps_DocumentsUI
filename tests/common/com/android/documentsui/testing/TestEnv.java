@@ -16,6 +16,7 @@
 package com.android.documentsui.testing;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.DocumentsContract.Document;
 import android.test.mock.MockContentResolver;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 public class TestEnv {
 
@@ -73,6 +75,7 @@ public class TestEnv {
     }
 
     public final TestScheduledExecutorService mExecutor;
+    public final TestScheduledExecutorService mMainExecutor;
     public final State state = new State();
     public final TestProvidersAccess providers = new TestProvidersAccess();
     public final TestDocumentsAccess docs = new TestDocumentsAccess();
@@ -98,6 +101,7 @@ public class TestEnv {
         userHandle = UserHandle.of(userId.getIdentifier());
         state.sortModel = SortModel.createModel();
         mExecutor = new TestScheduledExecutorService();
+        mMainExecutor = new TestScheduledExecutorService();
         model = new TestModel(userId, authority, features);
         modelOtherUser = new TestModel(TestProvidersAccess.OtherUser.USER_ID, authority, features);
         archiveModel = new TestModel(userId, ArchivesProvider.AUTHORITY, features);
@@ -221,7 +225,20 @@ public class TestEnv {
     }
 
     public void beforeAsserts() throws Exception {
-        mExecutor.waitForTasks(30000); // 30 secs
+        final long startTimeMillis = SystemClock.uptimeMillis();
+        long timeoutMillis = TimeUnit.SECONDS.toMillis(30);
+
+        while (timeoutMillis > 0
+                && (mExecutor.hasScheduledTasks() || mMainExecutor.hasScheduledTasks())) {
+            if (mExecutor.hasScheduledTasks()) {
+                mExecutor.waitForTasks(timeoutMillis);
+                timeoutMillis -= (SystemClock.uptimeMillis() - startTimeMillis);
+            }
+            if (mMainExecutor.hasScheduledTasks()) {
+                mMainExecutor.waitForTasks(timeoutMillis);
+                timeoutMillis -= (SystemClock.uptimeMillis() - startTimeMillis);
+            }
+        }
     }
 
     public Executor lookupExecutor(String authority) {
