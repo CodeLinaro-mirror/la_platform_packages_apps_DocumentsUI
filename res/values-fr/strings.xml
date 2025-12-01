@@ -408,5 +408,12 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vider la corbeille ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Cette action est irréversible et les fichiers ne pourront plus être récupérés."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Vider la corbeille"</string>
-    <string name="you_are_offline_banner_message" msgid="927661539025514935">"Vous êtes actuellement hors connexion. Certains fichiers risquent de ne pas être disponibles. La synchronisation reprendra lorsque vous aurez accès à Internet."</string>
+    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
+    <skip />
+    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
+    <skip />
 </resources>
