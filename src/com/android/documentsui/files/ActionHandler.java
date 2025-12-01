@@ -20,6 +20,7 @@ import static android.content.ContentResolver.wrap;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isGetInfoDialogEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
@@ -77,6 +78,7 @@ import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView;
+import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.peek.PeekViewManager;
 import com.android.documentsui.queries.SearchViewManager;
@@ -930,6 +932,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     }
 
+    /** Shows a dialog with the metadata of the selected document. */
+    private void showGetInfoDialog(DocumentInfo doc) {
+        GetInfoDialogFragment.show(mActivity.getSupportFragmentManager(), doc);
+    }
+
     private void showInspector(DocumentInfo doc) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_INSPECTOR);
         Intent intent = InspectorActivity.createIntent(mActivity, doc.derivedUri, doc.userId);
@@ -982,6 +989,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     public void showPreview(DocumentInfo doc) {
         if (isUsePeekPreviewFlagEnabled()) {
             showPeek(doc);
+        } else if (isGetInfoDialogEnabled()) {
+            showGetInfoDialog(doc);
         } else {
             showInspector(doc);
         }

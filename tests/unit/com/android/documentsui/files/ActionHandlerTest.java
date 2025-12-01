@@ -36,6 +36,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -64,6 +68,8 @@ import android.provider.DocumentsContract.Path;
 import android.view.DragEvent;
 
 import androidx.core.util.Preconditions;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.MediumTest;
 import androidx.test.filters.SdkSuppress;
@@ -82,6 +88,7 @@ import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.SidebarEntryItemInfo;
+import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -932,7 +939,7 @@ public class ActionHandlerTest {
 
     @Test
     // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO, Flags.FLAG_GET_INFO_DIALOG})
     public void testShowInspector() throws Exception {
         mHandler.showPreview(TestEnv.FILE_GIF);
 
@@ -948,6 +955,26 @@ public class ActionHandlerTest {
     @Test
     // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
     @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @EnableFlags({Flags.FLAG_GET_INFO_DIALOG, Flags.FLAG_USE_MATERIAL3})
+    public void testShowGetInfoDialog() throws Exception {
+        // Retrieve the mock FragmentManager created in setUp.
+        FragmentManager mockFragmentManager = mActivity.getSupportFragmentManager();
+        FragmentTransaction mockFragmentTransaction = mock(FragmentTransaction.class);
+
+        doReturn(mockFragmentTransaction).when(mockFragmentManager).beginTransaction();
+        doReturn(mockFragmentTransaction).when(mockFragmentTransaction).add(any(), anyString());
+        doReturn(null).when(mockFragmentManager).findFragmentByTag(anyString());
+
+        mHandler.showPreview(TestEnv.FILE_GIF);
+
+        mActivity.startActivity.assertNotCalled();
+        verify(mockFragmentTransaction).commit();
+        verify(mockFragmentTransaction).add(isA(GetInfoDialogFragment.class), eq("GetInfoDialog"));
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO, Flags.FLAG_GET_INFO_DIALOG})
     public void testShowInspector_DebugDisabled() throws Exception {
         mFeatures.debugSupport = false;
 
@@ -960,7 +987,7 @@ public class ActionHandlerTest {
 
     @Test
     // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO, Flags.FLAG_GET_INFO_DIALOG})
     public void testShowInspector_DebugEnabled() throws Exception {
         mFeatures.debugSupport = true;
         DebugFlags.setDocumentDetailsEnabled(true);
@@ -975,7 +1002,7 @@ public class ActionHandlerTest {
 
     @Test
     // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO, Flags.FLAG_GET_INFO_DIALOG})
     public void testShowInspector_OverridesRootDocumentName() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();
@@ -996,7 +1023,7 @@ public class ActionHandlerTest {
 
     @Test
     // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO, Flags.FLAG_GET_INFO_DIALOG})
     public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
         mActivity.currentRoot = TestProvidersAccess.PICKLES;
         mEnv.populateStack();

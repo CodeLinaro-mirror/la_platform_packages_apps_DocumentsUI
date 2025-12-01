@@ -1016,6 +1016,12 @@
     <!-- Peek metadata "Date modified" row. -->
     <string name="peek_metadata_date_modified">Date modified</string>
 
+    <!-- The button which dismisses the "Get info" dialog. -->
+    <string name="get_info_positive_button">OK</string>
+
+    <!-- When a file type is not known at all, uses this string instead. -->
+    <string name="get_info_unknown_file_type">Unknown</string>
+
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
 
