@@ -78,8 +78,11 @@ public class TestDocumentClipper implements DocumentClipper {
     }
 
     @Override
-    public void clipDocumentsForCut(Function<String, Uri> uriBuilder, Selection<String> selection,
-            DocumentInfo parent) {
+    public void clipDocumentsForCut(
+            Function<String, Uri> uriBuilder,
+            Selection<String> selection,
+            DocumentInfo parent,
+            boolean isFromRecents) {
         List<Uri> uris = new ArrayList<>(selection.size());
         for (String id : selection) {
             uris.add(uriBuilder.apply(id));

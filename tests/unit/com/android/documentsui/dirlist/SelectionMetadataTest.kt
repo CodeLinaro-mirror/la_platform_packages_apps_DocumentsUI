@@ -55,6 +55,7 @@ class SelectionMetadataTest {
             .createFile("oneOpeningApp.txt", "text/plain")
             .createFile("twoOpeningApp.jpg", "image/jpg")
             .createFile("twoOpeningApp.png", "image/png")
+            .createFile("duplicateMimeType.png", "image/png")
             .createFile("unavailableDocument1.png", "image/png", IS_UNAVAILABLE_FLAG)
             .createFile("unavailableDocument2.png", "image/png", IS_UNAVAILABLE_FLAG)
 
@@ -112,6 +113,102 @@ class SelectionMetadataTest {
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
         assertEquals(sm.hasMultipleOpeningApps(), false)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_noSelection() {
+        val sm = createSelectionMetadata()
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_selectOneFile() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        assertEquals(setOf("text/plain"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_selectMultipleFiles_differentMimeTypes() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        assertEquals(setOf("text/plain", "image/jpg"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_selectMultipleFiles_sameMimeType() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+        sm.onItemStateChanged(makeId("duplicateMimeType.png"), true)
+        assertEquals(setOf("text/plain", "image/jpg", "image/png"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_deselectFile_withRemainingOfSameMimeType() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+        sm.onItemStateChanged(makeId("duplicateMimeType.png"), true)
+
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), false)
+        assertEquals(setOf("text/plain", "image/jpg", "image/png"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_deselectLastFileOfMimeType() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), false)
+        assertEquals(setOf("image/jpg", "image/png"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_deselectAll() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), false)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), false)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), false)
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    @DisableFlags(Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_flagDisabled() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    @EnableFlags(Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_notMaterial3() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+
+        assertEquals(true, sm.mimeTypes().isEmpty())
     }
 
     @Test

@@ -54,12 +54,10 @@ class SortingCursorWrapper extends AbstractCursor {
         final String[] stringValues = stringy ? new String[count] : null;
         final long[] longValues = !stringy ? new long[count] : null;
 
-        Integer[] boxedInts = new Integer[count];
         cursor.moveToPosition(-1);
-        for (int i = 0; i < count; i++) {
-            cursor.moveToNext();
-            boxedInts[i] = Integer.valueOf(i);
-
+        int lastIndex = 0;
+        for (int i = 0; cursor.moveToNext(); i++) {
+            lastIndex = i;
             final String mimeType = getCursorString(mCursor, Document.COLUMN_MIME_TYPE);
             isDirs[i] = Document.MIME_TYPE_DIR.equals(mimeType);
             ids[i] = getCursorString(mCursor, Document.COLUMN_DOCUMENT_ID);
@@ -75,6 +73,11 @@ class SortingCursorWrapper extends AbstractCursor {
             } else if (id == SortModel.SORT_DIMENSION_ID_SIZE) {
                 longValues[i] = getCursorLong(mCursor, Document.COLUMN_SIZE);
             }
+        }
+        int size = lastIndex + 1;
+        Integer[] boxedInts = new Integer[size];
+        for (int i = 0; i < size; ++i) {
+            boxedInts[i] = i;
         }
 
         final boolean ascending =
@@ -113,8 +116,8 @@ class SortingCursorWrapper extends AbstractCursor {
             }
         });
 
-        mPosition = new int[count];
-        for (int i = 0; i < count; i++) {
+        mPosition = new int[size];
+        for (int i = 0; i < size; i++) {
             mPosition[i] = boxedInts[i].intValue();
         }
     }
@@ -127,7 +130,13 @@ class SortingCursorWrapper extends AbstractCursor {
 
     @Override
     public boolean onMove(int oldPosition, int newPosition) {
-        return mCursor.moveToPosition(mPosition[newPosition]);
+        if (newPosition < 0) {
+            return mCursor.moveToPosition(-1);
+        }
+        if (newPosition < mPosition.length) {
+            newPosition = mPosition[newPosition];
+        }
+        return mCursor.moveToPosition(newPosition);
     }
 
     @Override

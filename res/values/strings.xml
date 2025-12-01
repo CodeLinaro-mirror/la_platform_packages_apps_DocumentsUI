@@ -1046,6 +1046,15 @@
     <!-- Action button text in the dialog to confirm emptying the trash. [CHAR_LIMIT=48] -->
     <string name="empty_trash_dialog_action_button">Empty trash</string>
 
+    <!-- Title of the dialog when opening a file in the trash. [CHAR_LIMIT=48] -->
+    <string name="file_open_in_trash_dialog_title">File in Trash</string>
+
+    <!-- Message in the dialog when opening a file in the trash. [CHAR_LIMIT=NONE] -->
+    <string name="file_open_in_trash_dialog_message">This file is in your Trash and cannot be opened. Please restore it from trash to access it.</string>
+
+    <!-- Restore action button text in the dialog to restore the file from the trash. [CHAR_LIMIT=48] -->
+    <string name="file_open_in_trash_dialog_restore_action_button">Restore file</string>
+
     <!-- Message shown in a banner when offline for roots that have limited functionality when offline. [CHAR_LIMIT=NONE] -->
-    <string name="you_are_offline_banner_message">You are currently offline. Some files may not available and syncing will resume when you are connected to the internet. </string>
+    <string name="you_are_offline_banner_message">You are currently offline. Some files and functionality are not available. Connect to the internet for full access.</string>
 </resources>

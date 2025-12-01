@@ -32,7 +32,7 @@ import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
-import com.android.documentsui.base.NetworkMonitor;
+import com.android.documentsui.base.NetworkMonitorStub;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
@@ -121,7 +121,7 @@ public class TestEnv {
         injector.selectionMgr = selectionMgr;
         injector.focusManager = new FocusManager(features, selectionMgr, null, null, 0);
         injector.searchManager = searchViewManager;
-        injector.networkMonitor = NetworkMonitor.create(context);
+        injector.networkMonitor = new NetworkMonitorStub();
 
         contentResolver = new MockContentResolver();
         mockProviders = new HashMap<>(providers.getRootsBlocking().size());

@@ -195,7 +195,9 @@ abstract class Message {
                         mEnv.getContext()
                                 .getString(getRes(R.string.you_are_offline_banner_message)),
                         mEnv.getContext().getString(getRes(R.string.button_dismiss)),
-                        null);
+                        isUseMaterial3FlagEnabled()
+                                ? mEnv.getContext().getDrawable(R.drawable.ic_wifi_off_m3)
+                                : null);
             } else if (mEnv.getModel().error != null) {
                 update(
                         null,

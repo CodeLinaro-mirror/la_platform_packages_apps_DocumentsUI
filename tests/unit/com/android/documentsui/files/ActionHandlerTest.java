@@ -48,6 +48,7 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -1082,6 +1083,91 @@ public class ActionHandlerTest {
         mActivity.startService.assertCalled();
         // Total number of invocations is 2 now.
         assertSelectionContainerClosed(/* wantedNumberOfInvocations */ 2);
+    }
+
+    @Test
+    public void testCreateApprovedHandlerIntent_singleFile() {
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PNG);
+        Intent intent = mHandler.createApprovedHandlerIntent(mEnv.selectionMgr.getSelection());
+
+        assertNotNull(intent);
+        assertEquals(Intent.ACTION_SEND, intent.getAction());
+        assertEquals(TestEnv.FILE_PNG.getDocumentUri(),
+                intent.getParcelableExtra(Intent.EXTRA_STREAM));
+        // TODO: b/464388012 - Reference actual intent category when it's available.
+        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+    }
+
+    @Test
+    public void testCreateApprovedHandlerIntent_multipleFiles() {
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PNG);
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+        Intent intent = mHandler.createApprovedHandlerIntent(mEnv.selectionMgr.getSelection());
+
+        assertNotNull(intent);
+        assertEquals(Intent.ACTION_SEND_MULTIPLE, intent.getAction());
+        ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        assertEquals(2, uris.size());
+        assertTrue(uris.contains(TestEnv.FILE_PNG.getDocumentUri()));
+        assertTrue(uris.contains(TestEnv.FILE_PDF.getDocumentUri()));
+        // TODO: b/464388012 - Reference actual intent category when it's available.
+        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+    }
+
+    @Test
+    public void testCreateApprovedHandlerIntent_noSharableFiles() {
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PARTIAL);
+        Intent intent = mHandler.createApprovedHandlerIntent(mEnv.selectionMgr.getSelection());
+        assertNull(intent);
+    }
+
+    @Test
+    public void testCreateApprovedHandlerIntent_virtualFile() {
+        mFeatures.virtualFilesSharing = true;
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_VIRTUAL);
+        Intent intent = mHandler.createApprovedHandlerIntent(mEnv.selectionMgr.getSelection());
+
+        assertNotNull(intent);
+        assertEquals(Intent.ACTION_SEND, intent.getAction());
+        assertEquals(TestEnv.FILE_VIRTUAL.getDocumentUri(),
+                intent.getParcelableExtra(Intent.EXTRA_STREAM));
+        assertTrue(intent.hasCategory(Intent.CATEGORY_TYPED_OPENABLE));
+        // TODO: b/464388012 - Reference actual intent category when it's available.
+        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testSendToApprovedDocHandler_success() {
+        mFeatures.virtualFilesSharing = true;
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_VIRTUAL);
+        ComponentName testComponent = new ComponentName("com.test", "com.test.Activity");
+        boolean result = mHandler.sendToApprovedDocHandler(testComponent);
+
+        assertTrue(result);
+        mActivity.assertActivityStarted(Intent.ACTION_SEND);
+        Intent intent = mActivity.startActivity.getLastValue();
+        assertEquals(testComponent, intent.getComponent());
+        // TODO: b/464388012 - Reference actual intent category when it's available.
+        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testSendToApprovedDocHandler_failure() {
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PARTIAL);
+        ComponentName testComponent = new ComponentName("com.test", "com.test.Activity");
+
+        boolean result = mHandler.sendToApprovedDocHandler(testComponent);
+
+        assertFalse(result);
+        mActivity.startActivity.assertNotCalled();
     }
 
     /** Verifies that the permanent delete action does nothing if the trash is already empty. */

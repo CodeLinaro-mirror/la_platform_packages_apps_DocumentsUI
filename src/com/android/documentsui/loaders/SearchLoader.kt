@@ -390,7 +390,7 @@ class SearchLoader(
             // search to folder.
             queryArgs.putParcelable(
                 EXTRA_URI,
-                DocumentsContract.buildRootUri(rootInfo.authority, rootInfo.rootId),
+                DocumentsContract.buildDocumentUri(rootInfo.authority, rootInfo.documentId),
             )
         }
         queryArgs.putAll(options.otherQueryArgs)

@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"मेटाइयो"</string>
     <string name="compress_completed" msgid="6522047921428919799">"जिप गरियो"</string>
     <string name="extract_completed" msgid="8824595789915249972">"एक्स्ट्र्याक्ट गरियो"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"ट्र्यासमा सारिएको छ"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"रिस्टोर गरिएको छ"</string>
     <string name="copy_failed" msgid="3700193913993844675">"कपी गर्न सकिएन"</string>
     <string name="move_failed" msgid="7692364307225994220">"सार्न सकिएन"</string>
     <string name="delete_failed" msgid="2642684566325252513">"मेटाउन सकिएन"</string>
     <string name="compress_failed" msgid="7397502181042157261">"जिप गर्न सकिएन"</string>
     <string name="extract_failed" msgid="8372397499452831323">"एक्स्ट्र्याक्ट गर्न सकिएन"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"ट्र्यासमा सार्न सकिएन"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"रिस्टोर गर्न सकिएन"</string>
     <string name="expand_label" msgid="5683357671239615207">"एक्स्पान्ड गर्नुहोस्"</string>
     <string name="collapse_label" msgid="4530974883269531062">"कोल्याप्स गर्नुहोस्"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> लाई <xliff:g id="STORAGE"><i>^3</i></xliff:g> मा रहेको <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> निर्देशिकामाथि पहुँच राख्न दिने हो?"</string>
