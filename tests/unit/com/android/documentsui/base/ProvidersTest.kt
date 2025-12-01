@@ -20,6 +20,7 @@ import androidx.core.net.toUri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.base.Providers.isMediaStoreUri
+import com.android.documentsui.base.Providers.isSameProvider
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -35,5 +36,16 @@ class ProvidersTest {
         assertFalse(isMediaStoreUri("content://other/file/1".toUri()))
         assertFalse(isMediaStoreUri("other://media/file/1".toUri()))
         assertFalse(isMediaStoreUri(null))
+    }
+
+    @Test
+    fun testIsSameProvider() {
+        assertTrue(isSameProvider("scheme://authority/1".toUri(), "scheme://authority/1".toUri()))
+        assertTrue(isSameProvider("scheme://authority/1".toUri(), "scheme://authority/2".toUri()))
+        assertFalse(isSameProvider("scheme://authority/1".toUri(), "scheme://other/1".toUri()))
+        assertFalse(isSameProvider("scheme://authority/1".toUri(), "other://authority/1".toUri()))
+        assertFalse(isSameProvider("scheme://authority/1".toUri(), null))
+        assertFalse(isSameProvider(null, "scheme://authority/1".toUri()))
+        assertFalse(isSameProvider(null, null))
     }
 }

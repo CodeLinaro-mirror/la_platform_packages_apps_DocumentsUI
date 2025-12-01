@@ -21,7 +21,6 @@ import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -1109,9 +1108,7 @@ public class DragAndDropManagerTests {
         assertTrue(
                 mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
-        if (isDragsFromOtherAppsEnabled()) {
-            mEnv.beforeAsserts();
-        }
+        mEnv.beforeAsserts();
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1138,9 +1135,7 @@ public class DragAndDropManagerTests {
         assertTrue(
                 mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
-        if (isDragsFromOtherAppsEnabled()) {
-            mEnv.beforeAsserts();
-        }
+        mEnv.beforeAsserts();
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
@@ -1167,9 +1162,7 @@ public class DragAndDropManagerTests {
         assertTrue(
                 mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
-        if (isDragsFromOtherAppsEnabled()) {
-            mEnv.beforeAsserts();
-        }
+        mEnv.beforeAsserts();
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1705,9 +1698,33 @@ public class DragAndDropManagerTests {
             mClipper.copyFromClip.assertNotCalled();
             mClipper.opType.assertNotCalled();
         } else {
-            // TODO(b/440196110): Replace once `DropOperation#calculateOpType()` is implemented.
-            mClipper.copyFromClip.assertNotCalled();
-            mClipper.opType.assertNotCalled();
+            final Pair<DocumentStack, ClipData> actual = mClipper.copyFromClip.getLastValue();
+            assertNotNull(actual);
+
+            final DocumentStack actualDstStack = actual.first;
+            assertNotNull(actualDstStack);
+            assertEquals(dstStack, actualDstStack);
+
+            final ClipData actualClipData = actual.second;
+            assertNotNull(actualClipData);
+            assertEquals(uriList.size(), actualClipData.getItemCount());
+
+            for (int i = 0; i < uriList.size(); ++i) {
+                final ClipData.Item actualItem = actualClipData.getItemAt(i);
+                assertNotNull(actualItem);
+
+                final Uri actualUri = actualItem.getUri();
+                assertNotNull(actualUri);
+
+                final Uri expectedUri =
+                        uriList.get(i)
+                                .buildUpon()
+                                .authority(EXTERNAL_STORAGE_PROVIDER_AUTHORITY)
+                                .build();
+                assertEquals(expectedUri, actualUri);
+            }
+
+            mClipper.opType.assertLastArgument(expectedOpType);
         }
 
         // Verify expected permissions interactions.
