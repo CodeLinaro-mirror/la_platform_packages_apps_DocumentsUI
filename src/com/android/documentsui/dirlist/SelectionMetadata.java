@@ -16,15 +16,10 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.base.DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS;
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
-import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
@@ -34,8 +29,7 @@ import androidx.recyclerview.selection.SelectionTracker.SelectionObserver;
 
 import com.android.documentsui.MenuManager;
 import com.android.documentsui.archives.ArchivesProvider;
-import com.android.documentsui.base.MimeTypes;
-import com.android.documentsui.roots.RootCursorWrapper;
+import com.android.documentsui.base.DocumentInfo;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -51,34 +45,13 @@ import java.util.function.Function;
 public class SelectionMetadata extends SelectionObserver<String>
         implements MenuManager.SelectionDetails {
 
-    /**
-     * Represents a function that accepts three arguments and produces a result.
-     *
-     * @param <A> the type of the first input to the function
-     * @param <B> the type of the second input to the function
-     * @param <C> the type of the third input to the function
-     * @param <R> the type of the result of the function
-     */
-    @FunctionalInterface
-    public interface TriFunction<A, B, C, R> {
-        /**
-         * Applies this function to the given arguments.
-         *
-         * @param a the first function argument
-         * @param b the second function argument
-         * @param c the third function argument
-         * @return the function result
-         */
-        R apply(A a, B b, C c);
-    }
-
     private static final String TAG = "SelectionMetadata";
     private final static int FLAG_CAN_DELETE =
             Document.FLAG_SUPPORTS_REMOVE | Document.FLAG_SUPPORTS_DELETE;
 
     private final Function<String, Cursor> mDocFinder;
     private final Function<String, Integer> mCountOpeningApps;
-    private final TriFunction<String, Integer, Integer, Boolean> mIsContentAvailable;
+    private final Function<DocumentInfo, Boolean> mIsContentAvailable;
 
     private int mDirectoryCount = 0;
     private int mFileCount = 0;
@@ -121,7 +94,7 @@ public class SelectionMetadata extends SelectionObserver<String>
     public SelectionMetadata(
             Function<String, Cursor> docFinder,
             Function<String, Integer> countOpeningApps,
-            TriFunction<String, Integer, Integer, Boolean> isContentAvailable) {
+            Function<DocumentInfo, Boolean> isContentAvailable) {
         mDocFinder = docFinder;
         mCountOpeningApps = countOpeningApps;
         mIsContentAvailable = isContentAvailable;
@@ -135,26 +108,26 @@ public class SelectionMetadata extends SelectionObserver<String>
                     + ". Ignoring state changed event.");
             return;
         }
+        DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor);
 
         final int delta = selected ? 1 : -1;
 
-        final String mimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
         if (isUseApprovedDocumentHandlerEnabled()) {
-            if (mimeType != null) {
-                int count = mMimeTypeCounts.getOrDefault(mimeType, 0);
+            if (doc.mimeType != null) {
+                int count = mMimeTypeCounts.getOrDefault(doc.mimeType, 0);
                 count += delta;
                 if (count > 0) {
-                    mMimeTypeCounts.put(mimeType, count);
+                    mMimeTypeCounts.put(doc.mimeType, count);
                 } else {
-                    mMimeTypeCounts.remove(mimeType);
+                    mMimeTypeCounts.remove(doc.mimeType);
                 }
             }
         }
-        if (MimeTypes.isDirectoryType(mimeType)) {
+        if (doc.isDirectory()) {
             mDirectoryCount += delta;
         } else {
             mFileCount += delta;
-            if (ArchivesProvider.isSupportedArchiveType(mimeType)) {
+            if (ArchivesProvider.isSupportedArchiveType(doc.mimeType)) {
                 mArchiveCount += delta;
             }
             if (isDesktopFileHandlingFlagEnabled()) {
@@ -168,47 +141,35 @@ public class SelectionMetadata extends SelectionObserver<String>
             }
         }
 
-        final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
-        if ((docFlags & Document.FLAG_PARTIAL) != 0) {
+        if (doc.isPartial()) {
             mPartialCount += delta;
         }
-        if ((docFlags & Document.FLAG_DIR_SUPPORTS_CREATE) != 0) {
+        if (doc.isCreateSupported()) {
             mWritableDirectoryCount += delta;
         }
-        if ((docFlags & FLAG_CAN_DELETE) == 0) {
+        if (!doc.isDeleteSupported()) {
             mNoDeleteCount += delta;
         }
-        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_TRASH) == 0) {
+        if (isTrashFlowEnabled() && !doc.isTrashSupported()) {
             mUnsupportedTrashCount += delta;
         }
-        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_RESTORE) == 0) {
+        if (isTrashFlowEnabled() && !doc.isRestoreSupported()) {
             mUnsupportedRestoreCount += delta;
         }
-        if ((docFlags & Document.FLAG_SUPPORTS_RENAME) == 0) {
+        if (!doc.isRenameSupported()) {
             mNoRenameCount += delta;
         }
-        if ((docFlags & Document.FLAG_PARTIAL) != 0) {
+        if (doc.isPartial()) {
             mPartialCount += delta;
         }
 
-        mSupportsSettings = (docFlags & Document.FLAG_SUPPORTS_SETTINGS) != 0 && size() == 1;
+        mSupportsSettings = doc.isSettingsSupported() && size() == 1;
 
-        final String authority = getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY);
-        if (ArchivesProvider.AUTHORITY.equals(authority)) {
+        if (ArchivesProvider.AUTHORITY.equals(doc.authority)) {
             mInArchiveCount += delta;
         }
-        Integer syncStateFlags = null;
-        if (isCloudFeaturesFlagEnabled()) {
-            // TODO(b/458129770): Use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when it
-            //  exists in the SDK.
-            syncStateFlags =
-                    getCursorInteger(
-                            cursor,
-                            COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                            /* returnIfMissingOrNull= */ null);
-            if (!mIsContentAvailable.apply(mimeType, docFlags, syncStateFlags)) {
-                mUnavailableContentCount += delta;
-            }
+        if (!mIsContentAvailable.apply(doc)) {
+            mUnavailableContentCount += delta;
         }
     }
 

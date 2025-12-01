@@ -18,12 +18,8 @@ package com.android.documentsui;
 
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 
-import android.provider.DocumentsContract;
-
-import androidx.annotation.Nullable;
-
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
-import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
 
 /**
@@ -41,30 +37,20 @@ public abstract class ActivityConfig {
      * is enabled such that it may be double clicked, even in settings when the folder itself cannot
      * be selected. This may also be true of container types.
      */
-    public boolean canSelectType(
-            String docMimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
+    public boolean canSelectType(DocumentInfo doc, State state, boolean isOnline) {
         return true;
     }
 
     /** Returns whether a document is enabled. */
-    public boolean isDocumentEnabled(
-            String docMimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
+    public boolean isDocumentEnabled(DocumentInfo doc, State state, boolean isOnline) {
         if (!isCloudFeaturesFlagEnabled()) {
             return true;
         }
-        if (MimeTypes.isDirectoryType(docMimeType)) {
+        if (doc.isDirectory()) {
             // Directories don't have content, so they are enabled.
             return true;
         }
-        return isContentAvailable(docMimeType, docFlags, syncStateFlags, state, isOnline);
+        return isContentAvailable(doc, state, isOnline);
     }
 
     /**
@@ -76,17 +62,12 @@ public abstract class ActivityConfig {
      * the `SYNC_STATE_FLAG_AVAILABLE_LOCALLY` flag. For folders, return false unconditionally
      * because they may contain files that do not have content available.
      */
-    public boolean isContentAvailable(
-            String docMimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
+    public boolean isContentAvailable(DocumentInfo doc, State state, boolean isOnline) {
         if (!isCloudFeaturesFlagEnabled()) {
             return true;
         }
 
-        if ((docFlags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) != 0) {
+        if (doc.isVirtual()) {
             return true;
         }
 
@@ -100,12 +81,12 @@ public abstract class ActivityConfig {
             return true;
         }
 
-        if (MimeTypes.isDirectoryType(docMimeType)) {
+        if (doc.isDirectory()) {
             // Directories may contain files that don't have available content.
             return false;
         }
 
-        if (syncStateFlags == null) {
+        if (doc.syncStateFlags == null) {
             // When the availability of a file is unknown, we default to available and thus return
             // true.
             return true;
@@ -113,7 +94,7 @@ public abstract class ActivityConfig {
 
         // TODO(b/458129770): Update to using Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY when it
         // exists in the SDK.
-        if ((syncStateFlags & SYNC_STATE_FLAG_AVAILABLE_LOCALLY) != 0) {
+        if ((doc.syncStateFlags & SYNC_STATE_FLAG_AVAILABLE_LOCALLY) != 0) {
             // The file's content is available locally, so it is enabled.
             return true;
         }

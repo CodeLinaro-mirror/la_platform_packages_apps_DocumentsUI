@@ -24,6 +24,7 @@ import androidx.test.runner.AndroidJUnit4
 import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.NO_FLAGS
 import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.OFFLINE
 import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.SYNC_UNAVAILABLE_LOCALLY
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
 import com.android.documentsui.flags.Flags
@@ -78,15 +79,13 @@ class ActivityConfigTest {
         @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsDocumentEnabled() {
             state.stack.changeRoot(testParams.rootInfo)
+            var doc = DocumentInfo()
+            doc.mimeType = testParams.mimeType
+            doc.flags = testParams.docFlags
+            doc.syncStateFlags = testParams.syncStateFlags
             assertEquals(
                 testParams.expectedResult,
-                config.isDocumentEnabled(
-                    testParams.mimeType,
-                    testParams.docFlags,
-                    testParams.syncStateFlags,
-                    state,
-                    testParams.isOnline,
-                ),
+                config.isDocumentEnabled(doc, state, testParams.isOnline),
             )
         }
 
@@ -191,22 +190,22 @@ class ActivityConfigTest {
         @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsDocumentEnabled_featureFlagDisabled() {
             state.stack.changeRoot(TestProvidersAccess.CLOUD)
-            assertTrue(config.isDocumentEnabled("image/png", 0, 0, state, false))
+            var doc = DocumentInfo()
+            doc.mimeType = "image/png"
+            doc.flags = 0
+            doc.syncStateFlags = 0
+            assertTrue(config.isDocumentEnabled(doc, state, false))
         }
 
         @Test
         @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsContentAvailable_folder() {
             state.stack.changeRoot(TestProvidersAccess.CLOUD)
-            assertFalse(
-                config.isContentAvailable(
-                    Document.MIME_TYPE_DIR,
-                    NO_FLAGS,
-                    SYNC_UNAVAILABLE_LOCALLY,
-                    state,
-                    OFFLINE,
-                )
-            )
+            var doc = DocumentInfo()
+            doc.mimeType = Document.MIME_TYPE_DIR
+            doc.flags = NO_FLAGS
+            doc.syncStateFlags = SYNC_UNAVAILABLE_LOCALLY
+            assertFalse(config.isContentAvailable(doc, state, OFFLINE))
         }
     }
 

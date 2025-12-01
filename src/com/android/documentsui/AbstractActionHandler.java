@@ -16,11 +16,7 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
@@ -51,7 +47,6 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.MutableSelection;
-import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -364,20 +359,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 Log.w(TAG, "Skipping selection. Can't obtain cursor for modeId: " + id);
                 continue;
             }
-            String docMimeType = getCursorString(
-                    cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
-            int docFlags = getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
-            final Integer syncStateFlags =
-                    isCloudFeaturesFlagEnabled()
-                            ? getCursorInteger(
-                                    cursor,
-                                    DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                                    /* returnIfMissingOrNull= */ null)
-                            : null;
             if (mInjector.config.isDocumentEnabled(
-                    docMimeType,
-                    docFlags,
-                    syncStateFlags,
+                    DocumentInfo.fromDirectoryCursor(cursor),
                     mState,
                     mInjector.networkMonitor.isOnline())) {
                 enabled.add(id);

@@ -413,12 +413,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
             return false;
         }
 
-        if (mConfig.isDocumentEnabled(
-                doc.mimeType,
-                doc.flags,
-                doc.syncStateFlags,
-                mState,
-                mInjector.networkMonitor.isOnline())) {
+        if (mConfig.isDocumentEnabled(doc, mState, mInjector.networkMonitor.isOnline())) {
             mActivity.onDocumentPicked(doc);
             mSelectionMgr.clearSelection();
             return !doc.isDirectory();

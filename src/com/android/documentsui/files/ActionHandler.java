@@ -286,12 +286,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             showFileOpenFromTrashDialog(doc);
             return false;
         }
-        if (mConfig.isDocumentEnabled(
-                doc.mimeType,
-                doc.flags,
-                doc.syncStateFlags,
-                mState,
-                mInjector.networkMonitor.isOnline())) {
+        if (mConfig.isDocumentEnabled(doc, mState, mInjector.networkMonitor.isOnline())) {
             onDocumentOpened(doc, type, fallback, false);
             mSelectionMgr.clearSelection();
             return !doc.isContainer();
