@@ -111,7 +111,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 putExtra("id", id)
                 putParcelableArrayListExtra(EXTRA_PROGRESS, progresses)
             }
-        context.sendBroadcast(intent)
+        context.sendOrderedBroadcast(intent, null)
     }
 
     private fun openPanel() {
@@ -134,6 +134,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 }
             }
         val filter = IntentFilter(ACTION_PROGRESS)
+        // Ensure this receiver gets called after the UI updates.
+        filter.priority = -1
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
         IdlingRegistry.getInstance().register(jobUpdateIdle)

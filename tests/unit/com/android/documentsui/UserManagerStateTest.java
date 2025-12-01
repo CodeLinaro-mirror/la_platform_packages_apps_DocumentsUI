@@ -393,6 +393,28 @@ public class UserManagerStateTest {
     }
 
     @Test
+    public void testGetUserIds_currentUserShowInSharingSurfacesNo_returnsCurrentUser() {
+        assumeTrue(SdkLevel.isAtLeastV());
+        UserId currentUser = UserId.of(mNormalUser);
+        initializeUserManagerState(currentUser, Lists.newArrayList(mNormalUser));
+
+        assertWithMessage("getUserIds returns unexpected list of user ids")
+                .that(mUserManagerState.getUserIds())
+                .containsExactly(currentUser);
+    }
+
+    @Test
+    public void testGetUserIds_currentUserShowInSharingSurfacesWithParent_returnsCurrentUser() {
+        assumeTrue(SdkLevel.isAtLeastV());
+        UserId currentUser = UserId.of(mOtherUser);
+        initializeUserManagerState(currentUser, Lists.newArrayList(mOtherUser));
+
+        assertWithMessage("getUserIds returns unexpected list of user ids")
+                .that(mUserManagerState.getUserIds())
+                .containsExactly(currentUser);
+    }
+
+    @Test
     public void testGetCanForwardToProfileIdMap_systemUserCanForwardToManaged() {
         UserId currentUser = UserId.of(mSystemUser);
         initializeUserManagerState(currentUser, Lists.newArrayList(mSystemUser, mManagedUser));

@@ -68,11 +68,12 @@ public interface DocumentClipper {
      */
     void clipDocumentsForCopy(Function<String, Uri> uriBuilder, Selection<String> selection);
 
-    /**
-     *  Puts {@Code ClipData} in a primary clipboard, describing a cut operation
-     */
+    /** Puts {@code ClipData} in a primary clipboard, describing a cut operation */
     void clipDocumentsForCut(
-            Function<String, Uri> uriBuilder, Selection<String> selection, DocumentInfo parent);
+            Function<String, Uri> uriBuilder,
+            Selection<String> selection,
+            DocumentInfo parent,
+            boolean isFromRecents);
 
     /**
      * Copies documents from clipboard. It's the same as {@link #copyFromClipData} with clipData

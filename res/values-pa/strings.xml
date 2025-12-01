@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"ਮਿਟਾਈ ਗਈ"</string>
     <string name="compress_completed" msgid="6522047921428919799">"ਜ਼ਿਪ ਕੀਤਾ ਗਿਆ"</string>
     <string name="extract_completed" msgid="8824595789915249972">"ਐਕਸਟ੍ਰੈਕਟ ਕੀਤੀ ਗਈ"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"ਰੱਦੀ ਵਿੱਚ"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"ਮੁੜ-ਬਹਾਲ ਕੀਤਾ ਗਿਆ"</string>
     <string name="copy_failed" msgid="3700193913993844675">"ਕਾਪੀ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
     <string name="move_failed" msgid="7692364307225994220">"ਲਿਜਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ"</string>
     <string name="delete_failed" msgid="2642684566325252513">"ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ"</string>
     <string name="compress_failed" msgid="7397502181042157261">"ਜ਼ਿਪ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
     <string name="extract_failed" msgid="8372397499452831323">"ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"ਰੱਦੀ ਵਿੱਚ ਨਹੀਂ ਭੇਜਿਆ ਜਾ ਸਕਿਆ"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"ਮੁੜ-ਬਹਾਲ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ"</string>
     <string name="expand_label" msgid="5683357671239615207">"ਵਿਸਤਾਰ ਕਰੋ"</string>
     <string name="collapse_label" msgid="4530974883269531062">"ਸਮੇਟੋ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"ਕੀ <xliff:g id="APPNAME"><b>^1</b></xliff:g> ਨੂੰ <xliff:g id="STORAGE"><i>^3</i></xliff:g> \'ਤੇ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ਡਾਇਰੈਕਟਰੀ \'ਤੇ ਪਹੁੰਚ ਦੇਣੀ ਹੈ?"</string>
@@ -358,8 +354,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ਆਪਣੀ ਪਰਦੇਦਾਰੀ ਦੀ ਸੁਰੱਖਿਆ ਲਈ, ਕੋਈ ਹੋਰ ਫੋਲਡਰ ਚੁਣੋ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ਨਵਾਂ ਫੋਲਡਰ ਬਣਾਓ"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ਇਸ ਡੀਵਾਈਸ ਨੂੰ ਖੋਜੋ"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"ਖੋਜ ਨਤੀਜੇ"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"ਲਿਖਤ ਕਲੀਅਰ ਕਰੋ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ਰੂਟ ਫੋਲਡਰ"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"ਹਰ ਥਾਂ"</string>

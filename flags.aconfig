@@ -130,9 +130,9 @@ flag {
 }
 
 flag {
-    name: "use_trusted_apps"
+    name: "use_approved_document_handler"
     namespace: "documentsui"
-    description: "Enables trusted apps on DocumentsUI."
+    description: "Enables approved document handler on DocumentsUI."
     bug: "440464827"
     is_fixed_read_only: true
 }
@@ -144,3 +144,12 @@ flag {
     bug: "459640815"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "get_info_dialog"
+    namespace: "documentsui"
+    description: "Replaces the Inspector activity with a Get Info dialog"
+    bug: "458494432"
+    is_fixed_read_only: true
+}
+

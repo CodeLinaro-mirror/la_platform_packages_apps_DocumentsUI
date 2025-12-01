@@ -22,6 +22,8 @@ import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+
 import static junit.framework.Assert.assertNotNull;
 
 import android.annotation.LayoutRes;
@@ -45,6 +47,7 @@ import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
+import com.android.documentsui.R;
 import com.android.documentsui.actions.DoNothingAction;
 import com.android.documentsui.utils.LayoutUtilsKt;
 
@@ -54,6 +57,12 @@ import org.hamcrest.Matcher;
 
 /** Handy collection of bots for working with Files app. */
 public final class Bots {
+
+    @FunctionalInterface
+    public interface NavigateToDestinationRunnable {
+        /** Handles the navigation to the Copy/Cut or Copy to/Move to destination. */
+        void run() throws Exception;
+    }
 
     private static final String TAG = "Bots";
     private static final int TIMEOUT = 15000;
@@ -333,6 +342,63 @@ public final class Bots {
         /** Check if the app is running in drawer_layout. */
         public boolean inDrawerLayout() {
             return LayoutUtilsKt.inDrawerLayout(mContext, mLayoutId);
+        }
+
+        /**
+         * Indicates if the Copy/Cut menu should be used instead of "Copy to" and "Move to" menus.
+         */
+        public boolean isUseCopyCutFlow() {
+            final boolean showCopyToMoveToConfigValue =
+                    mContext.getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+            return isDesktopUxPhase2FlagEnabled() && !showCopyToMoveToConfigValue;
+        }
+
+        /**
+         * Do the copy process, cater for both "Copy/Paste" flow and "Copy to" dialog flow.
+         *
+         * @param navigateToDestination function to navigation to the copy destination folder.
+         */
+        public void doCopy(NavigateToDestinationRunnable navigateToDestination) throws Exception {
+            if (isUseCopyCutFlow()) {
+                mBots.main.clickActionbarOverflowItem(
+                        mContext.getResources().getString(R.string.menu_copy_to_clipboard));
+            } else {
+                mBots.main.clickActionbarOverflowItem(
+                        mContext.getResources().getString(R.string.menu_copy));
+            }
+            mDevice.waitForIdle();
+            navigateToDestination.run();
+            if (isUseCopyCutFlow()) {
+                mBots.main.clickToolbarOverflowItem(
+                        mContext.getResources().getString(R.string.menu_paste_from_clipboard));
+            } else {
+                mBots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+            }
+            mDevice.waitForIdle();
+        }
+
+        /**
+         * Do the move process, cater for both "Cut/Paste" flow and "Move to" dialog flow.
+         *
+         * @param navigateToDestination function to navigation to the move destination folder.
+         */
+        public void doMove(NavigateToDestinationRunnable navigateToDestination) throws Exception {
+            if (isUseCopyCutFlow()) {
+                mBots.main.clickActionbarOverflowItem(
+                        mContext.getResources().getString(R.string.menu_cut_to_clipboard));
+            } else {
+                mBots.main.clickActionbarOverflowItem(
+                        mContext.getResources().getString(R.string.menu_move));
+            }
+            mDevice.waitForIdle();
+            navigateToDestination.run();
+            if (isUseCopyCutFlow()) {
+                mBots.main.clickToolbarOverflowItem(
+                        mContext.getResources().getString(R.string.menu_paste_from_clipboard));
+            } else {
+                mBots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+            }
+            mDevice.waitForIdle();
         }
     }
 }

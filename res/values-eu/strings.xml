@@ -358,8 +358,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Pribatutasuna babesteko, aukeratu beste karpeta bat"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Sortu karpeta bat"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Bilatu gailu honetan"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"Bilaketa-emaitzak"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Garbitu testua"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Erroko karpeta"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Edonon"</string>

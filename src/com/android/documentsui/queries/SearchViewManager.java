@@ -971,6 +971,7 @@ public class SearchViewManager implements
 
     private void showNonSearchOptionMenus(boolean show) {
         if (isUseMaterial3FlagEnabled()) {
+            mMenu.setGroupVisible(getRes(R.id.menu_clipboard_group), show);
             mMenu.setGroupVisible(getRes(R.id.menu_folder_manage_group), show);
             mMenu.setGroupVisible(getRes(R.id.menu_modifier_group), show);
             mMenu.setGroupVisible(getRes(R.id.menu_settings_group), show);

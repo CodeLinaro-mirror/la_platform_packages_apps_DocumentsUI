@@ -18,7 +18,6 @@ package com.android.documentsui.testing;
 
 import android.content.ClipData;
 import android.net.Uri;
-import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -26,6 +25,7 @@ import androidx.annotation.Nullable;
 
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.DragAndDropManager;
+import com.android.documentsui.DragAndDropManager.Permissions;
 import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
@@ -34,15 +34,17 @@ import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.dirlist.IconHelper;
 import com.android.documentsui.services.FileOperations;
 
+import kotlin.Triple;
+
 import java.util.List;
 
 public class TestDragAndDropManager implements DragAndDropManager {
 
     public final TestEventListener<List<DocumentInfo>> startDragHandler = new TestEventListener<>();
-    public final TestEventHandler<Pair<ClipData, SidebarEntryItemInfo>> dropOnRootHandler =
-            new TestEventHandler<>();
-    public final TestEventHandler<Pair<ClipData, DocumentStack>> dropOnDocumentHandler =
-            new TestEventHandler<>();
+    public final TestEventHandler<Triple<Permissions, ClipData, SidebarEntryItemInfo>>
+            dropOnRootHandler = new TestEventHandler<>();
+    public final TestEventHandler<Triple<Permissions, ClipData, DocumentStack>>
+            dropOnDocumentHandler = new TestEventHandler<>();
     public final TestEventHandler<Void> isDragFromSameAppHandler = new TestEventHandler<>();
 
     public TestDragAndDropManager() {
@@ -82,15 +84,26 @@ public class TestDragAndDropManager implements DragAndDropManager {
     }
 
     @Override
-    public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo root,
-            ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest) {
-        return dropOnRootHandler.accept(Pair.create(clipData, root));
+    public boolean drop(
+            @Nullable Permissions permissions,
+            ClipData clipData,
+            Object localState,
+            SidebarEntryItemInfo root,
+            ActionHandler actions,
+            FileOperations.Callback callback,
+            List<Uri> invalidDest) {
+        return dropOnRootHandler.accept(new Triple(permissions, clipData, root));
     }
 
     @Override
-    public boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-            ActionHandler actions, FileOperations.Callback callback) {
-        return dropOnDocumentHandler.accept(Pair.create(clipData, dstStack));
+    public boolean drop(
+            @Nullable Permissions permissions,
+            ClipData clipData,
+            Object localState,
+            DocumentStack dstStack,
+            ActionHandler actions,
+            FileOperations.Callback callback) {
+        return dropOnDocumentHandler.accept(new Triple(permissions, clipData, dstStack));
     }
 
     @Override
