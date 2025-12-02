@@ -51,4 +51,14 @@ class ThemeUtilsTest {
     fun testMappingResourceIdDisabled() {
         assertEquals(R.id.option_menu_debug, Material3Config.getRes(R.id.option_menu_debug))
     }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testGetRes_whenIdNotInMap_returnsOriginalId() {
+        // Use a resource ID that is not present in the test mapping configured in setUp().
+        val unmappedResourceId = R.id.action_menu_sort
+
+        // Verify that the original resource ID is returned when no mapping is found.
+        assertEquals(unmappedResourceId, Material3Config.getRes(unmappedResourceId))
+    }
 }
