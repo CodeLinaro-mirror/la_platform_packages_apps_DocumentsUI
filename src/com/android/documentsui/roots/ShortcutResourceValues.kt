@@ -23,7 +23,7 @@ class ShortcutResourceValues(
     val rootId: String,
     val parentDocumentId: String,
     val folderTitle: String,
-    val localizedDisplayTitle: String,
+    var localizedDisplayTitle: String,
     val iconReference: Int,
 ) {
     override fun equals(other: Any?): Boolean {

@@ -198,17 +198,24 @@ public class DocumentStack implements Durable, Parcelable {
         return mRoot != null && mRoot.isRecents() && size() == 1;
     }
 
+    /**
+     * @return whether the user is at the top-level of the trash directory.
+     */
+    public boolean isTrashTopLevel() {
+        return isTrashRoot() && size() == 1;
+    }
 
     /**
-     * @return whether the root is trash or not
+     * @return whether the current navigation stack belongs to the trash root. This will be true
+     *     even when navigating into sub-folders within the trash.
      */
-    public boolean isTrash() {
+    public boolean isTrashRoot() {
         if (!isTrashFlowEnabled()) {
             return false;
         }
-        return mRoot != null && mRoot.isTrash() && size() == 1;
-    }
 
+        return mRoot != null && mRoot.isTrash();
+    }
 
     /**
      * Resets this stack to the given stack. It takes the reference of {@link #mList} and

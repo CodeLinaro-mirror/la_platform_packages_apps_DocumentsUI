@@ -291,7 +291,7 @@
     <string name="delete_failed" msgid="2642684566325252513">"Nepodarilo sa odstrániť"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Nepodarilo sa skomprimovať"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Nepodarilo sa extrahovať"</string>
-    <string name="trash_failed" msgid="4655759218201171408">"Nepodarilo sa presunúť do koša"</string>
+    <string name="trash_failed" msgid="4655759218201171408">"Nepodarilo sa zahodiť"</string>
     <string name="restore_failed" msgid="1967876571708544126">"Nepodarilo sa obnoviť"</string>
     <string name="expand_label" msgid="5683357671239615207">"Rozbaliť"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Zbaliť"</string>

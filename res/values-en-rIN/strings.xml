@@ -234,19 +234,19 @@
     <string name="rename_error" msgid="6700093173508118635">"Failed to rename document"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Eject"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Some files were converted"</string>
-    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Copying \'<xliff:g id="FILENAME">{filename}</xliff:g>\' to \'<xliff:g id="DIRECTORY">{directory}</xliff:g>\'"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Copying ‘<xliff:g id="FILENAME">{filename}</xliff:g>’ to ‘<xliff:g id="DIRECTORY">{directory}</xliff:g>’"</string>
     <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Copying # file to ‘<xliff:g id="DIRECTORY_0">{directory}</xliff:g>’}other{Copying # files to ‘<xliff:g id="DIRECTORY_1">{directory}</xliff:g>’}}"</string>
-    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Extracting \'<xliff:g id="FILENAME">{filename}</xliff:g>\' to \'<xliff:g id="DIRECTORY">{directory}</xliff:g>\'"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Extracting ‘<xliff:g id="FILENAME">{filename}</xliff:g>’ to ‘<xliff:g id="DIRECTORY">{directory}</xliff:g>’"</string>
     <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Extracting # file to ‘<xliff:g id="DIRECTORY_0">{directory}</xliff:g>’}other{Extracting # files to ‘<xliff:g id="DIRECTORY_1">{directory}</xliff:g>’}}"</string>
-    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Moving \'<xliff:g id="FILENAME">{filename}</xliff:g>\' to \'<xliff:g id="DIRECTORY">{directory}</xliff:g>\'"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Moving ‘<xliff:g id="FILENAME">{filename}</xliff:g>’ to ‘<xliff:g id="DIRECTORY">{directory}</xliff:g>’"</string>
     <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Moving # file to ‘<xliff:g id="DIRECTORY_0">{directory}</xliff:g>’}other{Moving # files to ‘<xliff:g id="DIRECTORY_1">{directory}</xliff:g>’}}"</string>
-    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Deleting \'<xliff:g id="FILENAME">{filename}</xliff:g>\'"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Deleting ‘<xliff:g id="FILENAME">{filename}</xliff:g>’"</string>
     <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Deleting # file}other{Deleting # files}}"</string>
-    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Binning \'<xliff:g id="FILENAME">{filename}</xliff:g>\'"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Binning ‘<xliff:g id="FILENAME">{filename}</xliff:g>’"</string>
     <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{Binning # file}other{Binning # files}}"</string>
-    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Restoring \'<xliff:g id="FILENAME">{filename}</xliff:g>\'"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Restoring ‘<xliff:g id="FILENAME">{filename}</xliff:g>’"</string>
     <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Restoring # file}other{Restoring # files}}"</string>
-    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Zipping \'<xliff:g id="FILENAME">{filename}</xliff:g>\'"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Zipping ‘<xliff:g id="FILENAME">{filename}</xliff:g>’"</string>
     <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Zipping # file}other{Zipping # files}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Show file progress"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"File progress"</string>
@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Deleted"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Zipped"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Extracted"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"In bin"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Restored"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Couldn\'t copy"</string>
     <string name="move_failed" msgid="7692364307225994220">"Couldn\'t move"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Couldn\'t delete"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Couldn\'t zip"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Couldn\'t extract"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"Couldn\'t bin"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Couldn\'t restore"</string>
     <string name="expand_label" msgid="5683357671239615207">"Expand"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Collapse"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Grant <xliff:g id="APPNAME"><b>^1</b></xliff:g> access to <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> directory on <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>

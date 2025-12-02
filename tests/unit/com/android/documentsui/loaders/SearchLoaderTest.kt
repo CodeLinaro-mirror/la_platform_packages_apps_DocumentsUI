@@ -15,9 +15,11 @@
  */
 package com.android.documentsui.loaders
 
+import android.net.Uri
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
+import androidx.core.os.BundleCompat
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
 import androidx.test.filters.SmallTest
@@ -68,8 +70,11 @@ data class SemanticSearchProviderTestParams(
     val flagEnabled: Boolean,
     val resourceUri: String,
     val semanticSearchError: Boolean,
-    val expectedDisplayName: String,
+    val expectedSemanticSearch: Boolean,
 ) {
+    val expectedDisplayName: String =
+        if (expectedSemanticSearch) "found-me-on-semantic-search" else "found-me-on-downloads"
+
     override fun toString(): String = testName
 }
 
@@ -214,35 +219,35 @@ class SearchLoaderTest {
                         flagEnabled = true,
                         resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
                         semanticSearchError = false,
-                        expectedDisplayName = "found-me-on-semantic-search",
+                        expectedSemanticSearch = true,
                     ),
                     SemanticSearchProviderTestParams(
                         testName = "flag_disabled_should_fall_back_to_default",
                         flagEnabled = false,
                         resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
                         semanticSearchError = false,
-                        expectedDisplayName = "found-me-on-downloads",
+                        expectedSemanticSearch = false,
                     ),
                     SemanticSearchProviderTestParams(
                         testName = "resource_missing_should_fall_back_to_default",
                         flagEnabled = true,
                         resourceUri = "",
                         semanticSearchError = false,
-                        expectedDisplayName = "found-me-on-downloads",
+                        expectedSemanticSearch = false,
                     ),
                     SemanticSearchProviderTestParams(
                         testName = "malformed_uri_should_fall_back_to_default",
                         flagEnabled = true,
                         resourceUri = "this-is-not-a-valid-uri",
                         semanticSearchError = false,
-                        expectedDisplayName = "found-me-on-downloads",
+                        expectedSemanticSearch = false,
                     ),
                     SemanticSearchProviderTestParams(
                         testName = "semantic_search_fails_should_fall_back_to_default",
                         flagEnabled = true,
                         resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
                         semanticSearchError = true,
-                        expectedDisplayName = "found-me-on-downloads",
+                        expectedSemanticSearch = false,
                     ),
                 )
         }
@@ -283,11 +288,7 @@ class SearchLoaderTest {
                     listOf(TestProvidersAccess.DOWNLOADS),
                     TestFileTypeLookup(),
                     contentObserver,
-                    // To bypass DocumentsContract.matchSearchQueryArguments(...) validation
-                    // in TestDocumentsProvider and default recent URI behavior in SearchLoader
-                    // the query is intentionaly empty while the extra args bundle is populated.
-                    // TODO(b/436750342): Find a cleaner solution.
-                    "",
+                    "found-me",
                     QueryOptions(
                         maxResults = 10,
                         maxResultsPerRoot = ALL_RESULTS,
@@ -295,15 +296,7 @@ class SearchLoaderTest {
                         maxQueryTime = null,
                         showHidden = false,
                         acceptableMimeTypes = null,
-                        otherQueryArgs =
-                            Bundle().apply {
-                                // Other than EXTRA_URI, other query options are not relevant for
-                                // this test.
-                                putParcelable(
-                                    DocumentsContract.EXTRA_URI,
-                                    TestProvidersAccess.DOWNLOADS.uri,
-                                )
-                            },
+                        otherQueryArgs = Bundle(),
                     ),
                     environment.state.sortModel,
                     executor,
@@ -314,6 +307,21 @@ class SearchLoaderTest {
             val document = getDocuments(result)[0]
             expect.that(document.authority).isEqualTo(TestProvidersAccess.DOWNLOADS.authority)
             expect.that(document.displayName).isEqualTo(testParams.expectedDisplayName)
+
+            if (testParams.expectedSemanticSearch) {
+                val queryArgs =
+                    environment.mockProviders[SEMANTIC_SEARCH_PROVIDER.authority]?.lastQueryArgs
+                val extraUri =
+                    queryArgs?.let { BundleCompat.getParcelable(it, EXTRA_URI, Uri::class.java) }
+                expect.that(extraUri).isNotNull()
+
+                val expectedExtraUri =
+                    DocumentsContract.buildDocumentUri(
+                        TestProvidersAccess.DOWNLOADS.authority,
+                        TestProvidersAccess.DOWNLOADS.documentId,
+                    )
+                expect.that(extraUri).isEqualTo(expectedExtraUri)
+            }
         }
     }
 

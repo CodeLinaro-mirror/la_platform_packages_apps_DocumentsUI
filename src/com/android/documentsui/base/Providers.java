@@ -15,7 +15,9 @@
  */
 package com.android.documentsui.base;
 
+import android.content.ContentResolver;
 import android.net.Uri;
+import android.provider.MediaStore;
 
 import com.android.documentsui.archives.ArchivesProvider;
 
@@ -56,6 +58,12 @@ public final class Providers {
 
     public static boolean isArchiveUri(Uri uri) {
         return uri != null && ArchivesProvider.AUTHORITY.equals(uri.getAuthority());
+    }
+
+    public static boolean isMediaStoreUri(Uri uri) {
+        return uri != null
+                && ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())
+                && MediaStore.AUTHORITY.equals(uri.getAuthority());
     }
 
     public static boolean isSystemProvider(String authority) {

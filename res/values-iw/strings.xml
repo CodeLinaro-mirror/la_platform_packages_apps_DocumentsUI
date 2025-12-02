@@ -272,8 +272,8 @@
     <string name="delete_completed" msgid="4149401155614626199">"נמחק"</string>
     <string name="compress_completed" msgid="6522047921428919799">"הקובץ נדחס"</string>
     <string name="extract_completed" msgid="8824595789915249972">"הקובץ חולץ"</string>
-    <string name="trash_completed" msgid="5527806383436622529">"הועבר לאשפה"</string>
-    <string name="restore_completed" msgid="4705296829051759784">"הקובץ שוחזר"</string>
+    <string name="trash_completed" msgid="5527806383436622529">"ההעברה לאשפה הושלמה"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"השחזור הושלם"</string>
     <string name="copy_failed" msgid="3700193913993844675">"ההעתקה נכשלה"</string>
     <string name="move_failed" msgid="7692364307225994220">"ההעברה נכשלה"</string>
     <string name="delete_failed" msgid="2642684566325252513">"המחיקה נכשלה"</string>

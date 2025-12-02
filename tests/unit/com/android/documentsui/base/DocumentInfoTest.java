@@ -22,20 +22,21 @@ import static androidx.core.util.Preconditions.checkArgument;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.kotlin.VerificationKt.never;
 import static org.mockito.kotlin.VerificationKt.verify;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
-import android.test.AndroidTestCase;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 import androidx.test.rule.provider.ProviderTestRule;
 
@@ -49,6 +50,7 @@ import com.android.documentsui.util.VersionUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,29 +60,26 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+@RunWith(AndroidJUnit4.class)
 @SmallTest
-public class DocumentInfoTest extends AndroidTestCase {
+public class DocumentInfoTest {
 
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+    @Rule
+    public ProviderTestRule mProviderTestRule = new ProviderTestRule.Builder(
+            InspectorProvider.class, InspectorProvider.AUTHORITY).build();
 
     private static final DocumentInfo TEST_DOC
             = createDocInfo("authority.a", "doc.1", "text/plain");
     private static final String FOLDER_NAME = "Top";
     private static final String FILE_NAME = InspectorProvider.OPEN_IN_PROVIDER_TEST;
 
-    private Context mContext;
     private ContentResolver mResolver;
 
-    @Rule
-    private ProviderTestRule mProviderTestRule = new ProviderTestRule.Builder(
-            InspectorProvider.class, InspectorProvider.AUTHORITY).build();
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        mContext = prepareContentResolverSource();
-        mResolver = mContext.getContentResolver();
+        mResolver = mProviderTestRule.getResolver();
     }
 
     private static DocumentInfo createDocInfo(String authority, String docId, String mimeType) {
@@ -91,14 +90,6 @@ public class DocumentInfoTest extends AndroidTestCase {
         doc.mimeType = mimeType;
         doc.deriveFields();
         return doc;
-    }
-
-    protected Context prepareContentResolverSource() {
-        ContentResolver contentResolver = mProviderTestRule.getResolver();
-        Context context = mock(Context.class);
-        // inject ContentResolver
-        when(context.getContentResolver()).thenReturn(contentResolver);
-        return context;
     }
 
     @Test
@@ -286,6 +277,7 @@ public class DocumentInfoTest extends AndroidTestCase {
         when(cursor.getInt(index)).thenReturn(value);
         DocumentInfo info = new DocumentInfo();
         info.updateFromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertEquals(info.syncStateFlags.intValue(), value);
     }
 
     @Test
@@ -334,8 +326,9 @@ public class DocumentInfoTest extends AndroidTestCase {
         String columnName = "column";
         int index = 0;
         int value = 5;
+        when(cursor.getInt(index)).thenReturn(value);
 
-        // When cursor is null, the default value value should be returned.
+        // When cursor is null, the default value should be returned.
         assertThat(DocumentInfo.getCursorInt(null, columnName)).isEqualTo(0);
         assertThat(
                         DocumentInfo.getCursorInteger(
@@ -346,7 +339,7 @@ public class DocumentInfoTest extends AndroidTestCase {
                                 null, columnName, /* returnIfMissingOrNull= */ null))
                 .isEqualTo(null);
 
-        // When the column has no index (-1), the default value value should be returned.
+        // When the column has no index (-1), the default value should be returned.
         when(cursor.getColumnIndex(columnName)).thenReturn(-1);
         assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(0);
         assertThat(
@@ -358,9 +351,22 @@ public class DocumentInfoTest extends AndroidTestCase {
                                 null, columnName, /* returnIfMissingOrNull= */ null))
                 .isEqualTo(null);
 
-        // When the column has a valid, the column's value should be returned.
+        // When the column's value is null, the default value should be returned.
         when(cursor.getColumnIndex(columnName)).thenReturn(index);
-        when(cursor.getInt(index)).thenReturn(value);
+        when(cursor.isNull(index)).thenReturn(true);
+        assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(0);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ -10))
+                .isEqualTo(-10);
+        assertThat(
+                        DocumentInfo.getCursorInteger(
+                                cursor, columnName, /* returnIfMissingOrNull= */ null))
+                .isEqualTo(null);
+
+        // When the column has a non-null value, the column's value should be returned.
+        when(cursor.getColumnIndex(columnName)).thenReturn(index);
+        when(cursor.isNull(index)).thenReturn(false);
         assertThat(DocumentInfo.getCursorInt(cursor, columnName)).isEqualTo(value);
         assertThat(
                         DocumentInfo.getCursorInteger(

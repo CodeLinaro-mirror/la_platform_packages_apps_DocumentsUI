@@ -117,7 +117,8 @@
             android:exported="true"
             android:theme="@style/PickDialogTheme"
             android:visibleToInstantApps="true"
-            android:featureFlag="com.android.documentsui.flags.desktop_ux_phase_2_ro">
+            android:featureFlag="com.android.documentsui.flags.desktop_ux_phase_2_ro"
+            android:configChanges="locale|layoutDirection">
             <!-- LINT.IfChange(pick_activity_feature_on) -->
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.OPEN_DOCUMENT" />
@@ -176,7 +177,8 @@
             android:name=".files.FilesActivity"
             android:documentLaunchMode="intoExisting"
             android:exported="true"
-            android:theme="@style/LauncherTheme">
+            android:theme="@style/LauncherTheme"
+            android:configChanges="locale|layoutDirection">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

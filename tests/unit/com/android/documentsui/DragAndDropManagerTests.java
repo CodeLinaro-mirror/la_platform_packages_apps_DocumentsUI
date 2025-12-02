@@ -16,10 +16,12 @@
 
 package com.android.documentsui;
 
+import static android.provider.DocumentsContract.EXTERNAL_STORAGE_PROVIDER_AUTHORITY;
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -37,7 +39,9 @@ import static org.mockito.Mockito.verify;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.platform.test.annotations.DisableFlags;
@@ -50,6 +54,7 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
@@ -59,10 +64,12 @@ import com.android.documentsui.DragAndDropManager.RuntimeDragAndDropManager;
 import com.android.documentsui.DragAndDropManager.State;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.services.FileOperationService;
+import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.KeyEvents;
@@ -87,11 +94,17 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DragAndDropManagerTests {
 
+    private static final Uri MEDIA_STORE_URI_0 = Uri.parse("content://media/files/1");
+    private static final Uri MEDIA_STORE_URI_1 = Uri.parse("content://media/files/2");
+    private static final Uri NON_MEDIA_STORE_URI_0 = Uri.parse("content://non-media/files/1");
     private static final String PLURAL_FORMAT = "%1$d items";
 
     private TestEnv mEnv;
@@ -130,6 +143,7 @@ public class DragAndDropManagerTests {
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Mock private Permissions mMockPermissions;
+    @Mock private BiFunction<Context, Uri, Uri> mMockMediaStoreToDocumentUriRewriter;
 
     @Before
     public void setUp() {
@@ -161,8 +175,8 @@ public class DragAndDropManagerTests {
         mCallbackListener = new TestEventListener<>();
         mFlagListener = new TestEventListener<>();
 
-        mManager = new RuntimeDragAndDropManager(mActivity, mClipper, mShadowBuilder,
-                mDefaultIcon) {
+        mManager = new RuntimeDragAndDropManager(mActivity, mClipper, mEnv.mExecutor,
+                mShadowBuilder, mDefaultIcon, mMockMediaStoreToDocumentUriRewriter) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1077,7 +1091,7 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    public void testDrop_Copies_DifferentRoot_DropOnDocument() {
+    public void testDrop_Copies_DifferentRoot_DropOnDocument() throws Exception {
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
@@ -1095,6 +1109,10 @@ public class DragAndDropManagerTests {
         assertTrue(
                 mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
+        if (isDragsFromOtherAppsEnabled()) {
+            mEnv.beforeAsserts();
+        }
+
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
 
@@ -1102,7 +1120,7 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    public void testDrop_Moves_SameRoot_DropOnDocument() {
+    public void testDrop_Moves_SameRoot_DropOnDocument() throws Exception {
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
@@ -1120,6 +1138,10 @@ public class DragAndDropManagerTests {
         assertTrue(
                 mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
 
+        if (isDragsFromOtherAppsEnabled()) {
+            mEnv.beforeAsserts();
+        }
+
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
 
@@ -1127,7 +1149,7 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    public void testDrop_Copies_SameRoot_ReadOnlyFile_DropOnDocument() {
+    public void testDrop_Copies_SameRoot_ReadOnlyFile_DropOnDocument() throws Exception {
         mDetails.canDelete = false;
         mManager.startDrag(
                 mStartDragView,
@@ -1144,6 +1166,10 @@ public class DragAndDropManagerTests {
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertTrue(
                 mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        if (isDragsFromOtherAppsEnabled()) {
+            mEnv.beforeAsserts();
+        }
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
@@ -1303,7 +1329,8 @@ public class DragAndDropManagerTests {
     @SuppressLint("VisibleForTests")
     private DragAndDropManager createNewManagerWithSpyClipper(TestDocumentClipper spyClipper) {
         DragAndDropManager newManager = new RuntimeDragAndDropManager(
-                mActivity, spyClipper, mShadowBuilder, mDefaultIcon) {
+                mActivity, spyClipper, mEnv.mExecutor, mShadowBuilder, mDefaultIcon,
+                mMockMediaStoreToDocumentUriRewriter) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1510,6 +1537,183 @@ public class DragAndDropManagerTests {
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_RESTORE);
 
         verify(mMockPermissions).release();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Copies_DropOnDocument_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_COPY,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.DOWNLOADS,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Copies_DropOnShortcut_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_COPY,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.DOWNLOADS,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Moves_DropOnDocument_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Moves_DropOnShortcut_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNonMediaStoreUri()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNonMediaStoreUri()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNullPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ null,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNullPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ null,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    private void testDrop_fromOtherApps(
+            @OpType int expectedOpType,
+            boolean dropOnDocument,
+            RootInfo dstRoot,
+            @Nullable Permissions permissions,
+            List<Uri> uriList)
+            throws Exception {
+        final DocumentInfo dstDoc = TestEnv.FOLDER_0;
+        final DocumentStack dstStack = new DocumentStack(dstRoot, dstDoc);
+
+        // Set up action handler.
+        mActions.nextRootDocument = dstDoc;
+
+        final List<ClipData.Item> itemList =
+                uriList.stream().map(ClipData.Item::new).collect(Collectors.toList());
+
+        // Set up clip data.
+        Mockito.when(mClipData.getItemCount()).thenReturn(itemList.size());
+        Mockito.when(mClipData.getItemAt(anyInt())).thenAnswer(i -> itemList.get(i.getArgument(0)));
+
+        // Set up URI rewriter.
+        Mockito.when(mMockMediaStoreToDocumentUriRewriter.apply(any(), any()))
+                .thenAnswer(
+                        invocation -> {
+                            final Uri uri = invocation.getArgument(1);
+                            return Providers.isMediaStoreUri(uri)
+                                    ? uri.buildUpon()
+                                            .authority(EXTERNAL_STORAGE_PROVIDER_AUTHORITY)
+                                            .build()
+                                    : null;
+                        });
+
+        // Perform and verify state update.
+        assertEquals(
+                DragAndDropManager.STATE_UNKNOWN,
+                mManager.updateState(mUpdateShadowView, dstRoot, dstDoc));
+
+        // Perform and verify drop.
+        assertTrue(
+                dropOnDocument
+                        ? mManager.drop(
+                                permissions, mClipData, mManager, dstStack, mActions, mCallback)
+                        : mManager.drop(
+                                permissions,
+                                mClipData,
+                                mManager,
+                                dstRoot,
+                                mActions,
+                                mCallback,
+                                mManager.getInvalidDestinations()));
+
+        mEnv.beforeAsserts();
+
+        // Verify expected clipper interactions.
+        if (expectedOpType == FileOperationService.OPERATION_UNKNOWN) {
+            mClipper.copyFromClip.assertNotCalled();
+            mClipper.opType.assertNotCalled();
+        } else {
+            // TODO(b/440196110): Replace once `DropOperation#calculateOpType()` is implemented.
+            mClipper.copyFromClip.assertNotCalled();
+            mClipper.opType.assertNotCalled();
+        }
+
+        // Verify expected permissions interactions.
+        if (permissions != null) {
+            verify(permissions).release();
+        }
     }
 
     @Test
