@@ -41,7 +41,7 @@ const val TestUserId = 0
 @RunWith(AndroidJUnit4::class)
 class SelectionMetadataTest {
     companion object {
-        const val IS_DISABLED_FLAG = 12
+        const val IS_UNAVAILABLE_FLAG = 13
     }
 
     val testPackageManager: TestPackageManager = TestPackageManager.create()
@@ -55,8 +55,8 @@ class SelectionMetadataTest {
             .createFile("oneOpeningApp.txt", "text/plain")
             .createFile("twoOpeningApp.jpg", "image/jpg")
             .createFile("twoOpeningApp.png", "image/png")
-            .createFile("disabledDocument1.png", "image/png", IS_DISABLED_FLAG)
-            .createFile("disabledDocument2.png", "image/png", IS_DISABLED_FLAG)
+            .createFile("unavailableDocument1.png", "image/png", IS_UNAVAILABLE_FLAG)
+            .createFile("unavailableDocument2.png", "image/png", IS_UNAVAILABLE_FLAG)
 
     @Before
     fun setUp() {
@@ -115,47 +115,47 @@ class SelectionMetadataTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
-    fun testContainsDisabledDocuments_disabledDocument_useMaterial3FlagEnabled() {
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_disabledDocument_cloudFeaturesEnabled() {
         val sm = createSelectionMetadata()
 
-        sm.onItemStateChanged(makeId("disabledDocument1.png"), true)
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDisabledDocuments(), true)
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), true)
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
-    fun testContainsDisabledDocuments_disabledDocuments_useMaterial3FlagEnabled() {
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_disabledDocuments_cloudFeaturesEnabled() {
         val sm = createSelectionMetadata()
 
-        sm.onItemStateChanged(makeId("disabledDocument1.png"), true)
-        sm.onItemStateChanged(makeId("disabledDocument2.png"), true)
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("unavailableDocument2.png"), true)
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDisabledDocuments(), true)
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), true)
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
-    fun testContainsDisabledDocuments_noDisabledDocuments_useMaterial3FlagEnabled() {
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_noDisabledDocuments_cloudFeaturesEnabled() {
         val sm = createSelectionMetadata()
 
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDisabledDocuments(), false)
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), false)
     }
 
     @Test
-    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
-    fun testContainsDisabledDocuments_useMaterial3FlagDisabled() {
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
         val sm = createSelectionMetadata()
 
-        sm.onItemStateChanged(makeId("disabledDocument1.png"), true)
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDisabledDocuments(), false)
+        assertEquals(sm.containsDocumentsWithUnavailableContent(), false)
     }
 
     fun makeId(docId: String): String {
@@ -170,8 +170,8 @@ class SelectionMetadataTest {
                 FileUtils.countOpeningApps(doc, testPackageManager)
             },
             { _, flag, _ ->
-                // Hack the `flag` to set whether the document is disabled in this test.
-                flag != IS_DISABLED_FLAG
+                // Hack the `flag` to set whether the document is unavailable in this test.
+                flag != IS_UNAVAILABLE_FLAG
             },
         )
     }

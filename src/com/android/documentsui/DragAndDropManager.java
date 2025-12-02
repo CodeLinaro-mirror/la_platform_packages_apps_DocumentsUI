@@ -16,11 +16,13 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -28,6 +30,7 @@ import android.net.Uri;
 import android.os.Trace;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import android.view.DragAndDropPermissions;
 import android.view.DragEvent;
 import android.view.KeyEvent;
 import android.view.View;
@@ -53,12 +56,41 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 
 /**
  * Manager that tracks control key state, calculates the default file operation (move or copy)
  * when user drops, and updates drag shadow state.
  */
 public interface DragAndDropManager {
+
+    String TAG = "DragAndDropManager";
+
+    /** Used to mock the output of {@link #requestPermissions()}. */
+    @VisibleForTesting
+    AtomicReference<BiFunction<Activity, DragEvent, Permissions>>
+            REQUEST_PERMISSIONS_HANDLER_FOR_TESTING = new AtomicReference<>();
+
+    /**
+     * A thin wrapper around {@link DragAndDropPermissions} which exists solely to facilitate
+     * testing being as the wrapped class is both final and uninstantiable.
+     */
+    class Permissions {
+
+        private final DragAndDropPermissions mPermissions;
+
+        public Permissions(DragAndDropPermissions permissions) {
+            mPermissions = permissions;
+        }
+
+        /**
+         * @see DragAndDropPermissions#release()
+         */
+        public void release() {
+            mPermissions.release();
+        }
+    }
 
     @IntDef({
         STATE_NOT_ALLOWED,
@@ -149,28 +181,41 @@ public interface DragAndDropManager {
     /**
      * Drops items onto the a root.
      *
-     * @param clipData   the clip data that contains sources information.
+     * @param permissions permissions granted for the drop event, released once no longer needed.
+     * @param clipData the clip data that contains sources information.
      * @param localState used to determine if this is a multi-window drag and drop.
-     * @param itemInfo   the target root
-     * @param actions    {@link ActionHandler} used to load root document.
-     * @param callback   callback called when file operation is rejected or scheduled.
+     * @param itemInfo the target root
+     * @param actions {@link ActionHandler} used to load root document.
+     * @param callback callback called when file operation is rejected or scheduled.
      * @param invalidDest a list of URIs representing invalid drop destinations
      * @return true if target accepts this drop; false otherwise
      */
-    boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
-            ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest);
+    boolean drop(
+            @Nullable Permissions permissions,
+            ClipData clipData,
+            Object localState,
+            SidebarEntryItemInfo itemInfo,
+            ActionHandler actions,
+            FileOperations.Callback callback,
+            List<Uri> invalidDest);
 
     /**
      * Drops items onto the target.
      *
+     * @param permissions permissions granted for the drop event, released once no longer needed.
      * @param clipData the clip data that contains sources information.
      * @param localState used to determine if this is a multi-window drag and drop.
      * @param dstStack the document stack pointing to the destination folder.
      * @param callback callback called when file operation is rejected or scheduled.
      * @return true if target accepts this drop; false otherwise
      */
-    boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-            ActionHandler actions, FileOperations.Callback callback);
+    boolean drop(
+            @Nullable Permissions permissions,
+            ClipData clipData,
+            Object localState,
+            DocumentStack dstStack,
+            ActionHandler actions,
+            FileOperations.Callback callback);
 
     /**
      * Called when drag and drop ended.
@@ -183,6 +228,35 @@ public interface DragAndDropManager {
 
     static DragAndDropManager create(Context context, DocumentClipper clipper) {
         return new RuntimeDragAndDropManager(context, clipper);
+    }
+
+    /**
+     * Requests permissions for a drop event.
+     *
+     * @param activity the activity with which to request permissions.
+     * @param event the drop event for which to request permissions.
+     * @return permissions if granted successfully, otherwise {@code null}.
+     */
+    @Nullable
+    static Permissions requestPermissions(Activity activity, DragEvent event) {
+        final BiFunction<Activity, DragEvent, Permissions> requestPermissionsHandlerForTesting =
+                REQUEST_PERMISSIONS_HANDLER_FOR_TESTING.get();
+
+        if (requestPermissionsHandlerForTesting != null) {
+            return requestPermissionsHandlerForTesting.apply(activity, event);
+        }
+
+        @Nullable DragAndDropPermissions permissions = null;
+
+        if (isDragsFromOtherAppsEnabled()) {
+            try {
+                permissions = activity.requestDragAndDropPermissions(event);
+            } catch (Exception e) {
+                Log.e(TAG, "Unable to obtain permissions", e);
+            }
+        }
+
+        return permissions != null ? new Permissions(permissions) : null;
     }
 
     /**
@@ -484,18 +558,26 @@ public interface DragAndDropManager {
         }
 
         @Override
-        public boolean drop(ClipData clipData, Object localState, SidebarEntryItemInfo itemInfo,
-                ActionHandler actions, FileOperations.Callback callback, List<Uri> invalidDest) {
+        public boolean drop(
+                @Nullable Permissions permissions,
+                ClipData clipData,
+                Object localState,
+                SidebarEntryItemInfo itemInfo,
+                ActionHandler actions,
+                FileOperations.Callback callback,
+                List<Uri> invalidDest) {
             final Uri rootDocUri = DocumentsContract.buildDocumentUri(
                     itemInfo.getRoot().authority, itemInfo.getDocumentId());
 
             if (!isValidDestination(itemInfo, rootDocUri, invalidDest)) {
+                if (permissions != null) permissions.release();
                 return false;
             }
 
             // NOTE: Create the drop operation helper early since mutable instance state could be
             // modified/reset while we're obtaining the root document in the background.
-            final DropOperation dropOperation = createDropOperation(clipData, itemInfo.getRoot());
+            final DropOperation dropOperation =
+                    createDropOperation(permissions, clipData, itemInfo.getRoot());
 
             actions.getDocument(
                     itemInfo.getRoot().authority,
@@ -549,14 +631,20 @@ public interface DragAndDropManager {
         }
 
         @Override
-        public boolean drop(ClipData clipData, Object localState, DocumentStack dstStack,
-                ActionHandler actions, FileOperations.Callback callback) {
+        public boolean drop(
+                @Nullable Permissions permissions,
+                ClipData clipData,
+                Object localState,
+                DocumentStack dstStack,
+                ActionHandler actions,
+                FileOperations.Callback callback) {
 
             if (!isValidDocumentStack(dstStack)) {
+                if (permissions != null) permissions.release();
                 return false;
             }
 
-            createDropOperation(clipData, dstStack.getRoot())
+            createDropOperation(permissions, clipData, dstStack.getRoot())
                     .dropChecked(localState, dstStack, actions, callback);
 
             return true;
@@ -644,9 +732,16 @@ public interface DragAndDropManager {
             return mAuthorityToRestore.equals(destAuthority) && isSameAuthority;
         }
 
-        private DropOperation createDropOperation(ClipData clipData, RootInfo destRoot) {
+        private DropOperation createDropOperation(
+                @Nullable Permissions permissions, ClipData clipData, RootInfo destRoot) {
             return new DropOperation(
-                    clipData, mClipper, destRoot, mIsCtrlPressed, mIsSrcRootTrash, mMustBeCopied);
+                    permissions,
+                    clipData,
+                    mClipper,
+                    destRoot,
+                    mIsCtrlPressed,
+                    mIsSrcRootTrash,
+                    mMustBeCopied);
         }
 
         /**
@@ -662,16 +757,26 @@ public interface DragAndDropManager {
             private final CompletableFuture<Integer> mOpType;
 
             private DropOperation(
+                    @Nullable Permissions permissions,
                     ClipData clipData,
                     DocumentClipper clipper,
                     RootInfo destRoot,
                     boolean isCtrlPressed,
                     boolean isSrcRootTrash,
                     boolean mustBeCopied) {
-                mClipData = rewrite(clipData);
+                mClipData = rewrite(permissions, clipData);
                 mClipper = clipper;
                 mIsSrcRootTrash = isSrcRootTrash;
                 mOpType = calculateOpType(destRoot, isCtrlPressed, mustBeCopied);
+
+                if (permissions != null) {
+                    final CompletableFuture<Void> unused =
+                            mClipData.handle(
+                                    (result, throwable) -> {
+                                        permissions.release();
+                                        return null;
+                                    });
+                }
             }
 
             private static @OpType int calculateOpType(
@@ -791,7 +896,8 @@ public interface DragAndDropManager {
             }
 
             // TODO(440196110): Implement flag-guarded async rewrite for drags from other apps.
-            private CompletableFuture<ClipData> rewrite(ClipData clipData) {
+            private CompletableFuture<ClipData> rewrite(
+                    @Nullable Permissions permissions, ClipData clipData) {
                 return CompletableFuture.completedFuture(clipData);
             }
         }

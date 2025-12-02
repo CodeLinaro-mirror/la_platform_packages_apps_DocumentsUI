@@ -50,6 +50,7 @@
   int show_media_roots;
   int show_preview_icon;
   int show_search_bar;
+  int show_selection_checkmark;
 }
 -keep class com.android.documentsui.R$color {
   int app_background_color;

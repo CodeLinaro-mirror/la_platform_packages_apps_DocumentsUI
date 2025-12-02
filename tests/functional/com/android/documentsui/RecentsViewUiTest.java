@@ -22,6 +22,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
@@ -243,11 +244,10 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("Recent");
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
-        bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_move));
-        device.waitForIdle();
-        bots.roots.openRoot("Downloads");
-        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        device.waitForIdle();
+        bots.main.doMove(
+                () -> {
+                    bots.roots.openRoot("Downloads");
+                });
 
         // Check: the random test file is now in Downloads.
         bots.roots.openRoot("Downloads");
@@ -261,7 +261,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
      * rewrites the Document flags to remove FLAG_SUPPORTS_DELETE, FLAG_SUPPORTS_REMOVE etc.
      */
     @Test
-    @DisableFlags({FLAG_USE_SEARCH_V2_READ_ONLY})
+    @DisableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_DESKTOP_UX_PHASE_2_RO})
     public void testMoveToInRecentsWithSearchV1() throws Exception {
         final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
         final String testFileName = testFileNamePrefix.concat(".jpg");

@@ -260,19 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"ଡିଲିଟ କରାଯାଇଛି"</string>
     <string name="compress_completed" msgid="6522047921428919799">"ଜିପ କରାଯାଇଛି"</string>
     <string name="extract_completed" msgid="8824595789915249972">"ଏକ୍ସଟ୍ରାକ୍ଟ କରାଯାଇଛି"</string>
-    <!-- no translation found for trash_completed (5527806383436622529) -->
-    <skip />
-    <!-- no translation found for restore_completed (4705296829051759784) -->
-    <skip />
+    <string name="trash_completed" msgid="5527806383436622529">"ଟ୍ରାସରେ"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"ରିଷ୍ଟୋର କରାଯାଇଛି"</string>
     <string name="copy_failed" msgid="3700193913993844675">"କପି କରାଯାଇପାରିଲା ନାହିଁ"</string>
     <string name="move_failed" msgid="7692364307225994220">"ମୁଭ କରାଯାଇପାରିଲା ନାହିଁ"</string>
     <string name="delete_failed" msgid="2642684566325252513">"ଡିଲିଟ କରାଯାଇପାରିଲା ନାହିଁ"</string>
     <string name="compress_failed" msgid="7397502181042157261">"ଜିପ କରାଯାଇପାରିଲା ନାହିଁ"</string>
     <string name="extract_failed" msgid="8372397499452831323">"ଏକ୍ସଟ୍ରାକ୍ଟ କରାଯାଇପାରିଲା ନାହିଁ"</string>
-    <!-- no translation found for trash_failed (4655759218201171408) -->
-    <skip />
-    <!-- no translation found for restore_failed (1967876571708544126) -->
-    <skip />
+    <string name="trash_failed" msgid="4655759218201171408">"ଟ୍ରାସକୁ ମୁଭ ହେଲା ନାହିଁ"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"ରିଷ୍ଟୋର ହୋଇପାରିଲା ନାହିଁ"</string>
     <string name="expand_label" msgid="5683357671239615207">"ବିସ୍ତାର କରନ୍ତୁ"</string>
     <string name="collapse_label" msgid="4530974883269531062">"ସଙ୍କୁଚିତ କରନ୍ତୁ"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="STORAGE"><i>^3</i></xliff:g>ରେ <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> ଡିରେକ୍ଟୋରୀକୁ <xliff:g id="APPNAME"><b>^1</b></xliff:g>ର ଆକ୍ସେସ୍‍ ମଞ୍ଜୁରୀ ଦେବେ?"</string>
@@ -358,8 +354,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ଆପଣଙ୍କ ଗୋପନୀୟତାକୁ ସୁରକ୍ଷିତ କରିବାକୁ ଅନ୍ୟ ଏକ ଫୋଲ୍ଡର୍ ବାଛନ୍ତୁ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ନୂଆ ଫୋଲ୍ଡର୍ ତିଆରି କରନ୍ତୁ"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ଏହି ଡିଭାଇସକୁ ସର୍ଚ୍ଚ କରନ୍ତୁ"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"ସର୍ଚ୍ଚ ଫଳାଫଳ"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"ଟେକ୍ସଟ ଖାଲି କରନ୍ତୁ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ମୂଳ ଫୋଲ୍ଡର"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"ସବୁ ସ୍ଥାନରେ"</string>

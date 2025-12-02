@@ -354,8 +354,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"개인정보 보호를 위해 다른 폴더를 선택하세요."</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"새 폴더 만들기"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"이 기기 검색"</string>
-    <!-- no translation found for search_results (7662182646512984171) -->
-    <skip />
+    <string name="search_results" msgid="7662182646512984171">"검색 결과"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"텍스트 삭제"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"루트 폴더"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"모든 위치"</string>

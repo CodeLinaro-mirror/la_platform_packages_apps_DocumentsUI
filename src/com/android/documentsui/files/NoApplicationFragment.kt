@@ -24,6 +24,7 @@ import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.android.documentsui.R
@@ -88,9 +89,9 @@ class NoApplicationFragment : DialogFragment() {
      * @return an AlertDialog instance.
      */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        if (savedInstanceState != null) {
+        savedInstanceState?.let { bundle ->
             mTargetDoc =
-                savedInstanceState.getParcelable(Shared.EXTRA_DOC, DocumentInfo::class.java)
+                BundleCompat.getParcelable(bundle, Shared.EXTRA_DOC, DocumentInfo::class.java)
         }
         val builder = MaterialAlertDialogBuilder(requireContext())
         if (!isUseMaterial3FlagEnabled()) {
