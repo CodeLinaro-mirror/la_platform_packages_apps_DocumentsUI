@@ -225,6 +225,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor querySearchDocuments(@NonNull String rootId, @Nullable String[] projection,
             @NonNull Bundle queryArgs) {
+        mLastQueryArgs = queryArgs;
         maybeThrowException();
         maybeDelayQueryResults();
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);

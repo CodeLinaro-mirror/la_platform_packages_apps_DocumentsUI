@@ -27,8 +27,10 @@ import android.content.ClipData;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.os.Trace;
 import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.DragAndDropPermissions;
 import android.view.DragEvent;
@@ -43,6 +45,7 @@ import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.MimeTypes;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.clipping.DocumentClipper;
@@ -56,6 +59,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 
@@ -227,7 +232,7 @@ public interface DragAndDropManager {
     void dragEnded();
 
     static DragAndDropManager create(Context context, DocumentClipper clipper) {
-        return new RuntimeDragAndDropManager(context, clipper);
+        return new RuntimeDragAndDropManager(context, clipper, Executors.newCachedThreadPool());
     }
 
     /**
@@ -270,8 +275,12 @@ public interface DragAndDropManager {
 
         private final Context mContext;
         private final DocumentClipper mClipper;
+        private final ExecutorService mExecutorService;
         private final DragShadowBuilder mShadowBuilder;
         private final Drawable mDefaultShadowIcon;
+
+        // NOTE: This is only utilized to mock out `MediaStore#getDocumentUri()` in unit tests.
+        private final BiFunction<Context, Uri, Uri> mMediaStoreToDocumentUriRewriter;
 
         private @State int mState = STATE_UNKNOWN;
         private boolean mDragInitiated = false;
@@ -302,21 +311,31 @@ public interface DragAndDropManager {
         // The authority to restore to. Null if not a restore operation.
         private String mAuthorityToRestore;
 
-        private RuntimeDragAndDropManager(Context context, DocumentClipper clipper) {
+        private RuntimeDragAndDropManager(
+                Context context, DocumentClipper clipper, ExecutorService executorService) {
             this(
                     context.getApplicationContext(),
                     clipper,
+                    executorService,
                     new DragShadowBuilder(context),
-                    IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE));
+                    IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE),
+                    MediaStore::getDocumentUri);
         }
 
         @VisibleForTesting
-        RuntimeDragAndDropManager(Context context, DocumentClipper clipper,
-                DragShadowBuilder builder, Drawable defaultShadowIcon) {
+        RuntimeDragAndDropManager(
+                Context context,
+                DocumentClipper clipper,
+                ExecutorService executorService,
+                DragShadowBuilder builder,
+                Drawable defaultShadowIcon,
+                BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
             mContext = context;
             mClipper = clipper;
+            mExecutorService = executorService;
             mShadowBuilder = builder;
             mDefaultShadowIcon = defaultShadowIcon;
+            mMediaStoreToDocumentUriRewriter = mediaStoreToDocumentUriRewriter;
         }
 
         @Override
@@ -467,6 +486,12 @@ public interface DragAndDropManager {
             mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
 
+            final boolean isDragFromSameApp = isDragFromSameApp();
+            if (isDragsFromOtherAppsEnabled() && mInvalidDest == null) {
+                assert !isDragFromSameApp;
+                mInvalidDest = new ArrayList<>();
+            }
+
             if (!destItemInfo.isValidDropTarget()) {
                 updateState(STATE_NOT_ALLOWED);
                 return STATE_NOT_ALLOWED;
@@ -503,7 +528,12 @@ public interface DragAndDropManager {
             @State int state = STATE_NOT_ALLOWED;
             final @OpType int opType =
                     DropOperation.calculateOpType(
-                            mClipData, mDestRoot, mIsCtrlPressed, mIsSrcRootTrash, mMustBeCopied);
+                            mClipData,
+                            mDestRoot,
+                            mIsCtrlPressed,
+                            isDragFromSameApp,
+                            mIsSrcRootTrash,
+                            mMustBeCopied);
             switch (opType) {
                 case FileOperationService.OPERATION_COPY:
                     state = STATE_COPY;
@@ -521,9 +551,15 @@ public interface DragAndDropManager {
                         state = STATE_RESTORES_FROM_TRASH;
                     }
                     break;
+                case FileOperationService.OPERATION_UNKNOWN:
+                    if (isDragsFromOtherAppsEnabled()) {
+                        assert !isDragFromSameApp;
+                        state = STATE_UNKNOWN;
+                        break;
+                    }
+                // fallthrough
                 default:
-                    // Should never happen
-                    throw new IllegalStateException("Unknown opType: " + opType);
+                    throw new IllegalStateException("Unexpected opType: " + opType);
             }
 
             updateState(state);
@@ -738,9 +774,13 @@ public interface DragAndDropManager {
                     permissions,
                     clipData,
                     mClipper,
+                    mContext,
                     destRoot,
+                    mExecutorService,
                     mIsCtrlPressed,
+                    isDragFromSameApp(),
                     mIsSrcRootTrash,
+                    mMediaStoreToDocumentUriRewriter,
                     mMustBeCopied);
         }
 
@@ -753,6 +793,8 @@ public interface DragAndDropManager {
 
             private final CompletableFuture<ClipData> mClipData;
             private final DocumentClipper mClipper;
+            private final Context mContext;
+            private final boolean mIsDragFromSameApp;
             private final boolean mIsSrcRootTrash;
             private final CompletableFuture<Integer> mOpType;
 
@@ -760,13 +802,26 @@ public interface DragAndDropManager {
                     @Nullable Permissions permissions,
                     ClipData clipData,
                     DocumentClipper clipper,
+                    Context context,
                     RootInfo destRoot,
+                    ExecutorService executorService,
                     boolean isCtrlPressed,
+                    boolean isDragFromSameApp,
                     boolean isSrcRootTrash,
+                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
                     boolean mustBeCopied) {
-                mClipData = rewrite(permissions, clipData);
                 mClipper = clipper;
+                mContext = context;
+                mIsDragFromSameApp = isDragFromSameApp;
                 mIsSrcRootTrash = isSrcRootTrash;
+
+                mClipData =
+                        rewrite(
+                                permissions,
+                                clipData,
+                                executorService,
+                                mediaStoreToDocumentUriRewriter);
+
                 mOpType = calculateOpType(destRoot, isCtrlPressed, mustBeCopied);
 
                 if (permissions != null) {
@@ -780,11 +835,17 @@ public interface DragAndDropManager {
             }
 
             private static @OpType int calculateOpType(
-                    ClipData clipData,
+                    @Nullable ClipData clipData,
                     RootInfo destRoot,
                     boolean isCtrlPressed,
+                    boolean isDragFromSameApp,
                     boolean isSrcRootTrash,
                     boolean mustBeCopied) {
+                if (isDragsFromOtherAppsEnabled() && clipData == null) {
+                    assert !isDragFromSameApp;
+                    return FileOperationService.OPERATION_UNKNOWN;
+                }
+
                 // If the src root is Trash, then it will be the restore operation.
                 if (isTrashFlowEnabled() && isSrcRootTrash) {
                     return FileOperationService.OPERATION_RESTORE;
@@ -799,22 +860,30 @@ public interface DragAndDropManager {
                     return FileOperationService.OPERATION_COPY;
                 }
 
-                final String srcRootUri =
-                        clipData.getDescription().getExtras().getString(SRC_ROOT_KEY);
-                final String destUri = destRoot.getUri().toString();
+                final PersistableBundle bundle = clipData.getDescription().getExtras();
+                if (!isDragsFromOtherAppsEnabled() || bundle.containsKey(SRC_ROOT_KEY)) {
+                    final String srcRootUri = bundle.getString(SRC_ROOT_KEY);
+                    final String destUri = destRoot.getUri().toString();
 
-                assert (srcRootUri != null);
-                assert (destUri != null);
+                    assert (srcRootUri != null);
+                    assert (destUri != null);
 
-                if (srcRootUri.equals(destUri)) {
-                    return isCtrlPressed
-                            ? FileOperationService.OPERATION_COPY
-                            : FileOperationService.OPERATION_MOVE;
-                } else {
-                    return isCtrlPressed
-                            ? FileOperationService.OPERATION_MOVE
-                            : FileOperationService.OPERATION_COPY;
+                    if (srcRootUri.equals(destUri)) {
+                        return isCtrlPressed
+                                ? FileOperationService.OPERATION_COPY
+                                : FileOperationService.OPERATION_MOVE;
+                    } else {
+                        return isCtrlPressed
+                                ? FileOperationService.OPERATION_MOVE
+                                : FileOperationService.OPERATION_COPY;
+                    }
                 }
+
+                if (isDragsFromOtherAppsEnabled()) {
+                    assert !isDragFromSameApp;
+                }
+
+                return FileOperationService.OPERATION_UNKNOWN;
             }
 
             // TODO(440196110): Implement flag-guarded async calculation for drags from other apps.
@@ -826,6 +895,7 @@ public interface DragAndDropManager {
                                         clipData,
                                         destRoot,
                                         isCtrlPressed,
+                                        mIsDragFromSameApp,
                                         mIsSrcRootTrash,
                                         mustBeCopied));
             }
@@ -849,12 +919,19 @@ public interface DragAndDropManager {
             }
 
             private void dropCheckedImpl(
-                    ClipData clipData,
+                    @Nullable ClipData clipData,
                     @OpType int opType,
                     Object localState,
                     DocumentStack dstStack,
                     ActionHandler actions,
                     FileOperations.Callback callback) {
+                if (isDragsFromOtherAppsEnabled()
+                        && opType == FileOperationService.OPERATION_UNKNOWN) {
+                    assert !mIsDragFromSameApp;
+                    callback.onOperationResult(FileOperations.Callback.STATUS_FAILED, opType, 0);
+                    return;
+                }
+
                 // System-defined shortcuts should be protected against the file move operation.
                 if (isHomeScreenFilesFlagEnabled()
                         && opType == FileOperationService.OPERATION_MOVE) {
@@ -895,10 +972,91 @@ public interface DragAndDropManager {
                 return mOpType;
             }
 
-            // TODO(440196110): Implement flag-guarded async rewrite for drags from other apps.
+            // NOTE: DocumentsUI expects URIs to adhere to the Documents contract but some apps may
+            // put non-Document URIs in clip data that we can still handle. The Launcher, for
+            // instance, puts MediaStore URIs in clip data which we are able to rewrite to External
+            // Storage Provider URIs. This method returns clip data in the form that DocumentsUI
+            // expects, when possible, or `null` when rewriting is not possible.
             private CompletableFuture<ClipData> rewrite(
-                    @Nullable Permissions permissions, ClipData clipData) {
-                return CompletableFuture.completedFuture(clipData);
+                    @Nullable Permissions permissions,
+                    ClipData clipData,
+                    ExecutorService executorService,
+                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
+                if (!isDragsFromOtherAppsEnabled()) {
+                    return CompletableFuture.completedFuture(clipData);
+                }
+                return CompletableFuture.supplyAsync(
+                        () -> {
+                            // NOTE: We only rewrite clip data from other apps.
+                            if (mIsDragFromSameApp || clipData == null) {
+                                return clipData;
+                            }
+
+                            // NOTE: If permissions were not obtained the drag source application
+                            // could be a bad actor attempting to leverage DocUI's MANAGE_DOCUMENTS
+                            // permission. Abort rewriting clip data to reject the drop operation.
+                            if (permissions == null) {
+                                return null;
+                            }
+
+                            try {
+                                ClipData result = null;
+                                ClipData.Item item = null;
+                                for (int i = 0; i < clipData.getItemCount(); ++i) {
+                                    item = clipData.getItemAt(i);
+                                    item = rewrite(item, mediaStoreToDocumentUriRewriter);
+
+                                    if (item == null) {
+                                        Log.e(TAG, "Unable to rewrite item");
+                                        return null;
+                                    }
+
+                                    if (result == null) {
+                                        result = new ClipData(clipData.getDescription(), item);
+                                    } else {
+                                        result.addItem(item);
+                                    }
+                                }
+                                return result;
+                            } catch (Exception e) {
+                                Log.e(TAG, "Unable to rewrite clip data", e);
+                                return null;
+                            }
+                        },
+                        executorService);
+            }
+
+            private @Nullable ClipData.Item rewrite(
+                    @Nullable ClipData.Item item,
+                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
+                if (item == null) {
+                    Log.e(TAG, "Unable to rewrite `NULL` item");
+                    return null;
+                }
+
+                Uri uri = item.getUri();
+                if (uri == null) {
+                    Log.e(TAG, "Unable to rewrite `NULL` URI");
+                    return null;
+                }
+
+                // NOTE: We can only safely rewrite `MediaStore` URIs since `MediaProvider` enables
+                // the `forceUriPermissions` attribute in its manifest definition. Absent this
+                // attribute, DocumentsUI would be unable to guarantee that the drag source
+                // application actually holds permissions for the URIs we are attempting to rewrite.
+                // TODO(b/454036239): Remove once the confused deputy vulnerability is mitigated.
+                if (!Providers.isMediaStoreUri(uri)) {
+                    Log.e(TAG, "Unable to rewrite non-MediaStore URI");
+                    return null;
+                }
+
+                uri = mediaStoreToDocumentUriRewriter.apply(mContext, uri);
+                if (uri == null) {
+                    Log.e(TAG, "Unable to obtain document URI");
+                    return null;
+                }
+
+                return new ClipData.Item(uri);
             }
         }
     }

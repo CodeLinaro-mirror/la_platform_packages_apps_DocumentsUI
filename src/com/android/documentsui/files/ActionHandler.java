@@ -23,6 +23,7 @@ import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEn
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
@@ -278,6 +279,11 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
     @VisibleForTesting
     public boolean openDocument(DocumentInfo doc, @ViewType int type, @ViewType int fallback) {
+        // Opening an item in the trash root is not allowed.
+        if (mState.stack.isTrashRoot() && !doc.isDirectory()) {
+            showFileOpenFromTrashDialog(doc);
+            return false;
+        }
         if (mConfig.isDocumentEnabled(
                 doc.mimeType,
                 doc.flags,
@@ -375,6 +381,92 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         mDialogs.showDocumentsClipped(selection.size());
     }
 
+    /** Base method for creating a share intent. */
+    private @Nullable Intent createShareIntentBase(Selection<String> selection) {
+        // Model must be accessed in UI thread, since underlying cursor is not thread safe.
+        List<DocumentInfo> docs =
+                mModel.loadDocuments(selection, DocumentFilters.sharable(mFeatures));
+
+        if (docs.size() < 1) {
+            return null;
+        }
+
+        Intent intent;
+        if (docs.size() == 1) {
+            intent = new Intent(Intent.ACTION_SEND);
+            DocumentInfo doc = docs.get(0);
+            intent.setDataAndType(doc.getDocumentUri(), doc.mimeType);
+            intent.putExtra(Intent.EXTRA_STREAM, doc.getDocumentUri());
+
+        } else {
+            intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+
+            final ArrayList<String> mimeTypes = new ArrayList<>();
+            final ArrayList<Uri> uris = new ArrayList<>();
+            for (DocumentInfo doc : docs) {
+                mimeTypes.add(doc.mimeType);
+                uris.add(doc.getDocumentUri());
+            }
+
+            intent.setType(MimeTypes.findCommonMimeType(mimeTypes));
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        }
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (mFeatures.isVirtualFilesSharingEnabled()
+                && mModel.hasDocuments(selection, DocumentFilters.VIRTUAL)) {
+            intent.addCategory(Intent.CATEGORY_TYPED_OPENABLE);
+        }
+
+        return intent;
+    }
+
+    /** Creates the intent for the Share menu. */
+    private @Nullable Intent createShareIntent(Selection<String> selection) {
+        Intent intent = createShareIntentBase(selection);
+        if (intent == null) {
+            return null;
+        }
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        return intent;
+    }
+
+    /** Creates the intent for the Approved Doc Handler. */
+    @VisibleForTesting
+    public @Nullable Intent createApprovedHandlerIntent(Selection<String> selection) {
+        Intent intent = createShareIntentBase(selection);
+        if (intent == null) {
+            return null;
+        }
+        // TODO: b/464388012 - Reference actual intent category when it's available.
+        intent.addCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER");
+
+        return intent;
+    }
+
+    @Override
+    public boolean sendToApprovedDocHandler(ComponentName app) {
+        if (!isUseApprovedDocumentHandlerEnabled()) {
+            return false;
+        }
+        Selection<String> selection = getSelectedOrFocused();
+        final Intent intent = createApprovedHandlerIntent(selection);
+
+        if (intent == null) {
+            if (DEBUG) {
+                Log.d(TAG, "Cannot send to approved document handler, intent is null");
+            }
+            return false;
+        }
+
+        intent.setComponent(app);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (isDesktopFileHandlingFlagEnabled()) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        }
+        mActivity.startActivity(intent);
+        return true;
+    }
+
     @Override
     public void viewInOwner() {
         Metrics.logUserAction(MetricConsts.USER_ACTION_VIEW_IN_APPLICATION);
@@ -423,7 +515,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         // The document in trash folder can not be removed from the parent, since it will be
         // permanently deleted. Pass a null parent so that DeleteJob can do a permanent delete.
-        if (isTrashFlowEnabled() && mState.stack.isTrash()) {
+        if (isTrashFlowEnabled() && mState.stack.isTrashTopLevel()) {
             parentDocumentInfo = null;
         }
 
@@ -588,46 +680,17 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
-        List<DocumentInfo> docs = mModel.loadDocuments(
-                selection, DocumentFilters.sharable(mFeatures));
+        Intent intent = createShareIntent(selection);
 
-        Intent intent;
-
-        if (docs.size() == 1) {
-            intent = new Intent(Intent.ACTION_SEND);
-            DocumentInfo doc = docs.get(0);
-            intent.setDataAndType(doc.getDocumentUri(), doc.mimeType);
-            intent.putExtra(Intent.EXTRA_STREAM, doc.getDocumentUri());
-
-        } else if (docs.size() > 1) {
-            intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-
-            final ArrayList<String> mimeTypes = new ArrayList<>();
-            final ArrayList<Uri> uris = new ArrayList<>();
-            for (DocumentInfo doc : docs) {
-                mimeTypes.add(doc.mimeType);
-                uris.add(doc.getDocumentUri());
+        if (intent == null) {
+            if (DEBUG) {
+                Log.d(TAG, "Cannot share files, intent is null");
             }
-
-            intent.setType(MimeTypes.findCommonMimeType(mimeTypes));
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-
-        } else {
-            // Everything filtered out, nothing to share.
             return;
         }
 
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-
-        if (mFeatures.isVirtualFilesSharingEnabled()
-                && mModel.hasDocuments(selection, DocumentFilters.VIRTUAL)) {
-            intent.addCategory(Intent.CATEGORY_TYPED_OPENABLE);
-        }
-
-        Intent chooserIntent = Intent.createChooser(
-                intent, mActivity.getResources().getText(R.string.share_via));
+        Intent chooserIntent =
+                Intent.createChooser(intent, mActivity.getResources().getText(R.string.share_via));
 
         mActivity.startActivity(chooserIntent);
     }
@@ -692,7 +755,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public void showEmptyTrashConfirmationDialog() {
-        if (!mState.stack.isTrash()) {
+        if (!mState.stack.isTrashTopLevel()) {
             return;
         }
 
@@ -707,7 +770,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     @Override
     public void permanentlyDeleteTrashDocuments() {
         // If this is not the trash page then ignore.
-        if (!mState.stack.isTrash()) {
+        if (!mState.stack.isTrashTopLevel()) {
             return;
         }
 
@@ -898,6 +961,21 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
         mPeekViewManager.peekDocument(doc);
+    }
+
+    private void showFileOpenFromTrashDialog(DocumentInfo doc) {
+        if (!mState.stack.isTrashRoot()) {
+            return;
+        }
+
+        // Directory is allowed to open.
+        if (doc.isDirectory()) {
+            return;
+        }
+
+        List<DocumentInfo> documentInfos = new ArrayList<>();
+        documentInfos.add(doc);
+        FileOpenFromTrashDialogFragment.show(mActivity.getSupportFragmentManager(), documentInfos);
     }
 
     @Override

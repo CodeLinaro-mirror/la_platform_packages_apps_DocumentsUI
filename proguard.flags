@@ -273,6 +273,10 @@
   public void setDisableAutoDismiss(boolean);
 }
 
+-keep class com.android.documentsui.dirlist.SelectionMetadata {
+  public java.util.Set mimeTypes();
+}
+
 # This is used in the unit test RecyclerRootsAdapterTest
 -keep class androidx.recyclerview.widget.RecyclerView$AdapterDataObserver {
   public void onItemRangeChanged(int, int, Object);
@@ -324,6 +328,7 @@
 
 -keep class com.android.documentsui.files.ActionHandler {
   public void restoreSelectedDocumentsFromTrash(java.util.List);
+  public boolean sendToApprovedDocHandler(android.content.ComponentName);
 }
 
 -keep interface androidx.drawerlayout.widget.DrawerLayout$DrawerListener {

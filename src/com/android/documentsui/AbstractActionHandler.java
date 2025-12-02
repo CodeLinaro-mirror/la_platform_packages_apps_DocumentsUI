@@ -51,6 +51,7 @@ import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.MutableSelection;
+import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -797,6 +798,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
+    public boolean sendToApprovedDocHandler(ComponentName app) {
+        throw new UnsupportedOperationException("sendToApprovedDocHandler not supported!");
+    }
+
+    @Override
     public void showDeleteDialog() {
         throw new UnsupportedOperationException("Delete not supported!");
     }
@@ -1073,7 +1079,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 }
             }
 
-            if (mState.stack.isTrash()) {
+            if (mState.stack.isTrashTopLevel()) {
                 return createTrashFileLoader(context, initialUser);
             }
 
@@ -1205,7 +1211,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // appropriately, once it gets notified about search starting.
             mSearchMgr.setCurrentRoot(root);
 
-            if (mState.stack.isTrash()) {
+            if (mState.stack.isTrashTopLevel()) {
                 return createTrashFileLoader(mActivity, initialUser);
             }
 

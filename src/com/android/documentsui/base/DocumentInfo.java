@@ -449,7 +449,7 @@ public class DocumentInfo implements Durable, Parcelable {
 
     /**
      * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns 0 if the
-     * cursor is null or the column is missing.
+     * cursor is null, the column is missing or the value is null.
      */
     public static int getCursorInt(Cursor cursor, String columnName) {
         return getCursorInteger(cursor, columnName, 0);
@@ -457,10 +457,10 @@ public class DocumentInfo implements Durable, Parcelable {
 
     /**
      * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns {@code
-     * returnIfMissingOrNull} if the cursor is null or the column is missing.
+     * returnIfMissingOrNull} if the cursor is null, the column is missing or the value is null.
      *
-     * @param returnIfMissingOrNull The value to return if the cursor is null or the column is
-     *     missing.
+     * @param returnIfMissingOrNull The value to return if the cursor is null, the column is missing
+     *     or the value is null.
      */
     public static Integer getCursorInteger(
             Cursor cursor, String columnName, Integer returnIfMissingOrNull) {
@@ -469,7 +469,14 @@ public class DocumentInfo implements Durable, Parcelable {
         }
 
         final int index = cursor.getColumnIndex(columnName);
-        return (index != -1) ? Integer.valueOf(cursor.getInt(index)) : returnIfMissingOrNull;
+        if (index == -1) {
+            return returnIfMissingOrNull;
+        }
+        if (cursor.isNull(index)) {
+            // This check is required because getInt returns 0 for null ints.
+            return returnIfMissingOrNull;
+        }
+        return Integer.valueOf(cursor.getInt(index));
     }
 
     public static FileNotFoundException asFileNotFoundException(Throwable t)
