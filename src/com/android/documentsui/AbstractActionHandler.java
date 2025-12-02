@@ -88,6 +88,7 @@ import com.android.documentsui.files.QuickViewIntentBuilder;
 import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.loaders.FolderLoader;
+import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.loaders.QueryOptions;
 import com.android.documentsui.loaders.SearchLoader;
 import com.android.documentsui.loaders.SummaryLoader;
@@ -133,11 +134,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @VisibleForTesting
     public static final int CODE_AUTHENTICATION = 43;
-
-    @VisibleForTesting
-    static final int LOADER_ID = 42;
-
-    static final int SUMMARY_LOADER_ID = 23;
 
     private static final String TAG = "AbstractActionHandler";
     private static final int REFRESH_SPINNER_TIMEOUT = 500;
@@ -1084,7 +1080,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         // multiple active loaders, because restartLoader() does not interrupt previous loaders'
         // loading, therefore may block the UI thread and cause ANR.
         if (mLoaderSemaphore.tryAcquire()) {
-            mActivity.getSupportLoaderManager().restartLoader(LOADER_ID, null, mBindings);
+            mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
         }
     }
 
@@ -1206,7 +1202,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public ActionHandler reset(ContentLock reloadLock) {
         mContentLock = reloadLock;
-        mActivity.getLoaderManager().destroyLoader(LOADER_ID);
+        mActivity.getLoaderManager().destroyLoader(LoaderIds.MAIN);
         return this;
     }
 
@@ -1503,7 +1499,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             mActivity
                     .getSupportLoaderManager()
                     .restartLoader(
-                            SUMMARY_LOADER_ID,
+                            LoaderIds.SUMMARY,
                             null,
                             SummaryLoader.createCallback(
                                     mActivity,
@@ -1520,7 +1516,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
             mInjector.getModel().updateSummaries(summaries);
-            mActivity.getSupportLoaderManager().destroyLoader(SUMMARY_LOADER_ID);
+            mActivity.getSupportLoaderManager().destroyLoader(LoaderIds.SUMMARY);
         }
     }
 

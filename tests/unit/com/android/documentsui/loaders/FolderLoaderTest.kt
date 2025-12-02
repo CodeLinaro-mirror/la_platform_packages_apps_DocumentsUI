@@ -304,11 +304,15 @@ class FolderLoaderTest() {
                 }
 
             // Effectively calls `onCreateLoader` and then runs it by calling `startLoading()`.
-            activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
+            activity.supportLoaderManager
+                .restartLoader(LoaderIds.TEST, null, loaderCallbacks)
+                .startLoading()
             downloadsStartedLoading.await()
             // Effectively calls `onCreateLoader` the second time, causing the first loader to
             // be cancelled. Then runs the new loader by calling `startLoading()`.
-            activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
+            activity.supportLoaderManager
+                .restartLoader(LoaderIds.TEST, null, loaderCallbacks)
+                .startLoading()
             resultsDelivered.await()
             // We use the fact that pickles returns 2 returns to verify we only got pickles results.
             assertNotNull(result)

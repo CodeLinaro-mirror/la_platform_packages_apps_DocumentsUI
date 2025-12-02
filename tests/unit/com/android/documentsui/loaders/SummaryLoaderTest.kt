@@ -47,7 +47,6 @@ class SummaryLoaderTest : BaseLoaderTest() {
             this.authority = this@SummaryLoaderTest.authority
             documentId = "parentDocId"
         }
-    private val LOADER_ID = 23
 
     override fun getEnvRootInfo(): RootInfo {
         return TestProvidersAccess.DOWNLOADS
@@ -132,7 +131,7 @@ class SummaryLoaderTest : BaseLoaderTest() {
             }
 
         // Start the loader.
-        activity.supportLoaderManager.initLoader(LOADER_ID, null, callback1).startLoading()
+        activity.supportLoaderManager.initLoader(LoaderIds.SUMMARY, null, callback1).startLoading()
 
         // Wait for onLoadFinished.
         assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue()
@@ -148,10 +147,12 @@ class SummaryLoaderTest : BaseLoaderTest() {
                 latch.countDown()
             }
 
-        activity.supportLoaderManager.restartLoader(LOADER_ID, null, callback2).startLoading()
+        activity.supportLoaderManager
+            .restartLoader(LoaderIds.SUMMARY, null, callback2)
+            .startLoading()
         assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue()
         assertThat(deliveredSummaries).isEqualTo(expectedSummaries)
 
-        activity.supportLoaderManager.destroyLoader(LOADER_ID)
+        activity.supportLoaderManager.destroyLoader(LoaderIds.SUMMARY)
     }
 }
