@@ -655,17 +655,19 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         mAdapterEnv::isContentAvailable);
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
-        DragStartListener dragStartListener = mInjector.config.dragAndDropEnabled()
-                ? DragStartListener.create(
-                mIconHelper,
-                mModel,
-                mSelectionMgr,
-                mSelectionMetadata,
-                mState,
-                this::getModelId,
-                mRecView::findChildViewUnder,
-                DocumentsApplication.getDragAndDropManager(mActivity))
-                : DragStartListener.STUB;
+        DragStartListener dragStartListener =
+                mInjector.config.dragAndDropEnabled()
+                        ? DragStartListener.create(
+                                mIconHelper,
+                                mModel,
+                                mSelectionMgr,
+                                mSelectionMetadata,
+                                mState,
+                                this::getModelId,
+                                mRecView::findChildViewUnder,
+                                mAdapterEnv::isContentAvailable,
+                                DocumentsApplication.getDragAndDropManager(mActivity))
+                        : DragStartListener.STUB;
 
         {
             // Limiting the scope of the localTracker so nobody uses it.
