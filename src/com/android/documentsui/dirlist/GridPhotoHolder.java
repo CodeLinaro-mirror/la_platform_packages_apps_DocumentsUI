@@ -18,17 +18,12 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLID_NOT_COLORED;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorLong;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.provider.DocumentsContract.Document;
 import android.text.format.Formatter;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,7 +40,6 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.ui.Views;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -64,7 +58,7 @@ final class GridPhotoHolder extends DocumentHolder {
     private final View mIconBadge;
 
     // This is used in as a convenience in our bind method.
-    private final DocumentInfo mDoc = new DocumentInfo();
+    private DocumentInfo mDoc = new DocumentInfo();
 
     GridPhotoHolder(Context context, ViewGroup parent, IconHelper iconHelper,
             ConfigStore configStore) {
@@ -181,14 +175,10 @@ final class GridPhotoHolder extends DocumentHolder {
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
-        assert (cursor != null);
-
+    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
         mModelId = modelId;
 
-        mDoc.updateFromCursor(cursor,
-                UserId.of(getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID)),
-                getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY));
+        mDoc = doc;
 
         mIconHelper.stopLoading(mIconThumb);
 
@@ -199,8 +189,7 @@ final class GridPhotoHolder extends DocumentHolder {
 
         mIconHelper.load(mDoc, mIconThumb, mIconMimeLg, /* subIconMime= */ null);
 
-        final String docSize =
-                Formatter.formatFileSize(mContext, getCursorLong(cursor, Document.COLUMN_SIZE));
+        final String docSize = Formatter.formatFileSize(mContext, mDoc.size);
         final String docDate = Shared.formatTime(mContext, mDoc.lastModified);
         if (mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier())) {
             itemView.setContentDescription(

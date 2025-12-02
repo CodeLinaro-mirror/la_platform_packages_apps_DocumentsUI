@@ -17,14 +17,7 @@ package com.android.documentsui.dirlist;
 
 import static androidx.core.util.Preconditions.checkArgument;
 
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
-
 import android.database.Cursor;
-import android.provider.DocumentsContract;
-import android.provider.DocumentsContract.Document;
 import android.util.Log;
 
 import androidx.recyclerview.selection.SelectionTracker.SelectionPredicate;
@@ -32,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.documentsui.ActivityConfig;
 import com.android.documentsui.Model;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.State;
 
 /**
@@ -74,18 +68,8 @@ final class DocsSelectionPredicate extends SelectionPredicate<String> {
                 Log.w(DirectoryFragment.TAG, "Couldn't obtain cursor for id: " + id);
                 return false;
             }
-
-            final String docMimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
-            final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
-            final Integer syncStateFlags =
-                    isCloudFeaturesFlagEnabled()
-                            ? getCursorInteger(
-                                    cursor,
-                                    DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                                    /* returnIfMissingOrNull= */ null)
-                            : null;
             return mConfig.canSelectType(
-                    docMimeType, docFlags, syncStateFlags, mState, mEnv.isOnline());
+                    DocumentInfo.fromDirectoryCursor(cursor), mState, mEnv.isOnline());
         }
 
         // Right now all selected items can be deselected.

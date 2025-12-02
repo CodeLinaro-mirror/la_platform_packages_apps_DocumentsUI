@@ -20,7 +20,6 @@ import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -31,6 +30,7 @@ import androidx.annotation.Nullable;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.R;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.State.ViewMode;
 
 /**
@@ -89,7 +89,7 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
     }
 
     @Override
-    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
+    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
         if (mMessage.getTitleString() != null) {
             mTitle.setVisibility(View.VISIBLE);
             mSubtitle.setVisibility(View.VISIBLE);

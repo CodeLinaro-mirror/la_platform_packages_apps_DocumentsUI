@@ -2012,15 +2012,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         @Override
-        public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
-            return mInjector.config.isDocumentEnabled(
-                    mimeType, flags, syncStateFlags, mState, isOnline());
+        public boolean isDocumentEnabled(DocumentInfo doc) {
+            return mInjector.config.isDocumentEnabled(doc, mState, isOnline());
         }
 
         @Override
-        public boolean isContentAvailable(String mimeType, int flags, Integer syncStateFlags) {
-            return mInjector.config.isContentAvailable(
-                    mimeType, flags, syncStateFlags, mState, isOnline());
+        public boolean isContentAvailable(DocumentInfo doc) {
+            return mInjector.config.isContentAvailable(doc, mState, isOnline());
         }
 
         @Override
