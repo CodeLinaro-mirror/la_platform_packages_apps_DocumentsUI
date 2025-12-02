@@ -27,6 +27,7 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -67,6 +68,12 @@ public interface DocumentsAccess {
     public static DocumentsAccess create(Context context, State state) {
         return new RuntimeDocumentAccess(context, state);
     }
+
+    /**
+     * Takes in a media store URI as an argument and attempts to convert it to a recognisable
+     * documents URI.
+     */
+    Uri getDocumentUri(Uri mediaStoreUri);
 
     public final class RuntimeDocumentAccess implements DocumentsAccess {
 
@@ -174,6 +181,14 @@ public interface DocumentsAccess {
         private Uri appendEncodedParentAuthority(DocumentInfo parentDoc, Uri uri) {
             return uri.buildUpon().encodedAuthority(
                     parentDoc.getDocumentUri().getAuthority()).build();
+        }
+
+        /**
+         * Takes in a media store URI as an argument and attempts to convert it to a recognisable
+         * documents URI.
+         */
+        public Uri getDocumentUri(Uri mediaStoreUri) {
+            return MediaStore.getDocumentUri(mContext, mediaStoreUri);
         }
     }
 }

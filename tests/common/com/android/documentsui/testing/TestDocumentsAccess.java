@@ -41,6 +41,7 @@ public class TestDocumentsAccess implements DocumentsAccess {
     public TestEventHandler<Uri> lastUri = new TestEventHandler<>();
 
     private Pair<DocumentInfo, DocumentInfo> mLastCreatedDoc;
+    public @Nullable Uri mNextDocumentUri;
 
     @Override
     public DocumentInfo getDocument(String authority, String documentId, UserId userId) {
@@ -95,5 +96,14 @@ public class TestDocumentsAccess implements DocumentsAccess {
 
     public @Nullable Uri getLastCreatedDocumentUri() {
         return mLastCreatedDoc.second.derivedUri;
+    }
+
+    /**
+     * Takes in a media store URI as an argument and attempts to convert it to a recognisable
+     * documents URI. In the case of TestDocumentsAccess, this will just be whatever has been set as
+     * mNextConvertedDocumentUri.
+     */
+    public Uri getDocumentUri(Uri mediaStoreUri) {
+        return mNextDocumentUri;
     }
 }

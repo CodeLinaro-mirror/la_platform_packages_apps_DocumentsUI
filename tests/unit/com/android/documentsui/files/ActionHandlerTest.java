@@ -741,14 +741,18 @@ public class ActionHandlerTest {
 
     @Test
     public void testInitLocation_BrowseRootWrongAuthority_ShowDefault() throws Exception {
+        ActionHandler<TestActivity> spyHandler = spy(mHandler);
         Intent intent = mActivity.getIntent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(DocumentsContract.buildRootsUri("com.test.wrongauthority"));
         mActivity.resources.strings.put(R.string.default_root_uri,
                 TestProvidersAccess.HOME.getUri().toString());
 
-        mHandler.initLocation(intent);
+        spyHandler.initLocation(intent);
         assertRootPicked(TestProvidersAccess.HOME.getUri());
+        // Assert that the root is picked correctly by specifically calling
+        // launchToDefaultLocation().
+        verify(spyHandler, times(1)).launchToDefaultLocation();
     }
 
     @Test
@@ -796,6 +800,42 @@ public class ActionHandlerTest {
 
         mHandler.initLocation(intent);
         assertRootPicked(TestProvidersAccess.DOWNLOADS.getUri());
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testInitLocation_LaunchToFolderOnHomeScreen() throws Exception {
+        Uri mediaStoreUri = Uri.parse("content://media/external/file/1");
+
+        // Set the intent data to be the media store uri.
+        Intent intent = mActivity.getIntent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(mediaStoreUri);
+
+        // Set the path to be:
+        // external storage provider root --> home screen folder --> folder 0.
+        mEnv.docs.nextPath =
+                new Path(
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot().rootId,
+                        Arrays.asList(
+                                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getDocumentId(),
+                                TestEnv.FOLDER_0.documentId));
+        // Needed to get the correct results when calling LoadDocStackTask.
+        mEnv.docs.nextIsDocumentsUri = true;
+        DocumentInfo homeScreenDoc = new DocumentInfo();
+        homeScreenDoc.derivedUri = TestProvidersAccess.HOME_SCREEN_SHORTCUT.getUri();
+        mEnv.docs.nextDocuments = Arrays.asList(homeScreenDoc, TestEnv.FOLDER_0);
+        // Mock the media store uri to convert to FOLDER_0's uri.
+        mEnv.docs.mNextDocumentUri = TestEnv.FOLDER_0.derivedUri;
+
+        mHandler.initLocation(intent);
+        mEnv.beforeAsserts();
+
+        DocumentStackAsserts.assertEqualsTo(
+                mEnv.state.stack,
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot(),
+                Arrays.asList(homeScreenDoc, TestEnv.FOLDER_0));
+        mActivity.refreshCurrentRootAndDirectory.assertCalled();
     }
 
     // Ignoring the test because it uses hidden api DragEvent#obtain() and changes to the api is
