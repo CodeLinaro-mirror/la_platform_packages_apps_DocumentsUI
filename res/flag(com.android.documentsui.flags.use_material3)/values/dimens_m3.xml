@@ -67,6 +67,10 @@
     <dimen name="grid_container_padding_bottom">@dimen/space_extra_small_4</dimen>
     <dimen name="grid_padding_horiz_m3">4dp</dimen>
     <dimen name="grid_padding_vert_m3">4dp</dimen>
+    <dimen name="list_header_cell_radius">8dp</dimen>
+    <dimen name="list_header_inner_padding">16dp</dimen>
+    <dimen name="list_header_outer_margin">12dp</dimen>
+    <dimen name="list_item_inner_padding">4dp</dimen>
     <dimen name="list_item_height_m3">56dp</dimen>
     <dimen name="list_item_padding_start">16dp</dimen>
     <dimen name="list_item_padding_end">8dp</dimen>
