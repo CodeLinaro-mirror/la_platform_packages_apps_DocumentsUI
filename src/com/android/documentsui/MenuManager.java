@@ -32,10 +32,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
@@ -56,6 +58,7 @@ public abstract class MenuManager {
     protected final DirectoryDetails mDirDetails;
     protected final IntSupplier mFilesCountSupplier;
     protected final Context mContext;
+    protected final Features mFeatures;
 
     protected Menu mOptionMenu;
 
@@ -64,12 +67,14 @@ public abstract class MenuManager {
             State displayState,
             DirectoryDetails dirDetails,
             IntSupplier filesCountSupplier,
-            Context context) {
+            Context context,
+            Features features) {
         mSearchManager = searchManager;
         mState = displayState;
         mDirDetails = dirDetails;
         mFilesCountSupplier = filesCountSupplier;
         mContext = context;
+        mFeatures = features;
     }
 
     /** @see ActionModeController */
@@ -186,7 +191,10 @@ public abstract class MenuManager {
      * correct locations to suppress context menus.
      */
     public void showContextMenu(Fragment f, View v, float x, float y) {
-        // Pickers don't have any context menu at this moment.
+        // Register context menu here so long-press doesn't trigger this context floating menu.
+        f.registerForContextMenu(v);
+        v.showContextMenu(x, y);
+        f.unregisterForContextMenu(v);
     }
 
     /**
@@ -198,12 +206,52 @@ public abstract class MenuManager {
      */
     public void inflateContextMenuForContainer(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        throw new UnsupportedOperationException("Pickers don't allow context menu.");
+        inflater.inflate(getRes(R.menu.container_context_menu), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
+        updateContextMenuForContainer(menu, selectionDetails);
     }
 
     public void inflateContextMenuForDocs(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        throw new UnsupportedOperationException("Pickers don't allow context menu.");
+        final boolean hasDir = selectionDetails.containsDirectories();
+        final boolean hasFile = selectionDetails.containsFiles();
+
+        if (isUseMaterial3FlagEnabled()) {
+            // If no dir or file are selected, do not show any context menu. Note: this is different
+            // from "right click at the empty area" which is handled by
+            // "inflateContextMenuForContainer" above. This happens especially in Picker where the
+            // folders are not selectable, when right clicking on folders, no dir/file is selected.
+            if (!hasDir && !hasFile) {
+                return;
+            }
+        }
+        // Note: this doesn't throw error if fails, it does nothing.
+        assert hasDir || hasFile;
+        if (!hasDir) {
+            inflater.inflate(getRes(R.menu.file_context_menu), menu);
+            if (isUseMaterial3FlagEnabled()) {
+                MenuCompat.setGroupDividerEnabled(menu, true);
+            }
+            updateContextMenuForFiles(menu, selectionDetails);
+            return;
+        }
+
+        if (!hasFile) {
+            inflater.inflate(getRes(R.menu.dir_context_menu), menu);
+            if (isUseMaterial3FlagEnabled()) {
+                MenuCompat.setGroupDividerEnabled(menu, true);
+            }
+            updateContextMenuForDirs(menu, selectionDetails);
+            return;
+        }
+
+        inflater.inflate(getRes(R.menu.mixed_context_menu), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
+        updateContextMenu(menu, selectionDetails);
     }
 
     /**
@@ -287,8 +335,14 @@ public abstract class MenuManager {
         }
 
         updateCopyAndCut(copy, cut, selectionDetails);
-        Menus.setEnabledAndVisible(delete, selectionDetails.canDelete());
-        Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
+
+        if (isUseMaterial3FlagEnabled()) {
+            updateDelete(delete, selectionDetails);
+            updateInspect(inspect, selectionDetails);
+        } else {
+            Menus.setEnabledAndVisible(delete, selectionDetails.canDelete());
+            Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
+        }
 
         updateCompress(menu.findItem(getRes(R.id.dir_menu_compress)), selectionDetails);
     }
@@ -413,26 +467,34 @@ public abstract class MenuManager {
     }
 
     protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(delete, false);
+        boolean enabled = selectionDetails.canDelete();
+        Menus.setEnabledAndVisible(delete, enabled);
+        // The delete menu item's visibility is tied to the trash flow's status.
+        // Since the XML defaults to never showing this action, we must manually make it visible
+        // when trash is disabled to give users a direct way to delete items.
+        if (!isTrashFlowEnabled()) {
+            delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
     }
 
     protected void updateRename(MenuItem rename, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(rename, false);
+        Menus.setEnabledAndVisible(
+                rename, !selectionDetails.containsPartialFiles() && selectionDetails.canRename());
     }
 
     /**
-     * This method is called for standard activity option menu as opposed
-     * to when there is a selection.
+     * This method is called for standard activity option menu as opposed to when there is a
+     * selection.
      */
-    protected void updateInspect(MenuItem inspector) {
-        Menus.setEnabledAndVisible(inspector, false);
+    protected void updateInspect(MenuItem inspect) {
+        boolean visible = mFeatures.isInspectorEnabled();
+        Menus.setEnabledAndVisible(inspect, visible && mDirDetails.canInspectDirectory());
     }
 
-    /**
-     * This method is called for action mode, when a selection exists.
-     */
+    /** This method is called for action mode, when a selection exists. */
     protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(inspect, false);
+        boolean visible = mFeatures.isInspectorEnabled() && selectionDetails.size() <= 1;
+        Menus.setEnabledAndVisible(inspect, visible);
     }
 
     /**
@@ -476,9 +538,16 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(cut, canCut);
     }
 
-
     protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        Menus.setEnabledAndVisible(it, false);
+        final boolean enabled =
+                mFeatures.isArchiveCreationEnabled()
+                        && mDirDetails.canCreateDoc()
+                        && !selection.containsPartialFiles()
+                        && !selection.canExtract();
+        if (enabled && isZipNgFlagEnabled()) it.setTitle(getRes(R.string.menu_zip));
+        if (!disableIfContentUnavailable(it, selection, enabled)) {
+            Menus.setEnabledAndVisible(it, enabled);
+        }
     }
 
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {
@@ -530,7 +599,27 @@ public abstract class MenuManager {
     protected abstract void updateDeselectAll(
             MenuItem deselectAll, SelectionDetails selectionDetails);
 
-    protected abstract void updateCreateDir(MenuItem createDir);
+    protected void updateCreateDir(MenuItem createDir) {
+        Menus.setEnabledAndVisible(createDir, mDirDetails.canCreateDirectory());
+    }
+
+    /**
+     * Disable the menu item and return true if the selection contains documents with unavailable
+     * content. Otherwise return false.
+     *
+     * <p>When disabling the item, keep it visible if it is normally enabled, otherwise hide it.
+     */
+    protected boolean disableIfContentUnavailable(
+            MenuItem item, SelectionDetails selectionDetails, boolean normallyEnabled) {
+        if (isCloudFeaturesFlagEnabled()
+                && selectionDetails.containsDocumentsWithUnavailableContent()) {
+            // Disable action as it is not valid right now because the required content is not
+            // available.
+            Menus.disableAndSetVisibility(item, /* visible= */ normallyEnabled);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Access to meta data about the selection.

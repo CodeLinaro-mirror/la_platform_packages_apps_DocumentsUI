@@ -227,7 +227,8 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         mState,
                         new DirectoryDetails(this),
                         mInjector.getModel()::getItemCount,
-                        getApplicationContext());
+                        getApplicationContext(),
+                        features);
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =
@@ -251,15 +252,26 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                 getProfileTabsAddon());
 
         mInjector.pickResult = getPickResult(icicle);
-        mInjector.actions = new ActionHandler<>(
-                this,
-                mState,
-                mProviders,
-                mDocs,
-                mSearchManager,
-                ProviderExecutor::forAuthority,
-                mInjector,
-                LastAccessedStorage.create());
+
+        Runnable closeSelectionBarRunnable =
+                (isUseMaterial3FlagEnabled()
+                        ? mInjector.selectionBarController::closeSelectionBar
+                        : () -> {});
+
+        mInjector.actions =
+                new ActionHandler<>(
+                        this,
+                        mState,
+                        mProviders,
+                        mDocs,
+                        mSearchManager,
+                        ProviderExecutor::forAuthority,
+                        mInjector,
+                        LastAccessedStorage.create(),
+                        mPeekViewManager,
+                        mInjector.actionModeController,
+                        closeSelectionBarRunnable,
+                        DocumentsApplication.getClipStore(this));
 
         mInjector.searchManager = mSearchManager;
 
@@ -593,6 +605,14 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
             mInjector.actions.finishPicking(uris);
             mSearchManager.recordHistory();
         }
+    }
+
+    @Override
+    protected boolean canInspectDirectory() {
+        if (isUseMaterial3FlagEnabled()) {
+            return super.canInspectDirectory();
+        }
+        return false;
     }
 
     private boolean canShare(List<DocumentInfo> docs) {

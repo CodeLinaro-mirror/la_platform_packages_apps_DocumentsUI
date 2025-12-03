@@ -16,11 +16,16 @@
 
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
+
+import static org.mockito.Mockito.mock;
+
 import android.content.Intent;
 
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.AbstractActionHandler;
+import com.android.documentsui.TestActionModeAddons;
 import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
@@ -50,7 +55,11 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
                 env.docs,
                 env.searchViewManager,
                 (String authority) -> null,
-                env.injector);
+                env.injector,
+                isUsePeekPreviewFlagEnabled() ? new TestPeekViewManager() : null,
+                new TestActionModeAddons(),
+                mock(Runnable.class),
+                null);
 
         mEnv = env;
     }

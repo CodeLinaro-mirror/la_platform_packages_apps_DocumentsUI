@@ -18,6 +18,9 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -25,6 +28,8 @@ import static com.google.common.truth.TruthJUnit.assume;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+
+import static org.junit.Assume.assumeTrue;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -38,6 +43,7 @@ import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 
+import androidx.annotation.StringRes;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -49,6 +55,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.Bots;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.picker.PickActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
@@ -74,6 +81,7 @@ public class PickActivityTest {
     private static final String RESULT_EXTRA = "test_result_extra";
     private static final String RESULT_DATA = "123321";
 
+    private UiDevice mDevice;
     private Context mTargetContext;
     private Intent mIntentGetContent;
     private TestDialogController mTestDialogs;
@@ -114,6 +122,8 @@ public class PickActivityTest {
 
     @Before
     public void setUp() throws Exception {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+        mDevice = UiDevice.getInstance(instrumentation);
         mTargetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
         mIntentGetContent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -127,10 +137,9 @@ public class PickActivityTest {
 
         isPrivateSpaceEnabled = SdkLevel.isAtLeastS() && isPrivateSpaceEnabled;
 
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         mBots =
                 new Bots(
-                        UiDevice.getInstance(instrumentation),
+                        mDevice,
                         instrumentation.getUiAutomation(),
                         mTargetContext,
                         5000,
@@ -224,6 +233,113 @@ public class PickActivityTest {
         // Open the overflow menu and assert that the Sort by menu option is there.
         mBots.main.openOverflowMenu();
         mBots.menu.hasMenuItem("Sort by...");
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testOptionMenuWorksWhileOptionSelected_M3Enabled()
+            throws UiObjectNotFoundException {
+        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+
+        // Switch to list mode and select the test document.
+        mBots.main.switchToListMode();
+        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+
+        // Open the overflow menu and assert that the expected menu options are there.
+        mBots.main.openOverflowMenu();
+        mBots.menu.hasMenuItem(mTargetContext.getString(R.string.menu_rename));
+        mBots.menu.hasMenuItem(mTargetContext.getString(R.string.menu_inspect));
+        final @StringRes int zipMenuId =
+                isZipNgFlagEnabled() ? R.string.menu_zip : R.string.menu_compress;
+        mBots.menu.hasMenuItem(mTargetContext.getString(zipMenuId));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testContextMenu_rename() throws UiObjectNotFoundException {
+        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+
+        // Right click FILE_NAME_1 to trigger rename.
+        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_rename));
+        mDevice.waitForIdle();
+
+        // Input a new name.
+        final String newName = "renamed inside picker";
+        mBots.main.setDialogText(newName);
+        mBots.keyboard.pressEnter();
+
+        // Assert the old file is gone, the new file appears.
+        mBots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        mBots.directory.assertDocumentsPresent(newName);
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testContextMenu_getInfo() throws UiObjectNotFoundException {
+        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+
+        // Right click FILE_NAME_1 to trigger get info.
+        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_inspect));
+        mDevice.waitForIdle();
+
+        // Assert inspector activity is shown.
+        if (!isUsePeekPreviewFlagEnabled()) {
+            Instrumentation.ActivityMonitor monitor =
+                    new Instrumentation.ActivityMonitor(
+                            InspectorActivity.class.getName(), null, false);
+            monitor.waitForActivityWithTimeout(5000);
+        }
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testContextMenu_delete() throws UiObjectNotFoundException {
+        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+
+        // Right click FILE_NAME_1 to trigger delete.
+        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_permanently_delete));
+        mBots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        mDevice.waitForIdle();
+
+        // Assert the file is gone.
+        mBots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+    }
+
+    @Test
+    public void testContextMenu_zip() throws UiObjectNotFoundException {
+        // We can't use EnableFlags here because: @EnableFlags(FLAG_USE_MATERIAL3) will override
+        // the M3 flag to true thus the isZipNgFlagEnabled() is also true, but the override doesn't
+        // affect the CompressJob service, which internally use the flag name to control the zipped
+        // file name, which eventually results in: the ZipNg flag is ON in this test context, but
+        // it's OFF in the CompressJob service.
+        assumeTrue(
+                "Skipping test: the use_material3 flag is OFF on the test device.",
+                isUseMaterial3FlagEnabled());
+
+        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
+        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
+        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+
+        // Right click FILE_NAME_1 to trigger zip.
+        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_zip));
+        mDevice.waitForIdle();
+
+        // Assert a zip file is created.
+        mBots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
+        final String zipFileName = isZipNgFlagEnabled() ? "file1.zip" : "file1.log.zip";
+        mBots.directory.assertDocumentsPresent(zipFileName);
     }
 
     @DesktopTest(cujs = {"b/434068578"})

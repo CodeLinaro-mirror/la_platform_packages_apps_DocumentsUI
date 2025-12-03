@@ -19,12 +19,9 @@ package com.android.documentsui.files;
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
-import static com.android.documentsui.testing.IntentAsserts.assertHasData;
-import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraIntent;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraList;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraUri;
-import static com.android.documentsui.testing.IntentAsserts.assertTargetsComponent;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -36,10 +33,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -59,7 +52,6 @@ import android.os.Build;
 import android.os.Parcelable;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
-import android.platform.test.annotations.RequiresFlagsDisabled;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
@@ -67,9 +59,6 @@ import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 import android.view.DragEvent;
 
-import androidx.core.util.Preconditions;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.MediumTest;
 import androidx.test.filters.SdkSuppress;
@@ -82,15 +71,12 @@ import com.android.documentsui.R;
 import com.android.documentsui.TestActionModeAddons;
 import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.archives.ArchivesProvider;
-import com.android.documentsui.base.DebugFlags;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.SidebarEntryItemInfo;
-import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.flags.Flags;
-import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.DocumentStackAsserts;
@@ -167,7 +153,7 @@ public class ActionHandlerTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         mFeatures = new TestFeatures();
         mEnv = TestEnv.create(mFeatures);
         mActivity = TestActivity.create(mEnv);
@@ -289,31 +275,6 @@ public class ActionHandlerTest {
         mEnv.selectionMgr.clearSelection();
         mHandler.copyToClipboard();
         mDialogs.assertDocumentsClippedNotShown();
-    }
-
-    @Test
-    public void testShowDeleteDialog_NoSelection() {
-        mEnv.populateStack();
-
-        mEnv.selectionMgr.clearSelection();
-        mHandler.showDeleteDialog();
-        mActivity.startService.assertNotCalled();
-        assertFalse(mActionModeAddons.finishActionModeCalled);
-    }
-
-    @Test
-    public void testDeleteSelectedDocuments() {
-        mEnv.populateStack();
-
-        mEnv.selectionMgr.clearSelection();
-        mEnv.selectDocument(TestEnv.FILE_PNG);
-
-        List<DocumentInfo> docs = new ArrayList<>();
-        docs.add(TestEnv.FILE_PNG);
-        mHandler.deleteSelectedDocuments(docs, mEnv.state.stack.peek());
-
-        mActivity.startService.assertCalled();
-        assertSelectionContainerClosed();
     }
 
     @Test
@@ -963,127 +924,6 @@ public class ActionHandlerTest {
         mHandler.onActivityResult(AbstractActionHandler.CODE_AUTHENTICATION,
                 Activity.RESULT_CANCELED, null);
         mActivity.refreshCurrentRootAndDirectory.assertNotCalled();
-    }
-
-    @Test
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsEnabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    public void testShowPeek() throws Exception {
-        mHandler.showPreview(TestEnv.FILE_GIF);
-        // The inspector activity is not called.
-        mActivity.startActivity.assertNotCalled();
-        mPeekViewManager.getPeekDocument().assertCalled();
-        mPeekViewManager.getPeekDocument().assertLastArgument(TestEnv.FILE_GIF);
-    }
-
-    @Test
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
-    public void testShowInspector() throws Exception {
-        mHandler.showPreview(TestEnv.FILE_GIF);
-
-        mActivity.startActivity.assertCalled();
-        Intent intent = mActivity.startActivity.getLastValue();
-        assertTargetsComponent(intent, InspectorActivity.class);
-        assertHasData(intent, TestEnv.FILE_GIF.derivedUri);
-
-        // should only send this under especial circumstances. See test below.
-        assertFalse(intent.getExtras().containsKey(Intent.EXTRA_TITLE));
-    }
-
-    @Test
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    @EnableFlags({Flags.FLAG_GET_INFO_DIALOG, Flags.FLAG_USE_MATERIAL3})
-    public void testShowGetInfoDialog() throws Exception {
-        // Retrieve the mock FragmentManager created in setUp.
-        FragmentManager mockFragmentManager = mActivity.getSupportFragmentManager();
-        FragmentTransaction mockFragmentTransaction = mock(FragmentTransaction.class);
-
-        doReturn(mockFragmentTransaction).when(mockFragmentManager).beginTransaction();
-        doReturn(mockFragmentTransaction).when(mockFragmentTransaction).add(any(), anyString());
-        doReturn(null).when(mockFragmentManager).findFragmentByTag(anyString());
-
-        mHandler.showPreview(TestEnv.FILE_GIF);
-
-        mActivity.startActivity.assertNotCalled();
-        verify(mockFragmentTransaction).commit();
-        verify(mockFragmentTransaction).add(isA(GetInfoDialogFragment.class), eq("GetInfoDialog"));
-    }
-
-    @Test
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
-    public void testShowInspector_DebugDisabled() throws Exception {
-        mFeatures.debugSupport = false;
-
-        mHandler.showPreview(TestEnv.FILE_GIF);
-        Intent intent = mActivity.startActivity.getLastValue();
-
-        assertHasExtra(intent, Shared.EXTRA_SHOW_DEBUG);
-        assertFalse(intent.getExtras().getBoolean(Shared.EXTRA_SHOW_DEBUG));
-    }
-
-    @Test
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
-    public void testShowInspector_DebugEnabled() throws Exception {
-        mFeatures.debugSupport = true;
-        DebugFlags.setDocumentDetailsEnabled(true);
-
-        mHandler.showPreview(TestEnv.FILE_GIF);
-        Intent intent = mActivity.startActivity.getLastValue();
-
-        assertHasExtra(intent, Shared.EXTRA_SHOW_DEBUG);
-        assertTrue(intent.getExtras().getBoolean(Shared.EXTRA_SHOW_DEBUG));
-        DebugFlags.setDocumentDetailsEnabled(false);
-    }
-
-    @Test
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
-    public void testShowInspector_OverridesRootDocumentName() throws Exception {
-        mActivity.currentRoot = TestProvidersAccess.PICKLES;
-        mEnv.populateStack();
-
-        // Verify test setup is correct, but not an assert related to the logic of our test.
-        Preconditions.checkState(mEnv.state.stack.size() == 1);
-        Preconditions.checkNotNull(mEnv.state.stack.peek());
-
-        DocumentInfo rootDoc = mEnv.state.stack.peek();
-        rootDoc.displayName = "poodles";
-
-        mHandler.showPreview(rootDoc);
-        Intent intent = mActivity.startActivity.getLastValue();
-        assertEquals(
-                TestProvidersAccess.PICKLES.title,
-                intent.getExtras().getString(Intent.EXTRA_TITLE));
-    }
-
-    @Test
-    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
-    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
-    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
-    public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
-        mActivity.currentRoot = TestProvidersAccess.PICKLES;
-        mEnv.populateStack();
-        mEnv.state.stack.push(TestEnv.FOLDER_2);
-
-        // Verify test setup is correct, but not an assert related to the logic of our test.
-        Preconditions.checkState(mEnv.state.stack.size() == 2);
-        Preconditions.checkNotNull(mEnv.state.stack.peek());
-
-        DocumentInfo rootDoc = mEnv.state.stack.peek();
-        rootDoc.displayName = "poodles";
-
-        mHandler.showPreview(rootDoc);
-        Intent intent = mActivity.startActivity.getLastValue();
-        assertFalse(intent.getExtras().containsKey(Intent.EXTRA_TITLE));
     }
 
     @Test
