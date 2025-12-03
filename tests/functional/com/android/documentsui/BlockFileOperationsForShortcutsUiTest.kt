@@ -20,6 +20,7 @@ import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import android.view.KeyEvent
+import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.UiObjectNotFoundException
 import com.android.documentsui.base.Providers
 import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
@@ -45,6 +46,7 @@ import org.junit.Test
  * by action menu clicks or keyboard controls get blocked when the operation is performed for a
  * system-defined shortcut.
  */
+@LargeTest
 class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>() {
     private val SHORTCUT_ID: String = "A Shortcut"
 
