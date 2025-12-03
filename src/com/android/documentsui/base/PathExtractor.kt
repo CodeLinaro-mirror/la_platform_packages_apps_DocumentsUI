@@ -19,7 +19,6 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.util.Log
 import com.android.documentsui.roots.ProvidersAccess
 
@@ -44,23 +43,14 @@ open class PathExtractor(
      * @throws NoSuchElementException if the stack extraction fails.
      */
     fun getDocumentStack(docInfo: DocumentInfo): DocumentStack {
-        // MediaDocumentsProvider URIs need special treatment to obtain real path.
-        val uri =
-            if (docInfo.authority == Providers.AUTHORITY_MEDIA) {
-                getExternalStorageUri(docInfo.derivedUri)
-            } else {
-                docInfo.derivedUri
-            }
-        val authority = uri.authority ?: docInfo.authority
-        val userId = docInfo.userId
-        val rootInfo = getRootInfo(authority, userId)
+        val uri = docInfo.derivedUri
+        val rootInfo = getRootInfo(docInfo)
         try {
             val path = getDocumentPath(uri)
             if (path === null || path.path === null || path.path.isEmpty()) {
                 throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}")
             }
-            val docInfoArray =
-                Array(path.path.size) { getDocumentInfo(authority, userId, path.path[it]) }
+            val docInfoArray = Array(path.path.size) { getDocumentInfo(docInfo, path.path[it]) }
             return DocumentStack(rootInfo, *docInfoArray)
         } catch (e: IllegalArgumentException) {
             throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}: $e")
@@ -69,17 +59,6 @@ open class PathExtractor(
             return approximateDocumentStack(rootInfo, docInfo)
         } catch (e: Exception) {
             throw e
-        }
-    }
-
-    /** For MediaDocumentsProvider URIs converts them to an external storage URI. */
-    private fun getExternalStorageUri(uri: Uri): Uri {
-        try {
-            val mediaUri = MediaStore.getMediaUri(context, uri) ?: return uri
-            return MediaStore.getDocumentUri(context, mediaUri) ?: uri
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to convert $uri to external storage URI", e)
-            return uri
         }
     }
 
@@ -102,32 +81,28 @@ open class PathExtractor(
     }
 
     /** Attempts to get the root for the given DocumentInfo. */
-    private fun getRootInfo(authority: String, userId: UserId): RootInfo {
+    private fun getRootInfo(docInfo: DocumentInfo): RootInfo {
         var cursor: Cursor? = null
-        val uri = DocumentsContract.buildRootsUri(authority)
+        val uri = DocumentsContract.buildRootsUri(docInfo.authority)
         try {
             cursor = getCursorForUri(uri)
             if (cursor != null && cursor.moveToFirst()) {
-                return RootInfo.fromRootsCursor(userId, authority, cursor)
+                return RootInfo.fromRootsCursor(docInfo.userId, docInfo.authority, cursor)
             }
         } finally {
             cursor?.close()
         }
-        throw NoSuchElementException("Can't find matching root for uri=$uri")
+        throw NoSuchElementException("Can't find matching root for id=${docInfo.documentId}")
     }
 
     /** Extracts the document info for the given `pathItemId` of the path of `docInfo`. */
-    private fun getDocumentInfo(
-        authority: String,
-        userId: UserId,
-        pathItemId: String,
-    ): DocumentInfo {
+    private fun getDocumentInfo(docInfo: DocumentInfo, pathItemId: String): DocumentInfo {
         var cursor: Cursor? = null
-        val itemUri = DocumentsContract.buildDocumentUri(authority, pathItemId)
+        val itemUri = DocumentsContract.buildDocumentUri(docInfo.authority, pathItemId)
         try {
             cursor = getCursorForUri(itemUri)
             if (cursor != null && cursor.moveToFirst()) {
-                return DocumentInfo.fromCursor(cursor, userId, authority)
+                return DocumentInfo.fromCursor(cursor, docInfo.userId, docInfo.authority)
             }
         } finally {
             cursor?.close()
