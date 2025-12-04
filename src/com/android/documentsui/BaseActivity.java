@@ -708,10 +708,10 @@ public abstract class BaseActivity
         View pickerSaverContainer = findViewById(getRes(R.id.container_save));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        final int drawerPaddingBottom =
-                getResources().getDimensionPixelSize(getRes(R.dimen.drawer_padding_bottom));
 
         if (isUseMaterial3FlagEnabled()) {
+            final int drawerPaddingBottom =
+                    getResources().getDimensionPixelSize(getRes(R.dimen.drawer_padding_bottom));
             WindowCompat.enableEdgeToEdge(getWindow());
             ViewCompat.setOnApplyWindowInsetsListener(
                     root,

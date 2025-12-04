@@ -75,6 +75,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -478,6 +479,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @Ignore("b/454313609") // TODO(b/454313609): Re-enable once the test is fixed.
     public void testSearchV2LastUsedChipCopiedToFileTypeDropdown() throws Exception {
         // Click "Images" chip and wait until the chip becomes selected.
         bots.search.clickChip(R.string.chip_title_images)

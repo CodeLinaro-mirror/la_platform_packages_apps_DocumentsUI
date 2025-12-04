@@ -59,7 +59,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
@@ -275,9 +275,10 @@ public interface DragAndDropManager {
 
         private final Context mContext;
         private final DocumentClipper mClipper;
-        private final ExecutorService mExecutorService;
+        private final Executor mBgThreadExecutor;
         private final DragShadowBuilder mShadowBuilder;
         private final Drawable mDefaultShadowIcon;
+        private final Executor mMainThreadExecutor;
 
         // NOTE: This is only utilized to mock out `MediaStore#getDocumentUri()` in unit tests.
         private final BiFunction<Context, Uri, Uri> mMediaStoreToDocumentUriRewriter;
@@ -312,11 +313,11 @@ public interface DragAndDropManager {
         private String mAuthorityToRestore;
 
         private RuntimeDragAndDropManager(
-                Context context, DocumentClipper clipper, ExecutorService executorService) {
+                Context context, DocumentClipper clipper, Executor bgThreadExecutor) {
             this(
                     context.getApplicationContext(),
                     clipper,
-                    executorService,
+                    bgThreadExecutor,
                     new DragShadowBuilder(context),
                     IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE),
                     MediaStore::getDocumentUri);
@@ -326,15 +327,16 @@ public interface DragAndDropManager {
         RuntimeDragAndDropManager(
                 Context context,
                 DocumentClipper clipper,
-                ExecutorService executorService,
+                Executor bgThreadExecutor,
                 DragShadowBuilder builder,
                 Drawable defaultShadowIcon,
                 BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
             mContext = context;
             mClipper = clipper;
-            mExecutorService = executorService;
+            mBgThreadExecutor = bgThreadExecutor;
             mShadowBuilder = builder;
             mDefaultShadowIcon = defaultShadowIcon;
+            mMainThreadExecutor = context.getMainExecutor();
             mMediaStoreToDocumentUriRewriter = mediaStoreToDocumentUriRewriter;
         }
 
@@ -527,7 +529,7 @@ public interface DragAndDropManager {
 
             @State int state = STATE_NOT_ALLOWED;
             final @OpType int opType =
-                    DropOperation.calculateOpType(
+                    DropOperation.calculateOpTypeSync(
                             mClipData,
                             mDestRoot,
                             mIsCtrlPressed,
@@ -610,10 +612,12 @@ public interface DragAndDropManager {
                 return false;
             }
 
+            final CompletableFuture<DocumentStack> dstStack = new CompletableFuture<>();
+
             // NOTE: Create the drop operation helper early since mutable instance state could be
             // modified/reset while we're obtaining the root document in the background.
             final DropOperation dropOperation =
-                    createDropOperation(permissions, clipData, itemInfo.getRoot());
+                    createDropOperation(permissions, clipData, dstStack);
 
             actions.getDocument(
                     itemInfo.getRoot().authority,
@@ -627,7 +631,9 @@ public interface DragAndDropManager {
                                 doc,
                                 actions,
                                 callback,
-                                dropOperation);
+                                dstStack,
+                                dropOperation,
+                                mMainThreadExecutor);
                     });
 
             return true;
@@ -640,7 +646,13 @@ public interface DragAndDropManager {
                 @Nullable DocumentInfo destRootDoc,
                 ActionHandler actions,
                 FileOperations.Callback callback,
-                DropOperation dropOperation) {
+                CompletableFuture<DocumentStack> destStack,
+                DropOperation dropOperation,
+                Executor mainThreadExecutor) {
+            destStack.complete(
+                    (destRootDoc == null)
+                            ? new DocumentStack(destRoot)
+                            : new DocumentStack(destRoot, destRootDoc));
 
             // Fail early: A drop onto a root is disallowed if the destination
             // is a non-trash root and its corresponding document is missing.
@@ -648,22 +660,18 @@ public interface DragAndDropManager {
                 final CompletableFuture<Void> unused =
                         dropOperation
                                 .getOpType()
-                                .thenAccept(
+                                .thenAcceptAsync(
                                         opType ->
                                                 callback.onOperationResult(
                                                         FileOperations.Callback.STATUS_FAILED,
                                                         opType,
-                                                        0));
+                                                        0),
+                                        mainThreadExecutor);
                 return;
             }
 
-            // For all valid cases, create the appropriate destination stack and proceed.
-            final DocumentStack destination =
-                    (destRootDoc == null)
-                            ? new DocumentStack(destRoot)
-                            : new DocumentStack(destRoot, destRootDoc);
-
-            dropOperation.dropChecked(localState, destination, actions, callback);
+            // For all valid cases, proceed.
+            dropOperation.dropChecked(localState, actions, callback);
         }
 
         @Override
@@ -680,8 +688,8 @@ public interface DragAndDropManager {
                 return false;
             }
 
-            createDropOperation(permissions, clipData, dstStack.getRoot())
-                    .dropChecked(localState, dstStack, actions, callback);
+            createDropOperation(permissions, clipData, dstStack)
+                    .dropChecked(localState, actions, callback);
 
             return true;
         }
@@ -769,17 +777,26 @@ public interface DragAndDropManager {
         }
 
         private DropOperation createDropOperation(
-                @Nullable Permissions permissions, ClipData clipData, RootInfo destRoot) {
+                @Nullable Permissions permissions, ClipData clipData, DocumentStack dstStack) {
+            return createDropOperation(
+                    permissions, clipData, CompletableFuture.completedFuture(dstStack));
+        }
+
+        private DropOperation createDropOperation(
+                @Nullable Permissions permissions,
+                ClipData clipData,
+                CompletableFuture<DocumentStack> dstStack) {
             return new DropOperation(
                     permissions,
                     clipData,
                     mClipper,
                     mContext,
-                    destRoot,
-                    mExecutorService,
+                    dstStack,
+                    mBgThreadExecutor,
                     mIsCtrlPressed,
                     isDragFromSameApp(),
                     mIsSrcRootTrash,
+                    mMainThreadExecutor,
                     mMediaStoreToDocumentUriRewriter,
                     mMustBeCopied);
         }
@@ -794,8 +811,10 @@ public interface DragAndDropManager {
             private final CompletableFuture<ClipData> mClipData;
             private final DocumentClipper mClipper;
             private final Context mContext;
+            private final CompletableFuture<DocumentStack> mDstStack;
             private final boolean mIsDragFromSameApp;
             private final boolean mIsSrcRootTrash;
+            private final Executor mMainThreadExecutor;
             private final CompletableFuture<Integer> mOpType;
 
             private DropOperation(
@@ -803,38 +822,42 @@ public interface DragAndDropManager {
                     ClipData clipData,
                     DocumentClipper clipper,
                     Context context,
-                    RootInfo destRoot,
-                    ExecutorService executorService,
+                    CompletableFuture<DocumentStack> dstStack,
+                    Executor bgThreadExecutor,
                     boolean isCtrlPressed,
                     boolean isDragFromSameApp,
                     boolean isSrcRootTrash,
+                    Executor mainThreadExecutor,
                     BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
                     boolean mustBeCopied) {
                 mClipper = clipper;
                 mContext = context;
+                mDstStack = dstStack;
                 mIsDragFromSameApp = isDragFromSameApp;
                 mIsSrcRootTrash = isSrcRootTrash;
+                mMainThreadExecutor = mainThreadExecutor;
 
                 mClipData =
                         rewrite(
                                 permissions,
                                 clipData,
-                                executorService,
+                                bgThreadExecutor,
                                 mediaStoreToDocumentUriRewriter);
 
-                mOpType = calculateOpType(destRoot, isCtrlPressed, mustBeCopied);
+                mOpType = calculateOpTypeAsync(bgThreadExecutor, isCtrlPressed, mustBeCopied);
 
                 if (permissions != null) {
                     final CompletableFuture<Void> unused =
-                            mClipData.handle(
+                            mClipData.handleAsync(
                                     (result, throwable) -> {
                                         permissions.release();
                                         return null;
-                                    });
+                                    },
+                                    mMainThreadExecutor);
                 }
             }
 
-            private static @OpType int calculateOpType(
+            private static @OpType int calculateOpTypeSync(
                     @Nullable ClipData clipData,
                     RootInfo destRoot,
                     boolean isCtrlPressed,
@@ -886,36 +909,111 @@ public interface DragAndDropManager {
                 return FileOperationService.OPERATION_UNKNOWN;
             }
 
-            // TODO(440196110): Implement flag-guarded async calculation for drags from other apps.
-            private CompletableFuture<Integer> calculateOpType(
-                    RootInfo destRoot, boolean isCtrlPressed, boolean mustBeCopied) {
-                return mClipData.thenApply(
-                        clipData ->
-                                calculateOpType(
-                                        clipData,
-                                        destRoot,
-                                        isCtrlPressed,
-                                        mIsDragFromSameApp,
-                                        mIsSrcRootTrash,
-                                        mustBeCopied));
+            private CompletableFuture<Integer> calculateOpTypeAsync(
+                    Executor bgThreadExecutor, boolean isCtrlPressed, boolean mustBeCopied) {
+                return CompletableFuture.allOf(mClipData, mDstStack)
+                        .thenComposeAsync(
+                                unused ->
+                                        calculateOpTypeAsyncImpl(
+                                                mClipData.join(),
+                                                mDstStack.join(),
+                                                bgThreadExecutor,
+                                                isCtrlPressed,
+                                                mustBeCopied),
+                                mMainThreadExecutor);
+            }
+
+            private CompletableFuture<Integer> calculateOpTypeAsyncImpl(
+                    @Nullable ClipData clipData,
+                    DocumentStack dstStack,
+                    Executor bgThreadExecutor,
+                    boolean isCtrlPressed,
+                    boolean mustBeCopied) {
+                if (!isDragsFromOtherAppsEnabled()) {
+                    return CompletableFuture.completedFuture(
+                            calculateOpTypeSync(
+                                    clipData,
+                                    dstStack.getRoot(),
+                                    isCtrlPressed,
+                                    mIsDragFromSameApp,
+                                    mIsSrcRootTrash,
+                                    mustBeCopied));
+                }
+                return CompletableFuture.supplyAsync(
+                        () -> {
+                            final RootInfo dstRoot = dstStack.getRoot();
+
+                            final @OpType int opType =
+                                    calculateOpTypeSync(
+                                            clipData,
+                                            dstRoot,
+                                            isCtrlPressed,
+                                            mIsDragFromSameApp,
+                                            mIsSrcRootTrash,
+                                            mustBeCopied);
+
+                            if (opType != FileOperationService.OPERATION_UNKNOWN
+                                    || clipData == null) {
+                                return opType;
+                            }
+
+                            assert !mIsDragFromSameApp;
+
+                            final Uri dstRootUri = dstRoot.getUri();
+
+                            boolean canCopyAll = true;
+                            boolean canMoveAll = true;
+                            Uri uri = null;
+
+                            for (int i = 0; i < clipData.getItemCount(); ++i) {
+                                uri = clipData.getItemAt(i).getUri();
+
+                                if (uri == null) {
+                                    canCopyAll = false;
+                                    canMoveAll = false;
+                                    break;
+                                }
+
+                                if (Providers.isSameProvider(dstRootUri, uri)) {
+                                    // NOTE: Drag-and-drop within the same provider should never
+                                    // result in a copy.
+                                    canCopyAll = false;
+
+                                    // TODO(b/440196110): Disallow dropping uri on immediate parent.
+                                } else {
+                                    // NOTE: Drag-and-drop across different providers should never
+                                    // result in a move.
+                                    canMoveAll = false;
+                                }
+
+                                if (!canCopyAll && !canMoveAll) {
+                                    break;
+                                }
+                            }
+
+                            return canMoveAll
+                                    ? FileOperationService.OPERATION_MOVE
+                                    : canCopyAll
+                                            ? FileOperationService.OPERATION_COPY
+                                            : FileOperationService.OPERATION_UNKNOWN;
+                        },
+                        bgThreadExecutor);
             }
 
             private void dropChecked(
-                    Object localState,
-                    DocumentStack dstStack,
-                    ActionHandler actions,
-                    FileOperations.Callback callback) {
+                    Object localState, ActionHandler actions, FileOperations.Callback callback) {
                 final CompletableFuture<Void> unused =
-                        CompletableFuture.allOf(mClipData, mOpType)
-                                .thenAccept(
+                        CompletableFuture.allOf(mClipData, mDstStack, mOpType)
+                                .thenAcceptAsync(
                                         result ->
                                                 dropCheckedImpl(
                                                         mClipData.join(),
                                                         mOpType.join(),
                                                         localState,
-                                                        dstStack,
+                                                        mDstStack.join(),
                                                         actions,
-                                                        callback));
+                                                        callback),
+                                        mMainThreadExecutor);
             }
 
             private void dropCheckedImpl(
@@ -980,7 +1078,7 @@ public interface DragAndDropManager {
             private CompletableFuture<ClipData> rewrite(
                     @Nullable Permissions permissions,
                     ClipData clipData,
-                    ExecutorService executorService,
+                    Executor bgThreadExecutor,
                     BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
                 if (!isDragsFromOtherAppsEnabled()) {
                     return CompletableFuture.completedFuture(clipData);
@@ -1023,7 +1121,7 @@ public interface DragAndDropManager {
                                 return null;
                             }
                         },
-                        executorService);
+                        bgThreadExecutor);
             }
 
             private @Nullable ClipData.Item rewrite(
