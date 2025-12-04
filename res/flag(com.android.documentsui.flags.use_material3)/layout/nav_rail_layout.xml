@@ -21,8 +21,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/coordinator_layout"
     android:background="?attr/colorSurfaceContainer"
-    android:id="@+id/coordinator_layout">
+    android:focusable="false">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -37,7 +38,6 @@
             android:baselineAligned="false"
             android:paddingTop="@dimen/layout_padding_top"
             android:paddingEnd="@dimen/layout_padding_end"
-            android:paddingBottom="@dimen/layout_padding_bottom"
             android:background="?attr/colorSurfaceContainer">
 
             <!-- Navigation rail: left hand side. -->
@@ -73,6 +73,7 @@
 
             <!-- Main container for the right hand side. -->
             <LinearLayout
+                android:id="@+id/main_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">

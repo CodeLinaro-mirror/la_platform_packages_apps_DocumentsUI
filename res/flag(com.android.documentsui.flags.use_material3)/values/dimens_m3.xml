@@ -73,6 +73,7 @@
     <dimen name="list_item_padding_vertical">4dp</dimen>
     <dimen name="list_item_icon_margin_end">12dp</dimen>
     <dimen name="list_item_icon_size">32dp</dimen>
+    <dimen name="list_item_preview_icon_size">48dp</dimen>
     <!-- TODO(b/379776735): remove this block after use_material3 flag is launched. -->
     <dimen name="list_item_width_m3">72dp</dimen>
     <dimen name="list_item_padding_m3">16dp</dimen>
@@ -217,19 +218,17 @@
     <dimen name="main_container_corner_radius_large">16dp</dimen>
     <dimen name="main_container_corner_radius_small">4dp</dimen>
     <dimen name="picker_saver_padding_top">@dimen/space_small_1</dimen>
-    <!-- TODO(b/402604097): The bottom padding should be 0dp if there is a gesture navigation bar. -->
     <dimen name="picker_saver_padding_bottom">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_padding_start">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_padding_end">@dimen/space_small_1</dimen>
     <dimen name="picker_saver_button_gap">@dimen/space_extra_small_2</dimen>
     <dimen name="saver_progress_start_margin">@dimen/space_extra_small_4</dimen>
     <dimen name="layout_padding_top">@dimen/space_small_1</dimen>
-    <dimen name="layout_padding_bottom">@dimen/space_small_1</dimen>
+    <dimen name="layout_padding_bottom">0dp</dimen>
     <dimen name="layout_padding_end">@dimen/space_small_1</dimen>
 
     <dimen name="dialog_content_padding_horizontal">@dimen/space_small_4</dimen>
-    <dimen name="dialog_content_padding_top_m3">@dimen/space_small_1</dimen>
-    <dimen name="dialog_content_padding_bottom_m3">@dimen/space_small_4</dimen>
+    <dimen name="dialog_content_padding_top_no_title">@dimen/space_small_4</dimen>
 
     <dimen name="apps_row_item_width_m3">96dp</dimen>
     <dimen name="apps_row_app_icon_size_m3">24dp</dimen>
@@ -320,4 +319,14 @@
     <dimen name="pick_dialog_window_margin_vertical">@dimen/space_small_1</dimen>
     <integer name="pick_dialog_window_elevation">3</integer>
     <dimen name="pick_dialog_background_alpha">0.32</dimen>
+
+    <!-- Override framework/material dimensions. -->
+    <!-- for dialog header's top padding -->
+    <dimen name="abc_dialog_padding_top_material">@dimen/space_small_4</dimen>
+    <!-- for dialog action bar's top/bottom padding -->
+    <dimen name="m3_alert_dialog_action_top_padding">@dimen/space_small_4</dimen>
+    <dimen name="m3_alert_dialog_action_bottom_padding">@dimen/space_small_4</dimen>
+
+    <integer name="dialog_width_percentage">100</integer>
+    <dimen name="dialog_max_width">512dp</dimen>
 </resources>

@@ -28,9 +28,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.android.documentsui.DocumentsUIDialogFragment;
 import com.android.documentsui.Injector;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
@@ -41,10 +41,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Dialog to delete file or directory.
- */
-public class DeleteDocumentFragment extends DialogFragment {
+import javax.annotation.Nullable;
+
+/** Dialog to delete file or directory. */
+public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
     private static final String TAG_DELETE_DOCUMENT = "delete_document";
 
     private List<DocumentInfo> mDocuments;
@@ -57,7 +57,8 @@ public class DeleteDocumentFragment extends DialogFragment {
      * @param docs the selected documents
      * @param srcParent the parent document of the selection
      */
-    public static void show(FragmentManager fm, List<DocumentInfo> docs, DocumentInfo srcParent) {
+    public static void show(
+            FragmentManager fm, List<DocumentInfo> docs, @Nullable DocumentInfo srcParent) {
         if (fm.isStateSaved()) {
             Log.w(TAG, "Skip show delete dialog because state saved");
             return;

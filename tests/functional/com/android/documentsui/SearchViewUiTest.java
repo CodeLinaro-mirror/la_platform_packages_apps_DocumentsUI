@@ -16,9 +16,11 @@
 
 package com.android.documentsui;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -46,6 +48,7 @@ import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
+import android.view.KeyEvent;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -58,6 +61,7 @@ import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.base.Providers;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -129,7 +133,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @HugeLongTest
     public void testSearchIconHidden() throws Exception {
-        bots.roots.openRoot(ROOT_1_ID);  // root 1 doesn't support search
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);  // root 1 doesn't support search
 
         bots.search.assertIsVisible(false);
     }
@@ -304,11 +308,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.keyboard.pressEnter();
 
-        bots.roots.openRoot(ROOT_1_ID);
+        EspressoBotsKt.openRoot(context, ROOT_1_ID);
         device.waitForIdle();
         assertDefaultContentOfTestDir1();
 
-        bots.roots.openRoot(ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID);
         device.waitForIdle();
 
         assertDefaultContentOfTestDir0();
@@ -433,7 +437,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move to a different root.
-        bots.roots.openRoot("Paging Root");
+        EspressoBotsKt.openRoot(context, "Paging Root");
 
         // Start search, again.
         bots.search.expand();
@@ -463,7 +467,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move to the Recents view and expect the last modified to be gone.
-        bots.roots.openRoot("Recent");
+        EspressoBotsKt.openRoot(context, "Recent");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
         onView(withId(R.id.search_last_modified_trigger)).check(matches(withEffectiveVisibility(
@@ -472,7 +476,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
-        bots.roots.openRoot("Downloads");
+        EspressoBotsKt.openRoot(context, "Downloads");
         bots.search.expand();
         bots.search.setInputText("-no-such-file-");
         bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
@@ -531,7 +535,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         String deviceLabel = getDeviceLabel();
 
         // Open the root and select the DCIM folder for selection.
-        bots.roots.openRoot(deviceLabel);
+        EspressoBotsKt.openRoot(context, deviceLabel);
         bots.directory.selectDocument("DCIM", 1);
 
         // Click on the Images search chips.
@@ -577,7 +581,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Use Paging Root, as it throws:
         //     java.lang.UnsupportedOperationException: Search not supported
-        bots.roots.openRoot("Paging Root");
+        EspressoBotsKt.openRoot(context, "Paging Root");
         bots.search.expand();
         bots.search.setInputText("00");
         UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
@@ -617,11 +621,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Starting in ROOT_ID_0, which is searchable.
         assertNotNull("Icon should be visible in ROOT_0_ID", bots.search.getSearchIcon());
         // Broken root cannot be searched.
-        bots.roots.openRoot("Broken Root Doc");
+        EspressoBotsKt.openRoot(context, "Broken Root Doc");
         assertNull("Icon should not be visible ini Broken Root Doc", bots.search.getSearchIcon());
         // Device root should be searchable.
         String deviceLabel = getDeviceLabel();
-        bots.roots.openRoot(deviceLabel);
+        EspressoBotsKt.openRoot(context, deviceLabel);
         assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
     }
 
@@ -665,6 +669,36 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testPathOfSearchResultSingleSelection() throws Exception {
+        bots.search.expand();
+        bots.search.setInputText("file");
+        device.waitForIdle();
+
+        // Click file1.log; check that one element is selected.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.assertSelection(1);
+
+        // Verify that the breadcrumb path shows the correct information.
+        onView(withId(R.id.breadcrumb_path_holder))
+                .check(bots.breadcrumb.pathEqualsTo("TEST_ROOT_0", TestFilesRule.FILE_NAME_1));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testPathOfSearchResultMultipleSelection() throws Exception {
+        bots.search.expand();
+        bots.search.setInputText("file");
+        device.waitForIdle();
+
+        // Click file1.log and NO_RENAMEfile.txt which should stop breadcrumb path.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 2);
+
+        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathEqualsTo(""));
+    }
+
+    @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_UX_PHASE_2_RO})
     public void testSearchResultHidesNonDesktopFolders() throws Exception {
         DocumentsProviderHelper rootStorageDocsHelper = new DocumentsProviderHelper(userId,
@@ -684,7 +718,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Open device root: the internal storage.
             String deviceRootLabel = getDeviceLabel();
-            bots.roots.openRoot(deviceRootLabel);
+            EspressoBotsKt.openRoot(context, deviceRootLabel);
 
             // Search the test file.
             bots.search.doSearch(testFileName);
@@ -721,4 +755,82 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
             }
         }
     }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testTabNavigationWithDockedSearchBar() throws Exception {
+        Assume.assumeTrue(
+                "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
+
+        // The button next to the docked search bar is the list or grid button, switch to list mode
+        // before the test so we can assert the next focused view is the grid button.
+        bots.main.switchToListMode();
+
+        // Click the docked search bar.
+        bots.search.expand();
+        closeSoftKeyboard();
+
+        // Assert it should get the focus.
+        bots.search.assertInputFocused(true);
+
+        // Press tab to move the focus.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+
+        // Assert that the focus should go to the grid button.
+        bots.search.assertInputFocused(false);
+        onView(withId(R.id.sub_menu_grid)).check(matches(hasFocus()));
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testTabNavigationWithDockedSearchBar_withQuery() throws Exception {
+        Assume.assumeTrue(
+                "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
+
+        // The button next to the docked search bar is the list or grid button, switch to list mode
+        // before the test so we can assert the next focused view is the grid button.
+        bots.main.switchToListMode();
+
+        // Click the docked search bar and type something.
+        bots.search.doSearch("a");
+
+        // Assert it should get the focus.
+        bots.search.assertInputFocused(true);
+
+        // Press tab to move the focus.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+
+        // Assert that the focus should go to the close search button.
+        bots.search.assertInputFocused(false);
+        onView(withId(R.id.docked_search_clear)).check(matches(hasFocus()));
+
+        // Press tab to move the focus.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+
+        // Assert that the focus should go to the grid button.
+        onView(withId(R.id.sub_menu_grid)).check(matches(hasFocus()));
+    }
+
+    @Test
+    public void testRecreatePreservesSearchState() throws Exception {
+        String[] expectedMatches =
+                new String[] {
+                    TestFilesRule.FILE_NAME_1,
+                    TestFilesRule.FILE_NAME_2,
+                    TestFilesRule.FILE_NAME_NO_RENAME,
+                };
+
+        // Search and expect 3 files to match.
+        bots.search.doSearch("file");
+        device.waitForIdle();
+        bots.directory.assertDocumentsPresent(expectedMatches);
+
+        // Relaunch the app, and expect the same result. Also this must never crash.
+        mActivityScenario.recreate();
+        device.waitForIdle();
+        bots.directory.assertDocumentsPresent(expectedMatches);
+        bots.search.assertInputEquals("file");
+    }
+
+    // TODO(b:450381836): Add tests that check that options change trigger search.
 }

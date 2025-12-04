@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -33,7 +34,7 @@ import androidx.fragment.app.Fragment;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Menus;
-import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DirectoryFragment;
 import com.android.documentsui.queries.SearchViewManager;
@@ -80,13 +81,16 @@ public abstract class MenuManager {
         updateInspect(menu.findItem(getRes(R.id.action_menu_inspect)), selection);
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
         updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
-        updateMoveToTrash(menu.findItem(getRes(R.id.action_menu_move_to_trash)), selection);
-        updateRestoreFromTrash(menu.findItem(getRes(R.id.action_menu_restore_from_trash)),
-                selection);
 
         if (isZipNgFlagEnabled()) {
             updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
             updateBrowse(menu.findItem(getRes(R.id.action_menu_browse)), selection);
+        }
+
+        if (isTrashFlowEnabled()) {
+            updateMoveToTrash(menu.findItem(getRes(R.id.action_menu_move_to_trash)), selection);
+            updateRestoreFromTrash(
+                    menu.findItem(getRes(R.id.action_menu_restore_from_trash)), selection);
         }
 
         Menus.disableHiddenItems(menu);
@@ -242,13 +246,25 @@ public abstract class MenuManager {
         MenuItem delete = menu.findItem(getRes(R.id.dir_menu_delete));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
 
+        boolean canRestore = false;
+        if (isTrashFlowEnabled()) {
+            MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
+            MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
+            final boolean canTrash = selectionDetails.canTrash();
+            canRestore = selectionDetails.canRestore();
+            Menus.setEnabledAndVisible(moveToTrash, canTrash);
+            Menus.setEnabledAndVisible(restoreFromTrash, canRestore);
+        }
+
         final boolean canCopy =
-                selectionDetails.size() > 0 && !selectionDetails.containsPartialFiles();
+                selectionDetails.size() > 0
+                        && !selectionDetails.containsPartialFiles()
+                        && !canRestore;
         final boolean canDelete = selectionDetails.canDelete();
+
         Menus.setEnabledAndVisible(cut, canCopy && canDelete);
         Menus.setEnabledAndVisible(copy, canCopy);
         Menus.setEnabledAndVisible(delete, canDelete);
-
         Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
 
         updateCompress(menu.findItem(getRes(R.id.dir_menu_compress)), selectionDetails);
@@ -278,16 +294,19 @@ public abstract class MenuManager {
     /**
      * @see RootsFragment#onCreateContextMenu
      */
-    public void updateRootContextMenu(Menu menu, RootInfo root, DocumentInfo docInfo) {
+    public void updateSidebarItemContextMenu(Menu menu, SidebarEntryItemInfo itemInfo,
+            DocumentInfo docInfo) {
         MenuItem eject = menu.findItem(getRes(R.id.root_menu_eject_root));
         MenuItem pasteInto = menu.findItem(getRes(R.id.root_menu_paste_into_folder));
         MenuItem openInNewWindow = menu.findItem(getRes(R.id.root_menu_open_in_new_window));
         MenuItem settings = menu.findItem(getRes(R.id.root_menu_settings));
+        MenuItem getInfo = menu.findItem(getRes(R.id.root_menu_inspect));
 
-        updateEject(eject, root);
-        updatePasteInto(pasteInto, root, docInfo);
-        updateOpenInNewWindow(openInNewWindow, root);
-        updateSettings(settings, root);
+        updateEject(eject, itemInfo);
+        updatePasteInto(pasteInto, itemInfo, docInfo);
+        updateOpenInNewWindow(openInNewWindow, itemInfo);
+        updateSettings(settings, itemInfo);
+        updateInspect(getInfo, itemInfo);
     }
 
     public abstract void updateKeyboardShortcutsMenu(
@@ -333,11 +352,11 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(settings, false);
     }
 
-    protected void updateSettings(MenuItem settings, RootInfo root) {
+    protected void updateSettings(MenuItem settings, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(settings, false);
     }
 
-    protected void updateEject(MenuItem eject, RootInfo root) {
+    protected void updateEject(MenuItem eject, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(eject, false);
     }
 
@@ -358,8 +377,7 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(openInNewWindow, false);
     }
 
-    protected void updateOpenInNewWindow(
-            MenuItem openInNewWindow, RootInfo root) {
+    protected void updateOpenInNewWindow(MenuItem openInNewWindow, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(openInNewWindow, false);
     }
 
@@ -387,6 +405,14 @@ public abstract class MenuManager {
      * This method is called for action mode, when a selection exists.
      */
     protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
+        Menus.setEnabledAndVisible(inspect, false);
+    }
+
+    /**
+     * This method is called during a sidebar context menu click with a reference to the
+     * item's information.
+     */
+    protected void updateInspect(MenuItem inspect, SidebarEntryItemInfo itemInfo) {
         Menus.setEnabledAndVisible(inspect, false);
     }
 
@@ -422,7 +448,8 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 
-    protected void updatePasteInto(MenuItem pasteInto, RootInfo root, DocumentInfo docInfo) {
+    protected void updatePasteInto(MenuItem pasteInto, SidebarEntryItemInfo itemInfo,
+            DocumentInfo docInfo) {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 

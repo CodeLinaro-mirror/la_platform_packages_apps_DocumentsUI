@@ -233,15 +233,23 @@
     <string name="rename_error" msgid="6700093173508118635">"ປ່ຽນຊື່ເອກະສານບໍ່ສຳເລັດ"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"ຖອດອອກ"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"ປ່ຽນແປງບາງໄຟລ໌ແລ້ວ"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{ກຳລັງສຳເນົາ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງສຳເນົາ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{ກຳລັງແຕກໄຟລ໌ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງແຕກ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{ກຳລັງຍ້າຍ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງຍ້າຍ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{ກຳລັງລຶບ “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{ກຳລັງລຶບ # ໄຟລ໌}}"</string>
-    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{ກຳລັງຖິ້ມ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປຖັງຂີ້ເຫຍື້ອ}other{ກຳລັງຖິ້ມ # ໄຟລ໌ໄປຖັງຂີ້ເຫຍື້ອ}}"</string>
-    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{ກຳລັງກູ້ຄືນ “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{ກຳລັງກູ້ຄືນ # ໄຟລ໌}}"</string>
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{ກຳລັງບີບອັດ “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{ກຳລັງບີບອັດ # ໄຟລ໌}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"ກຳລັງສຳເນົາ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{ກຳລັງສຳເນົາ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງສຳເນົາ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"ກຳລັງແຕກໄຟລ໌ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{ກຳລັງແຕກ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງແຕກ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"ກຳລັງຍ້າຍ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{ກຳລັງຍ້າຍ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{ກຳລັງຍ້າຍ # ໄຟລ໌ໄປໃສ່ “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"ກຳລັງລຶບ “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{ກຳລັງລຶບ # ໄຟລ໌}other{ກຳລັງລຶບ # ໄຟລ໌}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"ກຳລັງຖິ້ມ “<xliff:g id="FILENAME">{filename}</xliff:g>” ໄປໃສ່ຖັງຂີ້ເຫຍື້ອ"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{ກຳລັງຖິ້ມ # ໄຟລ໌ໄປໃສ່ຖັງຂີ້ເຫຍື້ອ}other{ກຳລັງຖິ້ມ # ໄຟລ໌ໄປໃສ່ຖັງຂີ້ເຫຍື້ອ}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"ກຳລັງກູ້ຄືນ “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{ກຳລັງກູ້ຄືນ # ໄຟລ໌}other{ກຳລັງກູ້ຄືນ # ໄຟລ໌}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"ກຳລັງບີບອັດ “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{ກຳລັງບີບອັດ # ໄຟລ໌}other{ກຳລັງບີບອັດ # ໄຟລ໌}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ສະແດງຄວາມຄືບໜ້າຂອງໄຟລ໌"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ຄວາມຄືບໜ້າຂອງໄຟລ໌"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"ປິດທັງໝົດ"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"ສຳເລັດແລ້ວ"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"ຍົກເລີກແລ້ວ"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"ເບິ່ງລາຍລະອຽດ"</string>
@@ -368,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"ຕົວຢ່າງຮູບຂອງ <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ເຊື່ອງແຜງຂໍ້ມູນ"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"ສະແດງແຜງຂໍ້ມູນ"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"ບໍ່ມີຫຍັງໃນຖັງຂີ້ເຫຍື້ອ"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"ໄຟລ໌ໃນຖັງຂີ້ເຫຍື້ອທີ່ເກີນ 30 ມື້ຈະຖືກລຶບໂດຍອັດຕະໂນມັດ."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ລ້າງຖັງຂີ້ເຫຍື້ອດຽວນີ້"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ລ້າງຖັງຂີ້ເຫຍື້ອບໍ?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ຄຳສັ່ງນີ້ບໍ່ສາມາດຍົກເລີກໄດ້ ແລະ ໄຟລ໌ຕ່າງໆຈະບໍ່ສາມາດກູ້ຄືນໄດ້."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ລຶບທຸກຢ່າງໃນຖັງຂີ້ເຫຍື້ອ"</string>
 </resources>

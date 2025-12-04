@@ -113,24 +113,36 @@
             style="@style/JobProgressItemActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@android:string/cancel"
-            app:layout_constraintStart_toEndOf="@id/job_progress_item_button_margin"
-            app:layout_constraintTop_toBottomOf="@id/job_progress_item_button_margin" />
+            android:text="@android:string/cancel" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/job_progress_item_show_in_folder"
             style="@style/JobProgressItemActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_show_in_folder"
-            app:layout_constraintStart_toEndOf="@id/job_progress_item_cancel"
-            app:layout_constraintTop_toTopOf="@id/job_progress_item_cancel" />
+            android:text="@string/button_show_in_folder" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/job_progress_item_see_details"
+            style="@style/JobProgressItemActionButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/job_progress_item_see_details" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/job_progress_item_dismiss"
             style="@style/JobProgressItemActionButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_dismiss"
-            app:layout_constraintStart_toEndOf="@id/job_progress_item_show_in_folder"
-            app:layout_constraintTop_toTopOf="@id/job_progress_item_show_in_folder" />
+            android:text="@string/button_dismiss" />
+        <!-- Allows the above button views to wrap if needed. -->
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/job_progress_button_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:flow_wrapMode="chain"
+            app:flow_horizontalStyle="packed"
+            app:flow_horizontalBias="0"
+            app:constraint_referenced_ids="job_progress_item_cancel,job_progress_item_show_in_folder,job_progress_item_see_details,job_progress_item_dismiss"
+            app:layout_constraintStart_toStartOf="@id/job_progress_item_button_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/job_progress_item_button_margin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

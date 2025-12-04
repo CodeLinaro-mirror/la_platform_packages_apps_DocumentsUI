@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"Bendrinti naudojant"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Kopijuojami failai"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Glaudinami failai"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"Glaudinami failai"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Išskleidžiami failai"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Perkeliami failai"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Failų ištrynimas"</string>
@@ -176,10 +175,8 @@
       <item quantity="many">Ištrinama <xliff:g id="COUNT_1">%1$d</xliff:g> elemento.</item>
       <item quantity="other">Ištrinama <xliff:g id="COUNT_1">%1$d</xliff:g> elementų.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{# failas perkeliamas į šiukšliadėžę}one{# failas perkeliamas į šiukšliadėžę}few{# failai perkeliami į šiukšliadėžę}many{# failo perkeliama į šiukšliadėžę}other{# failų perkeliama į šiukšliadėžę}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{Atkuriamas # failas}one{Atkuriamas # failas}few{Atkuriami # failai}many{Atkuriama # failo}other{Atkuriama # failų}}"</string>
     <string name="undo" msgid="2902438994196400565">"Anuliuoti"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Ruošiama..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Ruošiama..."</string>
@@ -192,23 +189,16 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Nepavyko nukopijuoti <xliff:g id="COUNT_0">{count}</xliff:g> elemento}one{Nepavyko nukopijuoti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}few{Nepavyko nukopijuoti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}many{Nepavyko nukopijuoti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}other{Nepavyko nukopijuoti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Nepavyko nukopijuoti # failo}one{Nepavyko nukopijuoti # failo}few{Nepavyko nukopijuoti # failų}many{Nepavyko nukopijuoti # failo}other{Nepavyko nukopijuoti # failų}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nepavyko suglaudinti <xliff:g id="COUNT_0">{count}</xliff:g> elemento}one{Nepavyko suglaudinti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}few{Nepavyko suglaudinti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}many{Nepavyko suglaudinti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}other{Nepavyko suglaudinti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Nepavyko supakuoti # failo}one{Nepavyko supakuoti # failo}few{Nepavyko supakuoti # failų}many{Nepavyko supakuoti # failo}other{Nepavyko supakuoti # failų}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Nepavyko išskleisti # failo}one{Nepavyko išskleisti # failo}few{Nepavyko išskleisti # failų}many{Nepavyko išskleisti # failo}other{Nepavyko išskleisti # failų}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Nepavyko perkelti <xliff:g id="COUNT_0">{count}</xliff:g> elemento}one{Nepavyko perkelti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}few{Nepavyko perkelti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}many{Nepavyko perkelti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}other{Nepavyko perkelti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Nepavyko perkelti # failo}one{Nepavyko perkelti # failo}few{Nepavyko perkelti # failų}many{Nepavyko perkelti # failo}other{Nepavyko perkelti # failų}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nepavyko ištrinti <xliff:g id="COUNT_0">{count}</xliff:g> elemento}one{Nepavyko ištrinti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}few{Nepavyko ištrinti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}many{Nepavyko ištrinti <xliff:g id="COUNT_1">{count}</xliff:g> elemento}other{Nepavyko ištrinti <xliff:g id="COUNT_1">{count}</xliff:g> elementų}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Nepavyko ištrinti # failo}one{Nepavyko ištrinti # failo}few{Nepavyko ištrinti # failų}many{Nepavyko ištrinti # failo}other{Nepavyko ištrinti # failų}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Nepavyko perkelti # failo į šiukšliadėžę}one{Nepavyko perkelti # failo į šiukšliadėžę}few{Nepavyko perkelti # failų į šiukšliadėžę}many{Nepavyko perkelti # failo į šiukšliadėžę}other{Nepavyko perkelti # failų į šiukšliadėžę}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Nepavyko atkurti # failo}one{Nepavyko atkurti # failo}few{Nepavyko atkurti # failų}many{Nepavyko atkurti # failo}other{Nepavyko atkurti # failų}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Palieskite, kad peržr. išsamią informaciją"</string>
     <string name="close" msgid="905969391788869975">"Uždaryti"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -217,48 +207,42 @@
       <item quantity="many">Šie failai nebuvo nukopijuoti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie failai nebuvo nukopijuoti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Šis failas nebuvo nukopijuotas: <xliff:g id="LIST_0">{list}</xliff:g>}one{Šie failai nebuvo nukopijuoti: <xliff:g id="LIST_1">{list}</xliff:g>}few{Šie failai nebuvo nukopijuoti: <xliff:g id="LIST_1">{list}</xliff:g>}many{Šie failai nebuvo nukopijuoti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie failai nebuvo nukopijuoti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">Šie failai nebuvo suglaudinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Šie failai nebuvo suglaudinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Šie failai nebuvo suglaudinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie failai nebuvo suglaudinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Šis failas nebuvo supakuotas: <xliff:g id="LIST_0">{list}</xliff:g>}one{Šie failai nebuvo supakuoti: <xliff:g id="LIST_1">{list}</xliff:g>}few{Šie failai nebuvo supakuoti: <xliff:g id="LIST_1">{list}</xliff:g>}many{Šie failai nebuvo supakuoti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie failai nebuvo supakuoti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Šis failas nebuvo išskleistas: <xliff:g id="LIST_0">{list}</xliff:g>}one{Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">{list}</xliff:g>}few{Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">{list}</xliff:g>}many{Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie failai nebuvo išskleisti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">Šie failai nebuvo perkelti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Šie failai nebuvo perkelti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Šie failai nebuvo perkelti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie failai nebuvo perkelti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Šis failas nebuvo perkeltas: <xliff:g id="LIST_0">{list}</xliff:g>}one{Šie failai nebuvo perkelti: <xliff:g id="LIST_1">{list}</xliff:g>}few{Šie failai nebuvo perkelti: <xliff:g id="LIST_1">{list}</xliff:g>}many{Šie failai nebuvo perkelti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie failai nebuvo perkelti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Šis failas nebuvo ištrintas: <xliff:g id="LIST_0">{list}</xliff:g>}one{Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">{list}</xliff:g>}few{Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">{list}</xliff:g>}many{Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Šis failas konvertuotas į kitą formatą: <xliff:g id="LIST_0">{list}</xliff:g>}one{Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">{list}</xliff:g>}few{Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">{list}</xliff:g>}many{Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> elementas nukopijuotas į iškarpinę.</item>
       <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> elementai nukopijuoti į iškarpinę.</item>
@@ -273,18 +257,23 @@
     <string name="rename_error" msgid="6700093173508118635">"Nepavyko pervardyti dokumento"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Pašalinti"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Kai kurie failai buvo konvertuoti"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Kopijuojamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ į katalogą „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Kopijuojamas # failas į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}few{Kopijuojami # failai į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}many{Kopijuojama # failo į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Kopijuojama # failų į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Perkeliamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ į katalogą „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Perkeliamas # failas į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}few{Perkeliami # failai į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}many{Perkeliama # failo į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Perkeliama # failų į katalogą „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Ištrinamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Ištrinamas # failas}few{Ištrinami # failai}many{Ištrinama # failo}other{Ištrinama # failų}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Glaudinamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“}one{Glaudinamas # failas}few{Glaudinami # failai}many{Glaudinama # failo}other{Glaudinama # failų}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Kopijuojamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ į „<xliff:g id="DIRECTORY">{directory}</xliff:g>“"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Kopijuojamas # failas į „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Kopijuojamas # failas į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}few{Kopijuojami # failai į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}many{Kopijuojama # failo į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Kopijuojama # failų į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Išskleidžiamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ į „<xliff:g id="DIRECTORY">{directory}</xliff:g>“"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Išskleidžiamas # failas į „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Išskleidžiamas # failas į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}few{Išskleidžiami # failai į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}many{Išskleidžiama # failo į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Išskleidžiama # failų į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Perkeliamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ į „<xliff:g id="DIRECTORY">{directory}</xliff:g>“"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Perkeliamas # failas į „<xliff:g id="DIRECTORY_0">{directory}</xliff:g>“}one{Perkeliamas # failas į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}few{Perkeliami # failai į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}many{Perkeliama # failo į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}other{Perkeliama # failų į „<xliff:g id="DIRECTORY_1">{directory}</xliff:g>“}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Ištrinamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Ištrinamas # failas}one{Ištrinamas # failas}few{Ištrinami # failai}many{Ištrinama # failo}other{Ištrinama # failų}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Failas „<xliff:g id="FILENAME">{filename}</xliff:g>“ perkeliamas į šiukšliadėžę"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{# failas perkeliamas į šiukšliadėžę}one{# failas perkeliamas į šiukšliadėžę}few{# failai perkeliami į šiukšliadėžę}many{# failo perkeliama į šiukšliadėžę}other{# failų perkeliama į šiukšliadėžę}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Atkuriamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Atkuriamas # failas}one{Atkuriamas # failas}few{Atkuriami # failai}many{Atkuriama # failo}other{Atkuriama # failų}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Glaudinamas failas „<xliff:g id="FILENAME">{filename}</xliff:g>“"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Glaudinamas # failas}one{Glaudinamas # failas}few{Glaudinami # failai}many{Glaudinama # failo}other{Glaudinama # failų}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Rodyti failo eigą"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Failo eiga"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Atsisakyti visų"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Užbaigta"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Atšaukta"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Žr. išsamią informaciją"</string>
@@ -423,4 +412,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"„<xliff:g id="FILENAME">%s</xliff:g>“ vaizdo peržiūra"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Slėpti informacijos skydelį"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Rodyti informacijos skydelį"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Šiukšliadėžėje nieko nėra"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Šiukšliadėžėje ilgiau nei 30 dienų prabuvę failai bus ištrinti automatiškai."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Ištuštinti šiukšliadėžę dabar"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Išvalyti šiukšliadėžę?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Šio veiksmo negalima anuliuoti, o failų nebebus galima atkurti."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Išvalyti šiukšliadėžę"</string>
 </resources>

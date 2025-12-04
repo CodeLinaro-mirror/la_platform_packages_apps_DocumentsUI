@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"Delen via"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Bestanden kopiëren"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Bestanden comprimeren"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"Bestanden zippen"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Bestanden uitpakken"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Bestanden verplaatsen"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Bestanden verwijderen"</string>
@@ -166,10 +165,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> items verwijderen.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> item verwijderen.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{# bestand naar de prullenbak verplaatsen}other{# bestanden naar de prullenbak verplaatsen}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{# bestand herstellen}other{# bestanden herstellen}}"</string>
     <string name="undo" msgid="2902438994196400565">"Ongedaan maken"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Voorbereiden..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Voorbereiden..."</string>
@@ -182,61 +179,48 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Kan <xliff:g id="COUNT_0">{count}</xliff:g> item niet kopiëren}other{Kan <xliff:g id="COUNT_1">{count}</xliff:g> items niet kopiëren}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Kan # bestand niet kopiëren}other{Kan # bestanden niet kopiëren}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Kan <xliff:g id="COUNT_0">{count}</xliff:g> item niet comprimeren}other{Kan <xliff:g id="COUNT_1">{count}</xliff:g> items niet comprimeren}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Kan # bestand niet zippen}other{Kan # bestanden niet zippen}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Kan # bestand niet uitpakken}other{Kan # bestanden niet uitpakken}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Kan <xliff:g id="COUNT_0">{count}</xliff:g> item niet verplaatsen}other{Kan <xliff:g id="COUNT_1">{count}</xliff:g> items niet verplaatsen}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Kan # bestand niet verplaatsen}other{Kan # bestanden niet verplaatsen}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Kan <xliff:g id="COUNT_0">{count}</xliff:g> item niet verwijderen}other{Kan <xliff:g id="COUNT_1">{count}</xliff:g> items niet verwijderen}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Kan # bestand niet verwijderen}other{Kan # bestanden niet verwijderen}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Kan # bestand niet naar de prullenbak verplaatsen}other{Kan # bestanden niet naar de prullenbak verplaatsen}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Kan # bestand niet herstellen}other{Kan # bestanden niet herstellen}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Tik om details te bekijken"</string>
     <string name="close" msgid="905969391788869975">"Sluiten"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">Deze bestanden zijn niet gekopieerd: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Dit bestand is niet gekopieerd: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Dit bestand is niet gekopieerd: <xliff:g id="LIST_0">{list}</xliff:g>}other{Deze bestanden zijn niet gekopieerd: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">Deze bestanden zijn niet gecomprimeerd: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Dit bestand is niet gecomprimeerd: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Dit bestand is niet gezipt: <xliff:g id="LIST_0">{list}</xliff:g>}other{Deze bestanden zijn niet gezipt: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">Deze bestanden zijn niet uitgepakt: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Dit bestand is niet uitgepakt: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Dit bestand is niet uitgepakt: <xliff:g id="LIST_0">{list}</xliff:g>}other{Deze bestanden zijn niet uitgepakt: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">Deze bestanden zijn niet verplaatst: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Dit bestand is niet verplaatst: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Dit bestand is niet verplaatst: <xliff:g id="LIST_0">{list}</xliff:g>}other{Deze bestanden zijn niet verplaatst: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">Deze bestanden zijn niet verwijderd: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Dit bestand is niet verwijderd: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Dit bestand is niet verwijderd: <xliff:g id="LIST_0">{list}</xliff:g>}other{Deze bestanden zijn niet verwijderd: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Deze bestanden zijn geconverteerd naar een andere indeling: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Dit bestand is geconverteerd naar een andere indeling: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Dit bestand is geconverteerd naar een andere indeling: <xliff:g id="LIST_0">{list}</xliff:g>}other{Deze bestanden zijn geconverteerd naar een andere indeling: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> items gekopieerd naar klembord.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> item gekopieerd naar klembord.</item>
@@ -249,18 +233,23 @@
     <string name="rename_error" msgid="6700093173508118635">"Kan naam van document niet wijzigen"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Uitwerpen"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Sommige bestanden zijn geconverteerd"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> kopiëren naar <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{# bestanden kopiëren naar <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> verplaatsen naar <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{# bestanden verplaatsen naar <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> verwijderen}other{# bestanden verwijderen}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{<xliff:g id="FILENAME">{filename}</xliff:g> inpakken}other{# bestanden inpakken}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"<xliff:g id="FILENAME">{filename}</xliff:g> kopiëren naar <xliff:g id="DIRECTORY">{directory}</xliff:g>"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{# bestand kopiëren naar <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{# bestanden kopiëren naar <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"<xliff:g id="FILENAME">{filename}</xliff:g> uitpakken naar <xliff:g id="DIRECTORY">{directory}</xliff:g>"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{# bestand uitpakken naar <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{# bestanden uitpakken naar <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"<xliff:g id="FILENAME">{filename}</xliff:g> verplaatsen naar <xliff:g id="DIRECTORY">{directory}</xliff:g>"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{# bestand verplaatsen naar <xliff:g id="DIRECTORY_0">{directory}</xliff:g>}other{# bestanden verplaatsen naar <xliff:g id="DIRECTORY_1">{directory}</xliff:g>}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"<xliff:g id="FILENAME">{filename}</xliff:g> verwijderen"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{# bestand verwijderen}other{# bestanden verwijderen}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"<xliff:g id="FILENAME">{filename}</xliff:g> naar de prullenbak verplaatsen"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{# bestand naar de prullenbak verplaatsen}other{# bestanden naar de prullenbak verplaatsen}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"<xliff:g id="FILENAME">{filename}</xliff:g> herstellen"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{# bestand herstellen}other{# bestanden herstellen}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"<xliff:g id="FILENAME">{filename}</xliff:g> inpakken"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{# bestand inpakken}other{# bestanden inpakken}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Bestandsvoortgang tonen"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Bestandsvoortgang"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Alles sluiten"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Voltooid"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Geannuleerd"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Details bekijken"</string>
@@ -387,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Voorbeeldafbeelding van <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Informatievenster verbergen"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Informatievenster tonen"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Niets in prullenbak"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Bestanden in de prullenbak worden na 30 dagen automatisch verwijderd."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Prullenbak leegmaken"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Prullenbak leegmaken?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Deze actie kan niet ongedaan worden gemaakt en de bestanden kunnen niet meer worden hersteld."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Prullenbak leegmaken"</string>
 </resources>

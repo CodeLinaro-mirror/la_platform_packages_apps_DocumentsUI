@@ -15,11 +15,12 @@
     limitations under the License.
 -->
 
-<!-- The 2 placeholder views here are for vertical alignment purpose, in the file row it uses
-     ratio-based layout for Name/Type/Size/Date columns but excluding the thumbnail icon and
-     the preview icon. In order to make the header and row are vertically aligned, we need to
-     use placeholder for thumbnail icon and preview icon and then do the ratio-based layout
-     for table headers.
+<!-- The file row (item_doc_list) uses ratio-based layout for Name/Type/Size/Date columns but
+     excluding the preview icon, so the table_header here needs to do the same. In order to make
+     the header and row are vertically aligned, we need to make sure the available width for
+     allocation are the same (thus the ratio-based width calculated by layout_weight will also be
+     the same), hence usage of the "list_container_padding_m3" (the padding after the preview icon)
+     and the placeholder view below.
  -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -30,7 +31,7 @@
     android:baselineAligned="false"
     android:gravity="center_vertical"
     android:paddingStart="@dimen/main_container_padding_start"
-    android:paddingEnd="@dimen/main_container_padding_end"
+    android:paddingEnd="@dimen/list_container_padding_m3"
     android:visibility="gone">
 
     <!-- Column headers -->
@@ -111,7 +112,6 @@
      -->
     <View
         android:id="@+id/preview_icon_placeholder"
-        android:layout_width="@dimen/list_item_icon_size"
-        android:layout_height="@dimen/list_item_icon_size"
-        android:layout_marginEnd="@dimen/list_item_icon_margin_end" />
+        android:layout_width="@dimen/list_item_preview_icon_size"
+        android:layout_height="@dimen/list_item_preview_icon_size" />
 </LinearLayout>

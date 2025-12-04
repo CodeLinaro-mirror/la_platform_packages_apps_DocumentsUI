@@ -26,8 +26,8 @@ import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.android.documentsui.R
+import com.android.documentsui.sidebar.BaseSidebarEntryItem
 import com.android.documentsui.sidebar.RecyclerRootsAdapter
-import com.android.documentsui.sidebar.RootItem
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.utils.inFixedLayout
 import org.hamcrest.Description
@@ -36,14 +36,21 @@ import org.hamcrest.Matchers
 import org.hamcrest.TypeSafeMatcher
 
 /**
- * Show roots list.
- * On small/medium screens this opens the drawer, on large screens it's a no-op.
+ * Show roots list. On small/medium screens this opens the drawer, on large screens it's a no-op.
  */
 fun showRootsList(context: Context) {
     if (inFixedLayout(context)) {
         return
     }
     Espresso.onView(ViewMatchers.withId(R.id.drawer_layout)).perform(DrawerActions.open())
+}
+
+/** Wait for the roots list drawer to close, if the layout has a drawer. */
+fun waitForRootsListDrawerToClose(context: Context) {
+    if (inFixedLayout(context)) {
+        return
+    }
+    Espresso.onView(ViewMatchers.withId(R.id.drawer_layout)).perform(DrawerActions.waitForClose())
 }
 
 /** Perform the specified action on the item with the specified label in the roots list. */
@@ -53,13 +60,12 @@ fun actionOnRootItem(label: String, action: ViewAction) {
     // roots_list we want.
     if (isUseMaterial3FlagEnabled()) {
         Espresso.onView(
-            Matchers.allOf(
-                ViewMatchers.withId(R.id.roots_list),
-                ViewMatchers.isDescendantOfA(
-                    ViewMatchers.withId(R.id.container_roots)
+                Matchers.allOf(
+                    ViewMatchers.withId(R.id.roots_list),
+                    ViewMatchers.isDescendantOfA(ViewMatchers.withId(R.id.container_roots)),
                 )
             )
-        ).perform(ActionOnRecyclerViewItem(label, action))
+            .perform(ActionOnRecyclerViewItem(label, action))
     } else {
         Espresso.onData(ListViewItemMatcher(label))
             .inAdapterView(ViewMatchers.withId(R.id.roots_list))
@@ -68,17 +74,15 @@ fun actionOnRootItem(label: String, action: ViewAction) {
 }
 
 /**
- * Perform the specified action on the item with the specified label in the roots list.
- * This action must be performed on the roots list with material3 enabled using RecyclerView.
+ * Perform the specified action on the item with the specified label in the roots list. This action
+ * must be performed on the roots list with material3 enabled using RecyclerView.
  */
-internal class ActionOnRecyclerViewItem internal constructor(
-    private val mLabel: String,
-    private val mAction: ViewAction
-) : ViewAction {
+internal class ActionOnRecyclerViewItem
+internal constructor(private val mLabel: String, private val mAction: ViewAction) : ViewAction {
     override fun getConstraints(): Matcher<View?> {
         return Matchers.allOf<View?>(
             ViewMatchers.isDisplayed(),
-            ViewMatchers.withClassName(Matchers.endsWith("RecyclerView"))
+            ViewMatchers.withClassName(Matchers.endsWith("RecyclerView")),
         )
     }
 
@@ -98,15 +102,15 @@ internal class ActionOnRecyclerViewItem internal constructor(
     }
 }
 
-/** Matcher used for finding a RootItem in the roots list.  */
+/** Matcher used for finding a BaseSidebarEntryItem in the roots list. */
 internal class ListViewItemMatcher internal constructor(private val mLabel: String?) :
     TypeSafeMatcher<Any?>() {
     override fun matchesSafely(item: Any?): Boolean {
-        if (item !is RootItem) {
+        if (item !is BaseSidebarEntryItem) {
             return false
         }
-        val root = item
-        return root.title == mLabel
+        val sidebarEntryItem = item
+        return sidebarEntryItem.title == mLabel
     }
 
     override fun describeTo(description: Description) {

@@ -18,22 +18,107 @@ package com.android.documentsui.base
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Parcel
+import android.os.Parcelable
 import android.provider.DocumentsContract
+import com.android.documentsui.IconUtils
+import com.android.documentsui.R
+import com.android.documentsui.base.Shared.compareToIgnoreCaseNullable
+import com.android.documentsui.roots.ShortcutResourceValues
+import com.android.documentsui.util.Material3Config.Companion.getRes
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.util.Objects
 
-class ShortcutInfo(
-    val icon: Int,
-    override val title: String,
-    override val root: RootInfo,
-    val parentDirDocumentId: String,
-) : SidebarEntryItemInfo {
+class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
+    constructor(icon: Int, title: String?, root: RootInfo, parentDirDocumentId: String?) : this() {
+        this.icon = icon
+        this.title = title
+        this.root = root
+        this.parentDirDocumentId = parentDirDocumentId
+    }
+
+    var icon: Int = ShortcutResourceValues.INVALID_ICON_REF
+    override var title: String? = null
+    override var root: RootInfo = RootInfo()
+    var parentDirDocumentId: String? = null
     override var documentId: String? = null
     override val uri: Uri?
         get() = DocumentsContract.buildDocumentUri(root.authority, documentId)
 
+    @SidebarEntryItemInfo.SidebarEntryItemType
+    override val derivedType: Int
+        get() {
+            if (
+                title.equals(Providers.HOME_SCREEN_SHORTCUT_TITLE) &&
+                    parentDirDocumentId.equals("primary:") &&
+                    root.authority.equals(Providers.AUTHORITY_STORAGE)
+            ) {
+                return SidebarEntryItemInfo.TYPE_HOME_SCREEN
+            } else {
+                return SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER
+            }
+        }
+
     override fun loadDrawerIcon(context: Context, maybeShowBadge: Boolean): Drawable? {
-        // TODO: b/439694430 - implement this view related method
-        return null
+        if (icon == RootInfo.LOAD_FROM_CONTENT_RESOLVER) {
+            return IconUtils.applyTintColor(
+                context,
+                loadMimeTypeIcon(context),
+                getRes(R.color.item_root_icon),
+            )
+        } else if (icon != 0) {
+            return IconUtils.applyTintColor(context, icon, getRes(R.color.item_root_icon))
+        } else {
+            return IconUtils.loadPackageIcon(
+                context,
+                root.userId,
+                root.authority,
+                root.icon,
+                maybeShowBadge,
+            )
+        }
+    }
+
+    private fun loadMimeTypeIcon(context: Context): Drawable? {
+        return when (root.derivedType) {
+            SidebarEntryItemInfo.TYPE_IMAGES ->
+                IconUtils.loadMimeIcon(context, MimeTypes.IMAGE_MIME)
+            SidebarEntryItemInfo.TYPE_AUDIO -> IconUtils.loadMimeIcon(context, MimeTypes.AUDIO_MIME)
+            SidebarEntryItemInfo.TYPE_VIDEO -> IconUtils.loadMimeIcon(context, MimeTypes.VIDEO_MIME)
+            else -> IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE)
+        }
+    }
+
+    /**
+     * Gets the URI of the parent directory. The parent directory may not be a real root directory.
+     */
+    fun getParentDirectoryUri(): Uri {
+        return DocumentsContract.buildDocumentUri(root.authority, parentDirDocumentId)
+    }
+
+    override fun supportsCreate(): Boolean {
+        return root.supportsCreate()
+    }
+
+    override fun supportsEject(): Boolean {
+        return false
+    }
+
+    override fun isEjecting(): Boolean {
+        return false
+    }
+
+    override fun supportsInspect(): Boolean {
+        return documentId != null
+    }
+
+    override fun hasSettings(): Boolean {
+        return root.hasSettings()
+    }
+
+    override fun isValidDropTarget(): Boolean {
+        return supportsCreate() || root.isTrash()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -62,5 +147,70 @@ class ShortcutInfo(
             root +
             "} @ " +
             uri)
+    }
+
+    override fun compareTo(other: SidebarEntryItemInfo): Int {
+        val score: Int = derivedType - other.derivedType
+        if (score != 0) {
+            return score
+        }
+        // If comparing a shortcut info with a root info, the score should have already been
+        // returned since the derived types would be different.
+        val o: ShortcutInfo = other as ShortcutInfo
+        return compareToIgnoreCaseNullable(title, o.title)
+    }
+
+    override fun reset() {
+        title = null
+        documentId = null
+        root = RootInfo()
+    }
+
+    override fun read(input: DataInputStream?) {
+        icon = input!!.readInt()
+        title = DurableUtils.readNullableString(input)
+        root = RootInfo()
+        root.read(input)
+        parentDirDocumentId = DurableUtils.readNullableString(input)
+        documentId = DurableUtils.readNullableString(input)
+    }
+
+    override fun write(out: DataOutputStream?) {
+        out!!.writeInt(icon)
+        DurableUtils.writeNullableString(out, title)
+        root.write(out)
+        DurableUtils.writeNullableString(out, parentDirDocumentId)
+        DurableUtils.writeNullableString(out, documentId)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        DurableUtils.writeToParcel(dest, this)
+    }
+
+    companion object CREATOR : Parcelable.Creator<ShortcutInfo> {
+        override fun createFromParcel(input: Parcel): ShortcutInfo {
+            val shortcut = ShortcutInfo()
+            DurableUtils.readFromParcel(input, shortcut)
+            return shortcut
+        }
+
+        override fun newArray(size: Int): Array<ShortcutInfo?> {
+            return kotlin.arrayOfNulls<ShortcutInfo?>(size)
+        }
+    }
+
+    /** Returns a new shortcut info copied from the existing ShortcutInfo instance. */
+    fun copyShortcutInfo(): ShortcutInfo {
+        val newShortcut = ShortcutInfo()
+        newShortcut.icon = this.icon
+        newShortcut.title = this.title
+        newShortcut.root = RootInfo.copyRootInfo(this.root)
+        newShortcut.parentDirDocumentId = this.parentDirDocumentId
+        newShortcut.documentId = this.documentId
+        return newShortcut
     }
 }

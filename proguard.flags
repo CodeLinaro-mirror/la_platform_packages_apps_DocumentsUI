@@ -63,6 +63,7 @@
   int ic_eject;
   int ic_menu_copy;
   int ic_root_download;
+  int ic_root_homescreen;
   int ic_sd_storage;
   int root_list_selector;
   int work_off;
@@ -130,6 +131,7 @@
   int root_menu_open_in_new_window;
   int root_menu_paste_into_folder;
   int root_menu_settings;
+  int root_menu_inspect;
   int sub_menu_grid;
   int sub_menu_list;
   int table_header;
@@ -218,6 +220,13 @@
   int DocumentsDefaultTheme;
   int DocumentsTheme;
 }
+-keep class com.android.documentsui.R$array {
+  int shortcut_authorities;
+  int shortcut_root_ids;
+  int shortcut_parent_doc_ids;
+  int shortcut_titles;
+  int shortcut_icons;
+}
 
 # Keep Apache Commons Compress classes
 -keep class org.apache.commons.compress.** { *; }
@@ -229,11 +238,14 @@
 
 # This is used in the unit test.
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbController {
-  public void setVisible(boolean);
+  public void setClickConsumer(java.util.function.IntConsumer);
+}
+-keep class com.android.documentsui.breadcrumbs.BreadcrumbModel {
+  public boolean setFromStack(com.android.documentsui.base.DocumentStack);
 }
 -keep class com.android.documentsui.breadcrumbs.BreadcrumbView {
-  public void setVisible(boolean);
   public boolean performPathItemClick(int);
+  public int getPathLength();
 }
 
 -keep class com.android.documentsui.util.Material3Config {
@@ -337,5 +349,15 @@
 }
 -keep class com.android.documentsui.sidebar.BaseSidebarEntryItem { *; }
 -keep class com.android.documentsui.sidebar.ShortcutItem { *; }
-# TODO(lucmult): Remove this when this class is used.
+-keep class com.android.documentsui.roots.ProvidersCache { *; }
+# TODO(lucmult): Remove these when they're used by the prod code.
 -keep class com.android.documentsui.dirlist.SummaryProviderManager { *; }
+-keep class com.android.documentsui.loaders.SummaryLoader { *; }
+-keep interface com.android.documentsui.SummaryUpdateListener { *; }
+-keep class com.android.documentsui.ModelSummariesUpdate { *; }
+
+-keep class com.android.documentsui.base.PathExtractor { *; }
+
+-keep class com.android.documentsui.services.JobProgress {
+  public <init>(java.lang.String, int, int, java.lang.String, boolean);
+}

@@ -34,16 +34,17 @@ import com.android.documentsui.roots.RootCursorWrapper
 
 const val TAG = "SearchV2"
 
-val FILE_ENTRY_COLUMNS = arrayOf(
-    Document.COLUMN_DOCUMENT_ID,
-    Document.COLUMN_MIME_TYPE,
-    Document.COLUMN_DISPLAY_NAME,
-    Document.COLUMN_LAST_MODIFIED,
-    Document.COLUMN_FLAGS,
-    Document.COLUMN_SUMMARY,
-    Document.COLUMN_SIZE,
-    Document.COLUMN_ICON,
-)
+val FILE_ENTRY_COLUMNS =
+    arrayOf(
+        Document.COLUMN_DOCUMENT_ID,
+        Document.COLUMN_MIME_TYPE,
+        Document.COLUMN_DISPLAY_NAME,
+        Document.COLUMN_LAST_MODIFIED,
+        Document.COLUMN_FLAGS,
+        Document.COLUMN_SUMMARY,
+        Document.COLUMN_SIZE,
+        Document.COLUMN_ICON,
+    )
 
 fun emptyCursor(): Cursor {
     return MatrixCursor(FILE_ENTRY_COLUMNS)
@@ -65,8 +66,8 @@ fun toSingleCursor(cursorList: List<Cursor>): Cursor {
 
 /**
  * The base class for search and directory loaders. This class implements common functionality
- * shared by these loaders. The extending classes should implement loadInBackground, which
- * should call the queryLocation method.
+ * shared by these loaders. The extending classes should implement loadInBackground, which should
+ * call the queryLocation method.
  */
 abstract class BaseFileLoader(
     context: Context,
@@ -155,9 +156,7 @@ abstract class BaseFileLoader(
         storedResult = null
     }
 
-    /**
-     * Quietly closes the result cursor, if results are still available.
-     */
+    /** Quietly closes the result cursor, if results are still available. */
     fun closeResult(result: DirectoryResult?) {
         try {
             result?.close()
@@ -192,54 +191,52 @@ abstract class BaseFileLoader(
     }
 
     /**
-     * A function that, for the specified location rooted in the root with the given rootId
-     * attempts to obtain a non-null cursor from the content provider client obtained for the
-     * given locationUri. It returns a non-null cursor, if it can access the location given
-     * by the `locationUri`, or null, if it fails to query the given location for the current user.
+     * A function that, for the specified location rooted in the root with the given rootId attempts
+     * to obtain a non-null cursor from the content provider client obtained for the given
+     * locationUri. It returns a non-null cursor, if it can access the location given by the
+     * `locationUri`, or null, if it fails to query the given location for the current user.
      */
-    fun queryLocation(
-        rootInfo: RootInfo,
-        locationUri: Uri,
-        queryArgs: Bundle?,
-        maxResults: Int,
-    ): Cursor? {
+    fun queryLocation(rootInfo: RootInfo, locationUri: Uri, queryArgs: Bundle?): Cursor? {
         try {
             Trace.beginSection("documentsui.searchv2.BaseFileLoader#queryLocation")
-            return queryLocationTraced(rootInfo, locationUri, queryArgs, maxResults)
+            return queryLocationTraced(rootInfo, locationUri, queryArgs)
         } finally {
             Trace.endSection()
         }
     }
 
-    /**
-     * A queryLocation code run within a trace.
-     */
+    /** A queryLocation code run within a trace. */
     private fun queryLocationTraced(
         rootInfo: RootInfo,
         locationUri: Uri,
         queryArgs: Bundle?,
-        maxResults: Int,
     ): Cursor? {
         val authority = locationUri.authority ?: return null
-        if (DEBUG) {
-            Log.d(TAG, "BaseFileLoader.queryLocation for ${rootInfo.userId} at $locationUri")
-        }
         val resolver = rootInfo.userId.getContentResolver(context) ?: return null
-        resolver.acquireUnstableContentProviderClient(
-            authority
-        ).use { client ->
+        resolver.acquireUnstableContentProviderClient(authority).use { client ->
             if (client == null) {
                 return null
             }
             // TODO(b:440453094): Fix handling of cancel signal is documents providers.
             val cursor = client.query(locationUri, null, queryArgs, cancelNotifier) ?: return null
-            return RootCursorWrapper(
-                rootInfo.userId,
-                authority,
-                rootInfo.rootId,
-                cursor,
-                maxResults
-            )
+            return createRootCursorWrapper(rootInfo, locationUri, cursor)
         }
     }
+
+    /**
+     * A method to create RootCursorWrapper given a result Cursor from the query. This allows
+     * subclass to override the creation, such as specifying max result or authority.
+     */
+    open fun createRootCursorWrapper(
+        rootInfo: RootInfo,
+        locationUri: Uri,
+        cursor: Cursor,
+    ): RootCursorWrapper =
+        RootCursorWrapper(
+            rootInfo.userId,
+            locationUri.authority,
+            rootInfo.rootId,
+            cursor,
+            ALL_RESULTS,
+        )
 }

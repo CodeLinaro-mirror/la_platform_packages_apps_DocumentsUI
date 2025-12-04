@@ -48,6 +48,9 @@ import android.view.ViewGroup.MarginLayoutParams;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -114,10 +117,50 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     }
 
     @Override
+    protected int getBottomPadding() {
+        if (isUseMaterial3FlagEnabled()) {
+            return getResources().getDimensionPixelSize(R.dimen.picker_saver_padding_bottom);
+        }
+        return 0;
+    }
+
+    @Override
     protected void setContainer() {
         if (isDesktopUxPhase2FlagEnabled()) {
-            // Intentionally doing nothing because PickActivity is not rendered as a full window
-            // activity, no need to do window insets setup as done by BaseActivity.
+            // Set bottom padding for the main container (i.e. right section) only because we don't
+            // need bottom padding for the navigation tree area.
+            View mainContainer = findViewById(getRes(R.id.main_container));
+            mainContainer.setPadding(0, 0, 0, getBottomPadding());
+
+            // PickActivity is not rendered as a full window activity, instead the UI was wrapped
+            // in a dialog with margins (check onCreate()), so no need to cater root container
+            // padding like what we have in BaseActivity. Instead we need to handle the overlap on
+            // the margin because that's the area which might be overlapped with navigation bar.
+            View root = findViewById(getRes(R.id.coordinator_layout));
+            final int horizontalMargin =
+                    getResources()
+                            .getDimensionPixelSize(R.dimen.pick_dialog_window_margin_horizontal);
+            final int verticalMargin =
+                    getResources()
+                            .getDimensionPixelSize(R.dimen.pick_dialog_window_margin_vertical);
+            ViewCompat.setOnApplyWindowInsetsListener(
+                    root,
+                    (v, insets) -> {
+                        // System bars includes both status bar (top) and navigation bar (bottom)
+                        // and also others, the insets will only have non-zero values when the app
+                        // might be overlapped with these areas (i.e. in fullscreen mode),
+                        // otherwise (i.e. in window mode) they will all be 0.
+                        Insets systemBarInsets =
+                                insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                        MarginLayoutParams mlp = (MarginLayoutParams) v.getLayoutParams();
+                        mlp.leftMargin = horizontalMargin + systemBarInsets.left;
+                        mlp.rightMargin = horizontalMargin + systemBarInsets.right;
+                        mlp.topMargin = verticalMargin + systemBarInsets.top;
+                        mlp.bottomMargin = verticalMargin + systemBarInsets.bottom;
+                        v.setLayoutParams(mlp);
+
+                        return WindowInsetsCompat.CONSUMED;
+                    });
         } else {
             super.setContainer();
         }
@@ -146,13 +189,14 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         return DocumentsApplication.getUserManagerState(context).getUserIds();
                     }
                 });
-
+        initInjector();
         super.onCreate(icicle);
 
         // The customizations here plus the PickDialogTheme style PickActivity styled as a dialog.
         // * Margins: by default the root view (coordinator_layout) will occupy the whole activity
         //            window, adding additional margins here between the root view and the window
-        //            so we can show the overlay and a visual border around the root view.
+        //            so we can show the overlay and a visual border around the root view (handled
+        //            by setContainer() above).
         // * Dialog corner radius: this is achieved by the custom background, ClipToOutline
         //                         makes sure the content inside the root view will be clipped
         //                         to the corner radius.
@@ -160,14 +204,6 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
         // * Dialog shadow: this is achieved by the elevation.
         if (isDesktopUxPhase2FlagEnabled()) {
             View coordinatorLayout = findViewById(getRes(R.id.coordinator_layout));
-            final int horizontalMargin =
-                    getResources()
-                            .getDimensionPixelSize(R.dimen.pick_dialog_window_margin_horizontal);
-            final int verticalMargin =
-                    getResources()
-                            .getDimensionPixelSize(R.dimen.pick_dialog_window_margin_vertical);
-            ((MarginLayoutParams) coordinatorLayout.getLayoutParams())
-                    .setMargins(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             int elevation = getResources().getInteger(R.integer.pick_dialog_window_elevation);
             coordinatorLayout.setElevation(elevation);
             coordinatorLayout.setBackgroundResource(R.drawable.pick_dialog_background);

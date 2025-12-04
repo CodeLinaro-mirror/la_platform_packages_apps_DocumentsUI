@@ -211,7 +211,8 @@ class CopyJob extends ResolvedResourcesJob {
     protected String getProgressMessage() {
         Map<String, Object> formatArgs = new HashMap<>();
         formatArgs.put("directory", BidiFormatter.getInstance().unicodeWrap(stack.getTitle()));
-        return getProgressMessage(R.string.copy_in_progress, formatArgs);
+        return getProgressMessage(
+                R.string.copy_specific_file_in_progress, R.string.copy_in_progress, formatArgs);
     }
 
     @Override
@@ -223,6 +224,9 @@ class CopyJob extends ResolvedResourcesJob {
                     getState(),
                     getProgressMessage(),
                     hasFailures(),
+                    failedDocs,
+                    failedUris,
+                    failedPaths,
                     stack);
         }
         mProgressTracker.updateEstimateRemainingTime();
@@ -232,6 +236,9 @@ class CopyJob extends ResolvedResourcesJob {
                 getState(),
                 getProgressMessage(),
                 hasFailures(),
+                failedDocs,
+                failedUris,
+                failedPaths,
                 stack,
                 mProgressTracker.getCurrentBytes(),
                 mProgressTracker.getRequiredBytes(),

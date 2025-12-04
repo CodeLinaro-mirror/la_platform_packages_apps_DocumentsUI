@@ -233,15 +233,23 @@
     <string name="rename_error" msgid="6700093173508118635">"Gagal menamakan semula dokumen"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Keluarkan"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Sesetengah fail telah ditukarkan"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Menyalin “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Menyalin # fail kepada “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="extract_in_progress" msgid="8395914945005887951">"{count,plural, =1{Mengekstrak “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Mengekstrak # fail kepada “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Mengalihkan “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Mengalihkan # fail kepada “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Memadamkan “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Memadamkan # fail}}"</string>
-    <string name="trash_in_progress" msgid="148010238243445101">"{count,plural, =1{Mengalihkan “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada sampah}other{Mengalihkan # fail kepada sampah}}"</string>
-    <string name="restore_in_progress" msgid="77264930309492659">"{count,plural, =1{Memulihkan “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Memulihkan # fail}}"</string>
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Mengezip “<xliff:g id="FILENAME">{filename}</xliff:g>”}other{Mengezip # fail}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Menyalin “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Menyalin # fail kepada “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Menyalin # fail kepada “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Mengekstrak “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Mengekstrak # fail kepada “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Mengekstrak # fail kepada “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Mengalihkan “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada “<xliff:g id="DIRECTORY">{directory}</xliff:g>”"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Mengalihkan # fail kepada “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”}other{Mengalihkan # fail kepada “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Memadamkan “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Memadamkan # fail}other{Memadamkan # fail}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Mengalihkan “<xliff:g id="FILENAME">{filename}</xliff:g>” kepada sampah"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{Mengalihkan # fail kepada sampah}other{Mengalihkan # fail kepada sampah}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Memulihkan “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Memulihkan # fail}other{Memulihkan # fail}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Mengezip “<xliff:g id="FILENAME">{filename}</xliff:g>”"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Mengezip # fail}other{Mengezip # fail}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Tunjukkan kemajuan fail"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Kemajuan Fail"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Ketepikan semua"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Selesai"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Dibatalkan"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Lihat butiran"</string>
@@ -368,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Pratonton imej <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Sembunyikan panel maklumat"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Tunjukkan panel maklumat"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Tiada apa-apa dalam sampah"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Fail dalam sampah yang melebihi 30 hari akan dipadamkan secara automatik."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Kosongkan sampah sekarang"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Kosongkan sampah?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Tindakan ini tidak boleh dibatalkan dan fail tersebut tidak boleh dipulihkan lagi."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Kosongkan sampah"</string>
 </resources>

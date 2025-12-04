@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"ഇതുവഴി പങ്കിടുക"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ഫയലുകൾ പകർത്തുന്നു"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ഫയലുകൾ കംപ്രസ്സുചെയ്യുന്നു"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"ഫയലുകൾ സിപ്പ് ചെയ്യുന്നു"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"ഫയലുകൾ എക്‌സ്ട്രാക്‌റ്റുചെയ്യുക"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ഫയലുകൾ നീക്കുന്നു"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ഫയലുകൾ ഇല്ലാതാക്കുന്നു"</string>
@@ -166,10 +165,8 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ ‌ഇല്ലാതാക്കുന്നു.</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ഇനം ‌ഇല്ലാതാക്കുന്നു.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{# ഫയൽ ട്രാഷിലേക്ക് നീക്കുന്നു}other{# ഫയലുകൾ ട്രാഷിലേക്ക് നീക്കുന്നു}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{# ഫയൽ പുനഃസ്ഥാപിക്കുന്നു}other{# ഫയലുകൾ പുനഃസ്ഥാപിക്കുന്നു}}"</string>
     <string name="undo" msgid="2902438994196400565">"പഴയപടിയാക്കുക"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"തയ്യാറെടുക്കുന്നു..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"തയ്യാറെടുക്കുന്നു..."</string>
@@ -182,61 +179,48 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം പകർത്താനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ പകർത്താനായില്ല}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{# ഫയൽ പകർത്താനായില്ല}other{# ഫയലുകൾ പകർത്താനായില്ല}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം കംപ്രസ് ചെയ്യാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ കംപ്രസ് ചെയ്യാനായില്ല}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{# ഫയൽ സിപ്പ് ചെയ്യാനായില്ല}other{# ഫയലുകൾ സിപ്പ് ചെയ്യാനായില്ല}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{# ഫയൽ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്യാനായില്ല}other{# ഫയലുകൾ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്യാനായില്ല}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം നീക്കാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ നീക്കാനായില്ല}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{# ഫയൽ നീക്കാനായില്ല}other{# ഫയലുകൾ നീക്കാനായില്ല}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> ഇനം ഇല്ലാതാക്കാനായില്ല}other{<xliff:g id="COUNT_1">{count}</xliff:g> ഇനങ്ങൾ ഇല്ലാതാക്കാനായില്ല}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{# ഫയൽ ഇല്ലാതാക്കാനായില്ല}other{# ഫയലുകൾ ഇല്ലാതാക്കാനായില്ല}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{# ഫയൽ ട്രാഷിലേക്ക് നീക്കാനായില്ല}other{# ഫയലുകൾ ട്രാഷിലേക്ക് നീക്കാനായില്ല}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{# ഫയൽ പുനഃസ്ഥാപിക്കാനായില്ല}other{# ഫയലുകൾ പുനഃസ്ഥാപിക്കാനായില്ല}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"വിശദാംശങ്ങൾ കാണുന്നതിന് ടാപ്പുചെയ്യുക"</string>
     <string name="close" msgid="905969391788869975">"അവസാനിപ്പിക്കുക"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="other">ഈ ഫയലുകൾ പകർത്തപ്പെട്ടില്ല: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ഈ ഫയൽ പകർത്തപ്പെട്ടില്ല: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{ഈ ഫയൽ പകർത്തിയിട്ടില്ല: <xliff:g id="LIST_0">{list}</xliff:g>}other{ഈ ഫയലുകൾ പകർത്തിയിട്ടില്ല: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">ഈ ഫയലുകൾ കംപ്രസ്സുചെയ്യപ്പെട്ടില്ല: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ഈ ഫയൽ കംപ്രസ്സുചെയ്യപ്പെട്ടില്ല: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{ഈ ഫയൽ സിപ്പ് ചെയ്തിട്ടില്ല: <xliff:g id="LIST_0">{list}</xliff:g>}other{ഈ ഫയലുകൾ സിപ്പ് ചെയ്തിട്ടില്ല: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">ഈ ഫയലുകൾ എക്സ്‌ട്രാക്റ്റു‌ചെയ്യപ്പെട്ടില്ല: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ഈ ഫയൽ എക്സ്‌ട്രാക്റ്റു‌ചെയ്യപ്പെട്ടില്ല: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{ഈ ഫയൽ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്‌തിട്ടില്ല: <xliff:g id="LIST_0">{list}</xliff:g>}other{ഈ ഫയലുകൾ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്‌തിട്ടില്ല: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">ഈ ഫയലുകൾ നീക്കപ്പെട്ടില്ല: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ഈ ഫയൽ നീക്കപ്പെട്ടില്ല: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{ഈ ഫയൽ നീക്കിയിട്ടില്ല: <xliff:g id="LIST_0">{list}</xliff:g>}other{ഈ ഫയലുകൾ നീക്കിയിട്ടില്ല: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">ഈ ഫയലുകൾ ഇല്ലാതാക്കപ്പെട്ടില്ല: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ഈ ഫയൽ ഇല്ലാതാക്കപ്പെട്ടില്ല: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{ഈ ഫയൽ ഇല്ലാതാക്കിയിട്ടില്ല: <xliff:g id="LIST_0">{list}</xliff:g>}other{ഈ ഫയലുകൾ ഇല്ലാതാക്കിയിട്ടില്ല: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">ഈ ഫയലുകൾ മറ്റൊരു ‌ഫോർമാ‌റ്റിലേക്ക് ‌പരിവർത്തിക്കപ്പെട്ടു: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ഈ ഫയൽ മറ്റൊരു ‌ഫോർമാ‌റ്റിലേക്ക് ‌പരിവർത്തിക്കപ്പെട്ടു: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{ഈ ഫയൽ മറ്റൊരു ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്തു: <xliff:g id="LIST_0">{list}</xliff:g>}other{ഈ ഫയലുകൾ മറ്റൊരു ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്തു: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ പകർത്തി.</item>
       <item quantity="one">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_0">%1$d</xliff:g> ഇനം പകർത്തി.</item>
@@ -249,18 +233,23 @@
     <string name="rename_error" msgid="6700093173508118635">"ഡോക്യുമെന്റിന്റെ പേരുമാറ്റുന്നത് പരാജയപ്പെട്ടു"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"ഒഴിവാക്കുക"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"ചില ഫയലുകൾ പരിവർത്തനം ചെയ്യപ്പെട്ടു"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” പകർത്തുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ പകർത്തുന്നു}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” നീക്കുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ നീക്കുന്നു}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ഇല്ലാതാക്കുന്നു}other{# ഫയലുകൾ ഇല്ലാതാക്കുന്നു}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ സിപ്പ് ചെയ്യുന്നു}other{# ഫയലുകൾ സിപ്പ് ചെയ്യുന്നു}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"“<xliff:g id="DIRECTORY">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” പകർത്തുന്നു"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{\"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" എന്നതിലേക്ക് # ഫയൽ പകർത്തുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ പകർത്തുന്നു}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"“<xliff:g id="DIRECTORY">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” എക്‌സ്ട്രാക്റ്റ് ചെയ്യുന്നു"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയൽ എക്‌സ്ട്രാക്റ്റ് ചെയ്യുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ എക്‌സ്ട്രാക്റ്റ് ചെയ്യുന്നു}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"“<xliff:g id="DIRECTORY">{directory}</xliff:g>” എന്നതിലേക്ക് “<xliff:g id="FILENAME">{filename}</xliff:g>” നീക്കുന്നു"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{\"<xliff:g id="DIRECTORY_0">{directory}</xliff:g>\" എന്നതിലേക്ക് # ഫയൽ നീക്കുന്നു}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>” എന്നതിലേക്ക് # ഫയലുകൾ നീക്കുന്നു}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"“<xliff:g id="FILENAME">{filename}</xliff:g>” ഇല്ലാതാക്കുന്നു"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{# ഫയൽ ഇല്ലാതാക്കുന്നു}other{# ഫയലുകൾ ഇല്ലാതാക്കുന്നു}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"“<xliff:g id="FILENAME">{filename}</xliff:g>” ട്രാഷിലേക്ക് നീക്കുന്നു"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{# ഫയൽ ട്രാഷിലേക്ക് നീക്കുന്നു}other{# ഫയലുകൾ ട്രാഷിലേക്ക് നീക്കുന്നു}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"“<xliff:g id="FILENAME">{filename}</xliff:g>” പുനഃസ്ഥാപിക്കുന്നു"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{# ഫയൽ പുനഃസ്ഥാപിക്കുന്നു}other{# ഫയലുകൾ പുനഃസ്ഥാപിക്കുന്നു}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"“<xliff:g id="FILENAME">{filename}</xliff:g>“ സിപ്പ് ചെയ്യുന്നു"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{# ഫയൽ സിപ്പ് ചെയ്യുന്നു}other{# ഫയലുകൾ സിപ്പ് ചെയ്യുന്നു}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ഫയലിന്റെ പുരോഗതി കാണിക്കുക"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ഫയലിന്റെ പുരോഗതി"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"എല്ലാം ഡിസ്‌മിസ് ചെയ്യുക"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"പൂർത്തിയായി"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"റദ്ദാക്കി"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"വിശദാംശങ്ങൾ കാണുക"</string>
@@ -387,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> എന്ന ചിത്രത്തിന്റെ പ്രിവ്യൂ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"വിവര പാനൽ മറയ്ക്കുക"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"വിവര പാനൽ കാണിക്കുക"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"ട്രാഷിൽ ഒന്നുമില്ല"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30 ദിവസത്തിൽ കൂടുതലായി ട്രാഷിലുള്ള ഫയലുകൾ സ്വയമേവ ഇല്ലാതാക്കും."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ട്രാഷ് ഇപ്പോൾ തന്നെ ശൂന്യമാക്കുക"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ട്രാഷ് ശൂന്യമാക്കണോ?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ആ പ്രവർത്തനം പഴയപടിയാക്കാനാകില്ല, ഫയലുകൾ വീണ്ടെടുക്കാനുമാകില്ല."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ട്രാഷ് ശൂന്യമാക്കുക"</string>
 </resources>

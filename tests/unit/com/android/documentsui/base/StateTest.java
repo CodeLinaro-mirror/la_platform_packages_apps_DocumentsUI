@@ -17,27 +17,40 @@
 package com.android.documentsui.base;
 
 
+import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Intent;
+import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
+
+import com.android.documentsui.TestRunner;
+import com.android.documentsui.rules.OverrideFlagsRule;
+import com.android.documentsui.testing.Parcelables;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(AndroidJUnit4.class)
+import java.util.Objects;
+
+@RunWith(TestRunner.class)
 @SmallTest
 public class StateTest {
 
-    private static final String[] MIME_TYPES = { "image/gif", "image/jpg" };
+    private static final String[] MIME_TYPES = {"image/gif", "image/jpg"};
 
     private Intent mIntent;
     private State mState;
+
+    @Rule
+    public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Before
     public void setUp() {
@@ -58,7 +71,7 @@ public class StateTest {
     public void testAcceptIntentTypeWithoutExtra() {
         mState.initAcceptMimes(mIntent, MIME_TYPES[0]);
 
-        assertArrayEquals(new String[] { MIME_TYPES[0] }, mState.acceptMimes);
+        assertArrayEquals(new String[]{MIME_TYPES[0]}, mState.acceptMimes);
     }
 
     @Test
@@ -91,7 +104,7 @@ public class StateTest {
 
     @Test
     public void testPhotoPicking_onlyOneImageType() {
-        String[] stringArray = { MIME_TYPES[0] };
+        String[] stringArray = {MIME_TYPES[0]};
         mIntent.putExtra(Intent.EXTRA_MIME_TYPES, stringArray);
 
         mState.initAcceptMimes(mIntent, "*/*");
@@ -111,7 +124,7 @@ public class StateTest {
 
     @Test
     public void testPhotoPicking_noImageType() {
-        final String[] mimeTypes = { "audio/mp3", "video/mp4" };
+        final String[] mimeTypes = {"audio/mp3", "video/mp4"};
         mIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         mState.initAcceptMimes(mIntent, "*/*");
         mState.action = State.ACTION_GET_CONTENT;
@@ -121,7 +134,7 @@ public class StateTest {
 
     @Test
     public void testPhotoPicking_oneIsNotImageType() {
-        final String[] mimeTypes = { "image/gif", "image/jpg", "audio/mp3" };
+        final String[] mimeTypes = {"image/gif", "image/jpg", "audio/mp3"};
         mIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         mState.initAcceptMimes(mIntent, "*/*");
         mState.action = State.ACTION_GET_CONTENT;
@@ -145,5 +158,27 @@ public class StateTest {
         mState.action = State.ACTION_GET_CONTENT;
 
         assertFalse(mState.isPhotoPicking());
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testParcelingWithNoShortcut() {
+        mState.shortcut = null;
+
+        Parcelables.assertParcelable(mState, 0,
+            (State left, State right) -> Objects.equals(left.toString(), right.toString()));
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testParcelingWithShortcut() {
+        RootInfo root = new RootInfo();
+        root.userId = UserId.of(100);
+        root.authority = "aaa";
+        root.rootId = "rrr";
+        mState.shortcut = new ShortcutInfo(10, "ttt", root, "ppp");
+
+        Parcelables.assertParcelable(mState, 0,
+            (State left, State right) -> Objects.equals(left.toString(), right.toString()));
     }
 }

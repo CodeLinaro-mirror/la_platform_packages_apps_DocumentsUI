@@ -19,6 +19,7 @@ package com.android.documentsui.sidebar;
 import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -49,6 +50,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
@@ -67,6 +69,7 @@ import com.android.documentsui.Injector;
 import com.android.documentsui.Injector.Injected;
 import com.android.documentsui.ItemDragListener;
 import com.android.documentsui.R;
+import com.android.documentsui.TimeoutTask;
 import com.android.documentsui.UserManagerState;
 import com.android.documentsui.UserPackage;
 import com.android.documentsui.base.BooleanConsumer;
@@ -76,11 +79,14 @@ import com.android.documentsui.base.Events;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.base.ShortcutInfo;
+import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.roots.RootsLoader;
+import com.android.documentsui.roots.ShortcutsLoader;
 import com.android.documentsui.util.CrossProfileUtils;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -116,7 +122,9 @@ public class RootsFragment extends Fragment {
     private static final int CONTEXT_MENU_ITEM_TIMEOUT = 500;
 
     private RootsListHandler mListHandler;
-    private LoaderCallbacks<Collection<RootInfo>> mCallbacks;
+    private LoaderCallbacks<Collection<RootInfo>> mRootsCallbacks;
+    private LoaderCallbacks<Collection<ShortcutInfo>> mShortcutsCallbacks;
+    private Collection<RootInfo> mLoadedRoots;
     private @Nullable OnDragListener mDragListener;
 
     @Injected
@@ -245,17 +253,16 @@ public class RootsFragment extends Fragment {
         Item item = mListHandler.getItemFromViewUnder(x, y);
 
         // If a read-only root, no need to see if top level is writable (it's not)
-        if (!(item instanceof RootItem) || !((RootItem) item).root.supportsCreate()) {
+        if (!(item instanceof BaseSidebarEntryItem)
+                || !((BaseSidebarEntryItem) item).getItemInfo().supportsCreate()) {
             return false;
         }
 
-        final RootItem rootItem = (RootItem) item;
-        getRootDocument(
-                rootItem,
-                (DocumentInfo doc) -> {
-                    rootItem.setDocInfo(doc);
-                    callback.run();
-                });
+        final BaseSidebarEntryItem sidebarItem = (BaseSidebarEntryItem) item;
+        getSidebarItemDocument(sidebarItem, (DocumentInfo doc) -> {
+                sidebarItem.setDocInfo(doc);
+                callback.run();
+        });
         return true;
     }
 
@@ -290,7 +297,30 @@ public class RootsFragment extends Fragment {
             mDragListener = mListHandler.createDragListener(listener);
         }
 
-        mCallbacks = new LoaderCallbacks<Collection<RootInfo>>() {
+        mShortcutsCallbacks = new LoaderCallbacks<>() {
+            @NonNull
+            @Override
+            public Loader<Collection<ShortcutInfo>> onCreateLoader(int id, @Nullable Bundle args) {
+                return new ShortcutsLoader(
+                    getContext(), providers, activity.getSelectedUser());
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<Collection<ShortcutInfo>> loader,
+                Collection<ShortcutInfo> shortcuts) {
+                if (!isHomeScreenFilesFlagEnabled()) {
+                    shortcuts = new ArrayList<>();
+                }
+                loadFinished(mLoadedRoots, shortcuts, activity, state);
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<Collection<ShortcutInfo>> loader) {
+                mListHandler.resetAdapter();
+            }
+        };
+
+        mRootsCallbacks = new LoaderCallbacks<>() {
             @Override
             public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
                 return new RootsLoader(activity, providers, state);
@@ -298,94 +328,20 @@ public class RootsFragment extends Fragment {
 
             @Override
             public void onLoadFinished(
-                    Loader<Collection<RootInfo>> loader, Collection<RootInfo> roots) {
+                Loader<Collection<RootInfo>> loader, Collection<RootInfo> roots) {
                 if (!isAdded()) {
                     return;
                 }
 
-                boolean shouldIncludeHandlerApp = getArguments().getBoolean(EXTRA_INCLUDE_APPS,
-                        /* defaultValue= */ false);
-                Intent handlerAppIntent = getArguments().getParcelable(EXTRA_INCLUDE_APPS_INTENT);
-
-                final Intent intent = activity.getIntent();
-                final boolean excludeSelf =
-                        intent.getBooleanExtra(DocumentsContract.EXTRA_EXCLUDE_SELF, false);
-                final String excludePackage = excludeSelf ? activity.getCallingPackage() : null;
-                final boolean maybeShowBadge =
-                        getBaseActivity().getDisplayState().supportsCrossProfile();
-
-                // For action which supports cross profile, update the policy value in state if
-                // necessary.
-                ResolveInfo crossProfileResolveInfo = null;
-                UserManagerState userManagerState = null;
-                if (state.supportsCrossProfile() && handlerAppIntent != null) {
-                    if (state.configStore.isPrivateSpaceInDocsUIEnabled()
-                            && SdkLevel.isAtLeastS()) {
-                        userManagerState = DocumentsApplication.getUserManagerState(getContext());
-                        Map<UserId, Boolean> canForwardToProfileIdMap =
-                                userManagerState.getCanForwardToProfileIdMapForAllowedUsers(intent,
-                                        state);
-                        updateCrossProfileMapStateAndMaybeRefresh(canForwardToProfileIdMap);
-                    } else {
-                        crossProfileResolveInfo = CrossProfileUtils.getCrossProfileResolveInfo(
-                                UserId.CURRENT_USER, getContext().getPackageManager(),
-                                handlerAppIntent, getContext(),
-                                state.configStore.isPrivateSpaceInDocsUIEnabled());
-                        updateCrossProfileStateAndMaybeRefresh(
-                                /* canShareAcrossProfile= */ crossProfileResolveInfo != null);
-                    }
+                if (isHomeScreenFilesFlagEnabled()) {
+                    mLoadedRoots = roots;
+                    // Load the shortcut roots next
+                    LoaderManager.getInstance(RootsFragment.this).restartLoader(
+                        2, null, mShortcutsCallbacks);
+                    return;
                 }
 
-                if (state.configStore.isPrivateSpaceInDocsUIEnabled()
-                        && userManagerState == null) {
-                    userManagerState = DocumentsApplication.getUserManagerState(getContext());
-                }
-
-                List<Item> sortedItems = sortLoadResult(
-                        getContext(),
-                        state,
-                        roots,
-                        excludePackage,
-                        shouldIncludeHandlerApp ? handlerAppIntent : null,
-                        DocumentsApplication.getProvidersCache(getContext()),
-                        getBaseActivity().getSelectedUser(),
-                        getUserIds(),
-                        maybeShowBadge,
-                        userManagerState);
-
-                // This will be removed when feature flag is removed.
-                if (crossProfileResolveInfo != null && !Features.CROSS_PROFILE_TABS) {
-                    // Add profile item if we don't support cross-profile tab.
-                    sortedItems.add(new SpacerItem());
-                    if (mUseRailAsContainer) {
-                        sortedItems.add(new NavRailProfileItem(crossProfileResolveInfo,
-                                crossProfileResolveInfo.loadLabel(
-                                        getContext().getPackageManager()).toString(),
-                                mActionHandler));
-                    } else {
-                        sortedItems.add(new ProfileItem(crossProfileResolveInfo,
-                                crossProfileResolveInfo.loadLabel(
-                                        getContext().getPackageManager()).toString(),
-                                mActionHandler));
-                    }
-                }
-
-                // Disable drawer if only one root
-                activity.setRootsDrawerLocked(sortedItems.size() <= 1);
-
-                mListHandler.scrollToFirstVisiblePosition(sortedItems, mDragListener);
-
-                mInjector.shortcutsUpdater.accept(roots);
-                mInjector.appsRowManager.updateList(mApplicationItemList);
-                mInjector.appsRowManager.updateView(activity);
-                onCurrentRootChanged();
-            }
-
-            private List<UserId> getUserIds() {
-                if (state.configStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
-                    return DocumentsApplication.getUserManagerState(getContext()).getUserIds();
-                }
-                return DocumentsApplication.getUserIdManager(getContext()).getUserIds();
+                loadFinished(roots, new ArrayList<>(), activity, state);
             }
 
             @Override
@@ -394,6 +350,97 @@ public class RootsFragment extends Fragment {
             }
         };
     }
+
+    private void reloadRootsAndShortcuts() {
+        LoaderManager.getInstance(this).restartLoader(2, null, mRootsCallbacks);
+    }
+
+    @VisibleForTesting
+    public void loadFinished(Collection<RootInfo> roots, Collection<ShortcutInfo> shortcuts,
+            BaseActivity activity, State state) {
+        boolean shouldIncludeHandlerApp = getArguments().getBoolean(EXTRA_INCLUDE_APPS,
+                /* defaultValue= */ false);
+        Intent handlerAppIntent = getArguments().getParcelable(EXTRA_INCLUDE_APPS_INTENT);
+
+        final Intent intent = activity.getIntent();
+        final boolean excludeSelf =
+                intent.getBooleanExtra(DocumentsContract.EXTRA_EXCLUDE_SELF, false);
+        final String excludePackage = excludeSelf ? activity.getCallingPackage() : null;
+        final boolean maybeShowBadge =
+                getBaseActivity().getDisplayState().supportsCrossProfile();
+
+        // For action which supports cross profile, update the policy value in state if
+        // necessary.
+        ResolveInfo crossProfileResolveInfo = null;
+        UserManagerState userManagerState = null;
+        if (state.supportsCrossProfile() && handlerAppIntent != null) {
+            if (state.configStore.isPrivateSpaceInDocsUIEnabled()
+                && SdkLevel.isAtLeastS()) {
+                userManagerState = DocumentsApplication.getUserManagerState(getContext());
+                Map<UserId, Boolean> canForwardToProfileIdMap =
+                        userManagerState.getCanForwardToProfileIdMapForAllowedUsers(intent, state);
+                updateCrossProfileMapStateAndMaybeRefresh(canForwardToProfileIdMap);
+            } else {
+                crossProfileResolveInfo = CrossProfileUtils.getCrossProfileResolveInfo(
+                        UserId.CURRENT_USER, getContext().getPackageManager(),
+                        handlerAppIntent, getContext(),
+                        state.configStore.isPrivateSpaceInDocsUIEnabled());
+                updateCrossProfileStateAndMaybeRefresh(
+                        /* canShareAcrossProfile= */ crossProfileResolveInfo != null);
+            }
+        }
+
+        if (state.configStore.isPrivateSpaceInDocsUIEnabled() && userManagerState == null) {
+            userManagerState = DocumentsApplication.getUserManagerState(getContext());
+        }
+
+        List<UserId> userIds;
+        if (state.configStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
+            userIds = DocumentsApplication.getUserManagerState(getContext()).getUserIds();
+        } else {
+            userIds = DocumentsApplication.getUserIdManager(getContext()).getUserIds();
+        }
+
+
+        List<Item> sortedItems = sortLoadResult(
+                getContext(),
+                state,
+                roots,
+                shortcuts,
+                excludePackage,
+                shouldIncludeHandlerApp ? handlerAppIntent : null,
+                DocumentsApplication.getProvidersCache(getContext()),
+                getBaseActivity().getSelectedUser(),
+                userIds,
+                maybeShowBadge,
+                userManagerState);
+
+        // This will be removed when feature flag is removed.
+        if (crossProfileResolveInfo != null && !Features.CROSS_PROFILE_TABS) {
+            // Add profile item if we don't support cross-profile tab.
+            sortedItems.add(new SpacerItem());
+            if (mUseRailAsContainer) {
+                sortedItems.add(new NavRailProfileItem(crossProfileResolveInfo,
+                        crossProfileResolveInfo.loadLabel(
+                                getContext().getPackageManager()).toString(), mActionHandler));
+            } else {
+                sortedItems.add(new ProfileItem(crossProfileResolveInfo,
+                    crossProfileResolveInfo.loadLabel(
+                            getContext().getPackageManager()).toString(), mActionHandler));
+            }
+        }
+
+        // Disable drawer if only one root
+        activity.setRootsDrawerLocked(sortedItems.size() <= 1);
+
+        mListHandler.scrollToFirstVisiblePosition(sortedItems, mDragListener);
+
+        mInjector.shortcutsUpdater.accept(roots);
+        mInjector.appsRowManager.updateList(mApplicationItemList);
+        mInjector.appsRowManager.updateView(activity);
+        onCurrentRootChanged();
+    }
+
 
     /**
      * Updates the state values of whether we can share across profiles, if necessary. Also reload
@@ -433,6 +480,7 @@ public class RootsFragment extends Fragment {
             Context context,
             State state,
             Collection<RootInfo> roots,
+            Collection<ShortcutInfo> shortcuts,
             @Nullable String excludePackage,
             @Nullable Intent handlerAppIntent,
             ProvidersAccess providersAccess,
@@ -455,10 +503,16 @@ public class RootsFragment extends Fragment {
 
             if (root.isExternalStorageHome()) {
                 // No-op.
+            } else if (root.isFiles()) {
+                // Never show this if MediaDocumentsProvider is serving it, it's for Recents only.
+            } else if (root.isLocalSearch(context)) {
+                // Local search provider is integrated with other providers, not to browse the
+                // files.
             } else if (hideMediaRoots
-                    && (root.isImages() || root.isVideos()
-                    || root.isDocuments()
-                    || root.isAudio())) {
+                    && (root.isImages()
+                            || root.isVideos()
+                            || root.isDocuments()
+                            || root.isAudio())) {
                 Log.d(TAG, "Hiding " + root);
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
@@ -493,11 +547,38 @@ public class RootsFragment extends Fragment {
         final List<RootItem> storageProviders = storageProvidersBuilder.getList();
 
         final RootComparator comp = new RootComparator();
-        Collections.sort(libraries, comp);
-        Collections.sort(storageProviders, comp);
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Handle the shortcuts next. The shortcuts passed in are specific to the user. So we
+            // can just create and add the shortcut items normally as it should already account for
+            // cross profile behaviour.
+            final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
+            librariesAndShortcuts.addAll(libraries);
+            for (final ShortcutInfo shortcut : shortcuts) {
+                final ShortcutItem item;
+                item = new ShortcutItem(
+                        shortcut,
+                        mActionHandler,
+                        /* packageName= */ "",
+                        maybeShowBadge);
+                librariesAndShortcuts.add(item);
+            }
+            final SidebarEntryItemComparator sidebarItemComp = new SidebarEntryItemComparator();
+            Collections.sort(librariesAndShortcuts, sidebarItemComp);
+            Collections.sort(storageProviders, comp);
 
-        if (VERBOSE) Log.v(TAG, "Adding library roots: " + libraries);
-        result.addAll(libraries);
+            if (VERBOSE) {
+                Log.v(TAG, "Adding library roots and system defined shortcuts: "
+                        + librariesAndShortcuts);
+            }
+            result.addAll(librariesAndShortcuts);
+        } else {
+            Collections.sort(libraries, comp);
+            Collections.sort(storageProviders, comp);
+
+            if (VERBOSE) Log.v(TAG, "Adding library roots: " + libraries);
+            result.addAll(libraries);
+        }
+
 
         // Only add the spacer if it is actually separating something.
         if (!result.isEmpty() && !storageProviders.isEmpty()) {
@@ -757,7 +838,7 @@ public class RootsFragment extends Fragment {
     public void onDisplayStateChanged() {
         mListHandler.onDisplayStateChange();
 
-        LoaderManager.getInstance(this).restartLoader(2, null, mCallbacks);
+        reloadRootsAndShortcuts();
     }
 
     public void onCurrentRootChanged() {
@@ -765,16 +846,37 @@ public class RootsFragment extends Fragment {
             return;
         }
 
-        final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
-        for (int i = 0; i < mListHandler.getItemCount(); i++) {
-            final Object item = mListHandler.getItem(i);
-            if (item instanceof RootItem) {
-                final RootInfo testRoot = ((RootItem) item).root;
-                if (Objects.equals(testRoot, root)) {
-                    // b/37358441 should reload all root title after configuration changed
-                    root.title = testRoot.title;
-                    mListHandler.selectItem(i);
-                    return;
+        if (isHomeScreenFilesFlagEnabled()) {
+            SidebarEntryItemInfo itemInfo = getBaseActivity().getCurrentShortcut();
+            if (itemInfo == null) {
+                itemInfo = getBaseActivity().getCurrentRoot();
+            }
+            for (int i = 0; i < mListHandler.getItemCount(); i++) {
+                final Object item = mListHandler.getItem(i);
+                if (item instanceof BaseSidebarEntryItem) {
+                    final SidebarEntryItemInfo testInfo =
+                        ((BaseSidebarEntryItem) item).getItemInfo();
+                    if (Objects.equals(testInfo, itemInfo)) {
+                        // TODO: b/447254297 - Check if this is still necessary for language
+                        //  configuration changes.
+                        itemInfo.setTitle(testInfo.getTitle());
+                        mListHandler.selectItem(i);
+                        return;
+                    }
+                }
+            }
+        } else {
+            final RootInfo root = ((BaseActivity) getActivity()).getCurrentRoot();
+            for (int i = 0; i < mListHandler.getItemCount(); i++) {
+                final Object item = mListHandler.getItem(i);
+                if (item instanceof RootItem) {
+                    final RootInfo testRoot = ((RootItem) item).root;
+                    if (Objects.equals(testRoot, root)) {
+                        // b/37358441 should reload all root title after configuration changed
+                        root.title = testRoot.title;
+                        mListHandler.selectItem(i);
+                        return;
+                    }
                 }
             }
         }
@@ -784,7 +886,7 @@ public class RootsFragment extends Fragment {
      * Called when the selected user is changed. It reloads roots with the current user.
      */
     public void onSelectedUserChanged() {
-        LoaderManager.getInstance(this).restartLoader(/* id= */ 2, /* args= */ null, mCallbacks);
+        reloadRootsAndShortcuts();
     }
 
     /**
@@ -817,24 +919,52 @@ public class RootsFragment extends Fragment {
         if (item == null) {
             return false;
         }
-        final RootItem rootItem = (RootItem) item;
+        final BaseSidebarEntryItem sidebarItem = (BaseSidebarEntryItem) item;
         final int id = menuItem.getItemId();
         if (id == getRes(R.id.root_menu_eject_root)) {
+            // This option should be hidden for shortcuts.
             View itemView = mListHandler.getItemViewForContextMenu(menuItem.getMenuInfo());
             if (itemView == null) {
                 return false;
             }
             final View ejectIcon = itemView.findViewById(getRes(R.id.action_icon));
-            ejectClicked(ejectIcon, rootItem.root, mActionHandler);
+            ejectClicked(ejectIcon, sidebarItem.getItemInfo().getRoot(), mActionHandler);
             return true;
         } else if (id == getRes(R.id.root_menu_open_in_new_window)) {
-            mActionHandler.openInNewWindow(new DocumentStack(rootItem.root));
+            if (sidebarItem instanceof RootItem) {
+                mActionHandler.openInNewWindow(
+                        new DocumentStack(sidebarItem.getItemInfo().getRoot()));
+            } else if (isHomeScreenFilesFlagEnabled() && sidebarItem instanceof ShortcutItem) {
+                ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
+                getBaseActivity().buildStackToParentShortcutFolder(shortcut,
+                    (@Nullable DocumentStack stack) -> {
+                        if (stack != null) {
+                            stack.push(sidebarItem.getDocInfo());
+                            mActionHandler.openInNewWindow(stack);
+                        }
+                    });
+                return true;
+            }
             return true;
         } else if (id == getRes(R.id.root_menu_paste_into_folder)) {
-            mActionHandler.pasteIntoFolder(rootItem.root);
+            mActionHandler.pasteIntoFolder(sidebarItem.getItemInfo());
             return true;
         } else if (id == getRes(R.id.root_menu_settings)) {
-            mActionHandler.openSettings(rootItem.root);
+            mActionHandler.openSettings(sidebarItem.getItemInfo().getRoot());
+            return true;
+        } else if (id == getRes(R.id.root_menu_inspect)) {
+            if (!isHomeScreenFilesFlagEnabled()
+                    || !(sidebarItem instanceof ShortcutItem)) {
+                return false;
+            }
+            ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
+            mActionHandler.getDocument(
+                    shortcut.getRoot().authority,
+                    shortcut.getDocumentId(),
+                    shortcut.getRoot().userId,
+                    TimeoutTask.DEFAULT_TIMEOUT,
+                    mActionHandler::showPreview
+            );
             return true;
         }
         if (DEBUG) {
@@ -843,14 +973,15 @@ public class RootsFragment extends Fragment {
         return false;
     }
 
-    private void getRootDocument(RootItem rootItem, RootUpdater updater) {
+    private void getSidebarItemDocument(BaseSidebarEntryItem sidebarItem, RootUpdater updater) {
         // We need to start a GetDocumentTask so we can know whether items can be directly
         // pasted into root
         mActionHandler.getDocument(
-                rootItem.root.authority, rootItem.root.documentId, rootItem.root.userId,
-                CONTEXT_MENU_ITEM_TIMEOUT, (DocumentInfo doc) -> {
-                    updater.updateDocInfoForRoot(doc);
-                });
+                sidebarItem.getItemInfo().getRoot().authority,
+                sidebarItem.getItemInfo().getDocumentId(),
+                sidebarItem.getItemInfo().getRoot().userId,
+                CONTEXT_MENU_ITEM_TIMEOUT,
+                updater::updateDocInfoForRoot);
     }
 
     private Item getItem(View v) {
@@ -886,6 +1017,14 @@ public class RootsFragment extends Fragment {
             return lhs.root.compareTo(rhs.root);
         }
     }
+
+    private static class SidebarEntryItemComparator implements Comparator<BaseSidebarEntryItem> {
+        @Override
+        public int compare(BaseSidebarEntryItem lhs, BaseSidebarEntryItem rhs) {
+            return lhs.getItemInfo().compareTo(rhs.getItemInfo());
+        }
+    }
+
 
     /**
      * The comparator of {@link AppItem}, {@link RootItem} and {@link RootAndAppItem}.

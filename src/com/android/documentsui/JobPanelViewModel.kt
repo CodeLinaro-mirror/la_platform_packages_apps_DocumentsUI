@@ -47,15 +47,17 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
      */
     data class ProgressViewModel(val jobProgress: JobProgress, val expanded: Boolean = false)
 
-    /**
-     * The UI state representation of the toolbar progress icon.
-     */
+    /** The UI state representation of the toolbar progress icon. */
     sealed class MenuIconState {
         abstract val hasFailures: Boolean
+
         data object INVISIBLE : MenuIconState() {
-            override val hasFailures get() = false
+            override val hasFailures
+                get() = false
         }
+
         data class INDETERMINATE(override val hasFailures: Boolean) : MenuIconState()
+
         data class VISIBLE(val totalProgress: Int, override val hasFailures: Boolean) :
             MenuIconState()
     }
@@ -64,7 +66,8 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
 
     /** List of jobs currently tracked. */
     private val _currentJobs = LinkedHashMap<String, ProgressViewModel>()
-    val currentJobs: Map<String, ProgressViewModel> get() = _currentJobs
+    val currentJobs: Map<String, ProgressViewModel>
+        get() = _currentJobs
 
     /** Tracks jobs that will be auto dismissed. */
     private val pendingRemoves = HashSet<String>()
@@ -72,17 +75,22 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
     /** Signaled whenever there is an update to the jobs tracked. */
     private val _jobUpdateEvent =
         MutableSharedFlow<Unit>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    val jobUpdateEvent: SharedFlow<Unit> get() = _jobUpdateEvent
+    val jobUpdateEvent: SharedFlow<Unit>
+        get() = _jobUpdateEvent
 
     /** Keeps track of the current menu icon state. */
     private val _menuIconState = MutableStateFlow<MenuIconState>(MenuIconState.INVISIBLE)
-    val menuIconState: StateFlow<MenuIconState> get() = _menuIconState
+    val menuIconState: StateFlow<MenuIconState>
+        get() = _menuIconState
+
+    private var dismissibleCount = 0
+    private val _anyDismissible = MutableStateFlow(false)
+    val anyDismissible: StateFlow<Boolean>
+        get() = _anyDismissible
 
     var listState: Parcelable? = null
 
-    /**
-     * Gets the state of the toolbar progress icon based off the current jobs tracked.
-     */
+    /** Gets the state of the toolbar progress icon based off the current jobs tracked. */
     fun getMenuState(): MenuIconState {
         var currentPercent = 0f
         var allIndeterminate = true
@@ -125,33 +133,36 @@ class JobPanelViewModel(scopeOverride: CoroutineScope? = null) : ViewModel() {
         }
         _currentJobs.entries.removeAll { (id, model) -> !model.jobProgress.isFinal && id !in seen }
 
+        dismissibleCount = _currentJobs.count { (_, value) -> value.jobProgress.isFinal }
+        _anyDismissible.value = dismissibleCount > 0
+
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)
     }
 
-    /**
-     * Removes a specific progress item from the list managed by this class.
-     */
+    /** Removes a specific progress item from the list managed by this class. */
     fun dismissProgress(id: String) {
-        _currentJobs.remove(id)
+        val entry = _currentJobs.remove(id)
+        if (entry != null && entry.jobProgress.isFinal) {
+            dismissibleCount--
+            _anyDismissible.value = dismissibleCount > 0
+        }
 
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)
     }
 
-    /**
-     * Dismisses all completed progresses.
-     */
+    /** Dismisses all completed progresses. */
     fun dismissCompleted() {
         _currentJobs.entries.removeAll { (_, v) -> v.jobProgress.isFinal }
+        dismissibleCount = 0
+        _anyDismissible.value = false
 
         _menuIconState.value = getMenuState()
         _jobUpdateEvent.tryEmit(Unit)
     }
 
-    /**
-     * Toggles the expanded state of a specific progress item.
-     */
+    /** Toggles the expanded state of a specific progress item. */
     fun toggleExpanded(id: String) {
         _currentJobs.computeIfPresent(id) { _, (jobProgress, expanded) ->
             ProgressViewModel(jobProgress, !expanded)

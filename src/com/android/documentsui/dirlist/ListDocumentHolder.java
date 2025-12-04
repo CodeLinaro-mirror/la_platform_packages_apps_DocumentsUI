@@ -20,7 +20,9 @@ import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLI
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.ui.Views.setWeight;
 import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -65,9 +67,16 @@ final class ListDocumentHolder extends DocumentHolder {
     private static final String TAG = "ListDocumentHolder";
 
     private final TextView mTitle;
+
+    /** Wrapper for the title column which contains title, icon, etc. */
+    private final @Nullable View mTitleContainer;
+
     private final @Nullable TextView mDate; // Non-null for tablets/sw720dp, null for other devices.
     private final @Nullable TextView mSize; // Non-null for tablets/sw720dp, null for other devices.
     private final @Nullable TextView mType; // Non-null for tablets/sw720dp, null for other devices.
+
+    // Summary is only displayed for Material3.
+    private final @Nullable TextView mSummary;
     // Container for date + size + summary, null only for tablets/sw720dp
     private final @Nullable LinearLayout mDetails;
     // TextView for date + size + summary, null only for tablets/sw720dp
@@ -94,6 +103,8 @@ final class ListDocumentHolder extends DocumentHolder {
         mIconCheck = (ImageView) itemView.findViewById(getRes(R.id.icon_check));
         mIconBadge = (ImageView) itemView.findViewById(getRes(R.id.icon_profile_badge));
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
+        mTitleContainer = (View) itemView.findViewById(R.id.title_container);
+        mSummary = (TextView) itemView.findViewById(getRes(R.id.file_summary));
         mSize = (TextView) itemView.findViewById(getRes(R.id.size));
         mDate = (TextView) itemView.findViewById(getRes(R.id.date));
         mType = (TextView) itemView.findViewById(getRes(R.id.file_type));
@@ -243,13 +254,58 @@ final class ListDocumentHolder extends DocumentHolder {
     }
 
     /**
+     * If summary column needs to be displayed or hidden, adjust the width of all columns. *
+     *
+     * <p>NOTE: These values are matched in {@link
+     * com.android.documentsui.sorting.TableHeaderController#adjustColumnWidthForSummary()}
+     */
+    private void adjustColumnWidthForSummary() {
+        if (isUseFileSummaryEnabled()) {
+            setWeight(mTitleContainer, 0.35f);
+            if (mSummary != null) {
+                setWeight(mSummary, 0.25f);
+            }
+            setWeight(mDate, 0.15f);
+            setWeight(mSize, 0.15f);
+            setWeight(mType, 0.15f);
+        } else {
+            setWeight(mTitleContainer, 0.4f);
+            if (mSummary != null) {
+                setWeight(mSummary, 0f);
+            }
+            setWeight(mDate, 0.2f);
+            setWeight(mSize, 0.2f);
+            setWeight(mType, 0.2f);
+        }
+    }
+
+    private void bindSummary(@Nullable String summary) {
+        if (mSummary == null) {
+            return;
+        }
+
+        if (isUseFileSummaryEnabled()) {
+            if (summary == null) {
+                mSummary.setText("--");
+                mSummary.setTooltipText(summary);
+            } else {
+                mSummary.setText(summary, TextView.BufferType.SPANNABLE);
+                mSummary.setTooltipText(summary);
+            }
+            mSummary.setVisibility(View.VISIBLE);
+        } else {
+            mSummary.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
      * Bind this view to the given document for display.
      *
-     * @param cursor  Pointing to the item to be bound.
+     * @param cursor Pointing to the item to be bound.
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId) {
+    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
         assert (cursor != null);
 
         mModelId = modelId;
@@ -274,6 +330,10 @@ final class ListDocumentHolder extends DocumentHolder {
         } else {
             mTitle.setText(mDoc.displayName, TextView.BufferType.SPANNABLE);
         }
+
+        adjustColumnWidthForSummary();
+        bindSummary(summary);
+
         mTitle.setVisibility(View.VISIBLE);
 
         if (mDoc.isDirectory()) {
@@ -289,6 +349,10 @@ final class ListDocumentHolder extends DocumentHolder {
                 // Non-tablets
                 boolean hasDetails = false;
                 ArrayList<String> metadataList = new ArrayList<>();
+                if (isUseFileSummaryEnabled() && !TextUtils.isEmpty(summary)) {
+                    hasDetails = true;
+                    metadataList.add(summary);
+                }
                 if (mDoc.lastModified > 0) {
                     hasDetails = true;
                     metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));

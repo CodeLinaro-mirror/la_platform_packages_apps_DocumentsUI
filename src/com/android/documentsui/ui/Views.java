@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.LinearLayout;
 
 /**
  * A utility class for working with Views.
@@ -69,5 +70,15 @@ public final class Views {
 
         return new Rect(coord[0], coord[1], coord[0] + view.getMeasuredWidth(),
                 coord[1] + view.getMeasuredHeight());
+    }
+
+    /** Set the `android:layout_weight` of a view. */
+    public static void setWeight(View view, float weight) {
+        if (view == null) return;
+        var params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        if (params.weight != weight) {
+            params.weight = weight;
+            view.setLayoutParams(params);
+        }
     }
 }

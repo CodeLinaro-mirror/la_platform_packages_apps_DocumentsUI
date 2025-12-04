@@ -48,6 +48,7 @@ import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.filters.SkipScreenRecording;
@@ -234,7 +235,11 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         device.executeShellCommand("settings put global stay_on_while_plugged_in "
                 + mPreTestStayAwakeValue);
 
-        context.unregisterReceiver(mReceiver);
+        try {
+            context.unregisterReceiver(mReceiver);
+        } catch (Exception e) {
+            Log.d(TAG, "Error unregistering the receiver, it might not be registered.", e);
+        }
         mCountDownLatch = null;
         setNotificationAccess(false);
     }
@@ -251,7 +256,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         }
 
         // Create folder and create file in its folder
-        bots.roots.openRoot(label);
+        EspressoBotsKt.openRoot(context, label);
         Uri uri = helper.createFolder(root, TARGET_FOLDER);
         device.waitForIdle();
         if (!bots.directory.hasDocuments(TARGET_FOLDER)) {
@@ -277,7 +282,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
             return false;
         }
 
-        bots.roots.openRoot(label);
+        EspressoBotsKt.openRoot(context, label);
         if (!bots.directory.hasDocuments(targetFolder)) {
             return true;
         }
@@ -397,12 +402,12 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     private void copyFiles(String sourceRoot, String targetRoot) throws Exception {
         mCountDownLatch = new CountDownLatch(1);
         // Copy folder and child files
-        bots.roots.openRoot(sourceRoot);
+        EspressoBotsKt.openRoot(context, sourceRoot);
         bots.directory.selectDocument(TARGET_FOLDER, 1);
         device.waitForIdle();
         bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
-        bots.roots.openRoot(targetRoot);
+        EspressoBotsKt.openRoot(context, targetRoot);
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
@@ -419,7 +424,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     private void assertFilesCopied(String rootLabel, RootInfo rootInfo,
             DocumentsProviderHelper helper) throws Exception {
         // Check that copied folder exists
-        bots.roots.openRoot(rootLabel);
+        EspressoBotsKt.openRoot(context, rootLabel);
         device.waitForIdle();
         bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
@@ -441,7 +446,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         copyFiles(StubProvider.ROOT_0_ID, StubProvider.ROOT_1_ID);
 
         // Check that original folder exists
-        bots.roots.openRoot(StubProvider.ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, StubProvider.ROOT_0_ID);
         bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
@@ -456,7 +461,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         copyFiles(mSdCardLabel, mDeviceLabel);
 
         // Check that original folder exists
-        bots.roots.openRoot(mSdCardLabel);
+        EspressoBotsKt.openRoot(context, mSdCardLabel);
         bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
@@ -471,7 +476,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         copyFiles(mDeviceLabel, mSdCardLabel);
 
         // Check that original folder exists
-        bots.roots.openRoot(mDeviceLabel);
+        EspressoBotsKt.openRoot(context, mDeviceLabel);
         bots.directory.assertDocumentsVisible(TARGET_FOLDER);
 
         // Check that copied files exist
@@ -482,12 +487,12 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
     @Ignore("TODO(b/437236527): re-enable")
     public void testCopyDocuments_documentsDisabled() throws Exception {
         mDocsHelper.createDocument(rootDir0, "text/plain", TestFilesRule.FILE_NAME_1);
-        bots.roots.openRoot(StubProvider.ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, StubProvider.ROOT_0_ID);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         device.waitForIdle();
         bots.main.clickActionbarOverflowItem(context.getResources().getString(R.string.menu_copy));
         device.waitForIdle();
-        bots.roots.openRoot(StubProvider.ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, StubProvider.ROOT_0_ID);
         device.waitForIdle();
 
         assertFalse(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
@@ -525,7 +530,7 @@ public class FileCopyUiTest extends ActivityTestJunit4<FilesActivity> {
         mCountDownLatch = new CountDownLatch(1);
 
         // Open Internal Storage Root.
-        bots.roots.openRoot(mDeviceLabel);
+        EspressoBotsKt.openRoot(context, mDeviceLabel);
         device.waitForIdle();
 
         // Select Download folder.

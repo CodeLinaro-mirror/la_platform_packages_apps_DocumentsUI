@@ -42,6 +42,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.actions.RelaxedClickAction
+import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
@@ -56,6 +57,7 @@ import com.android.documentsui.testing.MutableJobProgress
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Assert.assertTrue
@@ -89,11 +91,9 @@ private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progr
 @EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
 class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
-    @get:Rule
-    val testFiles = TestFilesRule()
+    @get:Rule val testFiles = TestFilesRule()
 
     private var lastId = 0L
 
@@ -105,11 +105,12 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             jobUpdateIdle.increment()
         }
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        var intent = Intent(ACTION_PROGRESS).apply {
-            `package` = context.packageName
-            putExtra("id", id)
-            putParcelableArrayListExtra(EXTRA_PROGRESS, progresses)
-        }
+        var intent =
+            Intent(ACTION_PROGRESS).apply {
+                `package` = context.packageName
+                putExtra("id", id)
+                putParcelableArrayListExtra(EXTRA_PROGRESS, progresses)
+            }
         context.sendBroadcast(intent)
     }
 
@@ -150,16 +151,17 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
 
-        val progress = MutableJobProgress(
-            id = "jobId1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 4,
-            requiredBytes = 10,
-            msRemaining = 10000,
-        )
+        val progress =
+            MutableJobProgress(
+                id = "jobId1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 4,
+                requiredBytes = 10,
+                msRemaining = 10000,
+            )
         sendProgress(arrayListOf(progress.toJobProgress()))
 
         assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
@@ -189,55 +191,69 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
     @Test
     fun testCompletedItems() {
-        val progress1 = MutableJobProgress(
-            id = "jobId1",
-            operationType = FileOperationService.OPERATION_EXTRACT,
-            state = Job.STATE_COMPLETED,
-            msg = "Job1 completed",
-            hasFailures = false,
-        )
-        val progress2 = MutableJobProgress(
-            id = "jobId2",
-            operationType = FileOperationService.OPERATION_MOVE,
-            state = Job.STATE_COMPLETED,
-            msg = "Job2 completed",
-            hasFailures = true,
-        )
+        val progress1 =
+            MutableJobProgress(
+                id = "jobId1",
+                operationType = FileOperationService.OPERATION_EXTRACT,
+                state = Job.STATE_COMPLETED,
+                msg = "Job1 completed",
+                hasFailures = false,
+            )
+        val progress2 =
+            MutableJobProgress(
+                id = "jobId2",
+                operationType = FileOperationService.OPERATION_MOVE,
+                state = Job.STATE_COMPLETED,
+                msg = "Job2 completed",
+                hasFailures = true,
+            )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
         openPanel()
 
         onView(withChild(withText(progress1.msg)))
-            .check(selectedDescendantsMatch(
-                withText(R.string.job_progress_item_completed),
-                isDisplayed()
-            ))
-            .check(selectedDescendantsMatch(
-                withText(R.string.extract_completed),
-                isDisplayed()
-            ))
+            .check(
+                selectedDescendantsMatch(
+                    withText(R.string.job_progress_item_completed),
+                    isDisplayed(),
+                )
+            )
+            .check(selectedDescendantsMatch(withText(R.string.extract_completed), isDisplayed()))
         onView(withChild(withText(progress2.msg)))
-            .check(selectedDescendantsMatch(
-                withText(R.string.move_failed),
-                isDisplayed()
-            ))
-            .check(selectedDescendantsMatch(
-                withText(R.string.job_progress_item_see_details),
-                isDisplayed()
-            ))
+            .check(selectedDescendantsMatch(withText(R.string.move_failed), isDisplayed()))
+            .check(
+                selectedDescendantsMatch(
+                    withId(R.id.job_progress_item_secondary_status),
+                    allOf(withText(R.string.job_progress_item_see_details), isDisplayed()),
+                )
+            )
 
         // Dismiss the first item.
-        onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress1)))
-            .perform(click())
+        onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress1))).perform(click())
+        onView(
+                allOf(
+                    withId(R.id.job_progress_item_see_details),
+                    insideItem(progress1),
+                    isDisplayed(),
+                )
+            )
+            .check(doesNotExist())
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress1)))
             .perform(click())
         onView(withText(progress1.msg)).check(doesNotExist())
 
         // Dismiss the second item. The panel should disappear.
-        onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress2)))
-            .perform(click())
-        onView(allOf(withText(R.string.job_progress_item_see_details), isDisplayed()))
+        onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress2))).perform(click())
+        onView(
+                allOf(
+                    withId(R.id.job_progress_item_secondary_status),
+                    insideItem(progress2),
+                    isDisplayed(),
+                )
+            )
             .check(doesNotExist())
+        onView(allOf(withId(R.id.job_progress_item_see_details), insideItem(progress2)))
+            .check(matches(isDisplayed()))
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress2)))
             .perform(click())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
@@ -246,23 +262,25 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
     @Test
     fun testJobCanceled() {
-        val progress1 = MutableJobProgress(
-            id = "jobId1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job1",
-            hasFailures = false,
-            currentBytes = 10,
-            requiredBytes = 20,
-            msRemaining = 1000,
-        )
-        val progress2 = MutableJobProgress(
-            id = "jobId2",
-            operationType = FileOperationService.OPERATION_EXTRACT,
-            state = Job.STATE_CREATED,
-            msg = "Job2",
-            hasFailures = false,
-        )
+        val progress1 =
+            MutableJobProgress(
+                id = "jobId1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job1",
+                hasFailures = false,
+                currentBytes = 10,
+                requiredBytes = 20,
+                msRemaining = 1000,
+            )
+        val progress2 =
+            MutableJobProgress(
+                id = "jobId2",
+                operationType = FileOperationService.OPERATION_EXTRACT,
+                state = Job.STATE_CREATED,
+                msg = "Job2",
+                hasFailures = false,
+            )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
         assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
@@ -280,10 +298,12 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         progress1.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
         onView(withChild(withText(progress1.msg)))
-            .check(selectedDescendantsMatch(
-                withText(R.string.job_progress_item_canceled),
-                isDisplayed()
-            ))
+            .check(
+                selectedDescendantsMatch(
+                    withText(R.string.job_progress_item_canceled),
+                    isDisplayed(),
+                )
+            )
         onView(withText(progress2.msg)).check(matches(isDisplayed()))
 
         // Overall progress should be 50% as the first job is finished. We need to close the popup
@@ -296,31 +316,36 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         progress2.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress2.toJobProgress()))
         onView(withChild(withText(progress1.msg)))
-            .check(selectedDescendantsMatch(
-                withText(R.string.job_progress_item_canceled),
-                isDisplayed()
-            ))
+            .check(
+                selectedDescendantsMatch(
+                    withText(R.string.job_progress_item_canceled),
+                    isDisplayed(),
+                )
+            )
         onView(withChild(withText(progress2.msg)))
-            .check(selectedDescendantsMatch(
-                withText(R.string.job_progress_item_canceled),
-                isDisplayed()
-            ))
+            .check(
+                selectedDescendantsMatch(
+                    withText(R.string.job_progress_item_canceled),
+                    isDisplayed(),
+                )
+            )
         Espresso.pressBack()
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(100)))
     }
 
     @Test
     fun testPersistsOnRecreate() {
-        val progress = MutableJobProgress(
-            id = "jobId1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 4,
-            requiredBytes = 10,
-            msRemaining = 10000,
-        )
+        val progress =
+            MutableJobProgress(
+                id = "jobId1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 4,
+                requiredBytes = 10,
+                msRemaining = 10000,
+            )
         sendProgress(arrayListOf(progress.toJobProgress()))
         assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
         mActivityScenario!!.recreate()
@@ -332,16 +357,17 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         mActivityScenario!!.recreate()
 
-        val progress2 = MutableJobProgress(
-            id = "jobId2",
-            operationType = FileOperationService.OPERATION_MOVE,
-            state = Job.STATE_SET_UP,
-            msg = "Job started",
-            hasFailures = false,
-            currentBytes = 6,
-            requiredBytes = 10,
-            msRemaining = 10000,
-        )
+        val progress2 =
+            MutableJobProgress(
+                id = "jobId2",
+                operationType = FileOperationService.OPERATION_MOVE,
+                state = Job.STATE_SET_UP,
+                msg = "Job started",
+                hasFailures = false,
+                currentBytes = 6,
+                requiredBytes = 10,
+                msRemaining = 10000,
+            )
         sendProgress(arrayListOf(progress.toJobProgress(), progress2.toJobProgress()))
 
         onView(withId(R.id.job_progress_list)).check(matches(hasChildCount(2)))
@@ -381,7 +407,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
 
         // Try from a different root.
-        bots.roots.openRoot(StubProvider.ROOT_1_ID)
+        openRoot(context, StubProvider.ROOT_1_ID)
         openPanel()
         onView(withId(R.id.job_progress_item_show_in_folder)).perform(click())
         bots.breadcrumb.assertItemsPresent(StubProvider.ROOT_0_ID, TestFilesRule.DIR_NAME_1)
@@ -389,23 +415,25 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
     @Test
     fun testFailedItem() {
-        val inProgress = MutableJobProgress(
-            id = "in_progress_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job in progress",
-            hasFailures = false,
-            currentBytes = 40,
-            requiredBytes = 100,
-        )
+        val inProgress =
+            MutableJobProgress(
+                id = "in_progress_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job in progress",
+                hasFailures = false,
+                currentBytes = 40,
+                requiredBytes = 100,
+            )
 
-        val failed = MutableJobProgress(
-            id = "failed_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_COMPLETED,
-            msg = "Job failed",
-            hasFailures = true,
-        )
+        val failed =
+            MutableJobProgress(
+                id = "failed_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job failed",
+                hasFailures = true,
+            )
 
         sendProgress(arrayListOf(inProgress.toJobProgress()))
         assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
@@ -434,39 +462,86 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     @Test
+    fun testShowDetailsForFailedItem() {
+        val root = testFiles.getRoot(StubProvider.ROOT_0_ID)
+        val doc = testFiles.docsHelper.findDocument(root.documentId, TestFilesRule.FILE_NAME_1)
+        val uri = testFiles.getUriInRoot(StubProvider.ROOT_0_ID, TestFilesRule.FILE_NAME_2)!!
+        val failed =
+            MutableJobProgress(
+                id = "failed_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job failed",
+                hasFailures = true,
+                failedDocs = arrayListOf(doc),
+                failedUris = arrayListOf(uri),
+                failedPaths = arrayListOf("failed/item.txt"),
+            )
+        sendProgress(arrayListOf(failed.toJobProgress()))
+
+        // Click the see details button of the failed item.
+        openPanel()
+        onView(withText(failed.msg)).perform(click())
+        onView(withId(R.id.job_progress_item_see_details)).perform(click())
+
+        // A dialog should pop up with the failed path inside.
+        onView(
+                withText(
+                    allOf(
+                        containsString(doc.displayName),
+                        containsString(uri.toString()),
+                        containsString("item.txt"),
+                    )
+                )
+            )
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
     fun testDismissAll() {
-        val inProgress = MutableJobProgress(
-            id = "in_progress_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job in progress",
-            hasFailures = false,
-            currentBytes = 40,
-            requiredBytes = 100,
-        )
+        val inProgress =
+            MutableJobProgress(
+                id = "in_progress_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job in progress",
+                hasFailures = false,
+                currentBytes = 40,
+                requiredBytes = 100,
+            )
 
-        val succeeded = MutableJobProgress(
-            id = "succeeded_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_COMPLETED,
-            msg = "Job succeeded",
-            hasFailures = false,
-        )
+        val succeeded =
+            MutableJobProgress(
+                id = "succeeded_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job succeeded",
+                hasFailures = false,
+            )
 
-        val failed = MutableJobProgress(
-            id = "failed_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_COMPLETED,
-            msg = "Job failed",
-            hasFailures = true,
-        )
-        sendProgress(arrayListOf(
-            inProgress.toJobProgress(),
-            succeeded.toJobProgress(),
-            failed.toJobProgress(),
-        ))
+        val failed =
+            MutableJobProgress(
+                id = "failed_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job failed",
+                hasFailures = true,
+            )
+        sendProgress(arrayListOf(inProgress.toJobProgress()))
 
-        assertTrue(bots.main.waitForJobProgressToolbarIconToAppear())
+        // The dismiss all button should not appear if all jobs are in progress.
+        openPanel()
+        onView(allOf(withId(R.id.job_progress_panel_dismiss_all), isDisplayed()))
+            .check(doesNotExist())
+        Espresso.pressBack()
+
+        sendProgress(
+            arrayListOf(
+                inProgress.toJobProgress(),
+                succeeded.toJobProgress(),
+                failed.toJobProgress(),
+            )
+        )
 
         // There are two jobs completed and one job at 40%, so the total progress is 80%.
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(80)))
@@ -478,6 +553,10 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withText(succeeded.msg)).check(doesNotExist())
         onView(withText(failed.msg)).check(doesNotExist())
         onView(withText(inProgress.msg)).check(matches(isDisplayed()))
+
+        // The button should also disappear afterwards.
+        onView(allOf(withId(R.id.job_progress_panel_dismiss_all), isDisplayed()))
+            .check(doesNotExist())
 
         // The total progress should now change to 40% as the two completed jobs are gone.
         Espresso.pressBack()

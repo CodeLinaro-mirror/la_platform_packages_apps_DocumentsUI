@@ -29,7 +29,7 @@ import java.util.Objects
 
 open class ShortcutItem(
     @LayoutRes layoutId: Int,
-    title: String,
+    title: String?,
     userId: UserId,
     actionHandler: ActionHandler?,
     packageName: String,
@@ -89,8 +89,9 @@ open class ShortcutItem(
     }
 
     public override fun bindView(convertView: View) {
-        // TODO: b/439694430 - implement this view related method
-        return
+        bindAction(convertView, View.GONE, -1, null)
+        bindIconAndTitle(convertView)
+        bindSummary(convertView, null)
     }
 
     override fun isRoot(): Boolean {
@@ -102,13 +103,11 @@ open class ShortcutItem(
     }
 
     override fun open() {
-        // TODO: b/441193752 - implement this view related method
-        return
+        actionHandler?.openShortcut(shortcut)
     }
 
     override fun dropOn(event: DragEvent?): Boolean {
-        // TODO: b/441194501 - implement this view related method
-        return false
+        return actionHandler?.dropOn(event, shortcut) ?: false
     }
 
     override fun onActionClick(view: View) {
@@ -117,7 +116,6 @@ open class ShortcutItem(
     }
 
     override fun isDropTarget(): Boolean {
-        // TODO: b/441194501 - implement this view related method
-        return false
+        return itemInfo.supportsCreate()
     }
 }

@@ -16,7 +16,6 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
@@ -27,9 +26,12 @@ import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.ActivityManager;
@@ -46,6 +48,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.DocumentsContract;
@@ -67,6 +70,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.FractionRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -109,11 +113,13 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Features;
+import com.android.documentsui.base.PathExtractor;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ViewMode;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.breadcrumbs.BreadcrumbModel;
 import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
@@ -139,6 +145,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -148,6 +155,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     static final int TYPE_NORMAL = 1;
     static final int TYPE_RECENT_OPEN = 2;
+    private static final Random RANDOM = new Random();
 
     @IntDef(flag = true, value = {
             REQUEST_COPY_DESTINATION
@@ -228,6 +236,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private Handler mHandler;
     private Runnable mProviderTestRunnable;
 
+    private @Nullable PathExtractor mPathExtractor;
+    private @Nullable BreadcrumbModel mBreadcrumbModel;
+
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
     protected BaseActivity getBaseActivity() {
@@ -240,6 +251,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     // Blocks loading/reloading of content while user is actively making selection.
     private ContentLock mContentLock = new ContentLock();
+
+    @VisibleForTesting @Nullable ItemDecorationInvalidator mItemDecorationInvalidator;
 
     private SortModel.UpdateListener mSortListener = (model, updateType) -> {
         // Only when sort order has changed do we need to trigger another loading.
@@ -457,6 +470,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mHandler = new Handler(Looper.getMainLooper());
         mActivity = getBaseActivity();
+        if (isSearchV2Enabled()) {
+            mPathExtractor = new PathExtractor(mActivity);
+            mBreadcrumbModel = mActivity.getBreadcrumbModel();
+        }
         mRootView =
                 (AnimationView)
                         inflater.inflate(getRes(R.layout.fragment_directory), container, false);
@@ -535,10 +552,19 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mModel.removeUpdateListener(mModelUpdateListener);
         mModel.removeUpdateListener(mAdapter.getModelUpdateListener());
+        if (isUseFileSummaryEnabled()) {
+            mModel.removeSummaryUpdateListener(mAdapter);
+        }
         setPreDrawListenerEnabled(false);
 
         if (isUseMaterial3FlagEnabled()) {
             mRootView.removeOnSizeChangedListener(mOnSizeChangedListener);
+        }
+        mBreadcrumbModel = null;
+
+        if (mItemDecorationInvalidator != null) {
+            mItemDecorationInvalidator.teardown();
+            mItemDecorationInvalidator = null;
         }
 
         super.onDestroyView();
@@ -592,6 +618,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mModel.addUpdateListener(mAdapter.getModelUpdateListener());
         mModel.addUpdateListener(mModelUpdateListener);
+        if (isUseFileSummaryEnabled()) {
+            mModel.addSummaryUpdateListener(mAdapter);
+        }
 
         SelectionPredicate<String> selectionPredicate =
                 new DocsSelectionPredicate(mInjector.config, mState, mModel, mRecView);
@@ -650,6 +679,47 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         mSelectionMgr.addObserver(mSelectionMetadata);
+        if (isSearchV2Enabled()) {
+            mSelectionMgr.addObserver(
+                    new SelectionTracker.SelectionObserver<String>() {
+                        private final String[] mEmptyPath = new String[0];
+
+                        @Override
+                        public void onSelectionChanged() {
+                            // If the path extractor or the breadcrumb model were not set up or the
+                            // activity is either null or indicating that it is neither in the
+                            // recents view or is searching, do not extract paths from the currently
+                            // selected files. The extracted path is used only in recent and search
+                            // results to show the location of the selected file.
+                            if (mPathExtractor == null
+                                    || mBreadcrumbModel == null
+                                    || mActivity == null
+                                    || !(mActivity.isSearching() || mActivity.isInRecents())) {
+                                return;
+                            }
+                            String selectedId = null;
+                            if (mSelectionMgr.getSelection().size() == 1) {
+                                for (String id : mSelectionMgr.getSelection()) {
+                                    selectedId = id;
+                                }
+                            }
+                            String[] path = mEmptyPath;
+                            if (selectedId != null) {
+                                DocumentInfo info = mModel.getDocument(selectedId);
+                                if (info != null) {
+                                    try {
+                                        path = mPathExtractor.getDocumentInfoPath(info);
+                                    } catch (Exception e) {
+                                        if (DEBUG) {
+                                            Log.d(TAG, "Failed to get path for " + info, e);
+                                        }
+                                    }
+                                }
+                            }
+                            mBreadcrumbModel.setPath(path);
+                        }
+                    });
+        }
 
         // Construction of the input handlers is non trivial, so to keep logic clear,
         // and code flexible, and DirectoryFragment small, the construction has been
@@ -849,9 +919,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (startUnpackingArchive(docDetails)) return true;
         }
 
-        if (isDesktopFileHandlingFlagEnabled()) {
-            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -964,15 +1031,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         if (isUseMaterial3FlagEnabled() && mRecView.getItemDecorationCount() > 0) {
-            mRecView.post(() -> {
-                if (mRecView != null) {
-
-                    // Invalidate item decorations so they are recalculated before layout. This also
-                    // calls requestLayout(). Post this to the UI thread as this will cause a
-                    // crash if it's executed during a scroll or layout.
-                    mRecView.invalidateItemDecorations();
-                }
-            });
+            if (mItemDecorationInvalidator == null
+                    || mItemDecorationInvalidator.hasFinishedInvalidation()) {
+                // Create a new ItemDecorationInvalidator to invalidate the item decorations the
+                // next time the recycler view is idle.
+                mItemDecorationInvalidator = ItemDecorationInvalidator.create(mRecView);
+            }
         } else {
             mRecView.requestLayout();
         }
@@ -1153,13 +1217,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // It won't end action mode if user cancels the delete.
             mActions.showDeleteDialog();
             return true;
-        } else if (isTrashFlowEnabled() && id == getRes(R.id.action_menu_move_to_trash)) {
-            trashSelectedDocuments(selection);
+        } else if (isTrashFlowEnabled()
+                && (id == getRes(R.id.action_menu_move_to_trash)
+                        || id == getRes(R.id.dir_menu_move_to_trash))) {
+            mActions.trashSelectedDocuments();
             return true;
-        } else if (id == getRes(R.id.action_menu_restore_from_trash)) {
+        } else if (isTrashFlowEnabled()
+                && (id == getRes(R.id.action_menu_restore_from_trash)
+                        || id == getRes(R.id.dir_menu_restore_from_trash))) {
             restoreDocumentsFromTrash(selection);
             return true;
-        }  else if (id == getRes(R.id.action_menu_copy_to)) {
+        } else if (id == getRes(R.id.action_menu_copy_to)) {
             transferDocuments(selection, null, FileOperationService.OPERATION_COPY);
             // TODO: Only finish selection mode if copy-to is not canceled.
             // Need to plum down into handling the way we do with deleteDocuments.
@@ -1189,6 +1257,19 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (mModel.hasDocuments(selection, DocumentFilters.NOT_MOVABLE)) {
                 mInjector.dialogs.showOperationUnsupported();
                 return true;
+            }
+            if (isHomeScreenFilesFlagEnabled()) {
+                // Block the operation if one of the selected documents is a shortcut folder.
+                List<Uri> uris = new ArrayList<>();
+                UserId userId = null;
+                for (DocumentInfo doc : mModel.getDocuments(selection)) {
+                    uris.add(doc.getDocumentUri());
+                    userId = doc.userId;
+                }
+                if (mActions.blockOperationForShortcuts(uris, userId)) {
+                    Log.e(TAG, "Unable to move because a protected folder is selected.");
+                    return true;
+                }
             }
             // Exit selection mode first, so we avoid deselecting deleted documents.
             closeSelectionBar();
@@ -1249,11 +1330,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            if (isDesktopFileHandlingFlagEnabled()) {
-                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
-            } else {
-                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
-            }
+            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
         }
         return true;
     }
@@ -1296,16 +1373,6 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void trashSelectedDocuments(final Selection selected) {
-        if (selected.isEmpty()) {
-            return;
-        }
-
-        // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
-        List<DocumentInfo> docs = mModel.getDocuments(selected);
-        mActions.trashSelectedDocuments(docs);
-    }
-
     private void restoreDocumentsFromTrash(final Selection selected) {
         if (selected.isEmpty()) {
             return;
@@ -1331,8 +1398,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private void viewDocument(final Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_OPEN);
+        Trace.beginSection("DirectoryFragment#viewDocument");
 
         if (selected.isEmpty()) {
+            Trace.endSection();
             return;
         }
 
@@ -1341,6 +1410,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 DocumentInfo.fromDirectoryCursor(mModel.getItem(selected.iterator().next()));
 
         mActions.openDocumentViewOnly(doc);
+        Trace.endSection();
     }
 
     private void transferDocuments(
@@ -1377,9 +1447,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         final DocumentInfo parent = mActivity.getCurrentDirectory();
+        Uri parentUri = parent == null ? null : parent.derivedUri;
+
+        // If the user is in the "Recent" view, there is no meaningful parent URI, but the
+        // FileOperationService can successfully deal with this for move operations. This is only
+        // enabled for Search v2 as using the old loaders masks out flags like FLAG_SUPPORTS_DELETE
+        // for the "Recent" view.
+        if (isSearchV2Enabled() && (mode == FileOperationService.OPERATION_MOVE
+                && mState.stack.isRecents())) {
+            parentUri = null;
+        }
+
         final FileOperation operation = new FileOperation.Builder()
                 .withOpType(mode)
-                .withSrcParent(parent == null ? null : parent.derivedUri)
+                .withSrcParent(parentUri)
                 .withSrcs(srcs)
                 .build();
 
@@ -1465,6 +1546,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
         List<DocumentInfo> docs = mModel.getDocuments(selected);
+
+        // Block the file operation if the selected document is a shortcut folder.
+        if (isHomeScreenFilesFlagEnabled() && mActions.blockOperationForShortcuts(
+                List.of(docs.get(0).derivedUri), docs.get(0).userId)) {
+            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+            return;
+        }
         RenameDocumentFragment.show(getChildFragmentManager(), docs.get(0));
     }
 
@@ -1477,11 +1565,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     public void pasteFromClipboard() {
         Metrics.logUserAction(MetricConsts.USER_ACTION_PASTE_CLIPBOARD);
+        int cookie = Trace.isEnabled() ? RANDOM.nextInt() : 0;
+        if (Trace.isEnabled()) {
+            Trace.beginAsyncSection("DirectoryFragment#pasteFromClipboard", cookie);
+        }
         // Since we are pasting into the current window, we already have the destination in the
         // stack. No need for a destination DocumentInfo.
         mClipper.copyFromClipboard(
                 mState.stack,
-                mInjector.dialogs::showFileOperationStatus);
+                (status, opType, docCount) -> {
+                    mInjector.dialogs.showFileOperationStatus(status, opType, docCount);
+                    Trace.endAsyncSection("DirectoryFragment#pasteFromClipboard", cookie);
+                });
         getBaseActivity().invalidateOptionsMenu();
     }
 
@@ -1825,5 +1920,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         public ActionHandler getActionHandler() {
             return mActions;
         }
+
+        @Override
+        public boolean isOnTrashPage() {
+            return mState.stack.isTrash();
+        }
     }
 }
+

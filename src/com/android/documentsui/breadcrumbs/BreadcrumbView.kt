@@ -23,10 +23,12 @@ import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isEmpty
 import com.android.documentsui.R
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import java.util.function.IntConsumer
+import kotlin.math.max
 
 /**
  * A programmatic wrapper around the horizontal scroll view. The view hides the details of updating
@@ -117,8 +119,30 @@ class BreadcrumbView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
         pathItems.last().setEnabled(false)
 
         // Scroll to the end where the new elements should be.
-        post { horizontalScrollView.fullScroll(FOCUS_RIGHT) }
+        scrollToEnd()
     }
+
+    /**
+     * Scrolls to the end of horizontal scroll view without using fullScroll. The reason for having
+     * this method is that fullScroll can scroll and grab focus. We cannot have breadcrumb view take
+     * focus away from other elements of the DocumentsUI.
+     */
+    private fun scrollToEnd() {
+        if (horizontalScrollView.isEmpty()) {
+            return
+        }
+        horizontalScrollView.post {
+            val horizontalPadding =
+                horizontalScrollView.paddingLeft + horizontalScrollView.paddingRight
+            val visibleWidth = horizontalScrollView.width - horizontalPadding
+            val child = horizontalScrollView.getChildAt(horizontalScrollView.childCount - 1)
+            val maxScrollX = max(0, child.width - visibleWidth)
+            horizontalScrollView.smoothScrollTo(maxScrollX, 0)
+        }
+    }
+
+    /** Returns the current length of the path shown by this view. */
+    fun getPathLength() = pathItems.size
 
     /** Clears the view. */
     fun clear() {

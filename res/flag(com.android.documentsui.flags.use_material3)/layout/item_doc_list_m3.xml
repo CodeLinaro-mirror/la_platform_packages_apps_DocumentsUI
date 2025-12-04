@@ -118,11 +118,12 @@
 
     <FrameLayout
         android:id="@+id/preview_icon"
-        android:layout_width="@dimen/list_item_icon_size"
-        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_width="@dimen/list_item_preview_icon_size"
+        android:layout_height="@dimen/list_item_preview_icon_size"
         android:layout_gravity="center"
         android:focusable="true"
-        android:clickable="true">
+        android:clickable="true"
+        android:pointerIcon="hand">
 
       <ImageView
           android:layout_width="@dimen/check_icon_size_m3"

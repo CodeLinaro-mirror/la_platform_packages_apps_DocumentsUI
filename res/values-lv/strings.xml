@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"Kopīgošanas veids"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Failu kopēšana"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"Failu saspiešana"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"Notiek failu tilpsaspiešana"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"Notiek failu izvilkšana"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"Failu pārvietošana"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"Failu dzēšana"</string>
@@ -171,10 +170,8 @@
       <item quantity="one">Tiek dzēsts <xliff:g id="COUNT_1">%1$d</xliff:g> vienums.</item>
       <item quantity="other">Tiek dzēsti <xliff:g id="COUNT_1">%1$d</xliff:g> vienumi.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{Notiek # faila pārvietošana uz atkritni}zero{Notiek # failu pārvietošana uz atkritni}one{Notiek # faila pārvietošana uz atkritni}other{Notiek # failu pārvietošana uz atkritni}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{Notiek # faila atjaunošana}zero{Notiek # failu atjaunošana}one{Notiek # faila atjaunošana}other{Notiek # failu atjaunošana}}"</string>
     <string name="undo" msgid="2902438994196400565">"Atsaukt"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"Notiek sagatavošana..."</string>
     <string name="compress_preparing" msgid="7401605598969019696">"Notiek sagatavošana..."</string>
@@ -187,23 +184,16 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g>/<xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{Nevarēja kopēt <xliff:g id="COUNT_0">{count}</xliff:g> vienumu}zero{Nevarēja kopēt <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}one{Nevarēja kopēt <xliff:g id="COUNT_1">{count}</xliff:g> vienumu}other{Nevarēja kopēt <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{Nevarēja nokopēt # failu}zero{Nevarēja nokopēt # failus}one{Nevarēja nokopēt # failu}other{Nevarēja nokopēt # failus}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{Nevarēja saspiest <xliff:g id="COUNT_0">{count}</xliff:g> vienumu}zero{Nevarēja saspiest <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}one{Nevarēja saspiest <xliff:g id="COUNT_1">{count}</xliff:g> vienumu}other{Nevarēja saspiest <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{Nevarēja tilpsaspiest # failu}zero{Nevarēja tilpsaspiest # failus}one{Nevarēja tilpsaspiest # failu}other{Nevarēja tilpsaspiest # failus}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{Nevarēja izvilkt # failu}zero{Nevarēja izvilkt # failus}one{Nevarēja izvilkt # failu}other{Nevarēja izvilkt # failus}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{Nevarēja pārvietot <xliff:g id="COUNT_0">{count}</xliff:g> vienumu}zero{Nevarēja pārvietot <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}one{Nevarēja pārvietot <xliff:g id="COUNT_1">{count}</xliff:g> vienumu}other{Nevarēja pārvietot <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{Nevarēja pārvietot # failu}zero{Nevarēja pārvietot # failus}one{Nevarēja pārvietot # failu}other{Nevarēja pārvietot # failus}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{Nevarēja izdzēst <xliff:g id="COUNT_0">{count}</xliff:g> vienumu}zero{Nevarēja izdzēst <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}one{Nevarēja izdzēst <xliff:g id="COUNT_1">{count}</xliff:g> vienumu}other{Nevarēja izdzēst <xliff:g id="COUNT_1">{count}</xliff:g> vienumus}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{Nevarēja izdzēst # failu}zero{Nevarēja izdzēst # failus}one{Nevarēja izdzēst # failu}other{Nevarēja izdzēst # failus}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{Nevarēja pārvietot uz atkritni # failu}zero{Nevarēja pārvietot uz atkritni # failus}one{Nevarēja pārvietot uz atkritni # failu}other{Nevarēja pārvietot uz atkritni # failus}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{Nevarēja atjaunot # failu}zero{Nevarēja atjaunot # failus}one{Nevarēja atjaunot # failu}other{Nevarēja atjaunot # failus}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"Pieskarieties, lai skatītu informāciju."</string>
     <string name="close" msgid="905969391788869975">"Aizvērt"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
@@ -211,43 +201,37 @@
       <item quantity="one">Šie faili netika nokopēti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie faili netika nokopēti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Šis fails netika nokopēts: <xliff:g id="LIST_0">{list}</xliff:g>}zero{Šie faili netika nokopēti: <xliff:g id="LIST_1">{list}</xliff:g>}one{Šie faili netika nokopēti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie faili netika nokopēti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="zero">Šie faili netika saspiesti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Šie faili netika saspiesti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie faili netika saspiesti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Šis fails netika tilpsaspiests: <xliff:g id="LIST_0">{list}</xliff:g>}zero{Šie faili netika tilpsaspiesti: <xliff:g id="LIST_1">{list}</xliff:g>}one{Šie faili netika tilpsaspiesti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie faili netika tilpsaspiesti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="zero">Šie faili netika izvilkti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Šie faili netika izvilkti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie faili netika izvilkti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Šis fails netika izvilkts: <xliff:g id="LIST_0">{list}</xliff:g>}zero{Šie faili netika izvilkti: <xliff:g id="LIST_1">{list}</xliff:g>}one{Šie faili netika izvilkti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie faili netika izvilkti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="zero">Šie faili netika pārvietoti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Šie faili netika pārvietoti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie faili netika pārvietoti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Šis fails netika pārvietots: <xliff:g id="LIST_0">{list}</xliff:g>}zero{Šie faili netika pārvietoti: <xliff:g id="LIST_1">{list}</xliff:g>}one{Šie faili netika pārvietoti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie faili netika pārvietoti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="zero">Šie faili netika izdzēsti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Šie faili netika izdzēsti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie faili netika izdzēsti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Šis fails netika izdzēsts: <xliff:g id="LIST_0">{list}</xliff:g>}zero{Šie faili netika izdzēsti: <xliff:g id="LIST_1">{list}</xliff:g>}one{Šie faili netika izdzēsti: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie faili netika izdzēsti: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="zero">Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Šis fails tika pārveidots citā formātā: <xliff:g id="LIST_0">{list}</xliff:g>}zero{Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">{list}</xliff:g>}one{Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">{list}</xliff:g>}other{Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="zero"><xliff:g id="COUNT_1">%1$d</xliff:g> vienumi ir kopēti starpliktuvē.</item>
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> vienums ir kopēts starpliktuvē.</item>
@@ -261,18 +245,23 @@
     <string name="rename_error" msgid="6700093173508118635">"Neizdevās pārdēvēt dokumentu."</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"Noņemt"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"Daži faili tika pārveidoti."</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{Fails “<xliff:g id="FILENAME">{filename}</xliff:g>” tiek kopēts uz mapi “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”.}zero{# faili tiek kopēti uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}one{# fails tiek kopēts uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}other{# faili tiek kopēti uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{Fails “<xliff:g id="FILENAME">{filename}</xliff:g>” tiek pārvietots uz mapi “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”.}zero{Notiek # failu pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}one{Notiek # faila pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}other{Notiek # failu pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”.}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{Fails “<xliff:g id="FILENAME">{filename}</xliff:g>” tiek dzēsts.}zero{Tiek dzēsti # faili.}one{Tiek dzēsts # fails.}other{Tiek dzēsti # faili.}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” arhivēšana…}zero{Notiek # failu arhivēšana…}one{Notiek # faila arhivēšana…}other{Notiek # failu arhivēšana…}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” kopēšana uz mapi “<xliff:g id="DIRECTORY">{directory}</xliff:g>”…"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{Notiek # faila kopēšana uz mapi “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”…}zero{Notiek # failu kopēšana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}one{Notiek # faila kopēšana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}other{Notiek # failu kopēšana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” izvilkšana mapē “<xliff:g id="DIRECTORY">{directory}</xliff:g>”…"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{Notiek # faila izvilkšana mapē “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”…}zero{Notiek # failu izvilkšana mapē “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}one{Notiek # faila izvilkšana mapē “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}other{Notiek # failu izvilkšana mapē “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” pārvietošana uz mapi “<xliff:g id="DIRECTORY">{directory}</xliff:g>”…"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{Notiek # faila pārvietošana uz mapi “<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”…}zero{Notiek # failu pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}one{Notiek # faila pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}other{Notiek # failu pārvietošana uz mapi “<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”…}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” dzēšana…"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{Notiek # faila dzēšana…}zero{Notiek # failu dzēšana…}one{Notiek # faila dzēšana…}other{Notiek # failu dzēšana…}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” pārvietošana uz atkritni…"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{Notiek # faila pārvietošana uz atkritni…}zero{Notiek # failu pārvietošana uz atkritni…}one{Notiek # faila pārvietošana uz atkritni…}other{Notiek # failu pārvietošana uz atkritni…}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” atjaunošana…"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{Notiek # faila atjaunošana…}zero{Notiek # failu atjaunošana…}one{Notiek # faila atjaunošana…}other{Notiek # failu atjaunošana…}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"Notiek faila “<xliff:g id="FILENAME">{filename}</xliff:g>” arhivēšana…"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{Notiek # faila arhivēšana…}zero{Notiek # failu arhivēšana…}one{Notiek # faila arhivēšana…}other{Notiek # failu arhivēšana…}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"Rādīt faila darbību norisi"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"Faila darbības norise"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"Noraidīt visus"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"Pabeigts"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"Atcelta"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"Skatīt detalizētu informāciju"</string>
@@ -405,4 +394,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Attēla <xliff:g id="FILENAME">%s</xliff:g> priekšskatījums"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Paslēpt informācijas paneli"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Rādīt informācijas paneli"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"Atkritnē nekā nav"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Faili, kas atkritnē atrodas ilgāk par 30 dienām, tiek automātiski dzēsti."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Iztukšot atkritni"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vai iztukšot atkritni?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Šo darbību nevar atsaukt, un failus vairs nevarēs atkopt."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Iztukšot atkritni"</string>
 </resources>

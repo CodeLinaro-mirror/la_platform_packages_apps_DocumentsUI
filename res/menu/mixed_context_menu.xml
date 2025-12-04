@@ -35,7 +35,7 @@
         android:id="@+id/menu_modifier_group">
         <item
             android:id="@+id/dir_menu_delete"
-            android:title="@string/menu_delete" />
+            android:title="@string/menu_permanently_delete" />
     </group>
 
     <group

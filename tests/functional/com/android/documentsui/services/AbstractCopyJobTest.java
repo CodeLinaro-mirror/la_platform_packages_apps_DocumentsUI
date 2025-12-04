@@ -16,6 +16,8 @@
 
 package com.android.documentsui.services;
 
+import static android.provider.DocumentsContract.buildDocumentUri;
+
 import static com.google.common.collect.Lists.newArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -303,6 +305,15 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         mJobListener.assertFilesFailed(newArrayList("test1.txt"));
 
         mDocs.assertChildCount(mDestRoot, 0);
+    }
+
+    protected void runCopyFileWithFileNotFoundTest() throws Exception {
+        Uri testFile = buildDocumentUri(AUTHORITY, "DOES_NOT_EXIST");
+        Job job = createJob(newArrayList(testFile));
+        job.run();
+
+        JobProgress progress = job.getJobProgress();
+        assertEquals(getVerb() + " 1 file to “" + mDestRoot.title + "”", progress.msg);
     }
 
     protected void runCopyProgressForFileCountTest() throws Exception {

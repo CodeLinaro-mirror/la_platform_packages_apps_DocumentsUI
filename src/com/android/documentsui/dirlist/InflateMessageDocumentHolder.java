@@ -27,6 +27,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.R;
 import com.android.documentsui.util.VersionUtils;
@@ -73,11 +75,11 @@ final class InflateMessageDocumentHolder extends MessageHolder {
 
     public void bind(Message message) {
         mMessage = message;
-        bind(null, null);
+        bind(null, null, null);
     }
 
     @Override
-    public void bind(Cursor cursor, String modelId) {
+    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
         if (mMessage.getLayout() == LAYOUT_CROSS_PROFILE_ERROR) {
             bindCrossProfileMessageView();
         } else {

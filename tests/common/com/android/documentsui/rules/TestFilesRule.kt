@@ -26,28 +26,31 @@ import com.android.documentsui.base.UserId
 import org.junit.rules.ExternalResource
 
 /**
- * Rule that creates test files in a test.
+ * Rule that uses the DocumentsProvider interface to create test files for a test.
+ *
+ * The class uses StubProvider (which stores its files within its private app cache) as the backing
+ * DocumentsProvider. Use ExternalStorageProviderTestFilesRule to create the test files in the
+ * user's profile directory on the device.
+ *
+ * Note that for StubProvider, test files created are not automatically cleaned up: that's left up
+ * to the test.
+ *
  * When `skipCreation` is false, this essentially falls back to providing a `docsHelper`.
  */
-class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResource() {
+open class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResource() {
     // Only needed so that the file creation function could throw.
-    interface CreateFilesFunction {
-        @Throws(Exception::class)
-        fun apply(helper: DocumentsProviderHelper)
+    fun interface CreateFilesFunction {
+        @Throws(Exception::class) fun apply(helper: DocumentsProviderHelper)
     }
 
     lateinit var docsHelper: DocumentsProviderHelper
-
-    // A map of the URIs that are created, used to keep track of names of items that are created
-    // as children of other items.
-    private val createdUris = mutableMapOf<String, Uri>()
 
     // The creation operations are deferred as the rules are instantiated prior to the environment
     // being ready.
     private val deferredOperations = mutableListOf<() -> Unit>()
 
-    override fun before() {
-        docsHelper =
+    open fun createDocumentsProviderHelper(): DocumentsProviderHelper {
+        val helper =
             DocumentsProviderHelper(
                 UserId.DEFAULT_USER,
                 StubProvider.DEFAULT_AUTHORITY,
@@ -55,13 +58,23 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
                 StubProvider.DEFAULT_AUTHORITY,
             )
 
-        docsHelper.clear(null, null)
-        docsHelper.configure(null, Bundle.EMPTY)
+        helper.clear(null, null)
+        helper.configure(null, Bundle.EMPTY)
+
+        return helper
+    }
+
+    // Sub-classes can implement this to ensure any temporary files don't remain between tests.
+    open fun cleanupTemporaryFiles() {}
+
+    override fun before() {
+        docsHelper = createDocumentsProviderHelper()
+        cleanupTemporaryFiles()
 
         if (skipCreation) {
-            require(
-                deferredOperations.isEmpty()
-            ) { "Have deferred operations yet requested to skip creation." }
+            require(deferredOperations.isEmpty()) {
+                "Have deferred operations yet requested to skip creation."
+            }
             return
         }
 
@@ -77,9 +90,7 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
      * running any DocumentsProviderHelper functions, but should only be used to create files.
      */
     fun createTestFiles(createTestFiles: CreateFilesFunction): TestFilesRule {
-        deferredOperations.add {
-            createTestFiles.apply(docsHelper)
-        }
+        deferredOperations.add { createTestFiles.apply(docsHelper) }
         return this
     }
 
@@ -94,9 +105,9 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
     }
 
     /** Creates a default set of files for testing. */
-    private fun createDefault() {
-        val root0 = docsHelper.getRoot(StubProvider.ROOT_0_ID)
-        val root1 = docsHelper.getRoot(StubProvider.ROOT_1_ID)
+    open fun createDefault() {
+        val root0: RootInfo = docsHelper.getRoot(StubProvider.ROOT_0_ID)
+        val root1: RootInfo = docsHelper.getRoot(StubProvider.ROOT_1_ID)
 
         docsHelper.createFolder(root0, DIR_NAME_1)
         docsHelper.createDocument(root0, "text/plain", FILE_NAME_1)
@@ -113,29 +124,31 @@ class TestFilesRule(private val skipCreation: Boolean = false) : ExternalResourc
     }
 
     override fun after() {
+        cleanupTemporaryFiles()
         docsHelper.cleanUp()
     }
 
     companion object {
-        @JvmField
-        val DIR_NAME_1: String = "Dir1"
+        @JvmField val DIR_NAME_1: String = "Dir1"
 
-        @JvmField
-        val CHILD_DIR_1: String = "ChildDir1"
+        @JvmField val CHILD_DIR_1: String = "ChildDir1"
 
-        @JvmField
-        val FILE_NAME_1: String = "file1.log"
+        @JvmField val FILE_NAME_1: String = "file1.log"
 
-        @JvmField
-        val FILE_NAME_2: String = "file12.png"
+        @JvmField val FILE_NAME_2: String = "file12.png"
 
-        @JvmField
-        val FILE_NAME_3: String = "anotherFile0.log"
+        @JvmField val FILE_NAME_3: String = "anotherFile0.log"
 
-        @JvmField
-        val FILE_NAME_4: String = "poodles.text"
+        @JvmField val FILE_NAME_4: String = "poodles.text"
 
-        @JvmField
-        val FILE_NAME_NO_RENAME: String = "NO_RENAMEfile.txt"
+        @JvmField val FILE_NAME_5: String = "audio.mp3"
+
+        @JvmField val FILE_NAME_6: String = "video.mp4"
+
+        @JvmField val FILE_NAME_7: String = "random.exe"
+
+        @JvmField val FILE_NAME_8: String = "test.zip"
+
+        @JvmField val FILE_NAME_NO_RENAME: String = "NO_RENAMEfile.txt"
     }
 }

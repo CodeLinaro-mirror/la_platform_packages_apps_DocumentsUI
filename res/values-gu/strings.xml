@@ -138,8 +138,7 @@
     <string name="share_via" msgid="8725082736005677161">"આના દ્વારા શેર કરો"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"ફાઇલો કૉપિ કરી રહ્યાં છે"</string>
     <string name="compress_notification_title" msgid="6830195148113751021">"ફાઇલોને સંકુચિત કરવી"</string>
-    <!-- no translation found for zip_notification_title (2858653527172763548) -->
-    <skip />
+    <string name="zip_notification_title" msgid="2858653527172763548">"ફાઇલો ઝિપ કરી રહ્યાં છીએ"</string>
     <string name="extract_notification_title" msgid="5067393961754430469">"ફાઇલો કાઢી રહ્યાં છીએ"</string>
     <string name="move_notification_title" msgid="3173424987049347605">"ફાઇલો ખસેડી રહ્યાં છે"</string>
     <string name="delete_notification_title" msgid="2512757431856830792">"ફાઇલને નીકાળી રહ્યાં છે"</string>
@@ -166,10 +165,8 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> આઇટમ કાઢી નાખી રહ્યા છીએ.</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> આઇટમ કાઢી નાખી રહ્યા છીએ.</item>
     </plurals>
-    <!-- no translation found for trashing (1363875848930103999) -->
-    <skip />
-    <!-- no translation found for restoring_from_trash (5480701724791535806) -->
-    <skip />
+    <string name="trashing" msgid="1363875848930103999">"{count,plural, =1{# ફાઇલને ટ્રેશમાં ખસેડી રહ્યાં છીએ}one{# ફાઇલને ટ્રેશમાં ખસેડી રહ્યાં છીએ}other{# ફાઇલને ટ્રેશમાં ખસેડી રહ્યાં છીએ}}"</string>
+    <string name="restoring_from_trash" msgid="5480701724791535806">"{count,plural, =1{# ફાઇલ રિસ્ટોર કરી રહ્યાં છીએ}one{# ફાઇલ રિસ્ટોર કરી રહ્યાં છીએ}other{# ફાઇલ રિસ્ટોર કરી રહ્યાં છીએ}}"</string>
     <string name="undo" msgid="2902438994196400565">"છેલ્લો ફેરફાર રદ કરો"</string>
     <string name="copy_preparing" msgid="4759516490222449324">"તૈયારી કરી રહ્યાં છીએ…"</string>
     <string name="compress_preparing" msgid="7401605598969019696">"તૈયારી કરી રહ્યાં છીએ…"</string>
@@ -182,61 +179,48 @@
     <string name="move_to_trash_progress" msgid="7117416860391196406">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="restore_from_trash_progress" msgid="6003816126633922428">"<xliff:g id="COUNT_0">%1$d</xliff:g> / <xliff:g id="TOTALCOUNT">%2$d</xliff:g>"</string>
     <string name="copy_error_notification_title" msgid="5426120176307563562">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> આઇટમ કૉપિ કરી શકાઈ નથી}one{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ કૉપિ કરી શકાઈ નથી}other{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ કૉપિ કરી શકાઈ નથી}}"</string>
-    <!-- no translation found for copy_error_2 (2553643062672015237) -->
-    <skip />
+    <string name="copy_error_2" msgid="2553643062672015237">"{count,plural, =1{# ફાઇલ કૉપિ કરી શક્યાં નહીં}one{# ફાઇલ કૉપિ કરી શક્યાં નહીં}other{# ફાઇલ કૉપિ કરી શક્યાં નહીં}}"</string>
     <string name="compress_error_notification_title" msgid="7238511273511460182">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> આઇટમ નાની કરી શકાઈ નથી}one{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ નાની કરી શકાઈ નથી}other{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ નાની કરી શકાઈ નથી}}"</string>
-    <!-- no translation found for compress_error_2 (7035005747251809554) -->
-    <skip />
-    <!-- no translation found for extract_error_2 (6428683221773394140) -->
-    <skip />
+    <string name="compress_error_2" msgid="7035005747251809554">"{count,plural, =1{# ફાઇલ ઝિપ કરી શક્યાં નહીં}one{# ફાઇલ ઝિપ કરી શક્યાં નહીં}other{# ફાઇલ ઝિપ કરી શક્યાં નહીં}}"</string>
+    <string name="extract_error_2" msgid="6428683221773394140">"{count,plural, =1{# ફાઇલ એક્સટ્રેક્ટ કરી શક્યાં નહીં}one{# ફાઇલ એક્સટ્રેક્ટ કરી શક્યાં નહીં}other{# ફાઇલ એક્સટ્રેક્ટ કરી શક્યાં નહીં}}"</string>
     <string name="move_error_notification_title" msgid="7094494564254143696">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> આઇટમ ખસેડી શકાઈ નથી}one{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ ખસેડી શકાઈ નથી}other{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ ખસેડી શકાઈ નથી}}"</string>
-    <!-- no translation found for move_error_2 (8089293906168239907) -->
-    <skip />
+    <string name="move_error_2" msgid="8089293906168239907">"{count,plural, =1{# ફાઇલ ખસેડી શક્યાં નહીં}one{# ફાઇલ ખસેડી શક્યાં નહીં}other{# ફાઇલ ખસેડી શક્યાં નહીં}}"</string>
     <string name="delete_error_notification_title" msgid="6510460288416352803">"{count,plural, =1{<xliff:g id="COUNT_0">{count}</xliff:g> આઇટમ ડિલીટ કરી શકાઈ નથી}one{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ ડિલીટ કરી શકાઈ નથી}other{<xliff:g id="COUNT_1">{count}</xliff:g> આઇટમ ડિલીટ કરી શકાઈ નથી}}"</string>
-    <!-- no translation found for delete_error_2 (5368270399330057918) -->
-    <skip />
-    <!-- no translation found for trash_error_2 (5039906473394301366) -->
-    <skip />
-    <!-- no translation found for restore_error_2 (3095191316757396713) -->
-    <skip />
+    <string name="delete_error_2" msgid="5368270399330057918">"{count,plural, =1{# ફાઇલ ડિલીટ કરી શક્યાં નહીં}one{# ફાઇલ ડિલીટ કરી શક્યાં નહીં}other{# ફાઇલ ડિલીટ કરી શક્યાં નહીં}}"</string>
+    <string name="trash_error_2" msgid="5039906473394301366">"{count,plural, =1{# ફાઇલ ટ્રેશ કરી શક્યાં નહીં}one{# ફાઇલ ટ્રેશ કરી શક્યાં નહીં}other{# ફાઇલ ટ્રેશ કરી શક્યાં નહીં}}"</string>
+    <string name="restore_error_2" msgid="3095191316757396713">"{count,plural, =1{# ફાઇલ રિસ્ટોર કરી શક્યાં નહીં}one{# ફાઇલ રિસ્ટોર કરી શક્યાં નહીં}other{# ફાઇલ રિસ્ટોર કરી શક્યાં નહીં}}"</string>
     <string name="notification_touch_for_details" msgid="2385563502445129570">"વિગતો જોવા માટે ટૅપ કરો"</string>
     <string name="close" msgid="905969391788869975">"બંધ કરો"</string>
     <plurals name="copy_failure_alert_content" formatted="false" msgid="5570549471912990536">
       <item quantity="one">આ ફાઇલો કૉપિ થઈ ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">આ ફાઇલો કૉપિ થઈ ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_content (9189052146654762708) -->
-    <skip />
+    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{આ ફાઇલ કૉપિ થઈ ન હતી: <xliff:g id="LIST_0">{list}</xliff:g>}one{આ ફાઇલ કૉપિ થઈ ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}other{આ ફાઇલો કૉપિ થઈ ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">આ ફાઇલો સંકુચિત થઈ ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">આ ફાઇલો સંકુચિત થઈ ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_content (8456626635020092667) -->
-    <skip />
+    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{આ ફાઇલ ઝિપ કરવામાં આવી ન હતી: <xliff:g id="LIST_0">{list}</xliff:g>}one{આ ફાઇલ ઝિપ કરવામાં આવી ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}other{આ ફાઇલો ઝિપ કરવામાં આવી ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">આ ફાઇલો એક્સટ્રેક્ટ થઈ ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">આ ફાઇલો એક્સટ્રેક્ટ થઈ ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_content (712220650216158840) -->
-    <skip />
+    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{આ ફાઇલ એક્સટ્રેક્ટ થઈ ન હતી: <xliff:g id="LIST_0">{list}</xliff:g>}one{આ ફાઇલ એક્સટ્રેક્ટ થઈ ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}other{આ ફાઇલો એક્સટ્રેક્ટ થઈ ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">આ ફાઇલો ખસેડવામાં આવી ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">આ ફાઇલો ખસેડવામાં આવી ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_content (1171202330576025930) -->
-    <skip />
+    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{આ ફાઇલ ખસેડી ન હતી: <xliff:g id="LIST_0">{list}</xliff:g>}one{આ ફાઇલ ખસેડી ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}other{આ ફાઇલો ખસેડી ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">આ ફાઇલો કાઢી નાખવામાં આવી ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">આ ફાઇલો કાઢી નાખવામાં આવી ન હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_content (4277261031394958675) -->
-    <skip />
+    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{આ ફાઇલ ડિલીટ કરવામાં આવી ન હતી: <xliff:g id="LIST_0">{list}</xliff:g>}one{આ ફાઇલ ડિલીટ કરવામાં આવી ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}other{આ ફાઇલો ડિલીટ કરવામાં આવી ન હતી: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">આ ફાઇલો બીજા ફૉર્મેટમાં રૂપાંતરિત કરવામાં આવી હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">આ ફાઇલો બીજા ફૉર્મેટમાં રૂપાંતરિત કરવામાં આવી હતી: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_content (4860955097845236961) -->
-    <skip />
+    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{આ ફાઇલ બીજા ફૉર્મેટમાં રૂપાંતરિત કરી હતી: <xliff:g id="LIST_0">{list}</xliff:g>}one{આ ફાઇલ બીજા ફૉર્મેટમાં રૂપાંતરિત કરી હતી: <xliff:g id="LIST_1">{list}</xliff:g>}other{આ ફાઇલો બીજા ફૉર્મેટમાં રૂપાંતરિત કરી હતી: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one">ક્લિપબોર્ડ પર <xliff:g id="COUNT_1">%1$d</xliff:g> આઇટમોની કૉપિ કરી.</item>
       <item quantity="other">ક્લિપબોર્ડ પર <xliff:g id="COUNT_1">%1$d</xliff:g> આઇટમોની કૉપિ કરી.</item>
@@ -249,18 +233,23 @@
     <string name="rename_error" msgid="6700093173508118635">"દસ્તાવેજનું નામ બદલવામાં નિષ્ફળ થયાં"</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"બહાર કાઢો"</string>
     <string name="notification_copy_files_converted_title" msgid="6916768494891833365">"કેટલીક ફાઇલો રૂપાંતરિત કરી હતી"</string>
-    <string name="copy_in_progress" msgid="3314396340163205014">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”માં “<xliff:g id="FILENAME">{filename}</xliff:g>”ની કૉપિ કરી રહ્યાં છીએ}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલની કૉપિ કરી રહ્યાં છીએ}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલની કૉપિ કરી રહ્યાં છીએ}}"</string>
-    <!-- no translation found for extract_in_progress (8395914945005887951) -->
-    <skip />
-    <string name="move_in_progress" msgid="2569791135683944801">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”માં “<xliff:g id="FILENAME">{filename}</xliff:g>”ને ખસેડી રહ્યાં છીએ}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલને ખસેડી રહ્યાં છીએ}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલને ખસેડી રહ્યાં છીએ}}"</string>
-    <string name="delete_in_progress" msgid="9032473164450943788">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>” ડિલીટ કરી રહ્યાં છીએ}one{# ફાઇલ ડિલીટ કરી રહ્યાં છીએ}other{# ફાઇલ ડિલીટ કરી રહ્યાં છીએ}}"</string>
-    <!-- no translation found for trash_in_progress (148010238243445101) -->
-    <skip />
-    <!-- no translation found for restore_in_progress (77264930309492659) -->
-    <skip />
-    <string name="compress_in_progress" msgid="6585173688835909381">"{count,plural, =1{“<xliff:g id="FILENAME">{filename}</xliff:g>“ને ઝિપ કરી રહ્યા છીએ}one{# ફાઇલને ઝિપ કરી રહ્યા છીએ}other{# ફાઇલને ઝિપ કરી રહ્યા છીએ}}"</string>
+    <string name="copy_specific_file_in_progress" msgid="2492589332201937030">"“<xliff:g id="DIRECTORY">{directory}</xliff:g>”માં “<xliff:g id="FILENAME">{filename}</xliff:g>” કૉપિ કરી રહ્યાં છીએ"</string>
+    <string name="copy_in_progress" msgid="6872096819249174615">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”માં # ફાઇલ કૉપિ કરી રહ્યાં છીએ}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલ કૉપિ કરી રહ્યાં છીએ}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલ કૉપિ કરી રહ્યાં છીએ}}"</string>
+    <string name="extract_specific_file_in_progress" msgid="1162381859640495308">"“<xliff:g id="DIRECTORY">{directory}</xliff:g>”માં “<xliff:g id="FILENAME">{filename}</xliff:g>” એક્સટ્રેક્ટ કરી રહ્યાં છીએ"</string>
+    <string name="extract_in_progress" msgid="4629395179865084830">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”માં # ફાઇલ એક્સટ્રેક્ટ કરી રહ્યાં છીએ}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલ એક્સટ્રેક્ટ કરી રહ્યાં છીએ}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલ એક્સટ્રેક્ટ કરી રહ્યાં છીએ}}"</string>
+    <string name="move_specific_file_in_progress" msgid="6369336484584073740">"“<xliff:g id="DIRECTORY">{directory}</xliff:g>”માં “<xliff:g id="FILENAME">{filename}</xliff:g>” ખસેડી રહ્યાં છીએ"</string>
+    <string name="move_in_progress" msgid="326356777470353315">"{count,plural, =1{“<xliff:g id="DIRECTORY_0">{directory}</xliff:g>”માં # ફાઇલ ખસેડી રહ્યાં છીએ}one{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલ ખસેડી રહ્યાં છીએ}other{“<xliff:g id="DIRECTORY_1">{directory}</xliff:g>”માં # ફાઇલ ખસેડી રહ્યાં છીએ}}"</string>
+    <string name="delete_specific_file_in_progress" msgid="7262273537447952230">"“<xliff:g id="FILENAME">{filename}</xliff:g>” ડિલીટ કરી રહ્યાં છીએ"</string>
+    <string name="delete_in_progress" msgid="7743890721129810508">"{count,plural, =1{# ફાઇલ ડિલીટ કરી રહ્યાં છીએ}one{# ફાઇલ ડિલીટ કરી રહ્યાં છીએ}other{# ફાઇલ ડિલીટ કરી રહ્યાં છીએ}}"</string>
+    <string name="trash_specific_file_in_progress" msgid="8266568481798889707">"“<xliff:g id="FILENAME">{filename}</xliff:g>” ટ્રેશમાં ખસેડી રહ્યાં છીએ"</string>
+    <string name="trash_in_progress" msgid="2509104069807418022">"{count,plural, =1{# ફાઇલ ટ્રેશમાં ખસેડી રહ્યાં છીએ}one{# ફાઇલ ટ્રેશમાં ખસેડી રહ્યાં છીએ}other{# ફાઇલ ટ્રેશમાં ખસેડી રહ્યાં છીએ}}"</string>
+    <string name="restore_specific_file_in_progress" msgid="6034897285865039861">"“<xliff:g id="FILENAME">{filename}</xliff:g>” રિસ્ટોર કરી રહ્યાં છીએ"</string>
+    <string name="restore_in_progress" msgid="9063203913920540783">"{count,plural, =1{# ફાઇલ રિસ્ટોર કરી રહ્યાં છીએ}one{# ફાઇલ રિસ્ટોર કરી રહ્યાં છીએ}other{# ફાઇલ રિસ્ટોર કરી રહ્યાં છીએ}}"</string>
+    <string name="compress_specific_file_in_progress" msgid="7855233703746784378">"“<xliff:g id="FILENAME">{filename}</xliff:g>“ ઝિપ કરી રહ્યા છીએ"</string>
+    <string name="compress_in_progress" msgid="5311444499230611877">"{count,plural, =1{# ફાઇલ ઝિપ કરી રહ્યાં છીએ}one{# ફાઇલ ઝિપ કરી રહ્યાં છીએ}other{# ફાઇલ ઝિપ કરી રહ્યાં છીએ}}"</string>
     <string name="job_progress_icon_label" msgid="1387365706178067075">"ફાઇલની પ્રગતિ બતાવો"</string>
     <string name="job_progress_panel_title" msgid="1640388840961608168">"ફાઇલની પ્રગતિ"</string>
+    <string name="job_progress_panel_dismiss_all" msgid="5858398094668912463">"બધા છોડી દો"</string>
     <string name="job_progress_item_completed" msgid="3933347715328014840">"પૂર્ણ"</string>
     <string name="job_progress_item_canceled" msgid="8915289522101993231">"રદ કર્યું"</string>
     <string name="job_progress_item_see_details" msgid="2069387639574541325">"વિગતો જુઓ"</string>
@@ -387,4 +376,10 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>ની છબીનો પ્રીવ્યૂ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"માહિતી પૅનલ છુપાવો"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"માહિતી પૅનલ બતાવો"</string>
+    <string name="trash_page_empty_title" msgid="1277047027818824150">"ટ્રેશમાં કંઈ નથી"</string>
+    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30 દિવસ કરતાં વધુ દિવસથી ટ્રેશમાં રહેલી ફાઇલોને ઑટોમૅટિક રીતે ડિલીટ કરવામાં આવશે."</string>
+    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ટ્રેશ હમણાં ખાલી કરો"</string>
+    <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ટ્રેશ ખાલી કરીએ?"</string>
+    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"આ ઍક્શન રદ કરી શકાતી નથી અને ફાઇલો હવે રિકવર કરી શકાય એવી રહેશે નહીં."</string>
+    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ટ્રેશ ખાલી કરો"</string>
 </resources>

@@ -136,7 +136,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         return DocumentsApplication.getUserManagerState(context).getUserIds();
                     }
                 });
-
+        initInjector();
         super.onCreate(icicle);
 
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
@@ -242,7 +242,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         mInjector.appsRowManager = mAppsRowManager;
 
         mActivityInputHandler =
-                new ActivityInputHandler(mInjector.actions::showDeleteDialog);
+                new ActivityInputHandler(mInjector.actions::runDeleteOrTrashHandler);
         mSharedInputHandler =
                 new SharedInputHandler(
                         mInjector.focusManager,

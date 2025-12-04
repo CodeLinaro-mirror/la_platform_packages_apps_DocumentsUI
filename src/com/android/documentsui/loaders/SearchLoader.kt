@@ -33,12 +33,19 @@ import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
+import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.sorting.SortModel
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import kotlin.time.measureTime
+
+/**
+ * The extra arg of URI to pass the context where the search is performed at. DocumentsProvider may
+ * use this information to apply the appropriate scope to the search.
+ */
+const val EXTRA_URI = "uri"
 
 /**
  * A wrapper around the cursor. We use it to distinguish between pending tasks (null query result)
@@ -107,15 +114,15 @@ class SearchLoader(
             var result: Cursor? = null
             val queryDuration = measureTime {
                 try {
-                    result = queryLocation(rootInfo, searchUri, queryArgs, options.maxResults)
+                    result = queryLocation(rootInfo, searchUri, queryArgs)
                 } catch (e: Exception) {
                     if (DEBUG) {
-                        Log.d(TAG, "Failed to get cursor for $searchUri", e)
+                        Log.d(TAG, "Failed to get cursor for ${searchUri.authority}", e)
                     }
                 }
             }
             if (DEBUG) {
-                Log.d(TAG, "Query on $searchUri took $queryDuration")
+                Log.d(TAG, "Query on ${searchUri.authority} took $queryDuration")
             }
             return result
         }
@@ -136,6 +143,19 @@ class SearchLoader(
             latch.countDown()
         }
     }
+
+    override fun createRootCursorWrapper(
+        rootInfo: RootInfo,
+        locationUri: Uri,
+        cursor: Cursor,
+    ): RootCursorWrapper =
+        RootCursorWrapper(
+            rootInfo.userId,
+            if (shouldUseSemanticSearch(rootInfo)) rootInfo.authority else locationUri.authority,
+            rootInfo.rootId,
+            cursor,
+            options.maxResults,
+        )
 
     private val searchTaskList = mutableListOf<SearchTask>()
 
@@ -300,14 +320,15 @@ class SearchLoader(
     private fun isRecentQuery(): Boolean =
         TextUtils.isEmpty(query) && options.otherQueryArgs.isEmpty
 
+    private fun shouldUseSemanticSearch(rootInfo: RootInfo): Boolean =
+        !isRecentQuery() &&
+            isUseLocalSearchProviderEnabled() &&
+            rootInfo.isLocalOnly &&
+            semanticSearchProvider != Uri.EMPTY
+
     /** Gets semantic search URI if applicable, or null otherwise. */
     private fun maybeGetSemanticSearchUri(rootInfo: RootInfo): Uri? {
-        if (
-            isRecentQuery() ||
-                !isUseLocalSearchProviderEnabled() ||
-                !rootInfo.isLocalOnly ||
-                semanticSearchProvider == Uri.EMPTY
-        ) {
+        if (!shouldUseSemanticSearch(rootInfo)) {
             return null
         }
         return rootToSearchUri(semanticSearchProvider, query)
@@ -345,10 +366,7 @@ class SearchLoader(
         }
     }
 
-    private fun createQueryArgs(
-        rootSupportsSearchResultLimiting: Boolean,
-        rejectBeforeTimestamp: Long,
-    ): Bundle {
+    private fun createQueryArgs(rootInfo: RootInfo, rejectBeforeTimestamp: Long): Bundle {
         val queryArgs = Bundle()
         sortModel.addQuerySortArgs(queryArgs)
         if (rejectBeforeTimestamp > 0L) {
@@ -360,8 +378,16 @@ class SearchLoader(
         if (!TextUtils.isEmpty(query)) {
             queryArgs.putString(DocumentsContract.QUERY_ARG_DISPLAY_NAME, query)
         }
-        if (rootSupportsSearchResultLimiting && options.maxResultsPerRoot > ALL_RESULTS) {
+        if (rootInfo.supportsSearchResultLimit() && options.maxResultsPerRoot > ALL_RESULTS) {
             queryArgs.putInt(ContentResolver.QUERY_ARG_LIMIT, options.maxResultsPerRoot)
+        }
+        if (shouldUseSemanticSearch(rootInfo)) {
+            // TODO(b:444354898): pass the actual folder stack instead of root to support limit
+            // search to folder.
+            queryArgs.putParcelable(
+                EXTRA_URI,
+                DocumentsContract.buildRootUri(rootInfo.authority, rootInfo.rootId),
+            )
         }
         queryArgs.putAll(options.otherQueryArgs)
         return queryArgs
@@ -376,11 +402,10 @@ class SearchLoader(
             }
             // Create a task that will set the cursor, once query call completes.
             val searchUris = createContentProviderQuery(rootInfo)
-            val queryArgs =
-                createQueryArgs(rootInfo.supportsSearchResultLimit(), rejectBeforeTimestamp)
+            val queryArgs = createQueryArgs(rootInfo, rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
             if (DEBUG) {
-                Log.d(TAG, "Querying $searchUris with args $queryArgs")
+                Log.d(TAG, "Querying ${searchUris.map { it.authority }}")
             }
             searchTaskList.add(SearchTask(rootInfo, searchUris, queryArgs, index, countDownLatch))
         }

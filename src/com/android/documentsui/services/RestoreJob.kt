@@ -96,8 +96,14 @@ class RestoreJob(
             id,
             operationType,
             state,
-            getProgressMessage(R.string.restore_in_progress),
+            getProgressMessage(
+                R.string.restore_specific_file_in_progress,
+                R.string.restore_in_progress,
+            ),
             hasFailures(),
+            failedDocs,
+            failedUris,
+            failedPaths,
         )
     }
 

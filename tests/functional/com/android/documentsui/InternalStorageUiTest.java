@@ -27,6 +27,7 @@ import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -59,7 +60,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
                 Providers.AUTHORITY_STORAGE);
         rootPrimary = mDocsHelper.getRoot(Providers.ROOT_ID_DEVICE);
 
-        bots.roots.openRoot(rootPrimary.title);
+        EspressoBotsKt.openRoot(context, rootPrimary.title);
         deleteTestFiles();
     }
 
@@ -73,6 +74,8 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRenameFile() throws Exception {
         createTestFiles();
 
+        var originalFile = bots.directory.findDocument(fileName);
+
         bots.directory.selectDocument(fileName, 1);
         device.waitForIdle();
 
@@ -83,7 +86,7 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.keyboard.pressEnter();
 
-        bots.directory.assertDocumentsAbsent(fileName);
+        originalFile.waitUntilGone(3000);
         bots.directory.assertDocumentsVisible(newFileName);
         // Snackbar will not show if no exception.
         assertNull(bots.directory.getSnackbar(context.getString(R.string.rename_error)));

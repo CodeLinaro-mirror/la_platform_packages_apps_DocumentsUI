@@ -26,6 +26,8 @@ import com.android.documentsui.ConfigStore;
 import com.android.documentsui.R;
 import com.android.documentsui.base.State;
 
+import javax.annotation.Nullable;
+
 /**
  * The most elegant transparent blank box that spans N rows ever conceived.
  * Used by {@link DirectoryAddonsAdapter}.
@@ -44,11 +46,11 @@ final class TransparentDividerDocumentHolder extends MessageHolder {
 
     public void bind(State state) {
         mState = state;
-        bind(null, null);
+        bind(null, null, null);
     }
 
     @Override
-    public void bind(Cursor cursor, String modelId) {
+    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
         if (mState.derivedMode == State.MODE_GRID) {
             itemView.setMinimumHeight(mVisibleHeight);
         } else {

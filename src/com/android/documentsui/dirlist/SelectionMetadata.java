@@ -19,8 +19,8 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
@@ -254,8 +254,11 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     @Override
     public boolean canOpen() {
-        return mFileCount == 1 && mDirectoryCount == 0 && mPartialCount == 0
+        return mFileCount == 1
+                && mDirectoryCount == 0
+                && mPartialCount == 0
                 && (mArchiveCount == 0 || !isZipNgFlagEnabled())
-                && (mInArchiveCount == 0 || isZipNgFlagEnabled()) && mUnsupportedRestoreCount == 0;
+                && (mInArchiveCount == 0 || isZipNgFlagEnabled())
+                && !canRestore();
     }
 }

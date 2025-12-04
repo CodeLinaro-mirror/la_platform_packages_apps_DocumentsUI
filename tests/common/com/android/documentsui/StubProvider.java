@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.TrashDocumentHelper.TRASH_LOCATION;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +28,7 @@ import android.database.MatrixCursor;
 import android.database.MatrixCursor.RowBuilder;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.FileUtils;
@@ -36,6 +39,7 @@ import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
+import android.provider.Flags;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -229,8 +233,10 @@ public class StubProvider extends DocumentsProvider {
     public void deleteDocument(String documentId)
             throws FileNotFoundException {
         final StubDocument document = mStorage.get(documentId);
+        if (document == null)
+            throw new FileNotFoundException();
         final long fileSize = document.file.length();
-        if (document == null || !document.file.delete())
+        if (!document.file.delete())
             throw new FileNotFoundException();
         synchronized (mWriteLock) {
             document.rootInfo.size -= fileSize;
@@ -410,6 +416,24 @@ public class StubProvider extends DocumentsProvider {
             throws FileNotFoundException {
         final MatrixCursor result = new MatrixCursor(projection != null ? projection
                 : DEFAULT_DOCUMENT_PROJECTION);
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+        // Return trash documents of all roots.
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
+        for (Map.Entry<String, RootInfo> entry : mRoots.entrySet()) {
+            final RootInfo info = entry.getValue();
+            final File rootDocumentFile = info.document.file;
+            final File trashDir = new File(rootDocumentFile, TRASH_LOCATION);
+            if (trashDir.exists()) {
+                StubDocument trashDirDocument = mStorage.get(getDocumentIdForFile(trashDir));
+                includeTrashDocuments(result, trashDirDocument);
+            }
+        }
         return result;
     }
 
@@ -800,11 +824,32 @@ public class StubProvider extends DocumentsProvider {
 
     private void includeDocument(MatrixCursor result, StubDocument document) {
         final RowBuilder row = result.newRow();
+        int flags = document.flags;
+        String displayName = document.file.getName();
+
+        // Skip the trash flow if the platform SDK is not newer than Android Baklava (SDK 36).
+        // The Trash feature under test relies on DocumentsContract APIs introduced in the
+        // Android release after Baklava (SDK 36).
+        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
+        // older Android base builds to verify backward compatibility. However, this specific
+        // Trash feature lacks backward compatibility with platforms at or below Baklava.
+        // This assumption prevents failures when the test runs on an older base OS
+        // without the necessary APIs.
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.BAKLAVA
+                && Flags.enableDocumentsTrashApi()) {
+            if (TrashDocumentHelper.INSTANCE.isTrashFile(document.file)) {
+                flags |= Document.FLAG_SUPPORTS_RESTORE;
+                displayName = RestoreDocumentHelper.INSTANCE.cleanSegment(displayName);
+            } else {
+                flags |= Document.FLAG_SUPPORTS_TRASH;
+            }
+        }
+
         row.add(Document.COLUMN_DOCUMENT_ID, document.documentId);
-        row.add(Document.COLUMN_DISPLAY_NAME, document.file.getName());
+        row.add(Document.COLUMN_DISPLAY_NAME, displayName);
         row.add(Document.COLUMN_SIZE, document.file.length());
         row.add(Document.COLUMN_MIME_TYPE, document.mimeType);
-        row.add(Document.COLUMN_FLAGS, document.flags);
+        row.add(Document.COLUMN_FLAGS, flags);
         row.add(Document.COLUMN_LAST_MODIFIED, document.file.lastModified());
     }
 
@@ -814,6 +859,33 @@ public class StubProvider extends DocumentsProvider {
                 removeChildrenRecursively(childFile);
             }
             childFile.delete();
+        }
+    }
+
+    /**
+     * Recursively includes all trash documents from the given parent directory and its
+     * subdirectories into the provided {@link MatrixCursor}.
+     *
+     * @param result The {@link MatrixCursor} to add the trashed documents to.
+     * @param parentDocument The {@link StubDocument} representing the directory to search for
+     *     trashed items.
+     */
+    private void includeTrashDocuments(MatrixCursor result, StubDocument parentDocument) {
+        if (parentDocument == null) {
+            return;
+        }
+        for (File file : parentDocument.file.listFiles()) {
+            StubDocument document = mStorage.get(getDocumentIdForFile(file));
+            if (TrashDocumentHelper.INSTANCE.isTrashFile(file)) {
+                result.setNotificationUri(
+                        getContext().getContentResolver(),
+                        DocumentsContract.buildChildDocumentsUri(mAuthority, document.documentId));
+                includeDocument(result, document);
+                continue;
+            }
+            if (file.isDirectory()) {
+                includeTrashDocuments(result, document);
+            }
         }
     }
 
@@ -977,6 +1049,7 @@ public class StubProvider extends DocumentsProvider {
             } else {
                 flags |= Document.FLAG_SUPPORTS_WRITE;
             }
+
             return new StubDocument(file, mimeType, new ArrayList<String>(), flags, parent);
         }
 

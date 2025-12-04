@@ -20,6 +20,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -48,6 +49,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.breadcrumbs.BreadcrumbController;
+import com.android.documentsui.breadcrumbs.BreadcrumbModel;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -55,6 +57,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import java.util.Objects;
 import java.util.function.IntConsumer;
 
 /** A facade over the portions of the app and drawer toolbars. */
@@ -220,13 +223,21 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
     }
 
-    /**
-     * Updates model held by the breadcrumb controller if it is enabled.
-     */
-    private void updateBreadcrumbs() {
+    /** Provides access to breadcrumb model v2 if one has been set */
+    public @Nullable BreadcrumbModel getBreadcrumbModel() {
         if (isSearchV2Enabled()) {
             if (mBreadcrumbController != null) {
-                mBreadcrumbController.getModel().setFromStack(mState.stack);
+                return mBreadcrumbController.getModel();
+            }
+        }
+        return null;
+    }
+
+    /** Updates the visibility of the breadcrumb v2 */
+    private void setBreadcrumbV2Visible(boolean visible) {
+        if (isSearchV2Enabled()) {
+            if (mBreadcrumbController != null) {
+                mBreadcrumbController.setVisible(visible);
             }
         }
     }
@@ -334,7 +345,12 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         boolean changed = false;
         while (mState.stack.size() > position + 1) {
             changed = true;
-            mState.stack.pop();
+            DocumentInfo popped = mState.stack.pop();
+            if (isHomeScreenFilesFlagEnabled() && mState.shortcut != null &&
+                    Objects.equals(popped.documentId, mState.shortcut.getDocumentId())) {
+                // Only reset the shortcut to null if it gets popped off the stack.
+                mState.shortcut = null;
+            }
         }
         if (changed) {
             mEnv.refreshCurrentRootAndDirectory(AnimationView.ANIM_LEAVE);
@@ -357,12 +373,11 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         // When the search view is expanded, most of the toolbar is hidden. Except when docked
         // search is enabled, in which case the toolbar is shown as normal.
-        boolean showDockedSearch =
-                mActivity.getResources().getBoolean(getRes(R.bool.show_docked_search));
+        boolean showDockedSearch = mActivity.isSearchDocked();
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
             mBreadcrumb.show(false);
-            updateBreadcrumbs();
+            setBreadcrumbV2Visible(true);
             return;
         }
 
@@ -383,9 +398,22 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
 
         if (shouldShowSearchBar()) {
             mBreadcrumb.show(false);
-            updateBreadcrumbs();
+            setBreadcrumbV2Visible(true);
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(VISIBLE);
+            return;
+        }
+
+        boolean showBreadcrumbV2 = mActivity.isSearching() || mActivity.isInRecents();
+        if (isSearchV2Enabled() && showDockedSearch && showBreadcrumbV2) {
+            // Special case: if the search is docked we need to add new breadcrumb handling code
+            // as the old shouldShowSearchBar() method returns false, preventing the pre SearchV2
+            // code for adjusting breadcrumb visibility.
+            mBreadcrumb.show(false);
+            setBreadcrumbV2Visible(true);
+            if (mActivity.isSearching()) {
+                mToolbar.setTitle(null);
+            }
             return;
         }
 
@@ -395,7 +423,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
         mBreadcrumb.show(true);
-        updateBreadcrumbs();
+        setBreadcrumbV2Visible(false);
         mBreadcrumb.postUpdate();
     }
 

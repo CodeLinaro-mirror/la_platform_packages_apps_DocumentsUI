@@ -56,10 +56,13 @@ public abstract class TestMenu implements Menu {
                 R.id.dir_menu_open_in_new_window,
                 R.id.dir_menu_extract_here,
                 R.id.dir_menu_browse,
+                R.id.dir_menu_move_to_trash,
+                R.id.dir_menu_restore_from_trash,
                 R.id.root_menu_eject_root,
                 R.id.root_menu_open_in_new_window,
                 R.id.root_menu_paste_into_folder,
                 R.id.root_menu_settings,
+                R.id.root_menu_inspect,
                 R.id.action_menu_open_with,
                 R.id.action_menu_share,
                 R.id.action_menu_delete,
@@ -107,9 +110,15 @@ public abstract class TestMenu implements Menu {
                 item.setActionView(Mockito.mock(SearchView.class));
             }
 
-            if (id == R.id.option_menu_extract_all || id == R.id.dir_menu_extract_here
-                    || id == R.id.dir_menu_browse || id == R.id.action_menu_extract_here
-                    || id == R.id.action_menu_browse) {
+            if (id == R.id.option_menu_extract_all
+                    || id == R.id.dir_menu_extract_here
+                    || id == R.id.dir_menu_browse
+                    || id == R.id.action_menu_extract_here
+                    || id == R.id.action_menu_browse
+                    || id == R.id.action_menu_move_to_trash
+                    || id == R.id.action_menu_restore_from_trash
+                    || id == R.id.dir_menu_move_to_trash
+                    || id == R.id.dir_menu_restore_from_trash) {
                 item.setEnabled(false);
                 item.setVisible(false);
             }

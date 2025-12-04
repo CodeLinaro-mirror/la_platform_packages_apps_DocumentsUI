@@ -35,7 +35,7 @@
     </style>
 
     <style name="JobProgressToolbarIndicatorStyle" parent="@style/Widget.Material3.CircularProgressIndicator.ExtraSmall">
-        <item name="android:background">?attr/actionBarItemBackground</item>
+        <item name="android:max">100</item>
         <item name="indicatorSize">@dimen/job_progress_toolbar_indicator_size</item>
         <item name="indicatorInset">0dp</item>
     </style>
@@ -135,12 +135,28 @@
         <item name="android:textAppearance">@style/MaterialButtonTextAppearanceM3</item>
     </style>
 
+    <style name="DialogTitlePanel" parent="@style/MaterialAlertDialog.Material3.Title.Panel">
+        <item name="android:paddingBottom">@dimen/space_small_1</item>
+    </style>
+
     <style name="MaterialAlertDialogThemeM3" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/DialogFilledButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/MaterialOutlinedButtonM3</item>
         <item name="buttonBarNeutralButtonStyle">@style/DialogTextButtonM3</item>
+        <item name="materialAlertDialogTitlePanelStyle">@style/DialogTitlePanel</item>
         <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogTitleStyleM3</item>
         <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialogBodyStyle</item>
+        <!-- This padding is used as:
+             * dialog header's left/right padding.
+             * dialog content's default message (via setMessage) left/right padding, custom content
+               (via setView) needs to define its own left/right padding.
+             * dialog button bar's left/right padding.
+             Note: the dialog usually has 3 sections: header/body/actions bar, both header and
+             actions bar defines their own padding top/bottom, so body section usually doesn't need
+             to redefine padding top/bottom, the exception is that when a dialog doesn't have header
+             or actions bar, body needs to define proper padding top/bottom.
+         -->
+        <item name="dialogPreferredPadding">@dimen/dialog_content_padding_horizontal</item>
     </style>
 
     <style name="SearchChipItemStyle" parent="@style/Widget.Material3.Chip.Filter">

@@ -20,6 +20,8 @@ import android.provider.DocumentsContract
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.testing.Parcelables
+import java.util.Objects
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Rule
@@ -141,5 +143,48 @@ class ShortcutInfoTest {
                 DocumentsContract.buildDocumentUri("aaa", "ddd")
 
         assertEquals(expected, shortcutInfo.toString())
+    }
+
+    @Test
+    fun testDerivedTypeHomeScreen() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "com.android.externalstorage.documents"
+                rootId = "primary"
+            }
+        val shortcutInfo = ShortcutInfo(0, "Home screen", rootInfo, "primary:")
+        assertEquals(SidebarEntryItemInfo.TYPE_HOME_SCREEN, shortcutInfo.derivedType)
+    }
+
+    @Test
+    fun testDerivedTypeShortcutOther() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "aaa"
+                rootId = "rrr"
+            }
+        val shortcutInfo = ShortcutInfo(0, "ttt", rootInfo, "ppp")
+        assertEquals(SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER, shortcutInfo.derivedType)
+    }
+
+    @Test
+    fun testParceling() {
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "aaa"
+                rootId = "rrr"
+            }
+        val shortcutInfo = ShortcutInfo(0, "ttt", rootInfo, "ppp")
+
+        Parcelables.assertParcelable(
+            shortcutInfo,
+            0,
+            { left: ShortcutInfo?, right: ShortcutInfo? ->
+                (Objects.equals(left, right) && Objects.equals(left?.icon, right?.icon))
+            },
+        )
     }
 }
