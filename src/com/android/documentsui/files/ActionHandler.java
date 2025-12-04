@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
@@ -287,19 +288,30 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isHomeScreenFilesFlagEnabled()) {
+        if (isHomeScreenFilesFlagEnabled() || isCloudFeaturesFlagEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
+                Log.e(TAG, "No documents available to cut.");
                 mDialogs.showOperationUnsupported();
                 return;
             }
 
             List<Uri> uris = new ArrayList<>();
             for (DocumentInfo doc : docs) {
-                uris.add(doc.derivedUri);
+                if (isCloudFeaturesFlagEnabled()
+                        && !mInjector.config.isContentAvailable(
+                                doc, mState, mInjector.networkMonitor.isOnline())) {
+                    Log.e(TAG, "Document does not have available content to cut.");
+                    mDialogs.showOperationUnsupported();
+                    return;
+                }
+                if (isHomeScreenFilesFlagEnabled()) {
+                    uris.add(doc.derivedUri);
+                }
             }
 
-            if (blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
+            if (isHomeScreenFilesFlagEnabled()
+                    && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
                 Log.e(TAG, "Failed to cut because a protected folder is selected.");
                 return;
             }
@@ -321,6 +333,25 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         if (selection.isEmpty()) {
             return;
         }
+
+        if (isCloudFeaturesFlagEnabled()) {
+            List<DocumentInfo> docs = mModel.getDocuments(selection);
+            if (docs == null || docs.isEmpty()) {
+                Log.e(TAG, "No documents available to copy.");
+                mDialogs.showOperationUnsupported();
+                return;
+            }
+
+            for (DocumentInfo doc : docs) {
+                if (!mInjector.config.isContentAvailable(
+                        doc, mState, mInjector.networkMonitor.isOnline())) {
+                    Log.e(TAG, "Document does not have available content to copy.");
+                    mDialogs.showOperationUnsupported();
+                    return;
+                }
+            }
+        }
+
         mSelectionMgr.clearSelection();
 
         mClipper.clipDocumentsForCopy(mModel::getItemUri, selection);

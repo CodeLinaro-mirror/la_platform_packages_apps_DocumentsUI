@@ -302,6 +302,7 @@ private fun initializeIdMapping() {
             R.menu.file_context_menu to R.menu.file_context_menu_m3,
             R.menu.mixed_context_menu to R.menu.mixed_context_menu_m3,
             R.menu.root_context_menu to R.menu.root_context_menu_m3,
+            R.string.file_operation_rejected to R.string.file_operation_rejected_m3,
             R.string.scrolling_behavior to R.string.scrolling_behavior_m3,
             R.style.ActionBarTheme to R.style.ActionBarThemeM3,
             R.style.ActionBarThemeCommon to R.style.ActionBarThemeCommonM3,
