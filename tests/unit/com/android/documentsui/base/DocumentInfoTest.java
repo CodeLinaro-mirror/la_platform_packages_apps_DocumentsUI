@@ -423,27 +423,40 @@ public class DocumentInfoTest {
 
     @Test
     @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
-    public void testHasSyncInProgress() {
-        // No sync in progress when column value doesn't contain the right flags.
+    public void testHasUploadInProgress() {
+        // No upload in progress when column value doesn't contain the right flag.
         Cursor cursor = mock(Cursor.class);
         int index = 1;
         int value = 0;
         when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(value);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
-        assertFalse(info.hasSyncInProgress());
+        assertFalse(info.hasUploadInProgress());
 
-        // Sync in progress when column value includes SYNC_STATE_FLAG_UPLOAD_PROGRESS.
+        // Upload in progress when column value includes SYNC_STATE_FLAG_UPLOAD_PROGRESS.
         value = SYNC_STATE_FLAG_UPLOAD_PROGRESS;
         when(cursor.getInt(index)).thenReturn(value);
         info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
-        assertTrue(info.hasSyncInProgress());
+        assertTrue(info.hasUploadInProgress());
+    }
 
-        // Sync in progress when column value includes SYNC_STATE_FLAG_DOWNLOAD_PROGRESS.
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testHasDownloadInProgress() {
+        // No download in progress when column value doesn't contain the right flag.
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+        int value = 0;
+        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getInt(index)).thenReturn(value);
+        DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertFalse(info.hasDownloadInProgress());
+
+        // Download in progress when column value includes SYNC_STATE_FLAG_DOWNLOAD_PROGRESS.
         value = SYNC_STATE_FLAG_DOWNLOAD_PROGRESS | SYNC_STATE_FLAG_LOCAL_CHANGES;
         when(cursor.getInt(index)).thenReturn(value);
         info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
-        assertTrue(info.hasSyncInProgress());
+        assertTrue(info.hasDownloadInProgress());
     }
 
     @Test

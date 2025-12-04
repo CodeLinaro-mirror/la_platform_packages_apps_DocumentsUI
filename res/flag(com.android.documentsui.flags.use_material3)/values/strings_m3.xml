@@ -17,4 +17,11 @@
 <resources>
     <!-- Toast shown when the file operation is not supported [CHAR LIMIT=48] -->
     <string name="file_operation_rejected_m3">Action not supported</string>
+
+    <!-- Inline sync state icon descriptions -->
+    <string name="sync_error_description_m3">Sync error</string>
+    <string name="upload_description_m3">Available to sync</string>
+    <string name="download_description_m3">Available to download</string>
+    <string name="uploading_description_m3">Uploading</string>
+    <string name="downloading_description_m3">Downloading</string>
 </resources>
