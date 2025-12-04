@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
@@ -24,6 +25,7 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,6 +52,8 @@ import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
+import javax.annotation.Nullable;
+
 public abstract class MenuManager {
     private final static String TAG = "MenuManager";
 
@@ -59,6 +63,7 @@ public abstract class MenuManager {
     protected final IntSupplier mFilesCountSupplier;
     protected final Context mContext;
     protected final Features mFeatures;
+    protected final Injector<?> mInjector;
 
     protected Menu mOptionMenu;
 
@@ -68,13 +73,15 @@ public abstract class MenuManager {
             DirectoryDetails dirDetails,
             IntSupplier filesCountSupplier,
             Context context,
-            Features features) {
+            Features features,
+            Injector<?> injector) {
         mSearchManager = searchManager;
         mState = displayState;
         mDirDetails = dirDetails;
         mFilesCountSupplier = filesCountSupplier;
         mContext = context;
         mFeatures = features;
+        mInjector = injector;
     }
 
     /** @see ActionModeController */
@@ -157,6 +164,7 @@ public abstract class MenuManager {
         updateSort(mOptionMenu.findItem(getRes(R.id.option_menu_sort)));
         updateLauncher(mOptionMenu.findItem(getRes(R.id.option_menu_launcher)));
         updateShowHiddenFiles(mOptionMenu.findItem(getRes(R.id.option_menu_show_hidden_files)));
+        updateShowSummaryColumn(mOptionMenu.findItem(R.id.option_show_summary));
 
         if (isUseMaterial3FlagEnabled()) {
             updateModePicker(
@@ -414,6 +422,19 @@ public abstract class MenuManager {
                 mState.showHiddenFiles
                         ? getRes(R.string.menu_hide_hidden_files)
                         : getRes(R.string.menu_show_hidden_files));
+    }
+
+    protected void updateShowSummaryColumn(@Nullable MenuItem showSummary) {
+        if (showSummary == null) {
+            if (DEBUG) Log.d(TAG, "show summary menu is null");
+            return;
+        }
+        if (mInjector.getSummaryProviderManager() == null) {
+            if (DEBUG) Log.d(TAG, "mSummaryProviderManager is null");
+            showSummary.setVisible(false);
+            return;
+        }
+        mInjector.getSummaryProviderManager().updateMenuState(showSummary);
     }
 
     protected void updateSort(MenuItem sort) {

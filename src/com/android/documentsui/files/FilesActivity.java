@@ -145,21 +145,23 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         this::focusSidebar,
                         getColor(getRes(R.color.primary)));
 
-        MenuManager menuManager = new MenuManager(
-                mInjector.features,
-                mSearchManager,
-                mState,
-                new DirectoryDetails(this) {
-                    @Override
-                    public boolean hasItemsToPaste() {
-                        return clipper.hasItemsToPaste();
-                    }
-                },
-                getApplicationContext(),
-                mInjector.selectionMgr,
-                mProviders::getApplicationName,
-                mInjector.getModel()::getItemUri,
-                mInjector.getModel()::getItemCount);
+        MenuManager menuManager =
+                new MenuManager(
+                        mInjector.features,
+                        mSearchManager,
+                        mState,
+                        new DirectoryDetails(this) {
+                            @Override
+                            public boolean hasItemsToPaste() {
+                                return clipper.hasItemsToPaste();
+                            }
+                        },
+                        getApplicationContext(),
+                        mInjector.selectionMgr,
+                        mProviders,
+                        mInjector.getModel()::getItemUri,
+                        mInjector.getModel()::getItemCount,
+                        mInjector);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {

@@ -31,10 +31,12 @@ import com.android.documentsui.TestSummaryProvider
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.prefs.LocalPreferences
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestProvidersAccess
 import com.google.common.truth.Truth.assertThat
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -48,6 +50,7 @@ import org.mockito.Mockito.`when`
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 @OptIn(ExperimentalCoroutinesApi::class)
+@EnableFlags(FLAG_USE_FILE_SUMMARY, FLAG_USE_MATERIAL3)
 class SummaryProviderManagerTest {
     @get:Rule val setFlags = OverrideFlagsRule()
 
@@ -65,6 +68,10 @@ class SummaryProviderManagerTest {
         }
     }
 
+    /** Helper to run tests with a default timeout. */
+    private fun runTestWithTimeout(testBody: suspend CoroutineScope.() -> Unit) =
+        runTest(timeout = 10.seconds, testBody = testBody)
+
     @Before
     fun setUp() {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
@@ -73,103 +80,124 @@ class SummaryProviderManagerTest {
 
         // Use the ContextWrapper to provide the mock Resources.
         context = TestContextWrapper(targetContext, mockResources)
+
+        setSummaryConsent(false)
     }
 
-    /** Sends a message to the TestSummaryProvider to set its empty state. */
-    private fun setIsEmpty(isEmpty: Boolean) {
-        val bundle = Bundle().apply { putBoolean("isEmpty", isEmpty) }
-        contentResolver.call(TestSummaryProvider.Companion.AUTHORITY, "setIsEmpty", null, bundle)
+    /**
+     * Sets the summary preference, it's local preference that tells if the summary column should be
+     * visible or hidden.
+     */
+    private fun setSummaryConsent(enabled: Boolean) {
+        LocalPreferences.setSummaryEnabled(context, enabled)
+    }
+
+    /**
+     * Sends a message to the TestSummaryProvider to set it as enabled/disabled. The provider state
+     * for EMPTY tell if the provider is enabled.
+     */
+    private fun setSummaryProviderEnabled(enabled: Boolean) {
+        // NOTE: Empty is the inverse of the enabled state.
+        val bundle = Bundle().apply { putBoolean("isEmpty", !enabled) }
+        contentResolver.call(TestSummaryProvider.AUTHORITY, "setIsEmpty", null, bundle)
     }
 
     @Test
-    fun testStart_withNoProvider_isDisabled() = runTest {
+    fun testStart_withNoProvider_isDisabled() = runTestWithTimeout {
         `when`(mockResources.getString(R.string.local_summary_provider)).thenReturn("")
         val manager = SummaryProviderManager(context, this, Uri.parse(""))
         manager.start()
-
-        assertThat(manager.state.value).isEqualTo(SummaryState.DISABLED)
+        assertThat(manager.state.value).isEqualTo(SummaryProviderState.ProviderUnavailable)
         manager.stop()
     }
 
     @Test
-    fun testStart_withProviderEmpty_isDisabled() = runTest {
+    fun testStart_withProviderEmpty_isDisabled() = runTestWithTimeout {
         `when`(mockResources.getString(R.string.local_summary_provider))
             .thenReturn(TEST_SUMMARY_PROVIDER)
-        setIsEmpty(true)
+        setSummaryProviderEnabled(enabled = false)
         val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
         manager.start()
 
-        // Wait for the state update to complete.
-        manager.state.first { it == SummaryState.DISABLED }
-        assertThat(manager.state.value).isEqualTo(SummaryState.DISABLED)
+        // Wait for the state to update.
+        manager.state.first { it is SummaryProviderState.Available && !it.isUserEnabled }
+
+        assertThat(manager.state.value)
+            .isEqualTo(SummaryProviderState.Available(isUserEnabled = false))
 
         manager.stop()
     }
 
     @Test
-    fun testStart_withProviderNotEmpty_isEnabled() = runTest {
+    fun testStart_withProviderEnabled() = runTestWithTimeout {
         `when`(mockResources.getString(R.string.local_summary_provider))
             .thenReturn(TEST_SUMMARY_PROVIDER)
-        setIsEmpty(false)
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = true)
         val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
         manager.start()
 
-        // Suspend and wait until the state becomes ENABLED.
-        manager.state.first { it == SummaryState.ENABLED }
-        assertThat(manager.state.value).isEqualTo(SummaryState.ENABLED)
+        // Wait until the state becomes available.
+        manager.state.first { it is SummaryProviderState.Available }
+        assertThat(manager.state.value)
+            .isEqualTo(SummaryProviderState.Available(isUserEnabled = true))
         manager.stop()
     }
 
     @Test
-    fun testStateChanges_whenProviderUpdates() =
-        runTest(timeout = 10.seconds) {
-            `when`(mockResources.getString(R.string.local_summary_provider))
-                .thenReturn(TEST_SUMMARY_PROVIDER)
+    fun testStateChanges_whenProviderUpdates() = runTestWithTimeout {
+        `when`(mockResources.getString(R.string.local_summary_provider))
+            .thenReturn(TEST_SUMMARY_PROVIDER)
 
-            // Emulate the provider being disabled.
-            setIsEmpty(true)
-            val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
-            manager.start()
+        // Start with the provider being disabled.
+        setSummaryProviderEnabled(enabled = false)
+        setSummaryConsent(enabled = true)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
 
-            // Wait for it to initialize as disabled.
-            manager.state.first { it == SummaryState.DISABLED }
-            assertThat(manager.state.value).isEqualTo(SummaryState.DISABLED)
+        // Wait for it to initialize as disabled.
+        manager.state.first { it is SummaryProviderState.Available && !it.isUserEnabled }
+        assertThat(manager.state.value)
+            .isEqualTo(SummaryProviderState.Available(isUserEnabled = false))
 
-            // Emulate the provider enabling, this should propagate via ContentObserver.
-            setIsEmpty(false)
+        // Flip the provider to enabled, this should propagate via ContentObserver.
+        setSummaryProviderEnabled(enabled = true)
 
-            // We wait for that update to complete.
-            manager.state.first { it == SummaryState.ENABLED }
-            assertThat(manager.state.value).isEqualTo(SummaryState.ENABLED)
-            manager.stop()
-        }
+        // Wait for that update to complete.
+        manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
+        assertThat(manager.state.value)
+            .isEqualTo(SummaryProviderState.Available(isUserEnabled = true))
+        manager.stop()
+    }
 
     @Test
-    @EnableFlags(FLAG_USE_FILE_SUMMARY, FLAG_USE_MATERIAL3)
-    fun testDisplaySummaryForRoot() = runTest {
+    fun testDisplaySummaryForRoot() = runTestWithTimeout {
         // Start it with empty, should not display summary.
-        setIsEmpty(true)
+        setSummaryProviderEnabled(enabled = false)
+        // But locally set as user enabled (aka summary column visible when the provider gets
+        // enabled).
+        setSummaryConsent(enabled = true)
         val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
         manager.start()
 
-        // Non-local root.
+        // Non-local root. Summary are only available for local files.
         val testRoot =
             RootInfo().apply {
                 authority = TestSummaryProvider.AUTHORITY
                 rootId = "summary-root"
             }
 
-        manager.state.first { it == SummaryState.DISABLED }
+        manager.state.first { it is SummaryProviderState.Available && !it.isUserEnabled }
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isFalse()
 
-        // When provider is not empty, should display summary.
-        setIsEmpty(false)
-        manager.state.first { it == SummaryState.ENABLED }
+        // When provider is enabled and user enabled, it should display summary.
+        setSummaryProviderEnabled(enabled = true)
+        manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
 
-        // Something that isn't local shouldn't display it.
+        // Something that isn't local shouldn't display the summary.
         assertThat(displaySummaryForRoot(manager, testRoot)).isFalse()
 
-        // Test with roots that are local.
+        // Test with roots that are local. These can display the summary.
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isTrue()
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME)).isTrue()
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS)).isTrue()

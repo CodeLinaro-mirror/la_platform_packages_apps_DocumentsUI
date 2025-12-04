@@ -119,7 +119,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     @Before
-    fun setUp() {
+    open fun setUp() {
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // NOTE: Must be the "target" context, else security checks in content provider will fail.
         context = InstrumentationRegistry.getInstrumentation().targetContext

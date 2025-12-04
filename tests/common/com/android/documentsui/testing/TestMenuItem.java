@@ -96,19 +96,19 @@ public abstract class TestMenuItem implements MenuItem {
     }
 
     public void assertEnabledAndVisible() {
-        assertTrue(this.enabled);
-        assertTrue(this.visible);
+        assertTrue(this.title + " should be enabled", this.enabled);
+        assertTrue(this.title + " should be visible", this.visible);
     }
 
     public void assertDisabledAndInvisible() {
-        assertFalse(this.enabled);
-        assertFalse(this.visible);
+        assertFalse(this.title + " should be disabled", this.enabled);
+        assertFalse(this.title + " should be invisible", this.visible);
     }
 
     /** Asserts that the menu item is disabled but visible. */
     public void assertDisabledAndVisible() {
-        assertFalse(this.enabled);
-        assertTrue(this.visible);
+        assertFalse(this.title + " should be disabled", this.enabled);
+        assertTrue(this.title + " should be visible", this.visible);
     }
 
     public void assertTitle(@StringRes int title) {

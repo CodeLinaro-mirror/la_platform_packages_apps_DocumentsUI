@@ -107,6 +107,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.DynamicColors;
 
+import kotlin.Unit;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -224,7 +226,6 @@ public abstract class BaseActivity
      */
     @VisibleForTesting
     public void setLocalSummaryProvider(Uri uri) {
-        Log.d(TAG, "Setting local summary provider: " + uri);
         if (mInjector.getSummaryProviderManager() != null) {
             mInjector.getSummaryProviderManager().stop();
         }
@@ -965,6 +966,19 @@ public abstract class BaseActivity
         } else if (id == getRes(R.id.option_menu_show_hidden_files)) {
             onClickedShowHiddenFiles();
             return true;
+        } else if (id == R.id.option_show_summary) {
+            if (mInjector.getSummaryProviderManager() != null) {
+                mInjector
+                        .getSummaryProviderManager()
+                        .onShowSummaryMenuClicked(
+                                this.getSupportFragmentManager(),
+                                () -> {
+                                    updateColumnHeaders(mState.stack.getRoot());
+                                    refreshDirectory(AnimationView.ANIM_NONE);
+                                    return Unit.INSTANCE;
+                                });
+                return true;
+            }
         } else if (id == getRes(R.id.sub_menu_grid)) {
             setViewMode(MODE_GRID);
             return true;
