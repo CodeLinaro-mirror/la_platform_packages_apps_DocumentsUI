@@ -84,7 +84,8 @@ public class RecentsLoader extends MultiRootDocumentsLoader {
         return !root.isLocalOnly()
                 || !root.supportsRecents()
                 || !mUserId.equals(root.userId)
-                || root.isFiles();
+                || root.isFiles()
+                || root.isLocalSearch(getContext());
     }
 
     @Override

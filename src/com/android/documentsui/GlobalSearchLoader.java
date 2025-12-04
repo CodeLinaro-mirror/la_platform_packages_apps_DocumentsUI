@@ -72,6 +72,10 @@ public class GlobalSearchLoader extends MultiRootDocumentsLoader {
         if (!root.isLocalOnly() || !root.supportsSearch() || root.isFiles()) {
             return true;
         }
+        // Also local search is not supported in V1 of loaders.
+        if (root.isLocalSearch(getContext())) {
+            return true;
+        }
 
         if (mState.supportsCrossProfile() && root.supportsCrossProfile()
                 && !mQueryArgs.containsKey(DocumentsContract.QUERY_ARG_DISPLAY_NAME)
