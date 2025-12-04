@@ -936,6 +936,8 @@
 
     <!-- Search hint on search view. [CHAR LIMIT=48] -->
     <string name="search_bar_hint">Search this device</string>
+    <!-- A generic search hint on search view, congruent with search everywhere. [CHAR LIMIT=48] -->
+    <string name="search_bar_generic_hint">Search</string>
 
     <!-- Text shown on the application bar when search is active and search results are shown. -->
     <string name="search_results">Search results</string>
