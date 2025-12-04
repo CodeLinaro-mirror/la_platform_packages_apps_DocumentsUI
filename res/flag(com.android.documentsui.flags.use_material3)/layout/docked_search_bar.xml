@@ -36,7 +36,7 @@
         android:layout_width="@dimen/docked_searchbar_text_width"
         android:layout_height="match_parent"
         android:background="@null"
-        android:hint="@string/search_bar_hint"
+        android:hint="@string/search_bar_generic_hint"
         android:singleLine="true"
         android:textAppearance="@style/TextAppearance.DocumentsUI.SearchBar"
         android:textColorHint="@null"
