@@ -396,6 +396,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
+    public void toggleFocusedItemSelection() {
+        throw new UnsupportedOperationException("Can't toggle selection");
+    }
+
+    @Override
     public void showCreateDirectoryDialog() {
         Metrics.logUserAction(MetricConsts.USER_ACTION_CREATE_DIR);
 

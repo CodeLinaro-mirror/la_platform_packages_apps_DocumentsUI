@@ -137,6 +137,9 @@ public interface ActionHandler {
      */
     void deselectAllFiles();
 
+    /** Toggles the focused item's selection. Does nothing if no item is focused. */
+    void toggleFocusedItemSelection();
+
     void showCreateDirectoryDialog();
 
     void showPreview(DocumentInfo doc);

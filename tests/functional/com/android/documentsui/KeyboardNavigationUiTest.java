@@ -16,9 +16,12 @@
 
 package com.android.documentsui;
 
-
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
+import static junit.framework.Assert.fail;
+
+import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
@@ -102,5 +105,22 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
             bots.keyboard.pressKey(KeyEvent.KEYCODE_DPAD_LEFT);
             bots.roots.assertHasFocus();
         }
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3})
+    public void testKeyboard_controlSpaceTogglesSelection() throws Exception {
+        for (int i = 0; !bots.directory.anyDocumentHasFocus(); i++) {
+            if (i > 99) {
+                fail("could not focus a document");
+            }
+            bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB, KeyEvent.META_SHIFT_LEFT_ON);
+        }
+
+        bots.directory.assertNoSelection();
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_SPACE, KeyEvent.META_CTRL_LEFT_ON);
+        bots.directory.assertSelection(1);
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_SPACE, KeyEvent.META_CTRL_LEFT_ON);
+        bots.directory.assertNoSelection();
     }
 }

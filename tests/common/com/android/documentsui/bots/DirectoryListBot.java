@@ -491,6 +491,12 @@ public class DirectoryListBot extends Bots.BaseBot {
         assertTrue(doc.isFocused());
     }
 
+    /** Returns whether a document is focused. */
+    public boolean anyDocumentHasFocus() throws UiObjectNotFoundException {
+        UiObject2 o = mDevice.findObject(By.res(mDirListId));
+        return (o != null) && (o.findObject(By.focused(true)) != null);
+    }
+
     public UiObject findDocumentsList() {
         return findObject(mDirContainerId, mDirListId);
     }

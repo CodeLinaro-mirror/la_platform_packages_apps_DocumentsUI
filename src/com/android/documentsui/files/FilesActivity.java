@@ -509,6 +509,12 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
         if (event.hasModifiers(KeyEvent.META_CTRL_ON)) {
             switch (keyCode) {
+                case KeyEvent.KEYCODE_SPACE:
+                    if (!isUseMaterial3FlagEnabled()) {
+                        break;
+                    }
+                    mInjector.actions.toggleFocusedItemSelection();
+                    return true;
                 case KeyEvent.KEYCODE_A:
                     mInjector.actions.selectAllFiles();
                     return true;
