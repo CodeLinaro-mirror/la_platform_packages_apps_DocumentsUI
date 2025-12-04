@@ -195,6 +195,11 @@ final class ListDocumentHolder extends DocumentHolder {
             mIconMime.setAlpha(imgAlpha);
             mIconThumb.setAlpha(imgAlpha);
         }
+
+        if (!enabled) {
+            // Hide the sync state when the user can't do anything to fix it.
+            hideSyncIcons();
+        }
     }
 
     @Override
@@ -357,6 +362,8 @@ final class ListDocumentHolder extends DocumentHolder {
         bindSummary(summary);
 
         mTitle.setVisibility(View.VISIBLE);
+
+        bindSyncIcons(mDoc);
 
         if (mDoc.isDirectory()) {
             // Note, we don't show any details for any directory...ever.

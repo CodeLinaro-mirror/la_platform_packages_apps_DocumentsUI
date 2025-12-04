@@ -95,8 +95,7 @@ class ActivityConfigTest {
             const val OFFLINE = false
             const val NO_FLAGS = 0
             private val NO_SYNC_STATE: Int? = null
-            private val SYNC_AVAILABLE_LOCALLY: Int =
-                ActivityConfig.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
+            private val SYNC_AVAILABLE_LOCALLY: Int = DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
             const val SYNC_UNAVAILABLE_LOCALLY = 0
 
             @JvmStatic
