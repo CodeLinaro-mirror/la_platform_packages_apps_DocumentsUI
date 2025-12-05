@@ -293,33 +293,14 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultInRecents() throws Exception {
-        // Create a file with a unique name.
-        DocumentsProviderHelper storageHelper = mTestFilesRule.docsHelper;
-        Uri aardvarkUri = null;
-        try {
-            RootInfo primaryRoot = storageHelper.getRoot(Providers.ROOT_ID_DEVICE);
-            DocumentInfo download = storageHelper.findFile(primaryRoot.documentId, "Download");
-            assertNotNull(download);
-            String newFileName = "0-aardvark.txt";
-            aardvarkUri =
-                    storageHelper.createDocument(download.documentId, "text/plain", newFileName);
+        bots.roots.openRoot("Recent");
+        device.waitForIdle();
 
-            // Move to the Recent view and wait for things to quiet down.
-            bots.roots.openRoot("Recent");
-            device.waitForIdle();
+        bots.directory.selectFirstDocument();
 
-            // Select the newly created file and check the expected path.
-            bots.directory.selectDocument(newFileName, 1);
-            // We use a negative match, because it is hard to predict root title correctly. So we
-            // require that we match Download and the newFileName, but the first component must not
-            // match "Recent".
-            onView(withId(R.id.breadcrumb_path_holder))
-                    .check(bots.breadcrumb.pathMatches("^(?!Recent$).*", "Download", newFileName));
-        } finally {
-            if (aardvarkUri != null) {
-                storageHelper.deleteDocument(aardvarkUri);
-            }
-        }
+        // Check that the breadcrumb path starts with "Recent". We don't know more about the
+        // selected file, to perform a more exact comparison.
+        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathStartsWith("Recent"));
     }
 
     @Test

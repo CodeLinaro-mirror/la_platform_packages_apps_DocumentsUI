@@ -172,12 +172,15 @@
   int empty;
   int local_summary_provider;
   int menu_copy;
+  int menu_inspect;
   int menu_move;
+  int menu_permanently_delete;
   int menu_rename;
   int menu_select;
   int menu_select_all;
   int menu_sort;
   int menu_view_in_owner;
+  int menu_zip;
   int metadata_address;
   int metadata_album;
   int metadata_altitude;

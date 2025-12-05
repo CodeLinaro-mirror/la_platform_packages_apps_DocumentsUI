@@ -861,7 +861,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    public void testOptionMenu_Inspector_VisibleButDisabled() {
+    public void testOptionMenu_Inspector_InvisibleAndDisabled() {
         features.inspector = true;
         dirDetails.canInspectDirectory = false;
         mgr.updateOptionMenu(testMenu);
@@ -1058,6 +1058,7 @@ public final class MenuManagerTest {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.containPartial = false;
         selectionDetails.canDelete = true;
+        features.inspector = true;
         selectionDetails.size = 1;
         selectionDetails.canExtract = false;
         features.archiveCreation = true;
@@ -1108,6 +1109,7 @@ public final class MenuManagerTest {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.containPartial = false;
         selectionDetails.canDelete = true;
+        features.inspector = true;
         selectionDetails.size = 1;
         selectionDetails.canExtract = false;
         features.archiveCreation = true;
@@ -1368,6 +1370,7 @@ public final class MenuManagerTest {
     @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_CanInspectSingleSelection() {
+        features.inspector = true;
         selectionDetails.size = 1;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
         dirInspect.assertEnabledAndVisible();
