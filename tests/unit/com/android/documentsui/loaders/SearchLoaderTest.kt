@@ -15,6 +15,8 @@
  */
 package com.android.documentsui.loaders
 
+import android.database.Cursor
+import android.database.CursorWrapper
 import android.net.Uri
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
@@ -42,9 +44,11 @@ import com.google.common.truth.Expect
 import java.time.Duration
 import java.util.Locale
 import java.util.UUID
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.measureTime
 import org.junit.After
@@ -56,6 +60,8 @@ import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import org.mockito.Mockito
+import org.mockito.Mockito.`when` as whenever
 
 private const val TOTAL_FILE_COUNT = 8
 
@@ -481,8 +487,6 @@ class SearchLoaderTest {
             val extras = result.cursor.extras
             expect.that(extras).isNotNull()
             expect.that(extras.containsKey(DocumentsContract.EXTRA_LOADING)).isTrue()
-            // TODO(417818526): Add ability to force mock providers to be extra slow, so that
-            // we can test for the case when they do not finish on time.
             expect.that(extras.getBoolean(DocumentsContract.EXTRA_LOADING)).isFalse()
         }
 
@@ -652,6 +656,111 @@ class SearchLoaderTest {
 
             barrier.await()
             expect.that(getFileCount(result)).isEqualTo(3)
+        }
+
+        @Test
+        fun testForceReload() {
+            // Setup: prepare the test provider, a loader and a listener.
+            val downloads = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
+            downloads.apply {
+                setNextChildDocumentsReturns(environment.model.createFile("file-01.txt"))
+                setQueryDelay(100)
+            }
+
+            // Mock SortModel to return a cursor on which we are able to change the getCount() of
+            // the cursor returned by the sortModel at will. We cannot extend SortModel, due to its
+            // package private constructor. Thus we mock the SortModel and mock out the sortCursor
+            // method to return a cursor whose count we can control from the outside.
+            val mockSortModel = Mockito.mock(SortModel::class.java)
+            val fakeCount = AtomicReference<Int?>(null)
+
+            whenever(mockSortModel.sortCursor(Mockito.any(Cursor::class.java), Mockito.any()))
+                .thenAnswer { invocation ->
+                    val cursor = invocation.getArgument<Cursor>(0)
+                    object : CursorWrapper(cursor) {
+                        override fun getCount(): Int {
+                            // Return the fake count if set, otherwise delegate to real cursor
+                            return fakeCount.get() ?: cursor.count
+                        }
+                    }
+                }
+
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.DOWNLOADS),
+                    null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "file",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        Duration.ofMillis(200),
+                        false,
+                        null,
+                        Bundle(),
+                    ),
+                    mockSortModel,
+                    Executors.newFixedThreadPool(3),
+                )
+
+            val listener =
+                object : Loader.OnLoadCompleteListener<DirectoryResult> {
+                    var result: DirectoryResult? = null
+                    var latch = CountDownLatch(1)
+
+                    override fun onLoadComplete(
+                        loader: Loader<DirectoryResult?>,
+                        data: DirectoryResult?,
+                    ) {
+                        result = data
+                        latch.countDown()
+                    }
+
+                    fun reset() {
+                        latch = CountDownLatch(1)
+                        result = null
+                    }
+                }
+
+            loader.registerListener(1, listener)
+            // Setup done.
+
+            // First load so that the loader holds the first cursor.
+            loader.startLoading()
+            listener.latch.await()
+            val firstResult: DirectoryResult = listener.result!!
+            expect.that(firstResult.fileNames.toTypedArray()).isEqualTo(arrayOf("file-01.txt"))
+
+            // Pretend that the DocumentsUI app was suspended, which results in a call to the
+            // stopLoading() method.
+            loader.stopLoading()
+
+            downloads.setNextChildDocumentsReturns(environment.model.createFile("file-02.txt"))
+            listener.reset()
+
+            // Set the fake count so that the loader concludes the cursor is stale.
+            fakeCount.set(5)
+
+            // Simulate the DocumentsUI being restored, which results in a call to the
+            // startLoading() method.
+            loader.startLoading()
+
+            // While we are waiting attempt to traverse old cursor; this should still work.
+            var count = 0
+            firstResult.cursor!!.moveToPosition(-1)
+            while (firstResult.cursor!!.moveToNext()) {
+                count++
+            }
+            expect.that(count).isEqualTo(1)
+            // Restore getCount() to report true count.
+            fakeCount.set(null)
+
+            listener.latch.await()
+            val secondResult: DirectoryResult = listener.result!!
+            expect.that(secondResult.fileNames.toTypedArray()).isEqualTo(arrayOf("file-02.txt"))
         }
     }
 }
