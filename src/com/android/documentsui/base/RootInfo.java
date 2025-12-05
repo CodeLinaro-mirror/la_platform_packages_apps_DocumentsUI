@@ -25,7 +25,6 @@ import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseLocalSearchProviderEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.ContentResolver;
@@ -370,9 +369,7 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
     /** Return true if the root is configured as local search. Otherwise, return false. */
     public boolean isLocalSearch(Context context) {
         String provider = context.getString(R.string.local_search_provider);
-        return isUseLocalSearchProviderEnabled()
-                && provider != null
-                && Uri.parse(provider).equals(getUri());
+        return provider != null && Uri.parse(provider).equals(getUri());
     }
 
     /*
