@@ -747,14 +747,15 @@ public abstract class BaseActivity
                                         && tappableInsets.bottom < navBarInsets.bottom;
 
                         // System bars includes both status bar (top) and navigation bar (bottom)
-                        // and also others, and display cutout is for the front camera cutout, the
-                        // insets will only have non-zero values when the app might be overlapped
-                        // with these areas (i.e. in fullscreen mode), otherwise (i.e. in window
-                        // mode) they will all be 0.
+                        // and also others, and display cutout is for the front camera cutout, and
+                        // the ime is for the soft keyboard, these insets will only have non-zero
+                        // values when the app might be overlapped with these areas (i.e. in
+                        // fullscreen mode), otherwise (i.e. in window mode) they will all be 0.
                         Insets systemInsets =
                                 insets.getInsets(
                                         WindowInsetsCompat.Type.systemBars()
-                                                | WindowInsetsCompat.Type.displayCutout());
+                                                | WindowInsetsCompat.Type.displayCutout()
+                                                | WindowInsetsCompat.Type.ime());
                         // Bottom padding for the root container is always 0, because we want
                         // different bottom paddings for the left section (navigation tree area) and
                         // the right section (picker saver container).
