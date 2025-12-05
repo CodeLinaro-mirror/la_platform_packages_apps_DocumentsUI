@@ -31,8 +31,6 @@ interface SidebarEntryItemInfo : Comparable<SidebarEntryItemInfo> {
     val root: RootInfo
     val documentId: String?
     val uri: Uri?
-    // TODO: b/447254297 - Make title immutable once reloading titles due to language configuration
-    //  is sorted.
     var title: String?
     val derivedType: Int
 

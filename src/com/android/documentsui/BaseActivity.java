@@ -36,6 +36,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -1525,5 +1526,19 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Force the shortcut resources to be reloaded the next time updateAsync() gets called.
+            mProviders.resetShortcutResourcesFirstLoadDone();
+
+            // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
+            //  localised titles in this method.
+            mProviders.updateAsync(false,
+                () -> RootsFragment.get(getSupportFragmentManager()).reloadRootsAndShortcuts());
+        }
     }
 }
