@@ -23,7 +23,6 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -43,6 +42,7 @@ import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.R;
 import com.android.documentsui.UserManagerState;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
@@ -87,7 +87,7 @@ public abstract class DocumentHolder
     }
 
     /** Binds the view to the given item data. */
-    public abstract void bind(Cursor cursor, String modelId, @Nullable String summary);
+    public abstract void bind(DocumentInfo doc, String modelId, @Nullable String summary);
 
     public String getModelId() {
         return mModelId;

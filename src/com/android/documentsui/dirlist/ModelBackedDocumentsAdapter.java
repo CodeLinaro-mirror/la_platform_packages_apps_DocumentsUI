@@ -16,18 +16,12 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
-import android.provider.DocumentsContract;
-import android.provider.DocumentsContract.Document;
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -37,11 +31,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.Model;
 import com.android.documentsui.Model.Update;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.State;
-import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.modules.utils.build.SdkLevel;
 
 import java.util.ArrayList;
@@ -174,14 +168,12 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     public void onBindViewHolder(DocumentHolder holder, int position) {
         String modelId = mModelIds.get(position);
         Cursor cursor = mEnv.getModel().getItem(modelId);
-
-        String summary = getCursorString(cursor, Document.COLUMN_SUMMARY);
+        DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor);
+        String summary = doc.summary;
 
         if (mEnv.shouldDisplaySummary()) {
-            String displayName = getCursorString(cursor, Document.COLUMN_DISPLAY_NAME);
-
             // For Download provider, the summary is set to the display name.
-            if (summary == null || summary.equals(displayName)) {
+            if (summary == null || summary.equals(doc.displayName)) {
                 summary = mEnv.getModel().getSummary(modelId);
             }
         }
@@ -189,20 +181,9 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
             // Need the action to be set for bind().
             holder.setAction(mEnv.getDisplayState().action);
         }
-        holder.bind(cursor, modelId, summary);
+        holder.bind(doc, modelId, summary);
 
-        final String docMimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
-        final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
-        final int userIdIdentifier = getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID);
-        final Integer syncStateFlags =
-                isCloudFeaturesFlagEnabled()
-                        ? getCursorInteger(
-                                cursor,
-                                DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                                /* returnIfMissingOrNull= */ null)
-                        : null;
-
-        boolean enabled = mEnv.isDocumentEnabled(docMimeType, docFlags, syncStateFlags);
+        boolean enabled = mEnv.isDocumentEnabled(doc);
         boolean selected = mEnv.isSelected(modelId);
         if (!enabled) {
             assert (!selected);
@@ -224,10 +205,11 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                                                                         .show_preview_icon));
         holder.bindPreviewIcon(
                 showPreview, view -> mEnv.getActionHandler().previewItem(holder.getItemDetails()));
+        int userId = doc.userId.getIdentifier();
         if (mConfigStore.isPrivateSpaceInDocsUIEnabled() && SdkLevel.isAtLeastS()) {
-            holder.bindProfileIcon(mIconHelper.shouldShowBadge(userIdIdentifier), userIdIdentifier);
+            holder.bindProfileIcon(mIconHelper.shouldShowBadge(userId), userId);
         } else {
-            holder.bindBriefcaseIcon(mIconHelper.shouldShowBadge(userIdIdentifier));
+            holder.bindBriefcaseIcon(mIconHelper.shouldShowBadge(userId));
         }
 
         mEnv.onBindDocumentHolder(holder, cursor);

@@ -20,6 +20,7 @@ import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.State
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -62,7 +63,11 @@ class ConfigTest {
         // Downloads root doesn't have limited functionality when offline. However the Config method
         // should still return false because read-only files are disabled when creating.
         state.stack.changeRoot(TestProvidersAccess.DOWNLOADS)
-        assertFalse(config.isDocumentEnabled("image/png", FLAG_READ_ONLY, 0, state, OFFLINE))
+        var doc = DocumentInfo()
+        doc.mimeType = "image/png"
+        doc.flags = FLAG_READ_ONLY
+        doc.syncStateFlags = 0
+        assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
     }
 
     @Test
@@ -74,28 +79,16 @@ class ConfigTest {
         // Downloads root doesn't have limited functionality when offline. The Config method should
         // also return true because the "image/png" mime type is accepted.
         state.stack.changeRoot(TestProvidersAccess.DOWNLOADS)
-        assertTrue(
-            config.isDocumentEnabled(
-                "image/png",
-                DocumentsContract.Document.FLAG_SUPPORTS_WRITE,
-                0,
-                state,
-                OFFLINE,
-            )
-        )
+        var doc = DocumentInfo()
+        doc.mimeType = "image/png"
+        doc.flags = DocumentsContract.Document.FLAG_SUPPORTS_WRITE
+        doc.syncStateFlags = 0
+        assertTrue(config.isDocumentEnabled(doc, state, OFFLINE))
 
         // The super method, ActivityConfig.isDocumentEnabled, will now return false because the
         // Cloud root has limited functionality when offline. This should cause the Config method
         // to return false.
         state.stack.changeRoot(TestProvidersAccess.CLOUD)
-        assertFalse(
-            config.isDocumentEnabled(
-                "image/png",
-                DocumentsContract.Document.FLAG_SUPPORTS_WRITE,
-                0,
-                state,
-                OFFLINE,
-            )
-        )
+        assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
     }
 }

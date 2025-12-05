@@ -21,11 +21,13 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
+import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -85,6 +87,8 @@ import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
 import com.android.documentsui.dirlist.SummaryProviderManager;
+import com.android.documentsui.peek.PeekViewManager;
+import com.android.documentsui.peek.PeekViewModel;
 import com.android.documentsui.prefs.LocalPreferences;
 import com.android.documentsui.prefs.PreferencesMonitor;
 import com.android.documentsui.queries.CommandInterceptor;
@@ -131,6 +135,7 @@ public abstract class BaseActivity
     protected NavigationViewManager mNavigator;
     protected SortController mSortController;
     protected ConfigStore mConfigStore;
+    protected @Nullable PeekViewManager mPeekViewManager;
 
     private final List<EventListener> mEventListeners = new ArrayList<>();
     private final String mTag;
@@ -345,12 +350,11 @@ public abstract class BaseActivity
                                 controller.setVisible(false);
                             }
                         }
-                        // When docked search bar is used, no need to invalidate the options menus
-                        // because docked search bar won't affect the options menu, invalidating it
-                        // will affect the tab navigation between the docked search bar and the
-                        // next option menu button (list/grid button), because it will try to
-                        // re-render all the option menu buttons.
-                        if (isUseMaterial3FlagEnabled() && isSearchDocked()) {
+                        // Invalidating the options menu will affect both tab navigation and the
+                        // job progress popup panel as it tries to re-render all the option menu
+                        // buttons, so just re-update it instead to set icon visibility.
+                        if (isUseMaterial3FlagEnabled()) {
+                            mInjector.menuManager.updateOptionMenu();
                             return;
                         }
                         // Restores menu icons state
@@ -527,6 +531,22 @@ public abstract class BaseActivity
 
         mNetworkMonitor = NetworkMonitor.create(getApplicationContext());
         mInjector.networkMonitor = mNetworkMonitor;
+
+        // Directly use the generated method `usePeekPreviewRo` to optimize out Peek when the flag
+        // isn't enabled. The optimization is not happening with the FlagUtils's
+        // `isUsePeekPreviewFlagEnabled`.
+        if (usePeekPreviewRo()) {
+            if (isUsePeekPreviewFlagEnabled()) {
+                ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+                PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
+                mPeekViewManager =
+                        new PeekViewManager(
+                                viewModel,
+                                findViewById(getRes(R.id.peek_overlay)),
+                                getSupportFragmentManager());
+                viewModel.getOverlayActive().observe(this, mPeekViewManager);
+            }
+        }
 
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
@@ -951,6 +971,8 @@ public abstract class BaseActivity
         } else if (id == getRes(R.id.sub_menu_list)) {
             setViewMode(MODE_LIST);
             return true;
+        } else if (id == getRes(R.id.option_menu_inspect)) {
+            mInjector.actions.showPreview(getCurrentDirectory());
         }
         final boolean showCopyToMoveTo =
                 getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
@@ -986,7 +1008,7 @@ public abstract class BaseActivity
      * Returns true if a directory can be inspected.
      */
     protected boolean canInspectDirectory() {
-        return false;
+        return getCurrentDirectory() != null && mInjector.getModel().doc != null;
     }
 
     // TODO: make navigator listen to state

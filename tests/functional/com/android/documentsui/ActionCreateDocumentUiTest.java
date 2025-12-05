@@ -24,9 +24,16 @@ import static android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 
 import static com.google.common.truth.Truth.assertThat;
+
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 
 import android.app.Instrumentation;
 import android.content.Intent;
@@ -35,6 +42,7 @@ import android.os.SystemClock;
 import android.provider.DocumentsContract;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.picker.PickActivity;
@@ -62,7 +70,9 @@ public class ActionCreateDocumentUiTest extends ActivityTestJunit4<PickActivity>
     public void testActionCreate_TextFile() throws Exception {
         final String fileName = UUID.randomUUID() + ".txt";
 
-        bots.main.setDialogText(fileName);
+        // Do not use setDialogText() here because both search input and saver input are EditText.
+        onView(allOf(withClassName(endsWith("EditText")), withId(android.R.id.title)))
+                .perform(ViewActions.replaceText(fileName));
         device.waitForIdle();
         bots.picker.clickSaveButton();
         SystemClock.sleep(3000);

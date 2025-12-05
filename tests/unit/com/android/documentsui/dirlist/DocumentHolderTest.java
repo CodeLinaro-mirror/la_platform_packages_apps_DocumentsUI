@@ -17,7 +17,6 @@
 package com.android.documentsui.dirlist;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Rect;
 import android.os.SystemClock;
 import android.test.AndroidTestCase;
@@ -31,6 +30,7 @@ import androidx.test.filters.Suppress;
 
 import com.android.documentsui.R;
 import com.android.documentsui.TestConfigStore;
+import com.android.documentsui.base.DocumentInfo;
 
 import javax.annotation.Nullable;
 
@@ -50,7 +50,7 @@ public class DocumentHolderTest extends AndroidTestCase {
                         inflater.inflate(R.layout.item_doc_list, null),
                         mTestConfigStore) {
                     @Override
-                    public void bind(Cursor cursor, String modelId, @Nullable String summary) {}
+                    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {}
                 };
 
         mListener = new TestListener();

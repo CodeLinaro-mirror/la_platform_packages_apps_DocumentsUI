@@ -19,11 +19,11 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.widget.Space;
 
 import com.android.documentsui.ConfigStore;
 import com.android.documentsui.R;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.State;
 
 import javax.annotation.Nullable;
@@ -50,7 +50,7 @@ final class TransparentDividerDocumentHolder extends MessageHolder {
     }
 
     @Override
-    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
+    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
         if (mState.derivedMode == State.MODE_GRID) {
             itemView.setMinimumHeight(mVisibleHeight);
         } else {
