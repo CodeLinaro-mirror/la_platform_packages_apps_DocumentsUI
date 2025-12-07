@@ -22,6 +22,8 @@
     <string name="downloads_label" msgid="5462789470049501103">"Татаж авсан файл"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Дараахаас нээх"</string>
@@ -56,6 +58,10 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Мэдээлэл авах"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Нуусан файлудыг харуул"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Нуусан файлуудыг бүү харуул"</string>
+    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
+    <skip />
+    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
+    <skip />
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>-д харах"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Шинэ цонх"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Таслах"</string>
@@ -354,6 +360,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Нууцлалаа хамгаалахын тулд өөр фолдер сонгоно уу"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Шинэ фолдер үүсгэх"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Энэ төхөөрөмжийг хайх"</string>
+    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
+    <skip />
     <string name="search_results" msgid="7662182646512984171">"Хайлтын илэрц"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Текст арилгах"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Үндсэн фолдер"</string>
@@ -380,6 +388,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"Хэмжээ"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"Төрөл"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Өөрчилсөн огноо"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"ЗА"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"Тодорхойгүй"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Файл урьдчилан үзэхийг нуух"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>-н урьдчилан үзэх зураг"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Мэдээллийн түр зуурын самбарыг нуух"</string>
@@ -390,12 +400,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Хогийн савыг хоослох уу?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Энэ үйлдлийг буцаах боломжгүй ба файлуудыг сэргээх боломжгүй болно."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Хогийн савыг хоослох"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Хогийн саван дахь файл"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Энэ файл таны Хогийн саванд байгаа бөгөөд нээх боломжгүй. Үүнд хандахын тулд хогийн савнаас сэргээнэ үү."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Файлыг сэргээх"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Та одоогоор офлайн байна. Зарим файл, функцийг ашиглах боломжгүй. Бүрэн хандахын тулд интернэтэд холбогдоно уу."</string>
 </resources>
