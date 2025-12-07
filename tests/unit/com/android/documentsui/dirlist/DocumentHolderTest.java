@@ -139,6 +139,9 @@ public class DocumentHolderTest {
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
                 progressCircle.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
+                progressCircle.getTooltipText().toString());
     }
 
     @Test
@@ -155,6 +158,9 @@ public class DocumentHolderTest {
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
                 progressCircle.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
+                progressCircle.getTooltipText().toString());
     }
 
     @Test
@@ -171,6 +177,9 @@ public class DocumentHolderTest {
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.sync_error_description_m3)),
                 syncError.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.sync_error_description_m3)),
+                syncError.getTooltipText().toString());
     }
 
     @Test
@@ -187,6 +196,9 @@ public class DocumentHolderTest {
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.upload_description_m3)),
                 uploadIcon.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.upload_description_m3)),
+                uploadIcon.getTooltipText().toString());
     }
 
     @Test
@@ -204,6 +216,9 @@ public class DocumentHolderTest {
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.download_description_m3)),
                 downloadIcon.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.download_description_m3)),
+                downloadIcon.getTooltipText().toString());
     }
 
     @Test
