@@ -565,6 +565,21 @@
         other {These files weren\u2019t deleted:}
     }</string>
 
+    <!-- Error dialog title shown by the Android File Manager when one or more files
+         failed to be trashed.  [CHAR_LIMIT=48] -->
+    <string name="trash_failure_alert_title">{count, plural,
+        =1 {This file wasn\u2019t trashed:}
+        other {These files weren\u2019t trashed:}
+    }</string>
+
+    <!-- Error dialog title shown by the Android File Manager when one or more files
+         failed to be restored.  [CHAR_LIMIT=48] -->
+    <string name="restore_from_trash_failure_alert_title">{count, plural,
+        =1 {This file wasn\u2019t restored:}
+        other {These files weren\u2019t restored:}
+    }</string>
+
+
     <!-- Contents of the copying warning dialog due to converted files. [CHAR LIMIT=64] -->
     <plurals name="copy_converted_warning_content">
         <item quantity="one">This file was converted to another format: <xliff:g id="list" example="Document.pdf">%1$s</xliff:g></item>
