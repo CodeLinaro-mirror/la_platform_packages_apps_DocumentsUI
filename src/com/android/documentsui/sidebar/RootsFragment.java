@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -440,7 +439,8 @@ public class RootsFragment extends Fragment {
         mInjector.appsRowManager.updateView(activity);
         onCurrentRootChanged();
         if (isHomeScreenFilesFlagEnabled()) {
-            getBaseActivity().refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            // Only refresh the current window - we don't want to cancel current search results.
+            getBaseActivity().refreshCurrentRootAndDirectoryWithoutSearch(AnimationView.ANIM_NONE);
         }
     }
 
