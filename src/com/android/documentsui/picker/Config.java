@@ -22,11 +22,8 @@ import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ACTION_OPEN_TREE;
 import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 
-import android.provider.DocumentsContract.Document;
-
-import androidx.annotation.Nullable;
-
 import com.android.documentsui.ActivityConfig;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
 
@@ -36,17 +33,12 @@ import com.android.documentsui.base.State;
 final class Config extends ActivityConfig {
 
     @Override
-    public boolean canSelectType(
-            String docMimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
-        if (!isDocumentEnabled(docMimeType, docFlags, syncStateFlags, state, isOnline)) {
+    public boolean canSelectType(DocumentInfo doc, State state, boolean isOnline) {
+        if (!isDocumentEnabled(doc, state, isOnline)) {
             return false;
         }
 
-        if (MimeTypes.isDirectoryType(docMimeType)) {
+        if (doc.isDirectory()) {
             return false;
         }
 
@@ -61,18 +53,13 @@ final class Config extends ActivityConfig {
     }
 
     @Override
-    public boolean isDocumentEnabled(
-            String mimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
-        if (!super.isDocumentEnabled(mimeType, docFlags, syncStateFlags, state, isOnline)) {
+    public boolean isDocumentEnabled(DocumentInfo doc, State state, boolean isOnline) {
+        if (!super.isDocumentEnabled(doc, state, isOnline)) {
             return false;
         }
 
         // Directories are always enabled.
-        if (MimeTypes.isDirectoryType(mimeType)) {
+        if (doc.isDirectory()) {
             return true;
         }
 
@@ -81,17 +68,16 @@ final class Config extends ActivityConfig {
                 return false;
             case ACTION_CREATE:
                 // Read-only files are disabled when creating.
-                if ((docFlags & Document.FLAG_SUPPORTS_WRITE) == 0) {
+                if (!doc.isWriteSupported()) {
                     return false;
                 }
             case ACTION_OPEN:
             case ACTION_GET_CONTENT:
-                final boolean isVirtual = (docFlags & Document.FLAG_VIRTUAL_DOCUMENT) != 0;
-                if (isVirtual && state.openableOnly) {
+                if (doc.isVirtual() && state.openableOnly) {
                     return false;
                 }
         }
 
-        return MimeTypes.mimeMatches(state.acceptMimes, mimeType);
+        return MimeTypes.mimeMatches(state.acceptMimes, doc.mimeType);
     }
 }

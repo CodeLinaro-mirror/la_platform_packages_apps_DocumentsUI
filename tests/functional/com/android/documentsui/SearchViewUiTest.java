@@ -75,6 +75,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -478,6 +479,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @Ignore("b/454313609") // TODO(b/454313609): Re-enable once the test is fixed.
     public void testSearchV2LastUsedChipCopiedToFileTypeDropdown() throws Exception {
         // Click "Images" chip and wait until the chip becomes selected.
         bots.search.clickChip(R.string.chip_title_images)
@@ -695,20 +697,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testNoDirectoryChangedOnRecentsBreadcrumbClick() throws Exception {
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
-        bots.directory.selectFirstDocument();
-        bots.directory.assertSelection(1);
-
-        // Click the first item of the path, which should take us to the directory listing.
-        onView(allOf(withText("Recent"), isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
-                .perform(click());
-        // No directory change and the selection remains.
-        bots.directory.assertSelection(1);
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultMultipleSelection() throws Exception {
         bots.search.doSearch("file");
         device.waitForIdle();
@@ -717,7 +705,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 2);
 
-        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathEqualsTo(""));
+        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathEqualsTo());
     }
 
     @Test

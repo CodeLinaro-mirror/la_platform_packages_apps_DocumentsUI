@@ -31,6 +31,11 @@
     <!-- Title of the documents application [CHAR LIMIT=32] -->
     <string name="app_label">@string/files_label</string>
 
+    <!-- Title for the summary consent dialog. -->
+    <string name="summary_consent_title"></string>
+    <!-- Message for the summary consent dialog. -->
+    <string name="summary_consent_message"></string>
+
     <!-- Title of the documents application [CHAR LIMIT=32] -->
     <string name="launcher_label">@string/files_label</string>
 
@@ -106,6 +111,10 @@
     <string name="menu_show_hidden_files">Show hidden files</string>
     <!-- Menu item that hides hidden files [CHAR LIMIT=36] -->
     <string name="menu_hide_hidden_files">Don\u2019t show hidden files</string>
+    <!-- Menu item that shows the summary column [CHAR LIMIT=36] -->
+    <string name="option_show_summary_column">Show summary column</string>
+    <!-- Menu item that hides the summary column [CHAR LIMIT=36] -->
+    <string name="option_hide_summary_column">Don\'t show summary column</string>
     <!-- Menu item that renames the selected document [CHAR LIMIT=28] -->
     <string name="menu_view_in_owner">View in <xliff:g id="source" example="Google Drive">%1$s</xliff:g></string>
 
@@ -936,6 +945,8 @@
 
     <!-- Search hint on search view. [CHAR LIMIT=48] -->
     <string name="search_bar_hint">Search this device</string>
+    <!-- A generic search hint on search view, congruent with search everywhere. [CHAR LIMIT=48] -->
+    <string name="search_bar_generic_hint">Search</string>
 
     <!-- Text shown on the application bar when search is active and search results are shown. -->
     <string name="search_results">Search results</string>
@@ -1015,6 +1026,12 @@
 
     <!-- Peek metadata "Date modified" row. -->
     <string name="peek_metadata_date_modified">Date modified</string>
+
+    <!-- The button which dismisses the "Get info" dialog. -->
+    <string name="get_info_positive_button">OK</string>
+
+    <!-- When a file type is not known at all, uses this string instead. -->
+    <string name="get_info_unknown_file_type">Unknown</string>
 
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>

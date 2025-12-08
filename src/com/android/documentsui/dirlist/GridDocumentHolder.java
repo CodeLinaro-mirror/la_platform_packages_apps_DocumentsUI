@@ -18,19 +18,14 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLID_COLORED;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorLong;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.provider.DocumentsContract.Document;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.MotionEvent;
@@ -51,7 +46,6 @@ import com.android.documentsui.base.Events;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.ui.Views;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -83,7 +77,7 @@ final class GridDocumentHolder extends DocumentHolder {
     final DocumentsAdapter.Environment mEnv;
 
     // This is used in as a convenience in our bind method.
-    private final DocumentInfo mDoc = new DocumentInfo();
+    private DocumentInfo mDoc = new DocumentInfo();
 
     // Non-null only when useMaterial3 flag is ON.
     private final @Nullable MaterialCardView mIconWrapper;
@@ -209,6 +203,11 @@ final class GridDocumentHolder extends DocumentHolder {
             mIconMimeSm.setAlpha(imgAlpha);
             mIconThumb.setAlpha(imgAlpha);
         }
+
+        if (!enabled) {
+            // Hide the sync state when the user can't do anything to fix it.
+            hideSyncIcons();
+        }
     }
 
     @Override
@@ -279,18 +278,13 @@ final class GridDocumentHolder extends DocumentHolder {
     /**
      * Bind this view to the given document for display.
      *
-     * @param cursor Pointing to the item to be bound.
+     * @param doc The document to be bound.
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
-        assert (cursor != null);
-
+    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
         mModelId = modelId;
-
-        mDoc.updateFromCursor(cursor,
-                UserId.of(getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID)),
-                getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY));
+        mDoc = doc;
 
         // Only have a selection region when the Material3 flag is on and if this is in non-browsing
         // mode, the item must not be a folder.
@@ -336,7 +330,7 @@ final class GridDocumentHolder extends DocumentHolder {
             // If file is partial, we want to show summary field as that's more relevant than
             // fileSize and date.
             if (mDoc.isPartial() && !useSummary) {
-                final String docSummary = getCursorString(cursor, Document.COLUMN_SUMMARY);
+                final String docSummary = mDoc.summary;
                 mDetails.setVisibility(View.VISIBLE);
                 if (isUseMaterial3FlagEnabled()) {
                     mDate.setVisibility(View.GONE);
@@ -355,7 +349,7 @@ final class GridDocumentHolder extends DocumentHolder {
                     mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
                 }
 
-                final long docSize = getCursorLong(cursor, Document.COLUMN_SIZE);
+                final long docSize = mDoc.size;
                 if (mDoc.isDirectory() || docSize == -1) {
                     mDetails.setVisibility(View.GONE);
                 } else {
@@ -370,5 +364,7 @@ final class GridDocumentHolder extends DocumentHolder {
             // There is no need for the bullet separating the details and date.
             mBullet.setVisibility(View.GONE);
         }
+
+        bindSyncIcons(mDoc);
     }
 }

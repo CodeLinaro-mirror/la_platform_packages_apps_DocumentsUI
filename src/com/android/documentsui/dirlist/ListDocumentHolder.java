@@ -18,8 +18,6 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLID_COLORED;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.ui.Views.setWeight;
 import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -28,7 +26,6 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -55,7 +52,6 @@ import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.ui.Views;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -91,7 +87,7 @@ final class ListDocumentHolder extends DocumentHolder {
     private final IconHelper mIconHelper;
     private final Lookup<String, String> mFileTypeLookup;
     // This is used in as a convenience in our bind method.
-    private final DocumentInfo mDoc;
+    private DocumentInfo mDoc;
     private final DocumentsAdapter.Environment mEnv;
 
     ListDocumentHolder(
@@ -198,6 +194,11 @@ final class ListDocumentHolder extends DocumentHolder {
             final float imgAlpha = enabled ? 1f : DISABLED_ALPHA;
             mIconMime.setAlpha(imgAlpha);
             mIconThumb.setAlpha(imgAlpha);
+        }
+
+        if (!enabled) {
+            // Hide the sync state when the user can't do anything to fix it.
+            hideSyncIcons();
         }
     }
 
@@ -332,18 +333,13 @@ final class ListDocumentHolder extends DocumentHolder {
     /**
      * Bind this view to the given document for display.
      *
-     * @param cursor Pointing to the item to be bound.
+     * @param doc The document to be bound.
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
-        assert (cursor != null);
-
+    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
         mModelId = modelId;
-
-        mDoc.updateFromCursor(cursor,
-                UserId.of(getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID)),
-                getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY));
+        mDoc = doc;
 
         mIconHelper.stopLoading(mIconThumb);
 
@@ -366,6 +362,8 @@ final class ListDocumentHolder extends DocumentHolder {
         bindSummary(summary);
 
         mTitle.setVisibility(View.VISIBLE);
+
+        bindSyncIcons(mDoc);
 
         if (mDoc.isDirectory()) {
             // Note, we don't show any details for any directory...ever.

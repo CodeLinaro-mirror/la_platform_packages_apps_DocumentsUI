@@ -79,6 +79,7 @@ android_library {
         "androidx.test.rules",
         "androidx.test.uiautomator_uiautomator",
         "flag-junit",
+        "kotlinx_coroutines_test",
         "mockito-target",
         "ub-janktesthelper",
     ],

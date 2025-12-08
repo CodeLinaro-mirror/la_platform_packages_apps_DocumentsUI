@@ -59,6 +59,7 @@ import com.android.documentsui.testing.TestSupportLoaderManager;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * Abstract to avoid having to implement unnecessary Activity stuff.
@@ -78,6 +79,8 @@ public abstract class TestActivity extends AbstractBase {
     public ActivityManager activityManager;
     public UserManager userManager;
     public boolean throwOnStartActivity;
+    public Executor mainExecutor;
+    public Injector<?> injector;
 
     public TestEventListener<Intent> startActivity;
     public TestEventListener<Pair<Intent, UserHandle>> startActivityAsUser;
@@ -101,10 +104,12 @@ public abstract class TestActivity extends AbstractBase {
 
     public void init(TestEnv env) {
         resources = TestResources.create();
+        injector = env.injector;
         packageMgr = TestPackageManager.create();
         intent = new Intent();
         currentUserHandle = env.userHandle;
         fm = Mockito.mock(FragmentManager.class, Mockito.CALLS_REAL_METHODS);
+        mainExecutor = env.mMainExecutor;
 
         startActivity = new TestEventListener<>();
         startActivityAsUser = new TestEventListener<>();
@@ -316,6 +321,11 @@ public abstract class TestActivity extends AbstractBase {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public final Executor getMainExecutor() {
+        return mainExecutor;
     }
 }
 

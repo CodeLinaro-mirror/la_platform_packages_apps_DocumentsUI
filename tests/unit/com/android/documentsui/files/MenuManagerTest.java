@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
@@ -31,7 +32,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -56,6 +59,8 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.dirlist.SummaryProviderManager;
+import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.dirlist.TestData;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -69,6 +74,9 @@ import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.util.VersionUtils;
+
+import kotlinx.coroutines.CoroutineScopeKt;
+import kotlinx.coroutines.Dispatchers;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -164,6 +172,7 @@ public final class MenuManagerTest {
     private MenuManager mgr;
     private TestActivity activity = TestActivity.create(TestEnv.create());
     private SelectionTracker<String> selectionManager;
+    private SummaryProviderManager mSummaryProviderManager;
 
     private int mFilesCount;
 
@@ -271,16 +280,28 @@ public final class MenuManagerTest {
         selectionDetails.size = 1;
         mFilesCount = 10;
 
-        mgr = new MenuManager(
-                features,
-                testSearchManager,
-                state,
-                dirDetails,
-                activity,
-                selectionManager,
-                this::getApplicationNameFromAuthority,
-                this::getUriFromModelId,
-                this::getFilesCount);
+        mSummaryProviderManager =
+                spy(
+                        new SummaryProviderManager(
+                                activity,
+                                CoroutineScopeKt.CoroutineScope(Dispatchers.getUnconfined()),
+                                null));
+        // Disable the part that kicks off the coroutine.
+        doNothing().when(mSummaryProviderManager).start();
+        activity.injector.setSummaryProviderManager(mSummaryProviderManager);
+
+        mgr =
+                new MenuManager(
+                        features,
+                        testSearchManager,
+                        state,
+                        dirDetails,
+                        activity,
+                        selectionManager,
+                        this::getApplicationNameFromAuthority,
+                        this::getUriFromModelId,
+                        this::getFilesCount,
+                        activity.injector);
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -637,7 +658,8 @@ public final class MenuManagerTest {
                         selectionManager,
                         this::getApplicationNameFromAuthority,
                         this::getUriFromModelId,
-                        this::getFilesCount);
+                        this::getFilesCount,
+                        activity.injector);
 
         selectionDetails.canViewInOwner = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -861,7 +883,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    public void testOptionMenu_Inspector_VisibleButDisabled() {
+    public void testOptionMenu_Inspector_InvisibleAndDisabled() {
         features.inspector = true;
         dirDetails.canInspectDirectory = false;
         mgr.updateOptionMenu(testMenu);
@@ -924,6 +946,33 @@ public final class MenuManagerTest {
         mgr.updateOptionMenu(testMenu);
 
         mOptionPaste.assertEnabledAndVisible();
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_FILE_SUMMARY)
+    public void testOptionMenu_ShowSummaryColumn_disabledWhenFlagIsOff() {
+        mSummaryProviderManager.setStateForTest(SummaryProviderState.FlagDisabled.INSTANCE);
+        TestMenuItem showSummary = testMenu.createMenuItem(R.id.option_show_summary);
+        mgr.updateOptionMenu(testMenu);
+        showSummary.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_FILE_SUMMARY)
+    public void testOptionMenu_ShowSummaryColumn_enabledWhenFlagIsOn() {
+        TestMenuItem showSummary = testMenu.createMenuItem(R.id.option_show_summary);
+
+        boolean isUserEnabled = false;
+        mSummaryProviderManager.setStateForTest(new SummaryProviderState.Available(isUserEnabled));
+        mgr.updateOptionMenu(testMenu);
+        showSummary.assertEnabledAndVisible();
+        showSummary.assertTitle(R.string.option_show_summary_column);
+
+        isUserEnabled = true;
+        mSummaryProviderManager.setStateForTest(new SummaryProviderState.Available(isUserEnabled));
+        mgr.updateOptionMenu(testMenu);
+        showSummary.assertEnabledAndVisible();
+        showSummary.assertTitle(R.string.option_hide_summary_column);
     }
 
     @Test
@@ -1058,6 +1107,7 @@ public final class MenuManagerTest {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.containPartial = false;
         selectionDetails.canDelete = true;
+        features.inspector = true;
         selectionDetails.size = 1;
         selectionDetails.canExtract = false;
         features.archiveCreation = true;
@@ -1108,6 +1158,7 @@ public final class MenuManagerTest {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.containPartial = false;
         selectionDetails.canDelete = true;
+        features.inspector = true;
         selectionDetails.size = 1;
         selectionDetails.canExtract = false;
         features.archiveCreation = true;
@@ -1368,6 +1419,7 @@ public final class MenuManagerTest {
     @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_CanInspectSingleSelection() {
+        features.inspector = true;
         selectionDetails.size = 1;
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
         dirInspect.assertEnabledAndVisible();

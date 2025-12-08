@@ -48,6 +48,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.AbstractActionHandler;
+import com.android.documentsui.ActionModeAddons;
 import com.android.documentsui.ActivityConfig;
 import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.Injector;
@@ -64,7 +65,9 @@ import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.dirlist.AnimationView;
+import com.android.documentsui.peek.PeekViewManager;
 import com.android.documentsui.picker.ActionHandler.Addons;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -111,8 +114,23 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
             SearchViewManager searchMgr,
             Lookup<String, Executor> executors,
             Injector injector,
-            LastAccessedStorage lastAccessed) {
-        super(activity, state, providers, docs, searchMgr, executors, injector);
+            LastAccessedStorage lastAccessed,
+            @Nullable PeekViewManager peekViewManager,
+            @Nullable ActionModeAddons actionModeAddons,
+            Runnable closeSelectionBar,
+            ClipStore clipStore) {
+        super(
+                activity,
+                state,
+                providers,
+                docs,
+                searchMgr,
+                executors,
+                injector,
+                peekViewManager,
+                actionModeAddons,
+                closeSelectionBar,
+                clipStore);
 
         mConfig = injector.config;
         mFeatures = injector.features;
@@ -413,12 +431,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
             return false;
         }
 
-        if (mConfig.isDocumentEnabled(
-                doc.mimeType,
-                doc.flags,
-                doc.syncStateFlags,
-                mState,
-                mInjector.networkMonitor.isOnline())) {
+        if (mConfig.isDocumentEnabled(doc, mState, mInjector.networkMonitor.isOnline())) {
             mActivity.onDocumentPicked(doc);
             mSelectionMgr.clearSelection();
             return !doc.isDirectory();
@@ -594,6 +607,41 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         } else {
             return AsyncTask.THREAD_POOL_EXECUTOR;
         }
+    }
+
+    @Override
+    public void showPreview(DocumentInfo doc) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.showPreview(doc);
+        } else {
+            throw new UnsupportedOperationException("Can't open properties.");
+        }
+    }
+
+    @Override
+    public void showDeleteDialog() {
+        if (isUseMaterial3FlagEnabled()) {
+            super.showDeleteDialog();
+        } else {
+            throw new UnsupportedOperationException("Delete not supported!");
+        }
+    }
+
+    @Override
+    public void deleteSelectedDocuments(List<DocumentInfo> docs, DocumentInfo srcParent) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.deleteSelectedDocuments(docs, srcParent);
+        } else {
+            throw new UnsupportedOperationException("Delete not supported!");
+        }
+    }
+
+    @Override
+    public @Nullable DocumentInfo renameDocument(String name, DocumentInfo document) {
+        if (isUseMaterial3FlagEnabled()) {
+            return super.renameDocument(name, document);
+        }
+        throw new UnsupportedOperationException("Can't rename documents.");
     }
 
     public interface Addons extends CommonAddons {

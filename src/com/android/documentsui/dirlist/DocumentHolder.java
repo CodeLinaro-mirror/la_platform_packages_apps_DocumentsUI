@@ -18,12 +18,12 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Strings.PREVIEW_WORK_FILE_ACCESSIBILITY;
 import static com.android.documentsui.DevicePolicyResources.Strings.UNDEFINED;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -43,6 +43,7 @@ import com.android.documentsui.ConfigStore;
 import com.android.documentsui.DocumentsApplication;
 import com.android.documentsui.R;
 import com.android.documentsui.UserManagerState;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
@@ -87,7 +88,7 @@ public abstract class DocumentHolder
     }
 
     /** Binds the view to the given item data. */
-    public abstract void bind(Cursor cursor, String modelId, @Nullable String summary);
+    public abstract void bind(DocumentInfo doc, String modelId, @Nullable String summary);
 
     public String getModelId() {
         return mModelId;
@@ -137,6 +138,55 @@ public abstract class DocumentHolder
      * @param userIdIdentifier user id of the profile the document belongs to
      */
     public void bindProfileIcon(boolean show, int userIdIdentifier) {
+    }
+
+    /** Binds the sync icons, if they exist, to the document's thumbnail. */
+    protected void bindSyncIcons(DocumentInfo doc) {
+        if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled() || !doc.hasSyncState()) {
+            return;
+        }
+
+        hideSyncIcons();
+        View progressView = itemView.findViewById(android.R.id.progress);
+        View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
+        View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
+        View downloadView = itemView.findViewById(getRes(R.id.download_icon));
+
+        if (doc.hasSyncInProgress() && progressView != null) {
+            progressView.setVisibility(View.VISIBLE);
+        } else if (doc.hasSyncError() && syncErrorView != null) {
+            syncErrorView.setVisibility(View.VISIBLE);
+        } else if (doc.hasLocalChanges() && uploadView != null) {
+            uploadView.setVisibility(View.VISIBLE);
+        } else if (!doc.isContentAvailableLocally() && !doc.isDirectory() && downloadView != null) {
+            // Only show download icon for files. Folders don't have content.
+            downloadView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /** Hides all sync icons. */
+    protected void hideSyncIcons() {
+        if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled()) {
+            return;
+        }
+
+        View progressView = itemView.findViewById(android.R.id.progress);
+        View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
+        View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
+        View downloadView = itemView.findViewById(getRes(R.id.download_icon));
+
+        if (progressView != null) {
+            progressView.setVisibility(View.GONE);
+        }
+        if (syncErrorView != null) {
+            syncErrorView.setVisibility(View.GONE);
+        }
+        if (uploadView != null) {
+            uploadView.setVisibility(View.GONE);
+        }
+        if (downloadView != null) {
+            downloadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

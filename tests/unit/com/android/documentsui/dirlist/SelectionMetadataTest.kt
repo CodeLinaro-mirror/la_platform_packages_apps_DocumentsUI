@@ -28,6 +28,8 @@ import com.android.documentsui.rules.TestModelRule
 import com.android.documentsui.testing.TestPackageManager
 import com.android.documentsui.util.FileUtils
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,21 +48,19 @@ class SelectionMetadataTest {
 
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
-    @get:Rule val setFlags = OverrideFlagsRule()
-
-    @get:Rule
-    val testModelRule =
-        TestModelRule(TestAuthority, TestUserId)
-            .createFile("noOpeningApp.pdf", "application/pdf")
-            .createFile("oneOpeningApp.txt", "text/plain")
-            .createFile("twoOpeningApp.jpg", "image/jpg")
-            .createFile("twoOpeningApp.png", "image/png")
-            .createFile("duplicateMimeType.png", "image/png")
-            .createFile("unavailableDocument1.png", "image/png", IS_UNAVAILABLE_FLAG)
-            .createFile("unavailableDocument2.png", "image/png", IS_UNAVAILABLE_FLAG)
+    @get:Rule(order = 0) val setFlags = OverrideFlagsRule()
+    @get:Rule(order = 1) val testModelRule = TestModelRule(TestAuthority, TestUserId)
 
     @Before
     fun setUp() {
+        testModelRule.createFile("noOpeningApp.pdf", "application/pdf")
+        testModelRule.createFile("oneOpeningApp.txt", "text/plain")
+        testModelRule.createFile("twoOpeningApp.jpg", "image/jpg")
+        testModelRule.createFile("twoOpeningApp.png", "image/png")
+        testModelRule.createFile("duplicateMimeType.png", "image/png")
+        testModelRule.createFile("unavailableDocument1.png", "image/png", 0, IS_UNAVAILABLE_FLAG)
+        testModelRule.createFile("unavailableDocument2.png", "image/png", 0, IS_UNAVAILABLE_FLAG)
+
         testPackageManager.queryIntentActivitiesResults.put("application/pdf", emptyList())
         testPackageManager.queryIntentActivitiesResults.put("text/plain", listOf(ResolveInfo()))
         testPackageManager.queryIntentActivitiesResults.put(
@@ -219,7 +219,7 @@ class SelectionMetadataTest {
         sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDocumentsWithUnavailableContent(), true)
+        assertTrue(sm.containsDocumentsWithUnavailableContent())
     }
 
     @Test
@@ -231,7 +231,7 @@ class SelectionMetadataTest {
         sm.onItemStateChanged(makeId("unavailableDocument2.png"), true)
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDocumentsWithUnavailableContent(), true)
+        assertTrue(sm.containsDocumentsWithUnavailableContent())
     }
 
     @Test
@@ -241,7 +241,7 @@ class SelectionMetadataTest {
 
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDocumentsWithUnavailableContent(), false)
+        assertFalse(sm.containsDocumentsWithUnavailableContent())
     }
 
     @Test
@@ -252,7 +252,7 @@ class SelectionMetadataTest {
         sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
         sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
 
-        assertEquals(sm.containsDocumentsWithUnavailableContent(), false)
+        assertFalse(sm.containsDocumentsWithUnavailableContent())
     }
 
     fun makeId(docId: String): String {
@@ -266,9 +266,10 @@ class SelectionMetadataTest {
                 val doc = testModelRule.model.getDocument(modelId)
                 FileUtils.countOpeningApps(doc, testPackageManager)
             },
-            { _, flag, _ ->
-                // Hack the `flag` to set whether the document is unavailable in this test.
-                flag != IS_UNAVAILABLE_FLAG
+            { doc ->
+                // Hack the `doc.syncStateFlags` to set whether the document is unavailable in this
+                // test.
+                doc.syncStateFlags != IS_UNAVAILABLE_FLAG
             },
         )
     }

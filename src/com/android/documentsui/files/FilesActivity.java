@@ -18,10 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
-import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -29,7 +26,6 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import android.app.ActivityManager.TaskDescription;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -76,8 +72,6 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
-import com.android.documentsui.peek.PeekViewManager;
-import com.android.documentsui.peek.PeekViewModel;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
@@ -85,8 +79,6 @@ import com.android.documentsui.ui.MessageBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Nullable;
 
 /**
  * Standalone file management activity.
@@ -99,7 +91,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     private Injector<ActionHandler<FilesActivity>> mInjector;
     private ActivityInputHandler mActivityInputHandler;
     private SharedInputHandler mSharedInputHandler;
-    private @Nullable PeekViewManager mPeekViewManager;
     private final ProfileTabsAddons mProfileTabsAddonsStub = new StubProfileTabsAddons();
 
     public FilesActivity() {
@@ -152,21 +143,23 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         this::focusSidebar,
                         getColor(getRes(R.color.primary)));
 
-        MenuManager menuManager = new MenuManager(
-                mInjector.features,
-                mSearchManager,
-                mState,
-                new DirectoryDetails(this) {
-                    @Override
-                    public boolean hasItemsToPaste() {
-                        return clipper.hasItemsToPaste();
-                    }
-                },
-                getApplicationContext(),
-                mInjector.selectionMgr,
-                mProviders::getApplicationName,
-                mInjector.getModel()::getItemUri,
-                mInjector.getModel()::getItemCount);
+        MenuManager menuManager =
+                new MenuManager(
+                        mInjector.features,
+                        mSearchManager,
+                        mState,
+                        new DirectoryDetails(this) {
+                            @Override
+                            public boolean hasItemsToPaste() {
+                                return clipper.hasItemsToPaste();
+                            }
+                        },
+                        getApplicationContext(),
+                        mInjector.selectionMgr,
+                        mProviders,
+                        mInjector.getModel()::getItemUri,
+                        mInjector.getModel()::getItemCount,
+                        mInjector);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {
@@ -184,23 +177,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             mNavigator,
                             mInjector.menuManager,
                             mInjector.messages);
-        }
-
-        // Directly use the generated method `usePeekPreviewRo` to optimize out Peek when the flag
-        // isn't enabled. The optimization is not happening with the FlagUtils's
-        // `isUsePeekPreviewFlagEnabled`.
-        if (usePeekPreviewRo()) {
-            if (isUsePeekPreviewFlagEnabled()) {
-                ViewModelProvider viewModelProvider = new ViewModelProvider(this);
-                PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
-                mPeekViewManager = new PeekViewManager(
-                        viewModel,
-                        findViewById(getRes(R.id.peek_overlay)),
-                        getSupportFragmentManager());
-                viewModel.getOverlayActive().observe(
-                        this,
-                        mPeekViewManager);
-            }
         }
 
         Runnable closeSelectionBarRunnable =
@@ -437,10 +413,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
             if (dir == null) return false;
             mInjector.actions.selectAllFiles();
             return dir.onContextItemSelected(item);
-        } else if (id == getRes(R.id.option_menu_select_all)) {
-            mInjector.actions.selectAllFiles();
-        } else if (id == getRes(R.id.option_menu_inspect)) {
-            mInjector.actions.showPreview(getCurrentDirectory());
         } else {
             final boolean ok = super.onOptionsItemSelected(item);
             if (DEBUG && !ok) {
@@ -491,11 +463,6 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         mInjector.focusManager.focusDocument(doc.documentId);
     }
 
-    @Override
-    protected boolean canInspectDirectory() {
-        return getCurrentDirectory() != null && mInjector.getModel().doc != null;
-    }
-
     @CallSuper
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -535,16 +502,5 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public Injector<ActionHandler<FilesActivity>> getInjector() {
         return mInjector;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (isHomeScreenFilesFlagEnabled()) {
-            // Localize the shortcut titles.
-            mProviders.updateShortcutLocalizedTitles();
-        }
-        // Localize the recents root title.
-        mProviders.createOrUpdateRecentsRoot();
     }
 }
