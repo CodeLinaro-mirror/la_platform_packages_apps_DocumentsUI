@@ -879,8 +879,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public boolean sendToApprovedDocHandler(ComponentName app) {
-        throw new UnsupportedOperationException("sendToApprovedDocHandler not supported!");
+    public Intent createApprovedHandlerIntent(ComponentName handler) {
+        throw new UnsupportedOperationException("createApprovedHandlerIntent not supported!");
     }
 
     protected Selection<String> getSelectedOrFocused() {

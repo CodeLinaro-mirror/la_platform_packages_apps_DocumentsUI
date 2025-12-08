@@ -54,6 +54,7 @@ import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
@@ -173,6 +174,7 @@ public final class MenuManagerTest {
     private TestActivity activity = TestActivity.create(TestEnv.create());
     private SelectionTracker<String> selectionManager;
     private SummaryProviderManager mSummaryProviderManager;
+    private ApprovedDocHandlers mApprovedDocHandlers;
 
     private int mFilesCount;
 
@@ -280,6 +282,9 @@ public final class MenuManagerTest {
         selectionDetails.size = 1;
         mFilesCount = 10;
 
+        mApprovedDocHandlers = new ApprovedDocHandlers(
+                activity, UserId.DEFAULT_USER, activity.injector);
+
         mSummaryProviderManager =
                 spy(
                         new SummaryProviderManager(
@@ -301,7 +306,8 @@ public final class MenuManagerTest {
                         this::getApplicationNameFromAuthority,
                         this::getUriFromModelId,
                         this::getFilesCount,
-                        activity.injector);
+                        activity.injector,
+                        mApprovedDocHandlers);
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -659,7 +665,8 @@ public final class MenuManagerTest {
                         this::getApplicationNameFromAuthority,
                         this::getUriFromModelId,
                         this::getFilesCount,
-                        activity.injector);
+                        activity.injector,
+                        mApprovedDocHandlers);
 
         selectionDetails.canViewInOwner = true;
         mgr.updateActionMenu(testMenu, selectionDetails);

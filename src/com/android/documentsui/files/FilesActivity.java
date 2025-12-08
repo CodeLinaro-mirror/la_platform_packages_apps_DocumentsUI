@@ -65,6 +65,7 @@ import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.ShortcutsUpdater;
 import com.android.documentsui.StubProfileTabsAddons;
 import com.android.documentsui.UserManagerProvider;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.RootInfo;
@@ -161,7 +162,8 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         mProviders,
                         mInjector.getModel()::getItemUri,
                         mInjector.getModel()::getItemCount,
-                        mInjector);
+                        mInjector,
+                        new ApprovedDocHandlers(this, getSelectedUser(), mInjector));
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {

@@ -22,6 +22,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
 import com.android.documentsui.R
 import com.android.documentsui.base.MimeTypes
@@ -52,7 +56,11 @@ data class ApprovedDocHandler(
  * This class and all methods in this class will only be called when the flag
  * `isUseApprovedDocumentHandlerEnabled` is true.
  */
-class ApprovedDocHandlers(private val context: Context, private val userId: UserId) {
+class ApprovedDocHandlers(
+    private val context: Context,
+    private val userId: UserId,
+    private val injector: Injector<*>,
+) {
     private val packageManager: PackageManager = userId.getPackageManager(context)
 
     companion object {
@@ -149,5 +157,56 @@ class ApprovedDocHandlers(private val context: Context, private val userId: User
         // TODO(b/465271281): Cache the handlers, use package notifications to invalidate and
         // re-fetch them when they change.
         return handlers
+    }
+
+    /**
+     * Updates the provided menu with actions from approved document handlers. This method
+     * dynamically adds or removes menu items based on the available approved document handlers and
+     * the current selection.
+     *
+     * @param menu The menu to be updated.
+     * @param selectionDetails Details about the current selection of documents.
+     */
+    fun updateApprovedDocHandlerMenus(menu: Menu, selectionDetails: MenuManager.SelectionDetails) {
+        val approvedDocHandlersMap =
+            getApprovedDocHandlers(selectionDetails).associateBy { it.componentName }.toMutableMap()
+        // TODO(b/465271277): Implement a limitation of the number of action buttons and menu
+        // items allowed
+        val toRemove = mutableListOf<Int>()
+
+        // TODO(b/466832041): Use a <group> in the menu to group the approved handlers together
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            val intent = item.intent
+            if (intent?.component == null || !intent.hasCategory(APPROVED_HANDLER_CATEGORY)) {
+                continue
+            }
+
+            // Have asserted that intent.component is not null above.
+            val component = intent.component!!
+            val handler = approvedDocHandlersMap.remove(component)
+            if (handler != null) {
+                item.intent = injector.actions.createApprovedHandlerIntent(component)
+            } else {
+                toRemove.add(item.itemId)
+            }
+        }
+
+        for (i in toRemove) {
+            menu.removeItem(i)
+        }
+
+        // Add new handlers. The map now only contains handlers that are not in the menu.
+        for (handler in approvedDocHandlersMap.values) {
+            // TODO(b/465299476): Truncate the label if it is too long.
+            val item = menu.add(Menu.NONE, View.generateViewId(), Menu.NONE, handler.label)
+            item.intent = injector.actions.createApprovedHandlerIntent(handler.componentName)
+            if (handler.isButton && handler.icon != null) {
+                item.icon = handler.icon
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+            } else {
+                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            }
+        }
     }
 }
