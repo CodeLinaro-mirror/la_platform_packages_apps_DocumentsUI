@@ -14,62 +14,23 @@
      limitations under the License.
 -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="@dimen/space_small_4"
-    android:paddingBottom="@dimen/space_small_1">
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/header_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/space_small_4"
-        android:text="@string/peek_metadata_header_title"
-        android:textColor="?attr/colorOnSurface"
-        android:textAppearance="@style/TextAppearance.DocumentsUI.HeadlineSmall"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/close_button_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_text"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        android:paddingTop="@dimen/space_small_1">
-
-        <LinearLayout
-            android:id="@+id/content_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    app:layout_constrainedHeight="true"
+    app:layout_constraintBottom_toTopOf="@+id/close_button_layout"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/header_text"
+    android:clipToPadding="false"
+    android:scrollbars="vertical"
+    android:paddingTop="@dimen/space_small_1">
 
     <LinearLayout
-        android:id="@+id/close_button_layout"
-        android:layout_width="wrap_content"
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/space_extra_small_6"
-        android:paddingEnd="@dimen/space_extra_small_4"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/close_button"
-            style="@style/MaterialButtonM3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/get_info_positive_button"
-            app:cornerRadius="@dimen/button_corner_radius_m3" />
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical" />
+</ScrollView>

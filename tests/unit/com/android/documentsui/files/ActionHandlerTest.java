@@ -249,6 +249,17 @@ public class ActionHandlerTest {
     }
 
     @Test
+    public void testCutSelectedDocuments() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+
+        mHandler.cutToClipboard();
+        mDialogs.assertDocumentsClippedShown();
+        mDialogs.assertOperationUnsupportedNotShown();
+        mClipper.clipForCut.assertCalled();
+    }
+
+    @Test
     public void testCutSelectedDocuments_NoGivenSelection() {
         mEnv.populateStack();
 
@@ -269,12 +280,115 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testCutSelectedDocuments_ContainsUnavailableDocument() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+
+        ((TestActivityConfig) mEnv.injector.config)
+                .documentsWithUnavailableContent.add(TestEnv.FILE_PDF.documentId);
+
+        mHandler.cutToClipboard();
+        mDialogs.assertDocumentsClippedNotShown();
+        mDialogs.assertShowOperationUnsupported();
+        mClipper.clipForCut.assertNotCalled();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testCutSelectedDocuments_ContainsUnavailableDocument_AndAvailableDocument() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+        mEnv.selectDocument(TestEnv.FILE_APK);
+
+        ((TestActivityConfig) mEnv.injector.config)
+                .documentsWithUnavailableContent.add(TestEnv.FILE_PDF.documentId);
+
+        mHandler.cutToClipboard();
+        mDialogs.assertDocumentsClippedNotShown();
+        mDialogs.assertShowOperationUnsupported();
+        mClipper.clipForCut.assertNotCalled();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testCutSelectedDocuments_ContainsUnavailableDocument_FeatureFlagDisabled() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+
+        ((TestActivityConfig) mEnv.injector.config)
+                .documentsWithUnavailableContent.add(TestEnv.FILE_PDF.documentId);
+
+        mHandler.cutToClipboard();
+        mDialogs.assertDocumentsClippedShown();
+        mDialogs.assertOperationUnsupportedNotShown();
+        mClipper.clipForCut.assertCalled();
+    }
+
+    @Test
+    public void testCopySelectedDocuments() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+
+        mHandler.copyToClipboard();
+        mDialogs.assertDocumentsClippedShown();
+        mDialogs.assertOperationUnsupportedNotShown();
+        mClipper.clipForCopy.assertCalled();
+    }
+
+    @Test
     public void testCopySelectedDocuments_NoGivenSelection() {
         mEnv.populateStack();
 
         mEnv.selectionMgr.clearSelection();
         mHandler.copyToClipboard();
         mDialogs.assertDocumentsClippedNotShown();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testCopySelectedDocuments_ContainsUnavailableDocument() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+
+        ((TestActivityConfig) mEnv.injector.config)
+                .documentsWithUnavailableContent.add(TestEnv.FILE_PDF.documentId);
+
+        mHandler.copyToClipboard();
+        mDialogs.assertDocumentsClippedNotShown();
+        mDialogs.assertShowOperationUnsupported();
+        mClipper.clipForCopy.assertNotCalled();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testCopySelectedDocuments_ContainsUnavailableDocument_AndAvailableDocument() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+        mEnv.selectDocument(TestEnv.FILE_JPG);
+
+        ((TestActivityConfig) mEnv.injector.config)
+                .documentsWithUnavailableContent.add(TestEnv.FILE_JPG.documentId);
+
+        mHandler.copyToClipboard();
+        mDialogs.assertDocumentsClippedNotShown();
+        mDialogs.assertShowOperationUnsupported();
+        mClipper.clipForCopy.assertNotCalled();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testCopySelectedDocuments_ContainsUnavailableDocument_FeatureFlagDisabled() {
+        mEnv.populateStack();
+        mEnv.selectDocument(TestEnv.FILE_PDF);
+
+        ((TestActivityConfig) mEnv.injector.config)
+                .documentsWithUnavailableContent.add(TestEnv.FILE_PDF.documentId);
+
+        mHandler.copyToClipboard();
+        mDialogs.assertDocumentsClippedShown();
+        mDialogs.assertOperationUnsupportedNotShown();
+        mClipper.clipForCopy.assertCalled();
     }
 
     @Test

@@ -39,6 +39,7 @@ public class TestDocumentClipper implements DocumentClipper {
     public ClipData primaryClip;
 
     public final TestEventHandler<List<Uri>> clipForCut = new TestEventHandler<>();
+    public final TestEventHandler<List<Uri>> clipForCopy = new TestEventHandler<>();
 
     public final TestEventListener<Pair<DocumentStack, ClipData>> copyFromClip =
             new TestEventListener<>();
@@ -75,6 +76,12 @@ public class TestDocumentClipper implements DocumentClipper {
 
     @Override
     public void clipDocumentsForCopy(Function<String, Uri> uriBuilder, Selection<String> selection) {
+        List<Uri> uris = new ArrayList<>(selection.size());
+        for (String id : selection) {
+            uris.add(uriBuilder.apply(id));
+        }
+
+        clipForCopy.accept(uris);
     }
 
     @Override

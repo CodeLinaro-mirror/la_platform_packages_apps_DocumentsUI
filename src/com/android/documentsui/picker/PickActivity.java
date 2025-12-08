@@ -228,7 +228,8 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         new DirectoryDetails(this),
                         mInjector.getModel()::getItemCount,
                         getApplicationContext(),
-                        features);
+                        features,
+                        mInjector);
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =

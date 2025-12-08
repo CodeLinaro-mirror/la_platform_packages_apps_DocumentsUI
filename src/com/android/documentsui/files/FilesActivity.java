@@ -18,7 +18,6 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -27,7 +26,6 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import android.app.ActivityManager.TaskDescription;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -145,21 +143,23 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         this::focusSidebar,
                         getColor(getRes(R.color.primary)));
 
-        MenuManager menuManager = new MenuManager(
-                mInjector.features,
-                mSearchManager,
-                mState,
-                new DirectoryDetails(this) {
-                    @Override
-                    public boolean hasItemsToPaste() {
-                        return clipper.hasItemsToPaste();
-                    }
-                },
-                getApplicationContext(),
-                mInjector.selectionMgr,
-                mProviders::getApplicationName,
-                mInjector.getModel()::getItemUri,
-                mInjector.getModel()::getItemCount);
+        MenuManager menuManager =
+                new MenuManager(
+                        mInjector.features,
+                        mSearchManager,
+                        mState,
+                        new DirectoryDetails(this) {
+                            @Override
+                            public boolean hasItemsToPaste() {
+                                return clipper.hasItemsToPaste();
+                            }
+                        },
+                        getApplicationContext(),
+                        mInjector.selectionMgr,
+                        mProviders,
+                        mInjector.getModel()::getItemUri,
+                        mInjector.getModel()::getItemCount,
+                        mInjector);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {
@@ -502,16 +502,5 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public Injector<ActionHandler<FilesActivity>> getInjector() {
         return mInjector;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (isHomeScreenFilesFlagEnabled()) {
-            // Localize the shortcut titles.
-            mProviders.updateShortcutLocalizedTitles();
-        }
-        // Localize the recents root title.
-        mProviders.createOrUpdateRecentsRoot();
     }
 }

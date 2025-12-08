@@ -39,6 +39,17 @@ public class LocalPreferences {
     private static final String ROOT_VIEW_MODE_PREFIX = "rootViewMode-";
     private static final String VIEW_MODE_STATE = "viewModeState";
     private static final String SHOW_HIDDEN_FILES = "showHiddenFiles";
+    public static final String KEY_SUMMARY_ENABLED = "summaryEnabled";
+
+    /** Returns if the summary preference is enabled. */
+    public static Boolean isSummaryEnabled(Context context) {
+        return getPrefs(context).getBoolean(KEY_SUMMARY_ENABLED, false);
+    }
+
+    /** Sets the summary preference. */
+    public static void setSummaryEnabled(Context context, boolean enabled) {
+        getPrefs(context).edit().putBoolean(KEY_SUMMARY_ENABLED, enabled).apply();
+    }
 
     public static @ViewMode int getViewMode(Context context, RootInfo root,
             @ViewMode int fallback) {

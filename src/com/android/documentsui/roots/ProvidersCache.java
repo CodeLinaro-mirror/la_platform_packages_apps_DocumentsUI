@@ -284,7 +284,7 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 synchronized (mLock) {
                     // Resources don't change, so only compute this the first time.
                     if (!mShortcutResourcesFirstLoadDone) {
-                        mShortcutResources = getShortcutResources();
+                        mShortcutResources = getShortcutResources(getContextAfterLocaleChange());
                         mShortcutResourcesFirstLoadDone = true;
                     }
                 }
@@ -335,23 +335,34 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         }
     }
 
+    /**
+     * If the locale has changed, then we want to ensure that the next set of shortcut resources
+     * fetch the new localised strings.
+     */
+    private Context getContextAfterLocaleChange() {
+        final Configuration conf = mContext.getResources().getConfiguration();
+        conf.setLocale(Locale.getDefault());
+        mContext.getResources().updateConfiguration(conf, null);
+        return mContext.createConfigurationContext(conf);
+    }
+
     /** Retrieves all the available shortcut resource values. */
     @VisibleForTesting
-    public List<ShortcutResourceValues> getShortcutResources() {
+    public List<ShortcutResourceValues> getShortcutResources(Context context) {
         List<ShortcutResourceValues> shortcutResources = new ArrayList<>();
         // Get values from the RRO.
         List<String> authorities = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_authorities));
+                context.getResources().getStringArray(R.array.shortcut_authorities));
         List<String> rootIds = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_root_ids));
+                context.getResources().getStringArray(R.array.shortcut_root_ids));
         List<String> parentDocIds = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
+                context.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
         List<String> folderTitles = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_titles));
-        List<String> localizedTitles =
-                List.of(mContext.getResources().getStringArray(R.array.shortcut_localized_titles));
+                context.getResources().getStringArray(R.array.shortcut_titles));
+        List<String> localizedTitles = List.of(
+                context.getResources().getStringArray(R.array.shortcut_localized_titles));
         TypedArray shortcutIcons =
-                mContext.getResources().obtainTypedArray(R.array.shortcut_icons);
+                context.getResources().obtainTypedArray(R.array.shortcut_icons);
 
         int shortcutArraySize = authorities.size();
         if (shortcutArraySize != rootIds.size()
@@ -379,30 +390,12 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     }
 
     /**
-     * This method is called when the locale or the language of the device has been changed. The
-     * shortcut titles stored in mShortcutResources will be updated to be localized to reflect the
-     * new language.
+     * Resets the mShortcutResourcesFirstLoadDone value to false to force a reload of the shortcut
+     * resources the next time we call updateAsync().
      */
-    public void updateShortcutLocalizedTitles() {
+    public void resetShortcutResourcesFirstLoadDone() {
         synchronized (mLock) {
-            // Update the resources when the locale has been changed.
-            final Configuration conf = mContext.getResources().getConfiguration();
-            conf.setLocale(Locale.getDefault());
-            Context newContext = mContext.createConfigurationContext(conf);
-            List<String> localizedTitles =
-                    List.of(
-                            newContext
-                                    .getResources()
-                                    .getStringArray(R.array.shortcut_localized_titles));
-
-            if (mShortcutResources.size() != localizedTitles.size()) {
-                return;
-            }
-
-            for (int i = 0; i < mShortcutResources.size(); i++) {
-                ShortcutResourceValues shortcutRes = mShortcutResources.get(i);
-                shortcutRes.setLocalizedDisplayTitle(localizedTitles.get(i));
-            }
+            mShortcutResourcesFirstLoadDone = false;
         }
     }
 

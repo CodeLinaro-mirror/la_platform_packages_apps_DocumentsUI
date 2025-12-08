@@ -95,6 +95,8 @@
             <item type="string" name="preferred_root_package"/>
             <item type="string" name="trusted_quick_viewer_package"/>
             <item type="string" name="local_search_provider"/>
+            <item type="string" name="summary_consent_title" />
+            <item type="string" name="summary_consent_message" />
             <!-- END STRING CONFIG -->
 
             <!-- START SHORTCUT ARRAY -->
