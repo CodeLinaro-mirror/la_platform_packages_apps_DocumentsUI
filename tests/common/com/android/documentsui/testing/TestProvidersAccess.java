@@ -18,6 +18,7 @@ package com.android.documentsui.testing;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.ContentResolver;
+import android.content.pm.ProviderInfo;
 import android.os.Process;
 import android.os.UserHandle;
 import android.provider.DocumentsContract.Root;
@@ -399,6 +400,7 @@ public class TestProvidersAccess implements ProvidersAccess {
 
     public final Map<String, Collection<RootInfo>> roots = new HashMap<>();
     public final Map<UserId, Collection<ShortcutInfo>> shortcuts = new HashMap<>();
+    public @Nullable ProviderInfo nextProviderInfo;
     private @Nullable RootInfo nextRoot;
 
     public TestProvidersAccess() {
@@ -434,6 +436,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         pm.addStubContentProviderForRoot(TestProvidersAccess.HOME);
         pm.addStubContentProviderForRoot(TestProvidersAccess.HAMMY);
         pm.addStubContentProviderForRoot(TestProvidersAccess.PICKLES);
+        pm.addStubContentProviderForRoot(TestProvidersAccess.EXTERNALSTORAGE);
         pm.addStubContentProviderForRoot(TestProvidersAccess.NO_TREE_ROOT);
         pm.addStubContentProviderForRoot(TestProvidersAccess.LOCAL_SEARCH);
     }
@@ -501,5 +504,10 @@ public class TestProvidersAccess implements ProvidersAccess {
     @Override
     public String getPackageName(UserId userId, String authority) {
         return "com.android.documentsui";
+    }
+
+    @Override
+    public @Nullable ProviderInfo getProviderInfo(UserId userId, String authority) {
+        return nextProviderInfo;
     }
 }

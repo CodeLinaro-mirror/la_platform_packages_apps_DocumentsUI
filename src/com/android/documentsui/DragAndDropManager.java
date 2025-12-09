@@ -34,6 +34,7 @@ import android.content.ClipData;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -61,6 +62,7 @@ import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.dirlist.IconHelper;
+import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
@@ -244,8 +246,10 @@ public interface DragAndDropManager {
      */
     void dragEnded();
 
-    static DragAndDropManager create(Context context, DocumentClipper clipper) {
-        return new RuntimeDragAndDropManager(context, clipper, Executors.newCachedThreadPool());
+    static DragAndDropManager create(
+            Context context, DocumentClipper clipper, ProvidersAccess providers) {
+        return new RuntimeDragAndDropManager(
+                context, clipper, Executors.newCachedThreadPool(), providers);
     }
 
     /**
@@ -292,6 +296,7 @@ public interface DragAndDropManager {
         private final DragShadowBuilder mShadowBuilder;
         private final Drawable mDefaultShadowIcon;
         private final Executor mMainThreadExecutor;
+        private final ProvidersAccess mProviders;
 
         // NOTE: This is only utilized to mock out `MediaStore#getDocumentUri()` in unit tests.
         private final BiFunction<Context, Uri, Uri> mMediaStoreToDocumentUriRewriter;
@@ -329,14 +334,18 @@ public interface DragAndDropManager {
         private String mAuthorityToRestore;
 
         private RuntimeDragAndDropManager(
-                Context context, DocumentClipper clipper, Executor bgThreadExecutor) {
+                Context context,
+                DocumentClipper clipper,
+                Executor bgThreadExecutor,
+                ProvidersAccess providers) {
             this(
                     context.getApplicationContext(),
                     clipper,
                     bgThreadExecutor,
                     new DragShadowBuilder(context),
                     IconUtils.loadMimeIcon(context, MimeTypes.GENERIC_TYPE),
-                    MediaStore::getDocumentUri);
+                    MediaStore::getDocumentUri,
+                    providers);
         }
 
         @VisibleForTesting
@@ -346,7 +355,8 @@ public interface DragAndDropManager {
                 Executor bgThreadExecutor,
                 DragShadowBuilder builder,
                 Drawable defaultShadowIcon,
-                BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
+                BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
+                ProvidersAccess providers) {
             mContext = context;
             mClipper = clipper;
             mBgThreadExecutor = bgThreadExecutor;
@@ -354,6 +364,7 @@ public interface DragAndDropManager {
             mDefaultShadowIcon = defaultShadowIcon;
             mMainThreadExecutor = context.getMainExecutor();
             mMediaStoreToDocumentUriRewriter = mediaStoreToDocumentUriRewriter;
+            mProviders = providers;
         }
 
         @Override
@@ -803,7 +814,8 @@ public interface DragAndDropManager {
                     mIsSrcRootTrash,
                     mMainThreadExecutor,
                     mMediaStoreToDocumentUriRewriter,
-                    mMustBeCopied);
+                    mMustBeCopied,
+                    mProviders);
         }
 
         /**
@@ -834,7 +846,8 @@ public interface DragAndDropManager {
                     boolean isSrcRootTrash,
                     Executor mainThreadExecutor,
                     BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
-                    boolean mustBeCopied) {
+                    boolean mustBeCopied,
+                    ProvidersAccess providers) {
                 mClipper = clipper;
                 mContext = context;
                 mDstStack = dstStack;
@@ -843,11 +856,12 @@ public interface DragAndDropManager {
                 mMainThreadExecutor = mainThreadExecutor;
 
                 mClipData =
-                        rewrite(
+                        rewriteAsync(
                                 permissions,
                                 clipData,
                                 bgThreadExecutor,
-                                mediaStoreToDocumentUriRewriter);
+                                mediaStoreToDocumentUriRewriter,
+                                providers);
 
                 mOpType = calculateOpTypeAsync(bgThreadExecutor, isCtrlPressed, mustBeCopied);
 
@@ -1147,11 +1161,31 @@ public interface DragAndDropManager {
             // instance, puts MediaStore URIs in clip data which we are able to rewrite to External
             // Storage Provider URIs. This method returns clip data in the form that DocumentsUI
             // expects, when possible, or `null` when rewriting is not possible.
-            private CompletableFuture<ClipData> rewrite(
+            private CompletableFuture<ClipData> rewriteAsync(
                     @Nullable Permissions permissions,
                     ClipData clipData,
                     Executor bgThreadExecutor,
-                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
+                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
+                    ProvidersAccess providers) {
+                return mDstStack.thenComposeAsync(
+                        dstStack ->
+                                rewriteAsyncImpl(
+                                        permissions,
+                                        clipData,
+                                        bgThreadExecutor,
+                                        mediaStoreToDocumentUriRewriter,
+                                        providers,
+                                        dstStack.getRoot().userId),
+                        mMainThreadExecutor);
+            }
+
+            private CompletableFuture<ClipData> rewriteAsyncImpl(
+                    @Nullable Permissions permissions,
+                    ClipData clipData,
+                    Executor bgThreadExecutor,
+                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
+                    ProvidersAccess providers,
+                    UserId userId) {
                 if (!isDragsFromOtherAppsEnabled()) {
                     return CompletableFuture.completedFuture(clipData);
                 }
@@ -1173,8 +1207,12 @@ public interface DragAndDropManager {
                                 ClipData result = null;
                                 ClipData.Item item = null;
                                 for (int i = 0; i < clipData.getItemCount(); ++i) {
-                                    item = clipData.getItemAt(i);
-                                    item = rewrite(item, mediaStoreToDocumentUriRewriter);
+                                    item =
+                                            rewrite(
+                                                    clipData.getItemAt(i),
+                                                    mediaStoreToDocumentUriRewriter,
+                                                    providers,
+                                                    userId);
 
                                     if (item == null) {
                                         Log.e(TAG, "Unable to rewrite item");
@@ -1198,7 +1236,9 @@ public interface DragAndDropManager {
 
             private @Nullable ClipData.Item rewrite(
                     @Nullable ClipData.Item item,
-                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter) {
+                    BiFunction<Context, Uri, Uri> mediaStoreToDocumentUriRewriter,
+                    ProvidersAccess providers,
+                    UserId userId) {
                 if (item == null) {
                     Log.e(TAG, "Unable to rewrite `NULL` item");
                     return null;
@@ -1210,18 +1250,22 @@ public interface DragAndDropManager {
                     return null;
                 }
 
-                // NOTE: We can only safely rewrite `MediaStore` URIs since `MediaProvider` enables
-                // the `forceUriPermissions` attribute in its manifest definition. Absent this
+                // NOTE: We can only safely rewrite URIs from providers which enable the
+                // `forceUriPermissions` attribute in their manifest definition. Absent this
                 // attribute, DocumentsUI would be unable to guarantee that the drag source
                 // application actually holds permissions for the URIs we are attempting to rewrite.
                 // TODO(b/454036239): Remove once the confused deputy vulnerability is mitigated.
-                if (!Providers.isMediaStoreUri(uri)) {
-                    Log.e(TAG, "Unable to rewrite non-MediaStore URI");
+                final ProviderInfo info = providers.getProviderInfo(userId, uri.getAuthority());
+                if (info == null || !info.forceUriPermissions) {
+                    Log.e(TAG, "Unable to rewrite security vulnerable URI");
                     return null;
                 }
 
-                uri = mediaStoreToDocumentUriRewriter.apply(mContext, uri);
-                if (uri == null) {
+                if (Providers.isMediaStoreUri(uri)) {
+                    uri = mediaStoreToDocumentUriRewriter.apply(mContext, uri);
+                }
+
+                if (uri == null || !DocumentsContract.isDocumentUri(mContext, uri)) {
                     Log.e(TAG, "Unable to obtain document URI");
                     return null;
                 }

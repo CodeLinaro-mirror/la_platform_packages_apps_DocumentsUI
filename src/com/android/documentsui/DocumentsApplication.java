@@ -231,7 +231,7 @@ public class DocumentsApplication extends Application {
                 getSharedPreferences(ClipStorage.PREF_NAME, 0));
         mClipper = DocumentClipper.create(this, mClipStore);
 
-        mDragAndDropManager = DragAndDropManager.create(this, mClipper);
+        mDragAndDropManager = DragAndDropManager.create(this, mClipper, mProviders);
 
         mFileTypeLookup = new FileTypeMap(this);
 
