@@ -16,6 +16,9 @@
 
 package com.android.documentsui;
 
+import static android.provider.DocumentsContract.buildDocumentUri;
+
+import static com.android.documentsui.services.FileOperations.Callback.STATUS_FAILED;
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
@@ -30,7 +33,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.PersistableBundle;
 import android.os.Trace;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.DragAndDropPermissions;
@@ -615,11 +617,13 @@ public interface DragAndDropManager {
                 ActionHandler actions,
                 FileOperations.Callback callback,
                 List<Uri> invalidDest) {
-            final Uri rootDocUri = DocumentsContract.buildDocumentUri(
-                    itemInfo.getRoot().authority, itemInfo.getDocumentId());
+            final RootInfo dstRoot = itemInfo.getRoot();
+            final String dstRootAuthority = dstRoot.authority;
+            final String dstRootDocId = itemInfo.getDocumentId();
+            final Uri dstRootDocUri = buildDocumentUri(dstRootAuthority, dstRootDocId);
 
             if ((isCloudFeaturesFlagEnabled() && !mCanDragAndDrop)
-                    || !isValidDestination(itemInfo, rootDocUri, invalidDest)) {
+                    || !isValidDestination(itemInfo, dstRootDocUri, invalidDest)) {
                 if (permissions != null) permissions.release();
                 return false;
             }
@@ -632,58 +636,35 @@ public interface DragAndDropManager {
                     createDropOperation(permissions, clipData, dstStack);
 
             actions.getDocument(
-                    itemInfo.getRoot().authority,
-                    itemInfo.getDocumentId(),
-                    itemInfo.getRoot().userId,
+                    dstRootAuthority,
+                    dstRootDocId,
+                    dstRoot.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
-                    (DocumentInfo doc) -> {
-                        dropOnRootDocument(
-                                localState,
-                                itemInfo.getRoot(),
-                                doc,
-                                actions,
-                                callback,
-                                dstStack,
-                                dropOperation,
-                                mMainThreadExecutor);
+                    (DocumentInfo dstRootDoc) -> {
+                        dstStack.complete(
+                                (dstRootDoc == null)
+                                        ? new DocumentStack(dstRoot)
+                                        : new DocumentStack(dstRoot, dstRootDoc));
+
+                        // Fail early: A drop onto a root is disallowed if the destination is a
+                        // non-trash root and its corresponding document is missing.
+                        if (dstRootDoc == null && !dstRoot.isTrash()) {
+                            final CompletableFuture<Void> unused =
+                                    dropOperation
+                                            .getOpType()
+                                            .thenAcceptAsync(
+                                                    opType ->
+                                                            callback.onOperationResult(
+                                                                    STATUS_FAILED, opType, 0),
+                                                    mMainThreadExecutor);
+                            return;
+                        }
+
+                        // For all valid cases, proceed.
+                        dropOperation.dropChecked(localState, actions, callback);
                     });
 
             return true;
-        }
-
-        // TODO(440196110): Inline this method.
-        private static void dropOnRootDocument(
-                Object localState,
-                RootInfo destRoot,
-                @Nullable DocumentInfo destRootDoc,
-                ActionHandler actions,
-                FileOperations.Callback callback,
-                CompletableFuture<DocumentStack> destStack,
-                DropOperation dropOperation,
-                Executor mainThreadExecutor) {
-            destStack.complete(
-                    (destRootDoc == null)
-                            ? new DocumentStack(destRoot)
-                            : new DocumentStack(destRoot, destRootDoc));
-
-            // Fail early: A drop onto a root is disallowed if the destination
-            // is a non-trash root and its corresponding document is missing.
-            if (destRootDoc == null && !destRoot.isTrash()) {
-                final CompletableFuture<Void> unused =
-                        dropOperation
-                                .getOpType()
-                                .thenAcceptAsync(
-                                        opType ->
-                                                callback.onOperationResult(
-                                                        FileOperations.Callback.STATUS_FAILED,
-                                                        opType,
-                                                        0),
-                                        mainThreadExecutor);
-                return;
-            }
-
-            // For all valid cases, proceed.
-            dropOperation.dropChecked(localState, actions, callback);
         }
 
         @Override
