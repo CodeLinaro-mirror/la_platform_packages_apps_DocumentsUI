@@ -41,6 +41,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.ProviderInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -105,7 +106,6 @@ import java.util.stream.Collectors;
 public class DragAndDropManagerTests {
 
     private static final Uri MEDIA_STORE_URI_0 = Uri.parse("content://media/files/1");
-    private static final Uri MEDIA_STORE_URI_1 = Uri.parse("content://media/files/2");
     private static final Uri NON_MEDIA_STORE_URI_0 = Uri.parse("content://non-media/files/1");
     private static final String PLURAL_FORMAT = "%1$d items";
     private static final boolean CAN_DRAG_AND_DROP = true;
@@ -154,6 +154,7 @@ public class DragAndDropManagerTests {
         mEnv = TestEnv.create();
         mActivity = TestActivity.create(mEnv);
         mActivity.resources.plurals.put(R.plurals.elements_dragged, PLURAL_FORMAT);
+        mEnv.providers.configurePm(mActivity.packageMgr);
 
         mShadowBuilder = TestDragShadowBuilder.create();
 
@@ -180,7 +181,8 @@ public class DragAndDropManagerTests {
         mFlagListener = new TestEventListener<>();
 
         mManager = new RuntimeDragAndDropManager(mActivity, mClipper, mEnv.mExecutor,
-                mShadowBuilder, mDefaultIcon, mMockMediaStoreToDocumentUriRewriter) {
+                mShadowBuilder, mDefaultIcon, mMockMediaStoreToDocumentUriRewriter,
+                mEnv.providers) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1480,7 +1482,7 @@ public class DragAndDropManagerTests {
     private DragAndDropManager createNewManagerWithSpyClipper(TestDocumentClipper spyClipper) {
         DragAndDropManager newManager = new RuntimeDragAndDropManager(
                 mActivity, spyClipper, mEnv.mExecutor, mShadowBuilder, mDefaultIcon,
-                mMockMediaStoreToDocumentUriRewriter) {
+                mMockMediaStoreToDocumentUriRewriter, mEnv.providers) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1703,8 +1705,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_COPY,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1718,8 +1721,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_COPY,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1729,8 +1733,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1744,18 +1749,20 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
     @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
-    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNonMediaStoreUri()
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNonDocumentUri()
             throws Exception {
         testDrop_fromOtherApps(
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
                 /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
     }
@@ -1766,12 +1773,13 @@ public class DragAndDropManagerTests {
         Flags.FLAG_ENABLE_TRASH_FLOW_RO,
         Flags.FLAG_USE_MATERIAL3
     })
-    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNonMediaStoreUri()
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNonDocumentUri()
             throws Exception {
         testDrop_fromOtherApps(
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
                 /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
     }
@@ -1784,8 +1792,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ null,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1800,8 +1809,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ null,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1811,12 +1821,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.singletonList(TestEnv.FILE_TXT),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(
-                        ContentUris.withAppendedId(
-                                ContentUris.removeId(MEDIA_STORE_URI_0),
-                                Long.parseLong(TestEnv.FILE_TXT.documentId)),
-                        MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1830,18 +1837,46 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.singletonList(TestEnv.FILE_TXT),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(
-                        ContentUris.withAppendedId(
-                                ContentUris.removeId(MEDIA_STORE_URI_0),
-                                Long.parseLong(TestEnv.FILE_TXT.documentId)),
-                        MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withUnforcedUriPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_0),
+                /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ false,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withUnforcedUriPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS),
+                /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ false,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     private void testDrop_fromOtherApps(
             @OpType int expectedOpType,
             DocumentStack dstStack,
             List<DocumentInfo> dstDocChildList,
+            boolean forceUriPermissions,
             @Nullable Permissions permissions,
             List<Uri> uriList)
             throws Exception {
@@ -1865,6 +1900,8 @@ public class DragAndDropManagerTests {
                 .get(EXTERNAL_STORAGE_PROVIDER_AUTHORITY)
                 .setNextChildDocumentsReturns(
                         dstDocChildList.toArray(new DocumentInfo[dstDocChildList.size()]));
+        mEnv.providers.nextProviderInfo = new ProviderInfo();
+        mEnv.providers.nextProviderInfo.forceUriPermissions = forceUriPermissions;
 
         // Set up URI rewriter.
         Mockito.when(mMockMediaStoreToDocumentUriRewriter.apply(any(), any()))
@@ -1925,10 +1962,13 @@ public class DragAndDropManagerTests {
                 final Uri actualUri = actualItem.getUri();
                 assertNotNull(actualUri);
 
-                final Uri expectedUri =
-                        DocumentsContract.buildDocumentUri(
-                                EXTERNAL_STORAGE_PROVIDER_AUTHORITY,
-                                Long.toString(ContentUris.parseId(uriList.get(i))));
+                Uri expectedUri = uriList.get(i);
+                if (Providers.isMediaStoreUri(expectedUri)) {
+                    expectedUri =
+                            DocumentsContract.buildDocumentUri(
+                                    EXTERNAL_STORAGE_PROVIDER_AUTHORITY,
+                                    Long.toString(ContentUris.parseId(expectedUri)));
+                }
                 assertEquals(expectedUri, actualUri);
             }
 
