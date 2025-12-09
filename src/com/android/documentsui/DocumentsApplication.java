@@ -59,6 +59,7 @@ import javax.annotation.concurrent.GuardedBy;
 public class DocumentsApplication extends Application {
     private static final String TAG = "DocumentsApplication";
     private static final long PROVIDER_ANR_TIMEOUT = 20 * DateUtils.SECOND_IN_MILLIS;
+    private static final long PROVIDER_ANR_CANCEL_TIMEOUT = 3 * DateUtils.SECOND_IN_MILLIS;
 
     private static final List<String> PACKAGE_FILTER_ACTIONS = Lists.newArrayList(
             Intent.ACTION_PACKAGE_ADDED,
@@ -103,7 +104,12 @@ public class DocumentsApplication extends Application {
         if (client == null) {
             throw new RemoteException("Failed to acquire provider for " + authority);
         }
-        client.setDetectNotResponding(PROVIDER_ANR_TIMEOUT);
+        if (FlagUtils.isContentProviderClientAnrOnCancelEnabled()) {
+            client.setDetectNotRespondingOnCancel(
+                    PROVIDER_ANR_TIMEOUT, PROVIDER_ANR_CANCEL_TIMEOUT);
+        } else {
+            client.setDetectNotResponding(PROVIDER_ANR_TIMEOUT);
+        }
         return client;
     }
 
