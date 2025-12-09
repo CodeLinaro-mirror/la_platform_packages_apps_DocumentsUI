@@ -634,7 +634,7 @@ public class SearchViewManager implements
                 && mDockedSearchEditText.hasFocus() : mSearchView != null && mSearchView.hasFocus();
         if (hasFocus && mCurrentSearch == null) {
             // Restore focus even if no text was input before screen rotation.
-            setCurrentSearch("");
+            mCurrentSearch = "";
         }
         state.putString(Shared.EXTRA_QUERY, mCurrentSearch);
         mChipViewManager.onSaveInstanceState(state);
