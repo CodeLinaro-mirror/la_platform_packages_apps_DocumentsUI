@@ -105,20 +105,10 @@ public class HeaderCell extends LinearLayout {
         }
     }
 
-    /**
-     * Sets a listener on the sort arrow image. When Material 3 is enabled, the Sort Arrow has
-     * "android:clickable" set to true (to enable a hover state). This stops the click listener from
-     * falling through to the cell click listener and thus the sort arrow will need to handle clicks
-     * itself.
-     */
-    public void setSortArrowListeners(
-            View.OnClickListener clickListener,
-            View.OnKeyListener keyListener,
-            SortDimension dimension) {
+    /** Sets the sort-dimension as a tag on the sort arrow image. */
+    void setSortArrowTag(SortDimension dimension) {
         ImageView arrow = findViewById(getRes(R.id.sort_arrow));
         arrow.setTag(dimension);
-        arrow.setOnKeyListener(keyListener);
-        arrow.setOnClickListener(clickListener);
     }
 
     private void showArrow(

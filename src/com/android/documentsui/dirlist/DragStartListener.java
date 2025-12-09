@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 
 import android.net.Uri;
@@ -71,8 +72,8 @@ interface DragStartListener {
         private final ViewFinder mViewFinder;
         private final Function<View, String> mIdFinder;
         private final Function<Selection<String>, List<DocumentInfo>> mDocsConverter;
+        private final Function<DocumentInfo, Boolean> mIsContentAvailable;
         private final DragAndDropManager mDragAndDropManager;
-
 
         // use DragStartListener.create
         @VisibleForTesting
@@ -84,6 +85,7 @@ interface DragStartListener {
                 ViewFinder viewFinder,
                 Function<View, String> idFinder,
                 Function<Selection<String>, List<DocumentInfo>> docsConverter,
+                Function<DocumentInfo, Boolean> isContentAvailable,
                 DragAndDropManager dragAndDropManager) {
 
             mIconHelper = iconHelper;
@@ -93,6 +95,7 @@ interface DragStartListener {
             mViewFinder = viewFinder;
             mIdFinder = idFinder;
             mDocsConverter = docsConverter;
+            mIsContentAvailable = isContentAvailable;
             mDragAndDropManager = dragAndDropManager;
         }
 
@@ -125,9 +128,19 @@ interface DragStartListener {
 
             final List<DocumentInfo> srcs = mDocsConverter.apply(selection);
 
+            boolean canDragAndDrop = true;
             final List<Uri> invalidDest = new ArrayList<>(srcs.size() + 1);
             for (DocumentInfo doc : srcs) {
                 invalidDest.add(doc.derivedUri);
+                // Drag and drop should be disabled if content is not available.
+                if (isCloudFeaturesFlagEnabled()
+                        && canDragAndDrop
+                        && !mIsContentAvailable.apply(doc)) {
+                    if (DEBUG) {
+                        Log.d(TAG, "Content not available for: " + doc.displayName);
+                    }
+                    canDragAndDrop = false;
+                }
             }
 
             final DocumentInfo parent = mState.stack.peek();
@@ -143,8 +156,15 @@ interface DragStartListener {
                 itemInfo = mState.stack.getRoot();
             }
 
-            mDragAndDropManager.startDrag(view, srcs, itemInfo, invalidDest,
-                    mSelectionDetails, mIconHelper, parent);
+            mDragAndDropManager.startDrag(
+                    view,
+                    srcs,
+                    itemInfo,
+                    invalidDest,
+                    mSelectionDetails,
+                    mIconHelper,
+                    parent,
+                    canDragAndDrop);
 
             return true;
         }
@@ -182,6 +202,7 @@ interface DragStartListener {
             State state,
             Function<View, String> idFinder,
             ViewFinder viewFinder,
+            Function<DocumentInfo, Boolean> isContentAvailable,
             DragAndDropManager dragAndDropManager) {
 
         return new RuntimeDragStartListener(
@@ -192,6 +213,7 @@ interface DragStartListener {
                 viewFinder,
                 idFinder,
                 model::getDocuments,
+                isContentAvailable,
                 dragAndDropManager);
     }
 

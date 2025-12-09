@@ -113,7 +113,8 @@ public class SortBot extends Bots.BaseBot {
      */
     public boolean isSortIconFocused() {
         UiObject2 sortArrow = mDevice.findObject(By.res(mTargetPackage + ":id/sort_arrow"));
-        return sortArrow.isFocused();
+        UiObject2 parent = sortArrow.getParent();
+        return (parent != null) && parent.isFocused();
     }
 
     private boolean sortByMenu(int id, @SortDirection int direction) {

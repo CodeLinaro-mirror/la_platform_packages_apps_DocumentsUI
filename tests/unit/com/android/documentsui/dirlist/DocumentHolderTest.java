@@ -136,6 +136,12 @@ public class DocumentHolderTest {
         View progressCircle = getProgressCircle(holder);
         assertNotNull(progressCircle);
         assertEquals(View.VISIBLE, progressCircle.getVisibility());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
+                progressCircle.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
+                progressCircle.getTooltipText().toString());
     }
 
     @Test
@@ -149,6 +155,12 @@ public class DocumentHolderTest {
         View progressCircle = getProgressCircle(holder);
         assertNotNull(progressCircle);
         assertEquals(View.VISIBLE, progressCircle.getVisibility());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
+                progressCircle.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
+                progressCircle.getTooltipText().toString());
     }
 
     @Test
@@ -162,6 +174,12 @@ public class DocumentHolderTest {
         View syncError = getSyncErrorIcon(holder);
         assertNotNull(syncError);
         assertEquals(View.VISIBLE, syncError.getVisibility());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.sync_error_description_m3)),
+                syncError.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.sync_error_description_m3)),
+                syncError.getTooltipText().toString());
     }
 
     @Test
@@ -175,6 +193,12 @@ public class DocumentHolderTest {
         View uploadIcon = getUploadIcon(holder);
         assertNotNull(uploadIcon);
         assertEquals(View.VISIBLE, uploadIcon.getVisibility());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.upload_description_m3)),
+                uploadIcon.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.upload_description_m3)),
+                uploadIcon.getTooltipText().toString());
     }
 
     @Test
@@ -189,6 +213,12 @@ public class DocumentHolderTest {
         View downloadIcon = getDownloadIcon(holder);
         assertNotNull(downloadIcon);
         assertEquals(View.VISIBLE, downloadIcon.getVisibility());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.download_description_m3)),
+                downloadIcon.getContentDescription().toString());
+        assertEquals(
+                mEnv.getContext().getString(getRes(R.string.download_description_m3)),
+                downloadIcon.getTooltipText().toString());
     }
 
     @Test
