@@ -68,6 +68,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.SelectionBarController;
 import com.android.documentsui.SharedInputHandler;
 import com.android.documentsui.UserManagerProvider;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.MimeTypes;
@@ -229,7 +230,8 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
                         mInjector.getModel()::getItemCount,
                         getApplicationContext(),
                         features,
-                        mInjector);
+                        mInjector,
+                        new ApprovedDocHandlers(this, getSelectedUser(), mInjector));
 
         if (isUseMaterial3FlagEnabled()) {
             mInjector.selectionBarController =

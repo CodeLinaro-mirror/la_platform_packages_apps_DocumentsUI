@@ -27,6 +27,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
 import com.android.documentsui.R
 import com.android.documentsui.base.UserId
@@ -57,6 +58,7 @@ class ApprovedDocHandlersTest {
     @Mock private lateinit var resources: Resources
     @Mock private lateinit var selectionDetails: MenuManager.SelectionDetails
     @Mock private lateinit var icon: Drawable
+    @Mock private lateinit var injector: Injector<*>
 
     private lateinit var approvedDocHandlers: ApprovedDocHandlers
     private var userId: UserId = UserId.of(10)
@@ -77,7 +79,7 @@ class ApprovedDocHandlersTest {
         doReturn(packageManager).`when`(context).getPackageManager()
         doReturn(icon).`when`(activityInfo).loadIcon(packageManager)
         doReturn("Test App").`when`(activityInfo).loadLabel(packageManager)
-        approvedDocHandlers = ApprovedDocHandlers(context, userId)
+        approvedDocHandlers = ApprovedDocHandlers(context, userId, injector)
     }
 
     @Test

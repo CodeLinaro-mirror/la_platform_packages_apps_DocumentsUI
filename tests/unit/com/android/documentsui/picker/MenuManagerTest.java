@@ -45,6 +45,7 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
+import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.files.TestActivity;
@@ -57,6 +58,7 @@ import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
 import kotlinx.coroutines.CoroutineScopeKt;
 import kotlinx.coroutines.Dispatchers;
@@ -150,6 +152,7 @@ public final class MenuManagerTest {
 
     private final com.android.documentsui.files.TestActivity mActivity =
             TestActivity.create(TestEnv.create());
+    private ApprovedDocHandlers mApprovedDocHandlers;
 
     @Before
     public void setUp() {
@@ -225,6 +228,8 @@ public final class MenuManagerTest {
         // Disable the part that kicks off the coroutine.
         doNothing().when(mSummaryProviderManager).start();
         mActivity.injector.setSummaryProviderManager(mSummaryProviderManager);
+        mApprovedDocHandlers =
+                new ApprovedDocHandlers(mActivity, UserId.DEFAULT_USER, mActivity.injector);
         mgr =
                 new MenuManager(
                         testSearchManager,
@@ -233,7 +238,8 @@ public final class MenuManagerTest {
                         this::getFilesCount,
                         mActivity,
                         mFeatures,
-                        mActivity.injector);
+                        mActivity.injector,
+                        mApprovedDocHandlers);
         selectionDetails.size = 1;
         mFilesCount = 10;
 
