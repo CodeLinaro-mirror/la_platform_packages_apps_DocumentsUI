@@ -446,7 +446,10 @@ public class SearchViewManager implements
             mMenuItem.setVisible(supportsSearch && (!stack.isRecents() || !mShowSearchBar));
         }
 
-        if (!isSearchV2Enabled()) {
+        // Do not show chips on trash pages.
+        if (stack != null && stack.isTrashRoot()) {
+            mChipViewManager.setChipsRowVisible(false);
+        } else if (!isSearchV2Enabled()) {
             mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
         }
     }
