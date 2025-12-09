@@ -47,11 +47,14 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
     /** The Document that the dialog is retrieving information about. */
     private lateinit var doc: DocumentInfo
 
+    /** Whether to show the debug information as a section. */
+    private var showDebug: Boolean = false
+
     /** Lazily initialized ViewModel. */
     private val viewModel: GetInfoViewModel by viewModels {
         val application = requireActivity().application
         val fileTypeLookup = DocumentsApplication.getFileTypeLookup(requireContext())
-        GetInfoViewModel.Factory(application, doc, fileTypeLookup)
+        GetInfoViewModel.Factory(application, doc, fileTypeLookup, showDebug)
     }
 
     override fun onCreate(savedInstanceBundle: Bundle?) {
@@ -65,6 +68,7 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
                     Log.e(TAG, "Document missing for Get info dialog, dismissing.")
                     DocumentInfo() // Fallback to avoid lateinit crash if dismissed immediately.
                 }
+        showDebug = arguments?.getBoolean(Shared.EXTRA_SHOW_DEBUG, false) ?: false
 
         if (doc.documentId == null) {
             // Because we're using `lateinit` on the var (if it doesn't exist, that is bad) we need
@@ -210,7 +214,7 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
          * down to the dialog.
          */
         @JvmStatic
-        fun show(fm: FragmentManager, doc: DocumentInfo) {
+        fun show(fm: FragmentManager, doc: DocumentInfo, showDebug: Boolean) {
             if (fm.isStateSaved) {
                 Log.w(TAG, "Skip showing get info dialog because state saved")
                 return
@@ -222,7 +226,11 @@ class GetInfoDialogFragment : DocumentsUIDialogFragment() {
             }
 
             val dialog = GetInfoDialogFragment()
-            val args = Bundle().apply { putParcelable(Shared.EXTRA_DOC, doc) }
+            val args =
+                Bundle().apply {
+                    putParcelable(Shared.EXTRA_DOC, doc)
+                    putBoolean(Shared.EXTRA_SHOW_DEBUG, showDebug)
+                }
             dialog.arguments = args
             dialog.show(fm, TAG)
         }
