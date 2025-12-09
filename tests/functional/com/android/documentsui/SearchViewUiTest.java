@@ -400,9 +400,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
 
-        // Verify that that the location still shows "Everywhere".
-        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(
-                matches(withText(R.string.search_location_everywhere)));
+        // Verify that that the location shows the name of the new root.
+        bots.search
+                .findDropdownTrigger(R.id.search_location_trigger)
+                .check(matches(withText("Paging Root")));
 
         // Click location trigger, and check that the root folder option is updated to Downloads.
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
@@ -462,10 +463,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
-        // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
-        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         device.waitForIdle();
+
+        // Repeat searching: it should still show last week modified option in recents.
         bots.search.doSearch("2");
+        // Click Everywhere, so that the recency choices are revealed.
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
         device.waitForIdle();
 
         bots.search
