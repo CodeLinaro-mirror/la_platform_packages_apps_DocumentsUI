@@ -22,6 +22,8 @@
     <string name="downloads_label" msgid="5462789470049501103">"බාගැනීම්"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"විවෘත වන්නේ"</string>
@@ -56,6 +58,10 @@
     <string name="menu_inspect" msgid="7279855349299446224">"තොරතුරු ලබා ගන්න"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"සැඟවුණු ගොනු පෙන්වන්න"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"සැඟවුණු ගොනු නොපෙන්වන්න"</string>
+    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
+    <skip />
+    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
+    <skip />
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> තුළ බලන්න"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"නව කවුළුව"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"කපන්න"</string>
@@ -354,6 +360,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ඔබේ රහස්‍යතාව ආරක්ෂා කිරීමට, තවත් ෆෝල්ඩරයක් තෝරා ගන්න"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"නව ෆෝල්ඩරය තනන්න"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"මෙම උපාංගය සොයන්න"</string>
+    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
+    <skip />
     <string name="search_results" msgid="7662182646512984171">"සෙවුම් ප්‍රතිඵල"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"පෙළ හිස් කරන්න"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"මූල ෆෝල්ඩරය"</string>
@@ -380,6 +388,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"තරම"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"වර්ගය"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"වෙනස් කළ දිනය"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"හරි"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"නොදනී"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ගොනු පෙරදසුන සඟවන්න"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> හි රූප පෙරදසුන"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"තතු පැනලය සඟවන්න"</string>
@@ -390,12 +400,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"කුණු කූඩය හිස් කරන්න ද?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"මෙම ක්‍රියාව අහෝසි කළ නොහැකි අතර, ගොනු තවදුරටත් ප්‍රතිසාධනය කළ නොහැක."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"කුණු කුඩය හිස් කරන්න"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"කුණු කූඩයේ ගොනුව"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"මෙම ගොනුව ඔබේ කුණු කූඩයේ ඇති අතර විවෘත කළ නොහැක. එයට ප්‍රවේශ වීමට එය කුණු කූඩයෙන් ප්‍රතිසාධනය කරන්න."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ගොනුව ප්‍රතිසාධනය කරන්න"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ඔබ දැනට නොබැඳි වේ. සමහර ගොනු සහ ක්‍රියාකාරීත්වය නොමැත. පූර්ණ ප්‍රවේශය සඳහා අන්තර්ජාලයට සම්බන්ධ වන්න."</string>
 </resources>
