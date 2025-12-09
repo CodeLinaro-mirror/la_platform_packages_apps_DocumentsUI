@@ -38,9 +38,17 @@ import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.MainDispatcherRule
 import java.util.Locale
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -52,6 +60,7 @@ import org.mockito.MockitoAnnotations.openMocks
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 class GetInfoViewModelTest {
@@ -73,9 +82,37 @@ class GetInfoViewModelTest {
                 return Bundle()
             }
         }
-    private val testDispatcher = StandardTestDispatcher()
 
-    @get:Rule private val mainDispatcherRule = MainDispatcherRule()
+    private val testDispatcher = UnconfinedTestDispatcher()
+
+    @get:Rule private val mainDispatcherRule = MainDispatcherRule(testDispatcher)
+
+    /**
+     * A helper class that matches either a ListItem exactly or just the label of an ListItem.Info.
+     */
+    sealed class ExpectedItem {
+        abstract val order: Int
+
+        abstract fun matches(actual: ListItem): Boolean
+
+        abstract fun contentToString(): String
+
+        /** Strict match for label and value. */
+        data class Exact(override val order: Int, val expectedItem: ListItem) : ExpectedItem() {
+            override fun matches(actual: ListItem): Boolean = actual == expectedItem
+
+            override fun contentToString() = expectedItem.toString()
+        }
+
+        /** Partial match of just the label for a ListItem.Info. */
+        data class InfoLabel(override val order: Int, val label: String) : ExpectedItem() {
+            override fun matches(actual: ListItem): Boolean {
+                return actual is ListItem.Info && actual.label == label
+            }
+
+            override fun contentToString() = "ListItem(label=$label, value=any())"
+        }
+    }
 
     @Before
     fun setUp() {
@@ -124,168 +161,238 @@ class GetInfoViewModelTest {
         `when`(lookup.lookup(eq(DocumentsContract.Document.MIME_TYPE_DIR))).thenReturn("Folder")
     }
 
-    @Test
-    fun testStandardFile_WithDebug() {
-        val doc =
-            DocumentInfo().apply {
-                documentId = "testId"
-                displayName = "test.pdf"
-                mimeType = "application/pdf"
-                size = 1024 * 1024 * 10
-                lastModified = 1234567890L
-                userId = UserId.DEFAULT_USER
-            }
+    /**
+     * The list of items is quite large so we don't always test the whole list. This is a helper
+     * function to ensure the various expectations are matched (either exactly or partially) and
+     * that their order is correct.
+     */
+    private fun assertOrderedItems(
+        actualList: List<ListItem>,
+        expectedSize: Int,
+        vararg expected: ExpectedItem,
+    ) {
+        assertEquals(expectedSize, actualList.size)
+        expected.forEach { expectation ->
+            val index = expectation.order
+            val actualItem = actualList.getOrNull(index)
+            assertNotNull("Item at $index expected, but is missing", actualItem)
+            assertTrue(
+                "Expected ${expectation.contentToString()} doesn't match $actualItem",
+                expectation.matches(actualItem!!),
+            )
+        }
+    }
 
-        val viewModel = GetInfoViewModel(application, doc, lookup, true)
-        val list = viewModel.items.value
+    /**
+     * A class that wraps the test Channel with a take() method that abstracts the semantics into a
+     * helpful function.
+     */
+    class GetInfoTestEmitter(
+        private val testEmitter: Channel<List<ListItem>>,
+        private val scheduler: TestCoroutineScheduler,
+    ) {
+        /** Takes the oldest value (FIFO order) from the channel. */
+        suspend fun take(): List<ListItem> {
+            // This runs the supplied scheduler to the next suspension point. This allows for the
+            // flows to run until an emission is made and that can be taken from the Channel.
+            scheduler.runCurrent()
+            return testEmitter.receive()
+        }
+    }
 
-        // Should have Header, Name, TYpe, Size, Modified. Header, Doc ID.
-        assertEquals(5 + DEBUG_ITEM_COUNT, list.size)
-        assertEquals(ListItem.Header("General info"), list[0])
-        assertEquals(ListItem.Info("Name", "test.pdf"), list[1])
-        assertEquals(ListItem.Info("Type", "File Type"), list[2])
-        assertEquals("Size", (list[3] as ListItem.Info).label)
-        assertEquals("Modified", (list[4] as ListItem.Info).label)
+    /**
+     * The ViewModel emits values as they are asynchronously retrieved. To ensure we retain an
+     * ordered list of events to assert on, construct a channel that buffers the events so we can
+     * inspect them one by one.
+     */
+    private fun TestScope.setupTestEmitter(viewModel: GetInfoViewModel): GetInfoTestEmitter {
+        val emissions = Channel<List<ListItem>>(Channel.UNLIMITED)
 
-        assertEquals(ListItem.Header("Debug Info"), list[5])
-        assertEquals(ListItem.Info("User ID", UserId.CURRENT_USER.identifier.toString()), list[6])
+        // To ensure the flows are started, it requires a subscription (i.e. collect must have been
+        // called) so we fake that here.
+        backgroundScope.launch(testDispatcher) {
+            viewModel.items.collect { list -> emissions.send(list) }
+        }
+
+        return GetInfoTestEmitter(emissions, testScheduler)
     }
 
     @Test
-    fun testStandardFile_NoDebug() {
-        val doc =
-            DocumentInfo().apply {
-                documentId = "testId"
-                displayName = "test.pdf"
-                mimeType = "application/pdf"
-                size = 1024 * 1024 * 10
-                lastModified = 1234567890L
-                userId = UserId.DEFAULT_USER
-            }
-
-        val viewModel = GetInfoViewModel(application, doc, lookup, false)
-        val list = viewModel.items.value
-
-        // Should have Header, Name, TYpe, Size, Modified. Header, Doc ID.
-        assertEquals(5, list.size)
-        assertEquals(ListItem.Header("General info"), list[0])
-        assertEquals(ListItem.Info("Name", "test.pdf"), list[1])
-        assertEquals(ListItem.Info("Type", "File Type"), list[2])
-        assertEquals("Size", (list[3] as ListItem.Info).label)
-        assertEquals("Modified", (list[4] as ListItem.Info).label)
-    }
-
-    @Test
-    fun testDirectory() = runTest {
-        val authority = "com.example.authority"
-        val doc =
-            DocumentInfo().apply {
-                documentId = "testDirectoryId"
-                displayName = "My Folder"
-                mimeType = DocumentsContract.Document.MIME_TYPE_DIR
-                size = 0
-                lastModified = 1234567890L
-                userId = UserId.DEFAULT_USER
-                this.authority = authority
-                documentId = "myFolder"
-            }
-
-        val childrenProvider =
-            object : MockContentProvider() {
-                override fun query(
-                    uri: Uri,
-                    projection: Array<out String>?,
-                    selection: String?,
-                    selectionArgs: Array<out String>?,
-                    sortOrder: String?,
-                ): Cursor {
-                    val cursor =
-                        MatrixCursor(arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID))
-                    cursor.addRow(arrayOf("child1"))
-                    cursor.addRow(arrayOf("child2"))
-                    cursor.addRow(arrayOf("child3"))
-                    return cursor
+    fun testStandardFile_WithDebug() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    documentId = "testId"
+                    displayName = "test.pdf"
+                    mimeType = "application/pdf"
+                    size = 1024 * 1024 * 10
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
                 }
-            }
-        contentResolver.addProvider(authority, childrenProvider)
 
-        val viewModel = GetInfoViewModel(application, doc, lookup, true, testDispatcher)
-        val initialList: List<ListItem> = viewModel.items.value
+            val viewModel = GetInfoViewModel(application, doc, lookup, true, testDispatcher)
+            val testEmitter = setupTestEmitter(viewModel)
 
-        // Should have Header, Name, Type, Modified, Items. No size.
-        // The asynchronous data hasn't been populated yet but there is a placeholder there.
-        assertEquals(5 + DEBUG_ITEM_COUNT, initialList.size)
-        assertEquals(ListItem.Header("General info"), initialList[0])
-        assertEquals(ListItem.Info("Name", "My Folder"), initialList[1])
-        assertEquals(ListItem.Info("Type", "Folder"), initialList[2])
-
-        // The "Modified" row has a timestamp that is ever changing, for now we just assert that the
-        // row is there and has the label "Modified". Given this data is static, this should be a
-        // sufficient assertion.
-        val modifiedRow = initialList[3] as ListItem.Info
-        assertEquals("Modified", modifiedRow.label)
-
-        // Items exists but only with a placeholder.
-        assertEquals(ListItem.Info("Items", "--"), initialList[4])
-
-        // Debug info is synchronously added so just compare 1 of the items.
-        assertEquals(ListItem.Header("Debug Info"), initialList[5])
-        assertEquals(
-            ListItem.Info("User ID", UserId.CURRENT_USER.identifier.toString()),
-            initialList[6],
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-        val updatedList = viewModel.items.value
-
-        // Should have Header, Name, Type, Modified, Items.
-        assertEquals(5 + DEBUG_ITEM_COUNT, updatedList.size)
-
-        // Items should not have changed position from the initial list (i.e. the Debug info should
-        // have been pushed down the list.
-        assertEquals(ListItem.Info("Items", "3"), updatedList[4])
-    }
+            val initialList = testEmitter.take()
+            assertOrderedItems(
+                initialList,
+                5 + DEBUG_ITEM_COUNT,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(1, ListItem.Info("Name", "test.pdf")),
+                ExpectedItem.Exact(2, ListItem.Info("Type", "File Type")),
+                ExpectedItem.InfoLabel(3, "Size"),
+                ExpectedItem.InfoLabel(4, "Modified"),
+                ExpectedItem.Exact(5, ListItem.Header("Debug Info")),
+                ExpectedItem.Exact(
+                    6,
+                    ListItem.Info("User ID", UserId.CURRENT_USER.identifier.toString()),
+                ),
+            )
+        }
 
     @Test
-    fun testPartialFile() {
-        val doc =
-            DocumentInfo().apply {
-                documentId = ""
-                displayName = "downloading.tmp"
-                mimeType = "application/octet-stream"
-                size = 500
-                lastModified = 1234567890L
-                flags = DocumentsContract.Document.FLAG_PARTIAL
-                summary = "OriginalFilename.pdf"
-                userId = UserId.DEFAULT_USER
-            }
+    fun testStandardFile_NoDebug() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    documentId = "testId"
+                    displayName = "test.pdf"
+                    mimeType = "application/pdf"
+                    size = 1024 * 1024 * 10
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                }
 
-        val viewModel = GetInfoViewModel(application, doc, lookup, true)
-        val list = viewModel.items.value
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, testDispatcher)
+            val testEmitter = setupTestEmitter(viewModel)
 
-        // Header, Name, Type, Size, Modified, Summary
-        assertEquals(6 + DEBUG_ITEM_COUNT, list.size)
-        assertEquals(ListItem.Info("Summary", "OriginalFilename.pdf"), list[5])
-    }
+            val initialList = testEmitter.take()
+            assertOrderedItems(
+                initialList,
+                5,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(1, ListItem.Info("Name", "test.pdf")),
+                ExpectedItem.Exact(2, ListItem.Info("Type", "File Type")),
+                ExpectedItem.InfoLabel(3, "Size"),
+                ExpectedItem.InfoLabel(4, "Modified"),
+            )
+        }
 
     @Test
-    fun testNoLastModified() {
-        val doc =
-            DocumentInfo().apply {
-                displayName = "test.pdf"
-                mimeType = "application/pdf"
-                size = 100
-                lastModified = -1
-                userId = UserId.DEFAULT_USER
-            }
+    fun testDirectory() =
+        runTest(testDispatcher) {
+            val authority = "com.example.authority"
+            val doc =
+                DocumentInfo().apply {
+                    documentId = "testDirectoryId"
+                    displayName = "My Folder"
+                    mimeType = DocumentsContract.Document.MIME_TYPE_DIR
+                    size = 0
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    this.authority = authority
+                    documentId = "myFolder"
+                }
 
-        val viewModel = GetInfoViewModel(application, doc, lookup, true)
-        val list = viewModel.items.value
+            val childrenProvider =
+                object : MockContentProvider() {
+                    override fun query(
+                        uri: Uri,
+                        projection: Array<out String>?,
+                        selection: String?,
+                        selectionArgs: Array<out String>?,
+                        sortOrder: String?,
+                    ): Cursor {
+                        val cursor =
+                            MatrixCursor(arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID))
+                        cursor.addRow(arrayOf("child1"))
+                        cursor.addRow(arrayOf("child2"))
+                        cursor.addRow(arrayOf("child3"))
+                        return cursor
+                    }
+                }
+            contentResolver.addProvider(authority, childrenProvider)
 
-        // Header, Name, Type, Size. No Modified.
-        assertEquals(4 + DEBUG_ITEM_COUNT, list.size)
-        assertEquals("Size", (list[3] as ListItem.Info).label)
-    }
+            // Setup a StandardTestDispatcher for the flows in the ViewModel. The test scope uses an
+            // `UnconfinedTestDispatcher` to allow for all the flows to run eagerly. For the
+            // ViewModel we can't follow this pattern as eager execution means the intermediate
+            // steps don't get emitted (the flow is ran immediately).
+            val ioDispatcher = StandardTestDispatcher(testScheduler)
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioDispatcher)
+            val testEmitter = setupTestEmitter(viewModel)
+
+            // The first list has no "Items" row as it sends it off asynchronously to calculate.
+            val initialList = testEmitter.take()
+            assertOrderedItems(
+                initialList,
+                4,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(1, ListItem.Info("Name", "My Folder")),
+                ExpectedItem.Exact(2, ListItem.Info("Type", "Folder")),
+                ExpectedItem.InfoLabel(3, "Modified"),
+            )
+
+            // The second list now has an "Items" row with just the placeholder text.
+            val placeholderList = testEmitter.take()
+            assertOrderedItems(
+                placeholderList,
+                5,
+                ExpectedItem.Exact(4, ListItem.Info("Items", "--")),
+            )
+
+            // The third list has the "Items" row visible and populated.
+            val itemsCountList = testEmitter.take()
+            assertOrderedItems(
+                itemsCountList,
+                5,
+                ExpectedItem.Exact(4, ListItem.Info("Items", "3")),
+            )
+        }
+
+    @Test
+    fun testPartialFile() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    documentId = ""
+                    displayName = "downloading.tmp"
+                    mimeType = "application/octet-stream"
+                    size = 500
+                    lastModified = 1234567890L
+                    flags = DocumentsContract.Document.FLAG_PARTIAL
+                    summary = "OriginalFilename.pdf"
+                    userId = UserId.DEFAULT_USER
+                }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, testDispatcher)
+            val testEmitter = setupTestEmitter(viewModel)
+
+            val initialList = testEmitter.take()
+            assertOrderedItems(
+                initialList,
+                6,
+                ExpectedItem.Exact(5, ListItem.Info("Summary", "OriginalFilename.pdf")),
+            )
+        }
+
+    @Test
+    fun testNoLastModified() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    displayName = "test.pdf"
+                    mimeType = "application/pdf"
+                    size = 100
+                    lastModified = -1
+                    userId = UserId.DEFAULT_USER
+                }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, testDispatcher)
+            val testEmitter = setupTestEmitter(viewModel)
+
+            val initialList = testEmitter.take()
+            assertOrderedItems(initialList, 4, ExpectedItem.InfoLabel(3, "Size"))
+        }
 
     companion object {
         // Constant for the number of debug items added (Header + 5 infos + 17 flags).
