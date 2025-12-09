@@ -15,6 +15,9 @@
  */
 package com.android.documentsui.ui;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import androidx.fragment.app.FragmentManager;
 
 import com.android.documentsui.base.DocumentInfo;
@@ -116,11 +119,21 @@ public class TestDialogController implements DialogController {
         Assert.assertTrue(mNoApplicationFound);
     }
 
+    /** Asserts that the "operation unsupported" dialog was not shown. */
+    public void assertOperationUnsupportedNotShown() {
+        assertFalse(mShowOperationUnsupported);
+    }
+
     public void assertShowOperationUnsupported() {
         Assert.assertTrue(mShowOperationUnsupported);
     }
     public void assertViewInArchivesShownUnsupported() {
         Assert.assertTrue(mViewInArchivesUnsupported);
+    }
+
+    /** Asserts that the "documents clipped" dialog was shown. */
+    public void assertDocumentsClippedShown() {
+        assertTrue(mDocumentsClipped);
     }
 
     public void assertDocumentsClippedNotShown() {

@@ -19,6 +19,7 @@ package com.android.documentsui.dirlist
 import android.net.Uri
 import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.BaseActivity
 import com.android.documentsui.DocumentsProviderHelper
@@ -29,8 +30,10 @@ import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.prefs.LocalPreferences
 import com.android.documentsui.rules.OverrideFlagsRule
 import org.junit.Assert.assertNotNull
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,11 +42,25 @@ import org.junit.Test
 class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
     @get:Rule val overrideFlagsRule: OverrideFlagsRule = OverrideFlagsRule()
 
-    private var summaryHelper: DocumentsProviderHelper? = null
+    private lateinit var summaryHelper: DocumentsProviderHelper
+    private val fileName = "recent_file.txt"
+    private val summary = "This is a summary for $fileName"
+    private val consentTitle = "RANDOM TITLE"
+    private val consentMessage = "RANDOM MESSAGE"
+    private var file: Uri? = null
+    private var primaryRootTitle: String = ""
+    private lateinit var localStorageHelper: DocumentsProviderHelper
 
-    @Test
+    @Before
+    override fun setUp() {
+        // Configure the preferences before launching the activity in the super setup.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        LocalPreferences.setSummaryEnabled(context, false)
+        super.setUp()
+    }
+
     @Throws(Exception::class)
-    fun testSummaryInGridAndListModes() {
+    fun prepareProviderAndFile() {
         val summaryProviderUri = "content://${TestSummaryProvider.AUTHORITY}/root/summary-root"
 
         // Initialize helper for the summary provider.
@@ -54,37 +71,53 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
                 context,
                 TestSummaryProvider.AUTHORITY,
             )
-        checkNotNull(summaryHelper)
 
         // Helper to interact with the local storage.
-        val localStorageHelper = DocumentsProviderHelper.setupStorageAuthorityDocsHelper(context)
+        localStorageHelper = DocumentsProviderHelper.setupStorageAuthorityDocsHelper(context)
+
         val primaryRoot = localStorageHelper.getRoot(ROOT_ID_DEVICE)
+        primaryRootTitle = primaryRoot.title
         // Find the Download folder.
         val download = localStorageHelper.findFile(primaryRoot.documentId, "Download")
         assertNotNull(download)
 
-        val fileName = "recent_file.txt"
-        val summary = "This is a summary for $fileName"
-        var file: Uri? = null
+        // Prepare a file in the Download folder.
+        file = localStorageHelper.createDocument(download?.documentId, "text/plain", fileName)
+        val fileInfo = localStorageHelper.findDocument(download?.documentId, fileName)
+        assertNotNull(fileInfo)
+        localStorageHelper.writeDocument(file, "ham and cheese".toByteArray())
+
+        // Prepare the summary for the file.
+        summaryHelper.setSummaryProviderIsEmpty(false) // Enable the provider.
+        val summaries = mutableMapOf<String, String?>()
+        summaries[fileInfo.documentId] = summary
+        summaryHelper.setProviderSummaries(summaries)
+
+        mActivityScenario!!.onActivity { activity ->
+            val baseActivity = (activity as BaseActivity)
+            baseActivity.setLocalSummaryProvider(Uri.parse(summaryProviderUri))
+            baseActivity.injector.summaryProviderManager?.setConsentMessage(
+                consentTitle,
+                consentMessage,
+            )
+        }
+    }
+
+    @Test
+    fun testSummaryInGridAndListModes() {
         try {
-            // Prepare a file in the Download folder.
-            file = localStorageHelper.createDocument(download?.documentId, "text/plain", fileName)
-            val fileInfo = localStorageHelper.findDocument(download?.documentId, fileName)
-            localStorageHelper.writeDocument(file, "ham and cheese".toByteArray())
-
-            // Prepare the summary for the file.
-            summaryHelper?.setSummaryProviderIsEmpty(false) // Enable the provider.
-            val summaries: MutableMap<String?, String?> = HashMap()
-            summaries[fileInfo?.documentId] = summary
-            summaryHelper?.setProviderSummaries(summaries)
-
-            mActivityScenario!!.onActivity { activity ->
-                (activity as BaseActivity).setLocalSummaryProvider(Uri.parse(summaryProviderUri))
-            }
+            prepareProviderAndFile()
 
             // Navigate to the Download folder in the primary root.
-            openRoot(context!!, primaryRoot.title, activityLayoutId)
+            openRoot(context!!, primaryRootTitle, activityLayoutId)
             bots.directory.openDocument("Download")
+
+            // Enable the summary column.
+            bots.main.clickToolbarOverflowItem("Show summary column")
+            device!!.waitForIdle()
+            bots.main.assertDialogTitle(consentTitle)
+            bots.main.assertDialogMessage(consentMessage)
+            bots.main.clickDialogOkButton(false)
 
             // Grid view.
             bots.main.switchToGridMode()
@@ -99,9 +132,9 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
             if (file != null) {
                 localStorageHelper.deleteDocument(file)
             }
-            summaryHelper?.clearDocumentSummaries()
+            summaryHelper.clearDocumentSummaries()
             localStorageHelper.cleanUp()
-            summaryHelper?.cleanUp()
+            summaryHelper.cleanUp()
         }
     }
 }

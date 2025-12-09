@@ -19,11 +19,14 @@ package com.android.documentsui.picker;
 import static com.android.documentsui.base.State.ACTION_CREATE;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
+import static com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
 
 import android.annotation.SuppressLint;
 import android.database.MatrixCursor;
@@ -32,6 +35,7 @@ import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 
@@ -41,6 +45,8 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
+import com.android.documentsui.dirlist.SummaryProviderManager;
+import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.files.TestActivity;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -51,6 +57,9 @@ import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
+
+import kotlinx.coroutines.CoroutineScopeKt;
+import kotlinx.coroutines.Dispatchers;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -135,6 +144,7 @@ public final class MenuManagerTest {
     private RootInfo testRootInfo;
     private DocumentInfo testDocInfo;
     private MenuManager mgr;
+    private SummaryProviderManager mSummaryProviderManager;
 
     private int mFilesCount;
 
@@ -206,6 +216,15 @@ public final class MenuManagerTest {
         selectionDetails = new TestSelectionDetails();
         dirDetails = new TestDirectoryDetails();
         testSearchManager = new TestSearchViewManager();
+        mSummaryProviderManager =
+                spy(
+                        new SummaryProviderManager(
+                                ApplicationProvider.getApplicationContext(),
+                                CoroutineScopeKt.CoroutineScope(Dispatchers.getUnconfined()),
+                                null));
+        // Disable the part that kicks off the coroutine.
+        doNothing().when(mSummaryProviderManager).start();
+        mActivity.injector.setSummaryProviderManager(mSummaryProviderManager);
         mgr =
                 new MenuManager(
                         testSearchManager,
@@ -213,7 +232,8 @@ public final class MenuManagerTest {
                         dirDetails,
                         this::getFilesCount,
                         mActivity,
-                        mFeatures);
+                        mFeatures,
+                        mActivity.injector);
         selectionDetails.size = 1;
         mFilesCount = 10;
 
@@ -787,6 +807,33 @@ public final class MenuManagerTest {
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_FILE_SUMMARY)
+    public void testOptionMenu_ShowSummaryColumn_disabledWhenFlagIsOff() {
+        mSummaryProviderManager.setStateForTest(SummaryProviderState.FlagDisabled.INSTANCE);
+        TestMenuItem showSummary = testMenu.createMenuItem(R.id.option_show_summary);
+        mgr.updateOptionMenu(testMenu);
+        showSummary.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_FILE_SUMMARY)
+    public void testOptionMenu_ShowSummaryColumn_enabledWhenFlagIsOn() {
+        TestMenuItem showSummary = testMenu.createMenuItem(R.id.option_show_summary);
+
+        boolean isUserEnabled = false;
+        mSummaryProviderManager.setStateForTest(new SummaryProviderState.Available(isUserEnabled));
+        mgr.updateOptionMenu(testMenu);
+        showSummary.assertEnabledAndVisible();
+        showSummary.assertTitle(R.string.option_show_summary_column);
+
+        isUserEnabled = true;
+        mSummaryProviderManager.setStateForTest(new SummaryProviderState.Available(isUserEnabled));
+        mgr.updateOptionMenu(testMenu);
+        showSummary.assertEnabledAndVisible();
+        showSummary.assertTitle(R.string.option_hide_summary_column);
     }
 
     @SuppressLint("VisibleForTests")

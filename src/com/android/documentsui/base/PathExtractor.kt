@@ -19,6 +19,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.util.Log
 import com.android.documentsui.roots.ProvidersAccess
 
@@ -43,22 +44,50 @@ open class PathExtractor(
      * @throws NoSuchElementException if the stack extraction fails.
      */
     fun getDocumentStack(docInfo: DocumentInfo): DocumentStack {
-        val uri = docInfo.derivedUri
-        val rootInfo = getRootInfo(docInfo)
+        // MediaDocumentsProvider URIs need special treatment to obtain real path.
+        val uri =
+            if (docInfo.authority == Providers.AUTHORITY_MEDIA) {
+                getExternalStorageUri(docInfo.derivedUri)
+            } else {
+                docInfo.derivedUri
+            }
+        val authority = uri.authority ?: docInfo.authority
+        val userId = docInfo.userId
+        val rootInfo = getRootInfo(authority, userId)
         try {
             val path = getDocumentPath(uri)
             if (path === null || path.path === null || path.path.isEmpty()) {
                 throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}")
             }
-            val docInfoArray = Array(path.path.size) { getDocumentInfo(docInfo, path.path[it]) }
+            val docInfoArray =
+                Array(path.path.size) { getDocumentInfo(authority, userId, path.path[it]) }
             return DocumentStack(rootInfo, *docInfoArray)
         } catch (e: IllegalArgumentException) {
             throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}: $e")
         } catch (e: UnsupportedOperationException) {
-            Log.w(TAG, "$uri does not support path extraction: $e: ${e.stackTraceToString()}")
+            Log.w(TAG, "$uri does not support path extraction: $e")
             return approximateDocumentStack(rootInfo, docInfo)
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    /** For MediaDocumentsProvider URIs converts them to an external storage URI. */
+    private fun getExternalStorageUri(uri: Uri): Uri {
+        try {
+            // Converts Media URI to standard MediaStore URI. If successful, this results in
+            // the canonical URI for the item within the MediaStore database itself.
+            val mediaUri = MediaStore.getMediaUri(context, uri) ?: return uri
+            // Takes the MediaStore URI and converts it back into a document URI. However, this
+            // step creates a URI for the ExternalStorageProvider, from which we can extract a
+            // true path in the devices internal storage.
+            return MediaStore.getDocumentUri(context, mediaUri) ?: uri
+        } catch (_: Exception) {
+            // This branch catches either IllegalArgumentException or SecurityException, or any
+            // type of exception thrown by the underlying database. The first type of exception
+            // happens if a malformed URI is passed to this method. The second type, while it should
+            // not occur, it is thrown if the app does not have permissions to access the URI.
+            return uri
         }
     }
 
@@ -80,29 +109,36 @@ open class PathExtractor(
         return DocumentStack(rootInfo, rootDir, docInfo)
     }
 
-    /** Attempts to get the root for the given DocumentInfo. */
-    private fun getRootInfo(docInfo: DocumentInfo): RootInfo {
+    /** Attempts to get the root of a document provider for the given authority and userId. */
+    private fun getRootInfo(authority: String, userId: UserId): RootInfo {
         var cursor: Cursor? = null
-        val uri = DocumentsContract.buildRootsUri(docInfo.authority)
+        val uri = DocumentsContract.buildRootsUri(authority)
         try {
             cursor = getCursorForUri(uri)
             if (cursor != null && cursor.moveToFirst()) {
-                return RootInfo.fromRootsCursor(docInfo.userId, docInfo.authority, cursor)
+                return RootInfo.fromRootsCursor(userId, authority, cursor)
             }
         } finally {
             cursor?.close()
         }
-        throw NoSuchElementException("Can't find matching root for id=${docInfo.documentId}")
+        throw NoSuchElementException("Can't find matching root for uri=$uri")
     }
 
-    /** Extracts the document info for the given `pathItemId` of the path of `docInfo`. */
-    private fun getDocumentInfo(docInfo: DocumentInfo, pathItemId: String): DocumentInfo {
+    /**
+     * Extracts the document info for the document identified by `pathItemId` and `authority` that
+     * manages documents. This is done for the user with the given `userId`.
+     */
+    private fun getDocumentInfo(
+        authority: String,
+        userId: UserId,
+        pathItemId: String,
+    ): DocumentInfo {
         var cursor: Cursor? = null
-        val itemUri = DocumentsContract.buildDocumentUri(docInfo.authority, pathItemId)
+        val itemUri = DocumentsContract.buildDocumentUri(authority, pathItemId)
         try {
             cursor = getCursorForUri(itemUri)
             if (cursor != null && cursor.moveToFirst()) {
-                return DocumentInfo.fromCursor(cursor, docInfo.userId, docInfo.authority)
+                return DocumentInfo.fromCursor(cursor, userId, authority)
             }
         } finally {
             cursor?.close()

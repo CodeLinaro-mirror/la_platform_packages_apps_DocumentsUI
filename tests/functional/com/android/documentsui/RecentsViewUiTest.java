@@ -19,8 +19,10 @@ package com.android.documentsui;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
@@ -48,11 +50,14 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.DirectoryListBot;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
+
+import junit.framework.AssertionFailedError;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -290,29 +295,61 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.menu.assertPresentMenuItems(menuItems);
     }
 
+    private Uri createFileInDownloads(String fileName, String mimeType) throws Exception {
+        DocumentsProviderHelper storageHelper = mTestFilesRule.docsHelper;
+        RootInfo primaryRoot = storageHelper.getRoot(Providers.ROOT_ID_DEVICE);
+        DocumentInfo download = storageHelper.findFile(primaryRoot.documentId, "Download");
+        assertNotNull(download);
+        return storageHelper.createDocument(download.documentId, mimeType, fileName);
+    }
+
+    private void deleteFileByUri(Uri fileUri) {
+        if (fileUri != null) {
+            mTestFilesRule.docsHelper.deleteDocument(fileUri);
+        }
+    }
+
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultInRecents() throws Exception {
-        bots.roots.openRoot("Recent");
-        device.waitForIdle();
+        // Create a file with a unique name.
+        Uri fileUri = null;
+        try {
+            String newFileName = "0-aardvark.txt";
+            fileUri = createFileInDownloads(newFileName, "text/plain");
 
-        bots.directory.selectFirstDocument();
+            // Move to the Recent view and wait for things to quiet down.
+            bots.roots.openRoot("Recent");
+            device.waitForIdle();
 
-        // Check that the breadcrumb path starts with "Recent". We don't know more about the
-        // selected file, to perform a more exact comparison.
-        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathStartsWith("Recent"));
+            // Select the newly created file and check the expected path.
+            bots.directory.selectDocument(newFileName, 1);
+
+            try {
+                // We either have the old behaviro, where the breadcrumb could not get the real path
+                // so it showed a path starting with "Recent".
+                onView(withId(R.id.breadcrumb_path_holder))
+                        .check(bots.breadcrumb.pathStartsWith("Recent"));
+            } catch (AssertionFailedError e) {
+                // Or we have the new behavior. We use a negative match, because it is hard to
+                // predict root title correctly. So we require that we match Download and the
+                // newFileName, but the first component must not match "Recent".
+                onView(withId(R.id.breadcrumb_path_holder))
+                        .check(
+                                bots.breadcrumb.pathMatches(
+                                        "^(?!Recent$).*", "Download", newFileName));
+            }
+        } finally {
+            deleteFileByUri(fileUri);
+        }
     }
 
     @Test
     public void testSearchRecentUsingVideoChips() throws Exception {
-        DocumentsProviderHelper storageHelper = mTestFilesRule.docsHelper;
         Uri fileUri = null;
         try {
-            RootInfo primaryRoot = storageHelper.getRoot(Providers.ROOT_ID_DEVICE);
-            DocumentInfo download = storageHelper.findFile(primaryRoot.documentId, "Download");
-            assertNotNull(download);
             String fileName = Long.toHexString(System.currentTimeMillis()) + ".mp4";
-            fileUri = storageHelper.createDocument(download.documentId, "video/mp4", fileName);
+            fileUri = createFileInDownloads(fileName, "video/mp4");
 
             // Move to the Recent view and wait for things to quiet down.
             bots.roots.openRoot("Recent");
@@ -327,9 +364,43 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             // Select the newly created file and check the expected path.
             bots.directory.assertDocumentsPresent(fileName);
         } finally {
-            if (fileUri != null) {
-                storageHelper.deleteDocument(fileUri);
+            deleteFileByUri(fileUri);
+        }
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testDirectoryChangeOnRecentsBreadcrumbClick() throws Exception {
+        Uri fileUri = null;
+        try {
+            String fileName = Long.toHexString(System.currentTimeMillis()) + ".zip";
+            fileUri = createFileInDownloads(fileName, "application/zip");
+            EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+
+            bots.directory.selectFirstDocument();
+            bots.directory.assertSelection(1);
+
+            // Until MediaStore code is propagated to every test device we can either have
+            // the old style path Downloads > fileName, in which case the test ends.
+            try {
+                bots.breadcrumb.pathEqualsTo("Downloads", fileName);
+            } catch (AssertionFailedError e) {
+                // Or, we have a new style path DeviceName > Download > fileName, in which case
+                // clicking on the breadcrumb changes the directory.
+                // Click the "Download" item of the path, which should take us to the directory
+                // listing.
+                onView(
+                                allOf(
+                                        withText("Download"),
+                                        isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
+                        .perform(click());
+
+                // Check that we are in the "Download" directory.
+                bots.main.assertWindowTitle("Download");
             }
+
+        } finally {
+            deleteFileByUri(fileUri);
         }
     }
 }

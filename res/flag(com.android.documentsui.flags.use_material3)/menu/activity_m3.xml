@@ -127,6 +127,11 @@
             android:visible="false"
             app:showAsAction="always" />
         <item
+            android:id="@+id/option_show_summary"
+            android:title="@string/option_show_summary_column"
+            android:visible="false"
+            app:showAsAction="never"/>
+        <item
             android:id="@+id/option_menu_launcher"
             android:visible="false"
             app:showAsAction="never" />

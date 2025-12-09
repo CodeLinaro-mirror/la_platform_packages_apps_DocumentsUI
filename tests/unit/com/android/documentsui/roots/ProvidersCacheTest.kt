@@ -17,7 +17,6 @@
 package com.android.documentsui.roots
 
 import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.content.res.TypedArray
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -103,7 +102,7 @@ class ProvidersCacheTest {
                 )
             )
 
-        assertEquals(expected, providers.getShortcutResources())
+        assertEquals(expected, providers.getShortcutResources(context))
     }
 
     // TODO: b/446064228 - Test flag dependency by returning the async task in updateAsync() and
@@ -142,7 +141,7 @@ class ProvidersCacheTest {
 
         val expected: List<ShortcutResourceValues> = listOf(shortcutResources1, shortcutResources2)
 
-        assertEquals(expected, providers.getShortcutResources())
+        assertEquals(expected, providers.getShortcutResources(context))
     }
 
     // TODO: b/446064228 - Test flag dependency by returning the async task in updateAsync() and
@@ -163,7 +162,7 @@ class ProvidersCacheTest {
 
         val expected: List<ShortcutResourceValues> = listOf()
 
-        assertEquals(expected, providers.getShortcutResources())
+        assertEquals(expected, providers.getShortcutResources(context))
     }
 
     @Test
@@ -332,65 +331,5 @@ class ProvidersCacheTest {
                 )
             )
         assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
-    }
-
-    @Test
-    fun testUpdateShortcutLocalizedTitles() {
-        // Set up mocking for the localized shortcut title.
-        val config = Configuration()
-        whenever(context.resources.configuration).thenReturn(config)
-        whenever(context.createConfigurationContext(config)).thenReturn(context2)
-        whenever(context2.resources).thenReturn(resources)
-        whenever(context2.resources.getStringArray(R.array.shortcut_localized_titles))
-            .thenReturn(arrayOf("Tuisskerm"))
-        val docsProviderRoot: RootInfo =
-            RootInfo().apply {
-                userId = UserId.DEFAULT_USER
-                authority = TEST_AUTHORITY
-                rootId = TEST_ROOT
-            }
-        val roots: List<RootInfo?> = listOf(docsProviderRoot)
-
-        val shortcutResources: List<ShortcutResourceValues> =
-            listOf(
-                ShortcutResourceValues(
-                    TEST_AUTHORITY,
-                    TEST_ROOT,
-                    TEST_PARENT_DOCID,
-                    TEST_TITLE,
-                    "Home screen",
-                    ICON_DEFAULT_RES_ID,
-                )
-            )
-        // Set the mRoots and shortcut resources for the test.
-        providers.setRoots(roots)
-        providers.setShortcutResources(shortcutResources)
-
-        val before: List<ShortcutInfo> =
-            listOf(
-                ShortcutInfo(
-                    docsProviderRoot,
-                    TEST_PARENT_DOCID,
-                    TEST_TITLE,
-                    "Home screen",
-                    R.drawable.ic_root_homescreen,
-                )
-            )
-        assertEquals(before, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
-
-        // Change the shortcut title.
-        providers.updateShortcutLocalizedTitles()
-
-        val after: List<ShortcutInfo> =
-            listOf(
-                ShortcutInfo(
-                    docsProviderRoot,
-                    TEST_PARENT_DOCID,
-                    TEST_TITLE,
-                    "Tuisskerm",
-                    R.drawable.ic_root_homescreen,
-                )
-            )
-        assertEquals(after, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
     }
 }

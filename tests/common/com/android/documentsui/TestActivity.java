@@ -80,6 +80,7 @@ public abstract class TestActivity extends AbstractBase {
     public UserManager userManager;
     public boolean throwOnStartActivity;
     public Executor mainExecutor;
+    public Injector<?> injector;
 
     public TestEventListener<Intent> startActivity;
     public TestEventListener<Pair<Intent, UserHandle>> startActivityAsUser;
@@ -103,6 +104,7 @@ public abstract class TestActivity extends AbstractBase {
 
     public void init(TestEnv env) {
         resources = TestResources.create();
+        injector = env.injector;
         packageMgr = TestPackageManager.create();
         intent = new Intent();
         currentUserHandle = env.userHandle;

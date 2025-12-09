@@ -36,6 +36,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -106,6 +107,8 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.DynamicColors;
+
+import kotlin.Unit;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -224,7 +227,6 @@ public abstract class BaseActivity
      */
     @VisibleForTesting
     public void setLocalSummaryProvider(Uri uri) {
-        Log.d(TAG, "Setting local summary provider: " + uri);
         if (mInjector.getSummaryProviderManager() != null) {
             mInjector.getSummaryProviderManager().stop();
         }
@@ -965,6 +967,19 @@ public abstract class BaseActivity
         } else if (id == getRes(R.id.option_menu_show_hidden_files)) {
             onClickedShowHiddenFiles();
             return true;
+        } else if (id == R.id.option_show_summary) {
+            if (mInjector.getSummaryProviderManager() != null) {
+                mInjector
+                        .getSummaryProviderManager()
+                        .onShowSummaryMenuClicked(
+                                this.getSupportFragmentManager(),
+                                () -> {
+                                    updateColumnHeaders(mState.stack.getRoot());
+                                    refreshDirectory(AnimationView.ANIM_NONE);
+                                    return Unit.INSTANCE;
+                                });
+                return true;
+            }
         } else if (id == getRes(R.id.sub_menu_grid)) {
             setViewMode(MODE_GRID);
             return true;
@@ -1511,5 +1526,19 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Force the shortcut resources to be reloaded the next time updateAsync() gets called.
+            mProviders.resetShortcutResourcesFirstLoadDone();
+
+            // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
+            //  localised titles in this method.
+            mProviders.updateAsync(false,
+                () -> RootsFragment.get(getSupportFragmentManager()).reloadRootsAndShortcuts());
+        }
     }
 }

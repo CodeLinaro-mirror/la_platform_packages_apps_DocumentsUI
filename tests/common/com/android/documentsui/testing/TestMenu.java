@@ -151,6 +151,13 @@ public abstract class TestMenu implements Menu {
         items.put(id, item);
     }
 
+    /** Creates and add the menu item with the given id. */
+    public TestMenuItem createMenuItem(int id) {
+        TestMenuItem item = TestMenuItem.create(id);
+        addMenuItem(id, item);
+        return item;
+    }
+
     @Override
     public TestMenuItem findItem(int id) {
         return items.get(id);

@@ -119,7 +119,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     @Before
-    fun setUp() {
+    open fun setUp() {
         device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         // NOTE: Must be the "target" context, else security checks in content provider will fail.
         context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -141,13 +141,10 @@ abstract class ActivityTestJunit4<T : Activity?> {
         device!!.pressKeyCode(KeyEvent.KEYCODE_WAKEUP)
 
         disableScreenOffAndSleepTimeouts()
-        // Ensure that the screen is unlocked.
-        device!!.executeShellCommand("wm dismiss-keyguard")
 
         setupTestingRoots()
         ActivityTest.closeNonDocsUiWindows(context, device)
         launchActivity()
-        device!!.waitForIdle()
 
         mActivityScenario?.onActivity({ activity ->
             activityLayoutId = (activity as? BaseActivity)?.layoutId
