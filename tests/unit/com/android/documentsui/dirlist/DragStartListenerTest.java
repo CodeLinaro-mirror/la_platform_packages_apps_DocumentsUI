@@ -19,6 +19,8 @@ package com.android.documentsui.dirlist;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,20 +38,27 @@ import com.android.documentsui.base.Events;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DragStartListener.RuntimeDragStartListener;
+import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDragAndDropManager;
 import com.android.documentsui.testing.TestEvents;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.testing.Views;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DragStartListenerTest {
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    private static int sIsUnavailableFlag = 1;
 
     private RuntimeDragStartListener mListener;
     private TestEvents.Builder mEvent;
@@ -58,6 +67,8 @@ public class DragStartListenerTest {
     private SelectionDetails mSelectionDetails;
     private String mViewModelId;
     private TestDragAndDropManager mManager;
+    private List<DocumentInfo> mSrcs;
+    private DocumentInfo mDoc;
 
     @Before
     public void setUp() throws Exception {
@@ -65,33 +76,41 @@ public class DragStartListenerTest {
         mManager = new TestDragAndDropManager();
         mSelectionDetails = new TestSelectionDetails();
         mDocLookup = new TestItemDetailsLookup();
-
-        DocumentInfo doc = new DocumentInfo();
-        doc.authority = Providers.AUTHORITY_STORAGE;
-        doc.documentId = "id";
-        doc.derivedUri = DocumentsContract.buildDocumentUri(doc.authority, doc.documentId);
+        mSrcs = new ArrayList<>();
+        mDoc = new DocumentInfo();
+        mDoc.authority = Providers.AUTHORITY_STORAGE;
+        mDoc.documentId = "id";
+        mDoc.derivedUri = DocumentsContract.buildDocumentUri(mDoc.authority, mDoc.documentId);
 
         State state = new State();
-        state.stack.push(doc);
+        state.stack.push(mDoc);
 
-        mListener = new DragStartListener.RuntimeDragStartListener(
-                null, // icon helper
-                state,
-                mSelectionMgr,
-                mSelectionDetails,
-                // view finder
-                (float x, float y) -> {
-                    return Views.createTestView(x, y);
-                },
-                // model id finder
-                (View view) -> {
-                    return mViewModelId;
-                },
-                // docInfo Converter
-                (Selection<String> selection) -> {
-                    return new ArrayList<>();
-                },
-                mManager);
+        mListener =
+                new DragStartListener.RuntimeDragStartListener(
+                        null, // icon helper
+                        state,
+                        mSelectionMgr,
+                        mSelectionDetails,
+                        // view finder
+                        (float x, float y) -> {
+                            return Views.createTestView(x, y);
+                        },
+                        // model id finder
+                        (View view) -> {
+                            return mViewModelId;
+                        },
+                        // docInfo Converter
+                        (Selection<String> selection) -> {
+                            return mSrcs;
+                        },
+                        // isContentAvailable
+                        (DocumentInfo docInfo) -> {
+                            boolean fakeIsContentAvailable =
+                                    docInfo.syncStateFlags == null
+                                            || docInfo.syncStateFlags != sIsUnavailableFlag;
+                            return fakeIsContentAvailable;
+                        },
+                        mManager);
 
         mViewModelId = "1234";
 
@@ -125,8 +144,13 @@ public class DragStartListenerTest {
 
     @Test
     public void testDragStarted_OnMouseMove() {
+        mSrcs.add(mDoc);
+
         assertTrue(mListener.onDragEvent(mEvent.build()));
+
         mManager.startDragHandler.assertCalled();
+        mManager.startDragHandler.assertLastArgument(mSrcs);
+        assertTrue(mManager.mLastCanDragAndDrop);
     }
 
     @Test
@@ -134,6 +158,40 @@ public class DragStartListenerTest {
         mViewModelId = null;
         assertFalse(mListener.onDragEvent(mEvent.build()));
         mManager.startDragHandler.assertNotCalled();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testDragStarted_ContentNotAvailable() {
+        // Set one of the source files to be unavailable.
+        DocumentInfo unavailableDoc = new DocumentInfo();
+        unavailableDoc.syncStateFlags = sIsUnavailableFlag;
+        mSrcs.add(unavailableDoc);
+        mSrcs.add(mDoc);
+
+        assertTrue(mListener.onDragEvent(mEvent.build()));
+
+        // Ensure that the files cannot be dragged and dropped.
+        mManager.startDragHandler.assertCalled();
+        mManager.startDragHandler.assertLastArgument(mSrcs);
+        assertFalse(mManager.mLastCanDragAndDrop);
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testDragStarted_ContentNotAvailable_FeatureFlagDisabled() {
+        // Set one of the source files to be unavailable.
+        DocumentInfo unavailableDoc = new DocumentInfo();
+        unavailableDoc.syncStateFlags = sIsUnavailableFlag;
+        mSrcs.add(unavailableDoc);
+        mSrcs.add(mDoc);
+
+        assertTrue(mListener.onDragEvent(mEvent.build()));
+
+        // Ensure that the files can still be dragged and dropped.
+        mManager.startDragHandler.assertCalled();
+        mManager.startDragHandler.assertLastArgument(mSrcs);
+        assertTrue(mManager.mLastCanDragAndDrop);
     }
 
     @Test

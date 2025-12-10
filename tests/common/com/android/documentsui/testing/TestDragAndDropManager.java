@@ -40,6 +40,8 @@ import java.util.List;
 
 public class TestDragAndDropManager implements DragAndDropManager {
 
+    public boolean mLastCanDragAndDrop = true;
+
     public final TestEventListener<List<DocumentInfo>> startDragHandler = new TestEventListener<>();
     public final TestEventHandler<Triple<Permissions, ClipData, SidebarEntryItemInfo>>
             dropOnRootHandler = new TestEventHandler<>();
@@ -55,10 +57,17 @@ public class TestDragAndDropManager implements DragAndDropManager {
     public void onKeyEvent(KeyEvent event) {}
 
     @Override
-    public void startDrag(View v, List<DocumentInfo> srcs, SidebarEntryItemInfo itemInfo,
-            List<Uri> invalidDest, SelectionDetails details, IconHelper iconHelper,
-            @Nullable DocumentInfo parent) {
+    public void startDrag(
+            View v,
+            List<DocumentInfo> srcs,
+            SidebarEntryItemInfo itemInfo,
+            List<Uri> invalidDest,
+            SelectionDetails details,
+            IconHelper iconHelper,
+            @Nullable DocumentInfo parent,
+            boolean canDragAndDrop) {
         startDragHandler.accept(srcs);
+        mLastCanDragAndDrop = canDragAndDrop;
     }
 
     @Override

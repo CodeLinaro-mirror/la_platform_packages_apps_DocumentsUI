@@ -379,15 +379,23 @@ public class DocumentInfo implements Durable, Parcelable {
     }
 
     /**
-     * Whether the `syncStateFlags` includes a progress flag. Returns false if there is no sync
-     * state.
+     * Whether the `syncStateFlags` includes the upload in progress flag. Returns false if there is
+     * no sync state.
      */
-    public boolean hasSyncInProgress() {
+    public boolean hasUploadInProgress() {
         if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
             return false;
         }
-        if ((SYNC_STATE_FLAG_UPLOAD_PROGRESS & syncStateFlags) != 0) {
-            return true;
+        return (SYNC_STATE_FLAG_UPLOAD_PROGRESS & syncStateFlags) != 0;
+    }
+
+    /**
+     * Whether the `syncStateFlags` includes the download in progress flag. Returns false if there
+     * is no sync state.
+     */
+    public boolean hasDownloadInProgress() {
+        if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
+            return false;
         }
         return (SYNC_STATE_FLAG_DOWNLOAD_PROGRESS & syncStateFlags) != 0;
     }
