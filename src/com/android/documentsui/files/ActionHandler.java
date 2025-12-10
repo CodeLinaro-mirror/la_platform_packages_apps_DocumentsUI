@@ -77,6 +77,7 @@ import com.android.documentsui.util.FlagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import javax.annotation.Nullable;
@@ -773,13 +774,22 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 // It is possible that the intent comes from the launcher home screen for which we
                 // need to convert the URI from a MediaStore URI to a DocumentsUI URI.
                 Uri documentUri = mDocs.getDocumentUri(uri);
-                if (DocumentsContract.isDocumentUri(mActivity, documentUri)) {
+                if (DocumentsContract.isDocumentUri(mActivity, documentUri)
+                        && Providers.isSystemProvider(documentUri.getAuthority())) {
+                    if (Objects.equals(intent.getType(), "application/zip")) {
+                        mToSelect = documentUri;
+                    }
                     return launchToDocument(documentUri);
                 }
             }
         }
 
         return false;
+    }
+
+    @VisibleForTesting
+    public Uri getToSelect() {
+        return mToSelect;
     }
 
     @Override
