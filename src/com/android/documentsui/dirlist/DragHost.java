@@ -33,6 +33,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.AbstractDragHost;
 import com.android.documentsui.ActionHandler;
+import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.DragAndDropManager;
 import com.android.documentsui.Metrics;
 import com.android.documentsui.R;
@@ -64,6 +65,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
     private final ActionHandler mActions;
     private final State mState;
     private final DialogController mDialogs;
+    private final DocumentsAccess mDocs;
     private final Predicate<View> mIsDocumentView;
     private final Lookup<View, DocumentHolder> mHolderLookup;
     private final Lookup<View, DocumentInfo> mDestinationLookup;
@@ -76,6 +78,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
             ActionHandler actions,
             State state,
             DialogController dialogs,
+            DocumentsAccess docs,
             Predicate<View> isDocumentView,
             Lookup<View, DocumentHolder> holderLookup,
             Lookup<View, DocumentInfo> destinationLookup) {
@@ -86,6 +89,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
         mActions = actions;
         mState = state;
         mDialogs = dialogs;
+        mDocs = docs;
         mIsDocumentView = isDocumentView;
         mHolderLookup = holderLookup;
         mDestinationLookup = destinationLookup;
@@ -164,6 +168,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
                 event.getLocalState(),
                 dstStack,
                 mActions,
+                mDocs,
                 mDialogs::showFileOperationStatus);
     }
 

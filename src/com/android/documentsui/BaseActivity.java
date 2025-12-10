@@ -1138,6 +1138,10 @@ public abstract class BaseActivity
         return mState;
     }
 
+    public DocumentsAccess getDocumentsAccess() {
+        return mDocs;
+    }
+
     /**
      * Updates hidden files visibility based on user action.
      */

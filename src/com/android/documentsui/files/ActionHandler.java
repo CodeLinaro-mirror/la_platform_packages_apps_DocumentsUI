@@ -153,6 +153,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 localState,
                 root,
                 this,
+                mDocs,
                 mDialogs::showFileOperationStatus,
                 mDragAndDropManager.getInvalidDestinations());
     }
@@ -172,6 +173,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 localState,
                 shortcut,
                 this,
+                mDocs,
                 mDialogs::showFileOperationStatus,
                 mDragAndDropManager.getInvalidDestinations());
     }
