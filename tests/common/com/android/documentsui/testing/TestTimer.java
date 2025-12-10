@@ -16,7 +16,7 @@
 
 package com.android.documentsui.testing;
 
-import java.lang.IllegalStateException;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -55,6 +55,14 @@ public class TestTimer extends Timer {
 
     public boolean hasScheduledTask() {
         return !mTaskList.isEmpty();
+    }
+
+    /** The execute time of the next scheduled task. */
+    public long executeTimeOfNextTask() {
+        if (!hasScheduledTask()) {
+            throw new IllegalStateException("There is no scheduled task!");
+        }
+        return mTaskList.getFirst().mExecuteTime;
     }
 
     public void fastForwardToNextTask() {
