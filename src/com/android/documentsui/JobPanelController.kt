@@ -49,6 +49,7 @@ import com.android.documentsui.JobPanelViewModel.ProgressViewModel
 import com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_FAILURE
 import com.android.documentsui.OperationDialogFragment.DialogType
 import com.android.documentsui.base.Menus
+import com.android.documentsui.base.UserId
 import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperations
 import com.android.documentsui.services.Job
@@ -126,6 +127,9 @@ class JobPanelController(
         private val dismissButton =
             cardView.findViewById<Button>(getRes(R.id.job_progress_item_dismiss))
 
+        private val openTrashButton =
+            cardView.findViewById<Button>(getRes(R.id.job_progress_item_open_trash))
+
         fun setJobProgress(jobProgress: JobProgress, expanded: Boolean) {
             titleView.text = jobProgress.msg
             if (expanded) {
@@ -166,16 +170,20 @@ class JobPanelController(
                 dismissButton.setOnClickListener { controller.dismissProgress(jobProgress.id) }
             }
 
-            if (
-                expanded &&
-                    jobProgress.isFinal &&
-                    jobProgress.destination != null &&
-                    !jobProgress.hasFailures
-            ) {
-                showInFolderButton.isVisible = true
-                showInFolderButton.setOnClickListener { controller.showInFolder(jobProgress) }
-            } else {
-                showInFolderButton.isVisible = false
+            openTrashButton.isVisible = false
+            showInFolderButton.isVisible = false
+            if (expanded && jobProgress.isFinal && !jobProgress.hasFailures) {
+                val isTrashOperation =
+                    jobProgress.operationType == FileOperationService.OPERATION_TRASH
+                val hasDestination = jobProgress.destination != null
+
+                if (isTrashOperation) {
+                    openTrashButton.isVisible = true
+                    openTrashButton.setOnClickListener { controller.openTrash() }
+                } else if (hasDestination) {
+                    showInFolderButton.isVisible = true
+                    showInFolderButton.setOnClickListener { controller.showInFolder(jobProgress) }
+                }
             }
         }
 
@@ -523,5 +531,12 @@ class JobPanelController(
 
     private fun showDetailsDialog(@DialogType dialogType: Int, jobProgress: JobProgress) {
         actions.showFileOperationDetailsDialog(dialogType, jobProgress)
+    }
+
+    private fun openTrash() {
+        val providers = DocumentsApplication.getProvidersCache(activityContext)
+        val root = providers.getTrashRoot(UserId.CURRENT_USER)
+        actions.openRoot(root)
+        popup?.dismiss()
     }
 }

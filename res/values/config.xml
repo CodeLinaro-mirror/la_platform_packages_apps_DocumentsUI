@@ -118,4 +118,7 @@
     <!-- The custom search provider that provides search results for local files, e.g. to perform semantic search.
     It should be a valid root URI, i.e. `content://<com.android.provider.authority>/root/<root_id>` -->
     <string name="local_search_provider" translatable="false"></string>
+
+    <!-- The list of approved documents handlers that have registered for ACTION_SEND/ACTION_SEND_MULTIPLE intents. -->
+    <string-array name="approved_document_handlers"></string-array>
 </resources>

@@ -45,6 +45,7 @@ import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
 import com.android.documentsui.queries.SearchViewManager;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
 import java.util.List;
 import java.util.function.IntFunction;
@@ -61,7 +62,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             IntSupplier filesCountSupplier,
             Context context,
             Features features,
-            Injector<?> injector) {
+            Injector<?> injector,
+            ApprovedDocHandlers approvedDocHandlers) {
         super(
                 searchManager,
                 displayState,
@@ -69,7 +71,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                 filesCountSupplier,
                 context,
                 features,
-                injector);
+                injector,
+                approvedDocHandlers);
     }
 
     @Override

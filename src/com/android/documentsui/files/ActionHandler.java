@@ -422,9 +422,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
-    public boolean sendToApprovedDocHandler(ComponentName app) {
+    public @Nullable Intent createApprovedHandlerIntent(ComponentName handler) {
         if (!isUseApprovedDocumentHandlerEnabled()) {
-            return false;
+            return null;
         }
         Selection<String> selection = getSelectedOrFocused();
         final Intent intent = createApprovedHandlerIntent(selection);
@@ -433,16 +433,15 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             if (DEBUG) {
                 Log.d(TAG, "Cannot send to approved document handler, intent is null");
             }
-            return false;
+            return null;
         }
 
-        intent.setComponent(app);
+        intent.setComponent(handler);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (isDesktopFileHandlingFlagEnabled()) {
             intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         }
-        mActivity.startActivity(intent);
-        return true;
+        return intent;
     }
 
     @Override

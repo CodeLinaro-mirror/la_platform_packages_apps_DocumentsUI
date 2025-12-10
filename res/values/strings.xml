@@ -158,6 +158,8 @@
     <string name="button_back">Back</string>
     <!-- Button label that navigates to the destination folder of a copy/move. -->
     <string name="button_show_in_folder">Show in folder</string>
+    <!-- Button label that navigates to the trash page. -->
+    <string name="button_open_trash">Open trash</string>
 
     <!-- A string used to show user that currently documents are not sorted in any given order. [CHAR_LIMIT=30] -->
     <string name="not_sorted">Not sorted</string>

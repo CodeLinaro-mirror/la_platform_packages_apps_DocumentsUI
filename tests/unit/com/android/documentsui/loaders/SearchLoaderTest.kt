@@ -609,7 +609,9 @@ class SearchLoaderTest {
                     }
                 }
 
-            activity.supportLoaderManager.restartLoader(1, null, loaderCallbacks).startLoading()
+            activity.supportLoaderManager
+                .restartLoader(LoaderIds.TEST, null, loaderCallbacks)
+                .startLoading()
             // Wait for the Downloads result.
             barrier.await()
             expect.that(getFileCount(result)).isEqualTo(1)

@@ -54,6 +54,7 @@ java_defaults {
     name: "documentsui_defaults",
 
     static_libs: [
+        "android.content.flags-aconfig-java",
         "android.provider.flags-aconfig-java",
         "androidx.appcompat_appcompat",
         "androidx.fragment_fragment-ktx",

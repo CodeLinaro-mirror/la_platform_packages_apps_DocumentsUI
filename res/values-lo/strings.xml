@@ -22,6 +22,8 @@
     <string name="downloads_label" msgid="5462789470049501103">"ດາວໂຫລດ"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"ເປີດຈາກ"</string>
@@ -56,6 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ຂໍຂໍ້ມູນ"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ສະ​ແດງ​ໄຟ​ລ໌​ທີ່​ເຊື່ອງ​ໄວ້"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ຢ່າສະແດງໄຟລ໌ທີ່ຖືກເຊື່ອງໄວ້"</string>
+    <string name="option_show_summary_column" msgid="2877633662563512552">"ສະແດງຖັນສະຫຼຸບ"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"ບໍ່ສະແດງຖັນສະຫຼຸບ"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"ເບິ່ງໃນ <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ໜ້າຈໍໃໝ່"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"ຕັດ"</string>
@@ -354,6 +358,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ໃຫ້ເລືອກໂຟນເດີອື່ນເພື່ອປົກປ້ອງຄວາມເປັນສ່ວນຕົວຂອງທ່ານ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ສ້າງໂຟນເດີໃໝ່"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ຊອກຫາອຸປະກອນນີ້"</string>
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"ຊອກຫາ"</string>
     <string name="search_results" msgid="7662182646512984171">"ຜົນການຊອກຫາ"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"ລຶບລ້າງຂໍ້ຄວາມ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ໂຟນເດີ root"</string>
@@ -380,6 +385,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"ຂະໜາດ"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"ປະເພດ"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"ວັນທີແກ້ໄຂ"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"ຕົກລົງ"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"ບໍ່ຮູ້ຈັກ"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ເຊື່ອງຕົວຢ່າງໄຟລ໌"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"ຕົວຢ່າງຮູບຂອງ <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ເຊື່ອງແຜງຂໍ້ມູນ"</string>
@@ -390,12 +397,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ລ້າງຖັງຂີ້ເຫຍື້ອບໍ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ຄຳສັ່ງນີ້ບໍ່ສາມາດຍົກເລີກໄດ້ ແລະ ໄຟລ໌ຕ່າງໆຈະບໍ່ສາມາດກູ້ຄືນໄດ້."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ລຶບທຸກຢ່າງໃນຖັງຂີ້ເຫຍື້ອ"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ໄຟລ໌ໃນຖັງຂີ້ເຫຍື້ອ"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ໄຟລ໌ນີ້ຢູ່ໃນຖັງຂີ້ເຫຍື້ອຂອງທ່ານ ແລະ ບໍ່ສາມາດເປີດໄດ້. ກະລຸນາກູ້ຄືນໄຟລ໌ຈາກຖັງຂີ້ເຫຍື້ອເພື່ອເຂົ້າເຖິງໄຟລ໌."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ກູ້ຄືນໄຟລ໌"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ປັດຈຸບັນທ່ານອອບລາຍຢູ່. ໄຟລ໌ ແລະ ຟັງຊັນບາງຢ່າງບໍ່ພ້ອມໃຫ້ບໍລິການ. ເຊື່ອມຕໍ່ອິນເຕີເນັດເພື່ອເຂົ້າເຖິງຢ່າງເຕັມຮູບແບບ."</string>
 </resources>
