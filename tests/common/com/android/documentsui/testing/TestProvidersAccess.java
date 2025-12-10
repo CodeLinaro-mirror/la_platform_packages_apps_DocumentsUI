@@ -234,7 +234,7 @@ public class TestProvidersAccess implements ProvidersAccess {
         LOCAL_SEARCH.rootId = "local_search";
         LOCAL_SEARCH.title = "Local Search";
         LOCAL_SEARCH.derivedType = RootInfo.TYPE_LOCAL;
-        LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY;
+        LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_SEARCH;
 
         HOME_SCREEN_SHORTCUT =
                 new ShortcutInfo(
