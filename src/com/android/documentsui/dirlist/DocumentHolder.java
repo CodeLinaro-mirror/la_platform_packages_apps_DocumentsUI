@@ -152,15 +152,37 @@ public abstract class DocumentHolder
         View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
         View downloadView = itemView.findViewById(getRes(R.id.download_icon));
 
-        if (doc.hasSyncInProgress() && progressView != null) {
+        if ((doc.hasUploadInProgress() || doc.hasDownloadInProgress()) && progressView != null) {
             progressView.setVisibility(View.VISIBLE);
+            if (doc.hasUploadInProgress()) {
+                progressView.setContentDescription(
+                        mContext.getString(getRes(R.string.uploading_description_m3)));
+                progressView.setTooltipText(
+                        mContext.getString(getRes(R.string.uploading_description_m3)));
+            } else {
+                progressView.setContentDescription(
+                        mContext.getString(getRes(R.string.downloading_description_m3)));
+                progressView.setTooltipText(
+                        mContext.getString(getRes(R.string.downloading_description_m3)));
+            }
         } else if (doc.hasSyncError() && syncErrorView != null) {
             syncErrorView.setVisibility(View.VISIBLE);
+            syncErrorView.setContentDescription(
+                    mContext.getString(getRes(R.string.sync_error_description_m3)));
+            syncErrorView.setTooltipText(
+                    mContext.getString(getRes(R.string.sync_error_description_m3)));
         } else if (doc.hasLocalChanges() && uploadView != null) {
             uploadView.setVisibility(View.VISIBLE);
+            uploadView.setContentDescription(
+                    mContext.getString(getRes(R.string.upload_description_m3)));
+            uploadView.setTooltipText(mContext.getString(getRes(R.string.upload_description_m3)));
         } else if (!doc.isContentAvailableLocally() && !doc.isDirectory() && downloadView != null) {
             // Only show download icon for files. Folders don't have content.
             downloadView.setVisibility(View.VISIBLE);
+            downloadView.setContentDescription(
+                    mContext.getString(getRes(R.string.download_description_m3)));
+            downloadView.setTooltipText(
+                    mContext.getString(getRes(R.string.download_description_m3)));
         }
     }
 

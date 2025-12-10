@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
@@ -122,15 +123,14 @@ public interface DragAndDropManager {
     /**
      * Starts a drag and drop.
      *
-     * @param v           the view which
-     *                    {@link View#startDragAndDrop(ClipData, View.DragShadowBuilder, Object,
-     *                    int)} will be
-     *                    called.
-     * @param srcs        documents that are dragged
-     * @param itemInfo    the root in which documents being dragged are
+     * @param v the view which {@link View#startDragAndDrop(ClipData, View.DragShadowBuilder,
+     *     Object, int)} will be called.
+     * @param srcs documents that are dragged
+     * @param itemInfo the root in which documents being dragged are
      * @param invalidDest destinations that don't accept this drag and drop
-     * @param iconHelper  used to load document icons
-     * @param parent      {@link DocumentInfo} of the container of srcs
+     * @param iconHelper used to load document icons
+     * @param parent {@link DocumentInfo} of the container of srcs
+     * @param canDragAndDrop Whether the items can be dragged and dropped.
      */
     void startDrag(
             View v,
@@ -139,7 +139,8 @@ public interface DragAndDropManager {
             List<Uri> invalidDest,
             SelectionDetails selectionDetails,
             IconHelper iconHelper,
-            @Nullable DocumentInfo parent);
+            @Nullable DocumentInfo parent,
+            boolean canDragAndDrop);
 
     /**
      * Checks whether the document can be spring opened.
@@ -309,6 +310,9 @@ public interface DragAndDropManager {
         // Tracks if the source of the drag operation is the trash root.
         private boolean mIsSrcRootTrash;
 
+        // Tracks if the items can be dragged and dropped.
+        private boolean mCanDragAndDrop = true;
+
         // The authority to restore to. Null if not a restore operation.
         private String mAuthorityToRestore;
 
@@ -372,7 +376,8 @@ public interface DragAndDropManager {
                 List<Uri> invalidDest,
                 SelectionDetails selectionDetails,
                 IconHelper iconHelper,
-                @Nullable DocumentInfo parent) {
+                @Nullable DocumentInfo parent,
+                boolean canDragAndDrop) {
 
             Trace.beginAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
                     DRAG_EVENT_COOKIE);
@@ -380,6 +385,7 @@ public interface DragAndDropManager {
             mView = v;
             mInvalidDest = invalidDest;
             mMustBeCopied = !selectionDetails.canDelete();
+            mCanDragAndDrop = canDragAndDrop;
             if (isTrashFlowEnabled()) {
                 mIsSrcRootTrash = itemInfo.getRoot().isTrash();
             }
@@ -487,6 +493,11 @@ public interface DragAndDropManager {
             mView = v;
             mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
+
+            if (isCloudFeaturesFlagEnabled() && !mCanDragAndDrop) {
+                updateState(STATE_NOT_ALLOWED);
+                return STATE_NOT_ALLOWED;
+            }
 
             final boolean isDragFromSameApp = isDragFromSameApp();
             if (isDragsFromOtherAppsEnabled() && mInvalidDest == null) {
@@ -607,7 +618,8 @@ public interface DragAndDropManager {
             final Uri rootDocUri = DocumentsContract.buildDocumentUri(
                     itemInfo.getRoot().authority, itemInfo.getDocumentId());
 
-            if (!isValidDestination(itemInfo, rootDocUri, invalidDest)) {
+            if ((isCloudFeaturesFlagEnabled() && !mCanDragAndDrop)
+                    || !isValidDestination(itemInfo, rootDocUri, invalidDest)) {
                 if (permissions != null) permissions.release();
                 return false;
             }
@@ -683,7 +695,8 @@ public interface DragAndDropManager {
                 ActionHandler actions,
                 FileOperations.Callback callback) {
 
-            if (!isValidDocumentStack(dstStack)) {
+            if ((isCloudFeaturesFlagEnabled() && !mCanDragAndDrop)
+                    || !isValidDocumentStack(dstStack)) {
                 if (permissions != null) permissions.release();
                 return false;
             }
@@ -710,6 +723,7 @@ public interface DragAndDropManager {
             mMustBeCopied = false;
             mDragInitiated = false;
             mIsFilesSupportTrash = false;
+            mCanDragAndDrop = true;
             mIsSrcRootTrash = false;
             mAuthorityToRestore = null;
             Trace.endAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
