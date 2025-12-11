@@ -441,7 +441,8 @@ public class RootsFragment extends Fragment {
         mInjector.appsRowManager.updateView(activity);
         onCurrentRootChanged();
         if (isHomeScreenFilesFlagEnabled()) {
-            getBaseActivity().refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            // Only refresh the current window - we don't want to cancel current search results.
+            getBaseActivity().refreshCurrentRootAndDirectoryWithoutSearch(AnimationView.ANIM_NONE);
         }
     }
 

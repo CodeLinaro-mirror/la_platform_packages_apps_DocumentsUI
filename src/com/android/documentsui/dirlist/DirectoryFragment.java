@@ -518,6 +518,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                             mInjector.actions,
                             mActivity.getDisplayState(),
                             mInjector.dialogs,
+                            mActivity.getDocumentsAccess(),
                             (View v) -> {
                                 return getModelId(v) != null;
                             },

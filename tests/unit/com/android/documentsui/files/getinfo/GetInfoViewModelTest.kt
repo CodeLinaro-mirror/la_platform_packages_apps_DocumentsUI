@@ -113,15 +113,22 @@ class GetInfoViewModelTest {
         `when`(resources.getString(R.string.datetime_format_24)).thenReturn("MMM d, yyyy")
         `when`(resources.getString(R.string.get_info_unknown_file_type)).thenReturn("Unknown")
 
+        // Mock some debug fields to validate in test (they are all synchronous and they fall back
+        // to "MockString" anyway, so let's avoid using a whole bunch of them that effectively will
+        // do the same validation.
+        `when`(resources.getString(R.string.inspector_debug_section)).thenReturn("Debug Info")
+        `when`(resources.getString(R.string.debug_user_id)).thenReturn("User ID")
+
         // Mock lookup to return folder type and a default for the remaining types.
         `when`(lookup.lookup(any())).thenReturn("File Type")
         `when`(lookup.lookup(eq(DocumentsContract.Document.MIME_TYPE_DIR))).thenReturn("Folder")
     }
 
     @Test
-    fun testCreateDataList_StandardFile() {
+    fun testStandardFile_WithDebug() {
         val doc =
             DocumentInfo().apply {
+                documentId = "testId"
                 displayName = "test.pdf"
                 mimeType = "application/pdf"
                 size = 1024 * 1024 * 10
@@ -129,10 +136,37 @@ class GetInfoViewModelTest {
                 userId = UserId.DEFAULT_USER
             }
 
-        val viewModel = GetInfoViewModel(application, doc, lookup)
+        val viewModel = GetInfoViewModel(application, doc, lookup, true)
         val list = viewModel.items.value
 
-        // Should have Header, Name, TYpe, Size, Modified.
+        // Should have Header, Name, TYpe, Size, Modified. Header, Doc ID.
+        assertEquals(5 + DEBUG_ITEM_COUNT, list.size)
+        assertEquals(ListItem.Header("General info"), list[0])
+        assertEquals(ListItem.Info("Name", "test.pdf"), list[1])
+        assertEquals(ListItem.Info("Type", "File Type"), list[2])
+        assertEquals("Size", (list[3] as ListItem.Info).label)
+        assertEquals("Modified", (list[4] as ListItem.Info).label)
+
+        assertEquals(ListItem.Header("Debug Info"), list[5])
+        assertEquals(ListItem.Info("User ID", UserId.CURRENT_USER.identifier.toString()), list[6])
+    }
+
+    @Test
+    fun testStandardFile_NoDebug() {
+        val doc =
+            DocumentInfo().apply {
+                documentId = "testId"
+                displayName = "test.pdf"
+                mimeType = "application/pdf"
+                size = 1024 * 1024 * 10
+                lastModified = 1234567890L
+                userId = UserId.DEFAULT_USER
+            }
+
+        val viewModel = GetInfoViewModel(application, doc, lookup, false)
+        val list = viewModel.items.value
+
+        // Should have Header, Name, TYpe, Size, Modified. Header, Doc ID.
         assertEquals(5, list.size)
         assertEquals(ListItem.Header("General info"), list[0])
         assertEquals(ListItem.Info("Name", "test.pdf"), list[1])
@@ -142,10 +176,11 @@ class GetInfoViewModelTest {
     }
 
     @Test
-    fun testCreateDataList_Directory() = runTest {
+    fun testDirectory() = runTest {
         val authority = "com.example.authority"
         val doc =
             DocumentInfo().apply {
+                documentId = "testDirectoryId"
                 displayName = "My Folder"
                 mimeType = DocumentsContract.Document.MIME_TYPE_DIR
                 size = 0
@@ -174,12 +209,12 @@ class GetInfoViewModelTest {
             }
         contentResolver.addProvider(authority, childrenProvider)
 
-        val viewModel = GetInfoViewModel(application, doc, lookup, testDispatcher)
+        val viewModel = GetInfoViewModel(application, doc, lookup, true, testDispatcher)
         val initialList: List<ListItem> = viewModel.items.value
 
-        // Should have Header, Name, Type, Modified. No size.
-        // The asynchronous data hasn't been populated yet (hence only 4 items in the list).
-        assertEquals(4, initialList.size)
+        // Should have Header, Name, Type, Modified, Items. No size.
+        // The asynchronous data hasn't been populated yet but there is a placeholder there.
+        assertEquals(5 + DEBUG_ITEM_COUNT, initialList.size)
         assertEquals(ListItem.Header("General info"), initialList[0])
         assertEquals(ListItem.Info("Name", "My Folder"), initialList[1])
         assertEquals(ListItem.Info("Type", "Folder"), initialList[2])
@@ -190,18 +225,32 @@ class GetInfoViewModelTest {
         val modifiedRow = initialList[3] as ListItem.Info
         assertEquals("Modified", modifiedRow.label)
 
+        // Items exists but only with a placeholder.
+        assertEquals(ListItem.Info("Items", "--"), initialList[4])
+
+        // Debug info is synchronously added so just compare 1 of the items.
+        assertEquals(ListItem.Header("Debug Info"), initialList[5])
+        assertEquals(
+            ListItem.Info("User ID", UserId.CURRENT_USER.identifier.toString()),
+            initialList[6],
+        )
+
         testDispatcher.scheduler.advanceUntilIdle()
         val updatedList = viewModel.items.value
 
         // Should have Header, Name, Type, Modified, Items.
-        assertEquals(5, updatedList.size)
+        assertEquals(5 + DEBUG_ITEM_COUNT, updatedList.size)
+
+        // Items should not have changed position from the initial list (i.e. the Debug info should
+        // have been pushed down the list.
         assertEquals(ListItem.Info("Items", "3"), updatedList[4])
     }
 
     @Test
-    fun testCreateDataList_PartialFile() {
+    fun testPartialFile() {
         val doc =
             DocumentInfo().apply {
+                documentId = ""
                 displayName = "downloading.tmp"
                 mimeType = "application/octet-stream"
                 size = 500
@@ -211,16 +260,16 @@ class GetInfoViewModelTest {
                 userId = UserId.DEFAULT_USER
             }
 
-        val viewModel = GetInfoViewModel(application, doc, lookup)
+        val viewModel = GetInfoViewModel(application, doc, lookup, true)
         val list = viewModel.items.value
 
         // Header, Name, Type, Size, Modified, Summary
-        assertEquals(6, list.size)
+        assertEquals(6 + DEBUG_ITEM_COUNT, list.size)
         assertEquals(ListItem.Info("Summary", "OriginalFilename.pdf"), list[5])
     }
 
     @Test
-    fun testCreateDataList_NoLastModified() {
+    fun testNoLastModified() {
         val doc =
             DocumentInfo().apply {
                 displayName = "test.pdf"
@@ -230,11 +279,16 @@ class GetInfoViewModelTest {
                 userId = UserId.DEFAULT_USER
             }
 
-        val viewModel = GetInfoViewModel(application, doc, lookup)
+        val viewModel = GetInfoViewModel(application, doc, lookup, true)
         val list = viewModel.items.value
 
         // Header, Name, Type, Size. No Modified.
-        assertEquals(4, list.size)
+        assertEquals(4 + DEBUG_ITEM_COUNT, list.size)
         assertEquals("Size", (list[3] as ListItem.Info).label)
+    }
+
+    companion object {
+        // Constant for the number of debug items added (Header + 5 infos + 17 flags).
+        const val DEBUG_ITEM_COUNT = 23
     }
 }
