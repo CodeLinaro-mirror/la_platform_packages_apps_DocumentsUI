@@ -19,7 +19,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ProgressBar
@@ -40,10 +43,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.actions.RelaxedClickAction
 import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.flags.Flags
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_VISUAL_SIGNALS_RO
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -54,6 +59,7 @@ import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
 import com.android.documentsui.services.Job
 import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.MutableJobProgress
+import com.android.documentsui.util.VersionUtils
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -574,5 +580,41 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         onView(withId(R.id.job_progress_panel_dismiss_all)).perform(RelaxedClickAction())
         onView(withId(R.id.job_progress_toolbar_indicator)).check(doesNotExist())
         onView(withId(R.id.job_progress_panel_title)).check(doesNotExist())
+    }
+
+    @Test
+    @RequiresFlagsEnabled(FLAG_ENABLE_DOCUMENTS_TRASH_API)
+    @EnableFlags(Flags.FLAG_ENABLE_TRASH_FLOW_RO)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    fun testOpenTrash() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService, which we cannot easily force from the test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
+        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
+        // The Trash feature under test relies on DocumentsContract APIs introduced in the
+        // Android release after Baklava (SDK 36).
+        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
+        // older Android base builds to verify backward compatibility. However, this specific
+        // Trash feature lacks backward compatibility with platforms at or below Baklava.
+        // This assumption prevents failures when the test runs on an older base OS
+        // without the necessary APIs.
+        assumeTrue(VersionUtils.isGreaterThanB())
+
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
+        bots.main.clickToolbarItem(R.id.action_menu_move_to_trash)
+        device!!.waitForIdle()
+
+        openPanel()
+        onView(withId(R.id.job_progress_item_title)).perform(click())
+        onView(withId(R.id.job_progress_item_open_trash)).perform(click())
+
+        // The panel should have been dismissed when we navigate.
+        onView(withId(R.id.job_progress_item_title)).check(doesNotExist())
+        // Verify that we're in the trash page.
+        val trashWindowTitle = context.getString(R.string.root_trash)
+        bots.main.assertWindowTitle(trashWindowTitle)
+        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1)
     }
 }

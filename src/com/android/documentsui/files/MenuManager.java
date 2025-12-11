@@ -20,6 +20,7 @@ import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEn
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -38,6 +39,7 @@ import androidx.recyclerview.selection.SelectionTracker;
 import com.android.documentsui.Injector;
 import com.android.documentsui.JobPanelController;
 import com.android.documentsui.R;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Lookup;
@@ -70,7 +72,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             LookupApplicationName appNameLookup,
             Lookup<String, Uri> uriLookup,
             IntSupplier filesCountSupplier,
-            Injector<?> injector) {
+            Injector<?> injector,
+            ApprovedDocHandlers approvedDocHandlers) {
 
         super(
                 searchManager,
@@ -79,7 +82,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                 filesCountSupplier,
                 context,
                 features,
-                injector);
+                injector,
+                approvedDocHandlers);
 
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;

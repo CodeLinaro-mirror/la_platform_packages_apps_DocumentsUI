@@ -22,6 +22,8 @@
     <string name="downloads_label" msgid="5462789470049501103">"Baixades"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Obre des de"</string>
@@ -56,6 +58,10 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Obtén informació"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostra els fitxers amagats"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"No mostris els fitxers amagats"</string>
+    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
+    <skip />
+    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
+    <skip />
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Mostra a <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Finestra nova"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Retalla"</string>
@@ -372,6 +378,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Per protegir la teva privadesa, tria una altra carpeta"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Crea una carpeta"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Cerca en aquest dispositiu"</string>
+    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
+    <skip />
     <string name="search_results" msgid="7662182646512984171">"Resultats de la cerca"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Esborra el text"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Carpeta arrel"</string>
@@ -398,6 +406,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"Mida"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"Tipus"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Data de modificació"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"D\'acord"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"Desconegut"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Amaga la previsualització del fitxer"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Previsualització de la imatge <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Amaga el tauler d\'informació"</string>
@@ -408,12 +418,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vols buidar la paperera?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Aquesta acció no es pot desfer i els fitxers ja no es podran recuperar."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Buida la paperera"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Fitxer a la paperera"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Aquest fitxer és a la paperera i no es pot obrir. Restaura\'l de la paperera per accedir-hi."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Restaura el fitxer"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"En aquests moments no tens connexió. Alguns fitxers i funcions no estan disponibles. Connecta\'t a Internet per obtenir accés complet."</string>
 </resources>

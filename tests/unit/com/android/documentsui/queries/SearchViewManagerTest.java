@@ -21,6 +21,7 @@ import static android.provider.DocumentsContract.QUERY_ARG_FILE_SIZE_OVER;
 import static android.provider.DocumentsContract.QUERY_ARG_LAST_MODIFIED_AFTER;
 import static android.provider.DocumentsContract.QUERY_ARG_MIME_TYPES;
 import static android.provider.DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
+import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
@@ -31,6 +32,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -38,16 +40,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -66,6 +73,7 @@ import com.android.documentsui.testing.TestHandler;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestTimer;
+import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -87,6 +95,9 @@ public final class SearchViewManagerTest {
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     private TestEventHandler<String> mTestEventHandler;
     private TestTimer mTestTimer;
@@ -524,6 +535,30 @@ public final class SearchViewManagerTest {
         root.queryArgs = TextUtils.join("\n",
                 new String[]{QUERY_ARG_DISPLAY_NAME, QUERY_ARG_FILE_SIZE_OVER,
                         QUERY_ARG_LAST_MODIFIED_AFTER});
+        DocumentStack stack = new DocumentStack(root, new DocumentInfo());
+
+        mSearchViewManager.showMenu(stack);
+
+        verify(mSearchChipViewManager, times(1)).setChipsRowVisible(false);
+    }
+
+    /** Verifies that the search chips are not displayed when the user is in the trash view. */
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testTrashPage_notShowChips() throws Exception {
+        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
+        // The Trash feature under test relies on DocumentsContract APIs introduced in the
+        // Android release after Baklava (SDK 36).
+        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
+        // older Android base builds to verify backward compatibility. However, this specific
+        // Trash feature lacks backward compatibility with platforms at or below Baklava.
+        // This assumption prevents failures when the test runs on an older base OS
+        // without the necessary APIs.
+        assumeTrue(VersionUtils.isGreaterThanB());
+        RootInfo root = spy(new RootInfo());
+        when(root.isTrash()).thenReturn(true);
         DocumentStack stack = new DocumentStack(root, new DocumentInfo());
 
         mSearchViewManager.showMenu(stack);

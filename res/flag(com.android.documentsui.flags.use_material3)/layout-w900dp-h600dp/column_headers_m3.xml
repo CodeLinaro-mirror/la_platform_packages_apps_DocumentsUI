@@ -28,23 +28,26 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="@dimen/doc_header_height_m3"
+    android:layout_marginStart="@dimen/list_header_outer_margin"
+    android:layout_marginEnd="@dimen/list_header_outer_margin"
     android:baselineAligned="false"
     android:gravity="center_vertical"
-    android:paddingStart="@dimen/main_container_padding_start"
-    android:paddingEnd="@dimen/list_container_padding_m3"
+    android:paddingStart="@dimen/list_item_padding_start"
+    android:paddingEnd="@dimen/list_item_padding_end"
     android:visibility="gone">
 
     <!-- Column headers -->
     <com.android.documentsui.sorting.HeaderCell
         android:id="@android:id/title"
+        android:background="@drawable/header_cell_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.4"
-        android:layout_marginEnd="12dp"
         android:clickable="true"
-        android:focusable="false"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/list_header_inner_padding"
         android:animateLayoutChanges="true">
 
         <include layout="@layout/shared_cell_content_m3" />
@@ -52,14 +55,16 @@
 
     <com.android.documentsui.sorting.HeaderCell
         android:id="@android:id/summary"
+        android:background="@drawable/header_cell_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:layout_marginEnd="0dp"
         android:clickable="true"
-        android:focusable="false"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/list_header_inner_padding"
         android:animateLayoutChanges="true">
 
         <include layout="@layout/shared_cell_content_m3" />
@@ -67,13 +72,15 @@
 
     <com.android.documentsui.sorting.HeaderCell
         android:id="@+id/file_type"
+        android:background="@drawable/header_cell_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.2"
         android:clickable="true"
-        android:focusable="false"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/list_header_inner_padding"
         android:animateLayoutChanges="true">
 
         <include layout="@layout/shared_cell_content_m3" />
@@ -81,13 +88,15 @@
 
     <com.android.documentsui.sorting.HeaderCell
         android:id="@+id/size"
+        android:background="@drawable/header_cell_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.2"
         android:clickable="true"
-        android:focusable="false"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/list_header_inner_padding"
         android:animateLayoutChanges="true">
 
         <include layout="@layout/shared_cell_content_m3" />
@@ -95,13 +104,15 @@
 
     <com.android.documentsui.sorting.HeaderCell
         android:id="@+id/date"
+        android:background="@drawable/header_cell_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.2"
         android:clickable="true"
-        android:focusable="false"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/list_header_inner_padding"
         android:animateLayoutChanges="true">
 
         <include layout="@layout/shared_cell_content_m3" />

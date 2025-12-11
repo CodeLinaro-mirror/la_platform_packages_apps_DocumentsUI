@@ -22,6 +22,8 @@
     <string name="downloads_label" msgid="5462789470049501103">"Laster ned"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Åpne fra"</string>
@@ -56,6 +58,10 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Hent informasjon"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Vis skjulte filer"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ikke vis skjulte filer"</string>
+    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
+    <skip />
+    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
+    <skip />
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Se i <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Nytt vindu"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Klipp ut"</string>
@@ -354,6 +360,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Velg en annen mappe for å beskytte personvernet ditt"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Opprett en ny mappe"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Søk på denne enheten"</string>
+    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
+    <skip />
     <string name="search_results" msgid="7662182646512984171">"Søkeresultater"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Fjern tekst"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Rotmappe"</string>
@@ -380,6 +388,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"Størrelse"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"Type"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Endringsdato"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"OK"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"Ukjent"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Skjul forhåndsvisning av filen"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Bildeforhåndsvisning av <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Skjul informasjonspanelet"</string>
@@ -390,12 +400,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vil du tømme papirkurven?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Denne handlingen kan ikke angres, og filene kan ikke gjenopprettes."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tøm papirkurven"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Fil i papirkurven"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Denne filen ligger i papirkurven og kan ikke åpnes. Gjenopprett den fra papirkurven for å få tilgang til den."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Gjenopprett filen"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Du er ikke på nettet for øyeblikket. Noen filer og funksjoner er ikke tilgjengelige. Koble til internett for å få full tilgang."</string>
 </resources>

@@ -22,6 +22,8 @@
     <string name="downloads_label" msgid="5462789470049501103">"ಡೌನ್‌ಲೋಡ್‌ಗಳು"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"ಇಲ್ಲಿಂದ ತೆರೆಯಿರಿ"</string>
@@ -56,6 +58,10 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ಮಾಹಿತಿಯನ್ನು ಪಡೆಯಿರಿ"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ಮರೆಮಾಡಿದ ಫೈಲ್‌ಗಳನ್ನು ತೋರಿಸಿ"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ಮರೆಮಾಡಿದ ಫೈಲ್‌ ತೋರಿಸಬೇಡಿ"</string>
+    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
+    <skip />
+    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
+    <skip />
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ಹೊಸ ವಿಂಡೋ"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"ಕತ್ತರಿಸು"</string>
@@ -354,6 +360,8 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ನಿಮ್ಮ ಗೌಪ್ಯತೆಯನ್ನು ಕಾಪಾಡಲು, ಬೇರೊಂದು ಫೋಲ್ಡರ್ ಅನ್ನು ಆಯ್ಕೆಮಾಡಿ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ಹೊಸ ಫೋಲ್ಡರ್ ರಚಿಸಿ"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ಈ ಸಾಧನವನ್ನು ಹುಡುಕಿ"</string>
+    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
+    <skip />
     <string name="search_results" msgid="7662182646512984171">"ಹುಡುಕಾಟ ಫಲಿತಾಂಶಗಳು"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"ಪಠ್ಯ ತೆರವುಗೊಳಿಸಿ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ಮೂಲ ಫೋಲ್ಡರ್"</string>
@@ -380,6 +388,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"ಗಾತ್ರ"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"ಪ್ರಕಾರ"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"ಮಾರ್ಪಡಿಸಿದ ದಿನಾಂಕ"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"ಸರಿ"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"ಅಪರಿಚಿತ"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ಫೈಲ್ ಪೂರ್ವವೀಕ್ಷಣೆಯನ್ನು ಮರೆಮಾಡಿ"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> ಚಿತ್ರದ ಪೂರ್ವವೀಕ್ಷಣೆ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ಮಾಹಿತಿ ಪ್ಯಾನೆಲ್ ಅನ್ನು ಮರೆಮಾಡಿ"</string>
@@ -390,12 +400,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ಟ್ರ್ಯಾಶ್ ಖಾಲಿ ಮಾಡಬೇಕೇ?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ಈ ಕ್ರಿಯೆಯನ್ನು ರದ್ದುಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ ಮತ್ತು ಫೈಲ್‌ಗಳನ್ನು ಇನ್ನು ರಿಕವರ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ಟ್ರ್ಯಾಶ್ ಖಾಲಿ ಮಾಡಿ"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿರುವ ಫೈಲ್"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ಈ ಫೈಲ್ ನಿಮ್ಮ ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿದೆ ಮತ್ತು ಅದನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ. ಅದನ್ನು ಆ್ಯಕ್ಸೆಸ್ ಮಾಡಲು ಅದನ್ನು ಟ್ರ್ಯಾಶ್‌ನಿಂದ ಮರುಸ್ಥಾಪಿಸಿ."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ಫೈಲ್ ಅನ್ನು ಮರುಸ್ಥಾಪಿಸಿ"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ. ಕೆಲವು ಫೈಲ್‌ಗಳು ಮತ್ತು ಕಾರ್ಯಚಟುವಟಿಕೆ ಲಭ್ಯವಿಲ್ಲ. ಪೂರ್ಣ ಆ್ಯಕ್ಸೆಸ್‌ಗಾಗಿ ಇಂಟರ್ನೆಟ್‌ಗೆ ಕನೆಕ್ಟ್ ಮಾಡಿ."</string>
 </resources>

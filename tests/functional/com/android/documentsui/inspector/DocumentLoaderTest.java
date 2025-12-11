@@ -33,8 +33,10 @@ import com.android.documentsui.InspectorProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.inspector.InspectorController.DataSupplier;
+import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.testing.LatchedConsumer;
 import com.android.documentsui.testing.TestSupportLoaderManager;
+import com.android.documentsui.testing.TestSupportRuntimeDataSupplier;
 
 import junit.framework.TestCase;
 
@@ -72,7 +74,7 @@ public class DocumentLoaderTest extends TestCase {
         mUserId = UserId.DEFAULT_USER;
         mResolver = mContext.getContentResolver();
         mLoaderManager = new TestSupportLoaderManager();
-        mLoader = new RuntimeDataSupplier(mContext, mLoaderManager);
+        mLoader = new TestSupportRuntimeDataSupplier(mContext, mLoaderManager);
 
         if (Looper.myLooper() == null) {
             Looper.prepare();
@@ -103,7 +105,7 @@ public class DocumentLoaderTest extends TestCase {
         mLoader.loadDocInfo(validUri, mUserId, consumer);
 
         // this is a test double that requires explicitly loading. @see TestLoaderManager
-        mLoaderManager.getLoader(0).startLoading();
+        mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
 
         consumer.assertCalled(1000, TimeUnit.MILLISECONDS);
 
@@ -122,7 +124,7 @@ public class DocumentLoaderTest extends TestCase {
         mLoader.loadDocInfo(invalidUri, mUserId, consumer);
 
         // this is a test double that requires explicitly loading. @see TestLoaderManager
-        mLoaderManager.getLoader(0).startLoading();
+        mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
 
         consumer.assertCalled(1000, TimeUnit.MILLISECONDS);
         assertNull(consumer.getValue());
@@ -138,7 +140,7 @@ public class DocumentLoaderTest extends TestCase {
             mLoader.loadDocInfo(invalidUri, mUserId, consumer);
 
             // this is a test double that requires explicitly loading. @see TestLoaderManager
-            mLoaderManager.getLoader(0).startLoading();
+            mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
             fail("Should have thrown exception.");
         } catch (Exception expected) {
         }
@@ -153,7 +155,7 @@ public class DocumentLoaderTest extends TestCase {
 
         LatchedConsumer<Integer> consumer = new LatchedConsumer<>(1);
         mLoader.loadDirCount(info, consumer);
-        mLoaderManager.getLoader(0).startLoading();
+        mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
 
         consumer.assertCalled(1000, TimeUnit.MILLISECONDS);
         assertEquals(consumer.getValue().intValue(), 4);
@@ -169,7 +171,7 @@ public class DocumentLoaderTest extends TestCase {
 
         try {
             mLoader.loadDirCount(info, consumer);
-            mLoaderManager.getLoader(0).startLoading();
+            mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
             fail("should have thrown exception");
         } catch (Exception expected) {
         }
@@ -182,7 +184,7 @@ public class DocumentLoaderTest extends TestCase {
         LatchedConsumer<Bundle> consumer = new LatchedConsumer<>(1);
 
         mLoader.getDocumentMetadata(uri, mUserId, consumer);
-        mLoaderManager.getLoader(0).startLoading();
+        mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
 
         consumer.assertCalled(100, TimeUnit.MILLISECONDS);
         assertNotNull(consumer.getValue());
@@ -199,7 +201,7 @@ public class DocumentLoaderTest extends TestCase {
         LatchedConsumer<Bundle> consumer = new LatchedConsumer<>(1);
 
         mLoader.getDocumentMetadata(uri, mUserId, consumer);
-        mLoaderManager.getLoader(0).startLoading();
+        mLoaderManager.getLoader(LoaderIds.TEST).startLoading();
 
         consumer.assertCalled(100, TimeUnit.MILLISECONDS);
         assertNull(consumer.getValue());
