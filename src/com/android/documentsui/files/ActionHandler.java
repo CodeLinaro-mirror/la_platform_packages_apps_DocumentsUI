@@ -277,6 +277,18 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
+    public void toggleFocusedItemSelection() {
+        String id = mFocusHandler.getFocusModelId();
+        if (id == null) {
+            // No-op.
+        } else if (mSelectionMgr.isSelected(id)) {
+            mSelectionMgr.deselect(id);
+        } else {
+            mSelectionMgr.select(id);
+        }
+    }
+
+    @Override
     public void cutToClipboard() {
         Metrics.logUserAction(MetricConsts.USER_ACTION_CUT_CLIPBOARD);
         Selection<String> selection = getSelectedOrFocused();

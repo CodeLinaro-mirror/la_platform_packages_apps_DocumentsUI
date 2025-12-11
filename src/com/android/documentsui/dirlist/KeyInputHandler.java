@@ -15,6 +15,8 @@
  */
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import android.view.KeyEvent;
 
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
@@ -82,7 +84,9 @@ public final class KeyInputHandler extends KeyboardEventListener<DocumentItemDet
                 mSelectionHelper.extendRange(details.getPosition());
             } else {
                 mSelectionHelper.endRange();
-                mSelectionHelper.clearSelection();
+                if (!isUseMaterial3FlagEnabled()) {
+                    mSelectionHelper.clearSelection();
+                }
             }
             return true;
         }
