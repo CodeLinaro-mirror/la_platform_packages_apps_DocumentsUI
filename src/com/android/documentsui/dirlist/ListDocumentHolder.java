@@ -365,7 +365,7 @@ final class ListDocumentHolder extends DocumentHolder {
 
         bindSyncIcons(mDoc);
 
-        if (mDoc.isDirectory()) {
+        if (mDoc.isDirectory() && !isUseMaterial3FlagEnabled()) {
             // Note, we don't show any details for any directory...ever.
             if (mDetails != null) {
                 // Non-tablets
@@ -377,21 +377,28 @@ final class ListDocumentHolder extends DocumentHolder {
             if (mMetadataView != null) {
                 // Non-tablets
                 boolean hasDetails = false;
-                ArrayList<String> metadataList = new ArrayList<>();
-                if (useSummary() && !TextUtils.isEmpty(summary)) {
-                    hasDetails = true;
-                    metadataList.add(summary);
+
+                if (!mDoc.isDirectory()) {
+                    ArrayList<String> metadataList = new ArrayList<>();
+                    if (useSummary() && !TextUtils.isEmpty(summary)) {
+                        hasDetails = true;
+                        metadataList.add(summary);
+                    }
+
+                    if (mDoc.lastModified > 0) {
+                        hasDetails = true;
+                        metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
+                    }
+
+                    if (mDoc.size >= 0) {
+                        hasDetails = true;
+                        metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
+                    }
+
+                    metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
+                    mMetadataView.setText(TextUtils.join(", ", metadataList));
                 }
-                if (mDoc.lastModified > 0) {
-                    hasDetails = true;
-                    metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
-                }
-                if (mDoc.size > -1) {
-                    hasDetails = true;
-                    metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
-                }
-                metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
-                mMetadataView.setText(TextUtils.join(", ", metadataList));
+
                 if (mDetails != null) {
                     mDetails.setVisibility(hasDetails ? View.VISIBLE : View.GONE);
                 } else {
@@ -399,18 +406,24 @@ final class ListDocumentHolder extends DocumentHolder {
                 }
             } else {
                 // Tablets
-                if (mDoc.lastModified > 0) {
+                assert mDate != null;
+                assert mSize != null;
+                assert mType != null;
+
+                if (!mDoc.isDirectory() && mDoc.lastModified > 0) {
                     mDate.setVisibility(View.VISIBLE);
                     mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
                 } else {
                     mDate.setVisibility(View.INVISIBLE);
                 }
-                if (mDoc.size > -1) {
+
+                if (!mDoc.isDirectory() && mDoc.size >= 0) {
                     mSize.setVisibility(View.VISIBLE);
                     mSize.setText(Formatter.formatFileSize(mContext, mDoc.size));
                 } else {
                     mSize.setVisibility(View.INVISIBLE);
                 }
+
                 mType.setText(mFileTypeLookup.lookup(mDoc.mimeType));
             }
         }
