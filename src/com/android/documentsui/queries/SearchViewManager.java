@@ -556,7 +556,7 @@ public class SearchViewManager implements
         if (isSearchV2Enabled()) {
             mCurrentRoot = root;
             if (mSearchOptionsController != null) {
-                mSearchOptionsController.updateUiForRoot(root);
+                mLocationOption = mSearchOptionsController.setRoot(root);
             }
         }
     }
@@ -574,7 +574,7 @@ public class SearchViewManager implements
                     if (mimeChipType != null) {
                         mSearchOptionsController.setSelectedFileType(mimeChipType);
                     }
-                    mSearchOptionsController.show(mCurrentRoot);
+                    mSearchOptionsController.show();
                 } else {
                     mSearchOptionsController.hide();
                 }
