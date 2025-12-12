@@ -1049,8 +1049,8 @@ public abstract class BaseActivity
     }
 
     /**
-     * Refreshes the content of the director and the menu/action bar.
-     * The current directory name and selection will get updated.
+     * Refreshes the current window including the root and the directory along with the menu/action
+     * bar. The current directory name and selection will get updated.
      */
     @Override
     public final void refreshCurrentRootAndDirectory(int anim) {
@@ -1061,7 +1061,14 @@ public abstract class BaseActivity
             mHasQueryContentFromIntent = false;
             mSearchManager.setCurrentSearch(mSearchManager.getQueryContentFromIntent());
         }
+        refreshCurrentRootAndDirectoryWithoutSearch(anim);
+    }
 
+    /**
+     * Refreshes the current window including the current root and directory. The current directory
+     * name and selection will get updated.
+     */
+    public final void refreshCurrentRootAndDirectoryWithoutSearch(int anim) {
         final int fallback = isUseMaterial3FlagEnabled() ? MODE_LIST : MODE_GRID;
         mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), fallback);
 
@@ -1129,6 +1136,10 @@ public abstract class BaseActivity
 
     public State getDisplayState() {
         return mState;
+    }
+
+    public DocumentsAccess getDocumentsAccess() {
+        return mDocs;
     }
 
     /**

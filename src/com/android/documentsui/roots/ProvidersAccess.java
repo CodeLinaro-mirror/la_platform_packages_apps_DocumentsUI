@@ -19,6 +19,7 @@ package com.android.documentsui.roots;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 
+import android.content.pm.ProviderInfo;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -80,6 +81,10 @@ public interface ProvidersAccess {
      * Returns an empty collection if none found.
      */
     Collection<ShortcutInfo> getShortcutsForUser(UserId userId);
+
+    /** Returns the {@link ProviderInfo} for the specified user and authority. */
+    @Nullable
+    ProviderInfo getProviderInfo(UserId userId, String authority);
 
     public static List<RootInfo> getMatchingRoots(Collection<RootInfo> roots, State state) {
 
