@@ -16,6 +16,7 @@
 
 package com.android.documentsui.util
 
+import android.content.flags.Flags.enableContentProviderClientAnrOnCancel
 import android.provider.Flags.enableDocumentsTrashApi
 import android.util.Log
 import com.android.documentsui.flags.Flags
@@ -241,6 +242,14 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                     .overrides
                     .getOrDefault(Flags.FLAG_GET_INFO_DIALOG, Flags.getInfoDialog())
             return flag && isUseMaterial3FlagEnabled()
+        }
+
+        @JvmStatic
+        fun isContentProviderClientAnrOnCancelEnabled(): Boolean {
+            if (!VersionUtils.isGreaterThanB()) {
+                return false
+            }
+            return enableContentProviderClientAnrOnCancel()
         }
     }
 

@@ -36,7 +36,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
          <FrameLayout
@@ -203,6 +202,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginEnd="12dp"
             android:ellipsize="middle"
             android:singleLine="true"
             android:textAlignment="viewStart"
@@ -216,6 +216,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:visibility="gone"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle" />
 
@@ -224,6 +225,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle"/>
 
@@ -232,6 +234,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle"/>
 
@@ -240,6 +243,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle"/>
 

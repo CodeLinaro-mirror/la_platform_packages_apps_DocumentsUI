@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -85,6 +84,7 @@ import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
+import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.roots.RootsLoader;
@@ -321,39 +321,40 @@ public class RootsFragment extends Fragment {
             }
         };
 
-        mRootsCallbacks = new LoaderCallbacks<>() {
-            @Override
-            public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
-                return new RootsLoader(activity, providers, state);
-            }
+        mRootsCallbacks =
+                new LoaderCallbacks<>() {
+                    @Override
+                    public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
+                        return new RootsLoader(activity, providers, state);
+                    }
 
-            @Override
-            public void onLoadFinished(
-                Loader<Collection<RootInfo>> loader, Collection<RootInfo> roots) {
-                if (!isAdded()) {
-                    return;
-                }
+                    @Override
+                    public void onLoadFinished(
+                            Loader<Collection<RootInfo>> loader, Collection<RootInfo> roots) {
+                        if (!isAdded()) {
+                            return;
+                        }
 
-                if (isHomeScreenFilesFlagEnabled()) {
-                    mLoadedRoots = roots;
-                    // Load the shortcut roots next
-                    LoaderManager.getInstance(RootsFragment.this).restartLoader(
-                        2, null, mShortcutsCallbacks);
-                    return;
-                }
+                        if (isHomeScreenFilesFlagEnabled()) {
+                            mLoadedRoots = roots;
+                            // Load the shortcut roots next
+                            LoaderManager.getInstance(RootsFragment.this)
+                                    .restartLoader(LoaderIds.SHORTCUTS, null, mShortcutsCallbacks);
+                            return;
+                        }
 
-                loadFinished(roots, new ArrayList<>(), activity, state);
-            }
+                        loadFinished(roots, new ArrayList<>(), activity, state);
+                    }
 
-            @Override
-            public void onLoaderReset(Loader<Collection<RootInfo>> loader) {
-                mListHandler.resetAdapter();
-            }
-        };
+                    @Override
+                    public void onLoaderReset(Loader<Collection<RootInfo>> loader) {
+                        mListHandler.resetAdapter();
+                    }
+                };
     }
 
     public void reloadRootsAndShortcuts() {
-        LoaderManager.getInstance(this).restartLoader(2, null, mRootsCallbacks);
+        LoaderManager.getInstance(this).restartLoader(LoaderIds.ROOTS, null, mRootsCallbacks);
     }
 
     @VisibleForTesting

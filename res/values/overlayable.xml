@@ -106,6 +106,7 @@
             <item type="array" name="shortcut_titles"/>
             <item type="array" name="shortcut_localized_titles"/>
             <item type="array" name="shortcut_icons"/>
+            <item type="array" name="approved_document_handlers"/>
             <!-- END SHORTCUT ARRAY -->
 
         </policy>

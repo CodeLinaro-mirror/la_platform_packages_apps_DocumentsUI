@@ -72,6 +72,7 @@ import com.android.documentsui.files.LauncherActivity;
 import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
+import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
@@ -395,7 +396,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch.await(1, TimeUnit.SECONDS);
         assertEquals(2, mEnv.model.getItemCount());
@@ -429,7 +430,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         assertTrue(latch.await(1, TimeUnit.SECONDS));
         Set<String> foundDocuments = new HashSet<>();
@@ -463,7 +464,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch.await(1, TimeUnit.SECONDS);
         assertEquals(1, mEnv.model.getItemCount());
@@ -493,7 +494,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch.await(1, TimeUnit.SECONDS);
         assertThat(listener.getLastValue().getException())
@@ -516,7 +517,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch.await(1, TimeUnit.SECONDS);
         assertThat(listener.getLastValue().getException())
@@ -542,7 +543,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch.await(1, TimeUnit.SECONDS);
         assertThat(listener.getLastValue().getException())
@@ -580,7 +581,7 @@ public class AbstractActionHandlerTest {
         CountDownLatch latch1 = new CountDownLatch(1);
         EventListener<Model.Update> updateEventListener1 = update -> latch1.countDown();
         mEnv.model.addUpdateListener(updateEventListener1);
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
         latch1.await(1, TimeUnit.SECONDS);
         assertThat(listener.getLastValue().getException())
                 .isInstanceOf(CrossProfileNoPermissionException.class);
@@ -595,7 +596,7 @@ public class AbstractActionHandlerTest {
         CountDownLatch latch2 = new CountDownLatch(1);
         mEnv.model.addUpdateListener(update -> latch2.countDown());
         mHandler.loadDocumentsForCurrentStack();
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch2.await(1, TimeUnit.SECONDS);
         assertEquals(1, mEnv.model.getItemCount());
@@ -618,7 +619,7 @@ public class AbstractActionHandlerTest {
         mHandler.loadDocumentsForCurrentStack();
         CountDownLatch latch = new CountDownLatch(1);
         mEnv.model.addUpdateListener(event -> latch.countDown());
-        mActivity.supportLoaderManager.runAsyncTaskLoader(AbstractActionHandler.LOADER_ID);
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
 
         latch.await(1, TimeUnit.SECONDS);
         assertTrue(listener.getLastValue().hasException());

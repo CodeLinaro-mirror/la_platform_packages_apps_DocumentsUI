@@ -23,21 +23,24 @@
     android:layout_height="@dimen/doc_header_height_m3"
     android:baselineAligned="false"
     android:gravity="center_vertical"
-    android:paddingStart="@dimen/main_container_padding_start"
-    android:paddingEnd="@dimen/main_container_padding_end"
+    android:paddingStart="@dimen/list_item_padding_start"
+    android:paddingEnd="@dimen/list_item_padding_end"
+    android:layout_marginEnd="@dimen/list_item_icon_margin_end"
     android:background="?attr/colorSurfaceBright"
     android:visibility="gone">
 
     <!-- Column headers: Name only for compact/medium size screen -->
     <com.android.documentsui.sorting.HeaderCell
         android:id="@android:id/title"
+        android:background="@drawable/header_cell_background"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:clickable="true"
-        android:focusable="false"
+        android:focusable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/list_header_inner_padding"
         android:animateLayoutChanges="true">
 
         <include layout="@layout/shared_cell_content_m3" />
