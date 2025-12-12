@@ -153,6 +153,7 @@ class GetInfoViewModelTest {
         `when`(resources.getString(R.string.datetime_format_12)).thenReturn("MMM d, yyyy")
         `when`(resources.getString(R.string.datetime_format_24)).thenReturn("MMM d, yyyy")
         `when`(resources.getString(R.string.get_info_unknown_file_type)).thenReturn("Unknown")
+        `when`(resources.getString(R.string.debug_stream_types)).thenReturn("Stream types")
 
         // Mock some debug fields to validate in test (they are all synchronous and they fall back
         // to "MockString" anyway, so let's avoid using a whole bunch of them that effectively will
@@ -270,6 +271,10 @@ class GetInfoViewModelTest {
                     6,
                     ListItem.Info("User ID", UserId.CURRENT_USER.identifier.toString()),
                 ),
+                ExpectedItem.Exact(
+                    5 + DEBUG_ITEM_COUNT - 1,
+                    ListItem.Info("Stream types", "[fake/type]"),
+                ),
             )
         }
 
@@ -386,7 +391,7 @@ class GetInfoViewModelTest {
         }
 
     companion object {
-        // Constant for the number of debug items added (Header + 5 infos + 17 flags).
-        const val DEBUG_ITEM_COUNT = 23
+        // Constant for the number of debug items added (Header + 5 infos + 17 flags + 1 async).
+        const val DEBUG_ITEM_COUNT = 24
     }
 }
