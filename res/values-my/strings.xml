@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"အချက်အလက် ရယူရန်"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ဝှက်ထားသည့်ဖိုင်များ ပြရန်"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ဝှက်ထားသည့်ဖိုင်များ မပြရန်"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"အနှစ်ချုပ်ကော်လံကို ပြပါ"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"အနှစ်ချုပ်ကော်လံကို မပြပါနှင့်"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> တွင် ကြည့်ရန်"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ဝင်းဒိုးသစ်"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"ဖြတ်ယူပါ"</string>
@@ -81,6 +79,8 @@
     <string name="button_show_provider" msgid="6905880493806292753">"ပံ့ပိုးပေးသူတွင် ပြရန်"</string>
     <string name="button_back" msgid="1888621708934742182">"နောက်သို့"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"ဖိုင်တွဲတွင် ပြပါ"</string>
+    <!-- no translation found for button_open_trash (8152584341121216006) -->
+    <skip />
     <string name="not_sorted" msgid="7813496644889115530">"စီမထားပါ"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"အမည်"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"အနှစ်ချုပ်"</string>
@@ -360,8 +360,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"သင်၏ကိုယ်ရေးလုံခြုံမှုကို ကာကွယ်ရန် ဖိုင်တွဲနောက်တစ်ခု ရွေးပါ"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ဖိုင်တွဲအသစ် ပြုလုပ်ရန်"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ဤစက်တွင် ရှာရန်"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"ရှာရန်"</string>
     <string name="search_results" msgid="7662182646512984171">"ရှာဖွေမှုရလဒ်များ"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"စာသား ဖယ်ရှားရန်"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"မူလဖိုင်တွဲ"</string>

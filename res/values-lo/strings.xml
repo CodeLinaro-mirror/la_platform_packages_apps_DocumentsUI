@@ -79,6 +79,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"ສະແດງໃນຜູ້ໃຫ້ບລິການ"</string>
     <string name="button_back" msgid="1888621708934742182">"ກັບຄືນ"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"ສະແດງໃນໂຟນເດີ"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"ເປີດຖັງຂີ້ເຫຍື້ອ"</string>
     <string name="not_sorted" msgid="7813496644889115530">"ບໍ່ໄດ້ຈັດຮຽງ"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"ຊື່"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"ສະຫຼຸບ"</string>
