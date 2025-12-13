@@ -75,6 +75,7 @@
     <dimen name="list_item_padding_start">16dp</dimen>
     <dimen name="list_item_padding_end">8dp</dimen>
     <dimen name="list_item_padding_vertical">4dp</dimen>
+    <dimen name="list_item_icon_margin_end">@dimen/space_extra_small_4</dimen>
     <dimen name="list_item_icon_wrapper_margin_end">12dp</dimen>
     <dimen name="list_item_icon_wrapper_size">35dp</dimen>
     <dimen name="list_item_icon_size">32dp</dimen>

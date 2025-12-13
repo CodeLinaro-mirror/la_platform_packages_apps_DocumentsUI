@@ -16,8 +16,12 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+
 import static org.junit.Assert.assertEquals;
 
+import android.platform.test.annotations.DisableFlags;
+import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
@@ -27,8 +31,10 @@ import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.SelectionHelpers;
+import com.android.documentsui.rules.OverrideFlagsRule;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,6 +45,8 @@ import java.util.List;
 public final class KeyInputHandlerTest {
 
     private static final List<String> ITEMS = TestData.create(100);
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     private KeyInputHandler mInputHandler;
     private SelectionTracker<String> mSelectionHelper;
@@ -57,8 +65,7 @@ public final class KeyInputHandlerTest {
                 mCallbacks);
     }
 
-    @Test
-    public void testArrowKey_nonShiftClearsSelection() {
+    private void testArrowKey(int expectedSelectionSize) {
         mSelectionHelper.select("11");
 
         mFocusHandler.handleKey = true;
@@ -66,7 +73,19 @@ public final class KeyInputHandlerTest {
         mInputHandler.onKey(null, event.getKeyCode(), event);
 
         Selection<String> selection = mSelectionHelper.getSelection();
-        assertEquals(selection.toString(), 0, selection.size());
+        assertEquals(selection.toString(), expectedSelectionSize, selection.size());
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
+    public void testArrowKey_nonShiftClearsSelection() {
+        testArrowKey(0);
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testArrowKey_nonShiftPreservesSelection() {
+        testArrowKey(1);
     }
 
     private static final class TestCallbacks
