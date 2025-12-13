@@ -47,6 +47,7 @@ import static org.junit.Assert.fail;
 
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -58,6 +59,7 @@ import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -79,6 +81,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @LargeTest
@@ -901,5 +904,32 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).waitUntilGone(mTimeout);
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_NO_RENAME);
         bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+    }
+
+    /** Change the dark/light theme and wait for the device to settle. */
+    private void changeNightMode(String mode) {
+        try (ParcelFileDescriptor ignored =
+                InstrumentationRegistry.getInstrumentation()
+                        .getUiAutomation()
+                        .executeShellCommand("cmd uimode night " + mode)) {
+            // Use try-with-resources to auto-close the ParcelFileDescriptor and prevent a file
+            // descriptor leak. The command output is ignored.
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    @Test
+    public void testSearchRetainsFocusOnConfigurationChange() throws UiObjectNotFoundException {
+        try {
+            changeNightMode("yes");
+            bots.search.expand();
+
+            changeNightMode("no");
+            bots.search.assertIsExpanded(true);
+        } finally {
+            changeNightMode("auto");
+        }
     }
 }

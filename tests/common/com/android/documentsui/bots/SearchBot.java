@@ -95,6 +95,10 @@ public class SearchBot extends Bots.BaseBot {
         } else {
             findDockedSearchInput().click();
         }
+        if (!showsDockedSearch()) {
+            BySelector selector = By.res(mTargetPackage + ":id/search_src_text").focused(true);
+            mDevice.wait(Until.findObject(selector), 5000);
+        }
     }
 
     public void clickSearchViewClearButton() throws UiObjectNotFoundException {
