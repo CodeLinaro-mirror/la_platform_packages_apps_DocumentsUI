@@ -17,6 +17,7 @@
 package com.android.documentsui.files.getinfo
 
 import android.app.Application
+import android.content.Context
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -43,6 +44,7 @@ class GetInfoViewModel(
     application: Application,
     private val doc: DocumentInfo,
     private val fileTypeLookup: Lookup<String, String>,
+    private val showDebug: Boolean,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : AndroidViewModel(application) {
 
@@ -57,22 +59,19 @@ class GetInfoViewModel(
     private fun loadData() {
         val context = getApplication<Application>()
 
+        var directoryCountPlaceholder: ListItem.Info? = null
         val baseList = buildList {
             // Add the "General info" header.
             add(ListItem.Header(context.getString(R.string.peek_metadata_general_info_title)))
 
             // Add the "Name" field along with the value.
-            add(
-                ListItem.Info(
-                    context.getString(R.string.sort_dimension_name),
-                    doc.displayName ?: "",
-                )
-            )
+            add(createInfo(context, R.string.sort_dimension_name, doc.displayName ?: ""))
 
             // Add the "Type" field along with the value, "Unknown" if not available.
             add(
-                ListItem.Info(
-                    context.getString(R.string.peek_metadata_type),
+                createInfo(
+                    context,
+                    R.string.peek_metadata_type,
                     fileTypeLookup.lookup(doc.mimeType)
                         ?: context.getString(R.string.get_info_unknown_file_type),
                 )
@@ -81,8 +80,9 @@ class GetInfoViewModel(
             // If the size is known format and display it.
             if (doc.size >= 0 && !doc.isDirectory) {
                 add(
-                    ListItem.Info(
-                        context.getString(R.string.peek_metadata_size),
+                    createInfo(
+                        context,
+                        R.string.peek_metadata_size,
                         DefaultInfoFormatter.formatFileSize(context, doc.size),
                     )
                 )
@@ -91,8 +91,9 @@ class GetInfoViewModel(
             // If the last modified date is known, format and display it.
             if (doc.lastModified > 0) {
                 add(
-                    ListItem.Info(
-                        context.getString(R.string.peek_metadata_date_modified),
+                    createInfo(
+                        context,
+                        R.string.peek_metadata_date_modified,
                         DefaultInfoFormatter.formatDate(context, doc.lastModified),
                     )
                 )
@@ -100,12 +101,17 @@ class GetInfoViewModel(
 
             // If the summary is available on partial documents, show that as well.
             if (doc.isPartial && doc.summary != null) {
-                add(
-                    ListItem.Info(
-                        context.getString(R.string.sort_dimension_summary),
-                        doc.summary ?: "",
-                    )
-                )
+                add(createInfo(context, R.string.sort_dimension_summary, doc.summary ?: ""))
+            }
+
+            if (doc.isDirectory) {
+                directoryCountPlaceholder = createInfo(context, R.string.directory_items, "--")
+                add(directoryCountPlaceholder)
+            }
+
+            // Add synchronous debug info.
+            if (showDebug) {
+                addAll(getDebugInfo(context))
             }
         }
 
@@ -113,22 +119,59 @@ class GetInfoViewModel(
         _items.value = baseList
 
         // If it's a directory, kick off the async calculation of the children items.
-        if (doc.isDirectory) {
-            fetchDirectoryCount()
+        directoryCountPlaceholder?.let { fetchDirectoryCount(it) }
+    }
+
+    private fun getDebugInfo(context: Context): List<ListItem> {
+        return buildList {
+            add(createHeader(context, R.string.inspector_debug_section))
+
+            add(createInfo(context, R.string.debug_user_id, doc.userId))
+            add(createInfo(context, R.string.debug_content_uri, doc.derivedUri))
+            add(createInfo(context, R.string.debug_document_id, doc.documentId))
+            add(createInfo(context, R.string.debug_raw_mimetype, doc.mimeType))
+            add(createInfo(context, R.string.debug_raw_size, doc.size))
+            add(createInfo(context, R.string.debug_is_archive, doc.isArchive))
+            add(createInfo(context, R.string.debug_is_blocked_from_tree, doc.isBlockedFromTree))
+            add(createInfo(context, R.string.debug_is_container, doc.isContainer))
+            add(createInfo(context, R.string.debug_is_partial, doc.isPartial))
+            add(createInfo(context, R.string.debug_is_virtual, doc.isVirtual))
+            add(createInfo(context, R.string.debug_supports_create, doc.isCreateSupported))
+            add(createInfo(context, R.string.debug_supports_delete, doc.isDeleteSupported))
+            add(createInfo(context, R.string.debug_supports_trash, doc.isTrashSupported))
+            add(
+                createInfo(
+                    context,
+                    R.string.debug_supports_restore_from_trash,
+                    doc.isRestoreSupported,
+                )
+            )
+            add(createInfo(context, R.string.debug_supports_metadata, doc.isMetadataSupported))
+            add(createInfo(context, R.string.debug_supports_move, doc.isMoveSupported))
+            add(createInfo(context, R.string.debug_supports_remove, doc.isRemoveSupported))
+            add(createInfo(context, R.string.debug_supports_rename, doc.isRenameSupported))
+            add(createInfo(context, R.string.debug_supports_settings, doc.isSettingsSupported))
+            add(createInfo(context, R.string.debug_supports_thumbnail, doc.isThumbnailSupported))
+            add(createInfo(context, R.string.debug_supports_weblink, doc.isWeblinkSupported))
+            add(createInfo(context, R.string.debug_supports_write, doc.isWriteSupported))
         }
     }
 
-    private fun fetchDirectoryCount() {
+    private fun fetchDirectoryCount(directoryCountPlaceholder: ListItem.Info) {
         viewModelScope.launch(ioDispatcher) {
             val count = getDirectoryChildCount(doc)
 
-            val context = getApplication<Application>()
-            val countItem =
-                ListItem.Info(context.getString(R.string.directory_items), count.toString())
-
-            // Don't update the old list, create a new one and emit again. The data shown in the
-            // "Get info" dialog is small enough that there is not a large performance cost here.
-            _items.update { oldList -> oldList + countItem }
+            // Find the existing placeholder that was added and update the value. This ensures the
+            // placeholder retains its position in the list.
+            _items.update { currentList ->
+                currentList.map { item ->
+                    if (item === directoryCountPlaceholder) {
+                        item.copy(value = count.toString())
+                    } else {
+                        item
+                    }
+                }
+            }
         }
     }
 
@@ -152,14 +195,23 @@ class GetInfoViewModel(
         }
     }
 
+    private fun createHeader(context: Context, labelRes: Int): ListItem.Header {
+        return ListItem.Header(context.getString(labelRes))
+    }
+
+    private fun createInfo(context: Context, labelRes: Int, value: Any?): ListItem.Info {
+        return ListItem.Info(context.getString(labelRes), value.toString())
+    }
+
     class Factory(
         private val application: Application,
         private val doc: DocumentInfo,
         private val fileTypeLookup: Lookup<String, String>,
+        private val showDebug: Boolean,
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return GetInfoViewModel(application, doc, fileTypeLookup) as T
+            return GetInfoViewModel(application, doc, fileTypeLookup, showDebug) as T
         }
     }
 

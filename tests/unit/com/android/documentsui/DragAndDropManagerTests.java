@@ -40,7 +40,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ContentUris;
-import android.content.Context;
+import android.content.pm.ProviderInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -76,6 +76,7 @@ import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.KeyEvents;
 import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestDocumentClipper;
+import com.android.documentsui.testing.TestDocumentsAccess;
 import com.android.documentsui.testing.TestDrawable;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestEventListener;
@@ -97,7 +98,6 @@ import org.mockito.junit.MockitoRule;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
@@ -105,7 +105,6 @@ import java.util.stream.Collectors;
 public class DragAndDropManagerTests {
 
     private static final Uri MEDIA_STORE_URI_0 = Uri.parse("content://media/files/1");
-    private static final Uri MEDIA_STORE_URI_1 = Uri.parse("content://media/files/2");
     private static final Uri NON_MEDIA_STORE_URI_0 = Uri.parse("content://non-media/files/1");
     private static final String PLURAL_FORMAT = "%1$d items";
     private static final boolean CAN_DRAG_AND_DROP = true;
@@ -117,6 +116,7 @@ public class DragAndDropManagerTests {
     private View mStartDragView;
     private View mUpdateShadowView;
     private TestActionHandler mActions;
+    private TestDocumentsAccess mDocs;
 
     private TestDocumentClipper mClipper;
     private TestSelectionDetails mDetails;
@@ -147,13 +147,13 @@ public class DragAndDropManagerTests {
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Mock private Permissions mMockPermissions;
-    @Mock private BiFunction<Context, Uri, Uri> mMockMediaStoreToDocumentUriRewriter;
 
     @Before
     public void setUp() {
         mEnv = TestEnv.create();
         mActivity = TestActivity.create(mEnv);
         mActivity.resources.plurals.put(R.plurals.elements_dragged, PLURAL_FORMAT);
+        mEnv.providers.configurePm(mActivity.packageMgr);
 
         mShadowBuilder = TestDragShadowBuilder.create();
 
@@ -161,6 +161,7 @@ public class DragAndDropManagerTests {
         mUpdateShadowView = Views.createTestView();
 
         mActions = new TestActionHandler(mEnv);
+        mDocs = new TestDocumentsAccess();
 
         mClipper = new TestDocumentClipper();
         mDetails = new TestSelectionDetails();
@@ -180,7 +181,7 @@ public class DragAndDropManagerTests {
         mFlagListener = new TestEventListener<>();
 
         mManager = new RuntimeDragAndDropManager(mActivity, mClipper, mEnv.mExecutor,
-                mShadowBuilder, mDefaultIcon, mMockMediaStoreToDocumentUriRewriter) {
+                mShadowBuilder, mDefaultIcon, mEnv.providers) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1012,6 +1013,7 @@ public class DragAndDropManagerTests {
                         mManager,
                         TestProvidersAccess.HAMMY,
                         mActions,
+                        mDocs,
                         mCallback,
                         mManager.getInvalidDestinations()));
 
@@ -1046,6 +1048,7 @@ public class DragAndDropManagerTests {
                         mManager,
                         root,
                         mActions,
+                        mDocs,
                         mCallback,
                         mManager.getInvalidDestinations()));
 
@@ -1075,6 +1078,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.DOWNLOADS,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1109,6 +1113,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.DOWNLOADS,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1146,6 +1151,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.DOWNLOADS,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1187,6 +1193,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.DOWNLOADS,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1222,7 +1229,8 @@ public class DragAndDropManagerTests {
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.HAMMY, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertFalse(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         verify(mMockPermissions).release();
     }
@@ -1247,7 +1255,8 @@ public class DragAndDropManagerTests {
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertTrue(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         mEnv.beforeAsserts();
 
@@ -1277,7 +1286,8 @@ public class DragAndDropManagerTests {
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertTrue(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         mEnv.beforeAsserts();
 
@@ -1305,7 +1315,8 @@ public class DragAndDropManagerTests {
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertTrue(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         mEnv.beforeAsserts();
 
@@ -1344,6 +1355,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.TEST_SHORTCUT,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1386,6 +1398,7 @@ public class DragAndDropManagerTests {
                         mManager,
                         TestProvidersAccess.HOME_SCREEN_SHORTCUT,
                         mActions,
+                        mDocs,
                         mCallback,
                         mManager.getInvalidDestinations()));
 
@@ -1422,6 +1435,7 @@ public class DragAndDropManagerTests {
                         mManager,
                         TestProvidersAccess.HOME_SCREEN_SHORTCUT,
                         mActions,
+                        mDocs,
                         mCallback,
                         mManager.getInvalidDestinations()));
 
@@ -1464,6 +1478,7 @@ public class DragAndDropManagerTests {
                 newManager,
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, docInfo),
                 spyActionHandler,
+                mDocs,
                 mCallback);
 
         mEnv.beforeAsserts();
@@ -1480,7 +1495,7 @@ public class DragAndDropManagerTests {
     private DragAndDropManager createNewManagerWithSpyClipper(TestDocumentClipper spyClipper) {
         DragAndDropManager newManager = new RuntimeDragAndDropManager(
                 mActivity, spyClipper, mEnv.mExecutor, mShadowBuilder, mDefaultIcon,
-                mMockMediaStoreToDocumentUriRewriter) {
+                mEnv.providers) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1528,6 +1543,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.TRASH_ROOT,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1560,7 +1576,8 @@ public class DragAndDropManagerTests {
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
         assertFalse(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         verify(mMockPermissions).release();
     }
@@ -1684,6 +1701,7 @@ public class DragAndDropManagerTests {
                 mManager,
                 TestProvidersAccess.HOME,
                 mActions,
+                mDocs,
                 mCallback,
                 mManager.getInvalidDestinations());
 
@@ -1703,8 +1721,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_COPY,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1718,8 +1737,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_COPY,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1729,8 +1749,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1744,18 +1765,20 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
     @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
-    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNonMediaStoreUri()
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNonDocumentUri()
             throws Exception {
         testDrop_fromOtherApps(
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
                 /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
     }
@@ -1766,12 +1789,13 @@ public class DragAndDropManagerTests {
         Flags.FLAG_ENABLE_TRASH_FLOW_RO,
         Flags.FLAG_USE_MATERIAL3
     })
-    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNonMediaStoreUri()
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNonDocumentUri()
             throws Exception {
         testDrop_fromOtherApps(
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
                 /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
     }
@@ -1784,8 +1808,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ null,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1800,8 +1825,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ null,
-                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1811,12 +1837,9 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME, TestEnv.FOLDER_0),
                 /* dstDocChildList= */ Collections.singletonList(TestEnv.FILE_TXT),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(
-                        ContentUris.withAppendedId(
-                                ContentUris.removeId(MEDIA_STORE_URI_0),
-                                Long.parseLong(TestEnv.FILE_TXT.documentId)),
-                        MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     @Test
@@ -1830,18 +1853,46 @@ public class DragAndDropManagerTests {
                 /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
                 /* dstStack= */ new DocumentStack(TestProvidersAccess.HOME),
                 /* dstDocChildList= */ Collections.singletonList(TestEnv.FILE_TXT),
+                /* forceUriPermissions= */ true,
                 /* permissions= */ mMockPermissions,
-                /* uriList= */ List.of(
-                        ContentUris.withAppendedId(
-                                ContentUris.removeId(MEDIA_STORE_URI_0),
-                                Long.parseLong(TestEnv.FILE_TXT.documentId)),
-                        MEDIA_STORE_URI_1));
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withUnforcedUriPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_0),
+                /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ false,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withUnforcedUriPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dstStack= */ new DocumentStack(TestProvidersAccess.DOWNLOADS),
+                /* dstDocChildList= */ Collections.emptyList(),
+                /* forceUriPermissions= */ false,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, TestEnv.FILE_TXT.derivedUri));
     }
 
     private void testDrop_fromOtherApps(
             @OpType int expectedOpType,
             DocumentStack dstStack,
             List<DocumentInfo> dstDocChildList,
+            boolean forceUriPermissions,
             @Nullable Permissions permissions,
             List<Uri> uriList)
             throws Exception {
@@ -1865,18 +1916,17 @@ public class DragAndDropManagerTests {
                 .get(EXTERNAL_STORAGE_PROVIDER_AUTHORITY)
                 .setNextChildDocumentsReturns(
                         dstDocChildList.toArray(new DocumentInfo[dstDocChildList.size()]));
+        mEnv.providers.nextProviderInfo = new ProviderInfo();
+        mEnv.providers.nextProviderInfo.forceUriPermissions = forceUriPermissions;
 
-        // Set up URI rewriter.
-        Mockito.when(mMockMediaStoreToDocumentUriRewriter.apply(any(), any()))
-                .thenAnswer(
-                        invocation -> {
-                            final Uri uri = invocation.getArgument(1);
-                            return Providers.isMediaStoreUri(uri)
-                                    ? DocumentsContract.buildDocumentUri(
-                                            EXTERNAL_STORAGE_PROVIDER_AUTHORITY,
-                                            Long.toString(ContentUris.parseId(uri)))
-                                    : null;
-                        });
+        // Set up documents access.
+        if (!uriList.isEmpty() && Providers.isMediaStoreUri(uriList.get(0))) {
+            mDocs.nextIsDocumentsUri = true;
+            mDocs.mNextDocumentUri =
+                    DocumentsContract.buildDocumentUri(
+                            EXTERNAL_STORAGE_PROVIDER_AUTHORITY,
+                            Long.toString(ContentUris.parseId(uriList.get(0))));
+        }
 
         // Perform and verify state update.
         assertEquals(
@@ -1895,10 +1945,17 @@ public class DragAndDropManagerTests {
                                 mManager,
                                 dstStack.getRoot(),
                                 mActions,
+                                mDocs,
                                 mCallback,
                                 mManager.getInvalidDestinations())
                         : mManager.drop(
-                                permissions, mClipData, mManager, dstStack, mActions, mCallback));
+                                permissions,
+                                mClipData,
+                                mManager,
+                                dstStack,
+                                mActions,
+                                mDocs,
+                                mCallback));
 
         mEnv.beforeAsserts();
 
@@ -1925,10 +1982,13 @@ public class DragAndDropManagerTests {
                 final Uri actualUri = actualItem.getUri();
                 assertNotNull(actualUri);
 
-                final Uri expectedUri =
-                        DocumentsContract.buildDocumentUri(
-                                EXTERNAL_STORAGE_PROVIDER_AUTHORITY,
-                                Long.toString(ContentUris.parseId(uriList.get(i))));
+                Uri expectedUri = uriList.get(i);
+                if (Providers.isMediaStoreUri(expectedUri)) {
+                    expectedUri =
+                            DocumentsContract.buildDocumentUri(
+                                    EXTERNAL_STORAGE_PROVIDER_AUTHORITY,
+                                    Long.toString(ContentUris.parseId(expectedUri)));
+                }
                 assertEquals(expectedUri, actualUri);
             }
 
@@ -1987,7 +2047,8 @@ public class DragAndDropManagerTests {
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         assertFalse(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         verify(mMockPermissions).release();
     }
@@ -2019,6 +2080,7 @@ public class DragAndDropManagerTests {
                         mManager,
                         TestProvidersAccess.DOWNLOADS,
                         mActions,
+                        mDocs,
                         mCallback,
                         mManager.getInvalidDestinations()));
 
@@ -2053,6 +2115,7 @@ public class DragAndDropManagerTests {
                         mManager,
                         TestProvidersAccess.DOWNLOADS,
                         mActions,
+                        mDocs,
                         mCallback,
                         mManager.getInvalidDestinations()));
 
@@ -2087,7 +2150,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(
                         TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertFalse(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         verify(mMockPermissions).release();
     }
@@ -2115,7 +2179,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(
                         TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
         assertTrue(
-                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+                mManager.drop(
+                        mMockPermissions, mClipData, mManager, stack, mActions, mDocs, mCallback));
 
         mEnv.beforeAsserts();
 

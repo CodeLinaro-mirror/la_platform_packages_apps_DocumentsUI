@@ -24,6 +24,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.android.documentsui.ActionHandler;
+import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.DragAndDropManager;
 import com.android.documentsui.DragAndDropManager.Permissions;
 import com.android.documentsui.MenuManager.SelectionDetails;
@@ -99,6 +100,7 @@ public class TestDragAndDropManager implements DragAndDropManager {
             Object localState,
             SidebarEntryItemInfo root,
             ActionHandler actions,
+            DocumentsAccess docs,
             FileOperations.Callback callback,
             List<Uri> invalidDest) {
         return dropOnRootHandler.accept(new Triple(permissions, clipData, root));
@@ -111,6 +113,7 @@ public class TestDragAndDropManager implements DragAndDropManager {
             Object localState,
             DocumentStack dstStack,
             ActionHandler actions,
+            DocumentsAccess docs,
             FileOperations.Callback callback) {
         return dropOnDocumentHandler.accept(new Triple(permissions, clipData, dstStack));
     }
