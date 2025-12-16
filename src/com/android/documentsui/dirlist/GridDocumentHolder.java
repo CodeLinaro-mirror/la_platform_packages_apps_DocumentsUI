@@ -282,7 +282,8 @@ final class GridDocumentHolder extends DocumentHolder {
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         mModelId = modelId;
         mDoc = doc;
 
@@ -365,6 +366,6 @@ final class GridDocumentHolder extends DocumentHolder {
             mBullet.setVisibility(View.GONE);
         }
 
-        bindSyncIcons(mDoc);
+        bindSyncIcons(mDoc, justFinishedSync);
     }
 }

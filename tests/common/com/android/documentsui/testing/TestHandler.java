@@ -46,6 +46,11 @@ public class TestHandler extends Handler {
         return mTimer.hasScheduledTask();
     }
 
+    /** The execute time of the next scheduled message. */
+    public long executeTimeOfNextMessage() {
+        return mTimer.executeTimeOfNextTask();
+    }
+
     public void dispatchNextMessage() {
         mTimer.fastForwardToNextTask();
 

@@ -336,7 +336,8 @@ final class ListDocumentHolder extends DocumentHolder {
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         mModelId = modelId;
         mDoc = doc;
 
@@ -362,7 +363,7 @@ final class ListDocumentHolder extends DocumentHolder {
 
         mTitle.setVisibility(View.VISIBLE);
 
-        bindSyncIcons(mDoc);
+        bindSyncIcons(mDoc, justFinishedSync);
 
         if (mDoc.isDirectory() && !isUseMaterial3FlagEnabled()) {
             // Note, we don't show any details for any directory...ever.

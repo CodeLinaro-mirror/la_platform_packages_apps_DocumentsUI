@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 
 import android.app.AuthenticationRequiredException;
@@ -65,6 +66,7 @@ public class Model {
     /** Maps Model ID to cursor positions, for looking up items by Model ID. */
     private final Map<String, Integer> mPositions = new HashMap<>();
     private final Set<String> mFileNames = new HashSet<>();
+    private final Set<String> mSyncInProgressModelIds = new HashSet<>();
 
     private boolean mIsLoading;
     private List<EventListener<Update>> mUpdateListeners = new ArrayList<>();
@@ -166,6 +168,11 @@ public class Model {
             }
         }
 
+        if (isCloudFeaturesFlagEnabled()) {
+            mSyncInProgressModelIds.clear();
+            mSyncInProgressModelIds.addAll(result.getSyncInProgressModelIds());
+        }
+
         final Bundle extras = mCursor.getExtras();
         if (extras == null) {
             if (isSearchV2Enabled()) {
@@ -178,6 +185,10 @@ public class Model {
         }
 
         notifyUpdateListeners();
+    }
+
+    public Set<String> getSyncInProgressModelIds() {
+        return mSyncInProgressModelIds;
     }
 
     /**
