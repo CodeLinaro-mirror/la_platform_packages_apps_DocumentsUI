@@ -243,7 +243,7 @@
     <string name="copy_failed" msgid="3700193913993844675">"کپی نشد"</string>
     <string name="move_failed" msgid="7692364307225994220">"انتقال داده نشد"</string>
     <string name="delete_failed" msgid="2642684566325252513">"حذف نشد"</string>
-    <string name="compress_failed" msgid="7397502181042157261">"امکان فشرده‌سازی وجود ندارد"</string>
+    <string name="compress_failed" msgid="7397502181042157261">"فشرده‌سازی نشد"</string>
     <string name="extract_failed" msgid="8372397499452831323">"استخراج نشد"</string>
     <string name="expand_label" msgid="5683357671239615207">"ازهم باز کردن"</string>
     <string name="collapse_label" msgid="4530974883269531062">"جمع کردن"</string>
@@ -334,8 +334,8 @@
     <string name="search_last_modified_any_time" msgid="6027501367865939696">"هر زمانی"</string>
     <string name="search_last_modified_1_day" msgid="7775353928859139915">"امروز"</string>
     <string name="search_last_modified_2_days" msgid="7885735119033678756">"دیروز"</string>
-    <string name="search_last_modified_7_days" msgid="7634290601544418836">"هفته گذشته"</string>
-    <string name="search_last_modified_30_days" msgid="4936787546211708940">"ماه گذشته"</string>
+    <string name="search_last_modified_7_days" msgid="7634290601544418836">"هفته پیش"</string>
+    <string name="search_last_modified_30_days" msgid="4936787546211708940">"ماه پیش"</string>
     <string name="search_last_modified_365_days" msgid="7147134152974373466">"سال گذشته"</string>
     <string name="search_file_type_all" msgid="6613664493134355781">"همه انواع"</string>
     <string name="delete_search_history" msgid="2202015025607694515">"حذف سابقه جستجوی <xliff:g id="TEXT">%1$s</xliff:g>"</string>
