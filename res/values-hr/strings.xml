@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Informacije"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Prikaži skrivene datoteke"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ne prikazuj skrivene datot."</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"Prikaži stupac sažetka"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"Ne prikazuj stupac sažetka"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Prikaži na usluzi <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Novi prozor"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Izreži"</string>
@@ -81,6 +79,8 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Prikaži na davatelju usluga"</string>
     <string name="button_back" msgid="1888621708934742182">"Natrag"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Prikaži u mapi"</string>
+    <!-- no translation found for button_open_trash (8152584341121216006) -->
+    <skip />
     <string name="not_sorted" msgid="7813496644889115530">"Nije poredano"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Naziv"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Sažetak"</string>
@@ -378,8 +378,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Radi zaštite vlastite sigurnosti odaberite neku drugu mapu"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Izradi novu mapu"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Pretraži ovaj uređaj"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"Pretražite"</string>
     <string name="search_results" msgid="7662182646512984171">"Rezultati pretraživanja"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Izbriši tekst"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Korijenska mapa"</string>
@@ -421,5 +420,5 @@
     <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Datoteka u otpadu"</string>
     <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Ta se datoteka nalazi u vašem otpadu i ne može se otvoriti. Vratite je iz otpada da biste joj pristupili."</string>
     <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Vrati datoteku"</string>
-    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Trenutačno ste offline. Neke datoteke i funkcije nisu dostupne. Povežite se s internetom da biste dobili potpuni pristup."</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Trenutačno ste offline. Neke datoteke i funkcije nisu dostupne. Povežite se s internetom za potpuni pristup."</string>
 </resources>

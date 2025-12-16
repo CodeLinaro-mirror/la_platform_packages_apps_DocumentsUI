@@ -29,11 +29,13 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Lookup
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * The ViewModel that backs the "Get info" dialog. There are a number of items in the list that are
@@ -48,21 +50,52 @@ class GetInfoViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : AndroidViewModel(application) {
 
-    /** The list of items to be shown in the GetInfoDialog. */
-    private val _items = MutableStateFlow<List<ListItem>>(emptyList<ListItem>())
-    val items: StateFlow<List<ListItem>> = _items.asStateFlow()
+    /**
+     * Asynchronously fetches the directory item count. Will emit a placeholder first to reserve the
+     * UI spot, then performs the DocumentsProvider query on the IO dispatcher for the final count.
+     */
+    private val directoryCountFlow: Flow<List<ListItem>> =
+        flow {
+                if (!doc.isDirectory) {
+                    emit(emptyList())
+                    return@flow
+                }
 
-    init {
-        loadData()
-    }
+                val context = getApplication<Application>()
 
-    private fun loadData() {
+                // The result is a single count, so emit a placeholder first so the items don't get
+                // pushed down when the value is ready.
+                emit(listOf(createInfo(context, R.string.directory_items, "--")))
+
+                val count = getDirectoryChildCount(doc)
+                emit(listOf(createInfo(context, R.string.directory_items, count.toString())))
+            }
+            .flowOn(ioDispatcher)
+
+    /**
+     * A StateFlow that defines the final list for the dialog. The data is combined using the
+     * statically available information the `DocumentInfo` with the asynchronously fetched
+     * information retrieved using the Flows.
+     */
+    val items: StateFlow<List<ListItem>> =
+        directoryCountFlow
+            .map { dirCountItems -> buildItemList(dirCountItems) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = buildItemList(emptyList()),
+            )
+
+    /**
+     * Builds the list of items in the dialog. Asynchronously fetched items are passed in via
+     * parameters and the method is called when new values are emitted.
+     */
+    private fun buildItemList(dirCountItems: List<ListItem>): List<ListItem> {
         val context = getApplication<Application>()
 
-        var directoryCountPlaceholder: ListItem.Info? = null
-        val baseList = buildList {
+        return buildList {
             // Add the "General info" header.
-            add(ListItem.Header(context.getString(R.string.peek_metadata_general_info_title)))
+            add(createHeader(context, R.string.peek_metadata_general_info_title))
 
             // Add the "Name" field along with the value.
             add(createInfo(context, R.string.sort_dimension_name, doc.displayName ?: ""))
@@ -73,7 +106,7 @@ class GetInfoViewModel(
                     context,
                     R.string.peek_metadata_type,
                     fileTypeLookup.lookup(doc.mimeType)
-                        ?: context.getString(R.string.get_info_unknown_file_type),
+                        ?: context.resources.getString(R.string.get_info_unknown_file_type),
                 )
             )
 
@@ -104,75 +137,40 @@ class GetInfoViewModel(
                 add(createInfo(context, R.string.sort_dimension_summary, doc.summary ?: ""))
             }
 
-            if (doc.isDirectory) {
-                directoryCountPlaceholder = createInfo(context, R.string.directory_items, "--")
-                add(directoryCountPlaceholder)
-            }
+            addAll(dirCountItems)
 
             // Add synchronous debug info.
             if (showDebug) {
                 addAll(getDebugInfo(context))
             }
         }
-
-        // Emit the initial synchronous data immediately.
-        _items.value = baseList
-
-        // If it's a directory, kick off the async calculation of the children items.
-        directoryCountPlaceholder?.let { fetchDirectoryCount(it) }
     }
 
-    private fun getDebugInfo(context: Context): List<ListItem> {
-        return buildList {
-            add(createHeader(context, R.string.inspector_debug_section))
+    private fun getDebugInfo(context: Context): List<ListItem> = buildList {
+        add(createHeader(context, R.string.inspector_debug_section))
 
-            add(createInfo(context, R.string.debug_user_id, doc.userId))
-            add(createInfo(context, R.string.debug_content_uri, doc.derivedUri))
-            add(createInfo(context, R.string.debug_document_id, doc.documentId))
-            add(createInfo(context, R.string.debug_raw_mimetype, doc.mimeType))
-            add(createInfo(context, R.string.debug_raw_size, doc.size))
-            add(createInfo(context, R.string.debug_is_archive, doc.isArchive))
-            add(createInfo(context, R.string.debug_is_blocked_from_tree, doc.isBlockedFromTree))
-            add(createInfo(context, R.string.debug_is_container, doc.isContainer))
-            add(createInfo(context, R.string.debug_is_partial, doc.isPartial))
-            add(createInfo(context, R.string.debug_is_virtual, doc.isVirtual))
-            add(createInfo(context, R.string.debug_supports_create, doc.isCreateSupported))
-            add(createInfo(context, R.string.debug_supports_delete, doc.isDeleteSupported))
-            add(createInfo(context, R.string.debug_supports_trash, doc.isTrashSupported))
-            add(
-                createInfo(
-                    context,
-                    R.string.debug_supports_restore_from_trash,
-                    doc.isRestoreSupported,
-                )
-            )
-            add(createInfo(context, R.string.debug_supports_metadata, doc.isMetadataSupported))
-            add(createInfo(context, R.string.debug_supports_move, doc.isMoveSupported))
-            add(createInfo(context, R.string.debug_supports_remove, doc.isRemoveSupported))
-            add(createInfo(context, R.string.debug_supports_rename, doc.isRenameSupported))
-            add(createInfo(context, R.string.debug_supports_settings, doc.isSettingsSupported))
-            add(createInfo(context, R.string.debug_supports_thumbnail, doc.isThumbnailSupported))
-            add(createInfo(context, R.string.debug_supports_weblink, doc.isWeblinkSupported))
-            add(createInfo(context, R.string.debug_supports_write, doc.isWriteSupported))
-        }
-    }
-
-    private fun fetchDirectoryCount(directoryCountPlaceholder: ListItem.Info) {
-        viewModelScope.launch(ioDispatcher) {
-            val count = getDirectoryChildCount(doc)
-
-            // Find the existing placeholder that was added and update the value. This ensures the
-            // placeholder retains its position in the list.
-            _items.update { currentList ->
-                currentList.map { item ->
-                    if (item === directoryCountPlaceholder) {
-                        item.copy(value = count.toString())
-                    } else {
-                        item
-                    }
-                }
-            }
-        }
+        add(createInfo(context, R.string.debug_user_id, doc.userId))
+        add(createInfo(context, R.string.debug_content_uri, doc.derivedUri))
+        add(createInfo(context, R.string.debug_document_id, doc.documentId))
+        add(createInfo(context, R.string.debug_raw_mimetype, doc.mimeType))
+        add(createInfo(context, R.string.debug_raw_size, doc.size))
+        add(createInfo(context, R.string.debug_is_archive, doc.isArchive))
+        add(createInfo(context, R.string.debug_is_blocked_from_tree, doc.isBlockedFromTree))
+        add(createInfo(context, R.string.debug_is_container, doc.isContainer))
+        add(createInfo(context, R.string.debug_is_partial, doc.isPartial))
+        add(createInfo(context, R.string.debug_is_virtual, doc.isVirtual))
+        add(createInfo(context, R.string.debug_supports_create, doc.isCreateSupported))
+        add(createInfo(context, R.string.debug_supports_delete, doc.isDeleteSupported))
+        add(createInfo(context, R.string.debug_supports_trash, doc.isTrashSupported))
+        add(createInfo(context, R.string.debug_supports_restore_from_trash, doc.isRestoreSupported))
+        add(createInfo(context, R.string.debug_supports_metadata, doc.isMetadataSupported))
+        add(createInfo(context, R.string.debug_supports_move, doc.isMoveSupported))
+        add(createInfo(context, R.string.debug_supports_remove, doc.isRemoveSupported))
+        add(createInfo(context, R.string.debug_supports_rename, doc.isRenameSupported))
+        add(createInfo(context, R.string.debug_supports_settings, doc.isSettingsSupported))
+        add(createInfo(context, R.string.debug_supports_thumbnail, doc.isThumbnailSupported))
+        add(createInfo(context, R.string.debug_supports_weblink, doc.isWeblinkSupported))
+        add(createInfo(context, R.string.debug_supports_write, doc.isWriteSupported))
     }
 
     private fun getDirectoryChildCount(doc: DocumentInfo): Int {
@@ -196,11 +194,11 @@ class GetInfoViewModel(
     }
 
     private fun createHeader(context: Context, labelRes: Int): ListItem.Header {
-        return ListItem.Header(context.getString(labelRes))
+        return ListItem.Header(context.resources.getString(labelRes))
     }
 
     private fun createInfo(context: Context, labelRes: Int, value: Any?): ListItem.Info {
-        return ListItem.Info(context.getString(labelRes), value.toString())
+        return ListItem.Info(context.resources.getString(labelRes), value.toString())
     }
 
     class Factory(

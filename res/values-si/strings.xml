@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"තොරතුරු ලබා ගන්න"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"සැඟවුණු ගොනු පෙන්වන්න"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"සැඟවුණු ගොනු නොපෙන්වන්න"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"සාරාංශ තීරුව පෙන්වන්න"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"සාරාංශ තීරුව නොපෙන්වන්න"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> තුළ බලන්න"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"නව කවුළුව"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"කපන්න"</string>
@@ -81,6 +79,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"සැපයුම්කරු තුළ පෙන්වන්න"</string>
     <string name="button_back" msgid="1888621708934742182">"ආපසු යන්න"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"ෆෝල්ඩරයේ පෙන්වන්න"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"කුණු කූඩය විවෘත කරන්න"</string>
     <string name="not_sorted" msgid="7813496644889115530">"අනුපිළිවෙළට සකසා නැත"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"නම‍"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"සාරාංශය"</string>
@@ -360,8 +359,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ඔබේ රහස්‍යතාව ආරක්ෂා කිරීමට, තවත් ෆෝල්ඩරයක් තෝරා ගන්න"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"නව ෆෝල්ඩරය තනන්න"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"මෙම උපාංගය සොයන්න"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"සෙවීම"</string>
     <string name="search_results" msgid="7662182646512984171">"සෙවුම් ප්‍රතිඵල"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"පෙළ හිස් කරන්න"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"මූල ෆෝල්ඩරය"</string>

@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"정보 확인"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"숨겨진 파일 표시"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"숨겨진 파일 표시 안함"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"요약 열 표시"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"요약 열 표시 안함"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>에서 보기"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"새 창"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"잘라내기"</string>
@@ -81,6 +79,8 @@
     <string name="button_show_provider" msgid="6905880493806292753">"제공업체 앱에서 보기"</string>
     <string name="button_back" msgid="1888621708934742182">"뒤로"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"폴더에서 보기"</string>
+    <!-- no translation found for button_open_trash (8152584341121216006) -->
+    <skip />
     <string name="not_sorted" msgid="7813496644889115530">"정렬되지 않음"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"이름"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"요약"</string>
@@ -360,8 +360,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"개인정보 보호를 위해 다른 폴더를 선택하세요."</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"새 폴더 만들기"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"이 기기 검색"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"검색"</string>
     <string name="search_results" msgid="7662182646512984171">"검색 결과"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"텍스트 삭제"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"루트 폴더"</string>

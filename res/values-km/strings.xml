@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ទទួល​ព័ត៌មាន"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"បង្ហាញឯកសារ​ដែលបានលាក់"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"កុំបង្ហាញ​ឯកសារដែល​បានលាក់"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"បង្ហាញជួរឈរសេចក្ដីសង្ខេប"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"កុំបង្ហាញជួរឈរសេចក្ដីសង្ខេប"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"មើល​នៅក្នុង <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ផ្ទាំងវិនដូថ្មី"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"កាត់"</string>
@@ -81,6 +79,8 @@
     <string name="button_show_provider" msgid="6905880493806292753">"បង្ហាញ​នៅក្នុង​ក្រុមហ៊ុន​ផ្តល់សេវា"</string>
     <string name="button_back" msgid="1888621708934742182">"ថយក្រោយ"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"បង្ហាញនៅក្នុងថត"</string>
+    <!-- no translation found for button_open_trash (8152584341121216006) -->
+    <skip />
     <string name="not_sorted" msgid="7813496644889115530">"Not sorted"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"ឈ្មោះ"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"សេចក្តីសង្ខេប"</string>
@@ -360,8 +360,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"ដើម្បី​ការពារ​ឯកជនភាព​របស់អ្នក សូម​ជ្រើសរើស​ថតផ្សេងទៀត"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"បង្កើត​ថត​ថ្មី"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ស្វែងរកឧបករណ៍នេះ"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"ស្វែងរក"</string>
     <string name="search_results" msgid="7662182646512984171">"លទ្ធផលស្វែងរក"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"សម្អាតអក្សរ"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ថតដើម"</string>

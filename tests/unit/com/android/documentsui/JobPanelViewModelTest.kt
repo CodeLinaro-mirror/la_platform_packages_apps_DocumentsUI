@@ -38,69 +38,72 @@ import org.junit.runner.RunWith
 
 private fun List<MutableJobProgress>.toJobProgressList() = map { item -> item.toJobProgress() }
 
-private fun List<MutableJobProgress>.withExpandStates(vararg expandStates: Boolean):
-        List<ProgressViewModel> =
-    toJobProgressList().zip(expandStates.asList(), ::ProgressViewModel)
+private fun List<MutableJobProgress>.withExpandStates(
+    vararg expandStates: Boolean
+): List<ProgressViewModel> = toJobProgressList().zip(expandStates.asList(), ::ProgressViewModel)
 
 @SmallTest
 @EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
 @RunWith(AndroidJUnit4::class)
 class JobPanelViewModelTest {
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     @Test
     fun testListModifications() {
         val viewModel = JobPanelViewModel()
 
-        val progress1 = MutableJobProgress(
-            id = "Job1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_CREATED,
-            msg = "Job1",
-            hasFailures = false,
-        )
-        val progress2 = MutableJobProgress(
-            id = "Job2",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_CREATED,
-            msg = "Job2",
-            hasFailures = false,
-        )
+        val progress1 =
+            MutableJobProgress(
+                id = "Job1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_CREATED,
+                msg = "Job1",
+                hasFailures = false,
+            )
+        val progress2 =
+            MutableJobProgress(
+                id = "Job2",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_CREATED,
+                msg = "Job2",
+                hasFailures = false,
+            )
 
         viewModel.updateProgress(listOf(progress1, progress2).toJobProgressList())
         assertEquals(
-            listOf(progress1, progress2)
-                .withExpandStates(false, false),
-            ArrayList(viewModel.currentJobs.values)
+            listOf(progress1, progress2).withExpandStates(false, false),
+            ArrayList(viewModel.currentJobs.values),
         )
 
-        val progress3 = MutableJobProgress(
-            id = "Job3",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_STARTED,
-            msg = "Job3",
-            hasFailures = false,
-        )
+        val progress3 =
+            MutableJobProgress(
+                id = "Job3",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_STARTED,
+                msg = "Job3",
+                hasFailures = false,
+            )
 
-        val progress4 = MutableJobProgress(
-            id = "Job4",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job4",
-            hasFailures = false,
-            currentBytes = 50,
-            requiredBytes = 100,
-            msRemaining = 4000
-        )
+        val progress4 =
+            MutableJobProgress(
+                id = "Job4",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job4",
+                hasFailures = false,
+                currentBytes = 50,
+                requiredBytes = 100,
+                msRemaining = 4000,
+            )
 
         viewModel.toggleExpanded("Job2")
-        viewModel
-            .updateProgress(listOf(progress1, progress2, progress3, progress4).toJobProgressList())
+        viewModel.updateProgress(
+            listOf(progress1, progress2, progress3, progress4).toJobProgressList()
+        )
         assertEquals(
             listOf(progress1, progress2, progress3, progress4)
                 .withExpandStates(false, true, false, false),
-            ArrayList(viewModel.currentJobs.values)
+            ArrayList(viewModel.currentJobs.values),
         )
 
         progress1.state = Job.STATE_COMPLETED
@@ -109,38 +112,34 @@ class JobPanelViewModelTest {
 
         viewModel.updateProgress(listOf(progress1, progress2, progress4).toJobProgressList())
         assertEquals(
-            listOf(progress1, progress2, progress4)
-                .withExpandStates(false, true, false),
-            ArrayList(viewModel.currentJobs.values)
+            listOf(progress1, progress2, progress4).withExpandStates(false, true, false),
+            ArrayList(viewModel.currentJobs.values),
         )
 
         progress4.state = Job.STATE_CANCELED
         viewModel.updateProgress(listOf(progress4).toJobProgressList())
         // Progresses 1, 2 and 4 should be kept as they are in final states.
         assertEquals(
-            listOf(progress1, progress2, progress4)
-                .withExpandStates(false, true, false),
-            ArrayList(viewModel.currentJobs.values)
+            listOf(progress1, progress2, progress4).withExpandStates(false, true, false),
+            ArrayList(viewModel.currentJobs.values),
         )
 
         viewModel.updateProgress(emptyList())
         assertEquals(
-            listOf(progress1, progress2, progress4)
-                .withExpandStates(false, true, false),
-            ArrayList(viewModel.currentJobs.values)
+            listOf(progress1, progress2, progress4).withExpandStates(false, true, false),
+            ArrayList(viewModel.currentJobs.values),
         )
 
         viewModel.dismissProgress("Job1")
         assertEquals(
-            listOf(progress2, progress4)
-                .withExpandStates(true, false),
-            ArrayList(viewModel.currentJobs.values)
+            listOf(progress2, progress4).withExpandStates(true, false),
+            ArrayList(viewModel.currentJobs.values),
         )
 
         viewModel.dismissProgress("Job4")
         assertEquals(
             listOf(progress2).withExpandStates(true),
-            ArrayList(viewModel.currentJobs.values)
+            ArrayList(viewModel.currentJobs.values),
         )
     }
 
@@ -151,19 +150,20 @@ class JobPanelViewModelTest {
         viewModel.dismissProgress("Job1")
         assertTrue(viewModel.currentJobs.isEmpty())
 
-        val progress1 = MutableJobProgress(
-            id = "Job1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_CREATED,
-            msg = "Job1",
-            hasFailures = false,
-        )
+        val progress1 =
+            MutableJobProgress(
+                id = "Job1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_CREATED,
+                msg = "Job1",
+                hasFailures = false,
+            )
 
         viewModel.updateProgress(listOf(progress1).toJobProgressList())
         viewModel.dismissProgress("Job2")
         assertEquals(
             listOf(progress1).withExpandStates(false),
-            ArrayList(viewModel.currentJobs.values)
+            ArrayList(viewModel.currentJobs.values),
         )
     }
 
@@ -174,19 +174,20 @@ class JobPanelViewModelTest {
         viewModel.toggleExpanded("Job1")
         assertTrue(viewModel.currentJobs.isEmpty())
 
-        val progress1 = MutableJobProgress(
-            id = "Job1",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_CREATED,
-            msg = "Job1",
-            hasFailures = false,
-        )
+        val progress1 =
+            MutableJobProgress(
+                id = "Job1",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_CREATED,
+                msg = "Job1",
+                hasFailures = false,
+            )
 
         viewModel.updateProgress(listOf(progress1).toJobProgressList())
         viewModel.toggleExpanded("Job2")
         assertEquals(
             listOf(progress1).withExpandStates(false),
-            ArrayList(viewModel.currentJobs.values)
+            ArrayList(viewModel.currentJobs.values),
         )
     }
 
@@ -194,49 +195,51 @@ class JobPanelViewModelTest {
     fun testHasFailures() {
         val viewModel = JobPanelViewModel()
 
-        val inProgress = MutableJobProgress(
-            id = "in_progress_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job in progress",
-            hasFailures = false,
-            currentBytes = 40,
-            requiredBytes = 100,
-        )
+        val inProgress =
+            MutableJobProgress(
+                id = "in_progress_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job in progress",
+                hasFailures = false,
+                currentBytes = 40,
+                requiredBytes = 100,
+            )
 
-        val failed = MutableJobProgress(
-            id = "failed_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_COMPLETED,
-            msg = "Job failed",
-            hasFailures = true,
-        )
+        val failed =
+            MutableJobProgress(
+                id = "failed_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job failed",
+                hasFailures = true,
+            )
 
         assertEquals(MenuIconState.INVISIBLE, viewModel.getMenuState())
 
         viewModel.updateProgress(listOf(failed).toJobProgressList())
         assertEquals(
             MenuIconState.VISIBLE(totalProgress = 100, hasFailures = true),
-            viewModel.getMenuState()
+            viewModel.getMenuState(),
         )
 
         viewModel.updateProgress(listOf(inProgress).toJobProgressList())
         assertEquals(
             MenuIconState.VISIBLE(totalProgress = 70, hasFailures = true),
-            viewModel.getMenuState()
+            viewModel.getMenuState(),
         )
 
         viewModel.dismissProgress(failed.id)
         assertEquals(
             MenuIconState.VISIBLE(totalProgress = 40, hasFailures = false),
-            viewModel.getMenuState()
+            viewModel.getMenuState(),
         )
 
         inProgress.hasFailures = true
         viewModel.updateProgress(listOf(inProgress).toJobProgressList())
         assertEquals(
             MenuIconState.VISIBLE(totalProgress = 40, hasFailures = true),
-            viewModel.getMenuState()
+            viewModel.getMenuState(),
         )
     }
 
@@ -244,31 +247,34 @@ class JobPanelViewModelTest {
     @Test
     fun testDismissCompleted() = runTest {
         val viewModel = JobPanelViewModel()
-        val inProgress = MutableJobProgress(
-            id = "in_progress_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_SET_UP,
-            msg = "Job in progress",
-            hasFailures = false,
-            currentBytes = 40,
-            requiredBytes = 100,
-        )
+        val inProgress =
+            MutableJobProgress(
+                id = "in_progress_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_SET_UP,
+                msg = "Job in progress",
+                hasFailures = false,
+                currentBytes = 40,
+                requiredBytes = 100,
+            )
 
-        val succeeded = MutableJobProgress(
-            id = "succeeded_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_COMPLETED,
-            msg = "Job succeeded",
-            hasFailures = false,
-        )
+        val succeeded =
+            MutableJobProgress(
+                id = "succeeded_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job succeeded",
+                hasFailures = false,
+            )
 
-        val failed = MutableJobProgress(
-            id = "failed_job",
-            operationType = FileOperationService.OPERATION_COPY,
-            state = Job.STATE_COMPLETED,
-            msg = "Job failed",
-            hasFailures = true,
-        )
+        val failed =
+            MutableJobProgress(
+                id = "failed_job",
+                operationType = FileOperationService.OPERATION_COPY,
+                state = Job.STATE_COMPLETED,
+                msg = "Job failed",
+                hasFailures = true,
+            )
 
         // Launch coroutines to collect the flow values in the background.
         // UnconfinedTestDispatcher is used to ensure that the coroutines are executed immediately
@@ -276,12 +282,8 @@ class JobPanelViewModelTest {
         var updates = 0
         val menuIconUpdates = ArrayList<MenuIconState>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            launch {
-                viewModel.jobUpdateEvent.collect { updates++ }
-            }
-            launch {
-                viewModel.menuIconState.collect { state -> menuIconUpdates.add(state) }
-            }
+            launch { viewModel.jobUpdateEvent.collect { updates++ } }
+            launch { viewModel.menuIconState.collect { state -> menuIconUpdates.add(state) } }
         }
 
         viewModel.updateProgress(listOf(inProgress, succeeded, failed).toJobProgressList())
@@ -299,7 +301,7 @@ class JobPanelViewModelTest {
         // dismissCompleted() should only remove the completed jobs.
         assertEquals(
             listOf(inProgress).withExpandStates(false),
-            ArrayList(viewModel.currentJobs.values)
+            ArrayList(viewModel.currentJobs.values),
         )
 
         // Change the in progress job to be completed and check that it would get dismissed by
