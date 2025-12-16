@@ -156,10 +156,10 @@ public class SearchViewManager implements
         }
 
         if (savedState != null) {
-            setCurrentSearchInternal(savedState.getString(Shared.EXTRA_QUERY));
+            mCurrentSearch = savedState.getString(Shared.EXTRA_QUERY);
             mChipViewManager.restoreCheckedChipItems(savedState);
         } else {
-            setCurrentSearchInternal(null);
+            mCurrentSearch = null;
         }
     }
 
