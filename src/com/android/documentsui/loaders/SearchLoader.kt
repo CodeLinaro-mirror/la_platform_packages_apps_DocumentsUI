@@ -27,7 +27,6 @@ import android.text.TextUtils
 import android.util.Log
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
-import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
@@ -74,6 +73,7 @@ private data class QueryResult(var cursor: Cursor? = null)
 class SearchLoader(
     context: Context,
     private val rootInfoList: Collection<RootInfo>,
+    private val semanticSearchRootInfo: RootInfo?,
     mimeTypeLookup: Lookup<String, String>,
     private val observer: LockingContentObserver,
     private val query: String?,
@@ -81,18 +81,6 @@ class SearchLoader(
     private val sortModel: SortModel,
     private val executorService: ExecutorService,
 ) : BaseFileLoader(context, mimeTypeLookup) {
-    // In this class, "local search" is treated as "semantic search"
-    // to make its behavior, such as failure handling, more explicit.
-    private val semanticSearchProvider: Uri by lazy {
-        val providerString =
-            runCatching { context.getString(R.string.local_search_provider) }.getOrNull()
-
-        if (isUseLocalSearchProviderEnabled() && !providerString.isNullOrEmpty()) {
-            Uri.parse(providerString)
-        } else {
-            Uri.EMPTY
-        }
-    }
 
     /**
      * Helper class that runs query on a single user for the given parameter, until the first
@@ -326,16 +314,19 @@ class SearchLoader(
 
     private fun shouldUseSemanticSearch(rootInfo: RootInfo): Boolean =
         !isRecentQuery() &&
+            // In this class, "local search" is treated as "semantic search"
+            // to make its behavior, such as failure handling, more explicit.
             isUseLocalSearchProviderEnabled() &&
-            rootInfo.isLocalOnly &&
-            semanticSearchProvider != Uri.EMPTY
+            semanticSearchRootInfo?.supportsSearch() == true &&
+            semanticSearchRootInfo?.isEmpty() == false &&
+            rootInfo.isLocalOnly
 
     /** Gets semantic search URI if applicable, or null otherwise. */
     private fun maybeGetSemanticSearchUri(rootInfo: RootInfo): Uri? {
         if (!shouldUseSemanticSearch(rootInfo)) {
             return null
         }
-        return rootToSearchUri(semanticSearchProvider, query)
+        return semanticSearchRootInfo?.let { rootToSearchUri(it.uri, query) }
     }
 
     private fun buildSearchDocumentsUri(rootInfo: RootInfo): Uri =

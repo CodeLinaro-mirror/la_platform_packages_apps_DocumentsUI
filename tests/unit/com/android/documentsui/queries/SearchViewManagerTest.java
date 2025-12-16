@@ -33,12 +33,15 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,6 +59,7 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.MetricConsts;
@@ -201,6 +205,11 @@ public final class SearchViewManagerTest {
             mIsHistoryRecorded = true;
         }
 
+        @Override
+        protected Context getApplicationContext() {
+            return InstrumentationRegistry.getInstrumentation().getTargetContext();
+        }
+
         public String getRecordedHistory() {
             return mHistoryRecorded;
         }
@@ -215,6 +224,17 @@ public final class SearchViewManagerTest {
         mTestHandler.dispatchAllMessages();
     }
 
+    private RootInfo createSpyRoot(String authority, String rootId, boolean isLocalSearch) {
+        RootInfo root = new RootInfo();
+        root.authority = authority;
+        root.rootId = rootId;
+        root.flags = DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
+
+        RootInfo spyRoot = spy(root);
+        doReturn(isLocalSearch).when(spyRoot).isLocalSearch(any());
+
+        return spyRoot;
+    }
 
     @Test
     public void testParseQueryContent_ActionIsNotMatched_NotParseQueryContent() {
@@ -618,20 +638,14 @@ public final class SearchViewManagerTest {
     @Test
     @EnableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testMediaAndDownloadsHiddenOnSearchEverywhere() {
-        RootInfo mediaRoot = spy(new RootInfo());
-        mediaRoot.authority = Providers.AUTHORITY_MEDIA;
-        mediaRoot.rootId = "images";
-        mediaRoot.flags =  DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
-        RootInfo downloadsRoot = spy(new RootInfo());
-        downloadsRoot.authority = Providers.AUTHORITY_DOWNLOADS;
-        downloadsRoot.rootId = "downloads";
-        downloadsRoot.flags =  DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
-        RootInfo externalRoot = spy(new RootInfo());
-        externalRoot.authority = Providers.AUTHORITY_STORAGE;
-        externalRoot.rootId = "primary";
-        externalRoot.flags =  DocumentsContract.Root.FLAG_SUPPORTS_SEARCH;
+        RootInfo mediaRoot = createSpyRoot(Providers.AUTHORITY_MEDIA, "images", false);
+        RootInfo downloadsRoot = createSpyRoot(Providers.AUTHORITY_DOWNLOADS, "downloads", false);
+        RootInfo externalRoot = createSpyRoot(Providers.AUTHORITY_STORAGE, "primary", false);
+        RootInfo localSearchRoot =
+                createSpyRoot("com.android.documentsui.testing.localsearch", "local_search", true);
 
-        Collection<RootInfo> roots = List.of(mediaRoot, downloadsRoot, externalRoot);
+        Collection<RootInfo> roots =
+                List.of(mediaRoot, downloadsRoot, externalRoot, localSearchRoot);
         DocumentInfo nestedFolder = new DocumentInfo();
         nestedFolder.authority = Providers.AUTHORITY_DOWNLOADS;
         nestedFolder.documentId = "xyz:Nested";

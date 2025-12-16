@@ -1429,16 +1429,22 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                         mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
                 Collection<RootInfo> roots = mProviders.getMatchingRootsBlocking(mState);
                 Collection<RootInfo> searchableRoots = mSearchMgr.getSearchRoots(roots, stack);
+                @Nullable
+                RootInfo localSearchRoot =
+                        roots.stream()
+                                .filter(it -> it.isLocalSearch(mActivity))
+                                .findFirst()
+                                .orElse(null);
                 return new SearchLoader(
                         mActivity,
                         searchableRoots,
+                        localSearchRoot,
                         mInjector.fileTypeLookup,
                         observer,
                         mSearchMgr.getCurrentSearch(),
                         options,
                         mState.sortModel,
-                        mExecutorService
-                );
+                        mExecutorService);
             }
             if (DEBUG) {
                 Log.d(TAG, "Creating folder loader V2");
