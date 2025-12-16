@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraIntent;
@@ -134,8 +135,6 @@ public class ActionHandlerTest {
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
-
-    // TODO(b/433858983): Remove CheckFlagsRule once peek is overridable in FlagUtils.
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
@@ -280,7 +279,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCutSelectedDocuments_ContainsUnavailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -295,7 +296,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCutSelectedDocuments_ContainsUnavailableDocument_AndAvailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -311,6 +314,8 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testCutSelectedDocuments_ContainsUnavailableDocument_FeatureFlagDisabled() {
         mEnv.populateStack();
@@ -346,7 +351,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCopySelectedDocuments_ContainsUnavailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -361,7 +368,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCopySelectedDocuments_ContainsUnavailableDocument_AndAvailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -377,6 +386,8 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testCopySelectedDocuments_ContainsUnavailableDocument_FeatureFlagDisabled() {
         mEnv.populateStack();

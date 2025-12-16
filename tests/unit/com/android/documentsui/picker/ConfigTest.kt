@@ -16,9 +16,13 @@
 
 package com.android.documentsui.picker
 
+import android.os.Build
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.State
@@ -42,6 +46,7 @@ class ConfigTest {
         private const val OFFLINE = false
     }
 
+    @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
     private lateinit var config: Config
@@ -56,7 +61,9 @@ class ConfigTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
     fun testIsDocumentEnabled_superReturnsTrue_doesNotAffectResult() {
         state.action = State.ACTION_CREATE
         // The super method, ActivityConfig.isDocumentEnabled, will return true because the
@@ -71,7 +78,9 @@ class ConfigTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
     fun testIsDocumentEnabled_superReturnsFalse_returnsFalse() {
         state.action = State.ACTION_CREATE
         state.acceptMimes = arrayOf("image/png")
@@ -88,7 +97,7 @@ class ConfigTest {
         // The super method, ActivityConfig.isDocumentEnabled, will now return false because the
         // Cloud root has limited functionality when offline. This should cause the Config method
         // to return false.
-        state.stack.changeRoot(TestProvidersAccess.CLOUD)
+        state.stack.changeRoot(TestProvidersAccess.getCloudRoot())
         assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
     }
 }

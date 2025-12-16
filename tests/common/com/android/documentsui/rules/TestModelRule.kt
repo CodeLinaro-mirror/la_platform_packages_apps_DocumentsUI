@@ -19,7 +19,6 @@ import android.database.MatrixCursor
 import android.provider.DocumentsContract
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.Model
-import com.android.documentsui.base.DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.testing.TestFeatures
 import com.android.documentsui.util.FlagUtils
@@ -54,8 +53,8 @@ class TestModelRule(val authority: String = "com.example.test", val userId: Int 
         row.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
         row.add(DocumentsContract.Document.COLUMN_MIME_TYPE, type)
         row.add(DocumentsContract.Document.COLUMN_FLAGS, flags)
-        if (FlagUtils.isCloudFeaturesFlagEnabled()) {
-            row.add(COLUMN_CONTENT_SYNC_STATE_FLAGS, syncStateFlags)
+        if (FlagUtils.isSyncStateEnabled()) {
+            row.add(DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS, syncStateFlags)
         }
 
         // Update the model after adding the row.
@@ -79,8 +78,8 @@ class TestModelRule(val authority: String = "com.example.test", val userId: Int 
                 DocumentsContract.Document.COLUMN_LAST_MODIFIED,
                 DocumentsContract.Document.COLUMN_MIME_TYPE,
             )
-        if (FlagUtils.isCloudFeaturesFlagEnabled()) {
-            columnNames.add(COLUMN_CONTENT_SYNC_STATE_FLAGS)
+        if (FlagUtils.isSyncStateEnabled()) {
+            columnNames.add(DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS)
         }
         cursor = MatrixCursor(columnNames.toTypedArray())
     }

@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.ContentResolver;
@@ -22,6 +23,7 @@ import android.content.pm.ProviderInfo;
 import android.os.Process;
 import android.os.UserHandle;
 import android.provider.DocumentsContract.Root;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -44,6 +46,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 public class TestProvidersAccess implements ProvidersAccess {
+    private static final String TAG = "TestProvidersAccess";
 
     public static final UserHandle USER_HANDLE = Process.myUserHandle();
     public static final UserId USER_ID = UserId.of(USER_HANDLE);
@@ -62,7 +65,6 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo DOCUMENT;
     public static final RootInfo EXTERNALSTORAGE;
 
-    public static final RootInfo CLOUD;
     public static final RootInfo NO_TREE_ROOT;
     public static final RootInfo SD_CARD;
     public static final RootInfo LOCAL_SEARCH;
@@ -204,16 +206,6 @@ public class TestProvidersAccess implements ProvidersAccess {
         EXTERNALSTORAGE.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
         EXTERNALSTORAGE.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_IS_CHILD;
-
-        CLOUD = new RootInfo();
-        CLOUD.userId = userId;
-        CLOUD.authority = "cloud.provider.authority";
-        CLOUD.rootId = Providers.ROOT_ID_DEVICE;
-        CLOUD.title = "Cloud";
-        CLOUD.derivedType = SidebarEntryItemInfo.TYPE_ROOT_OTHER;
-        // TODO(b/458129770): Use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead when it
-        //  exists in the SDK.
-        CLOUD.flags = RootInfo.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE;
 
         NO_TREE_ROOT = new RootInfo();
         NO_TREE_ROOT.userId = userId;
@@ -513,5 +505,28 @@ public class TestProvidersAccess implements ProvidersAccess {
     @Override
     public @Nullable ProviderInfo getProviderInfo(UserId userId, String authority) {
         return nextProviderInfo;
+    }
+
+    /**
+     * Returns the CLOUD root. This cannot be created statically as it is flag dependent and flags
+     * may not be fully initialised during static creation.
+     */
+    public static RootInfo getCloudRoot() {
+        RootInfo cloud = new RootInfo();
+        cloud.userId = TestProvidersAccess.USER_ID;
+        cloud.authority = "cloud.provider.authority";
+        cloud.rootId = Providers.ROOT_ID_DEVICE;
+        cloud.title = "Cloud";
+        cloud.derivedType = SidebarEntryItemInfo.TYPE_ROOT_OTHER;
+        if (isSyncStateEnabled()) {
+            cloud.flags = Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE;
+        } else {
+            Log.w(
+                    TAG,
+                    "Sync State is not enabled, not setting"
+                            + " FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE");
+            cloud.flags = 0;
+        }
+        return cloud;
     }
 }

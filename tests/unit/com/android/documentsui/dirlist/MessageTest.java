@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.OUTLINE;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_OFF_ICON;
@@ -346,12 +347,14 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_offlineAndLimitedWhenOffline_showsOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -369,12 +372,14 @@ public final class MessageTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testHeaderMessage_flagDisabled_doesNotShowOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -382,12 +387,14 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_onlineAndLimitedWhenOffline_doesNotShowBanner() {
         // Set online.
         ((TestEnvironment) mEnv).setIsOnline(true);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -395,7 +402,9 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_offlineAndNotLimitedWhenOffline_doesNotShowBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
