@@ -17,6 +17,8 @@ package com.android.documentsui.dirlist;
 
 import static androidx.core.util.Preconditions.checkArgument;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import android.view.KeyEvent;
 
 import androidx.recyclerview.selection.SelectionTracker;
@@ -63,37 +65,41 @@ final class InputHandlers {
     KeyInputHandler createKeyHandler() {
         KeyInputHandler.Callbacks<DocumentItemDetails> callbacks =
                 new KeyInputHandler.Callbacks<DocumentItemDetails>() {
-            @Override
-            public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
-                // Handle enter key events
-                switch (e.getKeyCode()) {
-                    case KeyEvent.KEYCODE_ENTER:
-                    case KeyEvent.KEYCODE_DPAD_CENTER:
-                    case KeyEvent.KEYCODE_BUTTON_A:
-                        return mActions.openItem(
-                                item,
-                                ActionHandler.VIEW_TYPE_REGULAR,
-                                ActionHandler.VIEW_TYPE_PREVIEW);
-                    case KeyEvent.KEYCODE_SPACE:
-                        return mActions.openItem(
-                                item,
-                                ActionHandler.VIEW_TYPE_PREVIEW,
-                                ActionHandler.VIEW_TYPE_NONE);
-                }
+                    @Override
+                    public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
+                        if (isUseMaterial3FlagEnabled() && !e.hasNoModifiers()) {
+                            return false;
+                        }
 
-                return false;
-            }
+                        switch (e.getKeyCode()) {
+                            case KeyEvent.KEYCODE_ENTER:
+                            case KeyEvent.KEYCODE_DPAD_CENTER:
+                            case KeyEvent.KEYCODE_BUTTON_A:
+                                return mActions.openItem(
+                                        item,
+                                        ActionHandler.VIEW_TYPE_REGULAR,
+                                        ActionHandler.VIEW_TYPE_PREVIEW);
+                            case KeyEvent.KEYCODE_SPACE:
+                                return mActions.openItem(
+                                        item,
+                                        ActionHandler.VIEW_TYPE_PREVIEW,
+                                        ActionHandler.VIEW_TYPE_NONE);
+                        }
 
-            @Override
-            public boolean onFocusItem(DocumentItemDetails details, int keyCode, KeyEvent event) {
-                ViewHolder holder =
-                        mRecView.findViewHolderForAdapterPosition(details.getPosition());
-                if (holder instanceof DocumentHolder) {
-                    return mFocusHandler.handleKey((DocumentHolder) holder, keyCode, event);
-                }
-                return false;
-            }
-        };
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onFocusItem(
+                            DocumentItemDetails details, int keyCode, KeyEvent event) {
+                        ViewHolder holder =
+                                mRecView.findViewHolderForAdapterPosition(details.getPosition());
+                        if (holder instanceof DocumentHolder) {
+                            return mFocusHandler.handleKey((DocumentHolder) holder, keyCode, event);
+                        }
+                        return false;
+                    }
+                };
 
         return new KeyInputHandler(mSelectionHelper, mSelectionPredicate, callbacks);
     }
