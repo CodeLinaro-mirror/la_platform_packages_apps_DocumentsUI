@@ -156,10 +156,10 @@ public class SearchViewManager implements
         }
 
         if (savedState != null) {
-            setCurrentSearchInternal(savedState.getString(Shared.EXTRA_QUERY));
+            mCurrentSearch = savedState.getString(Shared.EXTRA_QUERY);
             mChipViewManager.restoreCheckedChipItems(savedState);
         } else {
-            setCurrentSearchInternal(null);
+            mCurrentSearch = null;
         }
     }
 
@@ -556,7 +556,7 @@ public class SearchViewManager implements
         if (isSearchV2Enabled()) {
             mCurrentRoot = root;
             if (mSearchOptionsController != null) {
-                mSearchOptionsController.updateUiForRoot(root);
+                mLocationOption = mSearchOptionsController.setRoot(root);
             }
         }
     }
@@ -574,7 +574,7 @@ public class SearchViewManager implements
                     if (mimeChipType != null) {
                         mSearchOptionsController.setSelectedFileType(mimeChipType);
                     }
-                    mSearchOptionsController.show(mCurrentRoot);
+                    mSearchOptionsController.show();
                 } else {
                     mSearchOptionsController.hide();
                 }

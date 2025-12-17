@@ -15,5 +15,9 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_label">DocsUI Compose</string>
+    <string name="app_label" translable="false">DocsUI Compose</string>
+    <string name="recents_label" translable="false">Recents</string>
+    <string name="downloads_label" translable="false">Downloads</string>
+    <string name="this_laptop_label" translable="false">This Laptop</string>
+    <string name="menu_label" translable="false">Menu</string>
 </resources>
