@@ -424,6 +424,9 @@ final class ListDocumentHolder extends DocumentHolder {
                 if (!mDoc.isDirectory() && mDoc.size >= 0) {
                     mSize.setVisibility(View.VISIBLE);
                     mSize.setText(Formatter.formatFileSize(mContext, mDoc.size));
+                } else if (isUseMaterial3FlagEnabled()) {
+                    mSize.setVisibility(View.VISIBLE);
+                    mSize.setText("—");
                 } else {
                     mSize.setVisibility(View.INVISIBLE);
                 }
