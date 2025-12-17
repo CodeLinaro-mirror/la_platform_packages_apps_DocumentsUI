@@ -411,9 +411,12 @@ final class ListDocumentHolder extends DocumentHolder {
                 assert mSize != null;
                 assert mType != null;
 
-                if (!mDoc.isDirectory() && mDoc.lastModified > 0) {
+                if (mDoc.lastModified > 0) {
                     mDate.setVisibility(View.VISIBLE);
                     mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
+                } else if (isUseMaterial3FlagEnabled()) {
+                    mDate.setVisibility(View.VISIBLE);
+                    mDate.setText("—");
                 } else {
                     mDate.setVisibility(View.INVISIBLE);
                 }
