@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -377,27 +378,31 @@ final class ListDocumentHolder extends DocumentHolder {
                 // Non-tablets
                 boolean hasDetails = false;
 
-                ArrayList<String> metadataList = new ArrayList<>();
-                if (useSummary() && !TextUtils.isEmpty(summary)) {
-                    hasDetails = true;
-                    metadataList.add(summary);
-                }
+                if (!mDoc.isDirectory()) {
+                    ArrayList<String> metadataList = new ArrayList<>();
+                    if (useSummary() && !TextUtils.isEmpty(summary)) {
+                        hasDetails = true;
+                        metadataList.add(summary);
+                    }
 
-                if (mDoc.lastModified > 0) {
-                    hasDetails = true;
-                    metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
-                }
+                    if (mDoc.lastModified > 0) {
+                        hasDetails = true;
+                        metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
+                    }
 
-                if (!mDoc.isDirectory() && mDoc.size >= 0) {
-                    hasDetails = true;
-                    metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
-                }
+                    if (mDoc.size >= 0) {
+                        hasDetails = true;
+                        metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
+                    }
 
-                metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
-                mMetadataView.setText(TextUtils.join(", ", metadataList));
+                    metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
+                    mMetadataView.setText(TextUtils.join(", ", metadataList));
+                }
 
                 if (mDetails != null) {
                     mDetails.setVisibility(hasDetails ? View.VISIBLE : View.GONE);
+                } else {
+                    Log.w(TAG, "mDetails is unexpectedly null for non-tablet devices!");
                 }
             } else {
                 // Tablets
@@ -405,7 +410,7 @@ final class ListDocumentHolder extends DocumentHolder {
                 assert mSize != null;
                 assert mType != null;
 
-                if (mDoc.lastModified > 0) {
+                if (!mDoc.isDirectory() && mDoc.lastModified > 0) {
                     mDate.setVisibility(View.VISIBLE);
                     mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
                 } else {
