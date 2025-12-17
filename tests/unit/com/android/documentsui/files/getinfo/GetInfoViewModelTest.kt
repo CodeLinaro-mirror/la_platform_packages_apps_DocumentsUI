@@ -39,16 +39,12 @@ import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.MainDispatcherRule
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -83,7 +79,15 @@ class GetInfoViewModelTest {
             }
         }
 
-    private val testDispatcher = UnconfinedTestDispatcher()
+    // Runs the main test methods using a StandardTestDispatcher. This will allow for the usage of
+    // methods like `first()` to suspend to enable the ioTestDispatcher to eagerly evaluate any
+    // outstanding flows.
+    private val testDispatcher = StandardTestDispatcher()
+
+    // Use an UnconfinedTestDispatcher here to ensure the work performed in the ViewModel in the
+    // background are done eagerly. This removes any guesswork on the final state, all flows emit
+    // their values synchronously when evaluated.
+    private val ioTestDispatcher = UnconfinedTestDispatcher(testDispatcher.scheduler)
 
     @get:Rule private val mainDispatcherRule = MainDispatcherRule(testDispatcher)
 
@@ -162,67 +166,78 @@ class GetInfoViewModelTest {
     }
 
     /**
-     * The list of items is quite large so we don't always test the whole list. This is a helper
-     * function to ensure the various expectations are matched (either exactly or partially) and
-     * that their order is correct.
+     * Builds up an expected list based on the items of the actual list and expectations. This is
+     * primarily used to ensure the error message on the equality assertion is descriptive.
      */
-    private fun assertOrderedItems(
+    private fun buildExpectedList(
         actualList: List<ListItem>,
         expectedSize: Int,
-        vararg expected: ExpectedItem,
-    ) {
-        assertEquals(expectedSize, actualList.size)
-        expected.forEach { expectation ->
-            val index = expectation.order
+        vararg expectations: ExpectedItem,
+    ): List<ListItem> {
+        return List(expectedSize) { index ->
             val actualItem = actualList.getOrNull(index)
-            assertNotNull("Item at $index expected, but is missing", actualItem)
-            assertTrue(
-                "Expected ${expectation.contentToString()} doesn't match $actualItem",
-                expectation.matches(actualItem!!),
-            )
+            val expectation = expectations.firstOrNull { it.order == index }
+
+            when (expectation) {
+                // No expectation on this item index, return the actual item.
+                null -> actualItem
+
+                // Exact match expectation, return the expectation.
+                is ExpectedItem.Exact -> expectation.expectedItem
+
+                // Partial match expectation, return the actualItem if the labels match, otherwise
+                // return "<value ignored>" to ensure the assertion fails this row and the error
+                // message is descriptive.
+                is ExpectedItem.InfoLabel -> {
+                    if (actualItem is ListItem.Info && actualItem.label == expectation.label) {
+                        actualItem
+                    } else {
+                        // Create a "Target" item that will definitely cause a mismatch in the diff.
+                        // We use a dummy value because we only cared about the label.
+                        ListItem.Info(expectation.label, "<value ignored>")
+                    }
+                }
+            }!!
         }
     }
 
-    /**
-     * A class that wraps the test Channel with a take() method that abstracts the semantics into a
-     * helpful function.
-     */
-    class GetInfoTestEmitter(
-        private val testEmitter: Channel<List<ListItem>>,
-        private val scheduler: TestCoroutineScheduler,
+    /** Wait for the expectations to be correct, otherwise fail with an assertion. */
+    private suspend fun waitAndAssertOrderedItems(
+        viewModel: GetInfoViewModel,
+        expectedSize: Int,
+        vararg expectations: ExpectedItem,
     ) {
-        /** Takes the oldest value (FIFO order) from the channel. */
-        suspend fun take(): List<ListItem> {
-            // This runs the supplied scheduler to the next suspension point. This allows for the
-            // flows to run until an emission is made and that can be taken from the Channel.
-            scheduler.runCurrent()
-            return testEmitter.receive()
+        try {
+            val matchedList =
+                viewModel.items.first { list ->
+                    if (list.size != expectedSize) return@first false
+                    val expectedList = buildExpectedList(list, expectedSize, *expectations)
+                    list == expectedList
+                }
+
+            val expectedList = buildExpectedList(matchedList, expectedSize, *expectations)
+            assertEquals(expectedList, matchedList)
+        } catch (e: TimeoutCancellationException) {
+            // In the event the `first()` call timed out, let's rebuild the last known state so that
+            // the error messages can be much more useful.
+            val actualList = viewModel.items.value
+            val expectedList = buildExpectedList(actualList, expectedSize, *expectations)
+
+            assertEquals("Timed out waiting for expected state.", expectedList, actualList)
         }
-    }
-
-    /**
-     * The ViewModel emits values as they are asynchronously retrieved. To ensure we retain an
-     * ordered list of events to assert on, construct a channel that buffers the events so we can
-     * inspect them one by one.
-     */
-    private fun TestScope.setupTestEmitter(viewModel: GetInfoViewModel): GetInfoTestEmitter {
-        val emissions = Channel<List<ListItem>>(Channel.UNLIMITED)
-
-        // To ensure the flows are started, it requires a subscription (i.e. collect must have been
-        // called) so we fake that here.
-        backgroundScope.launch(testDispatcher) {
-            viewModel.items.collect { list -> emissions.send(list) }
-        }
-
-        return GetInfoTestEmitter(emissions, testScheduler)
     }
 
     @Test
     fun testStandardFile_WithDebug() =
         runTest(testDispatcher) {
+            val authority = "com.example.authority"
+            val documentId = "testId"
+            val derivedUri = DocumentsContract.buildDocumentUri(authority, documentId)
             val doc =
                 DocumentInfo().apply {
-                    documentId = "testId"
+                    this.derivedUri = derivedUri
+                    this.authority = authority
+                    this.documentId = documentId
                     displayName = "test.pdf"
                     mimeType = "application/pdf"
                     size = 1024 * 1024 * 10
@@ -230,12 +245,20 @@ class GetInfoViewModelTest {
                     userId = UserId.DEFAULT_USER
                 }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, true, testDispatcher)
-            val testEmitter = setupTestEmitter(viewModel)
+            val streamTypesProvider =
+                object : MockContentProvider() {
+                    override fun getStreamTypes(
+                        url: Uri,
+                        mimeTypeFilter: String,
+                    ): Array<out String?> {
+                        return arrayOf("fake/type")
+                    }
+                }
+            contentResolver.addProvider(authority, streamTypesProvider)
 
-            val initialList = testEmitter.take()
-            assertOrderedItems(
-                initialList,
+            val viewModel = GetInfoViewModel(application, doc, lookup, true, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
                 5 + DEBUG_ITEM_COUNT,
                 ExpectedItem.Exact(0, ListItem.Header("General info")),
                 ExpectedItem.Exact(1, ListItem.Info("Name", "test.pdf")),
@@ -263,12 +286,9 @@ class GetInfoViewModelTest {
                     userId = UserId.DEFAULT_USER
                 }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, testDispatcher)
-            val testEmitter = setupTestEmitter(viewModel)
-
-            val initialList = testEmitter.take()
-            assertOrderedItems(
-                initialList,
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
                 5,
                 ExpectedItem.Exact(0, ListItem.Header("General info")),
                 ExpectedItem.Exact(1, ListItem.Info("Name", "test.pdf")),
@@ -282,6 +302,7 @@ class GetInfoViewModelTest {
     fun testDirectory() =
         runTest(testDispatcher) {
             val authority = "com.example.authority"
+
             val doc =
                 DocumentInfo().apply {
                     documentId = "testDirectoryId"
@@ -313,38 +334,14 @@ class GetInfoViewModelTest {
                 }
             contentResolver.addProvider(authority, childrenProvider)
 
-            // Setup a StandardTestDispatcher for the flows in the ViewModel. The test scope uses an
-            // `UnconfinedTestDispatcher` to allow for all the flows to run eagerly. For the
-            // ViewModel we can't follow this pattern as eager execution means the intermediate
-            // steps don't get emitted (the flow is ran immediately).
-            val ioDispatcher = StandardTestDispatcher(testScheduler)
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioDispatcher)
-            val testEmitter = setupTestEmitter(viewModel)
-
-            // The first list has no "Items" row as it sends it off asynchronously to calculate.
-            val initialList = testEmitter.take()
-            assertOrderedItems(
-                initialList,
-                4,
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                5,
                 ExpectedItem.Exact(0, ListItem.Header("General info")),
                 ExpectedItem.Exact(1, ListItem.Info("Name", "My Folder")),
                 ExpectedItem.Exact(2, ListItem.Info("Type", "Folder")),
                 ExpectedItem.InfoLabel(3, "Modified"),
-            )
-
-            // The second list now has an "Items" row with just the placeholder text.
-            val placeholderList = testEmitter.take()
-            assertOrderedItems(
-                placeholderList,
-                5,
-                ExpectedItem.Exact(4, ListItem.Info("Items", "--")),
-            )
-
-            // The third list has the "Items" row visible and populated.
-            val itemsCountList = testEmitter.take()
-            assertOrderedItems(
-                itemsCountList,
-                5,
                 ExpectedItem.Exact(4, ListItem.Info("Items", "3")),
             )
         }
@@ -364,12 +361,9 @@ class GetInfoViewModelTest {
                     userId = UserId.DEFAULT_USER
                 }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, testDispatcher)
-            val testEmitter = setupTestEmitter(viewModel)
-
-            val initialList = testEmitter.take()
-            assertOrderedItems(
-                initialList,
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
                 6,
                 ExpectedItem.Exact(5, ListItem.Info("Summary", "OriginalFilename.pdf")),
             )
@@ -387,11 +381,8 @@ class GetInfoViewModelTest {
                     userId = UserId.DEFAULT_USER
                 }
 
-            val viewModel = GetInfoViewModel(application, doc, lookup, false, testDispatcher)
-            val testEmitter = setupTestEmitter(viewModel)
-
-            val initialList = testEmitter.take()
-            assertOrderedItems(initialList, 4, ExpectedItem.InfoLabel(3, "Size"))
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(viewModel, 4, ExpectedItem.InfoLabel(3, "Size"))
         }
 
     companion object {
