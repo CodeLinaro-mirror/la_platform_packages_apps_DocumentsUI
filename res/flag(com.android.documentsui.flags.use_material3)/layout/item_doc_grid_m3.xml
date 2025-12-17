@@ -183,8 +183,8 @@
 
         <FrameLayout
             android:id="@android:id/progress"
-            android:layout_width="@dimen/grid_inline_sync_progress_icon_size"
-            android:layout_height="@dimen/grid_inline_sync_progress_icon_size"
+            android:layout_width="@dimen/grid_inline_circular_icon_size"
+            android:layout_height="@dimen/grid_inline_circular_icon_size"
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="@dimen/grid_inline_sync_progress_margin"
             android:layout_marginEnd="@dimen/grid_inline_sync_progress_margin"
@@ -208,9 +208,36 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/progress_tick_icon"
+            android:layout_width="@dimen/grid_inline_circular_icon_size"
+            android:layout_height="@dimen/grid_inline_circular_icon_size"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="@dimen/grid_inline_sync_progress_margin"
+            android:layout_marginEnd="@dimen/grid_inline_sync_progress_margin"
+            android:visibility="gone"
+            android:focusable="false"
+            android:clickable="false">
+
+            <ImageView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_sync_circle_background_m3" />
+
+            <ImageView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_tick_m3" />
+
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/sync_error_icon"
-            android:layout_width="@dimen/grid_inline_sync_error_icon_size"
-            android:layout_height="@dimen/grid_inline_sync_error_icon_size"
+            android:layout_width="@dimen/grid_inline_circular_icon_size"
+            android:layout_height="@dimen/grid_inline_circular_icon_size"
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="@dimen/grid_inline_sync_error_margin"
             android:layout_marginEnd="@dimen/grid_inline_sync_error_margin"

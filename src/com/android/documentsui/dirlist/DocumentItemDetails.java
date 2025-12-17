@@ -16,6 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
@@ -54,6 +55,9 @@ public final class DocumentItemDetails extends ItemDetails<String> {
 
     @Override
     public int classifySelectionHotspot(MotionEvent e) {
+        if ((e.getMetaState() & KeyEvent.META_CTRL_ON) != 0) {
+            return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
+        }
         return mDocumentHolder.classifySelectionHotspot(e);
     }
 

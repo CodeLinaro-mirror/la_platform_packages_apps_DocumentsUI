@@ -71,6 +71,8 @@ data class SemanticSearchProviderTestParams(
     val resourceUri: String,
     val semanticSearchError: Boolean,
     val expectedSemanticSearch: Boolean,
+    val flagsToAdd: Int = 0,
+    val flagsToRemove: Int = 0,
 ) {
     val expectedDisplayName: String =
         if (expectedSemanticSearch) "found-me-on-semantic-search" else "found-me-on-downloads"
@@ -182,6 +184,7 @@ class SearchLoaderTest {
                 SearchLoader(
                     activity,
                     rootInfoList,
+                    semanticSearchRootInfo = null,
                     TestFileTypeLookup(),
                     contentObserver,
                     testParams.query,
@@ -229,18 +232,20 @@ class SearchLoaderTest {
                         expectedSemanticSearch = false,
                     ),
                     SemanticSearchProviderTestParams(
-                        testName = "resource_missing_should_fall_back_to_default",
+                        testName = "semantic_search_unsupported_should_fall_back_to_default",
                         flagEnabled = true,
-                        resourceUri = "",
+                        resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
                         semanticSearchError = false,
                         expectedSemanticSearch = false,
+                        flagsToRemove = DocumentsContract.Root.FLAG_SUPPORTS_SEARCH,
                     ),
                     SemanticSearchProviderTestParams(
-                        testName = "malformed_uri_should_fall_back_to_default",
+                        testName = "semantic_search_empty_should_fall_back_to_default",
                         flagEnabled = true,
-                        resourceUri = "this-is-not-a-valid-uri",
+                        resourceUri = SEMANTIC_SEARCH_PROVIDER.uri.toString(),
                         semanticSearchError = false,
                         expectedSemanticSearch = false,
+                        flagsToAdd = DocumentsContract.Root.FLAG_EMPTY,
                     ),
                     SemanticSearchProviderTestParams(
                         testName = "semantic_search_fails_should_fall_back_to_default",
@@ -252,9 +257,17 @@ class SearchLoaderTest {
                 )
         }
 
+        private var originalFlags: Int = 0
+
         @Before
         fun setUpTest() {
             executor = Executors.newSingleThreadExecutor()
+            originalFlags = SEMANTIC_SEARCH_PROVIDER.flags
+        }
+
+        @After
+        fun tearDownTest() {
+            SEMANTIC_SEARCH_PROVIDER.flags = originalFlags
         }
 
         @Test
@@ -282,10 +295,20 @@ class SearchLoaderTest {
                 setNextChildDocumentsReturns(downloadedDoc)
             }
 
+            if (testParams.flagsToAdd != 0) {
+                SEMANTIC_SEARCH_PROVIDER.flags =
+                    SEMANTIC_SEARCH_PROVIDER.flags or testParams.flagsToAdd
+            }
+            if (testParams.flagsToRemove != 0) {
+                SEMANTIC_SEARCH_PROVIDER.flags =
+                    SEMANTIC_SEARCH_PROVIDER.flags and testParams.flagsToRemove.inv()
+            }
+
             val loader =
                 SearchLoader(
                     activity,
                     listOf(TestProvidersAccess.DOWNLOADS),
+                    SEMANTIC_SEARCH_PROVIDER,
                     TestFileTypeLookup(),
                     contentObserver,
                     "found-me",
@@ -391,6 +414,7 @@ class SearchLoaderTest {
                 SearchLoader(
                     activity,
                     listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
+                    semanticSearchRootInfo = null,
                     TestFileTypeLookup(),
                     contentObserver,
                     "document-",
@@ -436,6 +460,7 @@ class SearchLoaderTest {
                 SearchLoader(
                     activity,
                     listOf(TestProvidersAccess.PICKLES, TestProvidersAccess.HOME),
+                    semanticSearchRootInfo = null,
                     TestFileTypeLookup(),
                     contentObserver,
                     "document",
@@ -477,6 +502,7 @@ class SearchLoaderTest {
                 SearchLoader(
                     activity,
                     listOf(TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
                     TestFileTypeLookup(),
                     contentObserver,
                     commonSearchString,
@@ -492,6 +518,7 @@ class SearchLoaderTest {
                 SearchLoader(
                     activity,
                     listOf(TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
                     TestFileTypeLookup(),
                     contentObserver,
                     commonSearchString,
@@ -514,6 +541,7 @@ class SearchLoaderTest {
                 SearchLoader(
                     activity,
                     listOf(TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
                     TestFileTypeLookup(),
                     contentObserver,
                     "query",
@@ -579,6 +607,7 @@ class SearchLoaderTest {
                                 TestProvidersAccess.PICKLES,
                                 TestProvidersAccess.HOME,
                             ),
+                            semanticSearchRootInfo = null,
                             TestFileTypeLookup(),
                             contentObserver,
                             commonSearchString,
