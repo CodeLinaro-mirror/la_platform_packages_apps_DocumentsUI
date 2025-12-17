@@ -1549,8 +1549,17 @@ public abstract class BaseActivity
 
             // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
             //  localised titles in this method.
-            mProviders.updateAsync(false,
-                () -> RootsFragment.get(getSupportFragmentManager()).reloadRootsAndShortcuts());
+            mProviders.updateAsync(
+                    false,
+                    () -> {
+                        RootsFragment fragment = RootsFragment.get(getSupportFragmentManager());
+                        if (fragment == null) {
+                            fragment = RootsFragment.getNavRail(getSupportFragmentManager());
+                        }
+                        if (fragment != null) {
+                            fragment.reloadRootsAndShortcuts();
+                        }
+                    });
         }
     }
 }
