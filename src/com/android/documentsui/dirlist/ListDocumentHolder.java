@@ -313,9 +313,9 @@ final class ListDocumentHolder extends DocumentHolder {
         }
 
         if (useSummary()) {
-            if (summary == null) {
-                mSummary.setText("--");
-                mSummary.setTooltipText(summary);
+            if (TextUtils.isEmpty(summary)) {
+                mSummary.setText("—");
+                mSummary.setTooltipText(null);
             } else {
                 mSummary.setText(summary, TextView.BufferType.SPANNABLE);
                 mSummary.setTooltipText(summary);
