@@ -1567,7 +1567,7 @@ public abstract class BaseActivity
                             fragment = RootsFragment.getNavRail(getSupportFragmentManager());
                         }
                         if (fragment != null) {
-                            fragment.reloadRootsAndShortcuts();
+                            fragment.reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ true);
                         }
                     });
         }
