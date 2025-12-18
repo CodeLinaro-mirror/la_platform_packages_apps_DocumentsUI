@@ -365,6 +365,22 @@ public class UiBot extends Bots.BaseBot {
         return title;
     }
 
+    /**
+     * Finds a {@link UiObject} containing text that matches the result of concatenating a
+     * string resource and a suffix string.
+     *
+     * @param resId The resource id of the string containing the target error message text.
+     * @param suffix The string to append to the resource string.
+     * @return A {@link UiObject} matching the concatenated text.
+     */
+    public UiObject findUiObjectWithResIdAndSuffix(@StringRes int resId, String suffix) {
+        String expectedText = mContext.getString(resId) + suffix;
+        UiSelector selector = new UiSelector().text(expectedText);
+        UiObject title = mDevice.findObject(selector);
+        title.waitForExists(mTimeout);
+        return title;
+    }
+
     @SuppressWarnings("unchecked")
     public void assertDialogOkButtonFocused() {
         onView(withId(android.R.id.button1)).check(matches(hasFocus()));
