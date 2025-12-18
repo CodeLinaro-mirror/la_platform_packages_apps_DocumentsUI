@@ -202,7 +202,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(DELETE_PERMANENTLY, true);
-        bots.directory.selectDocument("file1.png", 1);
+        bots.directory.selectDocument("anotherFile0.log", 1);
         bots.directory.selectDocument("Dir1", 2);
         bots.directory.rightClickDocument("Dir1");
         bots.menu.assertPresentMenuItems(menuItems);

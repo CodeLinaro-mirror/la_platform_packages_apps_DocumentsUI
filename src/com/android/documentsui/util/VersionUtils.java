@@ -49,4 +49,12 @@ public class VersionUtils {
     public static boolean isGreaterThanB() {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.BAKLAVA;
     }
+
+    /**
+     * Returns whether the device is running on a version newer than Android S.
+     */
+    public static boolean isGreaterThanS() {
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.S;
+    }
+
 }

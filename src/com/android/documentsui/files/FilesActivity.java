@@ -78,6 +78,7 @@ import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.MessageBuilder;
 
+import com.android.documentsui.util.VersionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -481,7 +482,9 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         if (event.hasModifiers(KeyEvent.META_CTRL_ON)) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_SPACE:
-                    if (!isUseMaterial3FlagEnabled()) {
+                    // Disable ctrl+space shortcut on Android S and earlier.
+                    // The OS does not deliver the key event.
+                    if (!isUseMaterial3FlagEnabled() || !VersionUtils.isGreaterThanS()) {
                         break;
                     }
                     mInjector.actions.toggleFocusedItemSelection();
