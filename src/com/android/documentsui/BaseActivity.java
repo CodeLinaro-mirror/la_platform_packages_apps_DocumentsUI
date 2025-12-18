@@ -849,12 +849,21 @@ public abstract class BaseActivity
 
     @Override
     public void onRootPicked(RootInfo root) {
+        final RootInfo previousRoot = getCurrentRoot();
+        final int previousStackSize = mState.stack.size();
+        if (isSearchV2Enabled()) {
+            // Before changing the root, store the current state of the stack.
+            // Before making any updates, set the new root. The code that is called uses the stack's
+            // root, as it has no access to the parameter of this method.
+            mState.stack.changeRoot(root);
+            updateColumnHeaders(root);
+        }
+
         // Clicking on the current root removes search
         mSearchManager.cancelSearch();
 
         // Skip refreshing if root nor directory didn't change
-        if (root.equals(getCurrentRoot()) && getCurrentShortcut() == null
-                && mState.stack.size() <= 1) {
+        if (root.equals(previousRoot) && getCurrentShortcut() == null && previousStackSize <= 1) {
             return;
         }
 
@@ -867,10 +876,11 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        updateColumnHeaders(root);
-
-        // Clear entire backstack and start in new root
-        mState.stack.changeRoot(root);
+        if (!isSearchV2Enabled()) {
+            updateColumnHeaders(root);
+            // Clear entire backstack and start in new root
+            mState.stack.changeRoot(root);
+        }
 
         // Recents is always in memory, so we just load it directly.
         // Otherwise we delegate loading data from disk to a task
