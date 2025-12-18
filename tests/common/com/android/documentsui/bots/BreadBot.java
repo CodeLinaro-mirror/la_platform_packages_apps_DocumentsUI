@@ -16,14 +16,22 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
+import android.view.View.Visibility;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
@@ -38,10 +46,11 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
- * A test helper class that provides support for controlling the UI Breadcrumb
- * programmatically, and making assertions against the state of the UI.
- * <p>
- * Support for working directly with Roots and Directory view can be found in the respective bots.
+ * A test helper class that provides support for controlling the UI Breadcrumb programmatically, and
+ * making assertions against the state of the UI.
+ *
+ * <p>Support for working directly with Roots and Directory view can be found in the respective
+ * bots.
  */
 public class BreadBot extends Bots.BaseBot {
 
@@ -156,9 +165,20 @@ public class BreadBot extends Bots.BaseBot {
             }
         }
         if (!absent.isEmpty()) {
-            Assert.fail("Expected iteams " + Arrays.asList(items)
-                    + ", but missing " + absent);
+            Assert.fail("Expected iteams " + Arrays.asList(items) + ", but missing " + absent);
         }
+    }
+
+    /**
+     * Checks if the breadcrumb with the specified ID has the specified visibility.
+     *
+     * @param breadcrumbId The ID of the breadcrumb.
+     * @param visibility The desired visibility.
+     */
+    public void assertBreadcrumbHasVisibility(@IdRes int breadcrumbId, @Visibility int visibility) {
+        ViewMatchers.Visibility effectiveVisibility =
+                ViewMatchers.Visibility.forViewVisibility(visibility);
+        onView(withId(breadcrumbId)).check(matches(withEffectiveVisibility(effectiveVisibility)));
     }
 
     private boolean hasHorizontalEntry(String label) {
