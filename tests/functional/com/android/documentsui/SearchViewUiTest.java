@@ -932,4 +932,28 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
             changeNightMode("auto");
         }
     }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testClickingRootAfterSearchListsRootsFiles() throws UiObjectNotFoundException {
+        // Verify that the files in the current root we expect to see later are here at the start.
+        bots.directory.assertDocumentsPresent(
+                TestFilesRule.FILE_NAME_1,
+                TestFilesRule.FILE_NAME_2,
+                TestFilesRule.FILE_NAME_NO_RENAME);
+        // Change to the Recent view and run a search. Any root would do, but we are certain
+        // Recent root exists.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        // Run any search, the results do not matter.
+        bots.search.doSearch("foo");
+        device.waitForIdle();
+        // Now change back to TEST_ROOT_0. This must result in a regular file listing.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        // Give the app time to list the directory.
+        device.waitForIdle();
+        bots.directory.assertDocumentsPresent(
+                TestFilesRule.FILE_NAME_1,
+                TestFilesRule.FILE_NAME_2,
+                TestFilesRule.FILE_NAME_NO_RENAME);
+    }
 }

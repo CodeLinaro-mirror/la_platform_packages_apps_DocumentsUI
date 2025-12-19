@@ -50,6 +50,7 @@ public final class Providers {
 
     public static final String TRASH_ROOT_ID = "trash_root";
     public static final String HOME_SCREEN_SHORTCUT_TITLE = "Home screen";
+    public static final String DOWNLOAD_SHORTCUT_TITLE = "Download";
 
     private static final String DOCSUI_PACKAGE = "com.android.documentsui";
     private static final Set<String> SYSTEM_AUTHORITIES = Set.of(
