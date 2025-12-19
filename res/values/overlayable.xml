@@ -52,6 +52,7 @@
             <!-- When force_material3 is true, overriding this section won't work. -->
             <item type="dimen" name="grid_item_radius"/>
             <item type="dimen" name="search_chip_radius"/>
+            <item type="dimen" name="summary_drawable_padding" />
             <!-- END DIMEN -->
 
             <!-- START DRAWABLE -->
@@ -65,6 +66,7 @@
             <item type="drawable" name="ic_root_smartphone"/>
             <item type="drawable" name="ic_root_homescreen"/>
             <item type="drawable" name="ic_sd_storage"/>
+            <item type="drawable" name="ic_summary" />
             <!-- When force_material3 is true, overriding "root_list_selector" won't work. -->
             <item type="drawable" name="root_list_selector"/>
             <!-- END DRAWABLE -->
