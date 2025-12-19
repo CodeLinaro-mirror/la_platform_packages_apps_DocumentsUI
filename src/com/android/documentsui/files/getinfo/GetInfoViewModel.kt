@@ -27,6 +27,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Lookup
+import com.android.documentsui.files.getinfo.SharedUtils.createInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -96,18 +97,50 @@ class GetInfoViewModel(
             .flowOn(ioDispatcher)
 
     /**
+     * Asynchronously fetches the file metadata (EXIF, Audio, Video) from the ContentProvider. Emits
+     * a placeholder (empty list) initially, then the parsed items once loaded.
+     */
+    private val metadataFlow: Flow<List<ListItem>> =
+        flow {
+                if (!doc.isMetadataSupported) {
+                    emit(emptyList())
+                    return@flow
+                }
+
+                val context = getApplication<Application>()
+                val resolver = doc.userId.getContentResolver(context)
+
+                try {
+                    val metadata = DocumentsContract.getDocumentMetadata(resolver, doc.derivedUri)
+                    if (metadata != null) {
+                        val items = MetadataUtils.parseMetadata(context, metadata)
+                        emit(items)
+                    } else {
+                        emit(emptyList())
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "Failed to load metadata for ${doc.derivedUri}", e)
+                    emit(emptyList())
+                }
+            }
+            .flowOn(ioDispatcher)
+
+    /**
      * A StateFlow that defines the final list for the dialog. The data is combined using the
      * statically available information the `DocumentInfo` with the asynchronously fetched
      * information retrieved using the Flows.
      */
     val items: StateFlow<List<ListItem>> =
-        combine(directoryCountFlow, streamTypesFlow) { dirCountItems, streamTypes ->
-                buildItemList(dirCountItems, streamTypes)
+        combine(directoryCountFlow, streamTypesFlow, metadataFlow) {
+                dirCountItems,
+                streamTypes,
+                metadataItems ->
+                buildItemList(dirCountItems, streamTypes, metadataItems)
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = buildItemList(emptyList(), emptyList()),
+                initialValue = buildItemList(emptyList(), emptyList(), emptyList()),
             )
 
     /**
@@ -117,6 +150,7 @@ class GetInfoViewModel(
     private fun buildItemList(
         dirCountItems: List<ListItem>,
         streamTypes: List<ListItem>,
+        metadataItems: List<ListItem>,
     ): List<ListItem> {
         val context = getApplication<Application>()
 
@@ -165,6 +199,12 @@ class GetInfoViewModel(
             }
 
             addAll(dirCountItems)
+
+            // Add Metadata info (EXIF, Audio, Video).
+            if (metadataItems.isNotEmpty()) {
+                add(createHeader(context, R.string.inspector_metadata_section))
+                addAll(metadataItems)
+            }
 
             // Add synchronous debug info.
             if (showDebug) {
@@ -241,10 +281,6 @@ class GetInfoViewModel(
 
     private fun createHeader(context: Context, labelRes: Int): ListItem.Header {
         return ListItem.Header(context.resources.getString(labelRes))
-    }
-
-    private fun createInfo(context: Context, labelRes: Int, value: Any?): ListItem.Info {
-        return ListItem.Info(context.resources.getString(labelRes), value.toString())
     }
 
     class Factory(
