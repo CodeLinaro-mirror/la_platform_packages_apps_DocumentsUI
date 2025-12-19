@@ -38,8 +38,9 @@ final class MetadataUtils {
     }
 
     static boolean hasVideoCoordinates(@Nullable Bundle data) {
-        return data != null && (data.containsKey(Shared.METADATA_VIDEO_LATITUDE)
-                && data.containsKey(Shared.METADATA_VIDEO_LONGITUTE));
+        return data != null
+                && (data.containsKey(Shared.METADATA_VIDEO_LATITUDE)
+                        && data.containsKey(Shared.METADATA_VIDEO_LONGITUDE));
     }
 
     static boolean hasExifGpsFields(@Nullable Bundle exif) {
@@ -83,8 +84,8 @@ final class MetadataUtils {
     static float[] getVideoCoords(Bundle data) {
         assert hasVideoCoordinates(data);
         return new float[] {
-                data.getFloat(Shared.METADATA_VIDEO_LATITUDE),
-                data.getFloat(Shared.METADATA_VIDEO_LONGITUTE)
+            data.getFloat(Shared.METADATA_VIDEO_LATITUDE),
+            data.getFloat(Shared.METADATA_VIDEO_LONGITUDE)
         };
     }
 
