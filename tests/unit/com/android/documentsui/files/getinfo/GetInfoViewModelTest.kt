@@ -31,6 +31,7 @@ import android.provider.DocumentsContract
 import android.provider.Settings
 import android.test.mock.MockContentProvider
 import android.test.mock.MockContentResolver
+import androidx.exifinterface.media.ExifInterface
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.R
@@ -53,6 +54,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyFloat
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -174,6 +176,30 @@ class GetInfoViewModelTest {
         `when`(resources.getString(R.string.metadata_duration)).thenReturn("Duration")
         `when`(resources.getString(R.string.metadata_artist)).thenReturn("Artist")
         `when`(resources.getString(R.string.metadata_album)).thenReturn("Album")
+
+        // Mock metadata fields
+        `when`(resources.getString(R.string.metadata_dimensions)).thenReturn("Dimensions")
+
+        // Mock Dimensions Format: Matches Video Test (1920x1080)
+        `when`(
+                resources.getString(
+                    eq(R.string.metadata_dimensions_format),
+                    eq(1920),
+                    eq(1080),
+                    anyFloat(),
+                )
+            )
+            .thenReturn("1920 x 1080 (2.07 MP)")
+
+        // Mock GPS/Address fields
+        `when`(resources.getString(R.string.metadata_coordinates)).thenReturn("Coordinates")
+        `when`(resources.getString(eq(R.string.metadata_coordinates_format), any(), any()))
+            .thenAnswer { invocation ->
+                val lat = invocation.arguments[1]
+                val lon = invocation.arguments[2]
+                "$lat, $lon"
+            }
+        `when`(resources.getString(R.string.metadata_address)).thenReturn("Address")
     }
 
     /**
@@ -573,6 +599,229 @@ class GetInfoViewModelTest {
                 ExpectedItem.InfoLabel(3, "Size"),
                 ExpectedItem.InfoLabel(4, "Modified"),
             )
+        }
+
+    @Test
+    fun testVideoMetadata() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        putInt(ExifInterface.TAG_IMAGE_WIDTH, 1920)
+                        putInt(ExifInterface.TAG_IMAGE_LENGTH, 1080)
+                        putInt(MediaMetadata.METADATA_KEY_DURATION, 60000)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                8,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Dimensions", "1920 x 1080 (2.07 MP)")),
+                ExpectedItem.Exact(7, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_LongDuration() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_long.mp4"
+                    displayName = "video_long.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        putInt(ExifInterface.TAG_IMAGE_WIDTH, 1920)
+                        putInt(ExifInterface.TAG_IMAGE_LENGTH, 1080)
+                        putLong(MediaMetadata.METADATA_KEY_DURATION, 60000L)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                8,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Dimensions", "1920 x 1080 (2.07 MP)")),
+                // Strict check ensures Long -> Int conversion didn't break format
+                ExpectedItem.Exact(7, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_Coordinates_Double() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_coords.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            // Mock the format specifically for this test if needed, or rely on the setUp() mock
+            // which currently returns "10.0, 20.0" for any coordinate input.
+            // We use 10.0 and 20.0 to match the hardcoded mock in your setUp() method.
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        // Test Double path in VideoUtils.getVideoCoords
+                        putDouble(Shared.METADATA_VIDEO_LATITUDE, 10.0)
+                        putDouble(Shared.METADATA_VIDEO_LONGITUDE, 20.0)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            // Expected items:
+            // 5 Standard (Header, Name, Type, Size, Modified)
+            // + 3 Video (Dimensions, Coordinates, Duration)
+            // Note: "Address" is not expected here because Geocoder is not shadowed/mocked
+            // to return a positive result in this environment, so getAddress returns null.
+            waitAndAssertOrderedItems(
+                viewModel,
+                7,
+                ExpectedItem.Exact(5, ListItem.Header("Metadata")),
+                ExpectedItem.Exact(6, ListItem.Info("Coordinates", "10.0, 20.0")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_Coordinates_Float() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_coords_float.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        // Test Float path in VideoUtils.getVideoCoords
+                        // Use Float values specifically to trigger the fallback logic in parsing
+                        putFloat(Shared.METADATA_VIDEO_LATITUDE, 10.0f)
+                        putFloat(Shared.METADATA_VIDEO_LONGITUDE, 20.0f)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            waitAndAssertOrderedItems(
+                viewModel,
+                7,
+                ExpectedItem.Exact(5, ListItem.Header("Metadata")),
+                ExpectedItem.Exact(6, ListItem.Info("Coordinates", "10.0, 20.0")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_DimensionsAsString() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_strings.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        // Test getIntTag fallback logic where tags are stored as Strings
+                        putString(ExifInterface.TAG_IMAGE_WIDTH, "1920")
+                        putString(ExifInterface.TAG_IMAGE_LENGTH, "1080")
+                        putInt(MediaMetadata.METADATA_KEY_DURATION, 60000)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            waitAndAssertOrderedItems(
+                viewModel,
+                8,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                // Verify calculation still works with String inputs
+                ExpectedItem.Exact(6, ListItem.Info("Dimensions", "1920 x 1080 (2.07 MP)")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_InvalidCoordinates() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_invalid_coords.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply { // Test 0.0/0.0 exclusion logic
+                        putDouble(Shared.METADATA_VIDEO_LATITUDE, 0.0)
+                        putDouble(Shared.METADATA_VIDEO_LONGITUDE, 0.0)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            // Should NOT have coordinates item (Size should just contain the standard items)
+            waitAndAssertOrderedItems(viewModel, 5)
         }
 
     companion object {

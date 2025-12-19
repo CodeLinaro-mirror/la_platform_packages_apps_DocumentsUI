@@ -26,8 +26,12 @@ import com.android.documentsui.base.Shared
  */
 object MetadataUtils {
     suspend fun parseMetadata(context: Context, metadata: Bundle): List<ListItem> = buildList {
-        // TODO(b/458494432): Parse Video.
         // TODO(b/458494432): Parse EXIF.
+
+        val video = metadata.getBundle(Shared.METADATA_KEY_VIDEO)
+        if (video != null) {
+            addAll(VideoUtils.parseVideoData(context, video))
+        }
 
         val audio = metadata.getBundle(Shared.METADATA_KEY_AUDIO)
         if (audio != null) {
