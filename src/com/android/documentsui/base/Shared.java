@@ -73,7 +73,7 @@ public final class Shared {
     public static final String METADATA_KEY_AUDIO = "android.media.metadata.audio";
     public static final String METADATA_KEY_VIDEO = "android.media.metadata.video";
     public static final String METADATA_VIDEO_LATITUDE = "android.media.metadata.video:latitude";
-    public static final String METADATA_VIDEO_LONGITUTE = "android.media.metadata.video:longitude";
+    public static final String METADATA_VIDEO_LONGITUDE = "android.media.metadata.video:longitude";
 
     /**
      * Extra flag used to store the current stack so user opens in right spot.

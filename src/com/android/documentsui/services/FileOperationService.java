@@ -17,6 +17,7 @@
 package com.android.documentsui.services;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isContentProviderClientAnrOnCancelEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -362,7 +363,9 @@ public class FileOperationService extends Service implements Job.Listener {
 
         JobRecord record = mJobs.remove(job.id);
         assert(record != null);
-        record.job.cleanup();
+        if (!isContentProviderClientAnrOnCancelEnabled()) {
+            record.job.cleanup();
+        }
 
         if (mVisualSignalsEnabled && mJobs.isEmpty()) {
             mJobMonitor.stop();

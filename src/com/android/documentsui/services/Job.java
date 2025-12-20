@@ -28,6 +28,7 @@ import static com.android.documentsui.services.FileOperationService.EXTRA_FAILED
 import static com.android.documentsui.services.FileOperationService.EXTRA_JOB_ID;
 import static com.android.documentsui.services.FileOperationService.EXTRA_OPERATION_TYPE;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNKNOWN;
+import static com.android.documentsui.util.FlagUtils.isContentProviderClientAnrOnCancelEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
@@ -206,6 +207,9 @@ abstract public class Job implements Runnable {
             // NOTE: If this details is a JumboClipDetails, and it's still referred in primary clip
             // at this point, user won't be able to paste it to anywhere else because the underlying
             mResourceUris.dispose();
+            if (isContentProviderClientAnrOnCancelEnabled()) {
+                cleanup();
+            }
         }
     }
 
