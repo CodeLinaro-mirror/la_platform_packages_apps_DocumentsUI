@@ -122,6 +122,7 @@ public class RootsFragment extends Fragment {
      */
     private static final String EXTRA_CONTAINER_ID = "containerId";
     private static final int CONTEXT_MENU_ITEM_TIMEOUT = 500;
+    private static final String LOADER_REFRESH_ROOT_AND_DIRECTORY_ID = "refreshRootAndDirectory";
 
     private RootsListHandler mListHandler;
     private LoaderCallbacks<Collection<RootInfo>> mRootsCallbacks;
@@ -298,33 +299,51 @@ public class RootsFragment extends Fragment {
             mDragListener = mListHandler.createDragListener(listener);
         }
 
-        mShortcutsCallbacks = new LoaderCallbacks<>() {
-            @NonNull
-            @Override
-            public Loader<Collection<ShortcutInfo>> onCreateLoader(int id, @Nullable Bundle args) {
-                return new ShortcutsLoader(
-                    getContext(), providers, activity.getSelectedUser());
-            }
+        mShortcutsCallbacks =
+                new LoaderCallbacks<>() {
+                    private Bundle mArgs;
 
-            @Override
-            public void onLoadFinished(@NonNull Loader<Collection<ShortcutInfo>> loader,
-                Collection<ShortcutInfo> shortcuts) {
-                if (!isHomeScreenFilesFlagEnabled()) {
-                    shortcuts = new ArrayList<>();
-                }
-                loadFinished(mLoadedRoots, shortcuts, activity, state);
-            }
+                    @NonNull
+                    @Override
+                    public Loader<Collection<ShortcutInfo>> onCreateLoader(
+                            int id, @Nullable Bundle args) {
+                        mArgs = args;
+                        return new ShortcutsLoader(
+                                getContext(), providers, activity.getSelectedUser());
+                    }
 
-            @Override
-            public void onLoaderReset(@NonNull Loader<Collection<ShortcutInfo>> loader) {
-                mListHandler.resetAdapter();
-            }
-        };
+                    @Override
+                    public void onLoadFinished(
+                            @NonNull Loader<Collection<ShortcutInfo>> loader,
+                            Collection<ShortcutInfo> shortcuts) {
+                        if (!isHomeScreenFilesFlagEnabled()) {
+                            shortcuts = new ArrayList<>();
+                        }
+                        loadFinished(mLoadedRoots, shortcuts, activity, state);
+                        if (isHomeScreenFilesFlagEnabled()
+                                && mArgs != null
+                                && mArgs.getBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID)) {
+                            // Only refresh the current window - we don't want to cancel current
+                            // search results.
+                            getBaseActivity()
+                                    .refreshCurrentRootAndDirectoryWithoutSearch(
+                                            AnimationView.ANIM_NONE);
+                        }
+                    }
+
+                    @Override
+                    public void onLoaderReset(@NonNull Loader<Collection<ShortcutInfo>> loader) {
+                        mListHandler.resetAdapter();
+                    }
+                };
 
         mRootsCallbacks =
                 new LoaderCallbacks<>() {
+                    private Bundle mArgs;
+
                     @Override
                     public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
+                        mArgs = args;
                         return new RootsLoader(activity, providers, state);
                     }
 
@@ -339,11 +358,12 @@ public class RootsFragment extends Fragment {
                             mLoadedRoots = roots;
                             // Load the shortcut roots next
                             LoaderManager.getInstance(RootsFragment.this)
-                                    .restartLoader(LoaderIds.SHORTCUTS, null, mShortcutsCallbacks);
+                                    .restartLoader(LoaderIds.SHORTCUTS, mArgs, mShortcutsCallbacks);
+                            mArgs = null;
                             return;
                         }
-
                         loadFinished(roots, new ArrayList<>(), activity, state);
+                        mArgs = null;
                     }
 
                     @Override
@@ -353,8 +373,10 @@ public class RootsFragment extends Fragment {
                 };
     }
 
-    public void reloadRootsAndShortcuts() {
-        LoaderManager.getInstance(this).restartLoader(LoaderIds.ROOTS, null, mRootsCallbacks);
+    public void reloadRootsAndShortcuts(boolean refreshRootAndDirectory) {
+        Bundle args = new Bundle();
+        args.putBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID, refreshRootAndDirectory);
+        LoaderManager.getInstance(this).restartLoader(LoaderIds.ROOTS, args, mRootsCallbacks);
     }
 
     @VisibleForTesting
@@ -440,10 +462,6 @@ public class RootsFragment extends Fragment {
         mInjector.appsRowManager.updateList(mApplicationItemList);
         mInjector.appsRowManager.updateView(activity);
         onCurrentRootChanged();
-        if (isHomeScreenFilesFlagEnabled()) {
-            // Only refresh the current window - we don't want to cancel current search results.
-            getBaseActivity().refreshCurrentRootAndDirectoryWithoutSearch(AnimationView.ANIM_NONE);
-        }
     }
 
 
@@ -862,7 +880,7 @@ public class RootsFragment extends Fragment {
     public void onDisplayStateChanged() {
         mListHandler.onDisplayStateChange();
 
-        reloadRootsAndShortcuts();
+        reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ false);
     }
 
     public void onCurrentRootChanged() {
@@ -909,7 +927,7 @@ public class RootsFragment extends Fragment {
      * Called when the selected user is changed. It reloads roots with the current user.
      */
     public void onSelectedUserChanged() {
-        reloadRootsAndShortcuts();
+        reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ false);
     }
 
     /**
