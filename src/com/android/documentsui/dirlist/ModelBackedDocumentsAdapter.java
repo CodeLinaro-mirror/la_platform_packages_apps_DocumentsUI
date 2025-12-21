@@ -73,7 +73,6 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     private NetworkMonitor.NetworkListener mNetworkListener = isOnline -> {
         // Do nothing. Logic is handled in DirectoryAddonsAdapter.java.
     };
-    @VisibleForTesting public static final int TICK_VISIBLE_DURATION_MS = 1200;
 
     @VisibleForTesting
     public HashMap<String, Runnable> mJustFinishedSyncingRemovalTasks = new HashMap<>();
@@ -300,7 +299,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
                     }
                 };
         mJustFinishedSyncingRemovalTasks.put(modelId, removalTask);
-        mHandler.postDelayed(removalTask, TICK_VISIBLE_DURATION_MS);
+        mHandler.postDelayed(removalTask, mEnv.getTickDuration());
     }
 
     private void onModelUpdateFailed(Exception e) {

@@ -105,6 +105,8 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
         boolean isOnline();
         Model getModel();
 
+        int getTickDuration();
+
         boolean isDocumentEnabled(DocumentInfo doc);
 
         boolean isContentAvailable(DocumentInfo doc);

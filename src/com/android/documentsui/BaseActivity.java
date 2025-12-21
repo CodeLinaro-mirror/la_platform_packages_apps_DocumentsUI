@@ -115,6 +115,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -159,6 +160,9 @@ public abstract class BaseActivity
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
     private Locale mCurrentLocale;
+
+    // Supplies the inline sync tick icon visibility duration.
+    private Supplier<Integer> mTestTickDurationSupplier = null;
 
     protected void setInitialStack(DocumentStack stack) {
         if (mInitialStack.isInitialized()) {
@@ -205,6 +209,17 @@ public abstract class BaseActivity
     @VisibleForTesting
     public void setConfigStore(ConfigStore configStore) {
         mConfigStore = configStore;
+    }
+
+    /** Used by tests to set the inline sync tick icon visibility duration. */
+    @VisibleForTesting
+    public void setTickDurationSupplierForTest(Supplier<Integer> testTickVisibleDurationSupplier) {
+        mTestTickDurationSupplier = testTickVisibleDurationSupplier;
+    }
+
+    /** Provides the inline sync tick icon visibility duration when set in tests. */
+    public Supplier<Integer> getTickDurationSupplierForTest() {
+        return mTestTickDurationSupplier;
     }
 
     /**
