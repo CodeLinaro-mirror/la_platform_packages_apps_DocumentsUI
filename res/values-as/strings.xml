@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"তথ্য পাওক"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"লুকুৱাই থোৱা ফাইল দেখুৱাওক"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"লুকুৱাই থোৱা ফাইল নেদেখুৱাব"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"সাৰাংশৰ স্তম্ভ দেখুৱাওক"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"সাৰাংশৰ স্তম্ভ নেদেখুৱাব"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>ত চাওক"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"নতুন ৱিণ্ড\'"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"কাট কৰক"</string>
@@ -81,6 +79,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"যোগানকাৰীত দেখুৱাওক"</string>
     <string name="button_back" msgid="1888621708934742182">"উভতি যাওক"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"ফ’ল্ডাৰত দেখুৱাওক"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"ট্ৰেশ্ব খোলক"</string>
     <string name="not_sorted" msgid="7813496644889115530">"ক্ৰমবদ্ধ কৰা হোৱা নাই"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"নাম"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"সাৰাংশ"</string>
@@ -360,8 +359,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"আপোনাৰ গোপনীয়তা সুৰক্ষিত কৰিবলৈ অন্য এটা ফ’ল্ডাৰ বাছনি কৰক"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"নতুন ফ\'ল্ডাৰ সৃষ্টি কৰক"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"এই ডিভাইচটো সন্ধান কৰক"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"সন্ধান কৰক"</string>
     <string name="search_results" msgid="7662182646512984171">"সন্ধানৰ ফলাফল"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"পাঠ মচক"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"মূল ফ’ল্ডাৰ"</string>

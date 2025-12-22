@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"তথ্য পান"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"লুকানো ফাইল দেখুন"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"লুকানো ফাইল দেখাবেন না"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"সারাংশের কলাম দেখুন"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"সারাংশের কলাম দেখতে চাই না"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>-এ দেখুন"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"নতুন উইন্ডো"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"কাট করুন"</string>
@@ -81,6 +79,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"প্রদানকারীতে দেখুন"</string>
     <string name="button_back" msgid="1888621708934742182">"ফিরে যান"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"ফোল্ডারে দেখুন"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"ট্র্যাশ খুলুন"</string>
     <string name="not_sorted" msgid="7813496644889115530">"সাজানো নেই"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"নাম"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"সারাংশ"</string>
@@ -360,8 +359,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"আপনার গোপনীয়তা সুরক্ষিত রাখতে, অন্য ফোল্ডার বেছে নিন"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"নতুন ফোল্ডার তৈরি করুন"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"এই ডিভাইসে খুঁজুন"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"সার্চ করুন"</string>
     <string name="search_results" msgid="7662182646512984171">"সার্চ ফলাফল"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"টেক্সট মুছুন"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"রুট ফোল্ডার"</string>

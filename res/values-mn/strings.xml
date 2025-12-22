@@ -58,10 +58,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Мэдээлэл авах"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Нуусан файлудыг харуул"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Нуусан файлуудыг бүү харуул"</string>
-    <!-- no translation found for option_show_summary_column (2877633662563512552) -->
-    <skip />
-    <!-- no translation found for option_hide_summary_column (2195115533636850442) -->
-    <skip />
+    <string name="option_show_summary_column" msgid="2877633662563512552">"Хураангуйн баганыг харуулах"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"Хураангуйн баганыг бүү харуул"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>-д харах"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Шинэ цонх"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Таслах"</string>
@@ -81,6 +79,8 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Үйлчилгээ үзүүлэгчид харуулах"</string>
     <string name="button_back" msgid="1888621708934742182">"Буцах"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Фолдерт харуулах"</string>
+    <!-- no translation found for button_open_trash (8152584341121216006) -->
+    <skip />
     <string name="not_sorted" msgid="7813496644889115530">"Эрэмбэлээгүй"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Нэр"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Хураангуй"</string>
@@ -360,8 +360,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Нууцлалаа хамгаалахын тулд өөр фолдер сонгоно уу"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Шинэ фолдер үүсгэх"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Энэ төхөөрөмжийг хайх"</string>
-    <!-- no translation found for search_bar_generic_hint (8923500515355253888) -->
-    <skip />
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"Хайх"</string>
     <string name="search_results" msgid="7662182646512984171">"Хайлтын илэрц"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Текст арилгах"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Үндсэн фолдер"</string>
