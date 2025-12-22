@@ -22,6 +22,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.Cursor
 import android.database.MatrixCursor
+import android.media.MediaMetadata
 import android.net.Uri
 import android.os.Bundle
 import android.os.LocaleList
@@ -35,6 +36,7 @@ import androidx.test.filters.SmallTest
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Lookup
+import com.android.documentsui.base.Shared
 import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.MainDispatcherRule
 import java.util.Locale
@@ -166,6 +168,12 @@ class GetInfoViewModelTest {
         // Mock lookup to return folder type and a default for the remaining types.
         `when`(lookup.lookup(any())).thenReturn("File Type")
         `when`(lookup.lookup(eq(DocumentsContract.Document.MIME_TYPE_DIR))).thenReturn("Folder")
+
+        // Mock Audio strings.
+        `when`(resources.getString(R.string.inspector_metadata_section)).thenReturn("Metadata")
+        `when`(resources.getString(R.string.metadata_duration)).thenReturn("Duration")
+        `when`(resources.getString(R.string.metadata_artist)).thenReturn("Artist")
+        `when`(resources.getString(R.string.metadata_album)).thenReturn("Album")
     }
 
     /**
@@ -248,16 +256,37 @@ class GetInfoViewModelTest {
         assertEquals("Timed out waiting for expected state.", expectedList, actualList)
     }
 
+    /**
+     * Helper to quickly setup a DocumentsProvider that returns a Bundle on the getDocumentMetadata
+     * call.
+     */
+    private fun setupMetadataProvider(metadataBuilder: Bundle.() -> Unit) {
+        val provider =
+            object : MockContentProvider() {
+                override fun call(
+                    auth: String,
+                    method: String,
+                    arg: String?,
+                    extras: Bundle?,
+                ): Bundle {
+                    if (method == DocumentsContract.METHOD_GET_DOCUMENT_METADATA) {
+                        return Bundle().apply(metadataBuilder)
+                    }
+                    return Bundle()
+                }
+            }
+        contentResolver.addProvider(AUTHORITY, provider)
+    }
+
     @Test
     fun testStandardFile_WithDebug() =
         runTest(testDispatcher) {
-            val authority = "com.example.authority"
             val documentId = "testId"
-            val derivedUri = DocumentsContract.buildDocumentUri(authority, documentId)
+            val derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
             val doc =
                 DocumentInfo().apply {
                     this.derivedUri = derivedUri
-                    this.authority = authority
+                    this.authority = AUTHORITY
                     this.documentId = documentId
                     displayName = "test.pdf"
                     mimeType = "application/pdf"
@@ -275,7 +304,7 @@ class GetInfoViewModelTest {
                         return arrayOf("fake/type")
                     }
                 }
-            contentResolver.addProvider(authority, streamTypesProvider)
+            contentResolver.addProvider(AUTHORITY, streamTypesProvider)
 
             val viewModel = GetInfoViewModel(application, doc, lookup, true, ioTestDispatcher)
             waitAndAssertOrderedItems(
@@ -326,8 +355,6 @@ class GetInfoViewModelTest {
     @Test
     fun testDirectory() =
         runTest(testDispatcher) {
-            val authority = "com.example.authority"
-
             val doc =
                 DocumentInfo().apply {
                     documentId = "testDirectoryId"
@@ -336,7 +363,7 @@ class GetInfoViewModelTest {
                     size = 0
                     lastModified = 1234567890L
                     userId = UserId.DEFAULT_USER
-                    this.authority = authority
+                    this.authority = AUTHORITY
                     documentId = "myFolder"
                 }
 
@@ -357,7 +384,7 @@ class GetInfoViewModelTest {
                         return cursor
                     }
                 }
-            contentResolver.addProvider(authority, childrenProvider)
+            contentResolver.addProvider(AUTHORITY, childrenProvider)
 
             val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
             waitAndAssertOrderedItems(
@@ -410,8 +437,149 @@ class GetInfoViewModelTest {
             waitAndAssertOrderedItems(viewModel, 4, ExpectedItem.InfoLabel(3, "Size"))
         }
 
+    @Test
+    fun testAudioMetadata() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val audio =
+                    Bundle().apply {
+                        putString(MediaMetadata.METADATA_KEY_ARTIST, "Artist Name")
+                        putString(MediaMetadata.METADATA_KEY_ALBUM, "Album Name")
+                        putLong(MediaMetadata.METADATA_KEY_DURATION, 60000L)
+                    }
+                putBundle(Shared.METADATA_KEY_AUDIO, audio)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                9,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Artist", "Artist Name")),
+                ExpectedItem.Exact(7, ListItem.Info("Album", "Album Name")),
+                ExpectedItem.Exact(8, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testAudioMetadata_NullBundle() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            val provider =
+                object : MockContentProvider() {
+                    override fun call(
+                        auth: String,
+                        method: String,
+                        arg: String?,
+                        extras: Bundle?,
+                    ): Bundle? {
+                        return null
+                    }
+                }
+            contentResolver.addProvider(AUTHORITY, provider)
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(viewModel, 5)
+        }
+
+    @Test
+    fun testAudioMetadata_DurationInt() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val audio = Bundle().apply { putInt(MediaMetadata.METADATA_KEY_DURATION, 60000) }
+                putBundle(Shared.METADATA_KEY_AUDIO, audio)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                7,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testAudioMetadata_EmptyStrings_Hidden() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio_empty.mp3"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val audio =
+                    Bundle().apply {
+                        // Empty values should not be shown.
+                        putString(MediaMetadata.METADATA_KEY_ARTIST, "")
+                        putString(MediaMetadata.METADATA_KEY_ALBUM, "")
+                        putString(MediaMetadata.METADATA_KEY_COMPOSER, "")
+                    }
+                putBundle(Shared.METADATA_KEY_AUDIO, audio)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                5,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(1, ListItem.Info("Name", "song.mp3")),
+                ExpectedItem.Exact(2, ListItem.Info("Type", "File Type")),
+                ExpectedItem.InfoLabel(3, "Size"),
+                ExpectedItem.InfoLabel(4, "Modified"),
+            )
+        }
+
     companion object {
         // Constant for the number of debug items added (Header + 5 infos + 17 flags + 1 async).
         const val DEBUG_ITEM_COUNT = 24
+
+        // Constant mock authority used throughout all the tests.
+        const val AUTHORITY = "com.example.authority"
     }
 }
