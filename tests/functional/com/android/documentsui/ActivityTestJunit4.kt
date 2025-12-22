@@ -112,7 +112,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
 
     /** Resolves testing roots. */
     @Throws(RemoteException::class)
-    protected fun setupTestingRoots() {
+    protected open fun setupTestingRoots() {
         rootDir0 = mDocsHelper!!.getRoot(StubProvider.ROOT_0_ID)
         rootDir1 = mDocsHelper!!.getRoot(StubProvider.ROOT_1_ID)
         this.initialRoot = rootDir0

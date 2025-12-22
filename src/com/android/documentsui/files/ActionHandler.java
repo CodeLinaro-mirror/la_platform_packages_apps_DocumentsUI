@@ -778,6 +778,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     private boolean launchToDownloads(Intent intent) {
         if (DownloadManager.ACTION_VIEW_DOWNLOADS.equals(intent.getAction())) {
+            if (isHomeScreenFilesFlagEnabled()) {
+                Uri uri =
+                        DocumentsContract.buildDocumentUri(
+                                Providers.AUTHORITY_STORAGE, Providers.DOWNLOAD_DOCUMENT_ID);
+                return launchToDocument(uri);
+            }
             Uri uri = DocumentsContract.buildRootUri(Providers.AUTHORITY_DOWNLOADS,
                     Providers.ROOT_ID_DOWNLOADS);
             loadRoot(uri, UserId.DEFAULT_USER);
