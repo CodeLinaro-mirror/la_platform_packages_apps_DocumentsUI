@@ -22,6 +22,8 @@ import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.DirectoryResult;
 import com.android.documentsui.Model;
 import com.android.documentsui.base.DocumentInfo;
@@ -29,7 +31,9 @@ import com.android.documentsui.base.Features;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.RootCursorWrapper;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class TestModel extends Model {
 
@@ -49,6 +53,8 @@ public class TestModel extends Model {
     private int mLastId = 0;
     private Random mRand = new Random();
     private MatrixCursor mCursor;
+    @Nullable private String[] mIds = null;
+    private final Set<String> mSyncInProgressModelIds = new HashSet<>();
 
     public TestModel(UserId userId, String authority, Features features) {
         super(features);
@@ -167,5 +173,28 @@ public class TestModel extends Model {
         }
 
         return "text/plain";
+    }
+
+    public String[] getModelIds() {
+        // Fallback to super if not overwritten.
+        return mIds != null ? mIds : super.getModelIds();
+    }
+
+    public void setModelIds(String[] ids) {
+        mIds = ids;
+    }
+
+    public Set<String> getSyncInProgressModelIds() {
+        return mSyncInProgressModelIds;
+    }
+
+    /** Adds the modelId to the `mSyncInProgressIds` set. */
+    public void addSyncInProgressModelId(String modelId) {
+        mSyncInProgressModelIds.add(modelId);
+    }
+
+    /** Removes the id to the `mSyncInProgressModelIds` set. */
+    public void removeSyncInProgressModelId(String modelId) {
+        mSyncInProgressModelIds.remove(modelId);
     }
 }

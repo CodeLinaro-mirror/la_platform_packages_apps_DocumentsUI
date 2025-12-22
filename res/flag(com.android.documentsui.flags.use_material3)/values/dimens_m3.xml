@@ -266,13 +266,13 @@
     <dimen name="grid_inline_sync_inner_cloud_icon_size">16dp</dimen>
     <dimen name="list_inline_sync_cloud_icon_size">17dp</dimen>
     <dimen name="grid_inline_sync_cloud_icon_size">19dp</dimen>
-    <dimen name="list_inline_sync_progress_icon_size">15dp</dimen>
-    <dimen name="grid_inline_sync_progress_icon_size">17dp</dimen>
+    <dimen name="list_inline_circular_icon_size">15dp</dimen>
+    <dimen name="grid_inline_circular_icon_size">17dp</dimen>
     <dimen name="grid_inline_sync_progress_margin">8dp</dimen>
     <dimen name="list_inline_sync_progress_indicator_size">11dp</dimen>
     <dimen name="grid_inline_sync_progress_indicator_size">12dp</dimen>
+    <dimen name="list_inline_tick_icon_size">14dp</dimen>
     <dimen name="list_inline_sync_error_icon_size">14dp</dimen>
-    <dimen name="grid_inline_sync_error_icon_size">17dp</dimen>
     <dimen name="grid_inline_sync_error_margin">8dp</dimen>
     <dimen name="list_inline_sync_error_inner_icon_size">12dp</dimen>
     <dimen name="grid_inline_sync_error_inner_icon_size">15dp</dimen>
