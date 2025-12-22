@@ -39,11 +39,13 @@ import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.MainDispatcherRule
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -203,29 +205,47 @@ class GetInfoViewModelTest {
     }
 
     /** Wait for the expectations to be correct, otherwise fail with an assertion. */
-    private suspend fun waitAndAssertOrderedItems(
+    private suspend fun TestScope.waitAndAssertOrderedItems(
         viewModel: GetInfoViewModel,
         expectedSize: Int,
         vararg expectations: ExpectedItem,
     ) {
-        try {
-            val matchedList =
-                viewModel.items.first { list ->
-                    if (list.size != expectedSize) return@first false
-                    val expectedList = buildExpectedList(list, expectedSize, *expectations)
-                    list == expectedList
-                }
-
-            val expectedList = buildExpectedList(matchedList, expectedSize, *expectations)
-            assertEquals(expectedList, matchedList)
-        } catch (e: TimeoutCancellationException) {
-            // In the event the `first()` call timed out, let's rebuild the last known state so that
-            // the error messages can be much more useful.
-            val actualList = viewModel.items.value
-            val expectedList = buildExpectedList(actualList, expectedSize, *expectations)
-
-            assertEquals("Timed out waiting for expected state.", expectedList, actualList)
+        // Subscribe to the items `StateFlow`. All the flows that combine to the items flow don't
+        // actually start until at least 1 subscriber.
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.items.collect()
         }
+
+        val timeoutMs = 5000L
+        val deadline = System.currentTimeMillis() + timeoutMs
+
+        while (System.currentTimeMillis() < deadline) {
+            val list = viewModel.items.value
+
+            if (list.size == expectedSize) {
+                val expectedList = buildExpectedList(list, expectedSize, *expectations)
+                if (list == expectedList) {
+                    return
+                }
+            }
+
+            // In runTest, virtual time controls (like withTimeout or advanceTimeBy) fast-forward
+            // instantly if no time-based delays are scheduled. Since the ViewModel's flow pipeline
+            // (combine, flowOn) relies on multiple dispatch cycles to propagate data rather than
+            // delays, virtual time controls can aggressively skip to the timeout before the
+            // dispatcher has finished processing.
+            //
+            // By using a wall-clock loop with `yield()`, we bypass virtual time skipping and
+            // manually pump the event loop. This gives the UnconfinedTestDispatcher the
+            // execution cycles it needs to process the flow pipeline without premature cancellation
+            // which allows for an appropriate error message to be displayed (and not a vague 60s
+            // timeout reached error).
+            yield()
+        }
+
+        val actualList = viewModel.items.value
+        val expectedList = buildExpectedList(actualList, expectedSize, *expectations)
+        assertEquals("Timed out waiting for expected state.", expectedList, actualList)
     }
 
     @Test
