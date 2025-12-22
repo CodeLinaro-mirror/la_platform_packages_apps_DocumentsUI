@@ -207,6 +207,26 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRename_ContainsInvalidCharacters() throws Exception {
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+
+        clickRename();
+        bots.main.setDialogText(TestFilesRule.INVALID_FILE_NAME);
+        assertTrue(
+                bots.main
+                        .findUiObjectWithResIdAndSuffix(R.string.rename_invalid_character, "/")
+                        .exists());
+        bots.keyboard.pressEnter();
+        assertTrue(
+                bots.main
+                        .findUiObjectWithResIdAndSuffix(R.string.rename_invalid_character, "/")
+                        .exists());
+        bots.main.clickDialogCancelButton(/* closeSoftKeyboard */ true);
+        bots.directory.assertDocumentsCount(4);
+    }
+
+    @Test
     public void testRename_NameExists() throws Exception {
         renameWithConflict();
 

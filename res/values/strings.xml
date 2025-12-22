@@ -22,6 +22,9 @@
     <!-- Error when rename does not have a string prior to file extension -->
     <string name="hidden_file_rename_warning">Files with "." at the beginning of their name are hidden</string>
 
+    <!-- Error when an invalid character is entered when renaming a file -->
+    <string name="rename_invalid_character">"Invalid character: "</string>
+
     <!-- Error to create new folder when name is not added -->
     <string name="add_folder_name_error">You need to add a folder name</string>
 
