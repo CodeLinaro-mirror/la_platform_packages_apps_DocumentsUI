@@ -104,7 +104,11 @@ public class AccessibilityTest {
                 new MessageHolder(
                         mView.getContext(), new Space(mView.getContext()), testConfigStore) {
                     @Override
-                    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {}
+                    public void bind(
+                            DocumentInfo doc,
+                            String modelId,
+                            @Nullable String summary,
+                            boolean justFinishedSync) {}
                 });
 
         mView.setHolders(holders);
@@ -125,7 +129,11 @@ public class AccessibilityTest {
                 new MessageHolder(
                         mView.getContext(), new Space(mView.getContext()), testConfigStore) {
                     @Override
-                    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {}
+                    public void bind(
+                            DocumentInfo doc,
+                            String modelId,
+                            @Nullable String summary,
+                            boolean justFinishedSync) {}
                 });
 
         mView.setHolders(holders);

@@ -88,7 +88,11 @@ public abstract class DocumentHolder
     }
 
     /** Binds the view to the given item data. */
-    public abstract void bind(DocumentInfo doc, String modelId, @Nullable String summary);
+    public abstract void bind(
+            DocumentInfo doc,
+            String modelId,
+            @androidx.annotation.Nullable String summary,
+            boolean justFinishedSync);
 
     public String getModelId() {
         return mModelId;
@@ -141,7 +145,7 @@ public abstract class DocumentHolder
     }
 
     /** Binds the sync icons, if they exist, to the document's thumbnail. */
-    protected void bindSyncIcons(DocumentInfo doc) {
+    protected void bindSyncIcons(DocumentInfo doc, boolean justFinishedSync) {
         if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled() || !doc.hasSyncState()) {
             return;
         }
@@ -151,6 +155,7 @@ public abstract class DocumentHolder
         View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
         View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
         View downloadView = itemView.findViewById(getRes(R.id.download_icon));
+        View tickView = itemView.findViewById(getRes(R.id.progress_tick_icon));
 
         if ((doc.hasUploadInProgress() || doc.hasDownloadInProgress()) && progressView != null) {
             progressView.setVisibility(View.VISIBLE);
@@ -183,6 +188,11 @@ public abstract class DocumentHolder
                     mContext.getString(getRes(R.string.download_description_m3)));
             downloadView.setTooltipText(
                     mContext.getString(getRes(R.string.download_description_m3)));
+        } else if (justFinishedSync && tickView != null) {
+            tickView.setVisibility(View.VISIBLE);
+            tickView.setContentDescription(
+                    mContext.getString(getRes(R.string.synced_description_m3)));
+            tickView.setTooltipText(mContext.getString(getRes(R.string.synced_description_m3)));
         }
     }
 
@@ -196,6 +206,7 @@ public abstract class DocumentHolder
         View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
         View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
         View downloadView = itemView.findViewById(getRes(R.id.download_icon));
+        View tickView = itemView.findViewById(getRes(R.id.progress_tick_icon));
 
         if (progressView != null) {
             progressView.setVisibility(View.GONE);
@@ -208,6 +219,9 @@ public abstract class DocumentHolder
         }
         if (downloadView != null) {
             downloadView.setVisibility(View.GONE);
+        }
+        if (tickView != null) {
+            tickView.setVisibility(View.GONE);
         }
     }
 

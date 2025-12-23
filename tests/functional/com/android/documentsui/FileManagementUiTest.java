@@ -147,7 +147,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
         device.waitForIdle();
 
-        bots.directory.assertDocumentsVisible("file1.png");
+        bots.directory.waitForDocument("file1.png");
     }
 
     @Test

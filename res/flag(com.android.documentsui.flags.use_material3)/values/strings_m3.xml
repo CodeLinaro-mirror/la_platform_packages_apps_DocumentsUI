@@ -19,9 +19,10 @@
     <string name="file_operation_rejected_m3">Action not supported</string>
 
     <!-- Inline sync state icon descriptions -->
-    <string name="sync_error_description_m3">Sync error</string>
+    <string name="sync_error_description_m3">Couldn’t sync</string>
     <string name="upload_description_m3">Available to sync</string>
     <string name="download_description_m3">Available to download</string>
     <string name="uploading_description_m3">Uploading</string>
     <string name="downloading_description_m3">Downloading</string>
+    <string name="synced_description_m3">Synced</string>
 </resources>

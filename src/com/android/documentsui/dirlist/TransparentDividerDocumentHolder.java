@@ -46,11 +46,12 @@ final class TransparentDividerDocumentHolder extends MessageHolder {
 
     public void bind(State state) {
         mState = state;
-        bind(null, null, null);
+        bind(null, null, null, false);
     }
 
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         if (mState.derivedMode == State.MODE_GRID) {
             itemView.setMinimumHeight(mVisibleHeight);
         } else {

@@ -728,6 +728,15 @@ public class SearchViewManager implements
         return Objects.requireNonNull(mSearchView, "SearchView is null").getContext();
     }
 
+    /**
+     * Gets the application context. Overridable in test since getCurrentContext() is based on
+     * SearchView which context will be null in test and not overridable.
+     */
+    @VisibleForTesting
+    protected Context getApplicationContext() {
+        return getCurrentContext().getApplicationContext();
+    }
+
     @Override
     public boolean onQueryTextChange(String newText) {
         if (isSearchV2Enabled()) {
@@ -821,8 +830,7 @@ public class SearchViewManager implements
             return;
         }
 
-        SearchHistoryManager.getInstance(
-                getCurrentContext().getApplicationContext()).addHistory(mCurrentSearch);
+        SearchHistoryManager.getInstance(getApplicationContext()).addHistory(mCurrentSearch);
     }
 
     /**
@@ -836,8 +844,7 @@ public class SearchViewManager implements
             return;
         }
 
-        SearchHistoryManager.getInstance(
-                getCurrentContext().getApplicationContext()).deleteHistory(history);
+        SearchHistoryManager.getInstance(getApplicationContext()).deleteHistory(history);
     }
 
     private void logTextSearchMetric() {
@@ -937,15 +944,20 @@ public class SearchViewManager implements
     }
 
     /**
-     * Returns all roots that can deliver search results. In order to avoid duplicate results,
-     * we remove all MEDIA sources, and downloads, since files in those providers are also known
-     * to the external storage provider.
+     * Returns all roots that can deliver search results. In order to avoid duplicate results, we
+     * remove all MEDIA sources, downloads, and local search since files in those providers are also
+     * known to the external storage provider.
+     *
      * @param roots A stream of roots that is guaranteed to have rootId, and authority.
      * @return The subset of roots that can be searched.
      */
     private Collection<RootInfo> getAllSearchableRoots(Stream<RootInfo> roots) {
-        return roots.filter(r -> !Providers.AUTHORITY_MEDIA.equals(r.authority)
-                && !r.isDownloads()).collect(Collectors.toList());
+        return roots.filter(
+                        r ->
+                                !Providers.AUTHORITY_MEDIA.equals(r.authority)
+                                        && !r.isDownloads()
+                                        && !r.isLocalSearch(getApplicationContext()))
+                .collect(Collectors.toList());
     }
 
     /**

@@ -75,11 +75,12 @@ final class InflateMessageDocumentHolder extends MessageHolder {
 
     public void bind(Message message) {
         mMessage = message;
-        bind(null, null, null);
+        bind(null, null, null, false);
     }
 
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         if (mMessage.getLayout() == LAYOUT_CROSS_PROFILE_ERROR) {
             bindCrossProfileMessageView();
         } else {

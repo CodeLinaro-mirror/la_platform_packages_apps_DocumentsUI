@@ -66,7 +66,7 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
         mMessage = message;
         mDismissButton.setOnClickListener(this::onButtonClick);
         mActionButton.setOnClickListener(this::onButtonClick);
-        bind(null, null, null);
+        bind(null, null, null, false);
     }
 
     /**
@@ -89,7 +89,8 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
     }
 
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         if (mMessage.getTitleString() != null) {
             mTitle.setVisibility(View.VISIBLE);
             mSubtitle.setVisibility(View.VISIBLE);
