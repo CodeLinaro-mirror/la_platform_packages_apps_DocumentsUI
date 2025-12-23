@@ -21,6 +21,6 @@
     <!-- shortcut_titles are the actual folder titles, shortcut_localized_titles would be the
          display and localized titles for shortcut sidebar items. -->
     <string-array name="shortcut_titles" translatable="false"/>
-    <string-array name="shortcut_localized_titles"/>
+    <string-array name="shortcut_folder_names"/>
     <array name="shortcut_icons"/>
 </resources>
