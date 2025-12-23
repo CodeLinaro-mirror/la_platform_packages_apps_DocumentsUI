@@ -22,6 +22,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.database.Cursor
 import android.database.MatrixCursor
+import android.media.MediaMetadata
 import android.net.Uri
 import android.os.Bundle
 import android.os.LocaleList
@@ -30,25 +31,30 @@ import android.provider.DocumentsContract
 import android.provider.Settings
 import android.test.mock.MockContentProvider
 import android.test.mock.MockContentResolver
+import androidx.exifinterface.media.ExifInterface
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Lookup
+import com.android.documentsui.base.Shared
 import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.MainDispatcherRule
 import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyFloat
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -164,6 +170,36 @@ class GetInfoViewModelTest {
         // Mock lookup to return folder type and a default for the remaining types.
         `when`(lookup.lookup(any())).thenReturn("File Type")
         `when`(lookup.lookup(eq(DocumentsContract.Document.MIME_TYPE_DIR))).thenReturn("Folder")
+
+        // Mock Audio strings.
+        `when`(resources.getString(R.string.inspector_metadata_section)).thenReturn("Metadata")
+        `when`(resources.getString(R.string.metadata_duration)).thenReturn("Duration")
+        `when`(resources.getString(R.string.metadata_artist)).thenReturn("Artist")
+        `when`(resources.getString(R.string.metadata_album)).thenReturn("Album")
+
+        // Mock metadata fields
+        `when`(resources.getString(R.string.metadata_dimensions)).thenReturn("Dimensions")
+
+        // Mock Dimensions Format: Matches Video Test (1920x1080)
+        `when`(
+                resources.getString(
+                    eq(R.string.metadata_dimensions_format),
+                    eq(1920),
+                    eq(1080),
+                    anyFloat(),
+                )
+            )
+            .thenReturn("1920 x 1080 (2.07 MP)")
+
+        // Mock GPS/Address fields
+        `when`(resources.getString(R.string.metadata_coordinates)).thenReturn("Coordinates")
+        `when`(resources.getString(eq(R.string.metadata_coordinates_format), any(), any()))
+            .thenAnswer { invocation ->
+                val lat = invocation.arguments[1]
+                val lon = invocation.arguments[2]
+                "$lat, $lon"
+            }
+        `when`(resources.getString(R.string.metadata_address)).thenReturn("Address")
     }
 
     /**
@@ -203,41 +239,80 @@ class GetInfoViewModelTest {
     }
 
     /** Wait for the expectations to be correct, otherwise fail with an assertion. */
-    private suspend fun waitAndAssertOrderedItems(
+    private suspend fun TestScope.waitAndAssertOrderedItems(
         viewModel: GetInfoViewModel,
         expectedSize: Int,
         vararg expectations: ExpectedItem,
     ) {
-        try {
-            val matchedList =
-                viewModel.items.first { list ->
-                    if (list.size != expectedSize) return@first false
-                    val expectedList = buildExpectedList(list, expectedSize, *expectations)
-                    list == expectedList
-                }
-
-            val expectedList = buildExpectedList(matchedList, expectedSize, *expectations)
-            assertEquals(expectedList, matchedList)
-        } catch (e: TimeoutCancellationException) {
-            // In the event the `first()` call timed out, let's rebuild the last known state so that
-            // the error messages can be much more useful.
-            val actualList = viewModel.items.value
-            val expectedList = buildExpectedList(actualList, expectedSize, *expectations)
-
-            assertEquals("Timed out waiting for expected state.", expectedList, actualList)
+        // Subscribe to the items `StateFlow`. All the flows that combine to the items flow don't
+        // actually start until at least 1 subscriber.
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.items.collect()
         }
+
+        val timeoutMs = 5000L
+        val deadline = System.currentTimeMillis() + timeoutMs
+
+        while (System.currentTimeMillis() < deadline) {
+            val list = viewModel.items.value
+
+            if (list.size == expectedSize) {
+                val expectedList = buildExpectedList(list, expectedSize, *expectations)
+                if (list == expectedList) {
+                    return
+                }
+            }
+
+            // In runTest, virtual time controls (like withTimeout or advanceTimeBy) fast-forward
+            // instantly if no time-based delays are scheduled. Since the ViewModel's flow pipeline
+            // (combine, flowOn) relies on multiple dispatch cycles to propagate data rather than
+            // delays, virtual time controls can aggressively skip to the timeout before the
+            // dispatcher has finished processing.
+            //
+            // By using a wall-clock loop with `yield()`, we bypass virtual time skipping and
+            // manually pump the event loop. This gives the UnconfinedTestDispatcher the
+            // execution cycles it needs to process the flow pipeline without premature cancellation
+            // which allows for an appropriate error message to be displayed (and not a vague 60s
+            // timeout reached error).
+            yield()
+        }
+
+        val actualList = viewModel.items.value
+        val expectedList = buildExpectedList(actualList, expectedSize, *expectations)
+        assertEquals("Timed out waiting for expected state.", expectedList, actualList)
+    }
+
+    /**
+     * Helper to quickly setup a DocumentsProvider that returns a Bundle on the getDocumentMetadata
+     * call.
+     */
+    private fun setupMetadataProvider(metadataBuilder: Bundle.() -> Unit) {
+        val provider =
+            object : MockContentProvider() {
+                override fun call(
+                    auth: String,
+                    method: String,
+                    arg: String?,
+                    extras: Bundle?,
+                ): Bundle {
+                    if (method == DocumentsContract.METHOD_GET_DOCUMENT_METADATA) {
+                        return Bundle().apply(metadataBuilder)
+                    }
+                    return Bundle()
+                }
+            }
+        contentResolver.addProvider(AUTHORITY, provider)
     }
 
     @Test
     fun testStandardFile_WithDebug() =
         runTest(testDispatcher) {
-            val authority = "com.example.authority"
             val documentId = "testId"
-            val derivedUri = DocumentsContract.buildDocumentUri(authority, documentId)
+            val derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
             val doc =
                 DocumentInfo().apply {
                     this.derivedUri = derivedUri
-                    this.authority = authority
+                    this.authority = AUTHORITY
                     this.documentId = documentId
                     displayName = "test.pdf"
                     mimeType = "application/pdf"
@@ -255,7 +330,7 @@ class GetInfoViewModelTest {
                         return arrayOf("fake/type")
                     }
                 }
-            contentResolver.addProvider(authority, streamTypesProvider)
+            contentResolver.addProvider(AUTHORITY, streamTypesProvider)
 
             val viewModel = GetInfoViewModel(application, doc, lookup, true, ioTestDispatcher)
             waitAndAssertOrderedItems(
@@ -306,8 +381,6 @@ class GetInfoViewModelTest {
     @Test
     fun testDirectory() =
         runTest(testDispatcher) {
-            val authority = "com.example.authority"
-
             val doc =
                 DocumentInfo().apply {
                     documentId = "testDirectoryId"
@@ -316,7 +389,7 @@ class GetInfoViewModelTest {
                     size = 0
                     lastModified = 1234567890L
                     userId = UserId.DEFAULT_USER
-                    this.authority = authority
+                    this.authority = AUTHORITY
                     documentId = "myFolder"
                 }
 
@@ -337,7 +410,7 @@ class GetInfoViewModelTest {
                         return cursor
                     }
                 }
-            contentResolver.addProvider(authority, childrenProvider)
+            contentResolver.addProvider(AUTHORITY, childrenProvider)
 
             val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
             waitAndAssertOrderedItems(
@@ -390,8 +463,372 @@ class GetInfoViewModelTest {
             waitAndAssertOrderedItems(viewModel, 4, ExpectedItem.InfoLabel(3, "Size"))
         }
 
+    @Test
+    fun testAudioMetadata() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val audio =
+                    Bundle().apply {
+                        putString(MediaMetadata.METADATA_KEY_ARTIST, "Artist Name")
+                        putString(MediaMetadata.METADATA_KEY_ALBUM, "Album Name")
+                        putLong(MediaMetadata.METADATA_KEY_DURATION, 60000L)
+                    }
+                putBundle(Shared.METADATA_KEY_AUDIO, audio)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                9,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Artist", "Artist Name")),
+                ExpectedItem.Exact(7, ListItem.Info("Album", "Album Name")),
+                ExpectedItem.Exact(8, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testAudioMetadata_NullBundle() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            val provider =
+                object : MockContentProvider() {
+                    override fun call(
+                        auth: String,
+                        method: String,
+                        arg: String?,
+                        extras: Bundle?,
+                    ): Bundle? {
+                        return null
+                    }
+                }
+            contentResolver.addProvider(AUTHORITY, provider)
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(viewModel, 5)
+        }
+
+    @Test
+    fun testAudioMetadata_DurationInt() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val audio = Bundle().apply { putInt(MediaMetadata.METADATA_KEY_DURATION, 60000) }
+                putBundle(Shared.METADATA_KEY_AUDIO, audio)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                7,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testAudioMetadata_EmptyStrings_Hidden() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "audio_empty.mp3"
+                    displayName = "song.mp3"
+                    mimeType = "audio/mpeg"
+                    size = 5000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val audio =
+                    Bundle().apply {
+                        // Empty values should not be shown.
+                        putString(MediaMetadata.METADATA_KEY_ARTIST, "")
+                        putString(MediaMetadata.METADATA_KEY_ALBUM, "")
+                        putString(MediaMetadata.METADATA_KEY_COMPOSER, "")
+                    }
+                putBundle(Shared.METADATA_KEY_AUDIO, audio)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                5,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(1, ListItem.Info("Name", "song.mp3")),
+                ExpectedItem.Exact(2, ListItem.Info("Type", "File Type")),
+                ExpectedItem.InfoLabel(3, "Size"),
+                ExpectedItem.InfoLabel(4, "Modified"),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        putInt(ExifInterface.TAG_IMAGE_WIDTH, 1920)
+                        putInt(ExifInterface.TAG_IMAGE_LENGTH, 1080)
+                        putInt(MediaMetadata.METADATA_KEY_DURATION, 60000)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                8,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Dimensions", "1920 x 1080 (2.07 MP)")),
+                ExpectedItem.Exact(7, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_LongDuration() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_long.mp4"
+                    displayName = "video_long.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        putInt(ExifInterface.TAG_IMAGE_WIDTH, 1920)
+                        putInt(ExifInterface.TAG_IMAGE_LENGTH, 1080)
+                        putLong(MediaMetadata.METADATA_KEY_DURATION, 60000L)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+            waitAndAssertOrderedItems(
+                viewModel,
+                8,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                ExpectedItem.Exact(6, ListItem.Info("Dimensions", "1920 x 1080 (2.07 MP)")),
+                // Strict check ensures Long -> Int conversion didn't break format
+                ExpectedItem.Exact(7, ListItem.Info("Duration", "01:00")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_Coordinates_Double() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_coords.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            // Mock the format specifically for this test if needed, or rely on the setUp() mock
+            // which currently returns "10.0, 20.0" for any coordinate input.
+            // We use 10.0 and 20.0 to match the hardcoded mock in your setUp() method.
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        // Test Double path in VideoUtils.getVideoCoords
+                        putDouble(Shared.METADATA_VIDEO_LATITUDE, 10.0)
+                        putDouble(Shared.METADATA_VIDEO_LONGITUDE, 20.0)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            // Expected items:
+            // 5 Standard (Header, Name, Type, Size, Modified)
+            // + 3 Video (Dimensions, Coordinates, Duration)
+            // Note: "Address" is not expected here because Geocoder is not shadowed/mocked
+            // to return a positive result in this environment, so getAddress returns null.
+            waitAndAssertOrderedItems(
+                viewModel,
+                7,
+                ExpectedItem.Exact(5, ListItem.Header("Metadata")),
+                ExpectedItem.Exact(6, ListItem.Info("Coordinates", "10.0, 20.0")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_Coordinates_Float() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_coords_float.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        // Test Float path in VideoUtils.getVideoCoords
+                        // Use Float values specifically to trigger the fallback logic in parsing
+                        putFloat(Shared.METADATA_VIDEO_LATITUDE, 10.0f)
+                        putFloat(Shared.METADATA_VIDEO_LONGITUDE, 20.0f)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            waitAndAssertOrderedItems(
+                viewModel,
+                7,
+                ExpectedItem.Exact(5, ListItem.Header("Metadata")),
+                ExpectedItem.Exact(6, ListItem.Info("Coordinates", "10.0, 20.0")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_DimensionsAsString() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_strings.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply {
+                        // Test getIntTag fallback logic where tags are stored as Strings
+                        putString(ExifInterface.TAG_IMAGE_WIDTH, "1920")
+                        putString(ExifInterface.TAG_IMAGE_LENGTH, "1080")
+                        putInt(MediaMetadata.METADATA_KEY_DURATION, 60000)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            waitAndAssertOrderedItems(
+                viewModel,
+                8,
+                ExpectedItem.Exact(0, ListItem.Header("General info")),
+                // Verify calculation still works with String inputs
+                ExpectedItem.Exact(6, ListItem.Info("Dimensions", "1920 x 1080 (2.07 MP)")),
+            )
+        }
+
+    @Test
+    fun testVideoMetadata_InvalidCoordinates() =
+        runTest(testDispatcher) {
+            val doc =
+                DocumentInfo().apply {
+                    this.authority = AUTHORITY
+                    documentId = "video_invalid_coords.mp4"
+                    displayName = "video.mp4"
+                    mimeType = "video/mp4"
+                    size = 10000000
+                    lastModified = 1234567890L
+                    userId = UserId.DEFAULT_USER
+                    flags = flags or DocumentsContract.Document.FLAG_SUPPORTS_METADATA
+                    derivedUri = DocumentsContract.buildDocumentUri(AUTHORITY, documentId)
+                }
+
+            setupMetadataProvider {
+                val video =
+                    Bundle().apply { // Test 0.0/0.0 exclusion logic
+                        putDouble(Shared.METADATA_VIDEO_LATITUDE, 0.0)
+                        putDouble(Shared.METADATA_VIDEO_LONGITUDE, 0.0)
+                    }
+                putBundle(Shared.METADATA_KEY_VIDEO, video)
+            }
+
+            val viewModel = GetInfoViewModel(application, doc, lookup, false, ioTestDispatcher)
+
+            // Should NOT have coordinates item (Size should just contain the standard items)
+            waitAndAssertOrderedItems(viewModel, 5)
+        }
+
     companion object {
         // Constant for the number of debug items added (Header + 5 infos + 17 flags + 1 async).
         const val DEBUG_ITEM_COUNT = 24
+
+        // Constant mock authority used throughout all the tests.
+        const val AUTHORITY = "com.example.authority"
     }
 }
