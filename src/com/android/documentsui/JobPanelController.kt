@@ -423,6 +423,10 @@ class JobPanelController(
                         /* focusable= */ true,
                     )
                     .apply {
+                        elevation =
+                            activityContext.resources.getDimension(
+                                getRes(R.dimen.job_progress_panel_elevation)
+                            )
                         setOnDismissListener {
                             progressListAdapter = null
                             popup = null

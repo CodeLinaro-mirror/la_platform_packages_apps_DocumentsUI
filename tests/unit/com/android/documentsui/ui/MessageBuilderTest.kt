@@ -78,51 +78,38 @@ class MessageBuilderTest() {
                 Params(
                     dialog = DIALOG_TYPE_CONVERTED,
                     op = OPERATION_UNKNOWN,
-                    want1 = "This file was converted to another format: <p>&#8226; File 1<br></p>",
-                    want2 =
-                        "These files were converted to another format: " +
-                            "<p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                    want1 = "This file was converted to another format:",
+                    want2 = "These files were converted to another format:",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_COPY,
-                    want1 = "This file wasn’t copied: <p>&#8226; File 1<br></p>",
-                    want2 =
-                        "These files weren’t copied: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                    want1 = "This file wasn’t copied:",
+                    want2 = "These files weren’t copied:",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_MOVE,
-                    want1 = "This file wasn’t moved: <p>&#8226; File 1<br></p>",
-                    want2 =
-                        "These files weren’t moved: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                    want1 = "This file wasn’t moved:",
+                    want2 = "These files weren’t moved:",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_COMPRESS,
-                    want1 = "This file wasn’t zipped: <p>&#8226; File 1<br></p>",
-                    want2 =
-                        "These files weren’t zipped: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                    want1 = "This file wasn’t zipped:",
+                    want2 = "These files weren’t zipped:",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_EXTRACT,
-                    want1 = "This file wasn’t extracted: <p>&#8226; File 1<br></p>",
-                    want2 =
-                        "These files weren’t extracted: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                    want1 = "This file wasn’t extracted:",
+                    want2 = "These files weren’t extracted:",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_DELETE,
-                    want1 = "This file wasn’t deleted: <p>&#8226; File 1<br></p>",
-                    want2 =
-                        "These files weren’t deleted: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                    want1 = "This file wasn’t deleted:",
+                    want2 = "These files weren’t deleted:",
                 ),
             )
 
@@ -152,6 +139,26 @@ class MessageBuilderTest() {
     }
 
     @Test
+    @EnableFlags(FLAG_ZIP_NG_RO)
+    fun getListContent() {
+        assertThat(MessageBuilder.getListContent(listOf(file("File 1")), null, null))
+            .isEqualTo("<p>&#8226; &#34;File 1&#34;<br></p>")
+
+        assertThat(
+                MessageBuilder.getListContent(
+                    listOf(file("File 1")),
+                    listOf("content://random-uri/File+2".toUri()),
+                    listOf("/Dir/File 3"),
+                )
+            )
+            .isEqualTo(
+                "<p>&#8226; &#34;File 1&#34;<br>" +
+                    "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                    "&#8226; &#34;File 3&#34;<br></p>"
+            )
+    }
+
+    @Test
     @DisableFlags(FLAG_ZIP_NG_RO)
     fun generateListMessageOld() {
         data class Params(val dialog: Int, val op: Int, val want1: String, val want2: String)
@@ -160,51 +167,64 @@ class MessageBuilderTest() {
                 Params(
                     dialog = DIALOG_TYPE_CONVERTED,
                     op = OPERATION_UNKNOWN,
-                    want1 = "This file was converted to another format: <p>&#8226; File 1<br></p>",
+                    want1 =
+                        "This file was converted to another format: " +
+                            "<p>&#8226; &#34;File 1&#34;<br></p>",
                     want2 =
                         "These files were converted to another format: " +
-                            "<p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                            "<p>&#8226; &#34;File 1&#34;<br>" +
+                            "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                            "&#8226; &#34;File 3&#34;<br></p>",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_COPY,
-                    want1 = "This file wasn’t copied: <p>&#8226; File 1<br></p>",
+                    want1 = "This file wasn’t copied: <p>&#8226; &#34;File 1&#34;<br></p>",
                     want2 =
-                        "These files weren’t copied: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                        "These files weren’t copied: " +
+                            "<p>&#8226; &#34;File 1&#34;<br>" +
+                            "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                            "&#8226; &#34;File 3&#34;<br></p>",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_MOVE,
-                    want1 = "This file wasn’t moved: <p>&#8226; File 1<br></p>",
+                    want1 = "This file wasn’t moved: <p>&#8226; &#34;File 1&#34;<br></p>",
                     want2 =
-                        "These files weren’t moved: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                        "These files weren’t moved: " +
+                            "<p>&#8226; &#34;File 1&#34;<br>" +
+                            "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                            "&#8226; &#34;File 3&#34;<br></p>",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_COMPRESS,
-                    want1 = "This file wasn’t compressed: <p>&#8226; File 1<br></p>",
+                    want1 = "This file wasn’t compressed: <p>&#8226; &#34;File 1&#34;<br></p>",
                     want2 =
-                        "These files weren’t compressed: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                        "These files weren’t compressed: " +
+                            "<p>&#8226; &#34;File 1&#34;<br>" +
+                            "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                            "&#8226; &#34;File 3&#34;<br></p>",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_EXTRACT,
-                    want1 = "This file wasn’t extracted: <p>&#8226; File 1<br></p>",
+                    want1 = "This file wasn’t extracted: <p>&#8226; &#34;File 1&#34;<br></p>",
                     want2 =
-                        "These files weren’t extracted: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                        "These files weren’t extracted: " +
+                            "<p>&#8226; &#34;File 1&#34;<br>" +
+                            "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                            "&#8226; &#34;File 3&#34;<br></p>",
                 ),
                 Params(
                     dialog = DIALOG_TYPE_FAILURE,
                     op = OPERATION_DELETE,
-                    want1 = "This file wasn’t deleted: <p>&#8226; File 1<br></p>",
+                    want1 = "This file wasn’t deleted: <p>&#8226; &#34;File 1&#34;<br></p>",
                     want2 =
-                        "These files weren’t deleted: <p>&#8226; File 1<br>&#8226; " +
-                            "content://random-uri/File+2<br>&#8226; File 3<br></p>",
+                        "These files weren’t deleted: " +
+                            "<p>&#8226; &#34;File 1&#34;<br>" +
+                            "&#8226; &#34;content://random-uri/File+2&#34;<br>" +
+                            "&#8226; &#34;File 3&#34;<br></p>",
                 ),
             )
 

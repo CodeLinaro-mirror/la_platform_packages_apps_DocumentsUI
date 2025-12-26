@@ -23,6 +23,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.os.Trace
+import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
 import android.util.Log
 import androidx.loader.content.AsyncTaskLoader
@@ -48,6 +49,20 @@ val FILE_ENTRY_COLUMNS =
 
 fun emptyCursor(): Cursor {
     return MatrixCursor(FILE_ENTRY_COLUMNS)
+}
+
+/** Merges MIME types specs supplied by V1 and V2 of search. */
+fun computeAcceptableMimeTypes(queryOptions: QueryOptions): Array<String>? {
+    var mimeTypes = queryOptions.acceptableMimeTypes
+    val otherMimeTypes =
+        queryOptions.otherQueryArgs.getStringArray(DocumentsContract.QUERY_ARG_MIME_TYPES)
+    if (mimeTypes == null) {
+        mimeTypes = otherMimeTypes
+    } else if (otherMimeTypes != null) {
+        mimeTypes = (mimeTypes + otherMimeTypes).toSet().toTypedArray()
+    }
+    // TODO(b/450381836): Optimize. Remove duplicates; if */* remove all but */*.
+    return mimeTypes
 }
 
 /**
@@ -179,9 +194,9 @@ abstract class BaseFileLoader(
             Log.d(TAG, "Long check of cursor staleness")
         }
         val count = cursor.count
-        if (!cursor.moveToPosition(-1)) {
-            return true
-        }
+        // Do not check if moveToPosition succeeded (returned true), as moveToPosition(-1) always
+        // returns false.
+        cursor.moveToPosition(-1)
         for (i in 1..count) {
             if (!cursor.moveToNext()) {
                 return true

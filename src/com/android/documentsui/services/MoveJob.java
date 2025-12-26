@@ -21,7 +21,7 @@ import static android.content.ContentResolver.wrap;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.services.FileOperationService.OPERATION_MOVE;
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Notification;
@@ -90,9 +90,12 @@ final class MoveJob extends CopyJob {
 
     @Override
     public Notification getFailureNotification() {
-        return getFailureNotification(getFailureContentTitle(
-                        getRes(isDesktopUxPhase2FlagEnabled() ? R.string.move_error_2
-                                : R.string.move_error_notification_title)),
+        return getFailureNotification(
+                getFailureContentTitle(
+                        getRes(
+                                isUseMaterial3FlagEnabled()
+                                        ? R.string.move_error_2
+                                        : R.string.move_error_notification_title)),
                 getRes(R.drawable.ic_menu_copy));
     }
 

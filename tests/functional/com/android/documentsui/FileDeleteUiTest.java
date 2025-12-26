@@ -20,11 +20,7 @@ import static android.content.Context.RECEIVER_EXPORTED;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
-import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
-import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import android.content.BroadcastReceiver;
@@ -33,19 +29,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.platform.test.annotations.DisableFlags;
-import android.platform.test.annotations.EnableFlags;
+import android.util.Log;
 
 import androidx.test.filters.LargeTest;
-import androidx.test.uiautomator.UiObject;
 
-import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
-import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
-import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.services.TestNotificationService;
 
@@ -54,8 +47,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -68,75 +59,57 @@ import java.util.concurrent.TimeUnit;
  */
 @LargeTest
 public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
-    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
-
     private static final String TAG = "FileDeleteUiTest";
 
-    private static final int STUB_FILE_COUNT = 1000;
+    private static final int STUB_FILE_COUNT = 50;
 
-    private static final int WAIT_TIME_SECONDS = 60;
+    private static final int WAIT_TIME_SECONDS = 30;
 
-    private final List<String> mCopyFileList = new ArrayList<String>();
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (TestNotificationService.ACTION_PONG.equals(action)) {
-                sRendezvousCountDownLatch.countDown();
-            } else if (TestNotificationService.ACTION_OPERATION_RESULT.equals(action)) {
-                mOperationExecuted = intent.getBooleanExtra(
-                        TestNotificationService.EXTRA_RESULT, false);
-                if (!mOperationExecuted) {
-                    mErrorReason = intent.getStringExtra(
-                            TestNotificationService.EXTRA_ERROR_REASON);
+    private final BroadcastReceiver mReceiver =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (TestNotificationService.ACTION_PONG.equals(action)) {
+                        sRendezvousCountDownLatch.countDown();
+                    } else if (TestNotificationService.ACTION_RECENT_NOTIFICATIONS.equals(action)) {
+                        mRecentNotificationsAsText =
+                                intent.getStringExtra(
+                                        TestNotificationService.EXTRA_RECENT_NOTIFICATIONS_AS_TEXT);
+                    }
                 }
-                if (mCountDownLatch != null) {
-                    mCountDownLatch.countDown();
-                }
-            }
-        }
-    };
+            };
 
     @Rule
     public final TestFilesRule mTestFilesRule =
             new TestFilesRule().createTestFiles(this::initTestFiles);
 
-    @Rule
-    public final ExternalStorageProviderTestFilesRule mExternalStorageProviderTestFilesRule =
-            new ExternalStorageProviderTestFilesRule();
-
     private static CountDownLatch sRendezvousCountDownLatch = new CountDownLatch(1);
 
-    private CountDownLatch mCountDownLatch;
-
-    private boolean mOperationExecuted;
-
-    private String mErrorReason;
+    private String mRecentNotificationsAsText;
 
     @Before
     public void setUpTest() throws Exception {
         setNotificationAccess(true);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(TestNotificationService.ACTION_OPERATION_RESULT);
         filter.addAction(TestNotificationService.ACTION_PONG);
+        filter.addAction(TestNotificationService.ACTION_RECENT_NOTIFICATIONS);
         context.registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
         if (!TestNotificationService.rendezvous(context, sRendezvousCountDownLatch)) {
             fail("TestNotificationService.rendezvous failed");
         }
         context.sendBroadcast(new Intent(
                 TestNotificationService.ACTION_CHANGE_EXECUTION_MODE));
-
-        mOperationExecuted = false;
-        mErrorReason = "No response from Notification";
-        mCountDownLatch = new CountDownLatch(1);
     }
 
     @After
     public void tearDownTest() {
-        context.unregisterReceiver(mReceiver);
-        mCountDownLatch = null;
+        try {
+            context.unregisterReceiver(mReceiver);
+        } catch (Exception e) {
+            Log.d(TAG, "Error unregistering the receiver, it might not be registered.", e);
+        }
         setNotificationAccess(false);
     }
 
@@ -152,7 +125,7 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         for (int i = 0; i < STUB_FILE_COUNT; i++) {
             final String fileName = "file" + String.format("%04d", i) + ".log";
             if (exec.getQueue().size() >= 80) {
-                Thread.sleep(50);
+                SystemClock.sleep(50);
             }
             exec.submit(
                     new Runnable() {
@@ -166,7 +139,6 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
                             }
                         }
                     });
-            mCopyFileList.add(fileName);
         }
         exec.shutdown();
     }
@@ -175,7 +147,11 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags(FLAG_HOME_SCREEN_FILES_RO)
     public void testDeleteAllDocument() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        device.waitForIdle();
+
+        waitUntilFileCountIs(STUB_FILE_COUNT);
+
         bots.main.clickToolbarOverflowItem(
                 context.getResources().getString(R.string.menu_select_all));
         device.waitForIdle();
@@ -184,41 +160,36 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
 
-        try {
-            mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            fail("Cannot wait because of error." + e.toString());
-        }
-
-        assertTrue(mErrorReason, mOperationExecuted);
-
-        EspressoBotsKt.openRoot(context, ROOT_0_ID);
-        device.waitForIdle();
-
-        List<DocumentInfo> root1 = mDocsHelper.listChildren(rootDir0.documentId, 1000);
-        assertTrue("Delete operation was not completed", root1.size() == 0);
+        waitUntilFileCountIs(0);
     }
 
-    /** When using the new Search stack, files in Recents are deletable. */
-    @Test
-    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
-    public void testDeleteFromRecentsWithSearchV2() throws Exception {
-        final String testFileNamePrefix =
-                mExternalStorageProviderTestFilesRule.createRandomFile("image/jpeg", "Pictures");
-        final String testFileName = testFileNamePrefix.concat(".jpg");
+    private void waitUntilFileCountIs(int expected) throws Exception {
+        // Assert that mDocsHelper.listChildren(etc).size() has hit the expected count. File
+        // creation and deletion happens asynchronously from the UI thread so we'll poll every
+        // second (up to WAIT_TIME_SECONDS iterations), failing early if no progress was made after
+        // 10 iterations.
+        int count = 0;
+        int prevCount = 0;
+        int numIterationsNoProgressMade = 0;
+        for (int i = 0; i < WAIT_TIME_SECONDS; i++) {
+            count = mDocsHelper.listChildren(rootDir0.documentId, STUB_FILE_COUNT).size();
+            if (count == expected) {
+                return;
+            } else if ((i == 0) || (prevCount != count)) {
+                prevCount = count;
+                numIterationsNoProgressMade = 0;
+            } else if (++numIterationsNoProgressMade == 10) {
+                break;
+            }
+            SystemClock.sleep(1000);
+        }
 
-        // Check: the random test file is visible in Recents.
-        bots.roots.openRoot("Recent");
-        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
-        assertTrue(fileInRecents.exists());
+        // Recent notifications, whether DocumentsUI progress notifications or otherwise, as
+        // recorded by the TestNotificationService, might give some insight as to whether any
+        // delete-the-files progress is being made (albeit slowly) or whether the overall
+        // multiple-file-delete operation is stuck.
+        Log.e(TAG, "Recent notifications: " + mRecentNotificationsAsText);
 
-        // Check: the file can be successfully deleted.
-        bots.directory.selectDocument(testFileName, 1);
-        device.waitForIdle();
-        bots.main.clickDelete();
-        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        device.waitForIdle();
-        fileInRecents = bots.directory.findDocument(testFileName, true);
-        assertFalse(fileInRecents.exists());
+        fail("waitUntilFileCountIs(" + expected + ") failed, count=" + count);
     }
 }

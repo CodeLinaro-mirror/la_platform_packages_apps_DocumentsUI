@@ -161,7 +161,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     @Override
     public boolean dropOn(DragEvent event, ShortcutInfo shortcut) {
-        if (!shortcut.supportsCreate()) {
+        if (!shortcut.isValidDropTarget()) {
             return false;
         }
 
@@ -183,7 +183,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         assert(selection.size() == 1);
         DocumentInfo doc = mModel.getDocument(selection.iterator().next());
         assert(doc != null);
-        openInNewWindow(new DocumentStack(mState.stack, doc));
+        openInNewWindow(new DocumentStack(mState.stack, doc), mState.shortcut);
     }
 
     @Override
@@ -268,7 +268,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     // TODO: Make this private and make tests call openDocument(DocumentDetails, int, int) instead.
     @VisibleForTesting
     public boolean openDocument(DocumentInfo doc, @ViewType int type, @ViewType int fallback) {
-        if (mConfig.isDocumentEnabled(doc.mimeType, doc.flags, mState)) {
+        if (mConfig.isDocumentEnabled(
+                doc.mimeType,
+                doc.flags,
+                doc.syncStateFlags,
+                mState,
+                mInjector.networkMonitor.isOnline())) {
             onDocumentOpened(doc, type, fallback, false);
             mSelectionMgr.clearSelection();
             return !doc.isContainer();
@@ -404,6 +409,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         if (isSearchV2Enabled() && mState.stack.isRecents()) {
             parentDocumentInfo = null;
         }
+
+        // The document in trash folder can not be removed from the parent, since it will be
+        // permanently deleted. Pass a null parent so that DeleteJob can do a permanent delete.
+        if (isTrashFlowEnabled() && mState.stack.isTrash()) {
+            parentDocumentInfo = null;
+        }
+
         DeleteDocumentFragment.show(mActivity.getSupportFragmentManager(),
                 mModel.getDocuments(selection),
                 parentDocumentInfo);
@@ -719,11 +731,24 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return false;
         }
 
-        if (stack.isEmpty()) {
-            mActivity.onRootPicked(stack.getRoot());
+        if (isHomeScreenFilesFlagEnabled()) {
+            ShortcutInfo shortcut = intent.getParcelableExtra(Shared.EXTRA_SELECTED_SHORTCUT);
+            if (stack.isEmpty() && shortcut == null) {
+                mActivity.onRootPicked(stack.getRoot());
+            } else if (stack.isEmpty()) {
+                mActivity.onShortcutPicked(shortcut);
+            } else {
+                mState.stack.reset(stack);
+                mState.shortcut = shortcut;
+                mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            }
         } else {
-            mState.stack.reset(stack);
-            mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            if (stack.isEmpty()) {
+                mActivity.onRootPicked(stack.getRoot());
+            } else {
+                mState.stack.reset(stack);
+                mActivity.refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
+            }
         }
 
         return true;

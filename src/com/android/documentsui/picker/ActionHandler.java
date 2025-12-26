@@ -340,7 +340,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
     }
 
     @Override
-    public void openInNewWindow(DocumentStack path) {
+    public void openInNewWindow(DocumentStack path, ShortcutInfo shortcut) {
         // Open new window support only depends on vanilla Activity, so it is
         // implemented in our parent class. But we don't support that in
         // picking. So as a matter of defensiveness, we override that here.
@@ -413,7 +413,12 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
             return false;
         }
 
-        if (mConfig.isDocumentEnabled(doc.mimeType, doc.flags, mState)) {
+        if (mConfig.isDocumentEnabled(
+                doc.mimeType,
+                doc.flags,
+                doc.syncStateFlags,
+                mState,
+                mInjector.networkMonitor.isOnline())) {
             mActivity.onDocumentPicked(doc);
             mSelectionMgr.clearSelection();
             return !doc.isDirectory();

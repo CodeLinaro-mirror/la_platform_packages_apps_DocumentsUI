@@ -15,7 +15,7 @@
  */
 package com.android.documentsui.ui;
 
-import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
@@ -54,6 +54,12 @@ public interface DialogController {
     void showActionNotAllowed();
 
     /**
+     * When a delete/cut/rename/move file operation is requested on a system-defined shortcut,
+     * create a snack bar with a message saying that this action is not allowed.
+     */
+    void showOperationNotAllowedForShortcuts();
+
+    /**
      * Dialogs used when share file count over limit
      */
     void showShareOverLimit(int size);
@@ -89,7 +95,7 @@ public interface DialogController {
                 return;
             }
 
-            if (isDesktopUxPhase2FlagEnabled() || shouldShowProgressDialogForOperation(opType)) {
+            if (isUseMaterial3FlagEnabled() || shouldShowProgressDialogForOperation(opType)) {
                 // The operation has a progress dialog created, so do not show a snackbar
                 // for operation start, as it would duplicate the UI.
                 return;
@@ -156,6 +162,14 @@ public interface DialogController {
                             getRes(R.string.toast_action_not_allowed),
                             Snackbar.LENGTH_LONG)
                     .show();
+        }
+
+        @Override
+        public void showOperationNotAllowedForShortcuts() {
+            Snackbars.makeSnackbar(
+                    mActivity,
+                    getRes(R.string.toast_op_not_allowed_for_shortcuts),
+                    Snackbar.LENGTH_LONG).show();
         }
 
         @Override

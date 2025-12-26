@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"కొన్ని డాక్యుమెంట్‌లను తొలగించడం సాధ్యపడలేదు"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> ఫైళ్ల కంటే ఎక్కువ షేర్ చేయలేరు"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"చర్యకు అనుమతి లేదు"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"దీనితో తెరవండి…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"సపోర్ట్ ఉన్న యాప్‌లు ఏవీ ఇన్‌స్టాల్ చేసి లేవు. Play Store నుండి ఒక దాన్ని ఇన్‌స్టాల్ చేయడానికి ట్రై చేయండి."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Storeలో సెర్చ్ చేయండి"</string>
@@ -195,32 +197,38 @@
       <item quantity="other">ఈ ఫైళ్లు కాపీ కాలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ కాపీ కాలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{ఈ ఫైల్ కాపీ అవ్వలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు కాపీ అవ్వలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">ఈ ఫైళ్లు కుదించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ కుదించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{ఈ ఫైల్ జిప్ చేయబడలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు జిప్ చేయబడలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">ఈ ఫైళ్లు సంగ్రహించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ సంగ్రహించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{ఈ ఫైల్ ఎక్స్‌ట్రాక్ట్ అవ్వలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు ఎక్స్‌ట్రాక్ట్ అవ్వలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">ఈ ఫైళ్లు తరలించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ తరలించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{ఈ ఫైల్ తరలించబడలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు తరలించబడలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">ఈ ఫైళ్లు తొలగించబడలేదు: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ తొలగించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{ఈ ఫైల్ తొలగించబడలేదు: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు తొలగించబడలేదు: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">ఈ ఫైళ్లు మరో ఫార్మాట్‌లోకి మార్చబడ్డాయి: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ మరో ఫార్మాట్‌లోకి మార్చబడింది: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{ఈ ఫైల్ వేరొక ఫార్మాట్‌కు మార్చబడింది: <xliff:g id="LIST_0">{list}</xliff:g>}other{ఈ ఫైళ్లు వేరొక ఫార్మాట్‌కు మార్చబడ్డాయి: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలు కాపీ చేయబడ్డాయి.</item>
       <item quantity="one">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_0">%1$d</xliff:g> అంశం కాపీ చేయబడింది.</item>
@@ -307,7 +315,12 @@
     <string name="sign_in" msgid="6253762676723505592">"సైన్ ఇన్ చేయండి"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"ఆర్కైవ్ చేయండి<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"ఆర్కైవ్ చేయండి"</string>
-    <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"<xliff:g id="NAME">%1$s</xliff:g>ని భర్తీ చేయాలా?"</string>
+    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
+    <skip />
     <string name="continue_in_background" msgid="1974214559047793331">"బ్యాక్‌గ్రౌండ్‌లో కొనసాగించండి"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఎంచుకోబడ్డాయి</item>
@@ -333,16 +346,20 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"డాక్యుమెంట్‌లు"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"పెద్ద ఫైళ్లు"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"ఈ వారం"</string>
-    <string name="input_hint_new_folder" msgid="479672411219725677">"ఫోల్డర్ పేరు"</string>
-    <string name="input_hint_rename" msgid="8390711744270994452">"కొత్త పేరు"</string>
+    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
+    <skip />
+    <!-- no translation found for input_hint_rename (4501630494874065128) -->
+    <skip />
     <string name="preview_file" msgid="4056622696305432343">"<xliff:g id="FILENAME">%1$s</xliff:g>ని ప్రివ్యూ చేయండి"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"కార్యాలయ ఫైల్ <xliff:g id="FILENAME">%1$s</xliff:g>ని ప్రివ్యూ చేయండి"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"<xliff:g id="PROFILE">%1$s</xliff:g> ఫైల్ <xliff:g id="FILENAME">%2$s</xliff:g>‌ను ప్రివ్యూ చేయండి"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"ఇతర యాప్‌లలోని ఫైళ్లను బ్రౌజ్ చేయండి"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"తెలియనిది"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"ఈ ఫోల్డర్‌ను ఉపయోగించండి"</string>
-    <string name="open_tree_dialog_title" msgid="6339509533852318569">"<xliff:g id="DIRECTORY">%2$s</xliff:g>లోని ఫైళ్లను యాక్సెస్ చేయడానికి <xliff:g id="APPNAME">%1$s</xliff:g>ని అనుమతించాలా?"</string>
-    <string name="open_tree_dialog_message" msgid="4120695398430659628">"ఇది <xliff:g id="DIRECTORY">%2$s</xliff:g>లో స్టోరేజ్‌ చేసిన ప్రస్తుత మరియు భవిష్యత్తు కంటెంట్‌ను <xliff:g id="APPNAME">%1$s</xliff:g> యాక్సెస్ చేయడానికి అనుమతిస్తుంది."</string>
+    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
+    <skip />
+    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
+    <skip />
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"ఈ ఫోల్డర్‌ను ఉపయోగించడం సాధ్యం కాదు"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"మీ గోప్యతను కాపాడుకోవటానికి, మరొక ఫోల్డర్‌ను ఎంచుకోండి"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"కొత్త ఫోల్డర్‌ని క్రియేట్ చేయండి"</string>
@@ -382,4 +399,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ట్రాష్‌ని ఖాళీ చేయాలా?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ఈ చర్యను రద్దు చేయడం సాధ్యం కాదు, ఫైల్‌లను ఇకపై రికవర్ చేయడం సాధ్యం కాదు."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ట్రాష్‌ని ఖాళీ చేయండి"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

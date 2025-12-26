@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Не удалось удалить некоторые документы"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Количество файлов, которыми можно поделиться: <xliff:g id="COUNT">%1$d</xliff:g>."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Действие запрещено."</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"Открыть с помощью…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Поддерживаемые приложения не установлены. Скачайте какое-нибудь из Google Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Поиск в Google Play"</string>
@@ -207,42 +209,48 @@
       <item quantity="many">Не удалось скопировать эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Не удалось скопировать эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{Не удалось скопировать этот файл: <xliff:g id="LIST_0">{list}</xliff:g>}one{Не удалось скопировать эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}few{Не удалось скопировать эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}many{Не удалось скопировать эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}other{Не удалось скопировать эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">Не удалось сжать эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Не удалось сжать эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Не удалось сжать эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Не удалось сжать эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{Не удалось добавить этот файл в архив: <xliff:g id="LIST_0">{list}</xliff:g>}one{Эти файлы не были добавлены в архив: <xliff:g id="LIST_1">{list}</xliff:g>}few{Эти файлы не были добавлены в архив: <xliff:g id="LIST_1">{list}</xliff:g>}many{Эти файлы не были добавлены в архив: <xliff:g id="LIST_1">{list}</xliff:g>}other{Эти файлы не были добавлены в архив: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">Не удалось извлечь эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Не удалось извлечь эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Не удалось извлечь эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Не удалось извлечь эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{Не удалось извлечь этот файл: <xliff:g id="LIST_0">{list}</xliff:g>}one{Эти файлы не были извлечены: <xliff:g id="LIST_1">{list}</xliff:g>}few{Эти файлы не были извлечены: <xliff:g id="LIST_1">{list}</xliff:g>}many{Эти файлы не были извлечены: <xliff:g id="LIST_1">{list}</xliff:g>}other{Эти файлы не были извлечены: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">Не удалось переместить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Не удалось переместить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Не удалось переместить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Не удалось переместить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{Не удалось переместить этот файл: <xliff:g id="LIST_0">{list}</xliff:g>}one{Не удалось переместить эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}few{Не удалось переместить эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}many{Не удалось переместить эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}other{Не удалось переместить эти файлы: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">Не удалось удалить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Не удалось удалить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Не удалось удалить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Не удалось удалить эти файлы: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{Не удалось удалить этот файл: <xliff:g id="LIST_0">{list}</xliff:g>}one{Эти файлы не были удалены: <xliff:g id="LIST_1">{list}</xliff:g>}few{Эти файлы не были удалены: <xliff:g id="LIST_1">{list}</xliff:g>}many{Эти файлы не были удалены: <xliff:g id="LIST_1">{list}</xliff:g>}other{Эти файлы не были удалены: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">Формат этих файлов изменен: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Формат этих файлов изменен: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="many">Формат этих файлов изменен: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Формат этих файлов изменен: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{Формат этого файла изменен: <xliff:g id="LIST_0">{list}</xliff:g>}one{Формат этих файлов изменен: <xliff:g id="LIST_1">{list}</xliff:g>}few{Формат этих файлов изменен: <xliff:g id="LIST_1">{list}</xliff:g>}many{Формат этих файлов изменен: <xliff:g id="LIST_1">{list}</xliff:g>}other{Формат этих файлов изменен: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one">Скопирован <xliff:g id="COUNT_1">%1$d</xliff:g> файл</item>
       <item quantity="few">Скопировано <xliff:g id="COUNT_1">%1$d</xliff:g> файла</item>
@@ -341,7 +349,12 @@
     <string name="sign_in" msgid="6253762676723505592">"Войти"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"Архив<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Отправить в архив"</string>
-    <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"Заменить файл <xliff:g id="NAME">%1$s</xliff:g>?"</string>
+    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
+    <skip />
     <string name="continue_in_background" msgid="1974214559047793331">"Продолжить в фоновом режиме"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="one">Выбрано: <xliff:g id="COUNT_1">%1$d</xliff:g></item>
@@ -369,16 +382,20 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Документы"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Большие файлы"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"На этой неделе"</string>
-    <string name="input_hint_new_folder" msgid="479672411219725677">"Название папки"</string>
-    <string name="input_hint_rename" msgid="8390711744270994452">"Новое название"</string>
+    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
+    <skip />
+    <!-- no translation found for input_hint_rename (4501630494874065128) -->
+    <skip />
     <string name="preview_file" msgid="4056622696305432343">"Открыть файл \"<xliff:g id="FILENAME">%1$s</xliff:g>\" в режиме предпросмотра."</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Предпросмотр рабочего файла \"<xliff:g id="FILENAME">%1$s</xliff:g>\""</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Предпросмотр файла \"<xliff:g id="FILENAME">%2$s</xliff:g>\" из профиля \"<xliff:g id="PROFILE">%1$s</xliff:g>\""</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Поиск файлов в других приложениях"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Анонимное приложение"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Использовать эту папку"</string>
-    <string name="open_tree_dialog_title" msgid="6339509533852318569">"Разрешить приложению \"<xliff:g id="APPNAME">%1$s</xliff:g>\" доступ к файлам в папке \"<xliff:g id="DIRECTORY">%2$s</xliff:g>\"?"</string>
-    <string name="open_tree_dialog_message" msgid="4120695398430659628">"Приложение \"<xliff:g id="APPNAME">%1$s</xliff:g>\" получит доступ ко всему контенту, который есть в папке \"<xliff:g id="DIRECTORY">%2$s</xliff:g>\" сейчас или будет помещен в нее позже."</string>
+    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
+    <skip />
+    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
+    <skip />
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Выберите другую папку"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"В целях защиты вашей конфиденциальности мы заблокировали доступ к этой папке."</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Новая папка"</string>
@@ -418,4 +435,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Очистить корзину?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Это действие нельзя отменить. Файлы будут удалены безвозвратно."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Очистить корзину"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

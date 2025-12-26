@@ -22,7 +22,6 @@ import static com.android.documentsui.base.DocumentInfo.getCursorInt;
 import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -81,6 +80,7 @@ final class GridDocumentHolder extends DocumentHolder {
     final @Nullable View mIconLayout;
     final View mPreviewIcon;
     boolean mHasSelectionRegion;
+    final DocumentsAdapter.Environment mEnv;
 
     // This is used in as a convenience in our bind method.
     private final DocumentInfo mDoc = new DocumentInfo();
@@ -88,10 +88,15 @@ final class GridDocumentHolder extends DocumentHolder {
     // Non-null only when useMaterial3 flag is ON.
     private final @Nullable MaterialCardView mIconWrapper;
 
-    GridDocumentHolder(Context context, ViewGroup parent, IconHelper iconHelper,
-            ConfigStore configStore) {
+    GridDocumentHolder(
+            Context context,
+            ViewGroup parent,
+            IconHelper iconHelper,
+            ConfigStore configStore,
+            DocumentsAdapter.Environment environment) {
         super(context, parent, getRes(R.layout.item_doc_grid), configStore);
 
+        mEnv = environment;
         if (isUseMaterial3FlagEnabled()) {
             mBullet = itemView.findViewById(getRes(R.id.bullet));
             mIconWrapper = itemView.findViewById(getRes(R.id.icon_wrapper));
@@ -299,7 +304,9 @@ final class GridDocumentHolder extends DocumentHolder {
 
         // For the second row, when the summary is enabled and it has something, display only the
         // summary.
-        if (isUseFileSummaryEnabled() && !TextUtils.isEmpty(summary)) {
+        boolean useSummary = mEnv.shouldDisplaySummary();
+
+        if (useSummary && !TextUtils.isEmpty(summary)) {
             mDetails.setVisibility(View.VISIBLE);
             mDetails.setText(summary);
             mDate.setVisibility(View.GONE);
@@ -309,7 +316,7 @@ final class GridDocumentHolder extends DocumentHolder {
         } else {
             // If file is partial, we want to show summary field as that's more relevant than
             // fileSize and date.
-            if (mDoc.isPartial() && !isUseFileSummaryEnabled()) {
+            if (mDoc.isPartial() && !useSummary) {
                 final String docSummary = getCursorString(cursor, Document.COLUMN_SUMMARY);
                 mDetails.setVisibility(View.VISIBLE);
                 if (isUseMaterial3FlagEnabled()) {

@@ -98,6 +98,7 @@ public final class SearchViewManagerTest {
     private SearchOptionsController mSearchOptionsController;
 
     private boolean mListenerOnSearchChangedCalled;
+    private int mOnSearchChangedCallCount;
     private int mOnSearchStartingCallCount;
 
     @Before
@@ -107,11 +108,13 @@ public final class SearchViewManagerTest {
         mTestHandler = new TestHandler();
 
         mOnSearchStartingCallCount = 0;
+        mOnSearchChangedCallCount = 0;
 
         final SearchManagerListener searchListener = new SearchManagerListener() {
             @Override
             public void onSearchChanged(@Nullable String query) {
                 mListenerOnSearchChangedCalled = true;
+                mOnSearchChangedCallCount++;
             }
 
             @Override
@@ -342,6 +345,44 @@ public final class SearchViewManagerTest {
         mListenerOnSearchChangedCalled = false;
         mSearchViewManager.onQueryTextSubmit("q");
         assertFalse(mListenerOnSearchChangedCalled);
+    }
+
+    @Test
+    public void testSetCurrentSearch_returnsTrueAndNotifies_whenQueryChanges() {
+        assertTrue(mSearchViewManager.setCurrentSearch("query"));
+        assertTrue(mListenerOnSearchChangedCalled);
+        assertEquals(1, mOnSearchChangedCallCount);
+    }
+
+    @Test
+    public void testSetCurrentSearch_returnsFalseAndDoesNotNotify_whenQueryIsSame() {
+        // First call should notify and return true
+        mSearchViewManager.setCurrentSearch("query");
+
+        // Reset trackers for the second call
+        mListenerOnSearchChangedCalled = false;
+        mOnSearchChangedCallCount = 0;
+
+        // Second call with same query should not notify and return false
+        assertFalse(mSearchViewManager.setCurrentSearch("query"));
+        assertFalse(mListenerOnSearchChangedCalled);
+        assertEquals(0, mOnSearchChangedCallCount);
+    }
+
+    @Test
+    public void testSearchTriggered_withSameQuery_notifiesListener() {
+        mSearchViewManager.onQueryTextChange("query");
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
+
+        // First search should trigger a notification
+        assertEquals(1, mOnSearchChangedCallCount);
+
+        // Triggering another search with the same query text (e.g. after a filter change)
+        mSearchViewManager.onQueryTextChange("query");
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS * 2);
+
+        // The listener should be notified again, even with the same query text
+        assertEquals(2, mOnSearchChangedCallCount);
     }
 
     @Test

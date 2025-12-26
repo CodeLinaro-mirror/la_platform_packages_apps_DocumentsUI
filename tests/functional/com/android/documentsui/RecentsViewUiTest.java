@@ -107,7 +107,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRecentsDoesNotContainEntriesFromAllFilesRootWithSearchV1() throws Exception {
         bots.roots.openRoot("Recent");
 
-        // When Searchv2 is disabled, the old loaders are used: check that they're not picking up
+        // When SearchV2 is disabled, the old loaders are used: check that they're not picking up
         // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
         // we could see two copies of each file.
         onView(withId(R.id.dir_list))
@@ -165,9 +165,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         final String testFileName = mTestFilesRule.createRandomFile("application/octet-stream");
 
         bots.roots.openRoot("Recent");
-        bots.search.expand();
-        bots.search.setInputText(testFileName);
-        bots.keyboard.pressEnter();
+        bots.search.doSearch(testFileName);
 
         bots.directory.waitForDocument(testFileName);
         onView(withId(R.id.dir_list))
@@ -194,12 +192,34 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.setInputText(testFileName);
         bots.keyboard.pressEnter();
 
-        // When Searchv2 is disabled, the old loaders are used: check that they're not picking up
+        // When SearchV2 is disabled, the old loaders are used: check that they're not picking up
         // anything from the new "all files" root if it's enabled in MediaProvider. If they were,
         // we could see two copies of the file.
         bots.directory.waitForDocument(testFileName);
         onView(withId(R.id.dir_list))
                 .check(matches(DirectoryListBot.withDisplayedFilenameCount(testFileName, 1)));
+    }
+
+    /** When using the new Search stack, files in Recents are deletable. */
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testDeleteFromRecentsWithSearchV2() throws Exception {
+        final String testFileNamePrefix = mTestFilesRule.createRandomFile("image/jpeg", "Pictures");
+        final String testFileName = testFileNamePrefix.concat(".jpg");
+
+        // Check: the random test file is visible in Recents.
+        bots.roots.openRoot("Recent");
+        UiObject fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertTrue(fileInRecents.exists());
+
+        // Check: the file can be successfully deleted.
+        bots.directory.selectDocument(testFileName, 1);
+        device.waitForIdle();
+        bots.main.clickDelete();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        device.waitForIdle();
+        fileInRecents = bots.directory.findDocument(testFileName, true);
+        assertFalse(fileInRecents.exists());
     }
 
     /** When using the new Search stack, files in Recents are movable. */

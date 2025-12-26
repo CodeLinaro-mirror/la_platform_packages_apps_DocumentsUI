@@ -73,7 +73,6 @@
 
             <!-- Main container for the right hand side. -->
             <LinearLayout
-                android:id="@+id/main_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -125,7 +124,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="?attr/actionBarSize"
                             android:touchscreenBlocksFocus="false"
-                            android:background="?attr/colorSurfaceBright"
                             android:visibility="gone"/>
 
                     </FrameLayout>
@@ -172,6 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/main_container_section_gap"
                     android:orientation="vertical"
+                    android:clipToOutline="true"
                     android:background="@drawable/main_container_bottom_section_background">
 
                     <com.android.documentsui.HorizontalBreadcrumb

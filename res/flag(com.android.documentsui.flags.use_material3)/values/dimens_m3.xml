@@ -293,6 +293,7 @@
 
     <dimen name="job_progress_panel_width">360dp</dimen>
     <dimen name="job_progress_panel_margin">@dimen/space_small_1</dimen>
+    <dimen name="job_progress_panel_elevation">1dp</dimen>
     <dimen name="job_progress_panel_header_margin">@dimen/space_small_1</dimen>
 
     <!-- 360dp - 2 * header margin (16dp) - header line height (24dp) -->

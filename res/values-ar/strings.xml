@@ -132,6 +132,8 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"تعذر حذف بعض المستندات"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"لا يمكن مشاركة أكثر من <xliff:g id="COUNT">%1$d</xliff:g> ملف."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"غير مسموح بهذا الإجراء"</string>
+    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
+    <skip />
     <string name="no_application_dialog_title" msgid="515133936841913019">"فتح باستخدام…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏لم يتم تثبيت أي تطبيقات متوافقة. يُرجى تثبيت تطبيق من \"متجر Play\"."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏البحث في \"متجر Play\""</string>
@@ -219,7 +221,8 @@
       <item quantity="other">لم يتم نسخ هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">لم يتم نسخ هذا الملف: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_failure_alert_content" msgid="9189052146654762708">"{count,plural, =1{لم يتم نسخ هذا الملف: <xliff:g id="LIST_0">{list}</xliff:g>}zero{لم يتم نسخ هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}two{لم يتم نسخ هذَين الملفَين: <xliff:g id="LIST_1">{list}</xliff:g>}few{لم يتم نسخ هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}many{لم يتم نسخ هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}other{لم يتم نسخ هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
+    <skip />
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="zero">لم يتم ضغط هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">لم يتم ضغط هذين الملفين: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -228,7 +231,8 @@
       <item quantity="other">لم يتم ضغط هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">لم يتم ضغط هذا الملف: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="compress_failure_alert_content" msgid="8456626635020092667">"{count,plural, =1{لم يتم ضغط هذا الملف: <xliff:g id="LIST_0">{list}</xliff:g>}zero{لم يتم ضغط هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}two{لم يتم ضغط هذَين الملفَين: <xliff:g id="LIST_1">{list}</xliff:g>}few{لم يتم ضغط هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}many{لم يتم ضغط هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}other{لم يتم ضغط هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
+    <skip />
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="zero">لم يتم فك ضغط هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">لم يتم فك ضغط هذين الملفين: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -237,7 +241,8 @@
       <item quantity="other">لم يتم فك ضغط هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">لم يتم فك ضغط هذا الملف: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="extract_failure_alert_content" msgid="712220650216158840">"{count,plural, =1{لم يتم استخراج هذا الملف: <xliff:g id="LIST_0">{list}</xliff:g>}zero{لم يتم استخراج هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}two{لم يتم استخراج هذَين الملفَين: <xliff:g id="LIST_1">{list}</xliff:g>}few{لم يتم استخراج هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}many{لم يتم استخراج هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}other{لم يتم استخراج هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
+    <skip />
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="zero">لم يتم نقل هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">لم يتم نقل هذين الملفين: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -246,7 +251,8 @@
       <item quantity="other">لم يتم نقل هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">لم يتم نقل هذا الملف: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="move_failure_alert_content" msgid="1171202330576025930">"{count,plural, =1{لم يتم نقل هذا الملف: <xliff:g id="LIST_0">{list}</xliff:g>}zero{لم يتم نقل هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}two{لم يتم نقل هذَين الملفَين: <xliff:g id="LIST_1">{list}</xliff:g>}few{لم يتم نقل هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}many{لم يتم نقل هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}other{لم يتم نقل هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
+    <skip />
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="zero">لم يتم حذف هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">لم يتم حذف هذين الملفين: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -255,7 +261,8 @@
       <item quantity="other">لم يتم حذف هذه الملفات: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">لم يتم حذف هذا الملف: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="delete_failure_alert_content" msgid="4277261031394958675">"{count,plural, =1{لم يتم حذف هذا الملف: <xliff:g id="LIST_0">{list}</xliff:g>}zero{لم يتم حذف هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}two{لم يتم حذف هذَين الملفَين: <xliff:g id="LIST_1">{list}</xliff:g>}few{لم يتم حذف هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}many{لم يتم حذف هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}other{لم يتم حذف هذه الملفات: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="zero">تم تحويل هذه الملفات إلى تنسيق آخر: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="two">تم تحويل هذين الملفين إلى تنسيق آخر: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -264,7 +271,8 @@
       <item quantity="other">تم تحويل هذه الملفات إلى تنسيق آخر: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">تم تحويل هذا الملف إلى تنسيق آخر: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <string name="copy_converted_warning_content" msgid="4860955097845236961">"{count,plural, =1{تم تحويل هذا الملف إلى تنسيق آخر: <xliff:g id="LIST_0">{list}</xliff:g>}zero{تم تحويل هذه الملفات إلى تنسيق آخر: <xliff:g id="LIST_1">{list}</xliff:g>}two{تم تحويل هذَين الملفَين إلى تنسيق آخر: <xliff:g id="LIST_1">{list}</xliff:g>}few{تم تحويل هذه الملفات إلى تنسيق آخر: <xliff:g id="LIST_1">{list}</xliff:g>}many{تم تحويل هذه الملفات إلى تنسيق آخر: <xliff:g id="LIST_1">{list}</xliff:g>}other{تم تحويل هذه الملفات إلى تنسيق آخر: <xliff:g id="LIST_1">{list}</xliff:g>}}"</string>
+    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
+    <skip />
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="zero">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملف إلى الحافظة.</item>
       <item quantity="two">تم نسخ ملفين (<xliff:g id="COUNT_1">%1$d</xliff:g>) إلى الحافظة.</item>
@@ -276,7 +284,7 @@
     <string name="read_only_label" msgid="894442752344379606">"للقراءة فقط"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"يمكنك الاطّلاع على هذه الملفات، ولكن بعض الإجراءات غير متاحة"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"هذا الأرشيف مخزّن في مكان متاح للقراءة فقط ولا يمكن استخراجه هنا."</string>
-    <string name="file_operation_rejected" msgid="4301554203329008794">"معالجة الملف غير متوافقة."</string>
+    <string name="file_operation_rejected" msgid="4301554203329008794">"لا يمكن تنفيذ العملية على هذا الملف."</string>
     <string name="file_operation_error" msgid="2234357335716533795">"تعذّرت معالجة الملف."</string>
     <string name="rename_error" msgid="6700093173508118635">"تعذّرت إعادة تسمية المستند."</string>
     <string name="menu_eject_root" msgid="9215040039374893613">"إخراج"</string>
@@ -311,7 +319,7 @@
     <string name="move_failed" msgid="7692364307225994220">"تعذّر النقل"</string>
     <string name="delete_failed" msgid="2642684566325252513">"تعذَّر الحذف"</string>
     <string name="compress_failed" msgid="7397502181042157261">"تعذّر ضغط الملف"</string>
-    <string name="extract_failed" msgid="8372397499452831323">"تعذّر الاستخراج"</string>
+    <string name="extract_failed" msgid="8372397499452831323">"تعذّر استخراج الملف"</string>
     <string name="expand_label" msgid="5683357671239615207">"توسيع"</string>
     <string name="collapse_label" msgid="4530974883269531062">"تصغير"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"هل تريد منح التطبيق <xliff:g id="APPNAME"><b>^1</b></xliff:g> الإذن بالوصول إلى الدليل <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> على <xliff:g id="STORAGE"><i>^3</i></xliff:g>؟"</string>
@@ -375,7 +383,12 @@
     <string name="sign_in" msgid="6253762676723505592">"تسجيل الدخول"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"أرشيف<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"أرشيف"</string>
-    <string name="overwrite_file_confirmation_message" msgid="2496109652768222716">"هل تريد استبدال <xliff:g id="NAME">%1$s</xliff:g>؟"</string>
+    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
+    <skip />
+    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
+    <skip />
     <string name="continue_in_background" msgid="1974214559047793331">"المتابعة في الخلفية"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="zero">تم اختيار <xliff:g id="COUNT_1">%1$d</xliff:g></item>
@@ -405,16 +418,20 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"المستندات"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"الملفات الكبيرة"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"هذا الأسبوع"</string>
-    <string name="input_hint_new_folder" msgid="479672411219725677">"اسم المجلد"</string>
-    <string name="input_hint_rename" msgid="8390711744270994452">"اسم جديد"</string>
+    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
+    <skip />
+    <!-- no translation found for input_hint_rename (4501630494874065128) -->
+    <skip />
     <string name="preview_file" msgid="4056622696305432343">"معاينة الملف <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"معاينة ملف العمل <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"معاينة الملف \"<xliff:g id="FILENAME">%2$s</xliff:g>\" في <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"تصفّح الملفات في تطبيقات أخرى"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"مجهول"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"استخدام هذا المجلد"</string>
-    <string name="open_tree_dialog_title" msgid="6339509533852318569">"هل تريد السماح لتطبيق <xliff:g id="APPNAME">%1$s</xliff:g> بالوصول إلى <xliff:g id="DIRECTORY">%2$s</xliff:g>؟"</string>
-    <string name="open_tree_dialog_message" msgid="4120695398430659628">"سيسمح هذا الإجراء لتطبيق <xliff:g id="APPNAME">%1$s</xliff:g> بالوصول إلى المحتوى المخزن في <xliff:g id="DIRECTORY">%2$s</xliff:g> حاليًا وفي المستقبل."</string>
+    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
+    <skip />
+    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
+    <skip />
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"لا يمكن استخدام هذا المجلد"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"لحماية خصوصيتك، اختَر مجلدًا آخر"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"إنشاء مجلد جديد"</string>
@@ -454,4 +471,6 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"إفراغ المهملات؟"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"لا يمكن التراجع عن هذا الإجراء ولن تتوفّر إمكانية استرداد الملفات بعد ذلك."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"إفراغ المهملات"</string>
+    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <skip />
 </resources>

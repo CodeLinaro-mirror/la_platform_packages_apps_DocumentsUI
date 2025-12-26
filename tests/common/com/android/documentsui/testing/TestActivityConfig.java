@@ -16,6 +16,8 @@
 
 package com.android.documentsui.testing;
 
+import androidx.annotation.Nullable;
+
 import com.android.documentsui.ActivityConfig;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.State;
@@ -27,11 +29,23 @@ public class TestActivityConfig extends ActivityConfig {
     public boolean nextManagedModeEnabled = false;
     public boolean nextDragAndDropEnabled = false;
 
-    public boolean canSelectType(String docMimeType, int docFlags, State state) {
+    /** Whether the document can be selected in this context. */
+    public boolean canSelectType(
+            String docMimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
         return nextSelectType;
     }
 
-    public boolean isDocumentEnabled(String docMimeType, int docFlags, State state) {
+    /** Whether the document is enabled in this context. */
+    public boolean isDocumentEnabled(
+            String docMimeType,
+            int docFlags,
+            @Nullable Integer syncStateFlags,
+            State state,
+            boolean isOnline) {
         return nextDocumentEnabled;
     }
 

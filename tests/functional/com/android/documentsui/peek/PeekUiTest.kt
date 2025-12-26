@@ -89,10 +89,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         if (this.initialRoot != null) {
             intent.setAction(Intent.ACTION_VIEW)
-            intent.setDataAndType(
-                this.initialRoot!!.uri,
-                DocumentsContract.Root.MIME_TYPE_ITEM
-            )
+            intent.setDataAndType(this.initialRoot!!.uri, DocumentsContract.Root.MIME_TYPE_ITEM)
         }
         val displayMetrics = Resources.getSystem().displayMetrics
         val options = ActivityOptions.makeBasic()
@@ -121,7 +118,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         val displayMetrics = Resources.getSystem().displayMetrics
         assumeTrue(
             "Skipping test: test device display size is too small to support provided " +
-                    "dimensions: ${pxWidth}x$pxHeight px.",
+                "dimensions: ${pxWidth}x$pxHeight px.",
             pxToDp(displayMetrics.widthPixels.toFloat(), displayMetrics) >= pxWidth &&
                 pxToDp(displayMetrics.heightPixels.toFloat(), displayMetrics) >= pxHeight,
         )
@@ -129,7 +126,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
 
     @Before
     fun setUpTest() {
-        peekBot = PeekBot(device!!, context!!, TIMEOUT)
+        peekBot = PeekBot(device!!, context!!, TIMEOUT, activityLayoutId!!)
         initFiles()
     }
 
@@ -244,7 +241,7 @@ class PeekUiTest : ActivityTestJunit4<FilesActivity?>() {
         val playerContentFrameMatcher =
             allOf(
                 withId(ExoPlayerR.id.exo_content_frame),
-                isDescendantOfA(withId(R.id.peek_container))
+                isDescendantOfA(withId(R.id.peek_container)),
             )
 
         // Check that the preview screen shows for "sample.webm".

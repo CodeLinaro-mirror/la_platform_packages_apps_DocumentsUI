@@ -148,8 +148,6 @@ public class State implements android.os.Parcelable {
      * Stores a ShortcutInfo reference of the currently selected shortcut. If a root is selected
      * instead, this value will be null.
      */
-    // TODO: b/447024807 - Make ShortcutInfo Parcelable and Durable for persisting state
-    //  configurations.
     @Nullable
     public ShortcutInfo shortcut;
 
@@ -194,6 +192,17 @@ public class State implements android.os.Parcelable {
             }
         }
         return true;
+    }
+
+    public String getTitleAtPosition(int pos) {
+        if (pos == 0 && shortcut != null) {
+            return shortcut.getTitle();
+        } else if ((pos == 0 || stack.isEmpty()) && stack.getRoot() != null) {
+            return stack.getRoot().title;
+        } else if (!stack.isEmpty() && pos < stack.size()) {
+            return stack.get(pos).displayName;
+        }
+        return null;
     }
 
     /**

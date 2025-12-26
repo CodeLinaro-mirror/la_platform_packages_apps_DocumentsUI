@@ -21,11 +21,14 @@ import android.app.UiAutomation
 import android.app.WindowConfiguration
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.os.LocaleList
 import android.os.RemoteException
 import android.provider.DocumentsContract
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import androidx.annotation.LayoutRes
 import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.Configurator
@@ -36,13 +39,24 @@ import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.Bots
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.util.FlagUtils.Companion.isCloudFeaturesFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isHomeScreenFilesFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isMovingContentIntoPrivateSpaceEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
+import com.android.documentsui.util.FlagUtils.Companion.isSingleClickToSelectEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isSupportVisibleBackgroundUserFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isTrashFlowEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseAllfilesRootForRecentsEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUsePeekPreviewFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isVisualSignalsFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
 import java.io.IOException
+import java.util.Locale
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -81,6 +95,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     @JvmField protected var mDocsHelper: DocumentsProviderHelper? = null
 
     @JvmField protected var mActivityScenario: ActivityScenario<T?>? = null
+    @LayoutRes protected var activityLayoutId: Int? = null
     private var initialScreenOffTimeoutValue: String? = null
     private var initialSleepTimeoutValue: String? = null
 
@@ -110,8 +125,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
         automation = InstrumentationRegistry.getInstrumentation().uiAutomation
         features = RuntimeFeatures(context!!.getResources(), null)
 
-        bots = Bots(device, automation, context, TIMEOUT)
-
         Configurator.getInstance().toolType = MotionEvent.TOOL_TYPE_MOUSE
 
         mDocsHelper =
@@ -131,7 +144,15 @@ abstract class ActivityTestJunit4<T : Activity?> {
         ActivityTest.closeNonDocsUiWindows(context, device)
         launchActivity()
 
-        logLayout()
+        mActivityScenario?.onActivity({ activity ->
+            activityLayoutId = (activity as? BaseActivity)?.layoutId
+            bots = Bots(device, automation, context, TIMEOUT, activityLayoutId)
+            if (activityLayoutId != null) {
+                logLayout()
+            }
+        })
+
+        logLocales()
         logFeatureFlags()
 
         // Since at the launch of activity, ROOT_0 and ROOT_1 have no files, drawer will
@@ -236,6 +257,35 @@ abstract class ActivityTestJunit4<T : Activity?> {
         Log.d(TAG, "Flag isUsePeekPreviewFlagEnabled() = ${isUsePeekPreviewFlagEnabled()}")
         Log.d(TAG, "Flag isVisualSignalsFlagEnabled() = ${isVisualSignalsFlagEnabled()}")
         Log.d(TAG, "Flag isZipNgFlagEnabled() = ${isZipNgFlagEnabled()}")
+        Log.d(TAG, "Flag isCloudFeaturesFlagEnabled() = ${isCloudFeaturesFlagEnabled()}")
+        Log.d(TAG, "Flag isDesktopUxPhase2FlagEnabled() = ${isDesktopUxPhase2FlagEnabled()}")
+        Log.d(TAG, "Flag isSingleClickToSelectEnabled() = ${isSingleClickToSelectEnabled()}")
+        Log.d(TAG, "Flag isTrashFlowEnabled() = ${isTrashFlowEnabled()}")
+        Log.d(
+            TAG,
+            "Flag isMovingContentIntoPrivateSpaceEnabled() = " +
+                "${isMovingContentIntoPrivateSpaceEnabled()}",
+        )
+        Log.d(
+            TAG,
+            "Flag isSupportVisibleBackgroundUserFlagEnabled() = " +
+                "${isSupportVisibleBackgroundUserFlagEnabled()}",
+        )
+        Log.d(TAG, "Flag isHomeScreenFilesFlagEnabled() = ${isHomeScreenFilesFlagEnabled()}")
+        Log.d(TAG, "Flag isUseFileSummaryEnabled() = ${isUseFileSummaryEnabled()}")
+        Log.d(TAG, "Flag isUseLocalSearchProviderEnabled() = ${isUseLocalSearchProviderEnabled()}")
+        Log.d(
+            TAG,
+            "Flag isUseAllfilesRootForRecentsEnabled() = ${isUseAllfilesRootForRecentsEnabled()}",
+        )
+    }
+
+    private fun logLocales() {
+        val config: Configuration = context!!.resources.configuration
+        val locales: LocaleList = config.getLocales()
+        val primaryLocale: Locale = locales.get(0) // User's primary preferred locale.
+
+        Log.d(TAG, "Primary Locale: ${primaryLocale.toLanguageTag()}")
     }
 
     companion object {

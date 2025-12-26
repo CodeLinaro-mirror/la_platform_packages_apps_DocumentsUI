@@ -340,6 +340,10 @@
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }
 
+-keep class com.android.documentsui.BaseActivity {
+  public int getLayoutId();
+}
+
 -keep class com.android.documentsui.base.RootInfo { *; }
 
 -keep class com.android.documentsui.base.ShortcutInfo { *; }
@@ -361,3 +365,4 @@
 -keep class com.android.documentsui.services.JobProgress {
   public <init>(java.lang.String, int, int, java.lang.String, boolean);
 }
+-keep class com.android.documentsui.sidebar.NavRailShortcutItem { *; }

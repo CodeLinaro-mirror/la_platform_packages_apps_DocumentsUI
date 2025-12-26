@@ -41,9 +41,12 @@ import com.android.documentsui.MenuManager
 import com.android.documentsui.ProfileTabsController
 import com.android.documentsui.R
 import com.android.documentsui.SelectionBarController
+import com.android.documentsui.base.NetworkMonitor
 import com.android.documentsui.base.State.MODE_GRID
 import com.android.documentsui.base.State.MODE_LIST
+import com.android.documentsui.flags.Flags
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.SortModels
@@ -60,13 +63,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 
 @RunWith(AndroidJUnit4::class)
 @MediumTest
@@ -76,6 +79,7 @@ class DirectoryFragmentTest {
     private lateinit var env: TestEnv
     private lateinit var injector: Injector<ActionHandler>
     private lateinit var fragment: DirectoryFragmentWithActivity
+    private lateinit var networkMonitor: NetworkMonitor
 
     @Before
     fun setUp() {
@@ -86,9 +90,12 @@ class DirectoryFragmentTest {
         val inflater = LayoutInflater.from(context)
         val container = FrameLayout(context)
         env.state.sortModel = SortModels.createTestSortModel()
+        env.state.stack.changeRoot(TestProvidersAccess.DOWNLOADS)
 
         // Mock injector.
         injector = spy(env.injector)
+        networkMonitor = spy(injector.networkMonitor)
+        injector.networkMonitor = networkMonitor
         injector.profileTabsController = mock(ProfileTabsController::class.java)
         injector.menuManager = mock(MenuManager::class.java)
         injector.actions = mock(ActionHandler::class.java)
@@ -119,6 +126,7 @@ class DirectoryFragmentTest {
         `when`(activity.selectedUser).thenReturn(env.userId)
         `when`(activity.resources).thenReturn(context.resources)
         `when`(activity.applicationContext).thenReturn(context.applicationContext)
+        `when`(activity.providersAccess).thenReturn(mock(ProvidersAccess::class.java))
 
         fragment = DirectoryFragmentWithActivity(context, activity)
         fragment.arguments = Bundle()
@@ -280,6 +288,12 @@ class DirectoryFragmentTest {
 
         verify(itemDecorationInvalidator).teardown()
         assertNull(fragment.mItemDecorationInvalidator)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testAddsNetworkListener() {
+        verify(networkMonitor).addNetworkListener(any())
     }
 }
 

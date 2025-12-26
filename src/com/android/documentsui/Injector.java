@@ -15,6 +15,7 @@
  */
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,7 +33,9 @@ import com.android.documentsui.base.DebugHelper;
 import com.android.documentsui.base.EventHandler;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Lookup;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.RootInfo;
+import com.android.documentsui.breadcrumbs.BreadcrumbController;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.picker.PickResult;
@@ -86,8 +89,12 @@ public class Injector<T extends ActionHandler> {
 
     private final Model mModel;
 
+    public NetworkMonitor networkMonitor;
+
     /** The Document Provider to use to fetch summary for local files. */
     @Nullable private SummaryProviderManager mSummaryProviderManager = null;
+
+    @Nullable private BreadcrumbController mBreadcrumbController = null;
 
     // must be initialized before calling super.onCreate because prefs
     // are used in State initialization.
@@ -170,6 +177,25 @@ public class Injector<T extends ActionHandler> {
 
     public @Nullable SummaryProviderManager getSummaryProviderManager() {
         return mSummaryProviderManager;
+    }
+
+    /**
+     * Sets the breadcrumb controller. This is the V2 version of breadcrumb, used by search and the
+     * recents view. This method only works with V2 version of search.
+     *
+     * @param controller The shared instance of breadcrumb controller
+     */
+    public void setBreadcrumbController(@Nullable BreadcrumbController controller) {
+        if (isSearchV2Enabled()) {
+            mBreadcrumbController = controller;
+        }
+    }
+
+    /**
+     * @return The V2 version of the breadcrumb controller.
+     */
+    public @Nullable BreadcrumbController getBreadcrumbController() {
+        return mBreadcrumbController;
     }
 
     /**

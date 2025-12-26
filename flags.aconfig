@@ -120,3 +120,19 @@ flag {
     bug: "444316005"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "cloud_features"
+    namespace: "documentsui"
+    description: "Enables features for the cloud storage root"
+    bug: "451775371"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "drags_from_other_apps"
+    namespace: "documentsui"
+    description: "Enables handling of system-level drag events from other apps."
+    bug: "440196110"
+    is_fixed_read_only: true
+}

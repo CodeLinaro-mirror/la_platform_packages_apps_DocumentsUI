@@ -37,6 +37,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.documentsui.BaseActivity;
+import com.android.documentsui.FocusManager;
 import com.android.documentsui.Injector;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
@@ -119,6 +120,11 @@ public class PickDirectoryFragment extends Fragment {
 
         mCancel = (Button) mContainer.findViewById(android.R.id.button2);
         mCancel.setOnClickListener(mCancelListener);
+
+        if (isUseMaterial3FlagEnabled()) {
+            FocusManager.setButtonFocusStyle(mPick);
+            FocusManager.setButtonFocusStyle(mCancel);
+        }
 
         updateView();
         return mContainer;

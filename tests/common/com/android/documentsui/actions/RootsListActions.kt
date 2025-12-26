@@ -18,6 +18,7 @@ package com.android.documentsui.actions
 
 import android.content.Context
 import android.view.View
+import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
@@ -38,16 +39,16 @@ import org.hamcrest.TypeSafeMatcher
 /**
  * Show roots list. On small/medium screens this opens the drawer, on large screens it's a no-op.
  */
-fun showRootsList(context: Context) {
-    if (inFixedLayout(context)) {
+fun showRootsList(context: Context, @LayoutRes layoutId: Int?) {
+    if (inFixedLayout(context, layoutId)) {
         return
     }
     Espresso.onView(ViewMatchers.withId(R.id.drawer_layout)).perform(DrawerActions.open())
 }
 
 /** Wait for the roots list drawer to close, if the layout has a drawer. */
-fun waitForRootsListDrawerToClose(context: Context) {
-    if (inFixedLayout(context)) {
+fun waitForRootsListDrawerToClose(context: Context, @LayoutRes layoutId: Int?) {
+    if (inFixedLayout(context, layoutId)) {
         return
     }
     Espresso.onView(ViewMatchers.withId(R.id.drawer_layout)).perform(DrawerActions.waitForClose())

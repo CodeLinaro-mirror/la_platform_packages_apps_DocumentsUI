@@ -19,6 +19,9 @@ package com.android.documentsui;
 import static com.android.documentsui.base.Shared.EXTRA_BENCHMARK;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
+import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -54,6 +57,7 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwnerKt;
@@ -65,6 +69,7 @@ import com.android.documentsui.NavigationViewManager.Breadcrumb;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
+import com.android.documentsui.base.NetworkMonitor;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
@@ -85,6 +90,7 @@ import com.android.documentsui.queries.SearchChipData;
 import com.android.documentsui.queries.SearchFragment;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.queries.SearchViewManager.SearchManagerListener;
+import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.sorting.SortController;
@@ -127,8 +133,7 @@ public abstract class BaseActivity
     private final List<EventListener> mEventListeners = new ArrayList<>();
     private final String mTag;
 
-    @LayoutRes
-    private int mLayoutId;
+    @LayoutRes private int mLayoutId;
 
     private RootsMonitor<BaseActivity> mRootsMonitor;
 
@@ -136,6 +141,8 @@ public abstract class BaseActivity
     private boolean mHasQueryContentFromIntent;
 
     private PreferencesMonitor mPreferencesMonitor;
+
+    private NetworkMonitor mNetworkMonitor;
 
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
@@ -173,6 +180,11 @@ public abstract class BaseActivity
     public abstract Injector<?> getInjector();
 
     @VisibleForTesting
+    public @LayoutRes int getLayoutId() {
+        return mLayoutId;
+    }
+
+    @VisibleForTesting
     protected void initConfigStore() {
         mConfigStore = DocumentsApplication.getConfigStore();
     }
@@ -180,18 +192,6 @@ public abstract class BaseActivity
     @VisibleForTesting
     public void setConfigStore(ConfigStore configStore) {
         mConfigStore = configStore;
-    }
-
-    /**
-     * @return A model that supports breadcrumb view v2, if one has been created.
-     */
-    public @Nullable BreadcrumbModel getBreadcrumbModel() {
-        if (isSearchV2Enabled()) {
-            if (mNavigator != null) {
-                return mNavigator.getBreadcrumbModel();
-            }
-        }
-        return null;
     }
 
     /**
@@ -203,8 +203,26 @@ public abstract class BaseActivity
         mInjector = getInjector();
         if (isUseFileSummaryEnabled()) {
             mInjector.setSummaryProviderManager(
-                    new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this)));
+                    new SummaryProviderManager(
+                            this,
+                            LifecycleOwnerKt.getLifecycleScope(this),
+                            Uri.parse(getString(R.string.local_summary_provider))));
         }
+    }
+
+    /**
+     * Sets the local summary provider and initializes a new SummaryProviderManager.
+     *
+     * @param uri The URI of the local summary provider, the one emulated from the resources.
+     */
+    @VisibleForTesting
+    public void setLocalSummaryProvider(Uri uri) {
+        Log.d(TAG, "Setting local summary provider: " + uri);
+        if (mInjector.getSummaryProviderManager() != null) {
+            mInjector.getSummaryProviderManager().stop();
+        }
+        mInjector.setSummaryProviderManager(
+                new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this), uri));
     }
 
     @CallSuper
@@ -248,7 +266,7 @@ public abstract class BaseActivity
                 // Bind event listener for the burger menu on nav rail.
                 MaterialButton burgerMenu = findViewById(getRes(R.id.nav_rail_burger_menu));
                 burgerMenu.setOnClickListener(v -> mDrawer.setOpen(true));
-                burgerMenu.setOnFocusChangeListener(this::onBurgerMenuFocusChange);
+                FocusManager.setButtonFocusStyle(burgerMenu);
             }
         }
 
@@ -268,10 +286,8 @@ public abstract class BaseActivity
             View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
             if (breadcrumbView2 != null) {
                 BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
-                BreadcrumbController breadcrumbController = new BreadcrumbController(
-                        this, model, (BreadcrumbView) breadcrumbView2);
-                // TODO(b:416108180): Connect to mNavigator directory change.
-                mNavigator.setBreadcrumbController(breadcrumbController);
+                mInjector.setBreadcrumbController(
+                        new BreadcrumbController(this, model, (BreadcrumbView) breadcrumbView2));
             }
         }
 
@@ -317,6 +333,16 @@ public abstract class BaseActivity
 
                     @Override
                     public void onSearchFinished() {
+                        // Always try to hide the breadcrumb view v2, which is to be active only
+                        // when search or recent results are selected. It is possible for the user
+                        // to exit search results without deselecting a file, for example, via
+                        // breadcrumb folder click.
+                        if (isSearchV2Enabled()) {
+                            BreadcrumbController controller = mInjector.getBreadcrumbController();
+                            if (controller != null) {
+                                controller.setVisible(false);
+                            }
+                        }
                         // When docked search bar is used, no need to invalidate the options menus
                         // because docked search bar won't affect the options menu, invalidating it
                         // will affect the tab navigation between the docked search bar and the
@@ -494,6 +520,9 @@ public abstract class BaseActivity
                 this::onPreferenceChanged);
         mPreferencesMonitor.start();
 
+        mNetworkMonitor = NetworkMonitor.create(getApplicationContext());
+        mInjector.networkMonitor = mNetworkMonitor;
+
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
         updateRecentsSetting();
@@ -613,6 +642,7 @@ public abstract class BaseActivity
         mRootsMonitor.stop();
         mPreferencesMonitor.stop();
         mSortController.destroy();
+        mNetworkMonitor.teardown();
         DocumentsApplication.invalidateUserManagerState(this);
         super.onDestroy();
     }
@@ -664,11 +694,17 @@ public abstract class BaseActivity
 
     protected void setContainer() {
         View root = findViewById(getRes(R.id.coordinator_layout));
-        View mainContainer = findViewById(getRes(R.id.main_container));
+        // Picker saver container always shows even when it's not in picker/saver mode (in which
+        // case it just shows as an empty container), so it's safe to rely on this container to add
+        // bottom padding for the right section of the layout.
+        View pickerSaverContainer = findViewById(getRes(R.id.container_save));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        final int drawerPaddingBottom =
+                getResources().getDimensionPixelSize(getRes(R.dimen.drawer_padding_bottom));
 
         if (isUseMaterial3FlagEnabled()) {
+            WindowCompat.enableEdgeToEdge(getWindow());
             ViewCompat.setOnApplyWindowInsetsListener(
                     root,
                     (v, insets) -> {
@@ -681,27 +717,57 @@ public abstract class BaseActivity
                                         && tappableInsets.bottom < navBarInsets.bottom;
 
                         // System bars includes both status bar (top) and navigation bar (bottom)
-                        // and also others, the insets will only have non-zero values when the app
-                        // might be overlapped with these areas (i.e. in fullscreen mode),
-                        // otherwise (i.e. in window mode) they will all be 0.
-                        Insets systemBarInsets =
-                                insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                        // and also others, and display cutout is for the front camera cutout, the
+                        // insets will only have non-zero values when the app might be overlapped
+                        // with these areas (i.e. in fullscreen mode), otherwise (i.e. in window
+                        // mode) they will all be 0.
+                        Insets systemInsets =
+                                insets.getInsets(
+                                        WindowInsetsCompat.Type.systemBars()
+                                                | WindowInsetsCompat.Type.displayCutout());
+                        // Bottom padding for the root container is always 0, because we want
+                        // different bottom paddings for the left section (navigation tree area) and
+                        // the right section (picker saver container).
+                        v.setPadding(systemInsets.left, systemInsets.top, systemInsets.right, 0);
                         // When Gesture navigation is used, we use its height (i.e.
-                        // systemBarInsets.bottom) as the bottom padding for the whole root
-                        // container (root container by default doesn't have bottom padding) without
-                        // adding additional "getBottomPadding()" so avoid the total bottom padding
-                        // looks too big (because gesture navigation area is transparent).
-                        v.setPadding(
-                                systemBarInsets.left,
-                                systemBarInsets.top,
-                                systemBarInsets.right,
-                                isGestureNav ? systemBarInsets.bottom : 0);
-                        // When Gesture navigation is not used, we only add bottom padding to the
-                        // main container (i.e. right section) because we don't want bottom padding
-                        // on the navigation tree area.
-                        if (!isGestureNav) {
-                            mainContainer.setPadding(
-                                    0, 0, 0, systemBarInsets.bottom + getBottomPadding());
+                        // systemInsets.bottom) as the bottom padding for the picker saver
+                        // without adding additional "getBottomPadding()" to avoid the total bottom
+                        // padding looks too big (because gesture navigation area is transparent).
+                        pickerSaverContainer.setPadding(
+                                0,
+                                0,
+                                0,
+                                isGestureNav
+                                        ? systemInsets.bottom
+                                        : (systemInsets.bottom + getBottomPadding()));
+                        // When Gesture navigation is used, we use its height (i.e.
+                        // systemInsets.bottom) as the bottom padding for the navigation tree
+                        // roots (both in drawer and nav rail) without adding additional
+                        // "drawerPaddingBottom" to avoid the total bottom padding looks too big
+                        // (because gesture navigation area is transparent). Note: the padding must
+                        // be added to the "roots_list" (the recycler view) because the bottom
+                        // padding must be part of the scrollable area.
+                        View drawerRootsList =
+                                findViewById(getRes(R.id.container_roots))
+                                        .findViewById(getRes(R.id.roots_list));
+                        int rootListBottomPadding =
+                                isGestureNav
+                                        ? systemInsets.bottom
+                                        : (systemInsets.bottom + drawerPaddingBottom);
+                        drawerRootsList.setPadding(
+                                drawerRootsList.getPaddingLeft(),
+                                drawerRootsList.getPaddingTop(),
+                                drawerRootsList.getPaddingRight(),
+                                rootListBottomPadding);
+                        View navRailContainer = findViewById(getRes(R.id.nav_rail_container_roots));
+                        if (navRailContainer != null) {
+                            View navRailRootsList =
+                                    navRailContainer.findViewById(getRes(R.id.roots_list));
+                            navRailRootsList.setPadding(
+                                    navRailRootsList.getPaddingLeft(),
+                                    navRailRootsList.getPaddingTop(),
+                                    navRailRootsList.getPaddingRight(),
+                                    rootListBottomPadding);
                         }
                         return WindowInsetsCompat.CONSUMED;
                     });
@@ -770,18 +836,7 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        if (isUseFileSummaryEnabled()) {
-            // Summary is only enabled for local roots.
-            mState.sortModel.setDimensionVisibility(
-                    SortModel.SORT_DIMENSION_ID_SUMMARY,
-                    root.isLocalProvider() ? View.VISIBLE : View.INVISIBLE);
-        } else {
-            // Set summary header's visibility. Only recents and downloads root may have summary in
-            // their docs.
-            mState.sortModel.setDimensionVisibility(
-                    SortModel.SORT_DIMENSION_ID_SUMMARY,
-                    root.isRecents() || root.isDownloads() ? View.VISIBLE : View.INVISIBLE);
-        }
+        updateColumnHeaders(root);
 
         // Clear entire backstack and start in new root
         mState.stack.changeRoot(root);
@@ -820,30 +875,28 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        // Set summary header's visibility to invisible. Only recents and downloads root may have
-        // summary in their docs.
-        mState.sortModel.setDimensionVisibility(
-                SortModel.SORT_DIMENSION_ID_SUMMARY, View.INVISIBLE);
+        updateColumnHeaders(shortcut.getRoot());
 
-        buildStackToParentShortcutFolder(
-                shortcut,
-                (@Nullable DocumentStack stack) -> {
-                    if (stack != null) {
-                        mInjector.actions.getDocument(
-                                shortcut.getRoot().authority,
-                                shortcut.getDocumentId(),
-                                shortcut.getRoot().userId,
-                                TimeoutTask.DEFAULT_TIMEOUT,
-                                doc -> {
-                                    // Reset the stack and store the shortcut reference.
-                                    mState.stack.reset(stack);
-                                    mState.shortcut = shortcut;
-                                    mInjector.actions.openRootDocument(doc);
-                                });
-                    }
-        });
+        mInjector.actions.getDocument(
+                shortcut.getRoot().authority,
+                shortcut.getDocumentId(),
+                shortcut.getRoot().userId,
+                TimeoutTask.DEFAULT_TIMEOUT,
+                doc -> {
+                    // Reset the stack and store the shortcut reference.
+                    mState.stack.changeRoot(shortcut.getRoot());
+                    mState.shortcut = shortcut;
+                    mInjector.actions.openRootDocument(doc);
+                });
+
         expandAppBar();
         updateHeaderTitle();
+    }
+
+    private void updateColumnHeaders(@Nullable RootInfo root) {
+        boolean showSummary = displaySummaryForRoot(mInjector.getSummaryProviderManager(), root);
+        mState.sortModel.setDimensionVisibility(
+                SortModel.SORT_DIMENSION_ID_SUMMARY, showSummary ? View.VISIBLE : View.GONE);
     }
 
     public void buildStackToParentShortcutFolder(ShortcutInfo shortcut,
@@ -888,7 +941,7 @@ public abstract class BaseActivity
             setViewMode(MODE_GRID);
             return true;
         } else if (id == getRes(R.id.sub_menu_list)) {
-            setViewMode(State.MODE_LIST);
+            setViewMode(MODE_LIST);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -952,7 +1005,8 @@ public abstract class BaseActivity
             mSearchManager.setCurrentSearch(mSearchManager.getQueryContentFromIntent());
         }
 
-        mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), MODE_GRID);
+        final int fallback = isUseMaterial3FlagEnabled() ? MODE_LIST : MODE_GRID;
+        mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), fallback);
 
         mNavigator.update();
 
@@ -977,7 +1031,12 @@ public abstract class BaseActivity
             getWindow().getDecorView().announceForAccessibility(appName);
         }
 
-        String newTitle = mState.stack.getTitle();
+        String newTitle;
+        if (isHomeScreenFilesFlagEnabled()) {
+            newTitle = mState.getTitleAtPosition(mState.stack.size() - 1);
+        } else {
+            newTitle = mState.stack.getTitle();
+        }
         if (newTitle != null) {
             // Causes talkback to announce the activity's new title
             setTitle(newTitle);
@@ -1036,9 +1095,9 @@ public abstract class BaseActivity
      * Set mode based on explicit user action.
      */
     void setViewMode(@ViewMode int mode) {
-        if (mode == State.MODE_GRID) {
+        if (mode == MODE_GRID) {
             Metrics.logUserAction(MetricConsts.USER_ACTION_GRID);
-        } else if (mode == State.MODE_LIST) {
+        } else if (mode == MODE_LIST) {
             Metrics.logUserAction(MetricConsts.USER_ACTION_LIST);
         }
 
@@ -1235,9 +1294,8 @@ public abstract class BaseActivity
         RootInfo root = mState.stack.getRoot();
         if (root != null) {
             return root;
-        } else {
-            return mProviders.getRecentsRoot(getSelectedUser());
         }
+        return mProviders.getRecentsRoot(getSelectedUser());
     }
 
     /**
@@ -1264,6 +1322,16 @@ public abstract class BaseActivity
      */
     public boolean isSearching() {
         return mSearchManager.isSearching();
+    }
+
+    /**
+     * Allows other views to inspect roots.
+     *
+     * @return ProvidersAccess for those views that need to access roots of the application.
+     */
+    // TODO(b/444316005): Remove, once MediaStore.toMediaUri works.
+    public ProvidersAccess getProvidersAccess() {
+        return mProviders;
     }
 
     @VisibleForTesting
@@ -1402,20 +1470,5 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
-    }
-
-    /**
-     * When the burger menu is focused, adding a focus ring indicator using Stroke.
-     * TODO(b/381957932): Remove this once Material Button supports focus ring.
-     */
-    private void onBurgerMenuFocusChange(View v, boolean hasFocus) {
-        MaterialButton burgerMenu = (MaterialButton) v;
-        if (hasFocus) {
-            final int focusRingWidth =
-                    getResources().getDimensionPixelSize(getRes(R.dimen.focus_ring_width));
-            burgerMenu.setStrokeWidth(focusRingWidth);
-        } else {
-            burgerMenu.setStrokeWidth(0);
-        }
     }
 }

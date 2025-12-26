@@ -288,8 +288,7 @@ public class RootsFragment extends Fragment {
                         public boolean handleDropEventChecked(View v, DragEvent event) {
                             final Item item = getItem(v);
 
-                            // TODO: b/441194501 - implement `isShortcut()` check in here
-                            assert (item.isRoot());
+                            assert (item.isRoot() || item.isShortcut());
 
                             return item.dropOn(event);
                         }
@@ -554,12 +553,18 @@ public class RootsFragment extends Fragment {
             final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
             librariesAndShortcuts.addAll(libraries);
             for (final ShortcutInfo shortcut : shortcuts) {
-                final ShortcutItem item;
-                item = new ShortcutItem(
-                        shortcut,
-                        mActionHandler,
-                        /* packageName= */ "",
-                        maybeShowBadge);
+                final ShortcutItem item =
+                        mUseRailAsContainer
+                                ? new NavRailShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge)
+                                : new ShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge);
                 librariesAndShortcuts.add(item);
             }
             final SidebarEntryItemComparator sidebarItemComp = new SidebarEntryItemComparator();
@@ -932,17 +937,12 @@ public class RootsFragment extends Fragment {
             return true;
         } else if (id == getRes(R.id.root_menu_open_in_new_window)) {
             if (sidebarItem instanceof RootItem) {
-                mActionHandler.openInNewWindow(
-                        new DocumentStack(sidebarItem.getItemInfo().getRoot()));
+                mActionHandler.openInNewWindow(new DocumentStack(
+                        sidebarItem.getItemInfo().getRoot(), sidebarItem.getDocInfo()), null);
             } else if (isHomeScreenFilesFlagEnabled() && sidebarItem instanceof ShortcutItem) {
                 ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
-                getBaseActivity().buildStackToParentShortcutFolder(shortcut,
-                    (@Nullable DocumentStack stack) -> {
-                        if (stack != null) {
-                            stack.push(sidebarItem.getDocInfo());
-                            mActionHandler.openInNewWindow(stack);
-                        }
-                    });
+                mActionHandler.openInNewWindow(
+                        new DocumentStack(shortcut.getRoot(), sidebarItem.getDocInfo()), shortcut);
                 return true;
             }
             return true;

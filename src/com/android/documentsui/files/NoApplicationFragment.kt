@@ -29,7 +29,7 @@ import androidx.fragment.app.FragmentManager
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Shared
-import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import com.android.documentsui.util.UnitUtils.Companion.dpToPx
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.net.URLEncoder
@@ -93,7 +93,7 @@ class NoApplicationFragment : DialogFragment() {
                 savedInstanceState.getParcelable(Shared.EXTRA_DOC, DocumentInfo::class.java)
         }
         val builder = MaterialAlertDialogBuilder(requireContext())
-        if (!isDesktopUxPhase2FlagEnabled()) {
+        if (!isUseMaterial3FlagEnabled()) {
             // We're setting the inset size explicitly so changes to the default inset size in
             // the future don't change our dialog size (the inset size affect the dialog size
             // because we're overriding the window size to get our desired dialog size).
@@ -121,8 +121,8 @@ class NoApplicationFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        // When desktop_ux_phase2 flag is ON, the base class will handle the dialog size.
-        if (isDesktopUxPhase2FlagEnabled()) {
+        // When use_material3 flag is ON, the base class will handle the dialog size.
+        if (isUseMaterial3FlagEnabled()) {
             return
         }
 

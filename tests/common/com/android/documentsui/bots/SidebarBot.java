@@ -25,6 +25,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import android.annotation.LayoutRes;
 import android.app.UiAutomation;
 import android.content.Context;
 import android.os.SystemClock;
@@ -55,7 +56,6 @@ public class SidebarBot extends Bots.BaseBot {
 
     private final String mRootListId;
     private final UiAutomation mAutomation;
-    private final UiBot mUiBot;
 
     /**
      * Root list exists in both drawer and navigation rail. With this enum the
@@ -73,10 +73,13 @@ public class SidebarBot extends Bots.BaseBot {
     }
 
     public SidebarBot(
-            UiDevice device, UiAutomation automation, Context context, UiBot uiBot, int timeout) {
-        super(device, context, timeout);
+            UiDevice device,
+            UiAutomation automation,
+            Context context,
+            int timeout,
+            @LayoutRes Integer layoutId) {
+        super(device, context, timeout, layoutId);
         mAutomation = automation;
-        mUiBot = uiBot;
         mRootListId = mTargetPackage + ":id/roots_list";
     }
 
@@ -102,7 +105,7 @@ public class SidebarBot extends Bots.BaseBot {
 
     private boolean toolbarHasTitle(String title) {
         try {
-            mUiBot.assertWindowTitle(title);
+            mBots.main.assertWindowTitle(title);
             return true;
         } catch (AssertionFailedError e) {
             return false;
@@ -117,7 +120,11 @@ public class SidebarBot extends Bots.BaseBot {
         final UiSelector rootsList = getRootsContainerSelector(containerType);
 
         // Wait for the first list item to appear.
-        new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
+        boolean exists =
+                new UiObject(rootsList.childSelector(new UiSelector())).waitForExists(mTimeout);
+        if (!exists) {
+            throw new UiObjectNotFoundException("First list item not found after timeout");
+        }
 
         // Now scroll around to find our item.
         new UiScrollable(rootsList).scrollIntoView(new UiSelector().text(label));
@@ -136,7 +143,7 @@ public class SidebarBot extends Bots.BaseBot {
         assertTrue(
                 "Failed to click on root: " + label,
                 findRoot(label, RootListContainerType.FOLLOW_LAYOUT).click());
-        mUiBot.assertWindowTitle(label);
+        mBots.main.assertWindowTitle(label);
     }
 
     /**
@@ -150,7 +157,7 @@ public class SidebarBot extends Bots.BaseBot {
         assertTrue(
                 "Failed to click on nav rail root: " + label,
                 findRoot(label, RootListContainerType.FORCE_NAV_RAIL).click());
-        mUiBot.assertWindowTitle(label);
+        mBots.main.assertWindowTitle(label);
     }
 
     /** Open navigation drawer from the burger menu button within the navigation rail layout. */

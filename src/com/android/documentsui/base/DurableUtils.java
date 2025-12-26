@@ -98,4 +98,36 @@ public class DurableUtils {
             return null;
         }
     }
+
+
+    /**
+     * Writes a nullable Integer to the provided DataOutputStream. First writes a leading byte which
+     * indicates presence, 1 for a non-null Integer value and 0 otherwise. Then writes the Integer
+     * if it is non-null.
+     */
+    public static void writeNullableInteger(DataOutputStream out, Integer value)
+            throws IOException {
+        if (value != null) {
+            // Use a leading 1 to indicate that the value is present.
+            out.writeByte(1);
+            out.writeInt(value.intValue());
+        } else {
+            // Use a leading 0 to indicate that the value is absent.
+            out.writeByte(0);
+        }
+    }
+
+    /**
+     * Reads a nullable Integer from the provided DataInputStream. First reads the leading byte
+     * which indicates presence, 1 for a non-null Integer value and 0 otherwise. Then returns the
+     * Integer if is present, otherwise returns null.
+     */
+    public static Integer readNullableInteger(DataInputStream in) throws IOException {
+        byte presence = in.readByte();
+        if (presence != 0) {
+            return in.readInt();
+        } else {
+            return null;
+        }
+    }
 }

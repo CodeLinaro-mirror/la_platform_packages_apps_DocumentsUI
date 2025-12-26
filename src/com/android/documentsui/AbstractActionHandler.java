@@ -17,9 +17,12 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.DocumentInfo.getCursorInt;
+import static com.android.documentsui.base.DocumentInfo.getCursorInteger;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -260,11 +263,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public void openInNewWindow(DocumentStack path) {
+    public void openInNewWindow(DocumentStack path, ShortcutInfo shortcut) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_NEW_WINDOW);
 
         Intent intent = LauncherActivity.createLaunchIntent(mActivity);
         intent.putExtra(Shared.EXTRA_STACK, (Parcelable) path);
+        if (isHomeScreenFilesFlagEnabled()) {
+            intent.putExtra(Shared.EXTRA_SELECTED_SHORTCUT, (Parcelable) shortcut);
+        }
 
         // Multi-window necessitates we pick how we are launched.
         // By default we'd be launched in-place above the existing app.
@@ -360,7 +366,19 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             String docMimeType = getCursorString(
                     cursor, DocumentsContract.Document.COLUMN_MIME_TYPE);
             int docFlags = getCursorInt(cursor, DocumentsContract.Document.COLUMN_FLAGS);
-            if (mInjector.config.isDocumentEnabled(docMimeType, docFlags, mState)) {
+            final Integer syncStateFlags =
+                    isCloudFeaturesFlagEnabled()
+                            ? getCursorInteger(
+                                    cursor,
+                                    DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                                    /* returnIfMissingOrNull= */ null)
+                            : null;
+            if (mInjector.config.isDocumentEnabled(
+                    docMimeType,
+                    docFlags,
+                    syncStateFlags,
+                    mState,
+                    mInjector.networkMonitor.isOnline())) {
                 enabled.add(id);
             }
         }
@@ -803,7 +821,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // Prevent special folders (i.e. system-defined shortcuts) from getting deleted.
             for (Uri uri : uris) {
                 if (uri.equals(shortcut.getUri())) {
-                    mDialogs.showOperationUnsupported();
+                    mDialogs.showOperationNotAllowedForShortcuts();
                     return true;
                 }
             }
@@ -1135,6 +1153,22 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             }
         }
 
+        /**
+         * If mState.acceptMimes do not limit file types, returns null, otherwise returns the
+         * acceptable MIME types. This is done to prevent acceptMimes to override the choices of
+         * files specified by dropdowns or chips.
+         *
+         * @return Acceptable MIME types or null, if any type is acceptable.
+         */
+        private String[] getAcceptMimesFilter() {
+            for (String type : mState.acceptMimes) {
+                if ("*/*".equals(type)) {
+                    return null;
+                }
+            }
+            return mState.acceptMimes;
+        }
+
         private Loader<DirectoryResult> onCreateLoaderV2(int id, Bundle args) {
             if (mExecutorService == null) {
                 // TODO(b:388130971): Fine tune the size of the thread pool.
@@ -1185,15 +1219,19 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             // itself, as otherwise directories containing only directories appear empty.
             String[] acceptMimes = null;
             if (stack.isRecents() || mSearchMgr.isSearching()) {
-                acceptMimes = mState.acceptMimes;
+                acceptMimes = getAcceptMimesFilter();
             } else if (mState.isPhotoPicking()) {
                 acceptMimes = new String[]{
                         DocumentsContract.Document.MIME_TYPE_DIR, MimeTypes.IMAGE_MIME,
                 };
             } else if (mState.acceptMimes != null) {
-                int mimeCount = mState.acceptMimes.length;
-                acceptMimes = Arrays.copyOf(mState.acceptMimes, mimeCount + 1);
-                acceptMimes[mimeCount - 1] = DocumentsContract.Document.MIME_TYPE_DIR;
+                acceptMimes = getAcceptMimesFilter();
+                if (acceptMimes != null) {
+                    // Add folders, so that we show something in folders that contain only folders.
+                    String[] expanded = Arrays.copyOf(acceptMimes, acceptMimes.length + 1);
+                    expanded[acceptMimes.length] = DocumentsContract.Document.MIME_TYPE_DIR;
+                    acceptMimes = expanded;
+                }
             }
             QueryOptions options = new QueryOptions(maxResults, maxResults, lastModifiedDelta,
                     Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles, acceptMimes,
@@ -1274,7 +1312,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             final RootInfo root = mState.stack.getRoot();
 
             // We only fetch summaries for local files.
-            if (!(root != null && root.isLocalProvider())) {
+            if (!(root != null && (root.isLocalProvider() || root.isRecents()))) {
                 return;
             }
 
@@ -1300,6 +1338,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
             mInjector.getModel().updateSummaries(summaries);
+            mActivity.getSupportLoaderManager().destroyLoader(SUMMARY_LOADER_ID);
         }
     }
 

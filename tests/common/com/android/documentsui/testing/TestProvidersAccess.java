@@ -60,6 +60,8 @@ public class TestProvidersAccess implements ProvidersAccess {
     public static final RootInfo VIDEO;
     public static final RootInfo DOCUMENT;
     public static final RootInfo EXTERNALSTORAGE;
+
+    public static final RootInfo CLOUD;
     public static final RootInfo NO_TREE_ROOT;
     public static final RootInfo SD_CARD;
     public static final RootInfo LOCAL_SEARCH;
@@ -73,6 +75,9 @@ public class TestProvidersAccess implements ProvidersAccess {
     private static final String HOME_SCREEN_DOC_ID = "primary%3AHome screen";
     public static final String LIVE_IMAGES_DOC_ID = "images_root%3ALive images";
     public static final String TEST_SHORTCUT_DOC_ID = "pepper%3ATest Shortcut";
+    public static final String HOME_SCREEN_GERMAN_TITLE = "Startbildschirm";
+    public static final String LIVE_IMAGES_GERMAN_TITLE = "Live-Bilder";
+    public static final String TEST_SHORTCUT_GERMAN_TITLE = "Testverknüpfung";
 
     static {
         UserId userId = TestProvidersAccess.USER_ID;
@@ -192,6 +197,16 @@ public class TestProvidersAccess implements ProvidersAccess {
         EXTERNALSTORAGE.flags = Root.FLAG_LOCAL_ONLY
                 | Root.FLAG_SUPPORTS_IS_CHILD;
 
+        CLOUD = new RootInfo();
+        CLOUD.userId = userId;
+        CLOUD.authority = "cloud.provider.authority";
+        CLOUD.rootId = Providers.ROOT_ID_DEVICE;
+        CLOUD.title = "Cloud";
+        CLOUD.derivedType = SidebarEntryItemInfo.TYPE_ROOT_OTHER;
+        // TODO(b/458129770): Use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead when it
+        //  exists in the SDK.
+        CLOUD.flags = RootInfo.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE;
+
         NO_TREE_ROOT = new RootInfo();
         NO_TREE_ROOT.userId = userId;
         NO_TREE_ROOT.authority = "no.tree.authority";
@@ -217,28 +232,31 @@ public class TestProvidersAccess implements ProvidersAccess {
         LOCAL_SEARCH.derivedType = RootInfo.TYPE_LOCAL;
         LOCAL_SEARCH.flags = Root.FLAG_LOCAL_ONLY;
 
-        HOME_SCREEN_SHORTCUT = new ShortcutInfo(
-                HOME_SCREEN_ICON_RES_ID,
-                Providers.HOME_SCREEN_SHORTCUT_TITLE,
-                EXTERNALSTORAGE,
-                "primary:"
-        );
+        HOME_SCREEN_SHORTCUT =
+                new ShortcutInfo(
+                        EXTERNALSTORAGE,
+                        "primary:",
+                        Providers.HOME_SCREEN_SHORTCUT_TITLE,
+                        Providers.HOME_SCREEN_SHORTCUT_TITLE,
+                        HOME_SCREEN_ICON_RES_ID);
         HOME_SCREEN_SHORTCUT.setDocumentId(HOME_SCREEN_DOC_ID);
 
-        LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
-                LIVE_IMAGES_ICON_RES_ID,
-                "Live images",
-                IMAGE,
-                "something/to/image:"
-        );
+        LIVE_IMAGES_SHORTCUT =
+                new ShortcutInfo(
+                        IMAGE,
+                        "something/to/image:",
+                        "Live images",
+                        "Live images",
+                        LIVE_IMAGES_ICON_RES_ID);
         LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
 
-        TEST_SHORTCUT = new ShortcutInfo(
-                TEST_ICON_RES_ID,
-                "shortcut in pepper",
-                PEPPER,
-                "some parent dir"
-        );
+        TEST_SHORTCUT =
+                new ShortcutInfo(
+                        PEPPER,
+                        "some parent dir",
+                        "shortcut in pepper",
+                        "shortcut in pepper",
+                        TEST_ICON_RES_ID);
         TEST_SHORTCUT.setDocumentId(TEST_SHORTCUT_DOC_ID);
     }
 
@@ -298,16 +316,16 @@ public class TestProvidersAccess implements ProvidersAccess {
             MTP_ROOT.rootId = Providers.ROOT_ID_DOCUMENTS;
             MTP_ROOT.title = "MTP";
             MTP_ROOT.derivedType = SidebarEntryItemInfo.TYPE_MTP;
-            MTP_ROOT.flags = Root.FLAG_SUPPORTS_CREATE
-                    | Root.FLAG_LOCAL_ONLY
-                    | Root.FLAG_SUPPORTS_IS_CHILD;
+            MTP_ROOT.flags =
+                    Root.FLAG_SUPPORTS_CREATE | Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_IS_CHILD;
 
-            LIVE_IMAGES_SHORTCUT = new ShortcutInfo(
-                LIVE_IMAGES_ICON_RES_ID,
-                "Live images",
-                IMAGE,
-                "something/to/image:"
-            );
+            LIVE_IMAGES_SHORTCUT =
+                    new ShortcutInfo(
+                            IMAGE,
+                            "something/to/image:",
+                            "Live images",
+                            "Live images",
+                            LIVE_IMAGES_ICON_RES_ID);
             LIVE_IMAGES_SHORTCUT.setDocumentId(LIVE_IMAGES_DOC_ID);
         }
     }
