@@ -17,10 +17,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"Tienes que cambiar el nombre"</string>
-    <!-- no translation found for hidden_file_rename_warning (5427365657393208836) -->
-    <skip />
-    <!-- no translation found for rename_invalid_character (5795828095376129943) -->
-    <skip />
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"Los archivos con . al principio de su nombre están ocultos"</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"Carácter no válido: "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"Tienes que dar un nombre a la carpeta"</string>
     <string name="files_label" msgid="771781190045103748">"Archivos"</string>
     <string name="downloads_label" msgid="5462789470049501103">"Descargas"</string>
