@@ -140,9 +140,13 @@ abstract class BaseFileLoader(
             deliverResult(storedResult)
         }
         if (takeContentChanged() || storedResult == null || isCursorStale) {
+            resetCursors()
             forceLoad()
         }
     }
+
+    /** Used when start loading detects stale cursor or content changed to reset cursors. */
+    open fun resetCursors() {}
 
     override fun onStopLoading() {
         if (DEBUG) {

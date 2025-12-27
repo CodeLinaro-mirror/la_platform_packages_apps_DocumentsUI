@@ -38,6 +38,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProvider
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.measureTime
 
 /**
@@ -154,7 +155,7 @@ class SearchLoader(
 
     // Indicates if the first pass for results is done. This is used to prevent tasks
     // that completed before the deadline from forcing content change calls.
-    private var firstPassDone = false
+    private var firstPassDone = AtomicBoolean(false)
 
     // A latch that counts the number of tasks done. Used to check if all tasks are completed.
     private var countDownLatch = CountDownLatch(rootInfoList.size)
@@ -177,7 +178,7 @@ class SearchLoader(
      * yet completed tasks the code just waits for them to be completed.
      */
     private fun maybeRefreshContent(taskId: String) {
-        if (firstPassDone) {
+        if (firstPassDone.get()) {
             if (DEBUG) {
                 Log.d(TAG, "Forcing refresh on cursor $taskId completed")
             }
@@ -191,16 +192,16 @@ class SearchLoader(
      * run.
      */
     @Throws(InterruptedException::class)
-    private fun firstPassRun(rejectBeforeTimestamp: Long) {
+    private fun firstPassRun(latch: CountDownLatch, rejectBeforeTimestamp: Long): Boolean {
         // Step 1: Create a list of new search tasks.
-        createSearchTaskList(rejectBeforeTimestamp, countDownLatch)
+        createSearchTaskList(rejectBeforeTimestamp, latch)
         if (DEBUG) {
             Log.d(TAG, "First run created ${searchTaskList.size} tasks")
         }
 
         // Check if we are cancelled; if not copy the task list.
         if (isLoadInBackgroundCanceled) {
-            return
+            return false
         }
 
         // Step 2: Enqueue tasks and wait for them to complete or time out.
@@ -211,21 +212,26 @@ class SearchLoader(
             Log.d(TAG, "Started ${searchTaskList.size} search tasks")
         }
 
+        if (isLoadInBackgroundCanceled) {
+            return false
+        }
+
         // Step 3: Wait for the results.
         if (options.isQueryTimeUnlimited()) {
             if (DEBUG) {
                 Log.d(TAG, "Waiting for results with no time limit")
             }
-            countDownLatch.await()
+            latch.await()
         } else {
             if (DEBUG) {
                 Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
             }
-            countDownLatch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
+            latch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
         }
         if (DEBUG) {
             Log.d(TAG, "Waiting for results is done")
         }
+        return true
     }
 
     /** The loadInBackground code run within a trace. */
@@ -238,10 +244,11 @@ class SearchLoader(
         result.queryOptions = options
         result.query = query
 
-        if (!firstPassDone) {
+        var firstPassComplete = false
+        if (firstPassDone.compareAndSet(false, true)) {
             try {
                 // Create a new task list and schedule it with the executor.
-                firstPassRun(rejectBeforeTimestamp)
+                firstPassComplete = firstPassRun(countDownLatch, rejectBeforeTimestamp)
             } catch (e: InterruptedException) {
                 if (DEBUG) {
                     Log.d(TAG, "Interrupted during first pass ${options.maxQueryTime}")
@@ -249,7 +256,7 @@ class SearchLoader(
                 // TODO(b:388336095): Record a metrics indicating incomplete search.
                 throw RuntimeException(e)
             } finally {
-                firstPassDone = true
+                firstPassDone.set(firstPassComplete)
             }
         }
 
@@ -420,5 +427,11 @@ class SearchLoader(
             Log.d(TAG, "Resetting search loader; search task list emptied.")
         }
         super.onReset()
+    }
+
+    /** Overrides the method called when forced load takes place to force full cursor reload. */
+    override fun resetCursors() {
+        firstPassDone.set(false)
+        countDownLatch = CountDownLatch(rootInfoList.size)
     }
 }

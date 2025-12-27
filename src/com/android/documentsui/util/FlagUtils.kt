@@ -246,10 +246,9 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
 
         @JvmStatic
         fun isContentProviderClientAnrOnCancelEnabled(): Boolean {
-            if (!VersionUtils.isGreaterThanB()) {
-                return false
-            }
-            return enableContentProviderClientAnrOnCancel()
+            // TODO(b/457843307): Replace with isAtLeastC when the new SDK is
+            // finalised.
+            return SdkLevel.isAtLeastB() && enableContentProviderClientAnrOnCancel()
         }
     }
 

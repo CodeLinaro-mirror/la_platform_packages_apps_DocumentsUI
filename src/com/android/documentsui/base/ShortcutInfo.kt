@@ -69,6 +69,12 @@ class ShortcutInfo() : SidebarEntryItemInfo, Durable, Parcelable {
                     root.authority.equals(Providers.AUTHORITY_STORAGE)
             ) {
                 return SidebarEntryItemInfo.TYPE_HOME_SCREEN
+            } else if (
+                folderTitle.equals(Providers.DOWNLOAD_SHORTCUT_TITLE) &&
+                    parentDirDocumentId.equals("primary:") &&
+                    root.authority.equals(Providers.AUTHORITY_STORAGE)
+            ) {
+                return SidebarEntryItemInfo.TYPE_DOWNLOADS
             } else {
                 return SidebarEntryItemInfo.TYPE_SHORTCUT_OTHER
             }

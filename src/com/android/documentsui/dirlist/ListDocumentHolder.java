@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -312,9 +313,9 @@ final class ListDocumentHolder extends DocumentHolder {
         }
 
         if (useSummary()) {
-            if (summary == null) {
-                mSummary.setText("--");
-                mSummary.setTooltipText(summary);
+            if (TextUtils.isEmpty(summary)) {
+                mSummary.setText("—");
+                mSummary.setTooltipText(null);
             } else {
                 mSummary.setText(summary, TextView.BufferType.SPANNABLE);
                 mSummary.setTooltipText(summary);
@@ -378,27 +379,31 @@ final class ListDocumentHolder extends DocumentHolder {
                 // Non-tablets
                 boolean hasDetails = false;
 
-                ArrayList<String> metadataList = new ArrayList<>();
-                if (useSummary() && !TextUtils.isEmpty(summary)) {
-                    hasDetails = true;
-                    metadataList.add(summary);
-                }
+                if (!mDoc.isDirectory()) {
+                    ArrayList<String> metadataList = new ArrayList<>();
+                    if (useSummary() && !TextUtils.isEmpty(summary)) {
+                        hasDetails = true;
+                        metadataList.add(summary);
+                    }
 
-                if (mDoc.lastModified > 0) {
-                    hasDetails = true;
-                    metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
-                }
+                    if (mDoc.lastModified > 0) {
+                        hasDetails = true;
+                        metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
+                    }
 
-                if (!mDoc.isDirectory() && mDoc.size >= 0) {
-                    hasDetails = true;
-                    metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
-                }
+                    if (mDoc.size >= 0) {
+                        hasDetails = true;
+                        metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
+                    }
 
-                metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
-                mMetadataView.setText(TextUtils.join(", ", metadataList));
+                    metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
+                    mMetadataView.setText(TextUtils.join(", ", metadataList));
+                }
 
                 if (mDetails != null) {
                     mDetails.setVisibility(hasDetails ? View.VISIBLE : View.GONE);
+                } else {
+                    Log.w(TAG, "mDetails is unexpectedly null for non-tablet devices!");
                 }
             } else {
                 // Tablets
@@ -409,6 +414,9 @@ final class ListDocumentHolder extends DocumentHolder {
                 if (mDoc.lastModified > 0) {
                     mDate.setVisibility(View.VISIBLE);
                     mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
+                } else if (isUseMaterial3FlagEnabled()) {
+                    mDate.setVisibility(View.VISIBLE);
+                    mDate.setText("—");
                 } else {
                     mDate.setVisibility(View.INVISIBLE);
                 }
@@ -416,6 +424,9 @@ final class ListDocumentHolder extends DocumentHolder {
                 if (!mDoc.isDirectory() && mDoc.size >= 0) {
                     mSize.setVisibility(View.VISIBLE);
                     mSize.setText(Formatter.formatFileSize(mContext, mDoc.size));
+                } else if (isUseMaterial3FlagEnabled()) {
+                    mSize.setVisibility(View.VISIBLE);
+                    mSize.setText("—");
                 } else {
                     mSize.setVisibility(View.INVISIBLE);
                 }

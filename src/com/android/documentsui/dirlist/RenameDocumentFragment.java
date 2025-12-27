@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.TAG;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
@@ -24,6 +25,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -94,6 +97,31 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
 
         // Workaround for the problem - virtual keyboard doesn't show on the phone.
         Shared.ensureKeyboardPresent(context, dialog);
+
+        if (isUseMaterial3FlagEnabled()) {
+            mEditText.addTextChangedListener(
+                    new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(
+                                CharSequence s, int start, int count, int after) {}
+
+                        @Override
+                        public void onTextChanged(
+                                CharSequence s, int start, int before, int count) {}
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            if (s.toString().startsWith(".")) {
+                                mRenameInputWrapper.setHelperText(
+                                    getContext()
+                                        .getString(
+                                            getRes(R.string.hidden_file_rename_warning)));
+                            } else {
+                                mRenameInputWrapper.setHelperText(null);
+                            }
+                        }
+                    });
+        }
 
         mEditText.setOnEditorActionListener(
                 new OnEditorActionListener() {

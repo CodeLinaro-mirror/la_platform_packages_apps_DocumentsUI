@@ -21,10 +21,12 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static junit.framework.Assert.fail;
 
+import android.os.Build;
 import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
+import androidx.test.filters.SdkSuppress;
 
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.files.FilesActivity;
@@ -109,6 +111,7 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
 
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
     public void testKeyboard_controlSpaceTogglesSelection() throws Exception {
         for (int i = 0; !bots.directory.anyDocumentHasFocus(); i++) {
             if (i > 99) {
