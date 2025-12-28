@@ -96,6 +96,7 @@ open class SummaryProviderManager(
     private var overrideConsentMessage: String? = null
 
     val authority: String? = authorityUri?.authority
+    var rootDocumentId: String? = null
 
     private var contentObserver: ContentObserver? = null
     private val contentResolver = context.contentResolver
@@ -165,7 +166,8 @@ open class SummaryProviderManager(
 
         withContext(Dispatchers.IO) {
             val rootsUri = DocumentsContract.buildRootsUri(authority)
-            val projection = arrayOf(Root.COLUMN_FLAGS, Root.COLUMN_ROOT_ID)
+            val projection =
+                arrayOf(Root.COLUMN_FLAGS, Root.COLUMN_ROOT_ID, Root.COLUMN_DOCUMENT_ID)
 
             try {
                 val rootId = DocumentsContract.getRootId(authorityUri)
@@ -192,6 +194,8 @@ open class SummaryProviderManager(
                         val isEffectivelyEnabled = providerHasConsent && userHasEnabledInSettings
                         _state.value =
                             SummaryProviderState.Available(isUserEnabled = isEffectivelyEnabled)
+                        rootDocumentId =
+                            it.getString(it.getColumnIndexOrThrow(Root.COLUMN_DOCUMENT_ID))
                         return@withContext
                     }
                 }
@@ -200,6 +204,23 @@ open class SummaryProviderManager(
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to query summary provider: $authority, assuming disabled", e)
                 _state.value = SummaryProviderState.ProviderUnavailable
+            }
+        }
+    }
+
+    private suspend fun notifyProvider() {
+        if (authority.isNullOrEmpty()) {
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            val rootDocUri = DocumentsContract.buildDocumentUri(authority, rootDocumentId)
+            val projection = arrayOf(Root.COLUMN_DOCUMENT_ID)
+            try {
+                val cursor = contentResolver.query(rootDocUri, projection, null, null, null)
+                cursor?.close()
+            } catch (e: Exception) {
+                Log.w(TAG, "Failure notifying the provider: $authority for enabling it", e)
             }
         }
     }
@@ -214,10 +235,12 @@ open class SummaryProviderManager(
         return currentState is SummaryProviderState.Available && currentState.isUserEnabled
     }
 
-    private fun userSwitchSummaryEnabled() {
+    @VisibleForTesting
+    fun userSwitchSummaryEnabled() {
         LocalPreferences.setSummaryEnabled(context, true)
         _state.value = SummaryProviderState.Available(isUserEnabled = true)
-        // TODO(b/436750999): Notify summary provider.
+        // We only notify for enablement, so the provider can fully enable itself.
+        scope.launch { notifyProvider() }
     }
 
     private fun userSwitchSummaryDisabled() {

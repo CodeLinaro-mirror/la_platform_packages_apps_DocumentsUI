@@ -35,14 +35,6 @@ internal class TestSummaryProvider :
     /** Maps the DocumentID to the desired summary. */
     private val summaries = HashMap<String, String>()
 
-    companion object {
-        const val AUTHORITY = "com.android.documentsui.summaryprovider"
-        const val TAG = "TestSummaryProvider"
-        private const val ROOT_ID = "summary-root"
-        const val EXTRA_SUMMARIES = "com.android.documentsui.test.summaryprovider.SUMMARIES"
-        const val EXTRA_IS_EMPTY = "com.android.documentsui.test.summaryprovider.IS_EMPTY"
-    }
-
     override fun onCreate(): Boolean {
         Log.d(TAG, "onCreate(): $AUTHORITY/$ROOT_ID")
         return true
@@ -75,6 +67,14 @@ internal class TestSummaryProvider :
 
     override fun queryDocument(documentId: String, projection: Array<String>?): Cursor {
         Log.d(TAG, "queryDocument(): $AUTHORITY/$ROOT_ID")
+
+        if (documentId == ROOT_ID && projection?.singleOrNull() == Document.COLUMN_DOCUMENT_ID) {
+            // Mark the root as enabled.
+            isEmpty = false
+
+            // Notify SummaryProviderManager that the provider has changed.
+            context?.contentResolver?.notifyChange(DocumentsContract.buildRootsUri(AUTHORITY), null)
+        }
 
         val cursor =
             MatrixCursor(
@@ -155,5 +155,13 @@ internal class TestSummaryProvider :
             summaries.putAll(summariesSerializable)
             Log.d(TAG, "Applied summaries: $summaries")
         }
+    }
+
+    companion object {
+        const val AUTHORITY = "com.android.documentsui.summaryprovider"
+        const val TAG = "TestSummaryProvider"
+        private const val ROOT_ID = "summary-root"
+        const val EXTRA_SUMMARIES = "com.android.documentsui.test.summaryprovider.SUMMARIES"
+        const val EXTRA_IS_EMPTY = "com.android.documentsui.test.summaryprovider.IS_EMPTY"
     }
 }

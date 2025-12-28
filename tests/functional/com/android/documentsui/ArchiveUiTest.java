@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import android.net.Uri;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.view.View;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -98,6 +99,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
         bots.directory.waitForDocument("file1.txt");
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
         bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");

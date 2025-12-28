@@ -18,7 +18,6 @@ package com.android.documentsui;
 
 import static android.text.Html.FROM_HTML_MODE_LEGACY;
 
-import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
@@ -126,16 +125,12 @@ public class OperationDialogFragment extends DocumentsUIDialogFragment {
                 FileOperationService.EXTRA_FAILED_PATHS);
 
         final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity());
-        final String message = new MessageBuilder(getContext()).generateListMessage(
-                dialogType, operationType, failedDocs, failedUris, failedPaths);
-        if (isZipNgFlagEnabled()) {
-            builder.setTitle(message);
-            final String fileList =
-                    MessageBuilder.getListContent(failedDocs, failedUris, failedPaths);
-            builder.setMessage(Html.fromHtml(fileList, FROM_HTML_MODE_LEGACY));
-        } else {
-            builder.setMessage(Html.fromHtml(message));
-        }
+        final MessageBuilder.ListDialogContent listDialogContent =
+                new MessageBuilder(getContext())
+                        .generateListDialogContent(
+                                dialogType, operationType, failedDocs, failedUris, failedPaths);
+        builder.setTitle(listDialogContent.title);
+        builder.setMessage(Html.fromHtml(listDialogContent.message, FROM_HTML_MODE_LEGACY));
         builder.setPositiveButton(
                 getRes(R.string.close),
                 new DialogInterface.OnClickListener() {

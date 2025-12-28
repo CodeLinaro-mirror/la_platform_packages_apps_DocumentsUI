@@ -503,6 +503,33 @@ public class RootsFragment extends Fragment {
                 isUseMaterial3FlagEnabled()
                         && !context.getResources().getBoolean(R.bool.show_media_roots);
 
+        boolean hasDownloadsOverlay = false;
+
+        final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Handle the shortcuts next. The shortcuts passed in are specific to the user. So we
+            // can just create and add the shortcut items normally as it should already account for
+            // cross profile behaviour.
+            for (final ShortcutInfo shortcut : shortcuts) {
+                if (shortcut.getDerivedType() == SidebarEntryItemInfo.TYPE_DOWNLOADS) {
+                    hasDownloadsOverlay = true;
+                }
+                final ShortcutItem item =
+                        mUseRailAsContainer
+                                ? new NavRailShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge)
+                                : new ShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge);
+                librariesAndShortcuts.add(item);
+            }
+        }
+
         for (final RootInfo root : roots) {
             final RootItem item;
 
@@ -519,6 +546,12 @@ public class RootsFragment extends Fragment {
                             || root.isDocuments()
                             || root.isAudio())) {
                 Log.d(TAG, "Hiding " + root);
+            } else if (isHomeScreenFilesFlagEnabled()
+                    && root.isDownloads()
+                    && hasDownloadsOverlay) {
+                // Hide the DownloadStorageProvider root if we have a shortcut to the Downloads
+                // folder via ExternalStorageProvider.
+                Log.d(TAG, "Hiding DownloadStorageProvider root: " + root);
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
                         mUseRailAsContainer
@@ -548,32 +581,13 @@ public class RootsFragment extends Fragment {
             }
         }
 
+        final RootComparator comp = new RootComparator();
         final List<RootItem> libraries = librariesBuilder.getList();
         final List<RootItem> storageProviders = storageProvidersBuilder.getList();
 
-        final RootComparator comp = new RootComparator();
         if (isHomeScreenFilesFlagEnabled()) {
-            // Handle the shortcuts next. The shortcuts passed in are specific to the user. So we
-            // can just create and add the shortcut items normally as it should already account for
-            // cross profile behaviour.
-            final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
-            librariesAndShortcuts.addAll(libraries);
-            for (final ShortcutInfo shortcut : shortcuts) {
-                final ShortcutItem item =
-                        mUseRailAsContainer
-                                ? new NavRailShortcutItem(
-                                        shortcut,
-                                        mActionHandler,
-                                        /* packageName= */ "",
-                                        maybeShowBadge)
-                                : new ShortcutItem(
-                                        shortcut,
-                                        mActionHandler,
-                                        /* packageName= */ "",
-                                        maybeShowBadge);
-                librariesAndShortcuts.add(item);
-            }
             final SidebarEntryItemComparator sidebarItemComp = new SidebarEntryItemComparator();
+            librariesAndShortcuts.addAll(libraries);
             Collections.sort(librariesAndShortcuts, sidebarItemComp);
             Collections.sort(storageProviders, comp);
 
@@ -589,7 +603,6 @@ public class RootsFragment extends Fragment {
             if (VERBOSE) Log.v(TAG, "Adding library roots: " + libraries);
             result.addAll(libraries);
         }
-
 
         // Only add the spacer if it is actually separating something.
         if (!result.isEmpty() && !storageProviders.isEmpty()) {

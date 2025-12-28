@@ -150,5 +150,7 @@ open class TestFilesRule(private val skipCreation: Boolean = false) : ExternalRe
         @JvmField val FILE_NAME_8: String = "test.zip"
 
         @JvmField val FILE_NAME_NO_RENAME: String = "NO_RENAMEfile.txt"
+
+        @JvmField val HIDDEN_FILE_NAME: String = ".txt"
     }
 }

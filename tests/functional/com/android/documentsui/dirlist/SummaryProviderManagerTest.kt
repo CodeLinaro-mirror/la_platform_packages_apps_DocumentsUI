@@ -57,8 +57,8 @@ class SummaryProviderManagerTest {
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
     private lateinit var mockResources: Resources
-    private var TEST_SUMMARY_PROVIDER =
-        "content://${TestSummaryProvider.Companion.AUTHORITY}/root/summary-root"
+    private val TEST_SUMMARY_PROVIDER =
+        "content://${TestSummaryProvider.AUTHORITY}/root/summary-root"
 
     /** A custom ContextWrapper that allows us to override getResources() for testing. */
     private class TestContextWrapper(base: Context, private val mockResources: Resources) :
@@ -201,5 +201,24 @@ class SummaryProviderManagerTest {
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isTrue()
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME)).isTrue()
         assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS)).isTrue()
+    }
+
+    @Test
+    fun test_userSwitchSummaryEnabled() = runTestWithTimeout {
+        // Start it with empty, should not display summary.
+        setSummaryProviderEnabled(enabled = false)
+        setSummaryConsent(enabled = false)
+
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
+        // The provider is available but not enabled by the user, aka without consent.
+        manager.state.first { it is SummaryProviderState.Available && !it.isUserEnabled }
+
+        manager.userSwitchSummaryEnabled()
+
+        // This should cause the provider to enable itself and mark the local setting as enabled.
+        manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
+
+        assertThat(LocalPreferences.isSummaryEnabled(context)).isTrue()
     }
 }
