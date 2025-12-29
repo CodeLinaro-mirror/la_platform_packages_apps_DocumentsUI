@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static junit.framework.Assert.fail;
 
@@ -98,7 +99,15 @@ public class KeyboardNavigationUiTest extends ActivityTestJunit4<FilesActivity> 
         // Open the drawer so we can ensure root list available even for phones
         bots.roots.openDrawer();
 
+        // Press tab to move the focus into the Root list.
         bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+        // When M3 is on, the root container "coordinator_layout" becomes focusable, so the first
+        // tab press will focus on it instead of the root list, so one more tab is required.
+        if (isUseMaterial3FlagEnabled()) {
+            bots.keyboard.pressKey(KeyEvent.KEYCODE_TAB);
+        }
+        bots.roots.assertHasFocus();
+
         for (int i = 0; i < 10; i++) {
             bots.keyboard.pressKey(KeyEvent.KEYCODE_DPAD_RIGHT);
             bots.roots.assertHasFocus();
