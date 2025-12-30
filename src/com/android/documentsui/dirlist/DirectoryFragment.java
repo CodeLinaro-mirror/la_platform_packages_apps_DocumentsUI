@@ -612,13 +612,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mRecView.setAdapter(mAdapter);
 
-        mLayout = new GridLayoutManager(getContext(), mColumnCount) {
-            @Override
-            public void onLayoutCompleted(RecyclerView.State state) {
-                super.onLayoutCompleted(state);
-                mFocusManager.onLayoutCompleted();
-            }
-        };
+        // When mFocusManager.onLayoutCompleted() is called inside the GridLayoutManager's
+        // onLayoutCompleted(), the newly added document (e.g.  after new folder creation)
+        // hasn't appeared in the list yet, which makes focusing on the document fail. Instead, we
+        // need to call it after the model update (e.g. ModelUpdateListener below).
+        mLayout =
+                isUseMaterial3FlagEnabled()
+                        ? new GridLayoutManager(getContext(), mColumnCount)
+                        : new GridLayoutManager(getContext(), mColumnCount) {
+                            @Override
+                            public void onLayoutCompleted(RecyclerView.State state) {
+                                super.onLayoutCompleted(state);
+                                mFocusManager.onLayoutCompleted();
+                            }
+                        };
 
         SpanSizeLookup lookup = mAdapter.createSpanSizeLookup();
         if (lookup != null) {
@@ -1975,6 +1982,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 } else {
                     mActivity.updateHeaderTitle();
                 }
+            }
+            if (isUseMaterial3FlagEnabled()) {
+                mRecView.post(mFocusManager::onLayoutCompleted);
             }
         }
     }
