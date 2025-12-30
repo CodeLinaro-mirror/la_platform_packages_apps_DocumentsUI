@@ -17,6 +17,7 @@
 package com.android.documentsui.queries;
 
 import static com.android.documentsui.testing.DrawableAsserts.assertDrawablesEqual;
+import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -100,7 +101,10 @@ public final class SearchChipViewManagerTest {
         mSearchChipViewManager.initChipSets(TEST_MIME_TYPES);
         mSearchChipViewManager.updateChips(new String[] {"*/*"});
 
-        int totalChipLength = TEST_MIME_TYPES.length + TEST_OTHER_TYPES.length;
+        // When use_allfiles_root_for_recents is ON, "This week" and "Large files" chips are not
+        // showing.
+        int otherChipLength = isUseAllfilesRootForRecentsEnabled() ? 0 : TEST_OTHER_TYPES.length;
+        int totalChipLength = TEST_MIME_TYPES.length + otherChipLength;
         assertThat(mChipGroup.getChildCount()).isEqualTo(totalChipLength);
     }
 
@@ -158,7 +162,10 @@ public final class SearchChipViewManagerTest {
     public void testUpdateChips_hasCorrectChipCount() throws Exception {
         mSearchChipViewManager.updateChips(TEST_MIME_TYPES);
 
-        int totalChipLength = TEST_MIME_TYPES.length + TEST_OTHER_TYPES.length;
+        // When use_allfiles_root_for_recents is ON, "This week" and "Large files" chips are not
+        // showing.
+        int otherChipLength = isUseAllfilesRootForRecentsEnabled() ? 0 : TEST_OTHER_TYPES.length;
+        int totalChipLength = TEST_MIME_TYPES.length + otherChipLength;
         assertThat(mChipGroup.getChildCount()).isEqualTo(totalChipLength);
     }
 
@@ -166,7 +173,10 @@ public final class SearchChipViewManagerTest {
     public void testUpdateChips_documentsFilterOnlyAvailableAboveR() throws Exception {
         mSearchChipViewManager.updateChips(TEST_MIME_TYPES_INCLUDING_DOCUMENT);
 
-        int totalChipLength = TEST_MIME_TYPES_INCLUDING_DOCUMENT.length + TEST_OTHER_TYPES.length;
+        // When use_allfiles_root_for_recents is ON, "This week" and "Large files" chips are not
+        // showing.
+        int otherChipLength = isUseAllfilesRootForRecentsEnabled() ? 0 : TEST_OTHER_TYPES.length;
+        int totalChipLength = TEST_MIME_TYPES_INCLUDING_DOCUMENT.length + otherChipLength;
         if (VersionUtils.isAtLeastR()) {
             assertThat(mChipGroup.getChildCount()).isEqualTo(totalChipLength);
         } else {
@@ -178,7 +188,10 @@ public final class SearchChipViewManagerTest {
     public void testUpdateChips_withSingleMimeType_hasCorrectChipCount() throws Exception {
         mSearchChipViewManager.updateChips(new String[]{"image/*"});
 
-        assertThat(mChipGroup.getChildCount()).isEqualTo(TEST_OTHER_TYPES.length);
+        // When use_allfiles_root_for_recents is ON, "This week" and "Large files" chips are not
+        // showing.
+        int otherChipLength = isUseAllfilesRootForRecentsEnabled() ? 0 : TEST_OTHER_TYPES.length;
+        assertThat(mChipGroup.getChildCount()).isEqualTo(otherChipLength);
     }
 
     @Test
@@ -236,7 +249,14 @@ public final class SearchChipViewManagerTest {
         ViewGroup mirror = spy(new LinearLayout(mContext));
         mSearchChipViewManager.bindMirrorGroup(mirror);
 
-        assertThat(View.VISIBLE).isEqualTo(mirror.getVisibility());
+        // When use_allfiles_root_for_recents is ON, "This week" and "Large files" chips are not
+        // showing, so the whole chip bar is hidden (because only one file type "Images" is
+        // provided).
+        if (isUseAllfilesRootForRecentsEnabled()) {
+            assertThat(mirror.getVisibility()).isEqualTo(View.GONE);
+        } else {
+            assertThat(mirror.getVisibility()).isEqualTo(View.VISIBLE);
+        }
     }
 
     @DesktopTest(cujs = {"b/434068218"})
