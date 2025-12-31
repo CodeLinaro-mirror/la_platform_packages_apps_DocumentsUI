@@ -91,6 +91,7 @@ abstract class Message {
     protected boolean mShouldKeep = false;
     protected int mLayout;
     protected ConfigStore mConfigStore;
+    protected boolean mIsButtonEnabled = true;
 
     Message(Environment env, Runnable defaultCallback, ConfigStore configStore) {
         mEnv = env;
@@ -102,6 +103,15 @@ abstract class Message {
 
     protected void update(@Nullable CharSequence messageTitle, CharSequence messageString,
             @Nullable CharSequence buttonString, Drawable icon) {
+        update(messageTitle, messageString, buttonString, icon, /* isButtonEnabled */ true);
+    }
+
+    protected void update(
+            @Nullable CharSequence messageTitle,
+            CharSequence messageString,
+            @Nullable CharSequence buttonString,
+            Drawable icon,
+            boolean isButtonEnabled) {
         if (messageString == null) {
             return;
         }
@@ -110,6 +120,7 @@ abstract class Message {
         mButtonString = buttonString;
         mIcon = icon;
         mShouldShow = true;
+        mIsButtonEnabled = isButtonEnabled;
     }
 
     void reset() {
@@ -117,6 +128,7 @@ abstract class Message {
         mIcon = null;
         mShouldShow = false;
         mLayout = 0;
+        mIsButtonEnabled = true;
     }
 
     void runCallback() {
@@ -160,6 +172,10 @@ abstract class Message {
         return mButtonString;
     }
 
+    boolean isButtonEnabled() {
+        return mIsButtonEnabled;
+    }
+
     final static class HeaderMessage extends Message {
 
         private static final String TAG = "HeaderMessage";
@@ -179,11 +195,13 @@ abstract class Message {
             } else if (isTrashFlowEnabled()
                     && isUseMaterial3FlagEnabled()
                     && mEnv.isOnTrashPage()) {
+                final boolean isEmptyPage = mEnv.getModel().getModelIds().length == 0;
                 update(
                         null,
                         mEnv.getContext().getString(getRes(R.string.empty_trash_banner_message)),
                         mEnv.getContext().getString(getRes(R.string.empty_trash_banner_button)),
-                        null);
+                        null,
+                        /* isButtonEnabled */ !isEmptyPage);
             } else if (isCloudFeaturesFlagEnabled()
                     && !mEnv.isOnline()
                     && mEnv.getDisplayState()

@@ -117,12 +117,14 @@ final class HeaderMessageDocumentHolder extends MessageHolder {
             if (mMessage.getButtonString() != null) {
                 mActionButton.setText(mMessage.getButtonString());
             }
+            mActionButton.setEnabled(mMessage.isButtonEnabled());
         } else {
             mActionView.setVisibility(View.GONE);
             mDismissButton.setVisibility(View.VISIBLE);
             if (mMessage.getButtonString() != null) {
                 mDismissButton.setText(mMessage.getButtonString());
             }
+            mDismissButton.setEnabled(mMessage.isButtonEnabled());
         }
     }
 }

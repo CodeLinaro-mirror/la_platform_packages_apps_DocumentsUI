@@ -121,6 +121,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         // Then, ensure the "Empty Trash" banner is visible.
         bots.main.assertEmptyTrashBannerIsVisible()
 
+        // Check that the "Empty Trash" button is enabled.
+        bots.main.assertEmptyTrashNowButtonEnabled(true)
+
         // Trigger the "Empty Trash" flow and confirm.
         bots.main.clickEmptyTrashNowButton()
         device!!.waitForIdle()
@@ -129,6 +132,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Verify that the previously trashed files are now gone.
         bots.directory.assertDocumentsAbsent(*trashedFileNames.toTypedArray())
+
+        // Verify that Empty trash bin button is disabled.
+        bots.main.assertEmptyTrashNowButtonEnabled(false)
     }
 
     /** Tests that permanently deleting selected items from the Trash view works correctly. */
