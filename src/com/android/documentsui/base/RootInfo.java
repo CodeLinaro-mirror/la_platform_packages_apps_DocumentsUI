@@ -61,7 +61,7 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
     public static final int LOAD_FROM_CONTENT_RESOLVER = -1;
     // TODO(b/458129770): Delete this and use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead
     // when it exists in the SDK.
-    @VisibleForTesting public static final int FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE = 1 << 20;
+    @VisibleForTesting public static final int FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE = 1 << 21;
     // private static final int VERSION_INIT = 1; // Not used anymore
     private static final int VERSION_DROP_TYPE = 2;
     private static final int VERSION_SEARCH_TYPE = 3;
