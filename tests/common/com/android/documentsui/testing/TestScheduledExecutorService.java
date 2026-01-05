@@ -179,6 +179,10 @@ public class TestScheduledExecutorService implements ScheduledExecutorService {
         }
     }
 
+    public boolean hasScheduledTasks() {
+        return !scheduled.isEmpty();
+    }
+
     static class TestFuture implements ScheduledFuture<Void> {
 
         final Runnable runnable;

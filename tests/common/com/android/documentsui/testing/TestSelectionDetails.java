@@ -18,6 +18,8 @@ package com.android.documentsui.testing;
 
 import com.android.documentsui.MenuManager.SelectionDetails;
 
+import java.util.Set;
+
 /**
  * Test copy of SelectionDetails, everything default to false
  */
@@ -38,6 +40,8 @@ public class TestSelectionDetails implements SelectionDetails {
     public boolean canViewInOwner;
     public boolean canTrash;
     public boolean canRestore;
+    public Set<String> mimeTypes;
+    public boolean containsDocumentsWithUnavailableContent;
 
     @Override
     public boolean containsPartialFiles() {
@@ -110,7 +114,17 @@ public class TestSelectionDetails implements SelectionDetails {
     }
 
     @Override
+    public boolean containsDocumentsWithUnavailableContent() {
+        return containsDocumentsWithUnavailableContent;
+    }
+
+    @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public Set<String> mimeTypes() {
+        return mimeTypes;
     }
 }

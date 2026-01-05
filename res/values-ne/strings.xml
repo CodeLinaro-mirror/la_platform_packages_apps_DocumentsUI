@@ -196,38 +196,32 @@
       <item quantity="other">यी फाइलहरूका प्रतिलिपि बनेनन्: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">यो फाइलको प्रतिलिपि बनेन: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{यो फाइल कपी गर्न सकिएन:}other{यी फाइलहरू कपी गर्न सकिएन:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">यी फाइलहरू कम्प्रेस भएनन्: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">यो फाइल कम्प्रेस भएन: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{यो फाइल जिप गर्न सकिएन:}other{यी फाइलहरू जिप गर्न सकिएन:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">यी फाइलहरू एकस्ट्र्याक्ट भएनन्: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">यो फाइल एकस्ट्र्याक्ट भएन: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{यो फाइल एक्स्ट्र्याक्ट गर्न सकिएन:}other{यी फाइलहरू एक्स्ट्र्याक्ट गर्न सकिएन:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">यी फाइलहरू सारिएनन्: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">यो फाइल सारिएन: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{यो फाइल सार्न सकिएन:}other{यी फाइलहरू सार्न सकिएन:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">यी फाइलहरू मेटिएनन्: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">यो फाइल मेटिएन: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{यो फाइल मेटाउन सकिएन:}other{यी फाइलहरू मेटाउन सकिएन:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">यी फाइलहरूलाई अर्को ढाँचामा रूपान्तरण गरिएको छ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">यो फाइललाई अर्को ढाँचामा रूपान्तरण गरिएको छ: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{यो फाइल अर्को फर्म्याटमा रूपान्तरण गरिएको छ:}other{यी फाइलहरू अर्को फर्म्याटमा रूपान्तरण गरिएका छन्:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> वटा फाइल क्लिपबोर्डमा कपी गरिए।</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> फाइल क्लिपबोर्डमा कपी गरियो।</item>
@@ -266,11 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"मेटाइयो"</string>
     <string name="compress_completed" msgid="6522047921428919799">"जिप गरियो"</string>
     <string name="extract_completed" msgid="8824595789915249972">"एक्स्ट्र्याक्ट गरियो"</string>
+    <string name="trash_completed" msgid="5527806383436622529">"ट्र्यासमा सारिएको छ"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"रिस्टोर गरिएको छ"</string>
     <string name="copy_failed" msgid="3700193913993844675">"कपी गर्न सकिएन"</string>
     <string name="move_failed" msgid="7692364307225994220">"सार्न सकिएन"</string>
     <string name="delete_failed" msgid="2642684566325252513">"मेटाउन सकिएन"</string>
     <string name="compress_failed" msgid="7397502181042157261">"जिप गर्न सकिएन"</string>
     <string name="extract_failed" msgid="8372397499452831323">"एक्स्ट्र्याक्ट गर्न सकिएन"</string>
+    <string name="trash_failed" msgid="4655759218201171408">"ट्र्यासमा सार्न सकिएन"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"रिस्टोर गर्न सकिएन"</string>
     <string name="expand_label" msgid="5683357671239615207">"एक्स्पान्ड गर्नुहोस्"</string>
     <string name="collapse_label" msgid="4530974883269531062">"कोल्याप्स गर्नुहोस्"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"<xliff:g id="APPNAME"><b>^1</b></xliff:g> लाई <xliff:g id="STORAGE"><i>^3</i></xliff:g> मा रहेको <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> निर्देशिकामाथि पहुँच राख्न दिने हो?"</string>
@@ -314,12 +312,9 @@
     <string name="sign_in" msgid="6253762676723505592">"साइन इन गर्नुहोस्"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"अभिलेख राख्नुहोस्<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"अभिलेख"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"फाइल बदल्ने हो?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"\"<xliff:g id="NAME">%1$s</xliff:g>\" नाम गरेको फाइल पहिलेदेखि नै छ।"</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"बदल्नुहोस्"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"पृष्ठभूमिमा जारी राख्नुहोस्"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> चयन गरियो</item>
@@ -345,24 +340,21 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"कागजातहरू"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"ठूला फाइलहरू"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"यस हप्ता"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"नाम"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"नाम"</string>
     <string name="preview_file" msgid="4056622696305432343">"<xliff:g id="FILENAME">%1$s</xliff:g> फाइलको पूर्वावलोकन गर्नुहोस्‌"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"कार्यालयको <xliff:g id="FILENAME">%1$s</xliff:g> नामक फाइलको पूर्वावलोकन गर्नुहोस्"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"<xliff:g id="PROFILE">%1$s</xliff:g> फाइल <xliff:g id="FILENAME">%2$s</xliff:g> को प्रिभ्यू गर्नुहोस्"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"अन्य एपहरूमा फाइलहरू खोज्नुहोस्"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"अज्ञात"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"यो फोल्डर प्रयोग गर्नुहोस्"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"<xliff:g id="APPNAME">%1$s</xliff:g> लाई फोल्डर एक्सेस गर्न दिने हो?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"\"<xliff:g id="DIRECTORY">%1$s</xliff:g>\" को एक्सेस दिनुहोस्।"</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"यो फोल्डर प्रयोग गर्न सकिएन"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"आफ्नो गोपनीयताको संरक्षण गर्न अर्को फोल्डर छान्नुहोस्"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"नयाँ फोल्डर सिर्जना गर्नुहोस्"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"यो डिभाइस खोज्नुहोस्"</string>
+    <string name="search_results" msgid="7662182646512984171">"खोज परिणामहरू"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"टेक्स्ट हटाउनुहोस्"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"मूल फोल्डर"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"सबैतिर"</string>
@@ -398,5 +390,12 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ट्र्यास खाली गर्ने हो?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"यो कार्य अन्डू गर्न मिल्दैन र फाइलहरू रिकभर गर्न मिल्ने छैन।"</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ट्र्यास खाली गर्नुहोस्"</string>
-    <string name="you_are_offline_banner_message" msgid="927661539025514935">"तपाईं अहिले अफलाइन हुनुहुन्छ। केही फाइलहरू उपलब्ध नहुन सक्छन् र तपाईंको डिभाइस इन्टरनेटमा कनेक्ट भएपछि सिंक गर्ने प्रक्रिया सुचारु हुने छ।"</string>
+    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
+    <skip />
+    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
+    <skip />
 </resources>

@@ -50,9 +50,9 @@ public class BreadBot extends Bots.BaseBot {
     /** A view assertion that extract the path and checks it against the given predicate. */
     private static class PathViewAssertion implements ViewAssertion {
         private final String[] mExpectedPath;
-        private final BiPredicate<String, String> mMatcher;
+        private final BiPredicate<String[], String[]> mMatcher;
 
-        PathViewAssertion(String[] expectedPath, BiPredicate<String, String> matcher) {
+        PathViewAssertion(String[] expectedPath, BiPredicate<String[], String[]> matcher) {
             mExpectedPath = expectedPath;
             mMatcher = matcher;
         }
@@ -74,10 +74,14 @@ public class BreadBot extends Bots.BaseBot {
                 throw new AssertionFailedError("Failed to locate the view");
             }
             List<String> shownPath = getBreadcrumbV2Path((ViewGroup) view);
-            String got = String.join("/", shownPath);
-            String want = String.join("/", mExpectedPath);
-            if (!mMatcher.test(got, want)) {
-                throw new AssertionFailedError("Path '" + want + "' does not match '" + got + "'");
+            String[] got = shownPath.toArray(new String[0]);
+            if (!mMatcher.test(got, mExpectedPath)) {
+                throw new AssertionFailedError(
+                        "Path '"
+                                + String.join("/", mExpectedPath)
+                                + "' does not match '"
+                                + String.join("/", got)
+                                + "'");
             }
         }
     }
@@ -87,7 +91,27 @@ public class BreadBot extends Bots.BaseBot {
      * @return A view assertion that checks if the path is equal to the expected.
      */
     public ViewAssertion pathEqualsTo(String... expectedPath) {
-        return new PathViewAssertion(expectedPath, (String got, String want) -> want.equals(got));
+        return new PathViewAssertion(expectedPath, Arrays::equals);
+    }
+
+    /**
+     * @param expectedPathRegEx Regular expressions to be matched against the breadcrumb path.
+     * @return A view assertion that checks if the path matches to the expected regular expressions.
+     */
+    public ViewAssertion pathMatches(String... expectedPathRegEx) {
+        return new PathViewAssertion(
+                expectedPathRegEx,
+                (String[] got, String[] want) -> {
+                    if (got.length != want.length) {
+                        return false;
+                    }
+                    for (int i = 0; i < got.length; ++i) {
+                        if (!got[i].matches(want[i])) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
     }
 
     /**
@@ -95,7 +119,19 @@ public class BreadBot extends Bots.BaseBot {
      * @return A view assertion that checks if the path starts with the expected path.
      */
     public ViewAssertion pathStartsWith(String... expectedPath) {
-        return new PathViewAssertion(expectedPath, String::startsWith);
+        return new PathViewAssertion(
+                expectedPath,
+                (String[] got, String[] want) -> {
+                    if (got.length < want.length) {
+                        return false;
+                    }
+                    for (int i = 0; i < want.length; ++i) {
+                        if (!got[i].equals(want[i])) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
     }
 
     public BreadBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {

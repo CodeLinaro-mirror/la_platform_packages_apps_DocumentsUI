@@ -16,11 +16,16 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,10 +34,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.view.MenuCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
@@ -41,8 +48,11 @@ import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.sidebar.RootsFragment;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
+
+import javax.annotation.Nullable;
 
 public abstract class MenuManager {
     private final static String TAG = "MenuManager";
@@ -51,6 +61,9 @@ public abstract class MenuManager {
     protected final State mState;
     protected final DirectoryDetails mDirDetails;
     protected final IntSupplier mFilesCountSupplier;
+    protected final Context mContext;
+    protected final Features mFeatures;
+    protected final Injector<?> mInjector;
 
     protected Menu mOptionMenu;
 
@@ -58,29 +71,57 @@ public abstract class MenuManager {
             SearchViewManager searchManager,
             State displayState,
             DirectoryDetails dirDetails,
-            IntSupplier filesCountSupplier) {
+            IntSupplier filesCountSupplier,
+            Context context,
+            Features features,
+            Injector<?> injector) {
         mSearchManager = searchManager;
         mState = displayState;
         mDirDetails = dirDetails;
         mFilesCountSupplier = filesCountSupplier;
+        mContext = context;
+        mFeatures = features;
+        mInjector = injector;
     }
 
     /** @see ActionModeController */
     public void updateActionMenu(Menu menu, SelectionDetails selection) {
+        Menus.disableHiddenItems(menu);
+
         updateOpenWith(menu.findItem(getRes(R.id.action_menu_open_with)), selection);
         updateDelete(menu.findItem(getRes(R.id.action_menu_delete)), selection);
         updateShare(menu.findItem(getRes(R.id.action_menu_share)), selection);
         updateRename(menu.findItem(getRes(R.id.action_menu_rename)), selection);
-        updateSelect(menu.findItem(getRes(R.id.action_menu_select)), selection);
-        updateSelectAll(menu.findItem(getRes(R.id.action_menu_select_all)), selection);
-        updateDeselectAll(menu.findItem(getRes(R.id.action_menu_deselect_all)), selection);
-        updateMoveTo(menu.findItem(getRes(R.id.action_menu_move_to)), selection);
-        updateCopyTo(menu.findItem(getRes(R.id.action_menu_copy_to)), selection);
         updateCompress(menu.findItem(getRes(R.id.action_menu_compress)), selection);
         updateExtractTo(menu.findItem(getRes(R.id.action_menu_extract_to)), selection);
         updateInspect(menu.findItem(getRes(R.id.action_menu_inspect)), selection);
         updateViewInOwner(menu.findItem(getRes(R.id.action_menu_view_in_owner)), selection);
-        updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+
+        if (isUseMaterial3FlagEnabled()) {
+            updateOpen(menu.findItem(getRes(R.id.action_menu_open)), selection);
+            MenuItem pasteInto = menu.findItem(getRes(R.id.action_menu_paste_into_folder));
+            MenuItem openInNewWindow = menu.findItem(getRes(R.id.action_menu_open_in_new_window));
+            updatePasteInto(pasteInto, selection);
+            updateOpenInNewWindow(openInNewWindow, selection);
+        } else {
+            // These menu items are deleted when user_material3 is ON.
+            updateSelect(menu.findItem(getRes(R.id.action_menu_select)), selection);
+            updateSelectAll(menu.findItem(getRes(R.id.action_menu_select_all)), selection);
+            updateDeselectAll(menu.findItem(getRes(R.id.action_menu_deselect_all)), selection);
+            updateSort(menu.findItem(getRes(R.id.action_menu_sort)));
+        }
+
+        final boolean showCopyToMoveTo =
+                mContext.getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            updateCopyAndCut(
+                    menu.findItem(getRes(R.id.action_menu_copy_to_clipboard)),
+                    menu.findItem(getRes(R.id.action_menu_cut_to_clipboard)),
+                    selection);
+        } else {
+            updateMoveTo(menu.findItem(getRes(R.id.action_menu_move_to)), selection);
+            updateCopyTo(menu.findItem(getRes(R.id.action_menu_copy_to)), selection);
+        }
 
         if (isZipNgFlagEnabled()) {
             updateExtractHere(menu.findItem(getRes(R.id.action_menu_extract_here)), selection);
@@ -92,8 +133,6 @@ public abstract class MenuManager {
             updateRestoreFromTrash(
                     menu.findItem(getRes(R.id.action_menu_restore_from_trash)), selection);
         }
-
-        Menus.disableHiddenItems(menu);
     }
 
     /** @see BaseActivity#onPrepareOptionsMenu */
@@ -105,6 +144,13 @@ public abstract class MenuManager {
     public void updateOptionMenu() {
         if (mOptionMenu == null) {
             return;
+        }
+        Menus.disableHiddenItems(mOptionMenu);
+
+        final boolean showCopyToMoveTo =
+                mContext.getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            updatePaste(mOptionMenu.findItem(getRes(R.id.option_menu_paste_from_clipboard)));
         }
         updateCreateDir(mOptionMenu.findItem(getRes(R.id.option_menu_create_dir)));
         if (isZipNgFlagEnabled()) {
@@ -118,6 +164,7 @@ public abstract class MenuManager {
         updateSort(mOptionMenu.findItem(getRes(R.id.option_menu_sort)));
         updateLauncher(mOptionMenu.findItem(getRes(R.id.option_menu_launcher)));
         updateShowHiddenFiles(mOptionMenu.findItem(getRes(R.id.option_menu_show_hidden_files)));
+        updateShowSummaryColumn(mOptionMenu.findItem(R.id.option_show_summary));
 
         if (isUseMaterial3FlagEnabled()) {
             updateModePicker(
@@ -125,7 +172,6 @@ public abstract class MenuManager {
                     mOptionMenu.findItem(getRes(R.id.sub_menu_list)));
         }
 
-        Menus.disableHiddenItems(mOptionMenu);
         mSearchManager.updateMenu();
     }
 
@@ -153,7 +199,10 @@ public abstract class MenuManager {
      * correct locations to suppress context menus.
      */
     public void showContextMenu(Fragment f, View v, float x, float y) {
-        // Pickers don't have any context menu at this moment.
+        // Register context menu here so long-press doesn't trigger this context floating menu.
+        f.registerForContextMenu(v);
+        v.showContextMenu(x, y);
+        f.unregisterForContextMenu(v);
     }
 
     /**
@@ -165,12 +214,52 @@ public abstract class MenuManager {
      */
     public void inflateContextMenuForContainer(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        throw new UnsupportedOperationException("Pickers don't allow context menu.");
+        inflater.inflate(getRes(R.menu.container_context_menu), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
+        updateContextMenuForContainer(menu, selectionDetails);
     }
 
     public void inflateContextMenuForDocs(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        throw new UnsupportedOperationException("Pickers don't allow context menu.");
+        final boolean hasDir = selectionDetails.containsDirectories();
+        final boolean hasFile = selectionDetails.containsFiles();
+
+        if (isUseMaterial3FlagEnabled()) {
+            // If no dir or file are selected, do not show any context menu. Note: this is different
+            // from "right click at the empty area" which is handled by
+            // "inflateContextMenuForContainer" above. This happens especially in Picker where the
+            // folders are not selectable, when right clicking on folders, no dir/file is selected.
+            if (!hasDir && !hasFile) {
+                return;
+            }
+        }
+        // Note: this doesn't throw error if fails, it does nothing.
+        assert hasDir || hasFile;
+        if (!hasDir) {
+            inflater.inflate(getRes(R.menu.file_context_menu), menu);
+            if (isUseMaterial3FlagEnabled()) {
+                MenuCompat.setGroupDividerEnabled(menu, true);
+            }
+            updateContextMenuForFiles(menu, selectionDetails);
+            return;
+        }
+
+        if (!hasFile) {
+            inflater.inflate(getRes(R.menu.dir_context_menu), menu);
+            if (isUseMaterial3FlagEnabled()) {
+                MenuCompat.setGroupDividerEnabled(menu, true);
+            }
+            updateContextMenuForDirs(menu, selectionDetails);
+            return;
+        }
+
+        inflater.inflate(getRes(R.menu.mixed_context_menu), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
+        updateContextMenu(menu, selectionDetails);
     }
 
     /**
@@ -194,7 +283,7 @@ public abstract class MenuManager {
         MenuItem viewInOwner = menu.findItem(getRes(R.id.dir_menu_view_in_owner));
 
         updateShare(share, selectionDetails);
-        updateOpenInContextMenu(open, selectionDetails);
+        updateOpen(open, selectionDetails);
         updateOpenWith(openWith, selectionDetails);
         updateRename(rename, selectionDetails);
         updateViewInOwner(viewInOwner, selectionDetails);
@@ -246,26 +335,22 @@ public abstract class MenuManager {
         MenuItem delete = menu.findItem(getRes(R.id.dir_menu_delete));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
 
-        boolean canRestore = false;
         if (isTrashFlowEnabled()) {
             MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
             MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
-            final boolean canTrash = selectionDetails.canTrash();
-            canRestore = selectionDetails.canRestore();
-            Menus.setEnabledAndVisible(moveToTrash, canTrash);
-            Menus.setEnabledAndVisible(restoreFromTrash, canRestore);
+            Menus.setEnabledAndVisible(moveToTrash, selectionDetails.canTrash());
+            Menus.setEnabledAndVisible(restoreFromTrash, selectionDetails.canRestore());
         }
 
-        final boolean canCopy =
-                selectionDetails.size() > 0
-                        && !selectionDetails.containsPartialFiles()
-                        && !canRestore;
-        final boolean canDelete = selectionDetails.canDelete();
+        updateCopyAndCut(copy, cut, selectionDetails);
 
-        Menus.setEnabledAndVisible(cut, canCopy && canDelete);
-        Menus.setEnabledAndVisible(copy, canCopy);
-        Menus.setEnabledAndVisible(delete, canDelete);
-        Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
+        if (isUseMaterial3FlagEnabled()) {
+            updateDelete(delete, selectionDetails);
+            updateInspect(inspect, selectionDetails);
+        } else {
+            Menus.setEnabledAndVisible(delete, selectionDetails.canDelete());
+            Menus.setEnabledAndVisible(inspect, selectionDetails.size() == 1);
+        }
 
         updateCompress(menu.findItem(getRes(R.id.dir_menu_compress)), selectionDetails);
     }
@@ -283,8 +368,7 @@ public abstract class MenuManager {
         MenuItem createDir = menu.findItem(getRes(R.id.dir_menu_create_dir));
         MenuItem inspect = menu.findItem(getRes(R.id.dir_menu_inspect));
 
-        Menus.setEnabledAndVisible(paste,
-                mDirDetails.hasItemsToPaste() && mDirDetails.canCreateDoc());
+        updatePaste(paste);
         updateSelectAll(selectAll, selectionDetails);
         updateDeselectAll(deselectAll, selectionDetails);
         updateCreateDir(createDir);
@@ -340,6 +424,19 @@ public abstract class MenuManager {
                         : getRes(R.string.menu_show_hidden_files));
     }
 
+    protected void updateShowSummaryColumn(@Nullable MenuItem showSummary) {
+        if (showSummary == null) {
+            if (DEBUG) Log.d(TAG, "show summary menu is null");
+            return;
+        }
+        if (mInjector.getSummaryProviderManager() == null) {
+            if (DEBUG) Log.d(TAG, "mSummaryProviderManager is null");
+            showSummary.setVisible(false);
+            return;
+        }
+        mInjector.getSummaryProviderManager().updateMenuState(showSummary);
+    }
+
     protected void updateSort(MenuItem sort) {
         Menus.setEnabledAndVisible(sort, true);
     }
@@ -364,6 +461,11 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(newWindow, false);
     }
 
+    protected void updatePaste(MenuItem paste) {
+        Menus.setEnabledAndVisible(
+                paste, mDirDetails.hasItemsToPaste() && mDirDetails.canCreateDoc());
+    }
+
     protected void updateSelect(MenuItem select, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(select, false);
     }
@@ -386,26 +488,34 @@ public abstract class MenuManager {
     }
 
     protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(delete, false);
+        boolean enabled = selectionDetails.canDelete();
+        Menus.setEnabledAndVisible(delete, enabled);
+        // The delete menu item's visibility is tied to the trash flow's status.
+        // Since the XML defaults to never showing this action, we must manually make it visible
+        // when trash is disabled to give users a direct way to delete items.
+        if (!isTrashFlowEnabled()) {
+            delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
     }
 
     protected void updateRename(MenuItem rename, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(rename, false);
+        Menus.setEnabledAndVisible(
+                rename, !selectionDetails.containsPartialFiles() && selectionDetails.canRename());
     }
 
     /**
-     * This method is called for standard activity option menu as opposed
-     * to when there is a selection.
+     * This method is called for standard activity option menu as opposed to when there is a
+     * selection.
      */
-    protected void updateInspect(MenuItem inspector) {
-        Menus.setEnabledAndVisible(inspector, false);
+    protected void updateInspect(MenuItem inspect) {
+        boolean visible = mFeatures.isInspectorEnabled();
+        Menus.setEnabledAndVisible(inspect, visible && mDirDetails.canInspectDirectory());
     }
 
-    /**
-     * This method is called for action mode, when a selection exists.
-     */
+    /** This method is called for action mode, when a selection exists. */
     protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(inspect, false);
+        boolean visible = mFeatures.isInspectorEnabled() && selectionDetails.size() <= 1;
+        Menus.setEnabledAndVisible(inspect, visible);
     }
 
     /**
@@ -428,8 +538,37 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(copyTo, false);
     }
 
+    protected void updateCopyAndCut(
+            MenuItem copy, MenuItem cut, SelectionDetails selectionDetails) {
+        final boolean canRestore = isTrashFlowEnabled() && selectionDetails.canRestore();
+        final boolean canCopy =
+                selectionDetails.size() > 0
+                        && !selectionDetails.containsPartialFiles()
+                        && !canRestore;
+        final boolean canDelete = selectionDetails.canDelete();
+        final boolean canCut = canCopy && canDelete;
+        if (isCloudFeaturesFlagEnabled()
+                && selectionDetails.containsDocumentsWithUnavailableContent()) {
+            // Disable actions as they are not valid right now because the required content is not
+            // available.
+            Menus.disableAndSetVisibility(copy, /* visible= */ canCopy);
+            Menus.disableAndSetVisibility(cut, /* visible= */ canCut);
+            return;
+        }
+        Menus.setEnabledAndVisible(copy, canCopy);
+        Menus.setEnabledAndVisible(cut, canCut);
+    }
+
     protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        Menus.setEnabledAndVisible(it, false);
+        final boolean enabled =
+                mFeatures.isArchiveCreationEnabled()
+                        && mDirDetails.canCreateDoc()
+                        && !selection.containsPartialFiles()
+                        && !selection.canExtract();
+        if (enabled && isZipNgFlagEnabled()) it.setTitle(getRes(R.string.menu_zip));
+        if (!disableIfContentUnavailable(it, selection, enabled)) {
+            Menus.setEnabledAndVisible(it, enabled);
+        }
     }
 
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {
@@ -453,7 +592,7 @@ public abstract class MenuManager {
         Menus.setEnabledAndVisible(pasteInto, false);
     }
 
-    protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
+    protected void updateOpen(MenuItem open, SelectionDetails selectionDetails) {
         Menus.setEnabledAndVisible(open, false);
     }
 
@@ -481,7 +620,27 @@ public abstract class MenuManager {
     protected abstract void updateDeselectAll(
             MenuItem deselectAll, SelectionDetails selectionDetails);
 
-    protected abstract void updateCreateDir(MenuItem createDir);
+    protected void updateCreateDir(MenuItem createDir) {
+        Menus.setEnabledAndVisible(createDir, mDirDetails.canCreateDirectory());
+    }
+
+    /**
+     * Disable the menu item and return true if the selection contains documents with unavailable
+     * content. Otherwise return false.
+     *
+     * <p>When disabling the item, keep it visible if it is normally enabled, otherwise hide it.
+     */
+    protected boolean disableIfContentUnavailable(
+            MenuItem item, SelectionDetails selectionDetails, boolean normallyEnabled) {
+        if (isCloudFeaturesFlagEnabled()
+                && selectionDetails.containsDocumentsWithUnavailableContent()) {
+            // Disable action as it is not valid right now because the required content is not
+            // available.
+            Menus.disableAndSetVisibility(item, /* visible= */ normallyEnabled);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Access to meta data about the selection.
@@ -504,6 +663,11 @@ public abstract class MenuManager {
 
         /** Returns whether the selection contains at least a file located in a mounted archive. */
         boolean containsFilesInArchive();
+
+        /**
+         * Returns whether the selection contains at least a document that has unavailable content.
+         */
+        boolean containsDocumentsWithUnavailableContent();
 
         /**
          * Returns whether the selection contains exactly one file which is also a supported archive
@@ -544,6 +708,11 @@ public abstract class MenuManager {
          * Check whether to show the restore option on the selection.
          */
         boolean canRestore();
+
+        /**
+         * Returns a set of unique MIME types of the selected documents.
+         */
+        Set<String> mimeTypes();
     }
 
     public static class DirectoryDetails {
@@ -562,7 +731,12 @@ public abstract class MenuManager {
         }
 
         public boolean canCreateDoc() {
-            return isInRecents() ? false : mActivity.getCurrentDirectory().isCreateSupported();
+            return isInRecents()
+                    ? false
+                    // This can be called to evaluate the option menu "Paste" visibility, where
+                    // the navigation stack is empty, thus the non-null check below.
+                    : (mActivity.getCurrentDirectory() != null
+                            && mActivity.getCurrentDirectory().isCreateSupported());
         }
 
         public boolean isInRecents() {

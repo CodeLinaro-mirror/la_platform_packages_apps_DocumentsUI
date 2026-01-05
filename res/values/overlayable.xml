@@ -75,11 +75,14 @@
             <item type="bool" name="force_material3"/>
             <item type="bool" name="handle_view_downloads_intent"/>
             <item type="bool" name="is_launcher_enabled"/>
-            <item type="bool" name="show_apps_row"/>
-            <item type="bool" name="show_media_roots"/>
-            <item type="bool" name="show_search_bar"/>
-            <item type="bool" name="show_picker_cancel_button"/>
             <item type="bool" name="move_search_chip_when_selected"/>
+            <item type="bool" name="show_apps_row"/>
+            <item type="bool" name="show_copy_to_move_to_menus"/>
+            <item type="bool" name="show_media_roots"/>
+            <item type="bool" name="show_picker_cancel_button"/>
+            <item type="bool" name="show_preview_icon"/>
+            <item type="bool" name="show_search_bar"/>
+            <item type="bool" name="show_selection_checkmark"/>
             <!-- END BOOLEAN CONFIG -->
 
             <!-- START STRING CONFIG -->
@@ -92,6 +95,8 @@
             <item type="string" name="preferred_root_package"/>
             <item type="string" name="trusted_quick_viewer_package"/>
             <item type="string" name="local_search_provider"/>
+            <item type="string" name="summary_consent_title" />
+            <item type="string" name="summary_consent_message" />
             <!-- END STRING CONFIG -->
 
             <!-- START SHORTCUT ARRAY -->

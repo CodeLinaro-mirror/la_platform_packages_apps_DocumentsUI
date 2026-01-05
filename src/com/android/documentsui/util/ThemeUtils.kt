@@ -18,10 +18,8 @@
 
 package com.android.documentsui.util
 
-import android.util.Log
 import androidx.annotation.AnyRes
 import com.android.documentsui.R
-import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 
 /**
@@ -304,6 +302,7 @@ private fun initializeIdMapping() {
             R.menu.file_context_menu to R.menu.file_context_menu_m3,
             R.menu.mixed_context_menu to R.menu.mixed_context_menu_m3,
             R.menu.root_context_menu to R.menu.root_context_menu_m3,
+            R.string.file_operation_rejected to R.string.file_operation_rejected_m3,
             R.string.scrolling_behavior to R.string.scrolling_behavior_m3,
             R.style.ActionBarTheme to R.style.ActionBarThemeM3,
             R.style.ActionBarThemeCommon to R.style.ActionBarThemeCommonM3,
@@ -359,21 +358,7 @@ abstract class Material3Config private constructor() {
                 initializeIdMapping()
             }
 
-            val newId = idMapping[originalResourceId] ?: originalResourceId
-            if (DEBUG) {
-                if (newId != originalResourceId) {
-                    Log.d(
-                        TAG,
-                        "Replacing R ID from ${
-              Integer.toHexString(
-                originalResourceId
-              )
-            } to ${Integer.toHexString(newId)}",
-                    )
-                }
-            }
-
-            return newId
+            return idMapping[originalResourceId] ?: originalResourceId
         }
 
         @JvmStatic

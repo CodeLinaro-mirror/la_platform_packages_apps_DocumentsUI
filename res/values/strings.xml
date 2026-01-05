@@ -31,6 +31,11 @@
     <!-- Title of the documents application [CHAR LIMIT=32] -->
     <string name="app_label">@string/files_label</string>
 
+    <!-- Title for the summary consent dialog. -->
+    <string name="summary_consent_title"></string>
+    <!-- Message for the summary consent dialog. -->
+    <string name="summary_consent_message"></string>
+
     <!-- Title of the documents application [CHAR LIMIT=32] -->
     <string name="launcher_label">@string/files_label</string>
 
@@ -106,6 +111,10 @@
     <string name="menu_show_hidden_files">Show hidden files</string>
     <!-- Menu item that hides hidden files [CHAR LIMIT=36] -->
     <string name="menu_hide_hidden_files">Don\u2019t show hidden files</string>
+    <!-- Menu item that shows the summary column [CHAR LIMIT=36] -->
+    <string name="option_show_summary_column">Show summary column</string>
+    <!-- Menu item that hides the summary column [CHAR LIMIT=36] -->
+    <string name="option_hide_summary_column">Don\'t show summary column</string>
     <!-- Menu item that renames the selected document [CHAR LIMIT=28] -->
     <string name="menu_view_in_owner">View in <xliff:g id="source" example="Google Drive">%1$s</xliff:g></string>
 
@@ -711,6 +720,15 @@
          [CHAR_LIMIT=24] -->
     <string name="extract_completed">Extracted</string>
 
+    <!-- Success message shown by the Android File Manager when one or more
+         files were successfully moved to the trash. [CHAR_LIMIT=24]
+         [SCREENSHOT=screen/AmocUgSPjjgkyUb] -->
+    <string name="trash_completed">In trash</string>
+
+    <!-- Success message shown by the Android File Manager when one or more
+         files were successfully restored from trash. [CHAR_LIMIT=24] -->
+    <string name="restore_completed">Restored</string>
+
     <!-- Error message shown by the Android File Manager when one or more files
          failed to be copied.  [CHAR_LIMIT=24] -->
     <string name="copy_failed">Couldn\u2019t copy</string>
@@ -731,6 +749,14 @@
     <!-- Error message shown by the Android File Manager when one or more files
          failed to be extracted from an archive.  [CHAR_LIMIT=24] -->
     <string name="extract_failed">Couldn\u2019t extract</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be moved to trash. [CHAR_LIMIT=24] -->
+    <string name="trash_failed">Couldn\u2019t trash</string>
+
+    <!-- Error message shown by the Android File Manager when one or more files
+         failed to be restored from trash. [CHAR_LIMIT=24] -->
+    <string name="restore_failed">Couldn\u2019t restore</string>
 
     <!-- Accessibility label for a button to expand a notification. -->
     <string name="expand_label">Expand</string>
@@ -919,6 +945,11 @@
 
     <!-- Search hint on search view. [CHAR LIMIT=48] -->
     <string name="search_bar_hint">Search this device</string>
+    <!-- A generic search hint on search view, congruent with search everywhere. [CHAR LIMIT=48] -->
+    <string name="search_bar_generic_hint">Search</string>
+
+    <!-- Text shown on the application bar when search is active and search results are shown. -->
+    <string name="search_results">Search results</string>
 
     <!-- Content description for the X button to clear text [CHAR_LIMIT=NONE] -->
     <string name="search_bar_clear">Clear text</string>
@@ -996,6 +1027,12 @@
     <!-- Peek metadata "Date modified" row. -->
     <string name="peek_metadata_date_modified">Date modified</string>
 
+    <!-- The button which dismisses the "Get info" dialog. -->
+    <string name="get_info_positive_button">OK</string>
+
+    <!-- When a file type is not known at all, uses this string instead. -->
+    <string name="get_info_unknown_file_type">Unknown</string>
+
     <!-- Accessibility label for the Peek navigation icon. -->
     <string name="a11y_peek_navigation_icon">Hide file preview</string>
 
@@ -1026,6 +1063,15 @@
     <!-- Action button text in the dialog to confirm emptying the trash. [CHAR_LIMIT=48] -->
     <string name="empty_trash_dialog_action_button">Empty trash</string>
 
+    <!-- Title of the dialog when opening a file in the trash. [CHAR_LIMIT=48] -->
+    <string name="file_open_in_trash_dialog_title">File in Trash</string>
+
+    <!-- Message in the dialog when opening a file in the trash. [CHAR_LIMIT=NONE] -->
+    <string name="file_open_in_trash_dialog_message">This file is in your Trash and cannot be opened. Please restore it from trash to access it.</string>
+
+    <!-- Restore action button text in the dialog to restore the file from the trash. [CHAR_LIMIT=48] -->
+    <string name="file_open_in_trash_dialog_restore_action_button">Restore file</string>
+
     <!-- Message shown in a banner when offline for roots that have limited functionality when offline. [CHAR_LIMIT=NONE] -->
-    <string name="you_are_offline_banner_message">You are currently offline. Some files may not available and syncing will resume when you are connected to the internet. </string>
+    <string name="you_are_offline_banner_message">You are currently offline. Some files and functionality are not available. Connect to the internet for full access.</string>
 </resources>

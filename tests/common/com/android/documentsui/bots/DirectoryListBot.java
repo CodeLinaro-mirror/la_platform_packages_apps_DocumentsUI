@@ -144,8 +144,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         mPreviewId = mTargetPackage + ":id/preview_icon";
         mListSelectionRegionId = mTargetPackage + ":id/icon";
         mGridSelectionRegionId =
-                mTargetPackage
-                        + (isUseMaterial3FlagEnabled() ? ":id/selection_circle" : ":id/icon");
+                mTargetPackage + (isUseMaterial3FlagEnabled() ? ":id/thumbnail" : ":id/icon");
     }
 
     public void assertDocumentsCount(int count) throws UiObjectNotFoundException {
@@ -300,8 +299,7 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     private UiObject findPlaceholderMessageTextView() throws UiObjectNotFoundException {
         final String childResourceId = mTargetPackage + ":id/message";
-        new UiScrollable(new UiSelector().resourceId(mDirContainerId))
-                .scrollIntoView(new UiSelector().text(childResourceId));
+        scrollIntoView(new UiSelector().resourceId(mDirContainerId), childResourceId);
         return findObject(mDirContainerId, childResourceId);
     }
 
@@ -320,13 +318,19 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     /**
+     * Selects the given document, identified by its label, assuming that it is not already
+     * selected. It does not change the selectedness of other documents.
+     *
      * @param label The filename of the document
      * @param number Which nth document it is. The number corresponding to "n selected"
      */
     public void selectDocument(String label, int number) throws UiObjectNotFoundException {
         waitForDocument(label);
-        UiObject2 selectionHotspot = findSelectionHotspot(label);
-        selectionHotspot.click();
+
+        // Long finger-click (instead of long mouse-click and instead of regular (not-long)
+        // mouse-click) to toggle (instead of set) selection. Toggling (instead of setting) does
+        // not change the selectedness of other documents.
+        longClickWithToolTypeFinger(findSelectionHotspot(label));
 
         // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
         // also avoids a future click being registered as double clicking.
@@ -346,11 +350,15 @@ public class DirectoryListBot extends Bots.BaseBot {
     public void selectFirstDocument() throws UiObjectNotFoundException {
         final BySelector list = By.res(mDirListId);
         final BySelector selectionRegionSelector = getSelectionRegionSelector();
-
-        UiObject2 firstAvailableSelectionHotspot =
-                mDevice.findObject(list).findObject(selectionRegionSelector);
-        firstAvailableSelectionHotspot.click();
+        longClickWithToolTypeFinger(mDevice.findObject(list).findObject(selectionRegionSelector));
         assertSelection(1);
+    }
+
+    private void longClickWithToolTypeFinger(UiObject2 uiObject) {
+        int toolType = Configurator.getInstance().getToolType();
+        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
+        uiObject.longClick();
+        Configurator.getInstance().setToolType(toolType);
     }
 
     /** Finds a list item's (whose text has the given label) selection hotspot. */
@@ -445,31 +453,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
 
         if (withScroll) {
-            UiScrollable docListView = new UiScrollable(docList);
-            // In drawer_layout the file list occupied the whole app window height because of
-            // the CollapsingToolbarLayout, so "scrollIntoView" might start swipe on the
-            // app bar or breadcrumb area, which doesn't actually trigger the scroll of the list.
-            // Setting a dead zone here to avoid starting swipe on these areas.
-            // Note: 0.2 is just an estimated percentage here (the dead zone ratio on 4 sides, we
-            // only need dead zone for the top and the bottom, but there's no API to set specific
-            // sides).
-            final double originalPercent = docListView.getSwipeDeadZonePercentage();
-            final boolean docListCoveredByOtherViews =
-                    inDrawerLayout() && isUseMaterial3FlagEnabled();
-            if (docListCoveredByOtherViews) {
-                docListView.setSwipeDeadZonePercentage(0.2);
-            }
-            // scrollIntoView will only attempt to scroll MaxSearchSwipes number of times.
-            // For directories containing a large number of files this default value is inadequate.
-            // Replace the default value with a larger one that will ensure the file
-            // is found if it is present.
-            final int defaultMaxSwipe = docListView.getMaxSearchSwipes();
-            docListView.setMaxSearchSwipes(MAX_SEARCH_SWIPES);
-            docListView.scrollIntoView(new UiSelector().text(label));
-            if (docListCoveredByOtherViews) {
-                docListView.setSwipeDeadZonePercentage(originalPercent);
-            }
-            docListView.setMaxSearchSwipes(defaultMaxSwipe);
+            scrollIntoView(docList, label);
         }
         return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
     }
@@ -612,6 +596,44 @@ public class DirectoryListBot extends Bots.BaseBot {
                 getTestRightClickMotionEvent(MotionEvent.ACTION_UP, point.x, point.y);
 
         mAutomation.injectInputEvent(motionUp, true);
+    }
+
+    /**
+     * Scroll the provided on-screen element for text defined by {@code label}.
+     *
+     * <p>Wrapper around {@link UiScrollable#scrollIntoView(UiSelector)} with additional dead-zone
+     * and max search swipe configuration to handle various device form factors and UI layouts.
+     *
+     * @param selector A UiSelector that specifies the scrollable container view itself.
+     * @param label the text to search for when scrolling.
+     * @throws UiObjectNotFoundException if the text matching {@code label} is not found.
+     */
+    private void scrollIntoView(UiSelector selector, String label)
+            throws UiObjectNotFoundException {
+        UiScrollable scrollable = new UiScrollable(selector);
+        // In drawer_layout the file list occupied the whole app window height because of
+        // the CollapsingToolbarLayout, so "scrollIntoView" might start swipe on the
+        // app bar or breadcrumb area, which doesn't actually trigger the scroll of the list.
+        // Setting a dead zone here to avoid starting swipe on these areas.
+        // Note: 0.2 is just an estimated percentage here (the dead zone ratio on 4 sides, we
+        // only need dead zone for the top and the bottom, but there's no API to set specific
+        // sides).
+        final double originalPercent = scrollable.getSwipeDeadZonePercentage();
+        final boolean docListCoveredByOtherViews = inDrawerLayout() && isUseMaterial3FlagEnabled();
+        if (docListCoveredByOtherViews) {
+            scrollable.setSwipeDeadZonePercentage(0.2);
+        }
+        // scrollIntoView will only attempt to scroll MaxSearchSwipes number of times.
+        // For directories containing a large number of files this default value is inadequate.
+        // Replace the default value with a larger one that will ensure the file
+        // is found if it is present.
+        final int defaultMaxSwipe = scrollable.getMaxSearchSwipes();
+        scrollable.setMaxSearchSwipes(MAX_SEARCH_SWIPES);
+        scrollable.scrollIntoView(new UiSelector().text(label));
+        if (docListCoveredByOtherViews) {
+            scrollable.setSwipeDeadZonePercentage(originalPercent);
+        }
+        scrollable.setMaxSearchSwipes(defaultMaxSwipe);
     }
 
     private void checkOrder(String first, String second)

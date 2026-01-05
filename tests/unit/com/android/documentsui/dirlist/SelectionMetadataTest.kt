@@ -16,6 +16,7 @@
 package com.android.documentsui.dirlist
 
 import android.content.pm.ResolveInfo
+import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -27,6 +28,8 @@ import com.android.documentsui.rules.TestModelRule
 import com.android.documentsui.testing.TestPackageManager
 import com.android.documentsui.util.FileUtils
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,29 +42,34 @@ const val TestUserId = 0
 @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
 @RunWith(AndroidJUnit4::class)
 class SelectionMetadataTest {
+    companion object {
+        const val IS_UNAVAILABLE_FLAG = 13
+    }
+
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
-
-    @get:Rule
-    val testModelRule = TestModelRule(TestAuthority, TestUserId)
-        .createFile("noOpeningApp.pdf", "application/pdf")
-        .createFile("oneOpeningApp.txt", "text/plain")
-        .createFile("twoOpeningApp.jpg", "image/jpg")
-        .createFile("twoOpeningApp.png", "image/png")
+    @get:Rule(order = 0) val setFlags = OverrideFlagsRule()
+    @get:Rule(order = 1) val testModelRule = TestModelRule(TestAuthority, TestUserId)
 
     @Before
     fun setUp() {
+        testModelRule.createFile("noOpeningApp.pdf", "application/pdf")
+        testModelRule.createFile("oneOpeningApp.txt", "text/plain")
+        testModelRule.createFile("twoOpeningApp.jpg", "image/jpg")
+        testModelRule.createFile("twoOpeningApp.png", "image/png")
+        testModelRule.createFile("duplicateMimeType.png", "image/png")
+        testModelRule.createFile("unavailableDocument1.png", "image/png", 0, IS_UNAVAILABLE_FLAG)
+        testModelRule.createFile("unavailableDocument2.png", "image/png", 0, IS_UNAVAILABLE_FLAG)
+
         testPackageManager.queryIntentActivitiesResults.put("application/pdf", emptyList())
         testPackageManager.queryIntentActivitiesResults.put("text/plain", listOf(ResolveInfo()))
         testPackageManager.queryIntentActivitiesResults.put(
             "image/jpg",
-            listOf(ResolveInfo(), ResolveInfo())
+            listOf(ResolveInfo(), ResolveInfo()),
         )
         testPackageManager.queryIntentActivitiesResults.put(
             "image/png",
-            listOf(ResolveInfo(), ResolveInfo())
+            listOf(ResolveInfo(), ResolveInfo()),
         )
     }
 
@@ -107,8 +115,148 @@ class SelectionMetadataTest {
         assertEquals(sm.hasMultipleOpeningApps(), false)
     }
 
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_noSelection() {
+        val sm = createSelectionMetadata()
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_selectOneFile() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        assertEquals(setOf("text/plain"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_selectMultipleFiles_differentMimeTypes() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        assertEquals(setOf("text/plain", "image/jpg"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_selectMultipleFiles_sameMimeType() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+        sm.onItemStateChanged(makeId("duplicateMimeType.png"), true)
+        assertEquals(setOf("text/plain", "image/jpg", "image/png"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_deselectFile_withRemainingOfSameMimeType() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+        sm.onItemStateChanged(makeId("duplicateMimeType.png"), true)
+
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), false)
+        assertEquals(setOf("text/plain", "image/jpg", "image/png"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_deselectLastFileOfMimeType() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), false)
+        assertEquals(setOf("image/jpg", "image/png"), sm.mimeTypes())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_deselectAll() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), false)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), false)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), false)
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    @DisableFlags(Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_flagDisabled() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    @EnableFlags(Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
+    fun testMimeTypes_notMaterial3() {
+        val sm = createSelectionMetadata()
+        sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
+
+        assertEquals(true, sm.mimeTypes().isEmpty())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_disabledDocument_cloudFeaturesEnabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertTrue(sm.containsDocumentsWithUnavailableContent())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_disabledDocuments_cloudFeaturesEnabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("unavailableDocument2.png"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertTrue(sm.containsDocumentsWithUnavailableContent())
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_noDisabledDocuments_cloudFeaturesEnabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertFalse(sm.containsDocumentsWithUnavailableContent())
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    fun testContainsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
+        val sm = createSelectionMetadata()
+
+        sm.onItemStateChanged(makeId("unavailableDocument1.png"), true)
+        sm.onItemStateChanged(makeId("twoOpeningApp.png"), true)
+
+        assertFalse(sm.containsDocumentsWithUnavailableContent())
+    }
+
     fun makeId(docId: String): String {
-        return ModelId.build(UserId.of(TestUserId), TestAuthority, docId)
+        return ModelId.build(UserId.of(TestUserId), TestAuthority, docId)!!
     }
 
     fun createSelectionMetadata(): SelectionMetadata {
@@ -117,7 +265,12 @@ class SelectionMetadataTest {
             { modelId ->
                 val doc = testModelRule.model.getDocument(modelId)
                 FileUtils.countOpeningApps(doc, testPackageManager)
-            }
+            },
+            { doc ->
+                // Hack the `doc.syncStateFlags` to set whether the document is unavailable in this
+                // test.
+                doc.syncStateFlags != IS_UNAVAILABLE_FLAG
+            },
         )
     }
 }

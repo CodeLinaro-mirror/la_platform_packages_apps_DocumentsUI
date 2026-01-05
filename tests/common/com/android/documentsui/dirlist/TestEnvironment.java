@@ -21,6 +21,7 @@ import android.database.Cursor;
 
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.Model;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.State;
 import com.android.documentsui.testing.TestEnv;
@@ -62,7 +63,12 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     }
 
     @Override
-    public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
+    public boolean isDocumentEnabled(DocumentInfo doc) {
+        return true;
+    }
+
+    @Override
+    public boolean isContentAvailable(DocumentInfo doc) {
         return true;
     }
 

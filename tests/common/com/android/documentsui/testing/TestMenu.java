@@ -16,6 +16,8 @@
 
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import android.util.SparseArray;
 import android.view.Menu;
 
@@ -37,6 +39,9 @@ public abstract class TestMenu implements Menu {
     private SparseArray<TestMenuItem> items = new SparseArray<>();
 
     public static TestMenu create() {
+        // We just blindly add all menu items here regardless of flags, the flag based menu
+        // show/hide will be validated in the actual tests. The default visibility of the menu items
+        // are not related to the XML file, the visibility is defined in the create() below.
         return create(
                 R.id.dir_menu_share,
                 R.id.dir_menu_open,
@@ -63,6 +68,7 @@ public abstract class TestMenu implements Menu {
                 R.id.root_menu_paste_into_folder,
                 R.id.root_menu_settings,
                 R.id.root_menu_inspect,
+                R.id.action_menu_open,
                 R.id.action_menu_open_with,
                 R.id.action_menu_share,
                 R.id.action_menu_delete,
@@ -81,6 +87,10 @@ public abstract class TestMenu implements Menu {
                 R.id.action_menu_browse,
                 R.id.action_menu_move_to_trash,
                 R.id.action_menu_restore_from_trash,
+                R.id.action_menu_open_in_new_window,
+                R.id.action_menu_cut_to_clipboard,
+                R.id.action_menu_copy_to_clipboard,
+                R.id.action_menu_paste_into_folder,
                 R.id.option_menu_search,
                 R.id.option_menu_debug,
                 R.id.option_menu_new_window,
@@ -92,6 +102,7 @@ public abstract class TestMenu implements Menu {
                 R.id.option_menu_sort,
                 R.id.option_menu_show_hidden_files,
                 R.id.option_menu_launcher,
+                R.id.option_menu_paste_from_clipboard,
                 R.id.sub_menu_grid,
                 R.id.sub_menu_list);
     }
@@ -122,12 +133,29 @@ public abstract class TestMenu implements Menu {
                 item.setEnabled(false);
                 item.setVisible(false);
             }
+
+            if (isUseMaterial3FlagEnabled()) {
+                if (id == R.id.action_menu_select
+                        || id == R.id.action_menu_select_all
+                        || id == R.id.action_menu_deselect_all
+                        || id == R.id.action_menu_sort) {
+                    item.setEnabled(false);
+                    item.setVisible(false);
+                }
+            }
         }
         return menu;
     }
 
     public void addMenuItem(int id, TestMenuItem item) {
         items.put(id, item);
+    }
+
+    /** Creates and add the menu item with the given id. */
+    public TestMenuItem createMenuItem(int id) {
+        TestMenuItem item = TestMenuItem.create(id);
+        addMenuItem(id, item);
+        return item;
     }
 
     @Override

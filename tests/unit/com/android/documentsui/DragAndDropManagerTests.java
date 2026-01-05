@@ -16,8 +16,10 @@
 
 package com.android.documentsui;
 
+import static android.provider.DocumentsContract.EXTERNAL_STORAGE_PROVIDER_AUTHORITY;
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
 
+import static com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
@@ -37,7 +39,9 @@ import static org.mockito.Mockito.verify;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipDescription;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.platform.test.annotations.DisableFlags;
@@ -50,18 +54,22 @@ import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
+import com.android.documentsui.DragAndDropManager.Permissions;
 import com.android.documentsui.DragAndDropManager.RuntimeDragAndDropManager;
 import com.android.documentsui.DragAndDropManager.State;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.services.FileOperationService;
+import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.KeyEvents;
@@ -80,15 +88,26 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class DragAndDropManagerTests {
 
+    private static final Uri MEDIA_STORE_URI_0 = Uri.parse("content://media/files/1");
+    private static final Uri MEDIA_STORE_URI_1 = Uri.parse("content://media/files/2");
+    private static final Uri NON_MEDIA_STORE_URI_0 = Uri.parse("content://non-media/files/1");
     private static final String PLURAL_FORMAT = "%1$d items";
+    private static final boolean CAN_DRAG_AND_DROP = true;
+    private static final boolean CANNOT_DRAG_AND_DROP = false;
 
     private TestEnv mEnv;
     private TestActivity mActivity;
@@ -119,10 +138,14 @@ public class DragAndDropManagerTests {
 
     private DragAndDropManager mManager;
 
+    @Rule public final MockitoRule mMockitoRule = MockitoJUnit.rule();
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+
+    @Mock private Permissions mMockPermissions;
+    @Mock private BiFunction<Context, Uri, Uri> mMockMediaStoreToDocumentUriRewriter;
 
     @Before
     public void setUp() {
@@ -154,8 +177,8 @@ public class DragAndDropManagerTests {
         mCallbackListener = new TestEventListener<>();
         mFlagListener = new TestEventListener<>();
 
-        mManager = new RuntimeDragAndDropManager(mActivity, mClipper, mShadowBuilder,
-                mDefaultIcon) {
+        mManager = new RuntimeDragAndDropManager(mActivity, mClipper, mEnv.mExecutor,
+                mShadowBuilder, mDefaultIcon, mMockMediaStoreToDocumentUriRewriter) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -182,11 +205,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mStartDragListener.assertLastArgument(mClipper.nextClip);
     }
@@ -197,11 +223,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                null);
+                null,
+                CAN_DRAG_AND_DROP);
 
         mStartDragListener.assertLastArgument(mClipper.nextClip);
     }
@@ -215,7 +244,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mShadowBuilder.title.assertLastArgument(TestEnv.FILE_APK.displayName);
         mShadowBuilder.icon.assertLastArgument(mIconHelper.nextDocumentIcon);
@@ -228,11 +258,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mShadowBuilder.title.assertLastArgument(mActivity.getResources().getQuantityString(
                 R.plurals.elements_dragged, 2, 2));
@@ -246,15 +279,37 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mShadowBuilder.title.assertLastArgument(TestEnv.FILE_APK.displayName);
         mShadowBuilder.icon.assertLastArgument(mIconHelper.nextDocumentIcon);
         mShadowBuilder.count.assertLastArgument(2);
+    }
+
+    @Test
+    @EnableFlags(FLAG_CLOUD_FEATURES)
+    public void testStartDrag_CannotDragAndDrop_StillStartsDrag() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.HOME,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        mStartDragListener.assertLastArgument(mClipper.nextClip);
     }
 
     @Test
@@ -263,11 +318,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FOLDER_1, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FOLDER_1.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FOLDER_1.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.HAMMY, TestEnv.FOLDER_2));
     }
@@ -282,7 +340,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FILE_ARCHIVE.derivedUri, TestEnv.FILE_IN_ARCHIVE.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FILE_ARCHIVE);
+                TestEnv.FILE_ARCHIVE,
+                CAN_DRAG_AND_DROP);
 
         mFlagListener.assertLastArgument(View.DRAG_FLAG_GLOBAL | View.DRAG_FLAG_OPAQUE);
     }
@@ -293,11 +352,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FOLDER_1, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FOLDER_1.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FOLDER_1.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1));
     }
@@ -308,11 +370,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FOLDER_1, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FOLDER_1.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FOLDER_1.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         assertTrue(mManager.canSpringOpen(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2));
     }
@@ -323,11 +388,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FOLDER_1, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FOLDER_1.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FOLDER_1.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mShadowBuilder.state.assertLastArgument(DragAndDropManager.STATE_UNKNOWN);
     }
@@ -338,11 +406,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateStateToNotAllowed(mUpdateShadowView);
 
@@ -355,11 +426,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_2);
@@ -374,11 +448,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.DOWNLOADS, null);
@@ -393,11 +470,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
@@ -412,11 +492,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
@@ -431,11 +514,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -453,11 +539,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         assertTrue(mManager.isDragFromSameApp());
     }
@@ -473,11 +562,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
         assertTrue(mManager.isDragFromSameApp());
 
         mManager.dragEnded();
@@ -491,11 +583,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -513,11 +608,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -535,11 +633,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -557,11 +658,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -582,11 +686,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -607,11 +714,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -632,11 +742,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -652,17 +765,47 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    public void testUpdateStateWithNullRootInfo() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.HOME,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
+
+        KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
+        mManager.onKeyEvent(event);
+
+        event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_UP);
+        mManager.onKeyEvent(event);
+
+        final @State int state =
+                mManager.updateState(mUpdateShadowView, /* destItemInfo= */ null, TestEnv.FOLDER_1);
+
+        assertEquals(DragAndDropManager.STATE_UNKNOWN, state);
+    }
+
+    @Test
     @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
     public void testUpdateStateForShortcut_UpdatesToCopyDiffRoot() {
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
@@ -682,11 +825,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.PEPPER,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -710,11 +856,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -738,11 +887,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.PEPPER,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
@@ -763,11 +915,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
@@ -789,11 +944,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
@@ -812,11 +970,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateStateToNotAllowed(mUpdateShadowView);
 
@@ -831,17 +992,28 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_1);
 
-        assertFalse(mManager.drop(
-                mClipData, mManager, TestProvidersAccess.HAMMY, mActions, mCallback,
-                mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.HAMMY,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -854,16 +1026,28 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 root,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_0);
 
-        assertFalse(mManager.drop(mClipData, mManager, root, mActions, mCallback,
-                mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        root,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -872,20 +1056,30 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
         mCallbackListener.assertLastArgument(FileOperations.Callback.STATUS_FAILED);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -896,16 +1090,24 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
@@ -913,6 +1115,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -923,16 +1127,24 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
@@ -940,6 +1152,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -951,11 +1165,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -963,7 +1180,12 @@ public class DragAndDropManagerTests {
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.DOWNLOADS, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.DOWNLOADS,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_UP);
@@ -974,6 +1196,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -982,65 +1206,87 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_2);
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.HAMMY, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
-    public void testDrop_Copies_DifferentRoot_DropOnDocument() {
+    public void testDrop_Copies_DifferentRoot_DropOnDocument() throws Exception {
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        mEnv.beforeAsserts();
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
-    public void testDrop_Moves_SameRoot_DropOnDocument() {
+    public void testDrop_Moves_SameRoot_DropOnDocument() throws Exception {
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.DOWNLOADS,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        mEnv.beforeAsserts();
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
-    public void testDrop_Copies_SameRoot_ReadOnlyFile_DropOnDocument() {
+    public void testDrop_Copies_SameRoot_ReadOnlyFile_DropOnDocument() throws Exception {
         mDetails.canDelete = false;
         mManager.startDrag(
                 mStartDragView,
@@ -1049,16 +1295,22 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_READ_ONLY.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
         final DocumentStack stack = new DocumentStack(
                 TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
-        assertTrue(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        mEnv.beforeAsserts();
 
         mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1070,11 +1322,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.PEPPER, TestEnv.FOLDER_1);
@@ -1082,7 +1337,12 @@ public class DragAndDropManagerTests {
         assertEquals(DragAndDropManager.STATE_COPY, state);
 
         mManager.drop(
-                mClipData, mManager, TestProvidersAccess.TEST_SHORTCUT, mActions, mCallback,
+                mMockPermissions,
+                mClipData,
+                mManager,
+                TestProvidersAccess.TEST_SHORTCUT,
+                mActions,
+                mCallback,
                 mManager.getInvalidDestinations());
 
         mEnv.beforeAsserts();
@@ -1090,6 +1350,8 @@ public class DragAndDropManagerTests {
                 new DocumentStack(TestProvidersAccess.PEPPER, TestEnv.FOLDER_1);
         mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1101,20 +1363,31 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
-                    TestEnv.FILE_JPG.derivedUri),
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.EXTERNALSTORAGE, TestEnv.FOLDER_1);
 
         assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
 
-        assertFalse(mManager.drop(
-                mClipData, mManager, TestProvidersAccess.HOME_SCREEN_SHORTCUT, mActions,
-                mCallback, mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1126,20 +1399,31 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.HOME,
-                Arrays.asList(TestEnv.FOLDER_1.derivedUri, TestEnv.FILE_APK.derivedUri,
-                    TestEnv.FILE_JPG.derivedUri),
+                Arrays.asList(
+                        TestEnv.FOLDER_1.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.EXTERNALSTORAGE, TestEnv.FOLDER_1);
 
         assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
 
-        assertFalse(mManager.drop(
-                mClipData, mManager, TestProvidersAccess.HOME_SCREEN_SHORTCUT, mActions,
-                mCallback, mManager.getInvalidDestinations()));
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1153,11 +1437,14 @@ public class DragAndDropManagerTests {
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
                 TestProvidersAccess.EXTERNALSTORAGE,
-                Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
                         TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         newManager.onKeyEvent(event);
@@ -1169,8 +1456,13 @@ public class DragAndDropManagerTests {
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.DOWNLOADS.getUri();
-        newManager.drop(mClipData, newManager, new DocumentStack(
-                TestProvidersAccess.DOWNLOADS, docInfo), spyActionHandler, mCallback);
+        newManager.drop(
+                mMockPermissions,
+                mClipData,
+                newManager,
+                new DocumentStack(TestProvidersAccess.DOWNLOADS, docInfo),
+                spyActionHandler,
+                mCallback);
 
         mEnv.beforeAsserts();
         // Verify that the block operation was called.
@@ -1178,12 +1470,15 @@ public class DragAndDropManagerTests {
         // If the file operation is blocked, copyFromClipData should never have been called.
         verify(spyClipper, never()).copyFromClipData(
                 any(), any(), anyInt(), any());
+
+        verify(mMockPermissions).release();
     }
 
     @SuppressLint("VisibleForTests")
     private DragAndDropManager createNewManagerWithSpyClipper(TestDocumentClipper spyClipper) {
         DragAndDropManager newManager = new RuntimeDragAndDropManager(
-                mActivity, spyClipper, mShadowBuilder, mDefaultIcon) {
+                mActivity, spyClipper, mEnv.mExecutor, mShadowBuilder, mDefaultIcon,
+                mMockMediaStoreToDocumentUriRewriter) {
             @Override
             void startDragAndDrop(View v, ClipData clipData, DragShadowBuilder builder,
                     Object localState, int flag) {
@@ -1220,11 +1515,13 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_SUPPORTS_TRASH.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
 
         mManager.drop(
+                mMockPermissions,
                 mClipData,
                 mManager,
                 TestProvidersAccess.TRASH_ROOT,
@@ -1236,6 +1533,8 @@ public class DragAndDropManagerTests {
         final DocumentStack expect = new DocumentStack(TestProvidersAccess.TRASH_ROOT);
         mClipper.trashFromClip.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_TRASH);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1251,13 +1550,17 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
 
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1273,7 +1576,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_SUPPORTS_TRASH.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state =
                 mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
@@ -1295,7 +1599,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state =
                 mManager.updateState(
@@ -1318,7 +1623,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_JPG.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         final @State int state =
                 mManager.updateState(
@@ -1341,7 +1647,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FOLDER_0.derivedUri, TestEnv.FILE_APK.derivedUri),
                 mDetails,
                 mIconHelper,
-                TestEnv.FOLDER_0);
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP);
 
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_APK));
     }
@@ -1362,13 +1669,15 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
                 mDetails,
                 mIconHelper,
-                null);
+                null,
+                CAN_DRAG_AND_DROP);
 
         // Update state to a valid destination.
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_1);
 
         // Drop the item.
         mManager.drop(
+                mMockPermissions,
                 mClipData,
                 mManager,
                 TestProvidersAccess.HOME,
@@ -1381,6 +1690,209 @@ public class DragAndDropManagerTests {
         // Verify that restoreFromTrashClipData is called with the correct parameters.
         mClipper.restoreFromClipData.assertLastArgument(Pair.create(expect, mClipData));
         mClipper.opType.assertLastArgument(FileOperationService.OPERATION_RESTORE);
+
+        verify(mMockPermissions).release();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Copies_DropOnDocument_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_COPY,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.DOWNLOADS,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Copies_DropOnShortcut_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_COPY,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.DOWNLOADS,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Moves_DropOnDocument_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Moves_DropOnShortcut_fromOtherApps() throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_MOVE,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNonMediaStoreUri()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNonMediaStoreUri()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ mMockPermissions,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, NON_MEDIA_STORE_URI_0));
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_DRAGS_FROM_OTHER_APPS)
+    public void testDrop_Rejects_DropOnDocument_fromOtherApps_withNullPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ true,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ null,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_MATERIAL3
+    })
+    public void testDrop_Rejects_DropOnShortcut_fromOtherApps_withNullPermissions()
+            throws Exception {
+        testDrop_fromOtherApps(
+                /* expectedOpType= */ FileOperationService.OPERATION_UNKNOWN,
+                /* dropOnDocument= */ false,
+                /* dstRoot= */ TestProvidersAccess.HOME,
+                /* permissions= */ null,
+                /* uriList= */ List.of(MEDIA_STORE_URI_0, MEDIA_STORE_URI_1));
+    }
+
+    private void testDrop_fromOtherApps(
+            @OpType int expectedOpType,
+            boolean dropOnDocument,
+            RootInfo dstRoot,
+            @Nullable Permissions permissions,
+            List<Uri> uriList)
+            throws Exception {
+        final DocumentInfo dstDoc = TestEnv.FOLDER_0;
+        final DocumentStack dstStack = new DocumentStack(dstRoot, dstDoc);
+
+        // Set up action handler.
+        mActions.nextRootDocument = dstDoc;
+
+        final List<ClipData.Item> itemList =
+                uriList.stream().map(ClipData.Item::new).collect(Collectors.toList());
+
+        // Set up clip data.
+        Mockito.when(mClipData.getItemCount()).thenReturn(itemList.size());
+        Mockito.when(mClipData.getItemAt(anyInt())).thenAnswer(i -> itemList.get(i.getArgument(0)));
+
+        // Set up URI rewriter.
+        Mockito.when(mMockMediaStoreToDocumentUriRewriter.apply(any(), any()))
+                .thenAnswer(
+                        invocation -> {
+                            final Uri uri = invocation.getArgument(1);
+                            return Providers.isMediaStoreUri(uri)
+                                    ? uri.buildUpon()
+                                            .authority(EXTERNAL_STORAGE_PROVIDER_AUTHORITY)
+                                            .build()
+                                    : null;
+                        });
+
+        // Perform and verify state update.
+        assertEquals(
+                DragAndDropManager.STATE_UNKNOWN,
+                mManager.updateState(mUpdateShadowView, dstRoot, dstDoc));
+
+        // Perform and verify drop.
+        assertTrue(
+                dropOnDocument
+                        ? mManager.drop(
+                                permissions, mClipData, mManager, dstStack, mActions, mCallback)
+                        : mManager.drop(
+                                permissions,
+                                mClipData,
+                                mManager,
+                                dstRoot,
+                                mActions,
+                                mCallback,
+                                mManager.getInvalidDestinations()));
+
+        mEnv.beforeAsserts();
+
+        // Verify expected clipper interactions.
+        if (expectedOpType == FileOperationService.OPERATION_UNKNOWN) {
+            mClipper.copyFromClip.assertNotCalled();
+            mClipper.opType.assertNotCalled();
+        } else {
+            final Pair<DocumentStack, ClipData> actual = mClipper.copyFromClip.getLastValue();
+            assertNotNull(actual);
+
+            final DocumentStack actualDstStack = actual.first;
+            assertNotNull(actualDstStack);
+            assertEquals(dstStack, actualDstStack);
+
+            final ClipData actualClipData = actual.second;
+            assertNotNull(actualClipData);
+            assertEquals(uriList.size(), actualClipData.getItemCount());
+
+            for (int i = 0; i < uriList.size(); ++i) {
+                final ClipData.Item actualItem = actualClipData.getItemAt(i);
+                assertNotNull(actualItem);
+
+                final Uri actualUri = actualItem.getUri();
+                assertNotNull(actualUri);
+
+                final Uri expectedUri =
+                        uriList.get(i)
+                                .buildUpon()
+                                .authority(EXTERNAL_STORAGE_PROVIDER_AUTHORITY)
+                                .build();
+                assertEquals(expectedUri, actualUri);
+            }
+
+            mClipper.opType.assertLastArgument(expectedOpType);
+        }
+
+        // Verify expected permissions interactions.
+        if (permissions != null) {
+            verify(permissions).release();
+        }
     }
 
     @Test
@@ -1397,7 +1909,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
                 mDetails,
                 mIconHelper,
-                null);
+                null,
+                CAN_DRAG_AND_DROP);
 
         // Update the state by hovering over a valid destination.
         final @State int state =
@@ -1422,11 +1935,148 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
                 mDetails,
                 mIconHelper,
-                null);
+                null,
+                CAN_DRAG_AND_DROP);
 
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
-        assertFalse(mManager.drop(mClipData, mManager, stack, mActions, mCallback));
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
+    }
+
+    @Test
+    @EnableFlags(FLAG_CLOUD_FEATURES)
+    public void testDrop_onRoot_Fails_WhenCannotDragAndDrop() {
+        mActions.nextRootDocument = TestEnv.FOLDER_1;
+
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+
+        assertFalse(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.DOWNLOADS,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        verify(mMockPermissions).release();
+    }
+
+    @Test
+    @DisableFlags(FLAG_CLOUD_FEATURES)
+    public void testDrop_onRoot_Succeeds_WhenCannotDragAndDrop_FeatureFlagDisabled()
+            throws Exception {
+        mActions.nextRootDocument = TestEnv.FOLDER_1;
+
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+
+        assertTrue(
+                mManager.drop(
+                        mMockPermissions,
+                        mClipData,
+                        mManager,
+                        TestProvidersAccess.DOWNLOADS,
+                        mActions,
+                        mCallback,
+                        mManager.getInvalidDestinations()));
+
+        mEnv.beforeAsserts();
+        final DocumentStack expect =
+                new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+        mClipper.copyFromClip.assertLastArgument(Pair.create(expect, mClipData));
+        mClipper.opType.assertLastArgument(FileOperationService.OPERATION_MOVE);
+
+        verify(mMockPermissions).release();
+    }
+
+    @Test
+    @EnableFlags(FLAG_CLOUD_FEATURES)
+    public void testDrop_onTarget_Fails_WhenCannotDragAndDrop() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.HOME,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
+
+        final DocumentStack stack =
+                new DocumentStack(
+                        TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
+        assertFalse(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        verify(mMockPermissions).release();
+    }
+
+    @Test
+    @DisableFlags(FLAG_CLOUD_FEATURES)
+    public void testDrop_onTarget_Succeeds_WhenCannotDragAndDrop_FeatureFlagDisabled()
+            throws Exception {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.HOME,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
+
+        final DocumentStack stack =
+                new DocumentStack(
+                        TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1, TestEnv.FOLDER_2);
+        assertTrue(
+                mManager.drop(mMockPermissions, mClipData, mManager, stack, mActions, mCallback));
+
+        mEnv.beforeAsserts();
+
+        mClipper.copyFromClip.assertLastArgument(Pair.create(stack, mClipData));
+        mClipper.opType.assertLastArgument(FileOperationService.OPERATION_COPY);
+
+        verify(mMockPermissions).release();
     }
 
     @Test
@@ -1443,7 +2093,8 @@ public class DragAndDropManagerTests {
                 Arrays.asList(TestEnv.FILE_SUPPORTS_RESTORE.derivedUri),
                 mDetails,
                 mIconHelper,
-                null);
+                null,
+                CAN_DRAG_AND_DROP);
 
         // Try to drop on a different authority (DOWNLOADS).
         final @State int state =
@@ -1452,6 +2103,54 @@ public class DragAndDropManagerTests {
 
         assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
         assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
+    }
+
+    @Test
+    @EnableFlags(FLAG_CLOUD_FEATURES)
+    public void testUpdateState_UpdatesToNotAllowed_WhenCannotDragAndDrop() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        final @State int state =
+                mManager.updateState(
+                        mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+
+        assertEquals(DragAndDropManager.STATE_NOT_ALLOWED, state);
+        assertStateUpdated(DragAndDropManager.STATE_NOT_ALLOWED);
+    }
+
+    @Test
+    @DisableFlags(FLAG_CLOUD_FEATURES)
+    public void testUpdateState_UpdatesToMove_WhenCannotDragAndDrop_FeatureFlagDisabled() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CANNOT_DRAG_AND_DROP);
+
+        final @State int state =
+                mManager.updateState(
+                        mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+
+        assertEquals(DragAndDropManager.STATE_MOVE, state);
+        assertStateUpdated(DragAndDropManager.STATE_MOVE);
     }
 
     private void assertStateUpdated(@State int expected) {

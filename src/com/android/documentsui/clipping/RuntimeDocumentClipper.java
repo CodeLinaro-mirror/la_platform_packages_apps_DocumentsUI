@@ -16,6 +16,8 @@
 
 package com.android.documentsui.clipping;
 
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
@@ -53,6 +55,7 @@ final class RuntimeDocumentClipper implements DocumentClipper {
     private static final String TAG = "DocumentClipper";
     private static final String SRC_PARENT_KEY = "clipper:srcParent";
     private static final String OP_TYPE_KEY = "clipper:opType";
+    private static final String SRC_IS_RECENTS_VIEW_KEY = "clipper:isRecentsView";
 
     private final Context mContext;
     private final ClipStore mClipStore;
@@ -200,7 +203,10 @@ final class RuntimeDocumentClipper implements DocumentClipper {
 
     @Override
     public void clipDocumentsForCut(
-            Function<String, Uri> uriBuilder, Selection<String> selection, DocumentInfo parent) {
+            Function<String, Uri> uriBuilder,
+            Selection<String> selection,
+            DocumentInfo parent,
+            boolean isFromRecents) {
         assert(!selection.isEmpty());
         assert(parent.derivedUri != null);
 
@@ -210,6 +216,11 @@ final class RuntimeDocumentClipper implements DocumentClipper {
 
         PersistableBundle bundle = data.getDescription().getExtras();
         bundle.putString(SRC_PARENT_KEY, parent.derivedUri.toString());
+        // If search_v2 is enabled we need to know if the file is cut from Recents view to do
+        // special handling (check copyFromClipData() below) to support the Cut/Paste flow.
+        if (isSearchV2Enabled()) {
+            bundle.putString(SRC_IS_RECENTS_VIEW_KEY, String.valueOf(isFromRecents));
+        }
 
         mClipboard.setPrimaryClip(data);
     }
@@ -272,6 +283,15 @@ final class RuntimeDocumentClipper implements DocumentClipper {
         }
 
         PersistableBundle bundle = clipData.getDescription().getExtras();
+        if (bundle == null) {
+            Log.i(TAG, "Unable to determine operation type due to null bundle. Ignoring.");
+            callback.onOperationResult(
+                    FileOperations.Callback.STATUS_REJECTED,
+                    FileOperationService.OPERATION_UNKNOWN,
+                    0);
+            return;
+        }
+
         @OpType int opType = getOpType(bundle);
         try {
             if (!canCopy(dstStack.peek())) {
@@ -289,6 +309,16 @@ final class RuntimeDocumentClipper implements DocumentClipper {
 
             String srcParentString = bundle.getString(SRC_PARENT_KEY);
             Uri srcParent = srcParentString == null ? null : Uri.parse(srcParentString);
+
+            // If the user is in the "Recent" view, there is no meaningful parent URI, but the
+            // FileOperationService can successfully deal with this for move operations. This is
+            // only enabled for Search v2 as using the old loaders masks out flags like
+            // FLAG_SUPPORTS_DELETE for the "Recent" view.
+            if (isSearchV2Enabled()
+                    && opType == FileOperationService.OPERATION_MOVE
+                    && Boolean.parseBoolean(bundle.getString(SRC_IS_RECENTS_VIEW_KEY))) {
+                srcParent = null;
+            }
 
             FileOperation operation = new FileOperation.Builder()
                     .withOpType(opType)

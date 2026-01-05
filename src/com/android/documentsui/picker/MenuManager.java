@@ -25,14 +25,22 @@ import static com.android.documentsui.base.State.ACTION_PICK_COPY_DESTINATION;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.provider.DocumentsContract.Document;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
+import com.android.documentsui.Injector;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
+import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
@@ -50,8 +58,18 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             SearchViewManager searchManager,
             State displayState,
             DirectoryDetails dirDetails,
-            IntSupplier filesCountSupplier) {
-        super(searchManager, displayState, dirDetails, filesCountSupplier);
+            IntSupplier filesCountSupplier,
+            Context context,
+            Features features,
+            Injector<?> injector) {
+        super(
+                searchManager,
+                displayState,
+                dirDetails,
+                filesCountSupplier,
+                context,
+                features,
+                injector);
     }
 
     @Override
@@ -61,6 +79,13 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     private boolean picking() {
+        // picking() is used to do special logic for the 3 action modes below, e.g. show some menu
+        // items on the app bar instead of under the dropdown, hide grid/list button in Recents.
+        // For M3, we don't want these special logic, we treat menus items for all picker/saver
+        // modes the same.
+        if (isUseMaterial3FlagEnabled()) {
+            return false;
+        }
         return mState.action == ACTION_CREATE
                 || mState.action == ACTION_OPEN_TREE
                 || mState.action == ACTION_PICK_COPY_DESTINATION;
@@ -131,9 +156,13 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateCreateDir(MenuItem createDir) {
-        createDir.setShowAsAction(picking()
-                ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER);
-        Menus.setEnabledAndVisible(createDir, picking() && mDirDetails.canCreateDirectory());
+        if (isUseMaterial3FlagEnabled()) {
+            super.updateCreateDir(createDir);
+        } else {
+            createDir.setShowAsAction(
+                    picking() ? MenuItem.SHOW_AS_ACTION_ALWAYS : MenuItem.SHOW_AS_ACTION_NEVER);
+            Menus.setEnabledAndVisible(createDir, picking() && mDirDetails.canCreateDirectory());
+        }
     }
 
     @Override
@@ -143,5 +172,99 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                 || mState.action == ACTION_OPEN)
                 && selectionDetails.size() > 0);
         select.setTitle(getRes(R.string.menu_select));
+    }
+
+    @Override
+    public void showContextMenu(Fragment f, View v, float x, float y) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.showContextMenu(f, v, x, y);
+        }
+    }
+
+    @Override
+    public void inflateContextMenuForContainer(
+            Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.inflateContextMenuForContainer(menu, inflater, selectionDetails);
+        } else {
+            throw new UnsupportedOperationException("Pickers don't allow context menu.");
+        }
+    }
+
+    @Override
+    public void inflateContextMenuForDocs(
+            Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.inflateContextMenuForDocs(menu, inflater, selectionDetails);
+        } else {
+            throw new UnsupportedOperationException("Pickers don't allow context menu.");
+        }
+    }
+
+    @Override
+    protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.updateDelete(delete, selectionDetails);
+        } else {
+            Menus.setEnabledAndVisible(delete, false);
+        }
+    }
+
+    @Override
+    protected void updateCopyAndCut(
+            MenuItem copy, MenuItem cut, SelectionDetails selectionDetails) {
+        // We don't support copy/cut/paste inside the picker.
+        if (isUseMaterial3FlagEnabled()) {
+            Menus.disableAndSetVisibility(copy, false);
+            Menus.disableAndSetVisibility(cut, false);
+        } else {
+            super.updateCopyAndCut(copy, cut, selectionDetails);
+        }
+    }
+
+    @Override
+    protected void updatePaste(MenuItem paste) {
+        // We don't support copy/cut/paste inside the picker.
+        if (isUseMaterial3FlagEnabled()) {
+            Menus.setEnabledAndVisible(paste, false);
+        } else {
+            super.updatePaste(paste);
+        }
+    }
+
+    @Override
+    protected void updateRename(MenuItem rename, SelectionDetails selectionDetails) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.updateRename(rename, selectionDetails);
+        } else {
+            Menus.setEnabledAndVisible(rename, false);
+        }
+    }
+
+    @Override
+    protected void updateInspect(MenuItem inspect) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.updateInspect(inspect);
+        } else {
+            Menus.setEnabledAndVisible(inspect, false);
+        }
+    }
+
+    @Override
+    protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.updateInspect(inspect, selectionDetails);
+        } else {
+            Menus.setEnabledAndVisible(inspect, false);
+        }
+    }
+
+    @Override
+    protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
+        if (isUseMaterial3FlagEnabled()) {
+            super.updateCompress(it, selection);
+        } else {
+            Menus.setEnabledAndVisible(it, false);
+        }
     }
 }

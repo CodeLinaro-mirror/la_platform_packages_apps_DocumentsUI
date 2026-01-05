@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Nije moguće izbrisati neke dokumente"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nije moguće dijeliti više od <xliff:g id="COUNT">%1$d</xliff:g> fajl(ova)"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Radnja nije dozvoljena"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Radnja nije dozvoljena"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Otvaranje uz…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nijedna podržana aplikacija nije instalirana. Instalirajte neku aplikaciju iz Google Play trgovine."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Pretražite Google Play trgovinu"</string>
@@ -203,43 +202,37 @@
       <item quantity="few">Nisu kopirani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Nisu kopirani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{Ovaj fajl nije kopiran:}one{Ovi fajlovi nisu kopirani:}few{Ovi fajlovi nisu kopirani:}other{Ovi fajlovi nisu kopirani:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="one">Nisu kompresovani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Nisu kompresovani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Nisu kompresovani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{Ovaj fajl nije komprimiran:}one{Ovi fajlovi nisu komprimirani:}few{Ovi fajlovi nisu komprimirani:}other{Ovi fajlovi nisu komprimirani:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="one">Nisu izvučeni ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Nisu izvučeni ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Nisu izvučeni ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{Ovaj fajl nije izdvojen:}one{Ovi fajlovi nisu izdvojeni:}few{Ovi fajlovi nisu izdvojeni:}other{Ovi fajlovi nisu izdvojeni:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="one">Nisu premješteni ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Nisu premješteni ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Nisu premješteni ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{Ovaj fajl nije premješten:}one{Ovi fajlovi nisu premješteni:}few{Ovi fajlovi nisu premješteni:}other{Ovi fajlovi nisu premješteni:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="one">Nisu izbrisani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Nisu izbrisani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Nisu izbrisani ovi fajlovi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Ovaj fajl nije izbrisan:}one{Ovi fajlovi nisu izbrisani:}few{Ovi fajlovi nisu izbrisani:}other{Ovi fajlovi nisu izbrisani:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">Ovi fajlovi nisu konvertirani u drugi format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Ovi fajlovi nisu konvertirani u drugi format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Ovi fajlovi nisu konvertirani u drugi format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ovaj fajl je konvertovan u drugi format:}one{Ovi fajlovi su konvertovani u drugi format:}few{Ovi fajlovi su konvertovani u drugi format:}other{Ovi fajlovi su konvertovani u drugi format:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="one">Kopirana je <xliff:g id="COUNT_1">%1$d</xliff:g> stavka u međumemoriju.</item>
       <item quantity="few">Kopirane su <xliff:g id="COUNT_1">%1$d</xliff:g> stavke u međumemoriju.</item>
@@ -279,11 +272,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Izbrisano"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Kreiran je ZIP fajl"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Izdvojeno"</string>
+    <string name="trash_completed" msgid="5527806383436622529">"U otpadu"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Vraćeno"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Kopiranje nije uspjelo"</string>
     <string name="move_failed" msgid="7692364307225994220">"Premještanje nije uspjelo"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Brisanje nije uspjelo"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Kreiranje ZIP fajla nije uspjelo"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Izdvajanje nije uspjelo"</string>
+    <string name="trash_failed" msgid="4655759218201171408">"Premještanje u otpad nije uspjelo"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Vraćanje nije uspjelo"</string>
     <string name="expand_label" msgid="5683357671239615207">"Proširivanje"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Sužavanje"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Želite li aplikaciji <xliff:g id="APPNAME"><b>^1</b></xliff:g> odobriti pristup direktoriju <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> na uređaju za pohranu <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
@@ -332,12 +329,9 @@
     <string name="sign_in" msgid="6253762676723505592">"Prijava"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arhiva<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Arhiva"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"Zamijeniti fajl?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"Već postoji fajl s nazivom \"<xliff:g id="NAME">%1$s</xliff:g>\"."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"Zamijeni"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Nastavi u pozadini"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> stavka je odabrana</item>
@@ -364,24 +358,21 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Dokumenti"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Veliki fajlovi"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Ova sedmica"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"Naziv"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"Naziv"</string>
     <string name="preview_file" msgid="4056622696305432343">"Pregled fajla <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Pregledajte poslovni fajl <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Pregled fajla <xliff:g id="FILENAME">%2$s</xliff:g> s profila \"<xliff:g id="PROFILE">%1$s</xliff:g>\""</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Pretraživanje fajlova u drugim aplikacijama"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Anonimno"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Koristi ovaj folder"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"Dozvoliti aplikaciji <xliff:g id="APPNAME">%1$s</xliff:g> da pristupa folderu?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"Dozvolite pristup za direktorij \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\"."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Nije moguće koristiti ovaj folder"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Da zaštitite svoju privatnost, odaberite drugi folder"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Napravi novi folder"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Pretražite uređaj"</string>
+    <string name="search_results" msgid="7662182646512984171">"Rezultati pretraživanja"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Brisanje teksta"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Osnovni folder"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Svugdje"</string>
@@ -417,6 +408,12 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Isprazniti otpad?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ova radnja se ne može opozvati i fajlovi se više neće moći oporaviti."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Isprazni otpad"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
+    <skip />
+    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
     <skip />
 </resources>

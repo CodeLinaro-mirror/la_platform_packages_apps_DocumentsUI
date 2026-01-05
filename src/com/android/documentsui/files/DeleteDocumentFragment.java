@@ -30,6 +30,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 
+import com.android.documentsui.BaseActivity;
 import com.android.documentsui.DocumentsUIDialogFragment;
 import com.android.documentsui.Injector;
 import com.android.documentsui.R;
@@ -84,7 +85,7 @@ public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
         }
 
         Context context = getActivity();
-        Injector<?> injector = ((FilesActivity) getActivity()).getInjector();
+        Injector<?> injector = ((BaseActivity) getActivity()).getInjector();
         LayoutInflater dialogInflater = LayoutInflater.from(context);
         TextView message =
                 (TextView)

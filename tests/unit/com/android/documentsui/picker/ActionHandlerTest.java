@@ -16,6 +16,8 @@
 
 package com.android.documentsui.picker;
 
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertEquals;
@@ -34,13 +36,16 @@ import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.test.filters.MediumTest;
 import androidx.test.filters.SdkSuppress;
 
+import com.android.documentsui.ActionModeAddons;
 import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.Injector;
 import com.android.documentsui.R;
+import com.android.documentsui.TestActionModeAddons;
 import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
@@ -49,7 +54,9 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.State.ActionType;
+import com.android.documentsui.clipping.ClipStore;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.peek.PeekViewManager;
 import com.android.documentsui.picker.ActionHandler.Addons;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
@@ -57,6 +64,7 @@ import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.DocumentStackAsserts;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestLastAccessedStorage;
+import com.android.documentsui.testing.TestPeekViewManager;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestResolveInfo;
 import com.android.documentsui.util.VersionUtils;
@@ -123,18 +131,21 @@ public class ActionHandlerTest {
             mEnv.state.canForwardToProfileIdMap.put(TestProvidersAccess.USER_ID, true);
         }
 
-        mHandler = new TestableActionHandler<>(
-                mActivity,
-                mEnv.state,
-                mEnv.providers,
-                mEnv.docs,
-                mEnv.searchViewManager,
-                mEnv::lookupExecutor,
-                mEnv.injector,
-                mLastAccessed,
-                mPickCountRecord
-        );
-
+        mHandler =
+                new TestableActionHandler<>(
+                        mActivity,
+                        mEnv.state,
+                        mEnv.providers,
+                        mEnv.docs,
+                        mEnv.searchViewManager,
+                        mEnv::lookupExecutor,
+                        mEnv.injector,
+                        mLastAccessed,
+                        mPickCountRecord,
+                        isUsePeekPreviewFlagEnabled() ? new TestPeekViewManager() : null,
+                        new TestActionModeAddons(),
+                        mock(Runnable.class),
+                        null);
 
         mEnv.selectionMgr.select("1");
 
@@ -155,10 +166,27 @@ public class ActionHandlerTest {
                 Lookup<String, Executor> executors,
                 Injector injector,
                 LastAccessedStorage lastAccessed,
-                PickCountRecordStorage pickCountRecordStorage) {
-            super(activity, state, providers, docs, searchMgr, executors, injector, lastAccessed);
-            mTask = new UpdatePickResultTask(
-                    mActivity, mInjector.pickResult, pickCountRecordStorage);
+                PickCountRecordStorage pickCountRecordStorage,
+                @Nullable PeekViewManager peekViewManager,
+                @Nullable ActionModeAddons actionModeAddons,
+                Runnable closeSelectionBar,
+                ClipStore clipStore) {
+            super(
+                    activity,
+                    state,
+                    providers,
+                    docs,
+                    searchMgr,
+                    executors,
+                    injector,
+                    lastAccessed,
+                    peekViewManager,
+                    actionModeAddons,
+                    closeSelectionBar,
+                    clipStore);
+            mTask =
+                    new UpdatePickResultTask(
+                            mActivity, mInjector.pickResult, pickCountRecordStorage);
         }
 
         @Override

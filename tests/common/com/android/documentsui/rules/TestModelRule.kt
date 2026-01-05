@@ -19,8 +19,10 @@ import android.database.MatrixCursor
 import android.provider.DocumentsContract
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.Model
+import com.android.documentsui.base.DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.testing.TestFeatures
+import com.android.documentsui.util.FlagUtils
 import org.junit.rules.ExternalResource
 
 /**
@@ -34,23 +36,17 @@ import org.junit.rules.ExternalResource
 class TestModelRule(val authority: String = "com.example.test", val userId: Int = 10) :
     ExternalResource() {
     val model = Model(TestFeatures())
-    private val cursor = MatrixCursor(
-        arrayOf(
-            RootCursorWrapper.COLUMN_AUTHORITY,
-            RootCursorWrapper.COLUMN_USER_ID,
-            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-            DocumentsContract.Document.COLUMN_FLAGS,
-            DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-            DocumentsContract.Document.COLUMN_SIZE,
-            DocumentsContract.Document.COLUMN_LAST_MODIFIED,
-            DocumentsContract.Document.COLUMN_MIME_TYPE
-        )
-    )
+    private lateinit var cursor: MatrixCursor
 
     /*
      * Create a file with the given name and type. Optionally specify flags as well.
      */
-    fun createFile(name: String, type: String, flags: Int = 0): TestModelRule {
+    fun createFile(
+        name: String,
+        type: String,
+        flags: Int = 0,
+        syncStateFlags: Int? = null,
+    ): TestModelRule {
         val row = cursor.newRow()
         row.add(RootCursorWrapper.COLUMN_AUTHORITY, authority)
         row.add(RootCursorWrapper.COLUMN_USER_ID, userId)
@@ -58,14 +54,34 @@ class TestModelRule(val authority: String = "com.example.test", val userId: Int 
         row.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
         row.add(DocumentsContract.Document.COLUMN_MIME_TYPE, type)
         row.add(DocumentsContract.Document.COLUMN_FLAGS, flags)
+        if (FlagUtils.isCloudFeaturesFlagEnabled()) {
+            row.add(COLUMN_CONTENT_SYNC_STATE_FLAGS, syncStateFlags)
+        }
+
+        // Update the model after adding the row.
+        cursor.moveToFirst()
+        val r = DirectoryResult()
+        r.setCursor(cursor)
+        model.update(r)
 
         return this
     }
 
     override fun before() {
-        cursor.moveToFirst()
-        val r = DirectoryResult()
-        r.setCursor(cursor)
-        model.update(r)
+        val columnNames =
+            mutableListOf(
+                RootCursorWrapper.COLUMN_AUTHORITY,
+                RootCursorWrapper.COLUMN_USER_ID,
+                DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                DocumentsContract.Document.COLUMN_FLAGS,
+                DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                DocumentsContract.Document.COLUMN_SIZE,
+                DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+                DocumentsContract.Document.COLUMN_MIME_TYPE,
+            )
+        if (FlagUtils.isCloudFeaturesFlagEnabled()) {
+            columnNames.add(COLUMN_CONTENT_SYNC_STATE_FLAGS)
+        }
+        cursor = MatrixCursor(columnNames.toTypedArray())
     }
 }

@@ -28,6 +28,7 @@ import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySu
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
@@ -640,28 +641,33 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 new AccessibilityEventRouter(mRecView,
                         (View child) -> onAccessibilityClick(child),
                         (View child) -> onAccessibilityLongClick(child), mState.action));
-        mSelectionMetadata = new SelectionMetadata(
-                mModel::getItem,
-                (String modelId) -> {
-                    DocumentInfo doc = mModel.getDocument(modelId);
-                    if (doc != null) {
-                        return FileUtils.countOpeningApps(doc, mActivity.getPackageManager());
-                    }
-                    return 0;
-                });
+        mSelectionMetadata =
+                new SelectionMetadata(
+                        mModel::getItem,
+                        (String modelId) -> {
+                            DocumentInfo doc = mModel.getDocument(modelId);
+                            if (doc != null) {
+                                return FileUtils.countOpeningApps(
+                                        doc, mActivity.getPackageManager());
+                            }
+                            return 0;
+                        },
+                        mAdapterEnv::isContentAvailable);
         mDetailsLookup = new DocsItemDetailsLookup(mRecView);
 
-        DragStartListener dragStartListener = mInjector.config.dragAndDropEnabled()
-                ? DragStartListener.create(
-                mIconHelper,
-                mModel,
-                mSelectionMgr,
-                mSelectionMetadata,
-                mState,
-                this::getModelId,
-                mRecView::findChildViewUnder,
-                DocumentsApplication.getDragAndDropManager(mActivity))
-                : DragStartListener.STUB;
+        DragStartListener dragStartListener =
+                mInjector.config.dragAndDropEnabled()
+                        ? DragStartListener.create(
+                                mIconHelper,
+                                mModel,
+                                mSelectionMgr,
+                                mSelectionMetadata,
+                                mState,
+                                this::getModelId,
+                                mRecView::findChildViewUnder,
+                                mAdapterEnv::isContentAvailable,
+                                DocumentsApplication.getDragAndDropManager(mActivity))
+                        : DragStartListener.STUB;
 
         {
             // Limiting the scope of the localTracker so nobody uses it.
@@ -1245,6 +1251,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
+    /**
+     * This handles both selection bar menu and context menu item click, but it doesn't handle the
+     * option menu (normal app bar) menu item click.
+     */
     private boolean handleMenuItemClick(MenuItem item) {
         if (mInjector.pickResult != null) {
             mInjector.pickResult.increaseActionCount();
@@ -1384,6 +1394,33 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         } else if (id == getRes(R.id.action_menu_sort)) {
             mActions.showSortDialog();
             return true;
+        }
+        if (isUseMaterial3FlagEnabled()) {
+            if (isDesktopFileHandlingFlagEnabled() && id == getRes(R.id.action_menu_open)) {
+                viewDocument(selection);
+                return true;
+            }
+            if (id == getRes(R.id.action_menu_open_in_new_window)) {
+                mActions.openSelectedInNewWindow();
+                return true;
+            }
+            if (id == getRes(R.id.action_menu_paste_into_folder)) {
+                pasteIntoFolder();
+                return true;
+            }
+        }
+
+        final boolean showCopyToMoveTo =
+                getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            if (id == getRes(R.id.action_menu_cut_to_clipboard)) {
+                mActions.cutToClipboard();
+                return true;
+            }
+            if (id == getRes(R.id.action_menu_copy_to_clipboard)) {
+                mActions.copyToClipboard();
+                return true;
+            }
         }
 
         if (DEBUG) {
@@ -1977,9 +2014,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         @Override
-        public boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags) {
-            return mInjector.config.isDocumentEnabled(
-                    mimeType, flags, syncStateFlags, mState, isOnline());
+        public boolean isDocumentEnabled(DocumentInfo doc) {
+            return mInjector.config.isDocumentEnabled(doc, mState, isOnline());
+        }
+
+        @Override
+        public boolean isContentAvailable(DocumentInfo doc) {
+            return mInjector.config.isContentAvailable(doc, mState, isOnline());
         }
 
         @Override
@@ -2000,7 +2041,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         public boolean isOnTrashPage() {
-            return mState.stack.isTrash();
+            return mState.stack.isTrashTopLevel();
         }
 
         @Override

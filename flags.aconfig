@@ -50,14 +50,6 @@ flag {
 }
 
 flag {
-    name: "redirect_get_content_ro"
-    namespace: "documentsui"
-    description: "Redirects GET_CONTENT requests to Photopicker when appropriate"
-    bug: "377771195"
-    is_fixed_read_only: true
-}
-
-flag {
     name: "use_peek_preview_ro"
     namespace: "documentsui"
     description: "Enables the Peek previewing capability as a substitute for the Inspector."
@@ -136,3 +128,28 @@ flag {
     bug: "440196110"
     is_fixed_read_only: true
 }
+
+flag {
+    name: "use_approved_document_handler"
+    namespace: "documentsui"
+    description: "Enables approved document handler on DocumentsUI."
+    bug: "440464827"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "use_new_open_with"
+    namespace: "documentsui"
+    description: "Enables the new open-with flow that relies on implicit routing to ResolverActivity."
+    bug: "459640815"
+    is_fixed_read_only: true
+}
+
+flag {
+    name: "get_info_dialog"
+    namespace: "documentsui"
+    description: "Replaces the Inspector activity with a Get Info dialog"
+    bug: "458494432"
+    is_fixed_read_only: true
+}
+

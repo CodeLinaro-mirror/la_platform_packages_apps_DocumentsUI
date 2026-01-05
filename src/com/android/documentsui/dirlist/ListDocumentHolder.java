@@ -18,8 +18,6 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.SOLID_COLORED;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_ICON;
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.ui.Views.setWeight;
 import static com.android.documentsui.util.FlagUtils.isSingleClickToSelectEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -28,7 +26,6 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -55,7 +52,6 @@ import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.ui.Views;
 import com.android.modules.utils.build.SdkLevel;
 
@@ -83,7 +79,7 @@ final class ListDocumentHolder extends DocumentHolder {
     private final @Nullable TextView mMetadataView;
     private final ImageView mIconMime;
     private final ImageView mIconThumb;
-    private final ImageView mIconCheck;
+    private final @Nullable ImageView mIconCheck;
     private final ImageView mIconBadge;
     private final View mIconLayout;
     final View mPreviewIcon;
@@ -91,7 +87,7 @@ final class ListDocumentHolder extends DocumentHolder {
     private final IconHelper mIconHelper;
     private final Lookup<String, String> mFileTypeLookup;
     // This is used in as a convenience in our bind method.
-    private final DocumentInfo mDoc;
+    private DocumentInfo mDoc;
     private final DocumentsAdapter.Environment mEnv;
 
     ListDocumentHolder(
@@ -103,11 +99,19 @@ final class ListDocumentHolder extends DocumentHolder {
             DocumentsAdapter.Environment environment) {
         super(context, parent, getRes(R.layout.item_doc_list), configStore);
 
+        boolean showSelectionCheckmark =
+                !isSingleClickToSelectEnabled()
+                        || itemView.getResources().getBoolean(R.bool.show_selection_checkmark);
+
         mEnv = environment;
         mIconLayout = itemView.findViewById(getRes(R.id.icon));
         mIconMime = (ImageView) itemView.findViewById(getRes(R.id.icon_mime));
         mIconThumb = (ImageView) itemView.findViewById(getRes(R.id.icon_thumb));
-        mIconCheck = (ImageView) itemView.findViewById(getRes(R.id.icon_check));
+        mIconCheck =
+                (ImageView)
+                        conditionalView(
+                                showSelectionCheckmark,
+                                itemView.findViewById(getRes(R.id.icon_check)));
         mIconBadge = (ImageView) itemView.findViewById(getRes(R.id.icon_profile_badge));
         mTitle = (TextView) itemView.findViewById(android.R.id.title);
         mTitleContainer = (View) itemView.findViewById(R.id.title_container);
@@ -123,6 +127,11 @@ final class ListDocumentHolder extends DocumentHolder {
         mIconHelper = iconHelper;
         mFileTypeLookup = fileTypeLookup;
         mDoc = new DocumentInfo();
+
+        if (!showSelectionCheckmark) {
+            // Override android:pointerIcon="hand" in the res/**/*.xml layout.
+            mIconLayout.setPointerIcon(null);
+        }
 
         if (SdkLevel.isAtLeastT() && !mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
             setUpdatableWorkProfileIcon(context);
@@ -143,11 +152,15 @@ final class ListDocumentHolder extends DocumentHolder {
 
     @Override
     public void setSelected(boolean selected, boolean animate) {
+        boolean showSelectionCheckmark = mIconCheck != null;
+
         // We always want to make sure our check box disappears if we're not selected,
         // even if the item is disabled. But it should be an error (see assert below)
         // to be set to selected && be disabled.
         float checkAlpha = selected ? 1f : 0f;
-        if (animate) {
+        if (!showSelectionCheckmark) {
+            // No-op.
+        } else if (animate) {
             fade(mIconCheck, checkAlpha).start();
         } else {
             mIconCheck.setAlpha(checkAlpha);
@@ -159,7 +172,9 @@ final class ListDocumentHolder extends DocumentHolder {
 
         super.setSelected(selected, animate);
 
-        if (animate) {
+        if (!showSelectionCheckmark) {
+            // No-op.
+        } else if (animate) {
             fade(mIconMime, 1f - checkAlpha).start();
             fade(mIconThumb, 1f - checkAlpha).start();
         } else {
@@ -180,22 +195,25 @@ final class ListDocumentHolder extends DocumentHolder {
             mIconMime.setAlpha(imgAlpha);
             mIconThumb.setAlpha(imgAlpha);
         }
+
+        if (!enabled) {
+            // Hide the sync state when the user can't do anything to fix it.
+            hideSyncIcons();
+        }
     }
 
     @Override
     public void bindPreviewIcon(boolean show, Function<View, Boolean> clickCallback) {
-        if (mDoc.isDirectory()) {
+        if (mDoc.isDirectory() || !show) {
             mPreviewIcon.setVisibility(View.GONE);
         } else {
-            mPreviewIcon.setVisibility(show ? View.VISIBLE : View.GONE);
-            if (show) {
-                mPreviewIcon.setContentDescription(
-                        getPreviewIconContentDescription(
-                                mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
-                                mDoc.displayName, mDoc.userId));
-                mPreviewIcon.setAccessibilityDelegate(
-                        new PreviewAccessibilityDelegate(clickCallback));
-            }
+            mPreviewIcon.setVisibility(View.VISIBLE);
+            mPreviewIcon.setContentDescription(
+                    getPreviewIconContentDescription(
+                            mIconHelper.shouldShowBadge(mDoc.userId.getIdentifier()),
+                            mDoc.displayName,
+                            mDoc.userId));
+            mPreviewIcon.setAccessibilityDelegate(new PreviewAccessibilityDelegate(clickCallback));
         }
     }
 
@@ -242,10 +260,13 @@ final class ListDocumentHolder extends DocumentHolder {
 
     @Override
     public int classifySelectionHotspot(MotionEvent event) {
+        boolean showSelectionCheckmark = mIconCheck != null;
+
         if (mDoc.isDirectory() && (mAction != State.ACTION_BROWSE)) {
             // No-op.
 
-        } else if (Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
+        } else if (showSelectionCheckmark
+                && Views.isEventOver(event, itemView.getParent(), mIconLayout)) {
             return ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_MULTI;
 
         } else if (Events.isMousyEvent(event) && isSingleClickToSelectEnabled()) {
@@ -312,18 +333,13 @@ final class ListDocumentHolder extends DocumentHolder {
     /**
      * Bind this view to the given document for display.
      *
-     * @param cursor Pointing to the item to be bound.
+     * @param doc The document to be bound.
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(Cursor cursor, String modelId, @Nullable String summary) {
-        assert (cursor != null);
-
+    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
         mModelId = modelId;
-
-        mDoc.updateFromCursor(cursor,
-                UserId.of(getCursorInt(cursor, RootCursorWrapper.COLUMN_USER_ID)),
-                getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY));
+        mDoc = doc;
 
         mIconHelper.stopLoading(mIconThumb);
 
@@ -346,6 +362,8 @@ final class ListDocumentHolder extends DocumentHolder {
         bindSummary(summary);
 
         mTitle.setVisibility(View.VISIBLE);
+
+        bindSyncIcons(mDoc);
 
         if (mDoc.isDirectory()) {
             // Note, we don't show any details for any directory...ever.

@@ -46,6 +46,9 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER,
                 Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
                 Flags.FLAG_DRAGS_FROM_OTHER_APPS,
+                Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER,
+                Flags.FLAG_USE_NEW_OPEN_WITH,
+                Flags.FLAG_GET_INFO_DIALOG,
             )
 
         @JvmStatic
@@ -208,6 +211,36 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
             return getInstance()
                 .overrides
                 .getOrDefault(Flags.FLAG_DRAGS_FROM_OTHER_APPS, Flags.dragsFromOtherApps())
+        }
+
+        @JvmStatic
+        fun isUseApprovedDocumentHandlerEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(
+                        Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER,
+                        Flags.useApprovedDocumentHandler(),
+                    )
+            return flag && isUseMaterial3FlagEnabled()
+        }
+
+        @JvmStatic
+        fun isUseNewOpenWithEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_USE_NEW_OPEN_WITH, Flags.useNewOpenWith())
+            return flag && isDesktopFileHandlingFlagEnabled()
+        }
+
+        @JvmStatic
+        fun isGetInfoDialogEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(Flags.FLAG_GET_INFO_DIALOG, Flags.getInfoDialog())
+            return flag && isUseMaterial3FlagEnabled()
         }
     }
 

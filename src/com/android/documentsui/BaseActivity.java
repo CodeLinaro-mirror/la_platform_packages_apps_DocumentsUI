@@ -21,10 +21,13 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
+import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
+import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -33,6 +36,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,6 +60,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -83,6 +88,8 @@ import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
 import com.android.documentsui.dirlist.SummaryProviderManager;
+import com.android.documentsui.peek.PeekViewManager;
+import com.android.documentsui.peek.PeekViewModel;
 import com.android.documentsui.prefs.LocalPreferences;
 import com.android.documentsui.prefs.PreferencesMonitor;
 import com.android.documentsui.queries.CommandInterceptor;
@@ -100,6 +107,8 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.color.DynamicColors;
+
+import kotlin.Unit;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -129,6 +138,7 @@ public abstract class BaseActivity
     protected NavigationViewManager mNavigator;
     protected SortController mSortController;
     protected ConfigStore mConfigStore;
+    protected @Nullable PeekViewManager mPeekViewManager;
 
     private final List<EventListener> mEventListeners = new ArrayList<>();
     private final String mTag;
@@ -217,7 +227,6 @@ public abstract class BaseActivity
      */
     @VisibleForTesting
     public void setLocalSummaryProvider(Uri uri) {
-        Log.d(TAG, "Setting local summary provider: " + uri);
         if (mInjector.getSummaryProviderManager() != null) {
             mInjector.getSummaryProviderManager().stop();
         }
@@ -343,12 +352,11 @@ public abstract class BaseActivity
                                 controller.setVisible(false);
                             }
                         }
-                        // When docked search bar is used, no need to invalidate the options menus
-                        // because docked search bar won't affect the options menu, invalidating it
-                        // will affect the tab navigation between the docked search bar and the
-                        // next option menu button (list/grid button), because it will try to
-                        // re-render all the option menu buttons.
-                        if (isUseMaterial3FlagEnabled() && isSearchDocked()) {
+                        // Invalidating the options menu will affect both tab navigation and the
+                        // job progress popup panel as it tries to re-render all the option menu
+                        // buttons, so just re-update it instead to set icon visibility.
+                        if (isUseMaterial3FlagEnabled()) {
+                            mInjector.menuManager.updateOptionMenu();
                             return;
                         }
                         // Restores menu icons state
@@ -509,8 +517,11 @@ public abstract class BaseActivity
         if (isUseMaterial3FlagEnabled()) {
             View previewIconPlaceholder = findViewById(getRes(R.id.preview_icon_placeholder));
             if (previewIconPlaceholder != null) {
-                previewIconPlaceholder.setVisibility(
-                        mState.shouldShowPreview() ? View.VISIBLE : View.GONE);
+                boolean showPreview =
+                        mState.shouldShowPreview(
+                                !isDesktopUxPhase2FlagEnabled()
+                                        || getResources().getBoolean(R.bool.show_preview_icon));
+                previewIconPlaceholder.setVisibility(showPreview ? View.VISIBLE : View.GONE);
             }
         }
 
@@ -522,6 +533,22 @@ public abstract class BaseActivity
 
         mNetworkMonitor = NetworkMonitor.create(getApplicationContext());
         mInjector.networkMonitor = mNetworkMonitor;
+
+        // Directly use the generated method `usePeekPreviewRo` to optimize out Peek when the flag
+        // isn't enabled. The optimization is not happening with the FlagUtils's
+        // `isUsePeekPreviewFlagEnabled`.
+        if (usePeekPreviewRo()) {
+            if (isUsePeekPreviewFlagEnabled()) {
+                ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+                PeekViewModel viewModel = viewModelProvider.get(PeekViewModel.class);
+                mPeekViewManager =
+                        new PeekViewManager(
+                                viewModel,
+                                findViewById(getRes(R.id.peek_overlay)),
+                                getSupportFragmentManager());
+                viewModel.getOverlayActive().observe(this, mPeekViewManager);
+            }
+        }
 
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
@@ -599,6 +626,9 @@ public abstract class BaseActivity
         boolean showMenu = super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(getRes(R.menu.activity), menu);
+        if (isUseMaterial3FlagEnabled()) {
+            MenuCompat.setGroupDividerEnabled(menu, true);
+        }
         mNavigator.update();
         boolean fullBarSearch = getResources().getBoolean(getRes(R.bool.full_bar_search_view));
         boolean showSearchBar = isUseMaterial3FlagEnabled() ? false : getResources().getBoolean(
@@ -700,10 +730,10 @@ public abstract class BaseActivity
         View pickerSaverContainer = findViewById(getRes(R.id.container_save));
         root.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-        final int drawerPaddingBottom =
-                getResources().getDimensionPixelSize(getRes(R.dimen.drawer_padding_bottom));
 
         if (isUseMaterial3FlagEnabled()) {
+            final int drawerPaddingBottom =
+                    getResources().getDimensionPixelSize(getRes(R.dimen.drawer_padding_bottom));
             WindowCompat.enableEdgeToEdge(getWindow());
             ViewCompat.setOnApplyWindowInsetsListener(
                     root,
@@ -937,12 +967,38 @@ public abstract class BaseActivity
         } else if (id == getRes(R.id.option_menu_show_hidden_files)) {
             onClickedShowHiddenFiles();
             return true;
+        } else if (id == R.id.option_show_summary) {
+            if (mInjector.getSummaryProviderManager() != null) {
+                mInjector
+                        .getSummaryProviderManager()
+                        .onShowSummaryMenuClicked(
+                                this.getSupportFragmentManager(),
+                                () -> {
+                                    updateColumnHeaders(mState.stack.getRoot());
+                                    refreshDirectory(AnimationView.ANIM_NONE);
+                                    return Unit.INSTANCE;
+                                });
+                return true;
+            }
         } else if (id == getRes(R.id.sub_menu_grid)) {
             setViewMode(MODE_GRID);
             return true;
         } else if (id == getRes(R.id.sub_menu_list)) {
             setViewMode(MODE_LIST);
             return true;
+        } else if (id == getRes(R.id.option_menu_inspect)) {
+            mInjector.actions.showPreview(getCurrentDirectory());
+        }
+        final boolean showCopyToMoveTo =
+                getResources().getBoolean(R.bool.show_copy_to_move_to_menus);
+        if (isDesktopUxPhase2FlagEnabled() && !showCopyToMoveTo) {
+            if (id == getRes(R.id.option_menu_paste_from_clipboard)) {
+                DirectoryFragment dir = getDirectoryFragment();
+                if (dir != null) {
+                    dir.pasteFromClipboard();
+                }
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -967,7 +1023,7 @@ public abstract class BaseActivity
      * Returns true if a directory can be inspected.
      */
     protected boolean canInspectDirectory() {
-        return false;
+        return getCurrentDirectory() != null && mInjector.getModel().doc != null;
     }
 
     // TODO: make navigator listen to state
@@ -1470,5 +1526,19 @@ public abstract class BaseActivity
                             : "disabled"));
         }
         setRecentsScreenshotEnabled(!mUserManagerState.areHiddenInQuietModeProfilesPresent());
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Force the shortcut resources to be reloaded the next time updateAsync() gets called.
+            mProviders.resetShortcutResourcesFirstLoadDone();
+
+            // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
+            //  localised titles in this method.
+            mProviders.updateAsync(false,
+                () -> RootsFragment.get(getSupportFragmentManager()).reloadRootsAndShortcuts());
+        }
     }
 }

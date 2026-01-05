@@ -46,9 +46,11 @@
   int feature_notification_channel;
   int full_bar_search_view;
   int is_launcher_enabled;
-  int show_media_roots;
-  int show_search_bar;
   int show_apps_row;
+  int show_media_roots;
+  int show_preview_icon;
+  int show_search_bar;
+  int show_selection_checkmark;
 }
 -keep class com.android.documentsui.R$color {
   int app_background_color;
@@ -170,12 +172,15 @@
   int empty;
   int local_summary_provider;
   int menu_copy;
+  int menu_inspect;
   int menu_move;
+  int menu_permanently_delete;
   int menu_rename;
   int menu_select;
   int menu_select_all;
   int menu_sort;
   int menu_view_in_owner;
+  int menu_zip;
   int metadata_address;
   int metadata_album;
   int metadata_altitude;
@@ -271,6 +276,10 @@
   public void setDisableAutoDismiss(boolean);
 }
 
+-keep class com.android.documentsui.dirlist.SelectionMetadata {
+  public java.util.Set mimeTypes();
+}
+
 # This is used in the unit test RecyclerRootsAdapterTest
 -keep class androidx.recyclerview.widget.RecyclerView$AdapterDataObserver {
   public void onItemRangeChanged(int, int, Object);
@@ -322,6 +331,7 @@
 
 -keep class com.android.documentsui.files.ActionHandler {
   public void restoreSelectedDocumentsFromTrash(java.util.List);
+  public boolean sendToApprovedDocHandler(android.content.ComponentName);
 }
 
 -keep interface androidx.drawerlayout.widget.DrawerLayout$DrawerListener {

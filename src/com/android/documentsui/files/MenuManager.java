@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -28,15 +29,13 @@ import android.view.KeyEvent;
 import android.view.KeyboardShortcutGroup;
 import android.view.KeyboardShortcutInfo;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.selection.SelectionTracker;
 
+import com.android.documentsui.Injector;
 import com.android.documentsui.JobPanelController;
 import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
@@ -56,8 +55,6 @@ import java.util.function.IntSupplier;
 
 public final class MenuManager extends com.android.documentsui.MenuManager {
 
-    private final Features mFeatures;
-    private final Context mContext;
     private final SelectionTracker<String> mSelectionManager;
     private final Lookup<String, Uri> mUriLookup;
     private final LookupApplicationName mAppNameLookup;
@@ -72,12 +69,18 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             SelectionTracker<String> selectionManager,
             LookupApplicationName appNameLookup,
             Lookup<String, Uri> uriLookup,
-            IntSupplier filesCountSupplier) {
+            IntSupplier filesCountSupplier,
+            Injector<?> injector) {
 
-        super(searchManager, displayState, dirDetails, filesCountSupplier);
+        super(
+                searchManager,
+                displayState,
+                dirDetails,
+                filesCountSupplier,
+                context,
+                features,
+                injector);
 
-        mFeatures = features;
-        mContext = context;
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;
         mUriLookup = uriLookup;
@@ -127,44 +130,6 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    public void showContextMenu(Fragment f, View v, float x, float y) {
-        // Register context menu here so long-press doesn't trigger this context floating menu.
-        f.registerForContextMenu(v);
-        v.showContextMenu(x, y);
-        f.unregisterForContextMenu(v);
-    }
-
-    @Override
-    public void inflateContextMenuForContainer(
-            Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        inflater.inflate(getRes(R.menu.container_context_menu), menu);
-        updateContextMenuForContainer(menu, selectionDetails);
-    }
-
-    @Override
-    public void inflateContextMenuForDocs(
-            Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
-        final boolean hasDir = selectionDetails.containsDirectories();
-        final boolean hasFile = selectionDetails.containsFiles();
-
-        assert hasDir || hasFile;
-        if (!hasDir) {
-            inflater.inflate(getRes(R.menu.file_context_menu), menu);
-            updateContextMenuForFiles(menu, selectionDetails);
-            return;
-        }
-
-        if (!hasFile) {
-            inflater.inflate(getRes(R.menu.dir_context_menu), menu);
-            updateContextMenuForDirs(menu, selectionDetails);
-            return;
-        }
-
-        inflater.inflate(getRes(R.menu.mixed_context_menu), menu);
-        updateContextMenu(menu, selectionDetails);
-    }
-
-    @Override
     public void instantiateJobProgress(Menu menu) {
         if (mJobPanelController == null) {
             return;
@@ -190,7 +155,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateNewWindow(MenuItem newWindow) {
-        Menus.setEnabledAndVisible(newWindow, true);
+        Menus.setEnabledAndVisible(
+                newWindow, !isUseMaterial3FlagEnabled() || !mDirDetails.isInArchive());
     }
 
     @Override
@@ -203,20 +169,27 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             enabled = enabled && selectionDetails.hasMultipleOpeningApps();
         }
 
-        Menus.setEnabledAndVisible(openWith, enabled);
+        if (!disableIfContentUnavailable(openWith, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(openWith, enabled);
+        }
     }
 
     @Override
-    protected void updateOpenInContextMenu(MenuItem open, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(
-                open, isDesktopFileHandlingFlagEnabled() && selectionDetails.canOpen());
+    protected void updateOpen(MenuItem open, SelectionDetails selectionDetails) {
+        boolean enabled = isDesktopFileHandlingFlagEnabled() && selectionDetails.canOpen();
+        if (!disableIfContentUnavailable(open, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(open, enabled);
+        }
     }
 
     @Override
     protected void updateOpenInNewWindow(
             MenuItem openInNewWindow, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(openInNewWindow, selectionDetails.size() == 1
-                && !selectionDetails.containsPartialFiles());
+        Menus.setEnabledAndVisible(
+                openInNewWindow,
+                selectionDetails.size() == 1
+                        && !selectionDetails.containsPartialFiles()
+                        && selectionDetails.containsDirectories());
     }
 
     @Override
@@ -226,45 +199,55 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateMoveTo(MenuItem moveTo, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(moveTo,
-                !selectionDetails.containsPartialFiles() && selectionDetails.canDelete());
+        boolean enabled = !selectionDetails.containsPartialFiles() && selectionDetails.canDelete();
+        if (!disableIfContentUnavailable(moveTo, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(moveTo, enabled);
+        }
     }
 
     @Override
     protected void updateCopyTo(MenuItem copyTo, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(copyTo, !selectionDetails.containsPartialFiles()
-                && !selectionDetails.canExtract() && !selectionDetails.canRestore());
-    }
-
-    @Override
-    protected void updateCompress(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        final boolean enabled = mFeatures.isArchiveCreationEnabled() && mDirDetails.canCreateDoc()
-                && !selection.containsPartialFiles() && !selection.canExtract();
-        Menus.setEnabledAndVisible(it, enabled);
-        if (enabled && isZipNgFlagEnabled()) it.setTitle(getRes(R.string.menu_zip));
+        boolean enabled =
+                !selectionDetails.containsPartialFiles()
+                        && !selectionDetails.canExtract()
+                        && !selectionDetails.canRestore();
+        if (!disableIfContentUnavailable(copyTo, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(copyTo, enabled);
+        }
     }
 
     @Override
     protected void updateExtractTo(MenuItem extractTo, SelectionDetails selectionDetails) {
         boolean enabled = selectionDetails.canExtract();
-        Menus.setEnabledAndVisible(extractTo, enabled);
         if (isZipNgFlagEnabled()) extractTo.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        if (!disableIfContentUnavailable(extractTo, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(extractTo, enabled);
+        }
     }
 
     @Override
     protected void updateExtractHere(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        Menus.setEnabledAndVisible(it, selection.isArchive() && mDirDetails.canCreateDirectory());
+        boolean enabled = selection.isArchive() && mDirDetails.canCreateDirectory();
+        if (!disableIfContentUnavailable(it, selection, enabled)) {
+            Menus.setEnabledAndVisible(it, enabled);
+        }
     }
 
     @Override
     protected void updateBrowse(@NonNull MenuItem it, @NonNull SelectionDetails selection) {
-        Menus.setEnabledAndVisible(it, selection.isArchive() && !mDirDetails.isInArchive());
+        boolean enabled = selection.isArchive() && !mDirDetails.isInArchive();
+        if (!disableIfContentUnavailable(it, selection, enabled)) {
+            Menus.setEnabledAndVisible(it, enabled);
+        }
     }
 
     @Override
     protected void updatePasteInto(MenuItem pasteInto, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(pasteInto,
-                selectionDetails.canPasteInto() && mDirDetails.hasItemsToPaste());
+        Menus.setEnabledAndVisible(
+                pasteInto,
+                selectionDetails.containsDirectories()
+                        && selectionDetails.canPasteInto()
+                        && mDirDetails.hasItemsToPaste());
     }
 
     @Override
@@ -299,47 +282,14 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
-    protected void updateCreateDir(MenuItem createDir) {
-        Menus.setEnabledAndVisible(createDir, mDirDetails.canCreateDirectory());
-    }
-
-    @Override
     protected void updateShare(MenuItem share, SelectionDetails selectionDetails) {
         boolean enabled = !selectionDetails.containsDirectories()
                 && !selectionDetails.containsPartialFiles()
                 && !selectionDetails.canExtract()
                 && !selectionDetails.canRestore();
-        Menus.setEnabledAndVisible(share, enabled);
-    }
-
-    @Override
-    protected void updateDelete(MenuItem delete, SelectionDetails selectionDetails) {
-        boolean enabled = selectionDetails.canDelete();
-        Menus.setEnabledAndVisible(delete, enabled);
-        // The delete menu item's visibility is tied to the trash flow's status.
-        // Since the XML defaults to never showing this action, we must manually make it visible
-        // when trash is disabled to give users a direct way to delete items.
-        if (!isTrashFlowEnabled()) {
-            delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (!disableIfContentUnavailable(share, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(share, enabled);
         }
-    }
-
-    @Override
-    protected void updateRename(MenuItem rename, SelectionDetails selectionDetails) {
-        Menus.setEnabledAndVisible(rename,
-                !selectionDetails.containsPartialFiles() && selectionDetails.canRename());
-    }
-
-    @Override
-    protected void updateInspect(MenuItem inspect) {
-        boolean visible = mFeatures.isInspectorEnabled();
-        Menus.setEnabledAndVisible(inspect, visible && mDirDetails.canInspectDirectory());
-    }
-
-    @Override
-    protected void updateInspect(MenuItem inspect, SelectionDetails selectionDetails) {
-        boolean visible = mFeatures.isInspectorEnabled() && selectionDetails.size() <= 1;
-        Menus.setEnabledAndVisible(inspect, visible);
     }
 
     /**
@@ -377,15 +327,18 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateMoveToTrash(MenuItem moveToTrash, SelectionDetails selectionDetails) {
-        final boolean visible = selectionDetails.canTrash() && isTrashFlowEnabled();
-        Menus.setEnabledAndVisible(moveToTrash, visible);
+        final boolean enabled = selectionDetails.canTrash() && isTrashFlowEnabled();
+        if (!disableIfContentUnavailable(moveToTrash, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(moveToTrash, enabled);
+        }
     }
 
     @Override
     protected void updateRestoreFromTrash(MenuItem restoreFromTrash,
             SelectionDetails selectionDetails) {
-        final boolean visible = selectionDetails.canRestore() && isTrashFlowEnabled();
-        Menus.setEnabledAndVisible(restoreFromTrash, visible);
+        final boolean enabled = selectionDetails.canRestore() && isTrashFlowEnabled();
+        if (!disableIfContentUnavailable(restoreFromTrash, selectionDetails, enabled)) {
+            Menus.setEnabledAndVisible(restoreFromTrash, enabled);
+        }
     }
-
 }

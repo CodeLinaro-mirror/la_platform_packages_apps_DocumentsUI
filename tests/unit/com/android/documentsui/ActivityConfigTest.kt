@@ -21,6 +21,10 @@ import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract.Document
 import androidx.test.filters.SmallTest
 import androidx.test.runner.AndroidJUnit4
+import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.NO_FLAGS
+import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.OFFLINE
+import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.SYNC_UNAVAILABLE_LOCALLY
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
 import com.android.documentsui.flags.Flags
@@ -29,6 +33,7 @@ import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.TestProvidersAccess
 import kotlin.collections.listOf
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -74,27 +79,24 @@ class ActivityConfigTest {
         @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsDocumentEnabled() {
             state.stack.changeRoot(testParams.rootInfo)
+            var doc = DocumentInfo()
+            doc.mimeType = testParams.mimeType
+            doc.flags = testParams.docFlags
+            doc.syncStateFlags = testParams.syncStateFlags
             assertEquals(
                 testParams.expectedResult,
-                config.isDocumentEnabled(
-                    testParams.mimeType,
-                    testParams.docFlags,
-                    testParams.syncStateFlags,
-                    state,
-                    testParams.isOnline,
-                ),
+                config.isDocumentEnabled(doc, state, testParams.isOnline),
             )
         }
 
         companion object {
             // Constants for readability.
             private const val ONLINE = true
-            private const val OFFLINE = false
-            private const val NO_FLAGS = 0
+            const val OFFLINE = false
+            const val NO_FLAGS = 0
             private val NO_SYNC_STATE: Int? = null
-            private val SYNC_AVAILABLE_LOCALLY: Int =
-                ActivityConfig.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
-            private const val SYNC_UNAVAILABLE_LOCALLY = 0
+            private val SYNC_AVAILABLE_LOCALLY: Int = DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
+            const val SYNC_UNAVAILABLE_LOCALLY = 0
 
             @JvmStatic
             @Parameters(name = "{0}")
@@ -187,7 +189,22 @@ class ActivityConfigTest {
         @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsDocumentEnabled_featureFlagDisabled() {
             state.stack.changeRoot(TestProvidersAccess.CLOUD)
-            assertTrue(config.isDocumentEnabled("image/png", 0, 0, state, false))
+            var doc = DocumentInfo()
+            doc.mimeType = "image/png"
+            doc.flags = 0
+            doc.syncStateFlags = 0
+            assertTrue(config.isDocumentEnabled(doc, state, false))
+        }
+
+        @Test
+        @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+        fun testIsContentAvailable_folder() {
+            state.stack.changeRoot(TestProvidersAccess.CLOUD)
+            var doc = DocumentInfo()
+            doc.mimeType = Document.MIME_TYPE_DIR
+            doc.flags = NO_FLAGS
+            doc.syncStateFlags = SYNC_UNAVAILABLE_LOCALLY
+            assertFalse(config.isContentAvailable(doc, state, OFFLINE))
         }
     }
 

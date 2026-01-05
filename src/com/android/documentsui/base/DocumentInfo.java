@@ -59,9 +59,15 @@ public class DocumentInfo implements Durable, Parcelable {
     private static final int VERSION_INIT = 1;
     private static final int VERSION_SPLIT_URI = 2;
     private static final int VERSION_USER_ID = 3;
-    // TODO(b/458129770): Delete this and use Document.COLUMN_CONTENT_SYNC_STATE_FLAGS instead when
-    // it exists in the SDK.
+    // TODO(b/458129770): Delete these and use the real Document constants instead when they exist
+    // in the SDK.
     public static final String COLUMN_CONTENT_SYNC_STATE_FLAGS = "content_sync_state_flags";
+    public static final int SYNC_STATE_FLAG_AVAILABLE_LOCALLY = 1 << 0;
+    public static final int SYNC_STATE_FLAG_LOCAL_CHANGES = 1 << 1;
+    public static final int SYNC_STATE_FLAG_UPLOAD_PROGRESS = 1 << 2;
+    public static final int SYNC_STATE_FLAG_DOWNLOAD_PROGRESS = 1 << 3;
+    public static final int SYNC_STATE_FLAG_UPLOAD_ERROR = 1 << 4;
+    public static final int SYNC_STATE_FLAG_DOWNLOAD_ERROR = 1 << 5;
 
     public UserId userId;
     public String authority;
@@ -367,6 +373,73 @@ public class DocumentInfo implements Durable, Parcelable {
         return (flags & Document.FLAG_VIRTUAL_DOCUMENT) != 0;
     }
 
+    /** Whether the `syncStateFlags` field is set. */
+    public boolean hasSyncState() {
+        return syncStateFlags != null;
+    }
+
+    /**
+     * Whether the `syncStateFlags` includes the upload in progress flag. Returns false if there is
+     * no sync state.
+     */
+    public boolean hasUploadInProgress() {
+        if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
+            return false;
+        }
+        return (SYNC_STATE_FLAG_UPLOAD_PROGRESS & syncStateFlags) != 0;
+    }
+
+    /**
+     * Whether the `syncStateFlags` includes the download in progress flag. Returns false if there
+     * is no sync state.
+     */
+    public boolean hasDownloadInProgress() {
+        if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
+            return false;
+        }
+        return (SYNC_STATE_FLAG_DOWNLOAD_PROGRESS & syncStateFlags) != 0;
+    }
+
+    /**
+     * Whether the `syncStateFlags` includes an error flag. Returns false if there is no sync state.
+     */
+    public boolean hasSyncError() {
+        if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
+            return false;
+        }
+        if ((SYNC_STATE_FLAG_UPLOAD_ERROR & syncStateFlags) != 0) {
+            return true;
+        }
+        return (SYNC_STATE_FLAG_DOWNLOAD_ERROR & syncStateFlags) != 0;
+    }
+
+    /**
+     * Whether the `syncStateFlags` includes the local changes flag. Returns false if there is no
+     * sync state.
+     */
+    public boolean hasLocalChanges() {
+        if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
+            return false;
+        }
+        return (SYNC_STATE_FLAG_LOCAL_CHANGES & syncStateFlags) != 0;
+    }
+
+    /**
+     * Whether the `syncStateFlags` includes the available locally flag. Default to true if there is
+     * no sync state or the file is virtual
+     */
+    public boolean isContentAvailableLocally() {
+        if (!isCloudFeaturesFlagEnabled() || !hasSyncState()) {
+            // When the sync state is not set, default to available.
+            return true;
+        }
+        if (isVirtual()) {
+            // Virtual files don't have content stored locally so default to available.
+            return true;
+        }
+        return (SYNC_STATE_FLAG_AVAILABLE_LOCALLY & syncStateFlags) != 0;
+    }
+
     public boolean prefersSortByLastModified() {
         return (flags & Document.FLAG_DIR_PREFERS_LAST_MODIFIED) != 0;
     }
@@ -449,7 +522,7 @@ public class DocumentInfo implements Durable, Parcelable {
 
     /**
      * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns 0 if the
-     * cursor is null or the column is missing.
+     * cursor is null, the column is missing or the value is null.
      */
     public static int getCursorInt(Cursor cursor, String columnName) {
         return getCursorInteger(cursor, columnName, 0);
@@ -457,10 +530,10 @@ public class DocumentInfo implements Durable, Parcelable {
 
     /**
      * Gets the int at the column with {@code columnName} on the {@code cursor}. Returns {@code
-     * returnIfMissingOrNull} if the cursor is null or the column is missing.
+     * returnIfMissingOrNull} if the cursor is null, the column is missing or the value is null.
      *
-     * @param returnIfMissingOrNull The value to return if the cursor is null or the column is
-     *     missing.
+     * @param returnIfMissingOrNull The value to return if the cursor is null, the column is missing
+     *     or the value is null.
      */
     public static Integer getCursorInteger(
             Cursor cursor, String columnName, Integer returnIfMissingOrNull) {
@@ -469,7 +542,14 @@ public class DocumentInfo implements Durable, Parcelable {
         }
 
         final int index = cursor.getColumnIndex(columnName);
-        return (index != -1) ? Integer.valueOf(cursor.getInt(index)) : returnIfMissingOrNull;
+        if (index == -1) {
+            return returnIfMissingOrNull;
+        }
+        if (cursor.isNull(index)) {
+            // This check is required because getInt returns 0 for null ints.
+            return returnIfMissingOrNull;
+        }
+        return Integer.valueOf(cursor.getInt(index));
     }
 
     public static FileNotFoundException asFileNotFoundException(Throwable t)

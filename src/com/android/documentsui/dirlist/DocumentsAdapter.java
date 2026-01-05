@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.Model;
 import com.android.documentsui.SummaryUpdateListener;
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.EventListener;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.NetworkMonitor;
@@ -104,7 +105,9 @@ public abstract class DocumentsAdapter extends RecyclerView.Adapter<DocumentHold
         boolean isOnline();
         Model getModel();
 
-        boolean isDocumentEnabled(String mimeType, int flags, Integer syncStateFlags);
+        boolean isDocumentEnabled(DocumentInfo doc);
+
+        boolean isContentAvailable(DocumentInfo doc);
 
         void initDocumentHolder(DocumentHolder holder);
         void onBindDocumentHolder(DocumentHolder holder, Cursor cursor);

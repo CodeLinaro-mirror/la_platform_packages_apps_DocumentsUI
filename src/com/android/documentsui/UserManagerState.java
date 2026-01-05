@@ -370,7 +370,11 @@ public interface UserManagerState {
 
             for (UserHandle handle : userProfiles) {
                 if (SdkLevel.isAtLeastV()) {
-                    if (isSupportVisibleBackgroundUserFlagEnabled()) {
+                    // The currently active profile should always be added, regardless of other User
+                    // config.
+                    if (mCurrentUser.getIdentifier() == handle.getIdentifier()) {
+                        // Intentionally empty so that this profile gets added.
+                    } else if (isSupportVisibleBackgroundUserFlagEnabled()) {
                         // UserState.getUserIds should include {@link UserId#CURRENT_USER}.
                         // When a visible background user logged in
                         // on a secondary display runs DocumentsUI,

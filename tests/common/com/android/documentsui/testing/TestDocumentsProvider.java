@@ -65,7 +65,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
     /** Faked result for {@link #queryRecentDocuments(String, String[])}. */
     private Cursor mNextRecentDocuments;
 
-    /** Faked result for {@link #queryTrashDocuments(String[])}. */
+    /**
+     * Faked result for {@link #queryTrashDocuments(String, String[], Bundle, CancellationSignal)}.
+     */
     private Cursor mNextTrashDocuments;
 
     /** Runtime exception thrown in either querySearchDocuments() or queryChildDocuments(). */
@@ -158,7 +160,27 @@ public class TestDocumentsProvider extends DocumentsProvider {
             String sortOrder) throws FileNotFoundException {
         maybeThrowException();
         maybeDelayQueryResults();
-        return mNextChildDocuments;
+
+        if (mNextChildDocuments != null) {
+            Log.d(TAG, "queryChildDocuments: returning from mNextChildDocuments");
+            return mNextChildDocuments;
+        }
+
+        // If the summaries has been set, use it.
+        if (!mNextSummaries.isEmpty()) {
+            final MatrixCursor result =
+                    new MatrixCursor(
+                            new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY});
+            final MatrixCursor.RowBuilder row = result.newRow();
+            for (String documentId : mNextSummaries.keySet()) {
+                row.add(Document.COLUMN_DOCUMENT_ID, documentId);
+                row.add(Document.COLUMN_SUMMARY, mNextSummaries.getOrDefault(documentId, null));
+            }
+            Log.d(TAG, "queryChildDocuments: returning from mNextSummaries");
+            return result;
+        }
+        Log.d(TAG, "queryChildDocuments: returning null");
+        return null;
     }
 
     @Override
@@ -182,7 +204,12 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     @Nullable
     @Override
-    public Cursor queryTrashDocuments(@Nullable String[] projection) throws FileNotFoundException {
+    public Cursor queryTrashDocuments(
+            @NonNull String rootId,
+            @Nullable String[] projection,
+            @Nullable Bundle queryArgs,
+            @Nullable CancellationSignal signal)
+            throws FileNotFoundException {
         maybeThrowException();
         return mNextTrashDocuments;
     }
@@ -198,6 +225,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     @Override
     public Cursor querySearchDocuments(@NonNull String rootId, @Nullable String[] projection,
             @NonNull Bundle queryArgs) {
+        mLastQueryArgs = queryArgs;
         maybeThrowException();
         maybeDelayQueryResults();
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);
@@ -336,7 +364,8 @@ public class TestDocumentsProvider extends DocumentsProvider {
     }
 
     /**
-     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String[])}.
+     * Sets the documents to be returned by the next call to {@link #queryTrashDocuments(String,
+     * String[], Bundle, CancellationSignal)}.
      *
      * @param docs The documents to be returned in the cursor.
      */

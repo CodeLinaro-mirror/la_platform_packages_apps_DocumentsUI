@@ -18,8 +18,6 @@ package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.swipeLeft;
-import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import static junit.framework.Assert.assertFalse;
@@ -29,9 +27,8 @@ import android.annotation.LayoutRes;
 import android.app.UiAutomation;
 import android.content.Context;
 import android.os.SystemClock;
-import android.util.Log;
-import android.view.View;
 
+import androidx.test.espresso.contrib.DrawerActions;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -195,22 +192,15 @@ public class SidebarBot extends Bots.BaseBot {
                         .waitForExists(mTimeout));
     }
 
+    /** Attempt to close the drawer. */
     public void closeDrawer() {
-        // Espresso will try to close the drawer if it's opened
-        // But if no drawer exists (Tablet devices), we will have to catch the exception
-        // and continue on the test
-        // Why can't we do something like .exist() first?
-        // http://stackoverflow.com/questions/20807131/espresso-return-boolean-if-view-exists
-        try {
-            if (mContext.getResources().getConfiguration()
-                    .getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-                onView(withId(R.id.drawer_layout)).perform(swipeRight());
-            } else {
-                onView(withId(R.id.drawer_layout)).perform(swipeLeft());
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Cannot close drawer", e);
+        // mLayoutId is null when it's not a FileActivity/PickerActivity.
+        if (mLayoutId == null || inFixedLayout()) {
+            // Not a layout with a drawer.
+            return;
         }
+        // Attempt to close the drawer if it's open.
+        onView(withId(R.id.drawer_layout)).perform(DrawerActions.close());
     }
 
     public void assertRootsPresent(String... labels) throws UiObjectNotFoundException {

@@ -16,6 +16,8 @@
 
 package com.android.documentsui.sidebar;
 
+import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
+
 import android.app.Activity;
 import android.util.Log;
 import android.view.View;
@@ -58,6 +60,9 @@ class DragHost extends AbstractDragHost {
 
     @Override
     public boolean canHandleDragEvent(View v) {
+        if (!isDragsFromOtherAppsEnabled() && !mDragAndDropManager.isDragFromSameApp()) {
+            return false;
+        }
         return v instanceof RootItemView;
     }
 

@@ -36,6 +36,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -77,6 +78,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -130,8 +132,10 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     private Multimap<UserId, ShortcutInfo> mShortcuts = ArrayListMultimap.create();
     @GuardedBy("mLock")
     private HashSet<UserAuthority> mStoppedAuthorities = new HashSet<>();
+
     @GuardedBy("mLock")
-    private Collection<ShortcutResourceValues> mShortcutResources = new ArrayList<>();
+    private List<ShortcutResourceValues> mShortcutResources = new ArrayList<>();
+
     @GuardedBy("mLock")
     private boolean mShortcutResourcesFirstLoadDone = false;
     private final Semaphore mMultiProviderUpdateTaskSemaphore = new Semaphore(1);
@@ -160,10 +164,11 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
 
     /**
      * Used for testing - sets the mRoots and mShortcutResources to unit test other methods.
+     *
      * @param shortcutResources - the shortcut resources.
      */
     @VisibleForTesting
-    public void setShortcutResources(Collection<ShortcutResourceValues> shortcutResources) {
+    public void setShortcutResources(List<ShortcutResourceValues> shortcutResources) {
         synchronized (mLock) {
             mShortcutResources = shortcutResources;
         }
@@ -273,30 +278,13 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     }
 
     public void updateAsync(boolean forceRefreshAll, @Nullable Runnable callback) {
-
-        // NOTE: This method is called when the UI language changes.
-        // For that reason we update our RecentsRoot to reflect
-        // the current language.
-        final String title = mContext.getString(getRes(R.string.root_recent));
-        List<UserId> userIds = new ArrayList<>(getUserIds());
-        for (UserId userId : userIds) {
-            RootInfo recentRoot = createOrGetRecentsRoot(userId);
-            recentRoot.title = title;
-            // Nothing else about the root should ever change.
-            assert (recentRoot.authority == null);
-            assert (recentRoot.rootId == null);
-            assert (recentRoot.derivedIcon == getRes(R.drawable.ic_root_recent));
-            assert (recentRoot.derivedType == RootInfo.TYPE_RECENTS);
-            assert (recentRoot.flags == (Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_IS_CHILD));
-            assert (recentRoot.availableBytes == -1);
-        }
-
+        createOrUpdateRecentsRoot();
         if (isHomeScreenFilesFlagEnabled()) {
             try {
                 synchronized (mLock) {
                     // Resources don't change, so only compute this the first time.
                     if (!mShortcutResourcesFirstLoadDone) {
-                        mShortcutResources = getShortcutResources();
+                        mShortcutResources = getShortcutResources(getContextAfterLocaleChange());
                         mShortcutResourcesFirstLoadDone = true;
                     }
                 }
@@ -328,24 +316,53 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
     }
 
     /**
-     * Retrieves all the available shortcut resource values.
+     * Creates or updates the recents root for every user. This method will also be called when the
+     * locale or language of the device is changed.
      */
+    public void createOrUpdateRecentsRoot() {
+        final String title = mContext.getString(getRes(R.string.root_recent));
+        List<UserId> userIds = new ArrayList<>(getUserIds());
+        for (UserId userId : userIds) {
+            RootInfo recentRoot = createOrGetRecentsRoot(userId);
+            recentRoot.title = title;
+            // Nothing else about the root should ever change.
+            assert (recentRoot.authority == null);
+            assert (recentRoot.rootId == null);
+            assert (recentRoot.derivedIcon == getRes(R.drawable.ic_root_recent));
+            assert (recentRoot.derivedType == RootInfo.TYPE_RECENTS);
+            assert (recentRoot.flags == (Root.FLAG_LOCAL_ONLY | Root.FLAG_SUPPORTS_IS_CHILD));
+            assert (recentRoot.availableBytes == -1);
+        }
+    }
+
+    /**
+     * If the locale has changed, then we want to ensure that the next set of shortcut resources
+     * fetch the new localised strings.
+     */
+    private Context getContextAfterLocaleChange() {
+        final Configuration conf = mContext.getResources().getConfiguration();
+        conf.setLocale(Locale.getDefault());
+        mContext.getResources().updateConfiguration(conf, null);
+        return mContext.createConfigurationContext(conf);
+    }
+
+    /** Retrieves all the available shortcut resource values. */
     @VisibleForTesting
-    public Collection<ShortcutResourceValues> getShortcutResources() {
+    public List<ShortcutResourceValues> getShortcutResources(Context context) {
         List<ShortcutResourceValues> shortcutResources = new ArrayList<>();
         // Get values from the RRO.
         List<String> authorities = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_authorities));
+                context.getResources().getStringArray(R.array.shortcut_authorities));
         List<String> rootIds = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_root_ids));
+                context.getResources().getStringArray(R.array.shortcut_root_ids));
         List<String> parentDocIds = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
+                context.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
         List<String> folderTitles = List.of(
-                mContext.getResources().getStringArray(R.array.shortcut_titles));
-        List<String> localizedTitles =
-                List.of(mContext.getResources().getStringArray(R.array.shortcut_localized_titles));
+                context.getResources().getStringArray(R.array.shortcut_titles));
+        List<String> localizedTitles = List.of(
+                context.getResources().getStringArray(R.array.shortcut_localized_titles));
         TypedArray shortcutIcons =
-                mContext.getResources().obtainTypedArray(R.array.shortcut_icons);
+                context.getResources().obtainTypedArray(R.array.shortcut_icons);
 
         int shortcutArraySize = authorities.size();
         if (shortcutArraySize != rootIds.size()
@@ -370,6 +387,16 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
             shortcutResources.add(shortcutResource);
         }
         return shortcutResources;
+    }
+
+    /**
+     * Resets the mShortcutResourcesFirstLoadDone value to false to force a reload of the shortcut
+     * resources the next time we call updateAsync().
+     */
+    public void resetShortcutResourcesFirstLoadDone() {
+        synchronized (mLock) {
+            mShortcutResourcesFirstLoadDone = false;
+        }
     }
 
     void setBootCompletedResult(PendingResult result) {

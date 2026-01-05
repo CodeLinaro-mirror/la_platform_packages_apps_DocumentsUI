@@ -72,6 +72,8 @@ public class TestProvidersAccess implements ProvidersAccess {
             getRes(R.drawable.ic_root_homescreen);
     private static final int LIVE_IMAGES_ICON_RES_ID = 12;
     private static final int TEST_ICON_RES_ID = 15;
+    // Some DocumentsProviders including DOWNLOADS have Root DOCUMENT_ID == ROOT_ID
+    private static final String DOWNLOADS_DOC_ID = Providers.ROOT_ID_DOWNLOADS;
     private static final String HOME_SCREEN_DOC_ID = "primary%3AHome screen";
     public static final String LIVE_IMAGES_DOC_ID = "images_root%3ALive images";
     public static final String TEST_SHORTCUT_DOC_ID = "pepper%3ATest Shortcut";
@@ -95,6 +97,7 @@ public class TestProvidersAccess implements ProvidersAccess {
                 | Root.FLAG_SUPPORTS_RECENTS;
         // This DocumentsProvider supports limiting the results returned
         DOWNLOADS.queryArgs = ContentResolver.QUERY_ARG_LIMIT;
+        DOWNLOADS.documentId = DOWNLOADS_DOC_ID;
 
         HOME = new RootInfo();
         HOME.userId = userId;
@@ -284,6 +287,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             DOWNLOADS.flags = Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_SUPPORTS_RECENTS;
+            DOWNLOADS.documentId = DOWNLOADS_DOC_ID;
 
             HOME = new RootInfo();
             HOME.userId = userId;
@@ -353,6 +357,7 @@ public class TestProvidersAccess implements ProvidersAccess {
             DOWNLOADS.flags = Root.FLAG_LOCAL_ONLY
                     | Root.FLAG_SUPPORTS_CREATE
                     | Root.FLAG_SUPPORTS_RECENTS;
+            DOWNLOADS.documentId = DOWNLOADS_DOC_ID;
 
             HOME = new RootInfo();
             HOME.userId = userId;

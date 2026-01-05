@@ -55,14 +55,14 @@ class FolderLoader(
     context: Context,
     mimeTypeLookup: Lookup<String, String>,
     contentLock: ContentLock,
-    private val mRoot: RootInfo,
-    private val mListedDir: DocumentInfo?,
-    private val mOptions: QueryOptions,
-    private val mSortModel: SortModel,
+    private val root: RootInfo,
+    private val listedDir: DocumentInfo?,
+    private val options: QueryOptions,
+    private val sortModel: SortModel,
 ) : BaseFileLoader(context, mimeTypeLookup) {
 
     // An observer registered on the cursor to force a reload if the cursor reports a change.
-    private val mObserver = LockingContentObserver(contentLock, this::onContentChanged)
+    private val observer = LockingContentObserver(contentLock, this::onContentChanged)
 
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
@@ -81,25 +81,23 @@ class FolderLoader(
             }
             cancelNotifier = CancellationSignal()
         }
-        val rejectBeforeTimestamp = mOptions.getRejectBeforeTimestamp()
+        val rejectBeforeTimestamp = options.getRejectBeforeTimestamp()
         val folderChildrenUri =
-            if (mListedDir == null) {
-                DocumentsContract.buildChildDocumentsUri(mRoot.authority, mRoot.documentId)
+            if (listedDir == null) {
+                DocumentsContract.buildChildDocumentsUri(root.authority, root.documentId)
             } else {
-                DocumentsContract.buildChildDocumentsUri(
-                    mListedDir.authority,
-                    mListedDir.documentId,
-                )
+                DocumentsContract.buildChildDocumentsUri(listedDir.authority, listedDir.documentId)
             }
         val result = DirectoryResult()
+        result.queryOptions = options
         // If we are listing an archive, in the current approach, we cache the client as part of
         // DirectoryResult. This way, when the loader is closed, we can close the archive client.
-        if (mListedDir != null && mListedDir.isInArchive) {
+        if (listedDir != null && listedDir.isInArchive) {
             result.setClient(openArchive(folderChildrenUri))
         }
         var cursor: Cursor? = null
         try {
-            cursor = queryLocation(mRoot, folderChildrenUri, mOptions.otherQueryArgs)
+            cursor = queryLocation(root, folderChildrenUri, options.otherQueryArgs)
         } catch (e: Exception) {
             result.exception = e
         } finally {
@@ -109,18 +107,17 @@ class FolderLoader(
             cursor = emptyCursor()
             result.setClient(null)
         }
-        cursor.registerContentObserver(mObserver)
+        cursor.registerContentObserver(observer)
 
         val filteredCursor = FilteringCursorWrapper(cursor)
-        filteredCursor.filterHiddenFiles(mOptions.showHidden)
-        filteredCursor.filterMimes(computeAcceptableMimeTypes(mOptions), null)
+        filteredCursor.filterHiddenFiles(options.showHidden)
+        filteredCursor.filterMimes(computeAcceptableMimeTypes(options), null)
         if (rejectBeforeTimestamp > 0L) {
             filteredCursor.filterLastModified(rejectBeforeTimestamp)
         }
-        // TODO(b:380945065): Add filtering by category, such as images, audio, video.
-        val sortedCursor = mSortModel.sortCursor(filteredCursor, mimeTypeLookup)
+        val sortedCursor = sortModel.sortCursor(filteredCursor, mimeTypeLookup)
 
-        result.doc = mListedDir ?: DocumentInfo()
+        result.doc = listedDir ?: DocumentInfo()
         result.cursor = sortedCursor
         return result
     }
@@ -136,7 +133,7 @@ class FolderLoader(
         // loader results are closed.
         var client: ContentProviderClient? = null
         try {
-            val resolver = mRoot.userId.getContentResolver(context)
+            val resolver = root.userId.getContentResolver(context)
             client = resolver.acquireUnstableContentProviderClient(folderChildrenUri.authority!!)
             ArchivesProvider.acquireArchive(client, folderChildrenUri)
         } catch (e: RemoteException) {

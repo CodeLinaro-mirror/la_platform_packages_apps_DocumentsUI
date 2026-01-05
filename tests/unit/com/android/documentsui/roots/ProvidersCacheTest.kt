@@ -42,6 +42,7 @@ class ProvidersCacheTest {
     @get:Rule val setFlags = OverrideFlagsRule()
 
     @Mock private lateinit var context: Context
+    @Mock private lateinit var context2: Context
     lateinit var providers: ProvidersCache
 
     @Mock private lateinit var resources: Resources
@@ -101,7 +102,7 @@ class ProvidersCacheTest {
                 )
             )
 
-        assertEquals(expected, providers.getShortcutResources())
+        assertEquals(expected, providers.getShortcutResources(context))
     }
 
     // TODO: b/446064228 - Test flag dependency by returning the async task in updateAsync() and
@@ -140,7 +141,7 @@ class ProvidersCacheTest {
 
         val expected: List<ShortcutResourceValues> = listOf(shortcutResources1, shortcutResources2)
 
-        assertEquals(expected, providers.getShortcutResources())
+        assertEquals(expected, providers.getShortcutResources(context))
     }
 
     // TODO: b/446064228 - Test flag dependency by returning the async task in updateAsync() and
@@ -161,7 +162,7 @@ class ProvidersCacheTest {
 
         val expected: List<ShortcutResourceValues> = listOf()
 
-        assertEquals(expected, providers.getShortcutResources())
+        assertEquals(expected, providers.getShortcutResources(context))
     }
 
     @Test
@@ -172,9 +173,9 @@ class ProvidersCacheTest {
                 authority = TEST_AUTHORITY
                 rootId = TEST_ROOT
             }
-        val roots: List<RootInfo?>? = listOf(docsProviderRoot)
+        val roots: List<RootInfo?> = listOf(docsProviderRoot)
 
-        val shortcutResources: Collection<ShortcutResourceValues> =
+        val shortcutResources: List<ShortcutResourceValues> =
             listOf(
                 ShortcutResourceValues(
                     TEST_AUTHORITY,
@@ -189,7 +190,7 @@ class ProvidersCacheTest {
         providers.setRoots(roots)
         providers.setShortcutResources(shortcutResources)
 
-        val expected: Collection<ShortcutInfo> =
+        val expected: List<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
                     docsProviderRoot,
@@ -216,11 +217,11 @@ class ProvidersCacheTest {
                 authority = TEST_AUTHORITY
                 rootId = TEST_ROOT
             }
-        val roots: List<RootInfo?>? = listOf(docsProviderRoot1, docsProviderRoot2)
+        val roots: List<RootInfo?> = listOf(docsProviderRoot1, docsProviderRoot2)
 
         // This shortcut resource should have a different authority/rootId so that the
         // parent documents provider root cannot be matched.
-        val shortcutResources: Collection<ShortcutResourceValues> =
+        val shortcutResources: List<ShortcutResourceValues> =
             listOf(
                 ShortcutResourceValues(
                     TEST_AUTHORITY,
@@ -235,7 +236,7 @@ class ProvidersCacheTest {
         providers.setRoots(roots)
         providers.setShortcutResources(shortcutResources)
 
-        val expected1: Collection<ShortcutInfo> =
+        val expected1: List<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
                     docsProviderRoot1,
@@ -247,7 +248,7 @@ class ProvidersCacheTest {
             )
         assertEquals(expected1, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
 
-        val expected2: Collection<ShortcutInfo> =
+        val expected2: List<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
                     docsProviderRoot2,
@@ -268,11 +269,11 @@ class ProvidersCacheTest {
                 authority = TEST_AUTHORITY
                 rootId = TEST_ROOT
             }
-        val roots: List<RootInfo?>? = listOf(docsProviderRoot)
+        val roots: List<RootInfo?> = listOf(docsProviderRoot)
 
         // This shortcut resource should have a different authority/rootId so that the
         // parent documents provider root cannot be matched.
-        val shortcutResources: Collection<ShortcutResourceValues> =
+        val shortcutResources: List<ShortcutResourceValues> =
             listOf(
                 ShortcutResourceValues(
                     "diff authority",
@@ -288,7 +289,7 @@ class ProvidersCacheTest {
         providers.setRoots(roots)
         providers.setShortcutResources(shortcutResources)
 
-        val expected: Collection<ShortcutInfo> = listOf()
+        val expected: List<ShortcutInfo> = listOf()
         // Load the shortcuts, should expect empty collection due to no matching parent
         // documents provider root.
         assertEquals(expected, providers.loadShortcutsForUser(UserId.DEFAULT_USER))
@@ -302,9 +303,9 @@ class ProvidersCacheTest {
                 authority = TEST_AUTHORITY
                 rootId = TEST_ROOT
             }
-        val roots: List<RootInfo?>? = listOf(docsProviderRoot)
+        val roots: List<RootInfo?> = listOf(docsProviderRoot)
 
-        val shortcutResources: Collection<ShortcutResourceValues> =
+        val shortcutResources: List<ShortcutResourceValues> =
             listOf(
                 ShortcutResourceValues(
                     TEST_AUTHORITY,
@@ -319,7 +320,7 @@ class ProvidersCacheTest {
         providers.setRoots(roots)
         providers.setShortcutResources(shortcutResources)
 
-        val expected: Collection<ShortcutInfo> =
+        val expected: List<ShortcutInfo> =
             listOf(
                 ShortcutInfo(
                     docsProviderRoot,

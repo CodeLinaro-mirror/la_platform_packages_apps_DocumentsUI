@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"Tidak dapat menghapus beberapa dokumen"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Tidak dapat membagikan lebih dari <xliff:g id="COUNT">%1$d</xliff:g> file"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Tindakan tidak diizinkan"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Tindakan tidak diizinkan"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Buka dengan…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Tidak ada aplikasi yang didukung terinstal. Coba instal aplikasi dari Google Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Telusuri Google Play Store"</string>
@@ -197,38 +196,32 @@
       <item quantity="other">File ini tidak disalin: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini tidak disalin: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{File ini tidak disalin:}other{File ini tidak disalin:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="other">File ini tidak dikompresi: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini tidak dikompresi: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{File ini tidak di-zip:}other{File ini tidak di-zip:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="other">File ini tidak diekstrak: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini tidak diekstrak: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{File ini tidak diekstrak:}other{File ini tidak diekstrak:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="other">File ini tidak dipindahkan: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini tidak dipindahkan: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{File ini tidak dipindahkan:}other{File ini tidak dipindahkan:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="other">File ini tidak dihapus: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini tidak dihapus: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{File ini tidak dihapus:}other{File ini tidak dihapus:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">File ini telah dikonversi ke format lain: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini telah dikonversi ke format lain: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{File ini diubah ke format lain:}other{File ini diubah ke format lain:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="other">Menyalin <xliff:g id="COUNT_1">%1$d</xliff:g> item ke papan klip.</item>
       <item quantity="one">Menyalin <xliff:g id="COUNT_0">%1$d</xliff:g> item ke papan klip.</item>
@@ -267,11 +260,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Dihapus"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Di-zip"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Diekstrak"</string>
+    <string name="trash_completed" msgid="5527806383436622529">"Di sampah"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Dipulihkan"</string>
     <string name="copy_failed" msgid="3700193913993844675">"Tidak dapat menyalin"</string>
     <string name="move_failed" msgid="7692364307225994220">"Tidak dapat memindahkan"</string>
     <string name="delete_failed" msgid="2642684566325252513">"Tidak dapat menghapus"</string>
     <string name="compress_failed" msgid="7397502181042157261">"Tidak dapat membuat zip"</string>
     <string name="extract_failed" msgid="8372397499452831323">"Tidak dapat mengekstrak"</string>
+    <string name="trash_failed" msgid="4655759218201171408">"Gagal dipindahkan ke sampah"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Tidak dapat memulihkan"</string>
     <string name="expand_label" msgid="5683357671239615207">"Luaskan"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Ciutkan"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"Beri <xliff:g id="APPNAME"><b>^1</b></xliff:g> akses ke direktori <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> di <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
@@ -315,12 +312,9 @@
     <string name="sign_in" msgid="6253762676723505592">"Login"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"arsip<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Arsip"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"Ganti file?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"File bernama \"<xliff:g id="NAME">%1$s</xliff:g>\" sudah ada."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"Ganti"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Lanjutkan di background"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> dipilih</item>
@@ -346,24 +340,21 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Dokumen"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"File besar"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Minggu ini"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"Nama"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"Nama"</string>
     <string name="preview_file" msgid="4056622696305432343">"Pratinjau file <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Lihat pratinjau file kerja <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Pratinjau file <xliff:g id="PROFILE">%1$s</xliff:g> <xliff:g id="FILENAME">%2$s</xliff:g>"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Cari file di aplikasi lain"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Anonim"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Gunakan folder ini"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"Izinkan <xliff:g id="APPNAME">%1$s</xliff:g> mengakses folder?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"Izinkan akses untuk \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\"."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Tidak dapat menggunakan folder ini"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Untuk melindungi privasi, pilih folder lain"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Buat folder baru"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Telusuri perangkat ini"</string>
+    <string name="search_results" msgid="7662182646512984171">"Hasil penelusuran"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Hapus teks"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Folder root"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"Di mana saja"</string>
@@ -399,6 +390,12 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Kosongkan sampah?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Tindakan ini tidak dapat diurungkan, dan file tidak akan dapat dipulihkan lagi."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Kosongkan sampah"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
+    <skip />
+    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
     <skip />
 </resources>

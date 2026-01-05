@@ -16,10 +16,9 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.base.DocumentInfo.getCursorInt;
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.database.Cursor;
@@ -30,10 +29,10 @@ import androidx.recyclerview.selection.SelectionTracker.SelectionObserver;
 
 import com.android.documentsui.MenuManager;
 import com.android.documentsui.archives.ArchivesProvider;
-import com.android.documentsui.base.MimeTypes;
-import com.android.documentsui.roots.RootCursorWrapper;
+import com.android.documentsui.base.DocumentInfo;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -52,6 +51,7 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     private final Function<String, Cursor> mDocFinder;
     private final Function<String, Integer> mCountOpeningApps;
+    private final Function<DocumentInfo, Boolean> mIsContentAvailable;
 
     private int mDirectoryCount = 0;
     private int mFileCount = 0;
@@ -75,23 +75,29 @@ public class SelectionMetadata extends SelectionObserver<String>
     private int mUnsupportedRestoreCount = 0;
 
     private boolean mSupportsSettings = false;
+    private int mUnavailableContentCount = 0;
 
     // For each selected file, remember the number of installed apps that support opening it. We
     // need this information to respond to hasMultipleOpeningApps.
     HashMap<String, Integer> mOpeningAppCountForFile = new HashMap<>();
+
+    // Number of files for each MIME type in the current selection.
+    HashMap<String, Integer> mMimeTypeCounts = new HashMap<>();
 
     /**
      * Keeps track of different properties about the current selection.
      *
      * @param docFinder A function that returns a cursor for the given document ID.
      * @param countOpeningApps A function that returns the number of installed apps that support
-     *                         opening a file given its document ID.
+     *     opening a file given its document ID.
      */
     public SelectionMetadata(
             Function<String, Cursor> docFinder,
-            Function<String, Integer> countOpeningApps) {
+            Function<String, Integer> countOpeningApps,
+            Function<DocumentInfo, Boolean> isContentAvailable) {
         mDocFinder = docFinder;
         mCountOpeningApps = countOpeningApps;
+        mIsContentAvailable = isContentAvailable;
     }
 
     @Override
@@ -102,15 +108,26 @@ public class SelectionMetadata extends SelectionObserver<String>
                     + ". Ignoring state changed event.");
             return;
         }
+        DocumentInfo doc = DocumentInfo.fromDirectoryCursor(cursor);
 
         final int delta = selected ? 1 : -1;
 
-        final String mimeType = getCursorString(cursor, Document.COLUMN_MIME_TYPE);
-        if (MimeTypes.isDirectoryType(mimeType)) {
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            if (doc.mimeType != null) {
+                int count = mMimeTypeCounts.getOrDefault(doc.mimeType, 0);
+                count += delta;
+                if (count > 0) {
+                    mMimeTypeCounts.put(doc.mimeType, count);
+                } else {
+                    mMimeTypeCounts.remove(doc.mimeType);
+                }
+            }
+        }
+        if (doc.isDirectory()) {
             mDirectoryCount += delta;
         } else {
             mFileCount += delta;
-            if (ArchivesProvider.isSupportedArchiveType(mimeType)) {
+            if (ArchivesProvider.isSupportedArchiveType(doc.mimeType)) {
                 mArchiveCount += delta;
             }
             if (isDesktopFileHandlingFlagEnabled()) {
@@ -124,34 +141,35 @@ public class SelectionMetadata extends SelectionObserver<String>
             }
         }
 
-        final int docFlags = getCursorInt(cursor, Document.COLUMN_FLAGS);
-        if ((docFlags & Document.FLAG_PARTIAL) != 0) {
+        if (doc.isPartial()) {
             mPartialCount += delta;
         }
-        if ((docFlags & Document.FLAG_DIR_SUPPORTS_CREATE) != 0) {
+        if (doc.isCreateSupported()) {
             mWritableDirectoryCount += delta;
         }
-        if ((docFlags & FLAG_CAN_DELETE) == 0) {
+        if (!doc.isDeleteSupported()) {
             mNoDeleteCount += delta;
         }
-        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_TRASH) == 0) {
+        if (isTrashFlowEnabled() && !doc.isTrashSupported()) {
             mUnsupportedTrashCount += delta;
         }
-        if (isTrashFlowEnabled() && (docFlags & Document.FLAG_SUPPORTS_RESTORE) == 0) {
+        if (isTrashFlowEnabled() && !doc.isRestoreSupported()) {
             mUnsupportedRestoreCount += delta;
         }
-        if ((docFlags & Document.FLAG_SUPPORTS_RENAME) == 0) {
+        if (!doc.isRenameSupported()) {
             mNoRenameCount += delta;
         }
-        if ((docFlags & Document.FLAG_PARTIAL) != 0) {
+        if (doc.isPartial()) {
             mPartialCount += delta;
         }
 
-        mSupportsSettings = (docFlags & Document.FLAG_SUPPORTS_SETTINGS) != 0 && size() == 1;
+        mSupportsSettings = doc.isSettingsSupported() && size() == 1;
 
-        final String authority = getCursorString(cursor, RootCursorWrapper.COLUMN_AUTHORITY);
-        if (ArchivesProvider.AUTHORITY.equals(authority)) {
+        if (ArchivesProvider.AUTHORITY.equals(doc.authority)) {
             mInArchiveCount += delta;
+        }
+        if (!mIsContentAvailable.apply(doc)) {
+            mUnavailableContentCount += delta;
         }
     }
 
@@ -166,7 +184,9 @@ public class SelectionMetadata extends SelectionObserver<String>
         mNoRenameCount = 0;
         mInArchiveCount = 0;
         mArchiveCount = 0;
+        mMimeTypeCounts.clear();
         mUnsupportedRestoreCount = 0;
+        mUnavailableContentCount = 0;
     }
 
     @Override
@@ -192,6 +212,11 @@ public class SelectionMetadata extends SelectionObserver<String>
     @Override
     public boolean containsFilesInArchive() {
         return mInArchiveCount > 0;
+    }
+
+    @Override
+    public boolean containsDocumentsWithUnavailableContent() {
+        return mUnavailableContentCount > 0;
     }
 
     @Override
@@ -260,5 +285,10 @@ public class SelectionMetadata extends SelectionObserver<String>
                 && (mArchiveCount == 0 || !isZipNgFlagEnabled())
                 && (mInArchiveCount == 0 || isZipNgFlagEnabled())
                 && !canRestore();
+    }
+
+    @Override
+    public Set<String> mimeTypes() {
+        return mMimeTypeCounts.keySet();
     }
 }

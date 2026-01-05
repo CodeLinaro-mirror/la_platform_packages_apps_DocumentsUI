@@ -18,12 +18,8 @@ package com.android.documentsui;
 
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 
-import android.provider.DocumentsContract;
-
-import androidx.annotation.Nullable;
-
+import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
-import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
 
 /**
@@ -32,75 +28,62 @@ import com.android.documentsui.base.State;
  */
 public abstract class ActivityConfig {
 
-    // TODO(b/458129770): Delete this and use Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY instead
-    // when it exists in the SDK.
-    public static final int SYNC_STATE_FLAG_AVAILABLE_LOCALLY = 1 << 0;
-
     /**
      * Subtly different from isDocumentEnabled. The reason may be illuminated as follows. A folder
      * is enabled such that it may be double clicked, even in settings when the folder itself cannot
      * be selected. This may also be true of container types.
      */
-    public boolean canSelectType(
-            String docMimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
+    public boolean canSelectType(DocumentInfo doc, State state, boolean isOnline) {
         return true;
     }
 
     /** Returns whether a document is enabled. */
-    public boolean isDocumentEnabled(
-            String docMimeType,
-            int docFlags,
-            @Nullable Integer syncStateFlags,
-            State state,
-            boolean isOnline) {
+    public boolean isDocumentEnabled(DocumentInfo doc, State state, boolean isOnline) {
+        if (!isCloudFeaturesFlagEnabled()) {
+            return true;
+        }
+        if (doc.isDirectory()) {
+            // Directories are always enabled.
+            return true;
+        }
+        return isContentAvailable(doc, state, isOnline);
+    }
+
+    /**
+     * Returns whether the document has content available, either locally or that can be downloaded.
+     * Content is assumed to always be available if the system is online or the document is not on a
+     * root that has limited functionality when offline.
+     *
+     * <p>However, is this is not the case, then files are only available if their content is
+     * available locally and directories are assumed unavailable because they may contain files that
+     * don't have available content.
+     */
+    public boolean isContentAvailable(DocumentInfo doc, State state, boolean isOnline) {
         if (!isCloudFeaturesFlagEnabled()) {
             return true;
         }
 
-        if (MimeTypes.isDirectoryType(docMimeType)) {
-            // Directories don't have content, so they are enabled.
-            return true;
-        }
-
-        if ((docFlags & DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) != 0) {
-            return true;
-        }
-
         if (!state.stack.getRoot().hasLimitedFunctionalityWhenOffline()) {
-            // Documents on roots that are not affected by the online status should always be
-            // enabled.
+            // Documents on roots that are not affected by the online status are always available.
             return true;
         }
 
         if (isOnline) {
-            // The content should be downloadable, so it is enabled.
+            // The content should be downloadable and thus available.
             return true;
         }
 
-        if (syncStateFlags == null) {
-            // When the availability is unknown, we default to available and thus return true.
-            return true;
+        if (doc.isDirectory()) {
+            // Directories may contain files that don't have available content.
+            return false;
         }
 
-        // TODO(b/458129770): Update to using Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY when it
-        // exists in the SDK.
-        if ((syncStateFlags & SYNC_STATE_FLAG_AVAILABLE_LOCALLY) != 0) {
-            // The file's content is available locally, so it is enabled.
-            return true;
-        }
-
-        // The file is definitely unavailable locally, so it should be disabled.
-        return false;
+        return doc.isContentAvailableLocally();
     }
 
     /**
-     * When managed mode is enabled, there will be special UI behaviors:
-     * 1) active downloads will be visible in the UI.
-     * 2) Android/[data|obb|sandbox] directories will not be hidden.
+     * When managed mode is enabled, there will be special UI behaviors: 1) active downloads will be
+     * visible in the UI. 2) Android/[data|obb|sandbox] directories will not be hidden.
      */
     public boolean managedModeEnabled(DocumentStack stack) {
         return false;

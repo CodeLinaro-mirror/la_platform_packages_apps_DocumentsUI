@@ -19,6 +19,11 @@ package com.android.documentsui;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
+import static com.android.documentsui.testing.IntentAsserts.assertHasData;
+import static com.android.documentsui.testing.IntentAsserts.assertHasExtra;
+import static com.android.documentsui.testing.IntentAsserts.assertTargetsComponent;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -27,6 +32,14 @@ import static junit.framework.Assert.fail;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Intent;
@@ -34,12 +47,20 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsDisabled;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
 
+import androidx.core.util.Preconditions;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.test.filters.MediumTest;
 
+import com.android.documentsui.base.DebugFlags;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventListener;
@@ -48,6 +69,9 @@ import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.files.LauncherActivity;
+import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
+import com.android.documentsui.flags.Flags;
+import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
@@ -55,12 +79,15 @@ import com.android.documentsui.testing.DocumentStackAsserts;
 import com.android.documentsui.testing.Roots;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestEventHandler;
+import com.android.documentsui.testing.TestFeatures;
+import com.android.documentsui.testing.TestPeekViewManager;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.UserManagers;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.android.collect.Lists;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,6 +95,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,10 +116,18 @@ public class AbstractActionHandlerTest {
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
+    // TODO(b/433858983): Remove CheckFlagsRule once peek is overridable in FlagUtils.
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+
     private final TestConfigStore mTestConfigStore = new TestConfigStore();
     private TestActivity mActivity;
     private TestEnv mEnv;
     private AbstractActionHandler<TestActivity> mHandler;
+    private TestPeekViewManager mPeekViewManager;
+    private TestFeatures mFeatures;
+    @Mock private Runnable mMockCloseSelectionBar;
+    private TestActionModeAddons mActionModeAddons;
 
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
@@ -106,46 +143,55 @@ public class AbstractActionHandlerTest {
 
     @Before
     public void setUp() {
-        mEnv = TestEnv.create();
+        MockitoAnnotations.openMocks(this);
+        mFeatures = new TestFeatures();
+        mEnv = TestEnv.create(mFeatures);
         mActivity = TestActivity.create(mEnv);
         mActivity.userManager = UserManagers.create();
         mEnv.state.configStore = mTestConfigStore;
+        mPeekViewManager = isUsePeekPreviewFlagEnabled() ? new TestPeekViewManager() : null;
+        mActionModeAddons = new TestActionModeAddons();
 
         isPrivateSpaceEnabled = SdkLevel.isAtLeastS() && isPrivateSpaceEnabled;
         if (isPrivateSpaceEnabled) {
             mTestConfigStore.enablePrivateSpaceInPhotoPicker();
             mEnv.state.canForwardToProfileIdMap.put(TestProvidersAccess.USER_ID, true);
         }
-        mHandler = new AbstractActionHandler<TestActivity>(
-                mActivity,
-                mEnv.state,
-                mEnv.providers,
-                mEnv.docs,
-                mEnv.searchViewManager,
-                mEnv::lookupExecutor,
-                mEnv.injector) {
+        mHandler =
+                new AbstractActionHandler<TestActivity>(
+                        mActivity,
+                        mEnv.state,
+                        mEnv.providers,
+                        mEnv.docs,
+                        mEnv.searchViewManager,
+                        mEnv::lookupExecutor,
+                        mEnv.injector,
+                        mPeekViewManager,
+                        mActionModeAddons,
+                        mMockCloseSelectionBar,
+                        null) {
 
-            @Override
-            public void openRoot(RootInfo root) {
-                throw new UnsupportedOperationException();
-            }
+                    @Override
+                    public void openRoot(RootInfo root) {
+                        throw new UnsupportedOperationException();
+                    }
 
-            @Override
-            public boolean openItem(
-                    ItemDetails<String> doc, @ViewType int type, @ViewType int fallback) {
-                throw new UnsupportedOperationException();
-            }
+                    @Override
+                    public boolean openItem(
+                            ItemDetails<String> doc, @ViewType int type, @ViewType int fallback) {
+                        throw new UnsupportedOperationException();
+                    }
 
-            @Override
-            public void initLocation(Intent intent) {
-                throw new UnsupportedOperationException();
-            }
+                    @Override
+                    public void initLocation(Intent intent) {
+                        throw new UnsupportedOperationException();
+                    }
 
-            @Override
-            protected void launchToDefaultLocation() {
-                throw new UnsupportedOperationException();
-            }
-        };
+                    @Override
+                    protected void launchToDefaultLocation() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
         mHandler.reset(new ContentLock());
     }
 
@@ -646,5 +692,155 @@ public class AbstractActionHandlerTest {
         assertFalse(mHandler.blockOperationForShortcuts(
                 uris, TestProvidersAccess.OtherUser.USER_ID));
         mEnv.dialogs.assertOperationNotAllowedForShortcutsNotShown();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3})
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsEnabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    public void testShowPeek() throws Exception {
+        mHandler.showPreview(TestEnv.FILE_GIF);
+        // The inspector activity is not called.
+        mActivity.startActivity.assertNotCalled();
+        mPeekViewManager.getPeekDocument().assertCalled();
+        mPeekViewManager.getPeekDocument().assertLastArgument(TestEnv.FILE_GIF);
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
+    public void testShowInspector() throws Exception {
+        mHandler.showPreview(TestEnv.FILE_GIF);
+
+        mActivity.startActivity.assertCalled();
+        Intent intent = mActivity.startActivity.getLastValue();
+        assertTargetsComponent(intent, InspectorActivity.class);
+        assertHasData(intent, TestEnv.FILE_GIF.derivedUri);
+
+        // should only send this under especial circumstances. See test below.
+        assertFalse(intent.getExtras().containsKey(Intent.EXTRA_TITLE));
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @EnableFlags({Flags.FLAG_GET_INFO_DIALOG, Flags.FLAG_USE_MATERIAL3})
+    public void testShowGetInfoDialog() throws Exception {
+        // Retrieve the mock FragmentManager created in setUp.
+        FragmentManager mockFragmentManager = mActivity.getSupportFragmentManager();
+        FragmentTransaction mockFragmentTransaction = mock(FragmentTransaction.class);
+
+        doReturn(mockFragmentTransaction).when(mockFragmentManager).beginTransaction();
+        doReturn(mockFragmentTransaction).when(mockFragmentTransaction).add(any(), anyString());
+        doReturn(null).when(mockFragmentManager).findFragmentByTag(anyString());
+
+        mHandler.showPreview(TestEnv.FILE_GIF);
+
+        mActivity.startActivity.assertNotCalled();
+        verify(mockFragmentTransaction).commit();
+        verify(mockFragmentTransaction).add(isA(GetInfoDialogFragment.class), eq("GetInfoDialog"));
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
+    public void testShowInspector_DebugDisabled() throws Exception {
+        mFeatures.debugSupport = false;
+
+        mHandler.showPreview(TestEnv.FILE_GIF);
+        Intent intent = mActivity.startActivity.getLastValue();
+
+        assertHasExtra(intent, Shared.EXTRA_SHOW_DEBUG);
+        assertFalse(intent.getExtras().getBoolean(Shared.EXTRA_SHOW_DEBUG));
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
+    public void testShowInspector_DebugEnabled() throws Exception {
+        mFeatures.debugSupport = true;
+        DebugFlags.setDocumentDetailsEnabled(true);
+
+        mHandler.showPreview(TestEnv.FILE_GIF);
+        Intent intent = mActivity.startActivity.getLastValue();
+
+        assertHasExtra(intent, Shared.EXTRA_SHOW_DEBUG);
+        Assert.assertTrue(intent.getExtras().getBoolean(Shared.EXTRA_SHOW_DEBUG));
+        DebugFlags.setDocumentDetailsEnabled(false);
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
+    public void testShowInspector_OverridesRootDocumentName() throws Exception {
+        mActivity.currentRoot = TestProvidersAccess.PICKLES;
+        mEnv.populateStack();
+
+        // Verify test setup is correct, but not an assert related to the logic of our test.
+        Preconditions.checkState(mEnv.state.stack.size() == 1);
+        Preconditions.checkNotNull(mEnv.state.stack.peek());
+
+        DocumentInfo rootDoc = mEnv.state.stack.peek();
+        rootDoc.displayName = "poodles";
+
+        mHandler.showPreview(rootDoc);
+        Intent intent = mActivity.startActivity.getLastValue();
+        assertEquals(
+                TestProvidersAccess.PICKLES.title,
+                intent.getExtras().getString(Intent.EXTRA_TITLE));
+    }
+
+    @Test
+    // TODO(b/433858983): Change to DisableFlags once peek is overridable in FlagUtils.
+    @RequiresFlagsDisabled({Flags.FLAG_USE_PEEK_PREVIEW_RO})
+    @DisableFlags({Flags.FLAG_GET_INFO_DIALOG})
+    public void testShowInspector_OverridesRootDocumentNameX() throws Exception {
+        mActivity.currentRoot = TestProvidersAccess.PICKLES;
+        mEnv.populateStack();
+        mEnv.state.stack.push(TestEnv.FOLDER_2);
+
+        // Verify test setup is correct, but not an assert related to the logic of our test.
+        Preconditions.checkState(mEnv.state.stack.size() == 2);
+        Preconditions.checkNotNull(mEnv.state.stack.peek());
+
+        DocumentInfo rootDoc = mEnv.state.stack.peek();
+        rootDoc.displayName = "poodles";
+
+        mHandler.showPreview(rootDoc);
+        Intent intent = mActivity.startActivity.getLastValue();
+        assertFalse(intent.getExtras().containsKey(Intent.EXTRA_TITLE));
+    }
+
+    @Test
+    public void testShowDeleteDialog_NoSelection() {
+        mEnv.populateStack();
+
+        mEnv.selectionMgr.clearSelection();
+        mHandler.showDeleteDialog();
+        mActivity.startService.assertNotCalled();
+        assertFalse(mActionModeAddons.finishActionModeCalled);
+    }
+
+    @Test
+    public void testDeleteSelectedDocuments() {
+        mEnv.populateStack();
+
+        mEnv.selectionMgr.clearSelection();
+        mEnv.selectDocument(TestEnv.FILE_PNG);
+
+        List<DocumentInfo> docs = new ArrayList<>();
+        docs.add(TestEnv.FILE_PNG);
+        mHandler.deleteSelectedDocuments(docs, mEnv.state.stack.peek());
+
+        mActivity.startService.assertCalled();
+        if (isUseMaterial3FlagEnabled()) {
+            verify(mMockCloseSelectionBar, times(1)).run();
+        } else {
+            Assert.assertTrue(mActionModeAddons.finishActionModeCalled);
+        }
     }
 }

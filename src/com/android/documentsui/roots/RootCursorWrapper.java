@@ -165,6 +165,10 @@ public class RootCursorWrapper extends AbstractCursor {
 
     @Override
     public boolean isNull(int column) {
+        if (column == mAuthorityIndex || column == mRootIdIndex || column == mUserIdIndex) {
+            // These columns are added by this class.
+            return false;
+        }
         return mCursor.isNull(column);
     }
 

@@ -132,8 +132,7 @@
     <string name="toast_failed_delete" msgid="3453846588205817591">"No es posible borrar algunos documentos"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"No puedes compartir más de <xliff:g id="COUNT">%1$d</xliff:g> archivos"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acción no permitida"</string>
-    <!-- no translation found for toast_op_not_allowed_for_shortcuts (8644996352874874167) -->
-    <skip />
+    <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Acción no permitida"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Abrir con…"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"No hay apps compatibles instaladas. Instala una desde Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buscar en Play Store"</string>
@@ -203,43 +202,37 @@
       <item quantity="other">No se copiaron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">No se copió el siguiente archivo: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_failure_alert_title (7723812563283375273) -->
-    <skip />
+    <string name="copy_failure_alert_title" msgid="7723812563283375273">"{count,plural, =1{No se copió el siguiente archivo:}many{No se copiaron los siguientes archivos:}other{No se copiaron los siguientes archivos:}}"</string>
     <plurals name="compress_failure_alert_content" formatted="false" msgid="5760632881868842400">
       <item quantity="many">No se comprimieron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">No se comprimieron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">No se comprimió el siguiente archivo: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for compress_failure_alert_title (4443538179586440935) -->
-    <skip />
+    <string name="compress_failure_alert_title" msgid="4443538179586440935">"{count,plural, =1{No se comprimió el siguiente archivo:}many{No se comprimieron los siguientes archivos:}other{No se comprimieron los siguientes archivos:}}"</string>
     <plurals name="extract_failure_alert_content" formatted="false" msgid="7572748127571720803">
       <item quantity="many">No se extrajeron estos archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">No se extrajeron estos archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">No se extrajo este archivo: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for extract_failure_alert_title (1720241850610374) -->
-    <skip />
+    <string name="extract_failure_alert_title" msgid="1720241850610374">"{count,plural, =1{No se extrajo el siguiente archivo:}many{No se extrajeron los siguientes archivos:}other{No se extrajeron los siguientes archivos:}}"</string>
     <plurals name="move_failure_alert_content" formatted="false" msgid="2747390342670799196">
       <item quantity="many">No se movieron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">No se movieron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">No se movió el siguiente archivo: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for move_failure_alert_title (4574011719660769064) -->
-    <skip />
+    <string name="move_failure_alert_title" msgid="4574011719660769064">"{count,plural, =1{No se movió el siguiente archivo:}many{No se movieron los siguientes archivos:}other{No se movieron los siguientes archivos:}}"</string>
     <plurals name="delete_failure_alert_content" formatted="false" msgid="6122372614839711711">
       <item quantity="many">No se borraron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">No se borraron los siguientes archivos: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">No se borró el siguiente archivo: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for delete_failure_alert_title (1416471664552009873) -->
-    <skip />
+    <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{No se borró el siguiente archivo:}many{No se borraron los siguientes archivos:}other{No se borraron los siguientes archivos:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="many">Estos archivos se convirtieron a otro formato: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Estos archivos se convirtieron a otro formato: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Este archivo se convirtió a otro formato: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
-    <!-- no translation found for copy_converted_warning_title (312091919227984842) -->
-    <skip />
+    <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Este archivo se convirtió a otro formato:}many{Estos archivos se convirtieron a otro formato:}other{Estos archivos se convirtieron a otro formato:}}"</string>
     <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
       <item quantity="many">Se copiaron <xliff:g id="COUNT_1">%1$d</xliff:g> elementos al portapapeles.</item>
       <item quantity="other">Se copiaron <xliff:g id="COUNT_1">%1$d</xliff:g> elementos al portapapeles.</item>
@@ -279,11 +272,15 @@
     <string name="delete_completed" msgid="4149401155614626199">"Se borró"</string>
     <string name="compress_completed" msgid="6522047921428919799">"Comprimido en ZIP"</string>
     <string name="extract_completed" msgid="8824595789915249972">"Se extrajo"</string>
+    <string name="trash_completed" msgid="5527806383436622529">"En la papelera"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"Restablecimiento listo"</string>
     <string name="copy_failed" msgid="3700193913993844675">"No se pudo hacer la copia"</string>
     <string name="move_failed" msgid="7692364307225994220">"No se pudo mover"</string>
     <string name="delete_failed" msgid="2642684566325252513">"No se pudo borrar"</string>
     <string name="compress_failed" msgid="7397502181042157261">"No se pudo comprimir"</string>
     <string name="extract_failed" msgid="8372397499452831323">"No se pudo extraer"</string>
+    <string name="trash_failed" msgid="4655759218201171408">"Envío a papelera fallido"</string>
+    <string name="restore_failed" msgid="1967876571708544126">"Error al restablecer"</string>
     <string name="expand_label" msgid="5683357671239615207">"Expandir"</string>
     <string name="collapse_label" msgid="4530974883269531062">"Contraer"</string>
     <string name="open_external_dialog_request" msgid="8173558471322861268">"¿Quieres otorgar a la app de <xliff:g id="APPNAME"><b>^1</b></xliff:g> acceso al directorio <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> en <xliff:g id="STORAGE"><i>^3</i></xliff:g>?"</string>
@@ -332,12 +329,9 @@
     <string name="sign_in" msgid="6253762676723505592">"Acceder"</string>
     <string name="new_archive_file_name" msgid="1604650338077249838">"archivo<xliff:g id="EXTENSION">%s</xliff:g>"</string>
     <string name="new_archive_file_name_2" msgid="6787685985722032255">"Archivo"</string>
-    <!-- no translation found for overwrite_file_confirmation_title (4314969202559855159) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_message (7780746502731666434) -->
-    <skip />
-    <!-- no translation found for overwrite_file_confirmation_positive_button (5343276672335028419) -->
-    <skip />
+    <string name="overwrite_file_confirmation_title" msgid="4314969202559855159">"¿Quieres reemplazar el archivo?"</string>
+    <string name="overwrite_file_confirmation_message" msgid="7780746502731666434">"Ya existe un archivo con el nombre \"<xliff:g id="NAME">%1$s</xliff:g>\"."</string>
+    <string name="overwrite_file_confirmation_positive_button" msgid="5343276672335028419">"Reemplazar"</string>
     <string name="continue_in_background" msgid="1974214559047793331">"Continuar en segundo plano"</string>
     <plurals name="selected_count" formatted="false" msgid="7555250236512981129">
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> elementos seleccionados</item>
@@ -364,24 +358,21 @@
     <string name="chip_title_documents" msgid="7432457563000753983">"Documentos"</string>
     <string name="chip_title_large_files" msgid="7740269190493883980">"Archivos grandes"</string>
     <string name="chip_title_from_this_week" msgid="4961536405220379672">"Esta semana"</string>
-    <!-- no translation found for input_hint_new_folder (5579927005544975259) -->
-    <skip />
-    <!-- no translation found for input_hint_rename (4501630494874065128) -->
-    <skip />
+    <string name="input_hint_new_folder" msgid="5579927005544975259">"Nombre"</string>
+    <string name="input_hint_rename" msgid="4501630494874065128">"Nombre"</string>
     <string name="preview_file" msgid="4056622696305432343">"Obtener vista previa del archivo <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_work_file" msgid="4495643735563487273">"Obtén una vista previa del archivo de trabajo <xliff:g id="FILENAME">%1$s</xliff:g>"</string>
     <string name="preview_cross_profile_file" msgid="7457849216193029610">"Obtener vista previa del archivo <xliff:g id="FILENAME">%2$s</xliff:g> del perfil <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="apps_row_title" msgid="3340490016663092925">"Explorar archivos en otras apps"</string>
     <string name="anonymous_application" msgid="7633027057951625862">"Anónimo"</string>
     <string name="open_tree_button" msgid="6402871398424497776">"Usar esta carpeta"</string>
-    <!-- no translation found for open_tree_dialog_title (4851450731067189325) -->
-    <skip />
-    <!-- no translation found for open_tree_dialog_message (962249605918827059) -->
-    <skip />
+    <string name="open_tree_dialog_title" msgid="4851450731067189325">"¿Quieres permitir que <xliff:g id="APPNAME">%1$s</xliff:g> acceda a la carpeta?"</string>
+    <string name="open_tree_dialog_message" msgid="962249605918827059">"Permite el acceso a \"<xliff:g id="DIRECTORY">%1$s</xliff:g>\"."</string>
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"No se puede usar esta carpeta"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Para proteger tu privacidad, elige otra carpeta."</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Crear carpeta"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Buscar este dispositivo"</string>
+    <string name="search_results" msgid="7662182646512984171">"Resultados de la búsqueda"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Borrar texto"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Carpeta raíz"</string>
     <string name="search_location_everywhere" msgid="747799487494833887">"En todas partes"</string>
@@ -417,6 +408,12 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"¿Quieres vaciar la papelera?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Esta acción no se puede deshacer y los archivos ya no se podrán recuperar."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Vaciar la papelera"</string>
-    <!-- no translation found for you_are_offline_banner_message (927661539025514935) -->
+    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
+    <skip />
+    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
+    <skip />
+    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
     <skip />
 </resources>

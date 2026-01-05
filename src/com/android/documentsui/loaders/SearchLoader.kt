@@ -128,6 +128,7 @@ class SearchLoader(
         }
 
         override fun run() {
+            Trace.beginSection("documentsui.searchv2.SearchLoader.SearchTask#run")
             for (searchUri in searchUris) {
                 val result = tryQuery(searchUri)
                 if (result != null) {
@@ -141,6 +142,7 @@ class SearchLoader(
             cursor?.registerContentObserver(observer)
             onTaskCompleted(this)
             latch.countDown()
+            Trace.endSection()
         }
     }
 
@@ -245,6 +247,8 @@ class SearchLoader(
         // TODO(b:378590632): If root list has one root use it to construct result.doc
         result.doc = DocumentInfo()
         result.cursor = emptyCursor()
+        result.queryOptions = options
+        result.query = query
 
         if (!firstPassDone) {
             try {
@@ -386,7 +390,7 @@ class SearchLoader(
             // search to folder.
             queryArgs.putParcelable(
                 EXTRA_URI,
-                DocumentsContract.buildRootUri(rootInfo.authority, rootInfo.rootId),
+                DocumentsContract.buildDocumentUri(rootInfo.authority, rootInfo.documentId),
             )
         }
         queryArgs.putAll(options.otherQueryArgs)

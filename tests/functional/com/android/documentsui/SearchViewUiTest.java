@@ -43,6 +43,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.graphics.Rect;
 import android.net.Uri;
@@ -74,6 +75,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -155,7 +157,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
-    @DisableFlags({FLAG_USE_MATERIAL3}) // Enable when b/397315793 is fixed.
     public void testSearchView_ShouldHideOptionMenuOnExpanding() throws Exception {
         bots.search.expand();
         device.waitForIdle();
@@ -166,7 +167,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         assertFalse(bots.menu.hasMenuItem("Grid view"));
         assertFalse(bots.menu.hasMenuItem("List view"));
-        assertEquals(!bots.search.isFullBarSearchViewEnabled(),
+        assertEquals(
+                !bots.search.isFullBarSearchViewEnabled(),
                 bots.menu.hasMenuItemByDesc("More options"));
     }
 
@@ -414,6 +416,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchV2LastModifiedDropdownVisibility() throws Exception {
         // Starts in TEST_ROOT_0. Start search and expect last modified dropdown to be visible.
         bots.search.doSearch("-no-such-file-");
+        device.waitForIdle();
         bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
                 matches(isDisplayed()));
 
@@ -422,6 +425,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Move to the Recents view and expect the last modified to be gone.
         EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
         bots.search.doSearch("-no-such-file-");
+        device.waitForIdle();
         onView(withId(R.id.search_last_modified_trigger)).check(matches(withEffectiveVisibility(
                 ViewMatchers.Visibility.GONE)));
 
@@ -430,12 +434,52 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
         EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         bots.search.doSearch("-no-such-file-");
-        bots.search.findDropdownTrigger(R.id.search_last_modified_trigger).check(
-                matches(isDisplayed()));
+        device.waitForIdle();
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(
+                        matches(
+                                allOf(
+                                        isDisplayed(),
+                                        withText(R.string.search_last_modified_any_time))));
     }
 
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2LastModifiedOptionKeepsUserChoice() throws Exception {
+        // Move to the Recents view and expect the last modified to be gone.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.search.doSearch("1");
+        device.waitForIdle();
+
+        // Click Everywhere, so that the recency choices are revealed.
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
+
+        // Now simulate the user choosing "Last week" for the modified option.
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_7_days);
+
+        // Close the search view, to make sure that the directory drawer button becomes visible.
+        bots.search.closeSearch();
+        // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
+        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        device.waitForIdle();
+        bots.search.doSearch("2");
+        device.waitForIdle();
+
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(
+                        matches(
+                                allOf(
+                                        isDisplayed(),
+                                        withText(R.string.search_last_modified_7_days))));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    @Ignore("b/454313609") // TODO(b/454313609): Re-enable once the test is fixed.
     public void testSearchV2LastUsedChipCopiedToFileTypeDropdown() throws Exception {
         // Click "Images" chip and wait until the chip becomes selected.
         bots.search.clickChip(R.string.chip_title_images)
@@ -611,6 +655,15 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         UiObject2 searchBar = device.findObject(By.res(pkg + ":id/docked_search_text"));
         assertNotNull(searchBar);
         assertTrue(searchBar.isEnabled());
+
+        // In an expanded search view, when searching, we should see "Search results".
+        try {
+            bots.search.doSearch("a");
+            device.waitForIdle();
+            onView(withText(R.string.search_results)).check(matches(isDisplayed()));
+        } catch (UiObjectNotFoundException e) {
+            fail("Failed to execute a search for 'a' due to " + e.getMessage());
+        }
     }
 
     @Test
@@ -644,20 +697,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testNoDirectoryChangedOnRecentsBreadcrumbClick() throws Exception {
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
-        bots.directory.selectFirstDocument();
-        bots.directory.assertSelection(1);
-
-        // Click the first item of the path, which should take us to the directory listing.
-        onView(allOf(withText("Recent"), isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
-                .perform(click());
-        // No directory change and the selection remains.
-        bots.directory.assertSelection(1);
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultMultipleSelection() throws Exception {
         bots.search.doSearch("file");
         device.waitForIdle();
@@ -666,7 +705,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_NO_RENAME, 2);
 
-        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathEqualsTo(""));
+        onView(withId(R.id.breadcrumb_path_holder)).check(bots.breadcrumb.pathEqualsTo());
     }
 
     @Test

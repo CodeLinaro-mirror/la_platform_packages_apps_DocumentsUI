@@ -32,6 +32,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -370,6 +371,12 @@ public final class MessageTest {
                 .isEqualTo(mContext.getString(getRes(R.string.you_are_offline_banner_message)));
         assertThat(mHeaderMessage.getButtonString().toString())
                 .isEqualTo(mContext.getString(getRes(R.string.button_dismiss)));
+        if (isUseMaterial3FlagEnabled()) {
+            assertDrawablesEqual(
+                    mHeaderMessage.getIcon(), mContext.getDrawable(R.drawable.ic_wifi_off_m3));
+        } else {
+            assertNull(mHeaderMessage.getIcon());
+        }
     }
 
     @Test
