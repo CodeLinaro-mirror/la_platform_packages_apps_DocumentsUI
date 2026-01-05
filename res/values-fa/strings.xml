@@ -389,7 +389,7 @@
     <string name="peek_metadata_general_info_title" msgid="5805064715498467299">"اطلاعات کلی"</string>
     <string name="peek_metadata_size" msgid="2377426288276139988">"اندازه"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"نوع"</string>
-    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"تاریخ اصلاح"</string>
+    <string name="peek_metadata_date_modified" msgid="5403086549396155362">"تاریخ اصلاح شدن"</string>
     <string name="get_info_positive_button" msgid="667388202590744953">"تأیید"</string>
     <string name="get_info_unknown_file_type" msgid="7976646447316381912">"نامشخص"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"پنهان کردن پیش‌نمای فایل"</string>
