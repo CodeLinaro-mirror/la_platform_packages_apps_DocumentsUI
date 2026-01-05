@@ -102,6 +102,6 @@ public class FilesActivityDefaultsUiTest extends ActivityTestJunit4<FilesActivit
         device.waitForIdle();
 
         bots.roots.assertItemSelected(RECENT_ROOT_TITLE);
-        // TODO: b/473358422 - Add a check for the window title once the title has been fixed.
+        bots.main.assertWindowTitle(RECENT_ROOT_TITLE);
     }
 }
