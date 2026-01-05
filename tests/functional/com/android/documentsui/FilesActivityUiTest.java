@@ -143,7 +143,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.openDocument(parentDirName);
         }
 
-        bots.directory.waitForDocument(fileName);
+        bots.directory.waitForDocument(fileName, /* withScroll= */ true);
         bots.directory.selectDocument(fileName, 1);
 
         bots.main.clickDelete();
@@ -294,14 +294,14 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         DocumentInfo info = storageDocsHelper.findFile(primaryRoot.documentId, "Download");
 
         // Create a file in "Download".
-        final String fileName = "recent_file.txt";
+        final String fileName = "recent_" + System.currentTimeMillis() + ".txt";
         storageDocsHelper.createDocument(info.documentId, "text/plain", fileName);
 
         // Navigate to "Download" and ensure the file exists (this should ensure it also exists in
         // Recent).
         EspressoBotsKt.openRoot(context, primaryRoot.title, getActivityLayoutId());
         bots.directory.openDocument("Download");
-        bots.directory.waitForDocument(fileName);
+        bots.directory.waitForDocument(fileName, /* withScroll= */ true);
 
         // Open Recent and wait for the document to appear.
         EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
