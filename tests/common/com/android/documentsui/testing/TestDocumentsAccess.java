@@ -42,6 +42,7 @@ public class TestDocumentsAccess implements DocumentsAccess {
 
     private Pair<DocumentInfo, DocumentInfo> mLastCreatedDoc;
     public @Nullable Uri mNextDocumentUri;
+    public @Nullable Uri mNextMediaUri;
 
     @Override
     public DocumentInfo getDocument(String authority, String documentId, UserId userId) {
@@ -101,9 +102,18 @@ public class TestDocumentsAccess implements DocumentsAccess {
     /**
      * Takes in a media store URI as an argument and attempts to convert it to a recognisable
      * documents URI. In the case of TestDocumentsAccess, this will just be whatever has been set as
-     * mNextConvertedDocumentUri.
+     * mNextDocumentUri.
      */
     public Uri getDocumentUri(Uri mediaStoreUri) {
         return mNextDocumentUri;
+    }
+
+    /**
+     * Takes in a media store URI as an argument and attempts to convert it to a recognisable
+     * documents URI. In the case of TestDocumentsAccess, this will just be whatever has been set as
+     * mNextMediaUri.
+     */
+    public Uri getMediaStoreUri(Uri uri) {
+        return mNextMediaUri;
     }
 }

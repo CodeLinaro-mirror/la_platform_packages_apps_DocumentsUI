@@ -674,7 +674,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 this::getModelId,
                                 mRecView::findChildViewUnder,
                                 mAdapterEnv::isContentAvailable,
-                                DocumentsApplication.getDragAndDropManager(mActivity))
+                                DocumentsApplication.getDragAndDropManager(mActivity),
+                                mActivity.getDocumentsAccess())
                         : DragStartListener.STUB;
 
         {
