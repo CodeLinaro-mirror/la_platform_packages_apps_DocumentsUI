@@ -257,6 +257,9 @@ class SearchLoader(
                 throw RuntimeException(e)
             } finally {
                 firstPassDone.set(firstPassComplete)
+                if (DEBUG) {
+                    Log.d(TAG, "SearchLoader#$myInstance set firstPassDone to $firstPassComplete")
+                }
             }
         }
 
@@ -414,6 +417,15 @@ class SearchLoader(
     }
 
     override fun onReset() {
+        if (DEBUG) {
+            Log.d(TAG, "SearchLoader#$myInstance resetting.")
+        }
+        resetInternal()
+        super.onReset()
+    }
+
+    /** Overrides the method called when forced load takes place to force full cursor reload. */
+    override fun resetInternal() {
         for (data in queryResults) {
             val cursor = data?.cursor
             if (cursor != null) {
@@ -423,14 +435,6 @@ class SearchLoader(
         }
         queryResults.fill(null)
         searchTaskList.clear()
-        if (DEBUG) {
-            Log.d(TAG, "Resetting search loader; search task list emptied.")
-        }
-        super.onReset()
-    }
-
-    /** Overrides the method called when forced load takes place to force full cursor reload. */
-    override fun resetCursors() {
         firstPassDone.set(false)
         countDownLatch = CountDownLatch(rootInfoList.size)
     }
