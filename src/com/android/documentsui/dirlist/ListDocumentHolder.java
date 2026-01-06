@@ -316,9 +316,11 @@ final class ListDocumentHolder extends DocumentHolder {
             if (TextUtils.isEmpty(summary)) {
                 mSummary.setText("—");
                 mSummary.setTooltipText(null);
+                mSummary.setCompoundDrawables(null, null, null, null);
             } else {
                 mSummary.setText(summary, TextView.BufferType.SPANNABLE);
                 mSummary.setTooltipText(summary);
+                mSummary.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_summary, 0, 0, 0);
             }
             mSummary.setVisibility(View.VISIBLE);
         } else {
@@ -384,6 +386,10 @@ final class ListDocumentHolder extends DocumentHolder {
                     if (useSummary() && !TextUtils.isEmpty(summary)) {
                         hasDetails = true;
                         metadataList.add(summary);
+                        mMetadataView.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_summary, 0, 0, 0);
+                    } else {
+                        mMetadataView.setCompoundDrawables(null, null, null, null);
                     }
 
                     if (mDoc.lastModified > 0) {
