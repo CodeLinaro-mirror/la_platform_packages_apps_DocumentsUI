@@ -29,8 +29,10 @@ import android.content.Context;
 import android.os.SystemClock;
 
 import androidx.test.espresso.contrib.DrawerActions;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
@@ -230,6 +232,12 @@ public class SidebarBot extends Bots.BaseBot {
 
     public void assertHasFocus() {
         assertHasFocus(mRootListId);
+    }
+
+    /** Returns whether a root is focused. */
+    public boolean anyRootHasFocus() {
+        UiObject2 list = mDevice.findObject(By.res(mRootListId));
+        return (list != null) && (list.findObject(By.focused(true)) != null);
     }
 
     /**
