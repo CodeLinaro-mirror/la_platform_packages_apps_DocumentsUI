@@ -50,6 +50,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.android.documentsui.R;
 import com.android.documentsui.ui.MessageBuilder;
+import com.android.documentsui.util.FlagUtils;
 import com.android.documentsui.util.VersionUtils;
 
 import java.text.Collator;
@@ -301,6 +302,12 @@ public final class Shared {
      */
     public static Uri getDefaultRootUri(Activity activity) {
         Uri defaultUri = Uri.parse(activity.getResources().getString(R.string.default_root_uri));
+
+        if (FlagUtils.isHomeScreenFilesFlagEnabled()
+                && FlagUtils.isUseAllfilesRootForRecentsEnabled()
+                && Providers.isRecentsRootUri(defaultUri)) {
+            return defaultUri;
+        }
 
         if (!DocumentsContract.isRootUri(activity, defaultUri)) {
             Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");

@@ -243,6 +243,8 @@
         android:visibility="gone"
         android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
+        android:drawablePadding="@dimen/summary_drawable_padding"
+        android:drawableTint="@color/doc_list_item_label_color"
         style="@style/FileItemLabelStyle" />
 
     <com.google.android.material.textview.MaterialTextView
