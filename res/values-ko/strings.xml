@@ -17,10 +17,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"이름을 변경해야 합니다."</string>
-    <!-- no translation found for hidden_file_rename_warning (5427365657393208836) -->
-    <skip />
-    <!-- no translation found for rename_invalid_character (5795828095376129943) -->
-    <skip />
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"이름이 .로 시작하는 파일은 숨겨집니다."</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"잘못된 문자입니다. "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"폴더 이름을 추가해야 합니다."</string>
     <string name="files_label" msgid="771781190045103748">"파일"</string>
     <string name="downloads_label" msgid="5462789470049501103">"다운로드"</string>
