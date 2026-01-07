@@ -28,6 +28,9 @@
         android:id="@+id/root_menu_settings"
         android:title="@string/menu_settings" />
     <item
+        android:id="@+id/root_menu_manage_device"
+        android:title="@string/manage_device" />
+    <item
         android:id="@+id/root_menu_inspect"
         android:title="@string/menu_inspect"  />
 </menu>

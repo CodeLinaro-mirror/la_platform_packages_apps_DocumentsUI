@@ -66,6 +66,8 @@
     <string name="menu_search">Search</string>
     <!-- Menu item that opens settings/options for a device (like an SD card). [CHAR LIMIT=28] -->
     <string name="menu_settings">Storage settings</string>
+    <!-- Alternative menu item that opens settings/options for a device (like an SD card). [CHAR LIMIT=28] -->
+    <string name="manage_device">Manage device</string>
 
     <!-- Menu item title that opens the selected documents [CHAR LIMIT=28] -->
     <string name="menu_open">Open</string>

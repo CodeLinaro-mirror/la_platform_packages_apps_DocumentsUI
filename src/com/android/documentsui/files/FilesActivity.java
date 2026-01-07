@@ -409,7 +409,8 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
             mInjector.actions.showCreateDirectoryDialog();
         } else if (id == getRes(R.id.option_menu_new_window)) {
             mInjector.actions.openInNewWindow(mState.stack, mState.shortcut);
-        } else if (id == getRes(R.id.option_menu_settings)) {
+        } else if (id == getRes(R.id.option_menu_settings)
+                || id == getRes(R.id.option_menu_manage_device)) {
             mInjector.actions.openSettings(getCurrentRoot());
         } else if (id == getRes(R.id.option_menu_extract_all)) {
             if (!isZipNgFlagEnabled()) return false;

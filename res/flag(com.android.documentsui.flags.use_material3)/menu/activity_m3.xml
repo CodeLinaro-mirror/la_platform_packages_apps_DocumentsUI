@@ -119,6 +119,13 @@
             android:visible="false"
             app:showAsAction="never" />
     </group>
+    <group android:id="@+id/menu_manage_device_group">
+        <item
+            android:id="@+id/option_menu_manage_device"
+            android:title="@string/manage_device"
+            android:visible="false"
+            app:showAsAction="never"/>
+    </group>
     <group android:id="@+id/menu_debug_group">
         <item
             android:id="@+id/option_menu_debug"
