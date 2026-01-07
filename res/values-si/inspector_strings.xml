@@ -41,7 +41,7 @@
     <string name="metadata_iso_speed_ratings" msgid="1699781252899759058">"ISO තුල්‍ය"</string>
     <string name="metadata_iso_format" msgid="4153285204012694861">"ISO <xliff:g id="ISO_SPEED">%1$d</xliff:g>"</string>
     <string name="metadata_artist" msgid="8972421485694988540">"කලාකරු"</string>
-    <string name="metadata_composer" msgid="4696926808308256056">"සංගීතඥ"</string>
+    <string name="metadata_composer" msgid="4696926808308256056">"සංගීත නිර්මාපක"</string>
     <string name="metadata_album" msgid="1661699531214720236">"ඇල්බමය"</string>
     <string name="metadata_address" msgid="1849921023707744640">"ස්ථානය"</string>
 </resources>

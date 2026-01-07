@@ -17,6 +17,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"Мұның атауын өзгертуіңіз қажет."</string>
+    <!-- no translation found for hidden_file_rename_warning (5427365657393208836) -->
+    <skip />
     <string name="add_folder_name_error" msgid="6014615052491406810">"Қалта атауын енгізуіңіз қажет."</string>
     <string name="files_label" msgid="771781190045103748">"Файлдар"</string>
     <string name="downloads_label" msgid="5462789470049501103">"Жүктеп алынғандар"</string>
@@ -79,8 +81,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Провайдерде көрсету"</string>
     <string name="button_back" msgid="1888621708934742182">"Артқа"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Қалтада көрсету"</string>
-    <!-- no translation found for button_open_trash (8152584341121216006) -->
-    <skip />
+    <string name="button_open_trash" msgid="8152584341121216006">"Себетті ашу"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Сұрыпталмаған"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Аты"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Жиынтық мәлімет"</string>
@@ -223,6 +224,10 @@
       <item quantity="one">Келесі файл жойылмады: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Мына файл жойылмады:}other{Мына файлдар жойылмады:}}"</string>
+    <!-- no translation found for trash_failure_alert_title (5133847817235721185) -->
+    <skip />
+    <!-- no translation found for restore_from_trash_failure_alert_title (8539033885115121134) -->
+    <skip />
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Келесі файлдар басқа форматқа түрленбеді: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Келесі файл басқа форматқа түрленбеді: <xliff:g id="LIST_0">%1$s</xliff:g></item>
@@ -359,7 +364,7 @@
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Бұл қалтаны пайдалану мүмкін емес"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Құпиялықты қорғау мақсатында басқа қалта таңдаңыз"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Жаңа қалта жасау"</string>
-    <string name="search_bar_hint" msgid="146031513183888721">"Осы құрылғыда іздеу"</string>
+    <string name="search_bar_hint" msgid="146031513183888721">"Осы құрылғыдан іздеу"</string>
     <string name="search_bar_generic_hint" msgid="8923500515355253888">"Іздеу"</string>
     <string name="search_results" msgid="7662182646512984171">"Іздеу нәтижелері"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Мәтінді өшіру"</string>
