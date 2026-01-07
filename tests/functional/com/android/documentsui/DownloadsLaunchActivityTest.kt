@@ -23,6 +23,7 @@ import android.content.Intent
 import android.platform.test.annotations.EnableFlags
 import android.util.Log
 import androidx.test.core.app.ActivityScenario
+import androidx.test.filters.LargeTest
 import com.android.documentsui.base.Providers
 import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
 import com.android.documentsui.base.RootInfo
@@ -36,6 +37,7 @@ import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 
+@LargeTest
 class DownloadsLaunchActivityTest : ActivityTestJunit4<FilesActivity>() {
     private var storageProvider: DocumentsProviderHelper? = null
     private var primaryRoot: RootInfo? = null
