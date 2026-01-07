@@ -18,6 +18,7 @@ package com.android.documentsui.testing;
 
 import com.android.documentsui.MenuManager.SelectionDetails;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -40,7 +41,7 @@ public class TestSelectionDetails implements SelectionDetails {
     public boolean canViewInOwner;
     public boolean canTrash;
     public boolean canRestore;
-    public Set<String> mimeTypes;
+    public Set<String> mimeTypes = new HashSet<>();
     public boolean containsDocumentsWithUnavailableContent;
 
     @Override

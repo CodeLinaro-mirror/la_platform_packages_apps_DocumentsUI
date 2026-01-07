@@ -66,6 +66,7 @@ class ApprovedDocHandlers(
     companion object {
         private const val TAG = "ApprovedDocHandlers"
         public const val AS_BUTTON_METADATA_KEY = "android.approvedtarget.as_button"
+
         // TODO(b/464388012): Reference actual intent category when it's available.
         public const val APPROVED_HANDLER_CATEGORY =
             "android.provider.category.APPROVED_DOCUMENT_HANDLER"
@@ -82,7 +83,8 @@ class ApprovedDocHandlers(
         if (DEBUG) {
             Log.d(
                 TAG,
-                "ApprovedDocHandlers ${R.array.approved_document_handlers} : ${approvedDocHandlers.contentToString()}",
+                "ApprovedDocHandlers ${R.array.approved_document_handlers} : " +
+                    approvedDocHandlers.contentToString(),
             )
         }
         return approvedDocHandlers
@@ -101,10 +103,17 @@ class ApprovedDocHandlers(
     private fun createIntentForSelection(selectionDetails: MenuManager.SelectionDetails): Intent {
         val intent =
             if (selectionDetails.size() == 1) {
-                Intent(Intent.ACTION_SEND).apply { type = selectionDetails.mimeTypes().first() }
+                Intent(Intent.ACTION_SEND).apply {
+                    type = selectionDetails.mimeTypes()?.firstOrNull() ?: "*/*"
+                }
             } else {
                 Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-                    if (selectionDetails.mimeTypes().isNotEmpty()) {
+                    if (
+                        selectionDetails.mimeTypes() == null ||
+                            selectionDetails.mimeTypes().isEmpty()
+                    ) {
+                        type = "*/*"
+                    } else if (selectionDetails.mimeTypes().isNotEmpty()) {
                         type = MimeTypes.findCommonMimeType(selectionDetails.mimeTypes().toList())
                     }
                 }
@@ -140,7 +149,8 @@ class ApprovedDocHandlers(
                     if (label == null) {
                         Log.w(
                             TAG,
-                            "Approved doc handler ${componentName.flattenToString()} has no label, skipping.",
+                            "Approved doc handler ${componentName.flattenToString()} has no " +
+                                "label, skipping.",
                         )
                         continue
                     }
