@@ -14,13 +14,12 @@
      limitations under the License.
 -->
 
-<resources>
-    <string-array name="shortcut_authorities" translatable="false"/>
-    <string-array name="shortcut_parent_doc_ids" translatable="false"/>
-    <string-array name="shortcut_root_ids" translatable="false"/>
-    <!-- shortcut_titles are the actual folder titles, shortcut_localized_titles would be the
-         display and localized titles for shortcut sidebar items. -->
-    <string-array name="shortcut_titles" translatable="false"/>
-    <string-array name="shortcut_folder_names"/>
-    <array name="shortcut_icons"/>
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Override the focus color to avoid the default gray overlay. -->
+    <item android:state_focused="true">
+        <color android:color="?attr/colorSurfaceContainer" />
+    </item>
+    <item>
+        <color android:color="?attr/colorSurfaceContainer" />
+    </item>
+</selector>

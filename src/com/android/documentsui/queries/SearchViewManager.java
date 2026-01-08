@@ -258,16 +258,16 @@ public class SearchViewManager implements
     }
 
     /**
-     * Initailize search view by option menu.
+     * Initialize search view by option menu.
      *
-     * @param menu            the menu include search view
+     * @param menu the menu include search view
      * @param isFullBarSearch whether hide other menu when search view expand
      * @param isShowSearchBar whether replace collapsed search view by search hint text
      * @param showDockedSearch whether show a docked (inline) search bar in the toolbar. When true,
-     *                         the search icon and search view will be hidden.
+     *     the search icon and search view will be hidden.
      */
-    public void install(Menu menu, boolean isFullBarSearch, boolean isShowSearchBar,
-            boolean showDockedSearch) {
+    public void install(
+            Menu menu, boolean isFullBarSearch, boolean isShowSearchBar, boolean showDockedSearch) {
         mMenu = menu;
         mMenuItem = mMenu.findItem(getRes(R.id.option_menu_search));
         mSearchView = (SearchView) mMenuItem.getActionView();
@@ -673,12 +673,20 @@ public class SearchViewManager implements
     }
 
     /**
-     * Used to detect and handle back button pressed event when search is expanded.
+     * Used to detect and handle back button pressed event when search is expanded. This is only
+     * called for SearchView. The docked search has a separate focus listener.
      */
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        // This is only called for SearchView. The docked search has a separate focus listener.
-        if (!hasFocus && !mChipViewManager.hasCheckedItems()) {
+        // If we have a pending search, we ignore focus change. This is the same as if the current
+        // search query was not null. However, mCurrentSearch may stay null until the pending task
+        // updates it.
+        boolean shouldClose;
+        synchronized (mSearchLock) {
+            shouldClose =
+                    !(hasFocus || mChipViewManager.hasCheckedItems() || mQueuedSearchTask != null);
+        }
+        if (shouldClose) {
             if (mCurrentSearch == null) {
                 if (!mShowDockedSearch && mSearchView != null) {
                     mSearchView.setIconified(true);
@@ -765,6 +773,7 @@ public class SearchViewManager implements
         synchronized (mSearchLock) {
             mQueuedSearchTask = createSearchTask(newText);
 
+            // TODO(b/471061093): Can be simplified by using postDelayed rather than a timer.
             mTimer.schedule(mQueuedSearchTask, SEARCH_DELAY_MS);
         }
     }

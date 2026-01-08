@@ -245,7 +245,7 @@ class SearchLoader(
         result.query = query
 
         var firstPassComplete = false
-        if (firstPassDone.compareAndSet(false, true)) {
+        if (!firstPassDone.get()) {
             try {
                 // Create a new task list and schedule it with the executor.
                 firstPassComplete = firstPassRun(countDownLatch, rejectBeforeTimestamp)

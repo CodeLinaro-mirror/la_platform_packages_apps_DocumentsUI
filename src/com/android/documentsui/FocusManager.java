@@ -206,7 +206,7 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
     /*
      * Attempts to put focus on the document associated with the given modelId. If item does not
      * exist yet in the layout, this sets a pending modelId to be used when {@code
-     * #applyPendingFocus()} is called next time.
+     * #onLayoutCompleted()} is called next time.
      */
     @Override
     public void focusDocument(String modelId) {

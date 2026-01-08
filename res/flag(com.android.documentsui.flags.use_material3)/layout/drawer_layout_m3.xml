@@ -15,15 +15,21 @@
 -->
 
 <!-- CoordinatorLayout is necessary for various components (e.g. Snackbars, and
-     floating action buttons) to operate correctly. -->
+     floating action buttons) to operate correctly. This is the root container of the whole app,
+     make it focusable so it can act as a "focus sink" for the system, e.g. when there's nothing
+     to be focused, the system will focus on this view instead. This is to avoid the system to
+     focus on the top-left view (e.g. Recent root in the sidenav) in certain scenarios, e.g. for
+     unhandled keypress like Enter/Space on the black area of the file list. A custom background
+     is provided to prevent the default grey-ish overlay for focused state. -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/coordinator_layout"
-    android:background="?attr/colorSurfaceContainer"
-    android:focusable="false">
+    android:background="@drawable/coordinator_layout_background"
+    android:focusable="true"
+    android:descendantFocusability="beforeDescendants">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"

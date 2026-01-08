@@ -111,13 +111,23 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
 
                         @Override
                         public void afterTextChanged(Editable s) {
+                            // Clear any previous errors
+                            mRenameInputWrapper.setError(null);
+                            mRenameInputWrapper.setHelperText(null);
                             if (s.toString().startsWith(".")) {
                                 mRenameInputWrapper.setHelperText(
                                     getContext()
                                         .getString(
                                             getRes(R.string.hidden_file_rename_warning)));
                             } else {
-                                mRenameInputWrapper.setHelperText(null);
+                                int invalidCharIdx = getFirstInvalidCharIndex(s.toString());
+                                if (invalidCharIdx == -1) {
+                                    return;
+                                }
+                                mRenameInputWrapper.setHelperText(
+                                    getContext()
+                                        .getString(getRes(R.string.rename_invalid_character))
+                                        + s.toString().charAt(invalidCharIdx));
                             }
                         }
                     });
@@ -208,7 +218,12 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
     private void renameDocuments(String newDisplayName) {
         BaseActivity activity = (BaseActivity) getActivity();
 
-        if (newDisplayName.equals(mDocument.displayName)) {
+        final int invalidCharIdx = getFirstInvalidCharIndex(newDisplayName);
+        if (isUseMaterial3FlagEnabled() && invalidCharIdx != -1) {
+            mRenameInputWrapper.setError(
+                    getContext().getString(getRes(R.string.rename_invalid_character))
+                            + newDisplayName.charAt(invalidCharIdx));
+        } else if (newDisplayName.equals(mDocument.displayName)) {
             mDialog.dismiss();
         } else if (newDisplayName.isEmpty()) {
             mRenameInputWrapper.setError(
@@ -224,6 +239,39 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
             activity.getInjector().selectionMgr.clearSelection();
         }
 
+    }
+
+    /**
+     * Returns the index of the first occurrence of an invalid character in a filename.
+     *
+     * @param filename The filename string to be validated.
+     * @return The index of the first invalid character found. Returns -1 if no invalid characters
+     *     exist, or if the input is null.
+     */
+    private int getFirstInvalidCharIndex(String filename) {
+        if (filename == null) {
+            return -1;
+        }
+
+        for (int i = 0; i < filename.length(); i++) {
+            final char c = filename.charAt(i);
+            switch (c) {
+                case '"':
+                case '*':
+                case '/':
+                case ':':
+                case '<':
+                case '>':
+                case '?':
+                case '\\':
+                case '|':
+                case 0x7F:
+                    return i;
+                default:
+                    continue;
+            }
+        }
+        return -1;
     }
 
     private class RenameDocumentsTask extends AsyncTask<DocumentInfo, Void, DocumentInfo> {

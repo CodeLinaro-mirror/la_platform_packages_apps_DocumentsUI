@@ -52,6 +52,7 @@ import com.android.documentsui.Injector;
 import com.android.documentsui.JobPanelController;
 import com.android.documentsui.JobPanelViewModel;
 import com.android.documentsui.MenuManager.DirectoryDetails;
+import com.android.documentsui.ModelId;
 import com.android.documentsui.OperationDialogFragment;
 import com.android.documentsui.OperationDialogFragment.DialogType;
 import com.android.documentsui.ProfileTabsAddons;
@@ -77,8 +78,8 @@ import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.MessageBuilder;
-
 import com.android.documentsui.util.VersionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -463,7 +464,14 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
     @Override
     public void onDirectoryCreated(DocumentInfo doc) {
         assert (doc.isDirectory());
-        mInjector.focusManager.focusDocument(doc.documentId);
+        // We need to pass Model ID instead of Document ID to focusDocument() below, that's because
+        // FocusManager use Model ID (from adapter.getStableIds()) to identify which document in the
+        // list should be focused.
+        final String idToFocus =
+                isUseMaterial3FlagEnabled()
+                        ? ModelId.build(doc.userId, doc.authority, doc.documentId)
+                        : doc.documentId;
+        mInjector.focusManager.focusDocument(idToFocus);
     }
 
     @CallSuper

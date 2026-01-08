@@ -17,6 +17,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"మీరు దీని పేరు మార్చాలి"</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"ఫైల్ పేరుకు మొదట్లో . అని ఉంటే అవి దాచబడిన ఫైల్స్‌గా పరిగణించబడతాయి"</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"చెల్లని క్యారెక్టర్: "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"మీరు ఫోల్డర్ పేరును జోడించాలి"</string>
     <string name="files_label" msgid="771781190045103748">"Files"</string>
     <string name="downloads_label" msgid="5462789470049501103">"డౌన్‌లోడ్‌లు"</string>
@@ -222,6 +224,8 @@
       <item quantity="one">ఈ ఫైల్ తొలగించబడలేదు: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{ఈ ఫైల్ తొలగించబడలేదు:}other{ఈ ఫైల్స్ తొలగించబడలేదు:}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{ఈ ఫైల్ ట్రాష్ చేయబడలేదు:}other{ఈ ఫైల్స్ ట్రాష్ చేయబడలేదు:}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{ఈ ఫైల్ రీస్టోర్ కాలేదు:}other{ఈ ఫైల్స్ రీస్టోర్ కాలేదు:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">ఈ ఫైళ్లు మరో ఫార్మాట్‌లోకి మార్చబడ్డాయి: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">ఈ ఫైల్ మరో ఫార్మాట్‌లోకి మార్చబడింది: <xliff:g id="LIST_0">%1$s</xliff:g></item>

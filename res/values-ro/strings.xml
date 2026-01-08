@@ -17,6 +17,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"Trebuie să redenumești elementul"</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"Fișiere cu . la începutul numelui sunt ascunse"</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"Caracter nevalid: "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"Trebuie să adaugi un nume de dosar"</string>
     <string name="files_label" msgid="771781190045103748">"Fișiere"</string>
     <string name="downloads_label" msgid="5462789470049501103">"Descărcări"</string>
@@ -79,8 +81,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Afișează în furnizor"</string>
     <string name="button_back" msgid="1888621708934742182">"Înapoi"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Afișează în dosar"</string>
-    <!-- no translation found for button_open_trash (8152584341121216006) -->
-    <skip />
+    <string name="button_open_trash" msgid="8152584341121216006">"Deschide coșul de gunoi"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nesortate"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nume"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Rezumat"</string>
@@ -233,6 +234,8 @@
       <item quantity="one">Acest fișier nu a fost șters: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Acest fișier nu a fost șters:}few{Aceste fișiere nu au fost șterse:}other{Aceste fișiere nu au fost șterse:}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{Acest fișier nu a fost mutat în coșul de gunoi:}few{Aceste fișiere nu au fost mutate în coșul de gunoi:}other{Aceste fișiere nu au fost mutate în coșul de gunoi:}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{Acest fișier nu a fost restabilit:}few{Aceste fișiere nu au fost restabilite:}other{Aceste fișiere nu au fost restabilite:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="few">Aceste fișiere au fost convertite în alt format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="other">Aceste fișiere au fost convertite în alt format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -377,7 +380,7 @@
     <string name="directory_blocked_header_title" msgid="1164584889578740066">"Nu poți folosi acest dosar"</string>
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Alege alt dosar, ca să-ți protejezi confidențialitatea"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Creează un dosar nou"</string>
-    <string name="search_bar_hint" msgid="146031513183888721">"Caută acest dispozitiv"</string>
+    <string name="search_bar_hint" msgid="146031513183888721">"Caută pe acest dispozitiv"</string>
     <string name="search_bar_generic_hint" msgid="8923500515355253888">"Caută"</string>
     <string name="search_results" msgid="7662182646512984171">"Rezultatele căutării"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Șterge textul"</string>
