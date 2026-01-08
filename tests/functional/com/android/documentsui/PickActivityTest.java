@@ -67,6 +67,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -344,6 +345,7 @@ public class PickActivityTest {
 
     @DesktopTest(cujs = {"b/434068578"})
     @Test
+    @Ignore("TODO(b/471548378): temporarily disable this for train boarding")
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionOpenDocument_SingleFile()
             throws UiObjectNotFoundException {
@@ -385,6 +387,7 @@ public class PickActivityTest {
 
     @DesktopTest(cujs = {"b/434068578"})
     @Test
+    @Ignore("TODO(b/471548378): temporarily disable this for train boarding")
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionGetContent_MultiFiles() throws Exception {
         // Allow multiple files to be selected.

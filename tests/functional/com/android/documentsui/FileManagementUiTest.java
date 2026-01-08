@@ -41,6 +41,7 @@ import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -68,6 +69,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
                             });
 
     @Test
+    @Ignore("TODO(b/472292681): temporarily disable this for train boarding")
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testCreateDirectory() throws Exception {
         // Disable the root notification because it triggers root list update which then triggers
