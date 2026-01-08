@@ -25,7 +25,6 @@ import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnable
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -1035,6 +1034,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @Override
     public final void loadRoot(Uri uri, UserId userId) {
+        if (Providers.isRecentsRootUri(uri)) {
+            loadRecent();
+            return;
+        }
         new LoadRootTask<>(mActivity, mProviders, uri, userId, this::onRootLoaded)
                 .executeOnExecutor(mExecutors.lookup(uri.getAuthority()));
     }
@@ -1195,13 +1198,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     protected final void loadHomeDir() {
-        Uri defaultUri = Shared.getDefaultRootUri(mActivity);
-        if (isHomeScreenFilesFlagEnabled()
-                && isUseAllfilesRootForRecentsEnabled()
-                && Providers.isRecentsRootUri(defaultUri)) {
-            loadRecent();
-            return;
-        }
+        Uri defaultUri = Shared.getDefaultRootUri(mActivity, mState.action);
         loadRoot(defaultUri, UserId.DEFAULT_USER);
     }
 
