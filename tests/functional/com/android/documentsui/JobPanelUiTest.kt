@@ -592,14 +592,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         assumeTrue(context.resources.getBoolean(R.bool.force_material3))
 
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
+        // TODO(b/457843307): Verify after the SDK is finalized. This test depends on StubProvider,
+        //  which currently encounters a NoSuchMethodError when the platform flag is used.
         assumeTrue(VersionUtils.isGreaterThanB())
 
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)

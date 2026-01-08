@@ -39,7 +39,6 @@ import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 import android.provider.DocumentsProvider;
-import android.provider.Flags;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -1001,8 +1000,9 @@ public class StubProvider extends DocumentsProvider {
      * @return {@code true} if the trash API is available and enabled, {@code false} otherwise.
      */
     private boolean isTrashApiEnabled() {
-        return Build.VERSION.SDK_INT > Build.VERSION_CODES.BAKLAVA
-                && Flags.enableDocumentsTrashApi();
+        // TODO(b/457843307): Replace with isAtLeastC when the new SDK is finalised.
+        //  NoSuchMethodError occurs when attempting to add the intended flag check here.
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.BAKLAVA;
     }
 
     final static class RootInfo {

@@ -412,7 +412,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_trashesTrashableDocuments_whenTrashIsEnabled() {
-        assumeTrashApiIsAvailable();
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
 
@@ -438,7 +437,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_deletesNonTrashableDocuments_whenTrashIsEnabled() {
-        assumeTrashApiIsAvailable();
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
 
@@ -464,7 +462,6 @@ public class ActionHandlerTest {
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_deletesAllDocuments_whenTrashIsDisabled() {
-        assumeTrashApiIsAvailable();
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
 
@@ -1067,7 +1064,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testShowEmptyTrashConfirmationDialog_NoDialog() {
-        assumeTrashApiIsAvailable();
         // Clear the environment to ensure trash is empty
         mEnv.clear();
         mEnv.state.stack.changeRoot(TestProvidersAccess.TRASH_ROOT);
@@ -1089,7 +1085,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testPermanentlyDeleteTrashDocuments() {
-        assumeTrashApiIsAvailable();
         // Add a file and move it to the trash
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
@@ -1201,7 +1196,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testPermanentlyDeleteTrashDocuments_NoItems() {
-        assumeTrashApiIsAvailable();
         // Ensure the environment and trash are empty
         mEnv.clear();
 
@@ -1246,18 +1240,5 @@ public class ActionHandlerTest {
                 mDragAndDropManager,
                 mPeekViewManager,
                 mEnv.injector);
-    }
-
-    /**
-     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
-     * The Trash feature under test relies on DocumentsContract APIs introduced in the
-     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
-     * subject to MTS testing, which runs on older Android base builds to verify backward
-     * compatibility. However, this specific Trash feature lacks backward compatibility
-     * with platforms at or below Baklava. This assumption prevents failures when the
-     * test runs on an older base OS without the necessary APIs.
-     */
-    private void assumeTrashApiIsAvailable() {
-        assumeTrue(VersionUtils.isGreaterThanB());
     }
 }
