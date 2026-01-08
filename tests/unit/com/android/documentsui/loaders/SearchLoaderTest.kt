@@ -54,6 +54,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.measureTime
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -800,6 +801,41 @@ class SearchLoaderTest {
             expect
                 .that(listener.result!!.fileNames.toTypedArray())
                 .isEqualTo(arrayOf("file-01.txt"))
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        fun testCancelLoad() {
+            val queryDelayMs = 200L
+            // shorter than query delay
+            val firstPassWaitMs = 100L
+            val loader =
+                createLoader(
+                    environment.state.sortModel,
+                    queryDelayMs = queryDelayMs,
+                    firstPassWaitMs = firstPassWaitMs,
+                )
+            // Expect only one task to deliver results. AsyncTaskLoader cancels the other task.
+            val listener = TestListener(1)
+            loader.registerListener(1, listener)
+
+            loader.startLoading()
+
+            // Immediately cancel the task. This must result in the first search task never
+            // delivering results.
+            val wasCancelled = loader.cancelLoad()
+            expect.that(wasCancelled).isTrue()
+
+            // Check if the results are delivered.
+            try {
+                listener.await(queryDelayMs + 50, TimeUnit.MILLISECONDS)
+                // Should never come here; fail if we do.
+                fail("Results must not be delivered after cancellation")
+            } catch (e: InterruptedException) {
+                // As expected.
+            }
+
+            expect.that(listener.result).isNull()
         }
     }
 }

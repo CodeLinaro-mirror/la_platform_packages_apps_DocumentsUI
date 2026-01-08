@@ -146,11 +146,16 @@ public abstract class DocumentHolder
 
     /** Binds the sync icons, if they exist, to the document's thumbnail. */
     protected void bindSyncIcons(DocumentInfo doc, boolean justFinishedSync) {
-        if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled() || !doc.hasSyncState()) {
+        if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled()) {
             return;
         }
 
         hideSyncIcons();
+
+        if (!doc.hasSyncState()) {
+            return;
+        }
+
         View progressView = itemView.findViewById(android.R.id.progress);
         View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
         View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
