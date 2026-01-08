@@ -340,15 +340,18 @@ public final class Shared {
     }
 
     /**
-     * Returns the default directory to be presented after starting the activity.
-     * Method can be overridden if the change of the behavior of the the child activity is needed.
+     * Returns the default directory to be presented after starting the activity. Method can be
+     * overridden if the change of the behavior of the child activity is needed.
      */
-    public static Uri getDefaultRootUri(Activity activity) {
+    public static Uri getDefaultRootUri(Activity activity, @State.ActionType int action) {
         Uri defaultUri = Uri.parse(activity.getResources().getString(R.string.default_root_uri));
-
+        // These pick actions require the root to allow creation, but Recents doesn't support it.
+        boolean requiresCreate =
+                action == State.ACTION_CREATE || action == State.ACTION_PICK_COPY_DESTINATION;
         if (FlagUtils.isHomeScreenFilesFlagEnabled()
                 && FlagUtils.isUseAllfilesRootForRecentsEnabled()
-                && Providers.isRecentsRootUri(defaultUri)) {
+                && Providers.isRecentsRootUri(defaultUri)
+                && !requiresCreate) {
             return defaultUri;
         }
 
