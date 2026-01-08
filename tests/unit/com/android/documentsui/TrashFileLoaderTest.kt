@@ -243,7 +243,7 @@ internal class TrashFileLoaderTest {
         } else {
             mEnv.state.canShareAcrossProfile = false
         }
-        val loader = createTrashFileLoader(mEnv)
+        val loader = createTrashFileLoader(mEnv, TestProvidersAccess.OtherUser.USER_ID)
         val result = loader.loadInBackground()!!
 
         Assert.assertNull(result.cursor)
@@ -265,37 +265,44 @@ internal class TrashFileLoaderTest {
         Assert.assertTrue(result.exception is CrossProfileQuietModeException)
     }
 
-    /** Test to ensure a provider is not queried more than once even if it has duplicate roots. */
+    /**
+     * Verifies that the loader correctly identifies which roots to ignore based on their support
+     * for querying trashed documents.
+     */
     @Test
-    fun testShouldIgnoreDuplicateRoot() {
-        val doc1 = mEnv.model.createFile("test1")
-        mEnv.mockProviders
-            .get(TestProvidersAccess.HOME.authority)!!
-            .setNextTrashDocumentsReturns(doc1)
+    fun testShouldIgnoreRoot() {
         val loader = createTrashFileLoader()
 
-        val roots =
+        // Verify that the HOME root, which supports query trash, is NOT ignored.
+        val homeRoots =
             mEnv.providers.getRootsForAuthorityBlocking(
                 TestProvidersAccess.OtherUser.USER_ID,
                 TestProvidersAccess.HOME.authority,
             )
-        val firstRoot = roots.first()
+        val homeRoot = homeRoots.first()
+        Assert.assertFalse(loader.shouldIgnoreRoot(homeRoot))
 
-        // The first call to shouldIgnoreRoot with a new root should return false.
-        Assert.assertFalse(loader.shouldIgnoreRoot(firstRoot))
-
-        // A subsequent call with the same root should now return true.
-        Assert.assertTrue(loader.shouldIgnoreRoot(firstRoot))
+        // Verify that the PICKLES root, which does NOT support query trash, IS ignored.
+        val pickleRoots =
+            mEnv.providers.getRootsForAuthorityBlocking(
+                TestProvidersAccess.OtherUser.USER_ID,
+                TestProvidersAccess.PICKLES.authority,
+            )
+        val pickleRoot = pickleRoots.first()
+        Assert.assertTrue(loader.shouldIgnoreRoot(pickleRoot))
     }
 
-    private fun createTrashFileLoader(env: TestEnv = mEnv): TrashFileLoader {
+    private fun createTrashFileLoader(
+        env: TestEnv = mEnv,
+        userId: UserId = TestProvidersAccess.USER_ID,
+    ): TrashFileLoader {
         return TrashFileLoader(
             mActivity,
             env.providers,
             env.state,
             TestImmediateExecutor.createLookup(),
             TestFileTypeLookup(),
-            TestProvidersAccess.OtherUser.USER_ID,
+            userId,
         )
     }
 
