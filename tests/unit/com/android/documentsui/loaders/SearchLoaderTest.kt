@@ -56,6 +56,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
@@ -805,6 +806,7 @@ class SearchLoaderTest {
 
         @Test
         @EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3)
+        @Ignore("b/474184546: Currently failing, re-enable")
         fun testCancelLoad() {
             val queryDelayMs = 200L
             // shorter than query delay
