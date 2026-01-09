@@ -107,14 +107,13 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
     private lateinit var receiver: BroadcastReceiver
 
     private fun sendProgress(progresses: ArrayList<JobProgress>, id: Long = lastId++) {
-        if (jobUpdateIdle.isIdleNow) {
-            jobUpdateIdle.increment()
-        }
+        jobUpdateIdle.increment()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         var intent =
             Intent(ACTION_PROGRESS).apply {
                 `package` = context.packageName
                 putExtra("id", id)
+                putExtra("from_test", true)
                 putParcelableArrayListExtra(EXTRA_PROGRESS, progresses)
             }
         context.sendOrderedBroadcast(intent, null)
@@ -133,8 +132,9 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         jobUpdateIdle = CountingIdlingResource("job")
         receiver =
             object : BroadcastReceiver() {
+                // Only decrement resource if broadcast was sent from a test
                 override fun onReceive(context: Context, intent: Intent) {
-                    if (!jobUpdateIdle.isIdleNow) {
+                    if (intent.getBooleanExtra("from_test", false)) {
                         jobUpdateIdle.decrement()
                     }
                 }
