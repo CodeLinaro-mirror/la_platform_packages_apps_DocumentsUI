@@ -1026,4 +1026,26 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 .findDropdownTrigger(R.id.search_last_modified_trigger)
                 .check(matches(withText(R.string.search_last_modified_any_time)));
     }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testRootReselectionDoesNotClobberDocumentStack() throws Exception {
+        // Validates that b/474153259 is fixed.
+
+        // Select Dir1 folder, and click on the root. This triggers onRootPicked, which
+        // before the fix would clobber the stack.
+        bots.directory.selectDocument(TestFilesRule.DIR_NAME_1, 1);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+
+        // Clear the selection, and enter the new directory. Check the breadcrumb.
+        bots.directory.clearSelection();
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
+        bots.breadcrumb.assertItemsPresent(ROOT_0_ID, TestFilesRule.DIR_NAME_1);
+
+        // Open TEST_ROOT_0 again. This should show the root directory, which includes the test
+        // folder.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+    }
 }
