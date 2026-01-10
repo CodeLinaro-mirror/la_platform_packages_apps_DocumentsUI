@@ -173,6 +173,22 @@ class ShortcutInfoTest {
     }
 
     @Test
+    fun testDerivedTypeDownloads() {
+        // Create a root info for the external storage provider.
+        val rootInfo =
+            RootInfo().apply {
+                userId = UserId.of(100)
+                authority = "com.android.externalstorage.documents"
+                rootId = "primary"
+            }
+        // Create a shortcut info that points to the "Download" folder.
+        val shortcutInfo = ShortcutInfo(rootInfo, "primary:", "Download", "Download", 0)
+
+        // Assert that the derived type is TYPE_DOWNLOADS.
+        assertEquals(SidebarEntryItemInfo.TYPE_DOWNLOADS, shortcutInfo.derivedType)
+    }
+
+    @Test
     fun testDerivedTypeShortcutOther() {
         val rootInfo =
             RootInfo().apply {

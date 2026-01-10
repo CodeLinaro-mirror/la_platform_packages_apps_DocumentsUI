@@ -181,7 +181,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
     private boolean launchHomeForCopyDestination(Intent intent) {
         // As a matter of policy we don't load the last used stack for the copy
         // destination picker (user is already in Files app).
-        // Consensus was that the experice was too confusing.
+        // Consensus was that the experience was too confusing.
         // In all other cases, where the user is visiting us from another app
         // we restore the stack as last used from that app.
         if (Shared.ACTION_PICK_COPY_DESTINATION.equals(intent.getAction())) {
