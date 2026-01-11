@@ -98,11 +98,11 @@
     <dimen name="breadcrumb_item_max_width">275dp</dimen>
     <dimen name="dir_elevation_m3">8dp</dimen>
     <dimen name="drag_shadow_size_m3">120dp</dimen>
-    <dimen name="grid_item_thumbnail_width">80dp</dimen>
-    <dimen name="grid_item_thumbnail_height">80dp</dimen>
+    <dimen name="grid_item_thumbnail_width">128dp</dimen>
+    <dimen name="grid_item_thumbnail_height">128dp</dimen>
     <dimen name="grid_item_thumbnail_radius">20dp</dimen>
-    <dimen name="grid_item_icon_width">64dp</dimen>
-    <dimen name="grid_item_icon_height">64dp</dimen>
+    <dimen name="grid_item_icon_width">112dp</dimen>
+    <dimen name="grid_item_icon_height">112dp</dimen>
     <dimen name="grid_item_nameplate_width">142dp</dimen>
     <dimen name="grid_item_nameplate_height">44dp</dimen>
     <dimen name="grid_item_nameplate_padding">4dp</dimen>

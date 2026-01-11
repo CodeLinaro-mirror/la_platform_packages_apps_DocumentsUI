@@ -39,6 +39,7 @@ import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.not;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
@@ -490,18 +491,37 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /**
-     * Asserts that the "Empty Trash" banner is currently visible. This banner only appears
-     * on the trash page.
+     * Asserts that the "Empty Trash" banner is currently visible. This banner only appears on the
+     * trash page.
      */
     public void assertEmptyTrashBannerIsVisible() {
         onView(
-                allOf(
-                        withId(R.id.message_textview),
-                        withText(
-                                "Files in the trash for more than 30 days will be "
-                                        + "automatically deleted."),
-                        isDisplayed()))
+                        allOf(
+                                withId(R.id.message_textview),
+                                withText(mContext.getString(R.string.empty_trash_banner_message)),
+                                isDisplayed()))
                 .check(matches(isDisplayed()));
+    }
+
+    /**
+     * Asserts whether the "Empty Trash" button is enabled or disabled.
+     *
+     * @param enabled Expected enabled state of the button.
+     */
+    public void assertEmptyTrashNowButtonEnabled(boolean enabled) {
+        // Define the matcher for the "Empty Trash now" button
+        Matcher<View> buttonMatcher =
+                allOf(
+                        withId(R.id.dismiss_button),
+                        withText(mContext.getString(R.string.empty_trash_banner_button)),
+                        isDisplayed());
+
+        // Check the enabled state
+        if (enabled) {
+            onView(buttonMatcher).check(matches(ViewMatchers.isEnabled()));
+        } else {
+            onView(buttonMatcher).check(matches(not(ViewMatchers.isEnabled())));
+        }
     }
 
     /**

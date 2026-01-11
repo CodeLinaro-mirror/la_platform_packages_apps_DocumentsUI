@@ -52,6 +52,7 @@ public final class Providers {
     public static final String HOME_SCREEN_SHORTCUT_TITLE = "Home screen";
     public static final String DOWNLOAD_SHORTCUT_TITLE = "Download";
     public static final String DOWNLOAD_DOCUMENT_ID = "primary:Download";
+    public static final String RECENTS_ROOT_URI = "content://com.android.documentsui/recents";
 
     private static final String DOCSUI_PACKAGE = "com.android.documentsui";
     private static final Set<String> SYSTEM_AUTHORITIES = Set.of(
@@ -81,5 +82,9 @@ public final class Providers {
         return SYSTEM_AUTHORITIES.contains(authority)
                 || authority == null  // Recents
                 || authority.startsWith(DOCSUI_PACKAGE);  // covers internal and test providers
+    }
+
+    public static boolean isRecentsRootUri(@Nullable Uri uri) {
+        return uri != null && RECENTS_ROOT_URI.equals(uri.toString());
     }
 }

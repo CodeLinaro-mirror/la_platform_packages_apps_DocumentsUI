@@ -339,6 +339,7 @@ private fun initializeIdMapping() {
             R.style.TabTextAppearance to R.style.TabTextAppearanceM3,
             R.style.ToolbarTitle to R.style.ToolbarTitleM3,
         )
+    initialized = true
 }
 
 abstract class Material3Config private constructor() {

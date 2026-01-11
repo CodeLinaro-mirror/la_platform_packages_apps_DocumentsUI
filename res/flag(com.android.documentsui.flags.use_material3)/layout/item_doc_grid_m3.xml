@@ -309,7 +309,9 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textAlignment="viewStart"
-                android:textAppearance="@style/ItemCaptionTextM3" />
+                android:textAppearance="@style/ItemCaptionTextM3"
+                android:drawableTint="@color/doc_list_item_subtitle_color_m3"
+                android:drawablePadding="@dimen/summary_drawable_padding" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/bullet"

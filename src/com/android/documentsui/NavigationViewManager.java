@@ -388,6 +388,10 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             mBreadcrumb.show(false);
             if (mActivity.isSearching()) {
                 mToolbar.setTitle(R.string.search_results);
+            } else {
+                // Hide the search bar so we can see the "Recent" title.
+                mSearchBarView.setVisibility(GONE);
+                mToolbar.setTitle(R.string.root_recent);
             }
             return;
         }

@@ -26,7 +26,7 @@ java_defaults {
     ],
 
     static_libs: [
-        "android.provider.flags-aconfig-java",
+        "android.provider.flags-aconfig-java-export",
         "androidx.arch.core_core-testing",
         "androidx.lifecycle_lifecycle-runtime-testing",
         "androidx.test.core",
