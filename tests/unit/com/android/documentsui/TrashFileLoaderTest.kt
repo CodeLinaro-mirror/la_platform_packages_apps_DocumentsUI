@@ -25,6 +25,8 @@ import android.provider.DocumentsContract
 import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.base.DocumentStack
 import com.android.documentsui.base.State
 import com.android.documentsui.base.UserId
 import com.android.documentsui.flags.Flags
@@ -82,6 +84,9 @@ internal class TrashFileLoaderTest {
         } else {
             mEnv.state.canShareAcrossProfile = true
         }
+        // Set the stack to the trash root. This is needed to ensure that the loader correctly
+        // identifies the trash root.
+        mEnv.state.stack.reset(DocumentStack(TestProvidersAccess.TRASH_ROOT, DocumentInfo()))
     }
 
     /** Tests that the loader correctly fetches trashed documents. */
@@ -118,11 +123,11 @@ internal class TrashFileLoaderTest {
 
         val loader = createTrashFileLoader()
 
-        Assert.assertFalse(loader.mState.showHiddenFiles)
+        Assert.assertTrue(loader.mState.shouldShowHiddenFiles())
         var result = loader.loadInBackground()!!
         Assert.assertEquals(2, result.cursor.getCount())
 
-        loader.mState.showHiddenFiles = true
+        loader.mState.setIsShowHiddenFiles(true)
         result = loader.loadInBackground()!!
         Assert.assertEquals(2, result.cursor.getCount())
     }

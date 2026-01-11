@@ -205,9 +205,7 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
                                         // Ignored, since we manage cursor lifecycle internally
                                     }
                                 };
-                        if (shouldFilterHiddenFiles()) {
-                            filteredCursor.filterHiddenFiles(mState.showHiddenFiles);
-                        }
+                        filteredCursor.filterHiddenFiles(mState.shouldShowHiddenFiles());
                         filteredCursor.filterMimes(mState.acceptMimes, getRejectMimes());
                         filteredCursor.filterLastModified(rejectBefore);
 
@@ -299,15 +297,6 @@ public abstract class MultiRootDocumentsLoader extends AsyncTaskLoader<Directory
 
     protected boolean isDocumentsMovable() {
         return false;
-    }
-
-    /**
-     * Returns whether hidden files should be filtered from the results.
-     *
-     * @return {@code true} if hidden files should be filtered, {@code false} otherwise.
-     */
-    protected boolean shouldFilterHiddenFiles() {
-        return true;
     }
 
     /**

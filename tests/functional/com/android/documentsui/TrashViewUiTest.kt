@@ -35,7 +35,6 @@ import com.android.documentsui.util.VersionUtils
 import com.android.modules.utils.build.SdkLevel
 import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -166,7 +165,6 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
     /** Tests permanently deleting items from within a trashed folder. */
     @Test
-    @Ignore("TODO(b/474376278): Enable when the bug is fixed.")
     fun testPermanentlyDeleteItemsFromTrashedFolder() {
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
