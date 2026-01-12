@@ -90,10 +90,8 @@ class TrashJob(
             id,
             operationType,
             state,
-            getProgressMessage(
-                R.string.trash_specific_file_in_progress,
-                R.string.trash_in_progress,
-            ),
+            filename,
+            mResourceUris.itemCount,
             hasFailures(),
             failedDocs,
             failedUris,

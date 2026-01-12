@@ -131,7 +131,7 @@ class JobPanelController(
             cardView.findViewById<Button>(getRes(R.id.job_progress_item_open_trash))
 
         fun setJobProgress(jobProgress: JobProgress, expanded: Boolean) {
-            titleView.text = jobProgress.msg
+            titleView.text = jobProgress.getProgressMessage(context)
             if (expanded) {
                 titleView.isSingleLine = false
                 toggleExpandButton.icon =

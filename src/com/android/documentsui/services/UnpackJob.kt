@@ -25,7 +25,6 @@ import android.os.SystemClock
 import android.os.Trace
 import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document.MIME_TYPE_DIR
-import android.text.BidiFormatter
 import android.text.TextUtils
 import android.util.Log
 import com.android.documentsui.DocumentsApplication
@@ -155,18 +154,6 @@ class UnpackJob(
 
     /** This method is called on a different thread than the thread running the extraction. */
     public override fun getJobProgress(): JobProgress {
-        val args: MutableMap<String, Any> =
-            mutableMapOf(
-                "directory" to BidiFormatter.getInstance().unicodeWrap(dstInfo.displayName)
-            )
-
-        val message =
-            getProgressMessage(
-                R.string.extract_specific_file_in_progress,
-                R.string.extract_in_progress,
-                args,
-            )
-
         val bytesCopied: Long
         val bytesRequired: Long
         val timeEstimate: Long
@@ -181,7 +168,8 @@ class UnpackJob(
             id,
             operationType,
             state,
-            message,
+            filename,
+            mResourceUris.itemCount,
             hasFailures(),
             failedDocs,
             failedUris,

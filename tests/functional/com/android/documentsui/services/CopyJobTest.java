@@ -156,7 +156,8 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
         JobProgress progress = job.getJobProgress();
         assertEquals(job.id, progress.id);
         assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals("Copying “tokyo.sth” to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("tokyo.sth", progress.filename);
+        assertEquals(1, progress.numFiles);
         assertFalse(progress.hasFailures);
 
         job.run();
@@ -168,7 +169,8 @@ public class CopyJobTest extends AbstractCopyJobTest<CopyJob> {
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(OPERATION_COPY, progress.operationType);
         assertFalse(progress.hasFailures);
-        assertEquals("Copying “tokyo.sth” to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("tokyo.sth", progress.filename);
+        assertEquals(1, progress.numFiles);
         assertEquals(-1, progress.currentBytes);
         assertEquals(-1, progress.requiredBytes);
     }

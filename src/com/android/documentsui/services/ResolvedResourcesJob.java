@@ -20,17 +20,12 @@ import static android.os.SystemClock.uptimeMillis;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
-import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.icu.text.MessageFormat;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.text.BidiFormatter;
 import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
@@ -45,10 +40,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Abstract job that resolves all resource URIs into mResolvedDocs. This provides
@@ -202,38 +194,11 @@ public abstract class ResolvedResourcesJob extends Job {
         return mResolvedDocs.size();
     }
 
-    /**
-     * Returns a progress message to be displayed to the user for this job.
-     *
-     * @param explicitStringId String used when there is a single file and the filename is known.
-     * @param pluralStringId String used when there are multiple files or the filename is unknown.
-     * @param formatArgs Extra format args passed when formatting the string.
-     * @return The progress message to be displayed.
-     */
-    protected String getProgressMessage(
-            int explicitStringId, int pluralStringId, @NonNull Map<String, Object> formatArgs) {
-        final int n = mResourceUris.getItemCount();
-        formatArgs.put("count", n);
-
-        if (n == 1) {
-            String name;
-            try {
-                name = mResolvedDocs.get(0).displayName;
-            } catch (IndexOutOfBoundsException ignored) {
-                name = "";
-            }
-            if (!name.isEmpty()) {
-                formatArgs.put("filename", BidiFormatter.getInstance().unicodeWrap(name));
-                return new MessageFormat(
-                                service.getString(getRes(explicitStringId)), Locale.getDefault())
-                        .format(formatArgs);
-            }
+    protected String getFilename() {
+        try {
+            return mResolvedDocs.get(0).displayName;
+        } catch (IndexOutOfBoundsException ignored) {
+            return "";
         }
-        return new MessageFormat(service.getString(getRes(pluralStringId)), Locale.getDefault())
-                .format(formatArgs);
-    }
-
-    protected String getProgressMessage(int explicitStringId, int pluralStringId) {
-        return getProgressMessage(explicitStringId, pluralStringId, new HashMap<>());
     }
 }
