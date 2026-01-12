@@ -857,7 +857,6 @@ public abstract class BaseActivity
             // If search V2 is enabled, first change the stack, before cancelling search, as that
             // triggers folder loading, which must know the correct stack content.
             if (!skipRootRefresh) {
-                updateColumnHeaders(root);
                 mState.stack.changeRoot(root);
             }
         }
@@ -880,7 +879,6 @@ public abstract class BaseActivity
         mSortController.onViewModeChanged(mState.derivedMode);
 
         if (!isSearchV2Enabled()) {
-            updateColumnHeaders(root);
             // Clear entire backstack and start in new root
             mState.stack.changeRoot(root);
         }
@@ -938,7 +936,9 @@ public abstract class BaseActivity
     }
 
     private void updateColumnHeaders(@Nullable RootInfo root) {
-        boolean showSummary = displaySummaryForRoot(mInjector.getSummaryProviderManager(), root);
+        boolean showSummary =
+                displaySummaryForRoot(
+                        mInjector.getSummaryProviderManager(), root, mState.stack.peek());
         mState.sortModel.setDimensionVisibility(
                 SortModel.SORT_DIMENSION_ID_SUMMARY, showSummary ? View.VISIBLE : View.GONE);
     }
@@ -1427,6 +1427,7 @@ public abstract class BaseActivity
 
     @VisibleForTesting
     public void notifyDirectoryLoaded(Uri uri) {
+        updateColumnHeaders(mState.stack.getRoot());
         for (EventListener listener : mEventListeners) {
             listener.onDirectoryLoaded(uri);
         }
