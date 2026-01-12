@@ -192,6 +192,11 @@ public class AbstractActionHandlerTest {
                     protected void launchToDefaultLocation() {
                         throw new UnsupportedOperationException();
                     }
+
+                    @Override
+                    protected Uri getDefaultFallbackUri() {
+                        return null;
+                    }
                 };
         mHandler.reset(new ContentLock());
     }
