@@ -25,6 +25,7 @@ import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnable
 import static com.android.documentsui.util.FlagUtils.isMovingContentIntoPrivateSpaceEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -1194,7 +1195,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     protected final void loadHomeDir() {
-        loadRoot(Shared.getDefaultRootUri(mActivity), UserId.DEFAULT_USER);
+        Uri defaultUri = Shared.getDefaultRootUri(mActivity);
+        if (isHomeScreenFilesFlagEnabled()
+                && isUseAllfilesRootForRecentsEnabled()
+                && Providers.isRecentsRootUri(defaultUri)) {
+            loadRecent();
+            return;
+        }
+        loadRoot(defaultUri, UserId.DEFAULT_USER);
     }
 
     protected final void loadRecent() {

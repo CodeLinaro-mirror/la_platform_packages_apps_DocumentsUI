@@ -242,7 +242,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textAppearance="@style/ItemCaptionTextM3" />
+            android:textAppearance="@style/ItemCaptionTextM3"
+            android:drawableTint="@color/doc_list_item_subtitle_color_m3"
+            android:drawablePadding="@dimen/summary_drawable_padding" />
 
       </LinearLayout>
 
