@@ -2069,7 +2069,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean shouldDisplaySummary() {
             return displaySummaryForRoot(
-                    mInjector.getSummaryProviderManager(), mState.stack.getRoot());
+                    mInjector.getSummaryProviderManager(),
+                    mState.stack.getRoot(),
+                    mState.stack.peek());
         }
     }
 }
