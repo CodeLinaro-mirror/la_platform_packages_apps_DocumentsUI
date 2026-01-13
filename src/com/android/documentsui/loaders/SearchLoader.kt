@@ -212,10 +212,6 @@ class SearchLoader(
             Log.d(TAG, "Started ${searchTaskList.size} search tasks")
         }
 
-        if (isLoadInBackgroundCanceled) {
-            return false
-        }
-
         // Step 3: Wait for the results.
         if (options.isQueryTimeUnlimited()) {
             if (DEBUG) {

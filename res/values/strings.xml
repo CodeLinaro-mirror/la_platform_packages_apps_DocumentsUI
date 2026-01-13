@@ -627,7 +627,7 @@
     <string name="notification_copy_files_converted_title">Some files were converted</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being copied.
-         [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         [CHAR_LIMIT=48] -->
     <string name="copy_specific_file_in_progress">Copying \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being copied.
@@ -638,7 +638,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being extracted from
-         an archive.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         an archive.  [CHAR_LIMIT=48] -->
     <string name="extract_specific_file_in_progress">Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being
@@ -649,7 +649,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being moved from one
-         folder to another.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         folder to another.  [CHAR_LIMIT=48] -->
     <string name="move_specific_file_in_progress">Moving \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being moved
@@ -660,7 +660,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being deleted.
-         [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         [CHAR_LIMIT=48] -->
     <string name="delete_specific_file_in_progress">Deleting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being
@@ -671,7 +671,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being moved to the
-         trash bin.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         trash bin.  [CHAR_LIMIT=48] -->
     <string name="trash_specific_file_in_progress">Trashing \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being moved
@@ -682,7 +682,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being restored from the
-         trash bin. [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         trash bin. [CHAR_LIMIT=48] -->
     <string name="restore_specific_file_in_progress">Restoring \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
@@ -693,7 +693,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being zipped, i.e.
-         bundled together and compressed into a ZIP archive.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         bundled together and compressed into a ZIP archive.  [CHAR_LIMIT=48] -->
     <string name="compress_specific_file_in_progress">Zipping \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being zipped,

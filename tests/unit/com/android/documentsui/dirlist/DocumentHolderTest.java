@@ -399,4 +399,22 @@ public class DocumentHolderTest {
         assertNull(getDownloadIcon(holder));
         assertNull(getTickIcon(holder));
     }
+
+    @Test
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
+    public void testIconDisappearsWhenSyncStateDisappears() {
+        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_LOCAL_CHANGES;
+        DocumentHolder holder = createHolder();
+        holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
+
+        assertNotNull(getUploadIcon(holder));
+        assertEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
+
+        // Rebind with a null sync state.
+        mDoc.syncStateFlags = null;
+        holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
+
+        assertNotNull(getUploadIcon(holder));
+        assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
+    }
 }
