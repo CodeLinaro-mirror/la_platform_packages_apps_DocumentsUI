@@ -117,7 +117,8 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_CREATED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting “test1.txt”");
+            assertThat(progress.filename).isEqualTo("test1.txt");
+            assertThat(progress.numFiles).isEqualTo(1);
         }
 
         job.run();
@@ -129,7 +130,8 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_COMPLETED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting “test1.txt”");
+            assertThat(progress.filename).isEqualTo("test1.txt");
+            assertThat(progress.numFiles).isEqualTo(1);
         }
 
         // All the files should have been deleted.
@@ -154,7 +156,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_CREATED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         job.run();
@@ -166,7 +168,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_COMPLETED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         // All the files should have been deleted.
@@ -190,7 +192,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_CREATED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         job.run();
@@ -202,7 +204,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_COMPLETED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         // All the files should have been deleted.

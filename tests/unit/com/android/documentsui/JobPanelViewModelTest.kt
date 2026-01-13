@@ -57,7 +57,7 @@ class JobPanelViewModelTest {
                 id = "Job1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_CREATED,
-                msg = "Job1",
+                numFiles = 1,
                 hasFailures = false,
             )
         val progress2 =
@@ -65,7 +65,7 @@ class JobPanelViewModelTest {
                 id = "Job2",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_CREATED,
-                msg = "Job2",
+                numFiles = 1,
                 hasFailures = false,
             )
 
@@ -80,7 +80,7 @@ class JobPanelViewModelTest {
                 id = "Job3",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_STARTED,
-                msg = "Job3",
+                numFiles = 1,
                 hasFailures = false,
             )
 
@@ -89,7 +89,7 @@ class JobPanelViewModelTest {
                 id = "Job4",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job4",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 50,
                 requiredBytes = 100,
@@ -155,7 +155,7 @@ class JobPanelViewModelTest {
                 id = "Job1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_CREATED,
-                msg = "Job1",
+                numFiles = 1,
                 hasFailures = false,
             )
 
@@ -179,7 +179,7 @@ class JobPanelViewModelTest {
                 id = "Job1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_CREATED,
-                msg = "Job1",
+                numFiles = 1,
                 hasFailures = false,
             )
 
@@ -200,7 +200,7 @@ class JobPanelViewModelTest {
                 id = "in_progress_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job in progress",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 40,
                 requiredBytes = 100,
@@ -211,7 +211,7 @@ class JobPanelViewModelTest {
                 id = "failed_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job failed",
+                numFiles = 1,
                 hasFailures = true,
             )
 
@@ -252,7 +252,7 @@ class JobPanelViewModelTest {
                 id = "in_progress_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job in progress",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 40,
                 requiredBytes = 100,
@@ -263,7 +263,7 @@ class JobPanelViewModelTest {
                 id = "succeeded_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job succeeded",
+                numFiles = 1,
                 hasFailures = false,
             )
 
@@ -272,7 +272,7 @@ class JobPanelViewModelTest {
                 id = "failed_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job failed",
+                numFiles = 1,
                 hasFailures = true,
             )
 

@@ -108,7 +108,7 @@ class JobPanelControllerTest {
                 id = "jobId1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_STARTED,
-                msg = "Job started",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 0,
                 requiredBytes = 10,
@@ -122,7 +122,6 @@ class JobPanelControllerTest {
 
         progress.apply {
             state = Job.STATE_SET_UP
-            msg = "Job in progress"
             currentBytes = 4
         }
         sendProgress(arrayListOf(progress.toJobProgress()))
@@ -133,7 +132,6 @@ class JobPanelControllerTest {
 
         progress.apply {
             state = Job.STATE_COMPLETED
-            msg = "Job completed"
             currentBytes = 10
         }
         sendProgress(arrayListOf(progress.toJobProgress()))
@@ -153,7 +151,7 @@ class JobPanelControllerTest {
                 id = "jobId1",
                 operationType = FileOperationService.OPERATION_MOVE,
                 state = Job.STATE_STARTED,
-                msg = "Job started",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 0,
                 requiredBytes = 10,
@@ -164,7 +162,7 @@ class JobPanelControllerTest {
                 id = "jobId2",
                 operationType = FileOperationService.OPERATION_DELETE,
                 state = Job.STATE_STARTED,
-                msg = "Job started",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 0,
                 requiredBytes = 50,
@@ -178,7 +176,6 @@ class JobPanelControllerTest {
 
         progress1.apply {
             state = Job.STATE_SET_UP
-            msg = "Job in progress"
             currentBytes = 4
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
@@ -189,7 +186,6 @@ class JobPanelControllerTest {
 
         progress1.apply {
             state = Job.STATE_COMPLETED
-            msg = "Job completed"
             currentBytes = 10
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
@@ -200,7 +196,6 @@ class JobPanelControllerTest {
 
         progress2.apply {
             state = Job.STATE_SET_UP
-            msg = "Job in progress"
             currentBytes = 30
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
@@ -211,7 +206,6 @@ class JobPanelControllerTest {
 
         progress2.apply {
             state = Job.STATE_COMPLETED
-            msg = "Job completed"
             currentBytes = 40
         }
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
@@ -228,7 +222,7 @@ class JobPanelControllerTest {
                 id = "indeterminate",
                 operationType = FileOperationService.OPERATION_MOVE,
                 state = Job.STATE_SET_UP,
-                msg = "Job started",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = -1,
                 requiredBytes = -1,
@@ -239,7 +233,7 @@ class JobPanelControllerTest {
                 id = "determinate",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job started",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 40,
                 requiredBytes = 100,

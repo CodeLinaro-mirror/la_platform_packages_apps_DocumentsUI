@@ -96,10 +96,8 @@ class RestoreJob(
             id,
             operationType,
             state,
-            getProgressMessage(
-                R.string.restore_specific_file_in_progress,
-                R.string.restore_in_progress,
-            ),
+            filename,
+            mResourceUris.itemCount,
             hasFailures(),
             failedDocs,
             failedUris,

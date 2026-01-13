@@ -342,7 +342,7 @@ final class GridDocumentHolder extends DocumentHolder {
                 }
                 mDetails.setText(docSummary);
             } else {
-                if ((isUseMaterial3FlagEnabled() && mDoc.isDirectory()) || mDoc.lastModified <= 0) {
+                if (mDoc.lastModified <= 0) {
                     if (isUseMaterial3FlagEnabled()) {
                         mDate.setVisibility(View.GONE);
                     } else {
