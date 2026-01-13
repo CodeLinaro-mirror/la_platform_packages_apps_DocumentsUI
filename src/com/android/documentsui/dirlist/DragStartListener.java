@@ -30,6 +30,7 @@ import androidx.recyclerview.selection.MutableSelection;
 import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 
+import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.DragAndDropManager;
 import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.Model;
@@ -74,6 +75,7 @@ interface DragStartListener {
         private final Function<Selection<String>, List<DocumentInfo>> mDocsConverter;
         private final Function<DocumentInfo, Boolean> mIsContentAvailable;
         private final DragAndDropManager mDragAndDropManager;
+        private final DocumentsAccess mDocsAccess;
 
         // use DragStartListener.create
         @VisibleForTesting
@@ -86,7 +88,8 @@ interface DragStartListener {
                 Function<View, String> idFinder,
                 Function<Selection<String>, List<DocumentInfo>> docsConverter,
                 Function<DocumentInfo, Boolean> isContentAvailable,
-                DragAndDropManager dragAndDropManager) {
+                DragAndDropManager dragAndDropManager,
+                DocumentsAccess docsAccess) {
 
             mIconHelper = iconHelper;
             mState = state;
@@ -97,6 +100,7 @@ interface DragStartListener {
             mDocsConverter = docsConverter;
             mIsContentAvailable = isContentAvailable;
             mDragAndDropManager = dragAndDropManager;
+            mDocsAccess = docsAccess;
         }
 
         @Override
@@ -164,7 +168,8 @@ interface DragStartListener {
                     mSelectionDetails,
                     mIconHelper,
                     parent,
-                    canDragAndDrop);
+                    canDragAndDrop,
+                    mDocsAccess);
 
             return true;
         }
@@ -203,7 +208,8 @@ interface DragStartListener {
             Function<View, String> idFinder,
             ViewFinder viewFinder,
             Function<DocumentInfo, Boolean> isContentAvailable,
-            DragAndDropManager dragAndDropManager) {
+            DragAndDropManager dragAndDropManager,
+            DocumentsAccess docsAccess) {
 
         return new RuntimeDragStartListener(
                 iconHelper,
@@ -214,7 +220,8 @@ interface DragStartListener {
                 idFinder,
                 model::getDocuments,
                 isContentAvailable,
-                dragAndDropManager);
+                dragAndDropManager,
+                docsAccess);
     }
 
     @FunctionalInterface

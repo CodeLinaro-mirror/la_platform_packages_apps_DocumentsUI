@@ -153,7 +153,8 @@ public interface DragAndDropManager {
             SelectionDetails selectionDetails,
             IconHelper iconHelper,
             @Nullable DocumentInfo parent,
-            boolean canDragAndDrop);
+            boolean canDragAndDrop,
+            DocumentsAccess docsAccess);
 
     /**
      * Checks whether the document can be spring opened.
@@ -398,7 +399,8 @@ public interface DragAndDropManager {
                 SelectionDetails selectionDetails,
                 IconHelper iconHelper,
                 @Nullable DocumentInfo parent,
-                boolean canDragAndDrop) {
+                boolean canDragAndDrop,
+                DocumentsAccess docsAccess) {
 
             Trace.beginAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
                     DRAG_EVENT_COOKIE);
@@ -415,6 +417,21 @@ public interface DragAndDropManager {
             boolean isFilesSupportTrash = isTrashFlowEnabled();
             for (DocumentInfo doc : srcs) {
                 isFilesSupportTrash &= doc.isTrashSupported();
+                if (isHomeScreenFilesFlagEnabled()
+                        && itemInfo.getRoot().derivedType == SidebarEntryItemInfo.TYPE_RECENTS) {
+                    try {
+                        Uri newUri =
+                                docsAccess.getDocumentUri(
+                                        docsAccess.getMediaStoreUri(doc.derivedUri));
+                        if (DocumentsContract.isDocumentUri(mContext, newUri)) {
+                            doc.derivedUri = newUri;
+                        }
+                    } catch (Exception e) {
+                        Log.w(
+                                TAG,
+                                "Unable to convert uri: " + doc.derivedUri + " to a document uri.");
+                    }
+                }
                 uris.add(doc.derivedUri);
 
                 if (isTrashFlowEnabled() && mIsSrcRootTrash && doc.isRestoreSupported()) {

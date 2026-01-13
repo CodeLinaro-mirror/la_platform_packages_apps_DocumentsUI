@@ -75,6 +75,12 @@ public interface DocumentsAccess {
      */
     Uri getDocumentUri(Uri mediaStoreUri);
 
+    /**
+     * Takes in a MediaDocumentsProvider or ExternalStorageProvider URI as an argument and attempts
+     * to convert it to a media store URI.
+     */
+    Uri getMediaStoreUri(Uri uri);
+
     public final class RuntimeDocumentAccess implements DocumentsAccess {
 
         private static final String TAG = "DocumentAccess";
@@ -189,6 +195,14 @@ public interface DocumentsAccess {
          */
         public Uri getDocumentUri(Uri mediaStoreUri) {
             return MediaStore.getDocumentUri(mContext, mediaStoreUri);
+        }
+
+        /**
+         * Takes in a MediaDocumentsProvider or ExternalStorageProvider URI as an argument and
+         * attempts to convert it to a media store URI.
+         */
+        public Uri getMediaStoreUri(Uri uri) {
+            return MediaStore.getMediaUri(mContext, uri);
         }
     }
 }
