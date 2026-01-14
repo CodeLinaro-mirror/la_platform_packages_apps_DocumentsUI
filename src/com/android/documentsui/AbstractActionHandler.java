@@ -1508,6 +1508,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 return;
             }
 
+            // We only fetch summaries for files that are not archives.
+            if (documentInfo == null || documentInfo.isInArchive()) {
+                return;
+            }
+
             List<String> documentIds = Arrays.asList(result.getModelIds());
 
             final Uri summaryProviderAuthority = summaryProviderManager.getAuthorityUri();

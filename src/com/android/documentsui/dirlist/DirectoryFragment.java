@@ -674,7 +674,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 this::getModelId,
                                 mRecView::findChildViewUnder,
                                 mAdapterEnv::isContentAvailable,
-                                DocumentsApplication.getDragAndDropManager(mActivity))
+                                DocumentsApplication.getDragAndDropManager(mActivity),
+                                mActivity.getDocumentsAccess())
                         : DragStartListener.STUB;
 
         {
@@ -2068,7 +2069,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean shouldDisplaySummary() {
             return displaySummaryForRoot(
-                    mInjector.getSummaryProviderManager(), mState.stack.getRoot());
+                    mInjector.getSummaryProviderManager(),
+                    mState.stack.getRoot(),
+                    mState.stack.peek());
         }
     }
 }

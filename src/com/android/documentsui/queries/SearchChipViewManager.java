@@ -85,7 +85,7 @@ public class SearchChipViewManager {
     private static final String[] EMPTY_MIMETYPES = new String[]{""};
 
     private static final Map<Integer, SearchChipData> sMimeTypesChipItems = new HashMap<>();
-    private static final Map<Integer, SearchChipData> sDefaultChipItems = new HashMap<>();
+    private final Map<Integer, SearchChipData> mDefaultChipItems = new HashMap<>();
 
     private final ViewGroup mChipGroup;
     private final List<Integer> mDefaultChipTypes = new ArrayList<>();
@@ -113,24 +113,24 @@ public class SearchChipViewManager {
         sMimeTypesChipItems.put(
                 TYPE_VIDEOS,
                 new SearchChipData(TYPE_VIDEOS, R.string.chip_title_videos, VIDEOS_MIMETYPES));
+    }
+
+    public SearchChipViewManager(@NonNull ViewGroup chipGroup) {
+        mChipGroup = chipGroup;
         // When use_allfiles_root_for_recents flag is ON, "This week" chip's functionality can be
         // fulfilled in "Recents" root, so we hide these 2 chips.
         if (!isUseAllfilesRootForRecentsEnabled()) {
-            sDefaultChipItems.put(
+            mDefaultChipItems.put(
                     TYPE_LARGE_FILES,
                     new SearchChipData(
                             TYPE_LARGE_FILES, R.string.chip_title_large_files, EMPTY_MIMETYPES));
-            sDefaultChipItems.put(
+            mDefaultChipItems.put(
                     TYPE_FROM_THIS_WEEK,
                     new SearchChipData(
                             TYPE_FROM_THIS_WEEK,
                             R.string.chip_title_from_this_week,
                             EMPTY_MIMETYPES));
         }
-    }
-
-    public SearchChipViewManager(@NonNull ViewGroup chipGroup) {
-        mChipGroup = chipGroup;
     }
 
     /**
@@ -147,7 +147,7 @@ public class SearchChipViewManager {
                 if (sMimeTypesChipItems.containsKey(chipType)) {
                     chipData = sMimeTypesChipItems.get(chipType);
                 } else {
-                    chipData = sDefaultChipItems.get(chipType);
+                    chipData = mDefaultChipItems.get(chipType);
                 }
 
                 mCheckedChipItems.add(chipData);
@@ -284,7 +284,7 @@ public class SearchChipViewManager {
             }
         }
 
-        for (SearchChipData chipData : sDefaultChipItems.values()) {
+        for (SearchChipData chipData : mDefaultChipItems.values()) {
             addChipToGroup(mChipGroup, chipData, inflater);
         }
 

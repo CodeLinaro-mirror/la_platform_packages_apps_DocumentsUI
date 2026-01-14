@@ -323,7 +323,6 @@ final class GridDocumentHolder extends DocumentHolder {
         if (useSummary && !TextUtils.isEmpty(summary)) {
             mDetails.setVisibility(View.VISIBLE);
             mDetails.setText(summary);
-            mDetails.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_summary, 0, 0, 0);
             mDate.setVisibility(View.GONE);
             if (mBullet != null) {
                 mBullet.setVisibility(View.GONE);
@@ -331,7 +330,6 @@ final class GridDocumentHolder extends DocumentHolder {
         } else {
             // If file is partial, we want to show summary field as that's more relevant than
             // fileSize and date.
-            mDetails.setCompoundDrawables(null, null, null, null);
             if (mDoc.isPartial() && !useSummary) {
                 final String docSummary = mDoc.summary;
                 mDetails.setVisibility(View.VISIBLE);

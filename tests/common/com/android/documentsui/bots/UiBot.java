@@ -21,6 +21,7 @@ import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -297,8 +298,9 @@ public class UiBot extends Bots.BaseBot {
 
     public void clickToolbarOverflowItem(String label) {
         onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
+        mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
-        onView(withText(label)).perform(click());
+        onView(withText(label)).inRoot(isPlatformPopup()).perform(click());
     }
 
     public boolean waitForActionModeBarToAppear() {

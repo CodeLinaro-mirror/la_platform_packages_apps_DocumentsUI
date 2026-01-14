@@ -141,7 +141,7 @@
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acción no permitida"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Acción no permitida"</string>
     <string name="no_application_dialog_title" msgid="515133936841913019">"Abrir con…"</string>
-    <string name="no_application_dialog_message" msgid="5444094365658346573">"No hay apps compatibles instaladas. Prueba a instalar una desde Play Store."</string>
+    <string name="no_application_dialog_message" msgid="5444094365658346573">"No hay aplicaciones compatibles instaladas. Prueba a instalar una desde Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buscar en Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Compartir a través de"</string>
     <string name="copy_notification_title" msgid="52256435625098456">"Copiando archivos"</string>
