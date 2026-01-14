@@ -54,6 +54,7 @@ import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.view.KeyEvent;
+import android.view.View;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -1047,5 +1048,24 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // folder.
         EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testBreadcrumbV2HiddenWhenChangingRoot() throws Exception {
+        // Validates that b/475686340 is fixed.
+
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.directory.selectFirstDocument();
+
+        // Verify that breadcrumb v2 shows the path.
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.GONE);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+
+        // Change root, and check that breadcrumb v2 is hidden, while breadcrumb v1 is visible.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
     }
 }

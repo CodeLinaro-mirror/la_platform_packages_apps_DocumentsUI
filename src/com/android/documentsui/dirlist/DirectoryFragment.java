@@ -875,18 +875,22 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (!isSearchV2Enabled()) {
             return;
         }
+        BreadcrumbController controller = mInjector.getBreadcrumbController();
+        if (controller == null) {
+            return;
+        }
         // If the path extractor or the breadcrumb model were not set up or the
         // activity is either null or indicating that it is neither in the
         // recents view or is searching, do not extract paths from the currently
         // selected files. The extracted path is used only in recent and search
         // results to show the location of the selected file.
-        if (mPathExtractor == null
-                || mActivity == null
-                || !(mActivity.isSearching() || mActivity.isInRecents())) {
+        if (mPathExtractor == null || mActivity == null) {
             return;
         }
-        BreadcrumbController controller = mInjector.getBreadcrumbController();
-        if (controller == null) {
+        if (!(mActivity.isSearching() || mActivity.isInRecents())) {
+            // Just in case, since breadcrumb V2 is only visible while searching or in recents, and
+            // we are neither searching nor in recent, hide the breadcrumb v2.
+            hideSearchResultBreadcrumb(controller);
             return;
         }
         String selectedId = null;
