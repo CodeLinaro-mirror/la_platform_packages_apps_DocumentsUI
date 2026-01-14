@@ -21,6 +21,7 @@ import static android.text.TextUtils.SAFE_STRING_FLAG_TRIM;
 
 import static com.android.documentsui.ChangeIds.RESTRICT_STORAGE_ACCESS_FRAMEWORK;
 import static com.android.documentsui.base.SharedMinimal.TAG;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
@@ -33,6 +34,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.icu.text.Collator;
+import android.icu.text.RuleBasedCollator;
+import android.icu.util.ULocale;
 import android.net.Uri;
 import android.os.Looper;
 import android.os.Process;
@@ -53,7 +57,6 @@ import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.FlagUtils;
 import com.android.documentsui.util.VersionUtils;
 
-import java.text.Collator;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -147,11 +150,47 @@ public final class Shared {
      */
     public static final String LAUNCHER_TARGET_CLASS = "com.android.documentsui.LauncherActivity";
 
-    private static final Collator sCollator;
+    /**
+     * Monitor status of locale-sensitive collators.
+     */
+    private static volatile CollatorState sCollatorState;
 
-    static {
-        sCollator = Collator.getInstance();
-        sCollator.setStrength(Collator.SECONDARY);
+    private static final class CollatorState {
+        final ULocale mLocale;
+        final RuleBasedCollator mCollator;
+        final RuleBasedCollator mNumericCollator;
+
+        CollatorState(ULocale locale) {
+            mLocale = locale;
+            mCollator = (RuleBasedCollator) Collator.getInstance(locale);
+            mCollator.setStrength(Collator.SECONDARY);
+            mCollator.freeze();
+
+            mNumericCollator = mCollator.cloneAsThawed();
+            mNumericCollator.setNumericCollation(true);
+            mNumericCollator.freeze();
+        }
+    }
+
+    /**
+     * Returns a thread-safe, cached {@link CollatorState} instance for the current default locale.
+     *
+     * @return A non-null {@link CollatorState} for the current locale.
+     */
+    private static CollatorState getCollatorState() {
+        final ULocale locale = ULocale.getDefault();
+
+        // Update collators if locale has changed. Prevents unnecessary locking otherwise.
+        CollatorState collatorState = sCollatorState;
+        if (collatorState == null || !collatorState.mLocale.equals(locale)) {
+            synchronized (Shared.class) {
+                collatorState = sCollatorState;
+                if (collatorState == null || !collatorState.mLocale.equals(locale)) {
+                    sCollatorState = new CollatorState(locale);
+                }
+            }
+        }
+        return sCollatorState;
     }
 
     /**
@@ -216,11 +255,11 @@ public final class Shared {
     }
 
     /**
-     * Compare two strings against each other using system default collator in a
-     * case-insensitive mode. Clusters strings prefixed with {@link DIR_PREFIX}
-     * before other items.
+     * Compare two strings against each other using system default collator in a case-insensitive
+     * mode. Clusters strings prefixed with {@link DIR_PREFIX} before other items.
      */
     public static int compareToIgnoreCaseNullable(String lhs, String rhs) {
+        final CollatorState collatorState = getCollatorState();
         final boolean leftEmpty = TextUtils.isEmpty(lhs);
         final boolean rightEmpty = TextUtils.isEmpty(rhs);
 
@@ -228,7 +267,11 @@ public final class Shared {
         if (leftEmpty) return -1;
         if (rightEmpty) return 1;
 
-        return sCollator.compare(lhs, rhs);
+        final RuleBasedCollator collator =
+                isUseMaterial3FlagEnabled()
+                        ? collatorState.mNumericCollator
+                        : collatorState.mCollator;
+        return collator.compare(lhs, rhs);
     }
 
     private static boolean isSystemApp(ApplicationInfo ai) {

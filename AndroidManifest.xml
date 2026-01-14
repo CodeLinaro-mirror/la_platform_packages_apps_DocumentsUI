@@ -17,6 +17,7 @@
  */
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="com.android.documentsui">
 
     <uses-sdk android:minSdkVersion="30"/>
@@ -234,6 +235,12 @@
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
+
+        <!-- Disable automatic initialization of androidx.startup to avoid crash -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
 
         <receiver android:name=".PackageReceiver"
             android:exported="true">
