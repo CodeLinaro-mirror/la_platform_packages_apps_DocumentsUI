@@ -16,6 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
@@ -34,6 +35,7 @@ import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -1001,6 +1003,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             if (startUnpackingArchive(docDetails)) return true;
         }
 
+        // This was reverted as desktop file handling was rolling out until
+        // we have default file opening apps out-of-the box.
+        // Since the default file opening app uses a build flag, we're using
+        // another flag that's rolling out in the same cycle to flag protect
+        // the revert^2.
+        if (isDesktopFileHandlingFlagEnabled() && isUseNewOpenWithEnabled()) {
+            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -1453,7 +1463,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            // This was reverted as desktop file handling was rolling out until
+            // we have default file opening apps out-of-the box.
+            // Since the default file opening app uses a build flag, we're using
+            // another flag that's rolling out in the same cycle to flag protect
+            // the revert^2.
+            if (isDesktopFileHandlingFlagEnabled() && isUseNewOpenWithEnabled()) {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+            } else {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            }
         }
         return true;
     }
