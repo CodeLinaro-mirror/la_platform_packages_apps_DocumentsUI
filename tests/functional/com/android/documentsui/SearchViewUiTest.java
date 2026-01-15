@@ -49,6 +49,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
@@ -71,6 +72,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
@@ -1067,5 +1069,21 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
         bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
         bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchDropdownsHiddenWhenChangingRoot() throws Exception {
+        bots.search.doSearch(TestFilesRule.FILE_NAME_1);
+        // Wait for the search to be triggered and then completed.
+        int delayMs = SearchViewManager.SEARCH_DELAY_MS + 250;
+        SystemClock.sleep(delayMs);
+        // Select the first item. We are guaranteed to have at least one of them due to using
+        // a name of a known, existing file.
+        bots.directory.selectFirstDocument();
+        // Move to recents without clearing the query or the selection.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        // Here we just check one dropdown for being hidden as they all work in sync.
+        bots.main.assertLocationTriggerHidden();
     }
 }
