@@ -566,7 +566,6 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         FileOperation operation = new FileOperation.Builder()
                 .withOpType(FileOperationService.OPERATION_RESTORE)
-                .withDestination(mState.stack)
                 .withSrcs(srcs)
                 .build();
 

@@ -481,6 +481,23 @@ public class UiBot extends Bots.BaseBot {
         }
     }
 
+    /** Shows hidden files if the current settings is to hide hidden files. */
+    public void showHiddenFilesIfNeeded() throws Exception {
+        openOverflowMenu();
+        UiObject2 showHiddenFilesMenu =
+                mDevice.findObject(By.text(mContext.getString(R.string.menu_show_hidden_files)));
+        if (showHiddenFilesMenu != null) {
+            showHiddenFilesMenu.click();
+            mDevice.waitForIdle();
+        } else {
+            // Close the menu popup via Back key.
+            pressBack();
+            // Verify the menu popup is closed by checking if "Hide hidden files" menu item is gone.
+            onView(withText(mContext.getString(R.string.menu_hide_hidden_files)))
+                    .check(doesNotExist());
+        }
+    }
+
     /**
      * Click the toolbar menu to show hidden files.
      */
