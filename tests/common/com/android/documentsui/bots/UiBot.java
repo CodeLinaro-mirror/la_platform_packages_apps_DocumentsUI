@@ -174,6 +174,11 @@ public class UiBot extends Bots.BaseBot {
         onView(withId(R.id.search_location_trigger)).check(matches(isDisplayed()));
     }
 
+    /** Checks that the UI chip that toggles location search menu is visible. */
+    public void assertLocationTriggerHidden() {
+        onView(withId(R.id.search_location_trigger)).check(matches(not(isDisplayed())));
+    }
+
     /**
      * Checks that the UI chip that toggles last modified menu is visible.
      */
