@@ -59,9 +59,10 @@ android_library {
         "functional/com/android/documentsui/ActivityTest.java",
     ],
     exclude_srcs: [
-        // TestRunner has a dependency on microbenchmark-device-lib. Since it's
-        // not used in this test target, we exclude instead of adding an
-        // unnecessary dependency.
+        // TestRunner/ArtifactSaverRunnerWithParameters have a dependency on
+        // microbenchmark-device-lib. Since it's not used in this test target,
+        // we exclude instead of adding an unnecessary dependency.
+        "common/com/android/documentsui/ArtifactSaverRunnerWithParameters.kt",
         "common/com/android/documentsui/TestRunner.kt",
     ],
     resource_dirs: [],
