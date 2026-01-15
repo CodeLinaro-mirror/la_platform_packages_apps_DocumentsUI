@@ -82,7 +82,7 @@
     <!-- Menu item title that deletes the selected documents [CHAR LIMIT=28] -->
     <string name="menu_delete">Delete</string>
     <!-- Menu item title that permanently deletes the selected documents [CHAR LIMIT=28] -->
-    <string name="menu_permanently_delete">Delete permanently</string>
+    <string name="menu_permanently_delete">Delete forever</string>
     <!-- Menu item title that trashes the selected documents [CHAR LIMIT=28] -->
     <string name="menu_move_to_trash">Move to trash</string>
     <!-- Menu item title that restores the selected trashed documents [CHAR LIMIT=28] -->
@@ -1077,31 +1077,37 @@
     <string name="a11y_peek_show_info_button">Show info panel</string>
 
     <!-- Title displayed on the trash page when it contains no files. [CHAR_LIMIT=48] -->
-    <string name="trash_page_empty_title">Nothing in trash</string>
+    <string name="trash_page_empty_title">Trash is empty</string>
 
     <!-- Message shown in a banner on the trash page informing users about automatic deletion. [CHAR_LIMIT=100] -->
-    <string name="empty_trash_banner_message">Files in the trash for more than 30 days will be automatically deleted.</string>
+    <string name="empty_trash_banner_message">Items in the trash for more than 30 days will be automatically deleted</string>
 
     <!-- Button text in the trash page banner to manually empty the trash. [CHAR_LIMIT=48] -->
-    <string name="empty_trash_banner_button">Empty trash now</string>
+    <string name="empty_trash_banner_button">Empty trash</string>
 
     <!-- Title of the confirmation dialog when emptying the trash. [CHAR_LIMIT=48] -->
     <string name="empty_trash_dialog_title">Empty trash?</string>
 
     <!-- Message in the confirmation dialog when emptying the trash, warning the user about permanent deletion. [CHAR_LIMIT=NONE] -->
-    <string name="empty_trash_dialog_message">This action cannot be undone, and the files will no longer be recoverable.</string>
+    <string name="empty_trash_dialog_message">All items in trash will be deleted forever. This can\u2019t be undone.</string>
 
     <!-- Action button text in the dialog to confirm emptying the trash. [CHAR_LIMIT=48] -->
-    <string name="empty_trash_dialog_action_button">Empty trash</string>
+    <string name="empty_trash_dialog_action_button">Delete forever</string>
 
     <!-- Title of the dialog when opening a file in the trash. [CHAR_LIMIT=48] -->
-    <string name="file_open_in_trash_dialog_title">File in Trash</string>
+    <string name="file_open_in_trash_dialog_title">{count, plural,
+        =1 {Item is in trash}
+        other {Items are in trash}
+    }</string>
 
     <!-- Message in the dialog when opening a file in the trash. [CHAR_LIMIT=NONE] -->
-    <string name="file_open_in_trash_dialog_message">This file is in your Trash and cannot be opened. Please restore it from trash to access it.</string>
+    <string name="file_open_in_trash_dialog_message">{count, plural,
+        =1 {To access this item, restore it or drag it out of the trash}
+        other {To access these items, restore them or drag them out of the trash}
+    }</string>
 
     <!-- Restore action button text in the dialog to restore the file from the trash. [CHAR_LIMIT=48] -->
-    <string name="file_open_in_trash_dialog_restore_action_button">Restore file</string>
+    <string name="file_open_in_trash_dialog_restore_action_button">Restore</string>
 
     <!-- Message shown in a banner when offline for roots that have limited functionality when offline. [CHAR_LIMIT=NONE] -->
     <string name="you_are_offline_banner_message">You are currently offline. Some files and functionality are not available. Connect to the internet for full access.</string>
