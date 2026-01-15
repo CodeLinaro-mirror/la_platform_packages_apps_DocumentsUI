@@ -17,9 +17,9 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -302,7 +302,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isHomeScreenFilesFlagEnabled() || isCloudFeaturesFlagEnabled()) {
+        if (isHomeScreenFilesFlagEnabled() || isSyncStateEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
                 Log.e(TAG, "No documents available to cut.");
@@ -312,7 +312,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
             List<Uri> uris = new ArrayList<>();
             for (DocumentInfo doc : docs) {
-                if (isCloudFeaturesFlagEnabled()
+                if (isSyncStateEnabled()
                         && !mInjector.config.isContentAvailable(
                                 doc, mState, mInjector.networkMonitor.isOnline())) {
                     Log.e(TAG, "Document does not have available content to cut.");
@@ -348,7 +348,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
                 Log.e(TAG, "No documents available to copy.");

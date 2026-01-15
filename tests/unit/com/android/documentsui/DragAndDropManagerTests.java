@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static android.provider.DocumentsContract.EXTERNAL_STORAGE_PROVIDER_AUTHORITY;
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
@@ -301,7 +302,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testStartDrag_CannotDragAndDrop_StillStartsDrag() {
         mManager.startDrag(
                 mStartDragView,
@@ -2131,7 +2134,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDrop_onRoot_Fails_WhenCannotDragAndDrop() {
         mActions.nextRootDocument = TestEnv.FOLDER_1;
 
@@ -2208,7 +2213,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDrop_onTarget_Fails_WhenCannotDragAndDrop() {
         mManager.startDrag(
                 mStartDragView,
@@ -2237,6 +2244,8 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(FLAG_CLOUD_FEATURES)
     public void testDrop_onTarget_Succeeds_WhenCannotDragAndDrop_FeatureFlagDisabled()
             throws Exception {
@@ -2298,7 +2307,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testUpdateState_UpdatesToNotAllowed_WhenCannotDragAndDrop() {
         mManager.startDrag(
                 mStartDragView,
@@ -2323,6 +2334,8 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(FLAG_CLOUD_FEATURES)
     public void testUpdateState_UpdatesToMove_WhenCannotDragAndDrop_FeatureFlagDisabled() {
         mManager.startDrag(

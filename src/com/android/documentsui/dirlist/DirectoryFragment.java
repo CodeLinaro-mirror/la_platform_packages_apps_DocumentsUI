@@ -26,11 +26,11 @@ import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -569,7 +569,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mItemDecorationInvalidator = null;
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mInjector.networkMonitor.removeNetworkListener(mAdapter.getNetworkListener());
         }
 
@@ -606,7 +606,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mAdapter = getModelBackedDocumentsAdapter();
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mInjector.networkMonitor.addNetworkListener(mAdapter.getNetworkListener());
         }
 
@@ -2033,7 +2033,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         public boolean isOnline() {
-            if (!isCloudFeaturesFlagEnabled()) {
+            if (!isSyncStateEnabled()) {
                 return true;
             }
             return mInjector.networkMonitor.isOnline();

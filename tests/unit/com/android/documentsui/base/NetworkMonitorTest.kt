@@ -18,8 +18,12 @@ package com.android.documentsui.base
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -43,9 +47,12 @@ import org.mockito.junit.MockitoRule
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-@EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+@RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+@EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
 class NetworkMonitorTest {
 
+    @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
     @get:Rule val mockitoRule: MockitoRule = MockitoJUnit.rule()
 

@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
@@ -444,6 +445,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
     public void testActionMenu_containsDocumentsWithUnavailableContent() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -495,13 +498,13 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API, FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({
         Flags.FLAG_CLOUD_FEATURES,
         Flags.FLAG_USE_MATERIAL3,
         Flags.FLAG_ENABLE_TRASH_FLOW_RO
     })
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_containsDocumentsWithUnavailableContent_trash() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.canTrash = true;
@@ -516,6 +519,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_ZIP_NG_RO, Flags.FLAG_USE_MATERIAL3})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
     public void testActionMenu_containsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
@@ -1144,6 +1149,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testContextMenu_containsDocumentsWithUnavailableContent() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -1174,7 +1181,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API, FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags({
         Flags.FLAG_CLOUD_FEATURES,
         Flags.FLAG_USE_MATERIAL3,
@@ -1194,6 +1201,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
     public void testContextMenu_containsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -1218,6 +1227,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
     public void testContextMenuForFiles_containsDocumentsWithUnavailableContent() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -1248,6 +1259,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
     public void testContextMenuForFiles_containsDocumentsWithUnavailableContent_disabled() {

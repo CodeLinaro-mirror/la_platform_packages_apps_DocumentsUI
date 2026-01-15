@@ -20,10 +20,13 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.MatrixCursor
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -31,6 +34,7 @@ import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.ActionHandler
 import com.android.documentsui.ActionModeController
@@ -74,6 +78,7 @@ import org.mockito.kotlin.any
 @RunWith(AndroidJUnit4::class)
 @MediumTest
 class DirectoryFragmentTest {
+    @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
     private lateinit var env: TestEnv
@@ -291,7 +296,9 @@ class DirectoryFragmentTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
     fun testAddsNetworkListener() {
         verify(networkMonitor).addNetworkListener(any())
     }

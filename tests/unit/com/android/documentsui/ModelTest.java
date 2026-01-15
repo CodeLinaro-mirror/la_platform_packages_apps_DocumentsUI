@@ -16,7 +16,7 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
@@ -80,8 +80,8 @@ public class ModelTest {
 
         Random rand = new Random();
 
-        if (isCloudFeaturesFlagEnabled()) {
-            COLUMNS.add(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS);
+        if (isSyncStateEnabled()) {
+            COLUMNS.add(Document.COLUMN_CONTENT_SYNC_STATE_FLAGS);
         }
         MatrixCursor c = new MatrixCursor(COLUMNS.toArray(new String[0]));
         for (int i = 0; i < ITEM_COUNT; ++i) {
@@ -94,26 +94,26 @@ public class ModelTest {
             // to actually do something.
             row.add(Document.COLUMN_DISPLAY_NAME, NAMES[i]);
             row.add(Document.COLUMN_SIZE, rand.nextInt());
-            if (isCloudFeaturesFlagEnabled()) {
+            if (isSyncStateEnabled()) {
                 String modelId = ModelId.build(UserId.of(USER_ID), AUTHORITY, Integer.toString(i));
                 // Set 2 items (0 and 1) to have a sync in progress.
                 if (i == 0) {
                     // Item 0 is uploading.
                     row.add(
-                            DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                            DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS);
+                            Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            Document.SYNC_STATE_FLAG_UPLOAD_PROGRESS);
                     mIdsForItemsWithSyncInProgress.add(modelId);
                 } else if (i == 1) {
                     // Item 1 is downloading.
                     row.add(
-                            DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                            DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS);
+                            Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS);
                     mIdsForItemsWithSyncInProgress.add(modelId);
                 } else if (i == 2) {
                     // Item 1 is available locally.
                     row.add(
-                            DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS,
-                            DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY);
+                            Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY);
                 }
             }
         }

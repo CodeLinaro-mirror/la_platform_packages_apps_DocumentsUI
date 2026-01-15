@@ -18,7 +18,7 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.DevicePolicyResources.Strings.PREVIEW_WORK_FILE_ACCESSIBILITY;
 import static com.android.documentsui.DevicePolicyResources.Strings.UNDEFINED;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -146,7 +146,7 @@ public abstract class DocumentHolder
 
     /** Binds the sync icons, if they exist, to the document's thumbnail. */
     protected void bindSyncIcons(DocumentInfo doc, boolean justFinishedSync) {
-        if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled()) {
+        if (!isSyncStateEnabled()) {
             return;
         }
 
@@ -203,7 +203,7 @@ public abstract class DocumentHolder
 
     /** Hides all sync icons. */
     protected void hideSyncIcons() {
-        if (!isUseMaterial3FlagEnabled() || !isCloudFeaturesFlagEnabled()) {
+        if (!isUseMaterial3FlagEnabled() || !isSyncStateEnabled()) {
             return;
         }
 

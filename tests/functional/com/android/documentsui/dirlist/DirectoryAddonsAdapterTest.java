@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
@@ -258,7 +259,9 @@ public class DirectoryAddonsAdapterTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void
             testOnNetworkStateChanged_onRootWithLimitedFunctionalityWhenOffline_modifiesHeader() {
         // Create a file to avoid the no items inflated message showing.
@@ -266,7 +269,7 @@ public class DirectoryAddonsAdapterTest {
 
         // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
         mEnv.model.update();
 
         // Check header is shown.
@@ -290,6 +293,8 @@ public class DirectoryAddonsAdapterTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testOnNetworkStateChanged_flagDisabled_doesNotShowHeader() {
         // Create a file to avoid the no items inflated message showing.
@@ -297,7 +302,7 @@ public class DirectoryAddonsAdapterTest {
 
         // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         // Clear any default messages set by the model update
         mEnv.model.update();
@@ -307,14 +312,16 @@ public class DirectoryAddonsAdapterTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testUpdate_toRootWithoutLimitedFunctionalityWhenOffline_removesHeader() {
         // Create a file to avoid the no items inflated message showing.
         mEnv.model.createFile("a.txt");
 
         // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
         mEnv.model.update();
 
         // Check header is shown.
