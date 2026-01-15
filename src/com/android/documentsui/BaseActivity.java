@@ -23,6 +23,7 @@ import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isGetInfoDialogEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -890,9 +891,18 @@ public abstract class BaseActivity
             refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
         } else {
             mInjector.actions.getDocument(
-                    root.authority, root.documentId, root.userId,
+                    root.authority,
+                    root.documentId,
+                    root.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
-                    doc -> mInjector.actions.openRootDocument(doc));
+                    doc -> {
+                        if (isGetInfoDialogEnabled() && doc != null) {
+                            // The document info for ESP root documents does not have the correct
+                            // title so use the root title to overwrite this information.
+                            doc.displayName = root.title;
+                        }
+                        mInjector.actions.openRootDocument(doc);
+                    });
         }
 
         expandAppBar();
