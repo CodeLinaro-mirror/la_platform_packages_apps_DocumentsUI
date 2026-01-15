@@ -85,6 +85,7 @@
             <item type="bool" name="show_preview_icon"/>
             <item type="bool" name="show_search_bar"/>
             <item type="bool" name="show_selection_checkmark"/>
+            <item type="bool" name="show_summary_consent_dialog"/>
             <!-- END BOOLEAN CONFIG -->
 
             <!-- START STRING CONFIG -->
@@ -99,6 +100,8 @@
             <item type="string" name="local_search_provider"/>
             <item type="string" name="summary_consent_title" />
             <item type="string" name="summary_consent_message" />
+            <item type="string" name="option_show_summary_column" />
+            <item type="string" name="option_hide_summary_column" />
             <!-- END STRING CONFIG -->
 
             <!-- START SHORTCUT ARRAY -->

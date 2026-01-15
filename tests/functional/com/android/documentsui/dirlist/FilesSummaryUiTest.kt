@@ -100,6 +100,7 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
             baseActivity.injector.summaryProviderManager?.setConsentMessage(
                 consentTitle,
                 consentMessage,
+                showConsent = true,
             )
         }
     }
