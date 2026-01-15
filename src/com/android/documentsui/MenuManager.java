@@ -20,16 +20,13 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import androidx.core.view.ActionProvider;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,28 +36,20 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.MenuCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.SidebarEntryItemInfo;
-import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DirectoryFragment;
-import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.sidebar.RootsFragment;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandler;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
@@ -764,6 +753,11 @@ public abstract class MenuManager {
             return mActivity.isInRecents();
         }
 
+        /** Is the current directory the trash root. */
+        public boolean isTrashTopLevel() {
+            return mActivity.mState.stack.isTrashTopLevel();
+        }
+
         /** Is the current directory showing the contents of an archive? */
         public boolean isInArchive() {
             final DocumentInfo dir = mActivity.getCurrentDirectory();
@@ -775,7 +769,7 @@ public abstract class MenuManager {
         }
 
         public boolean canInspectDirectory() {
-            return mActivity.canInspectDirectory() && !isInRecents();
+            return mActivity.canInspectDirectory() && !isInRecents() && !isTrashTopLevel();
         }
     }
 }

@@ -42,6 +42,7 @@ import androidx.test.filters.SmallTest;
 import com.android.documentsui.DirectoryResult;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
@@ -58,7 +59,6 @@ import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
 import kotlinx.coroutines.CoroutineScopeKt;
 import kotlinx.coroutines.Dispatchers;
@@ -770,6 +770,27 @@ public final class MenuManagerTest {
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
         mDirExtractHere.assertDisabledAndInvisible();
         mDirBrowse.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testContextMenu_CantInspectRecents() {
+        mFeatures.inspector = true;
+
+        dirDetails.isInRecents = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        mDirInspect.assertDisabledAndInvisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testContextMenu_CantInspectTrash() {
+        mFeatures.inspector = true;
+
+        dirDetails.isTrashTopLevel = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        mDirInspect.assertDisabledAndInvisible();
     }
 
     @Test

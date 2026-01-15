@@ -27,31 +27,19 @@ import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
 
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
@@ -66,15 +54,11 @@ import androidx.recyclerview.selection.SelectionTracker;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
-import android.util.Log;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
 
 import com.android.documentsui.Injector;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandler;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
@@ -85,12 +69,11 @@ import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.dirlist.TestData;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
+import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
-import com.android.documentsui.files.ActionHandler;
-import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestMenuInflater;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestPackageManager;
@@ -102,17 +85,14 @@ import com.android.documentsui.testing.TestSelectionDetails;
 import kotlinx.coroutines.CoroutineScopeKt;
 import kotlinx.coroutines.Dispatchers;
 
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -1391,6 +1371,26 @@ public final class MenuManagerTest {
         dirDetails.canInspectDirectory = true;
         mgr.updateContextMenuForContainer(testMenu, selectionDetails);
         dirInspect.assertEnabledAndVisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    public void testContextMenu_CantInspectRecents() {
+        features.inspector = true;
+
+        dirDetails.isInRecents = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        dirInspect.assertDisabledAndInvisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    public void testContextMenu_CantInspectTrash() {
+        features.inspector = true;
+
+        dirDetails.isTrashTopLevel = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        dirInspect.assertDisabledAndInvisible();
     }
 
     @SuppressLint("VisibleForTests")
