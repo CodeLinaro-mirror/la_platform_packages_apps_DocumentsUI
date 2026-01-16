@@ -378,7 +378,8 @@
 -keep class com.android.documentsui.base.PathExtractor { *; }
 
 -keep class com.android.documentsui.services.JobProgress {
-  public <init>(java.lang.String, int, int, java.lang.String, boolean);
+  public <init>(java.lang.String, int, int, java.lang.String, int, boolean);
+  public <init>(java.lang.String, int, int, java.lang.String, int, boolean, java.util.ArrayList, java.util.ArrayList, java.util.ArrayList, com.android.documentsui.base.DocumentStack, long, long, long);
 }
 -keep class com.android.documentsui.sidebar.NavRailShortcutItem { *; }
 -keep class com.android.documentsui.approveddochandlers.ApprovedDocHandlers { *; }

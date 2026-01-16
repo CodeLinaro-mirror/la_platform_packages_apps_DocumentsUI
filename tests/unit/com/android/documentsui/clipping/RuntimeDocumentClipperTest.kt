@@ -19,6 +19,7 @@ package com.android.documentsui.clipping
 import android.content.ClipDescription
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.PersistableBundle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -63,10 +64,41 @@ class RuntimeDocumentClipperTest {
     }
 
     @Test
-    fun whenOpTypeIndeterminableOperationIsRejected() {
+    fun testWhenOpTypeIndeterminableOperationIsRejected() {
         val stack = DocumentStack()
 
         val description = ClipDescription("", emptyArray<String>())
+        val clipData = ClipDatas.createTestClipData(description)
+
+        clipper.copyFromClipData(stack, clipData, callback)
+        callbackListener.assertLastArgument(FileOperations.Callback.STATUS_REJECTED)
+    }
+
+    @Test
+    fun testImagePastedOnClipboardWithNoOperationTypeIsRejected() {
+        val stack = DocumentStack()
+
+        val description = ClipDescription("", emptyArray<String>())
+
+        // This extras is present on a clipboard with an image attached, however, it doesn't contain
+        // the operation type that we use to determine a copy / move operation. An empty bundle is
+        // fine here as the operation type will not be found and go to default and still reject.
+        description.extras = PersistableBundle()
+        val clipData = ClipDatas.createTestClipData(description)
+
+        clipper.copyFromClipData(stack, clipData, callback)
+        callbackListener.assertLastArgument(FileOperations.Callback.STATUS_REJECTED)
+    }
+
+    @Test
+    fun testImagePastedOnClipboardWithUnknownOperationTypeIsRejected() {
+        val stack = DocumentStack()
+
+        val description = ClipDescription("", emptyArray<String>())
+
+        // The opType is out of bounds. This will throw an exception and get caught when trying to
+        // use FileOperationService.build(), which gets bubbled up to a rejected status.
+        description.extras = PersistableBundle().apply { putInt("clipper:opType", 9999) }
         val clipData = ClipDatas.createTestClipData(description)
 
         clipper.copyFromClipData(stack, clipData, callback)

@@ -32,13 +32,11 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.assertion.ViewAssertions.selectedDescendantsMatch
 import androidx.test.espresso.idling.CountingIdlingResource
 import androidx.test.espresso.matcher.BoundedDiagnosingMatcher
 import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -91,7 +89,8 @@ private fun withProgress(expectedProgress: Int): Matcher<View> {
 }
 
 // Helper function to match views inside a certain progress item view.
-private fun insideItem(progress: MutableJobProgress) = hasSibling(withText(progress.msg))
+private fun insideItem(progress: MutableJobProgress) =
+    hasSibling(withText(containsString(progress.filename)))
 
 @LargeTest
 @EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
@@ -164,7 +163,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job started",
+                filename = "file.txt",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 4,
                 requiredBytes = 10,
@@ -180,7 +180,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         val expectedPrimaryStatus = "4 B of 10 B"
         val expectedSecondaryStatus = "10 seconds left"
 
-        onView(withId(R.id.job_progress_item_title)).check(matches(withText("Job started")))
+        onView(withId(R.id.job_progress_item_title))
+            .check(matches(withText(containsString(progress.filename))))
         onView(withId(R.id.job_progress_item_progress)).check(matches(withProgress(40)))
         onView(allOf(withText(expectedPrimaryStatus), isDisplayed())).check(doesNotExist())
         onView(allOf(withText(expectedSecondaryStatus), isDisplayed())).check(doesNotExist())
@@ -204,7 +205,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId1",
                 operationType = FileOperationService.OPERATION_EXTRACT,
                 state = Job.STATE_COMPLETED,
-                msg = "Job1 completed",
+                filename = "job1.zip",
+                numFiles = 1,
                 hasFailures = false,
             )
         val progress2 =
@@ -212,29 +214,28 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId2",
                 operationType = FileOperationService.OPERATION_MOVE,
                 state = Job.STATE_COMPLETED,
-                msg = "Job2 completed",
+                filename = "job2.txt",
+                numFiles = 1,
                 hasFailures = true,
             )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
 
         openPanel()
 
-        onView(withChild(withText(progress1.msg)))
-            .check(
-                selectedDescendantsMatch(
-                    withText(R.string.job_progress_item_completed),
-                    isDisplayed(),
-                )
-            )
-            .check(selectedDescendantsMatch(withText(R.string.extract_completed), isDisplayed()))
-        onView(withChild(withText(progress2.msg)))
-            .check(selectedDescendantsMatch(withText(R.string.move_failed), isDisplayed()))
-            .check(
-                selectedDescendantsMatch(
+        onView(allOf(withText(R.string.job_progress_item_completed), insideItem(progress1)))
+            .check(matches(isDisplayed()))
+        onView(allOf(withText(R.string.extract_completed), insideItem(progress1)))
+            .check(matches(isDisplayed()))
+        onView(allOf(withText(R.string.move_failed), insideItem(progress2)))
+            .check(matches(isDisplayed()))
+        onView(
+                allOf(
                     withId(R.id.job_progress_item_secondary_status),
-                    allOf(withText(R.string.job_progress_item_see_details), isDisplayed()),
+                    withText(R.string.job_progress_item_see_details),
+                    insideItem(progress2),
                 )
             )
+            .check(matches(isDisplayed()))
 
         // Dismiss the first item.
         onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress1))).perform(click())
@@ -248,7 +249,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
             .check(doesNotExist())
         onView(allOf(withId(R.id.job_progress_item_dismiss), insideItem(progress1)))
             .perform(click())
-        onView(withText(progress1.msg)).check(doesNotExist())
+        onView(withText(containsString(progress1.filename))).check(doesNotExist())
 
         // Dismiss the second item. The panel should disappear.
         onView(allOf(withId(R.id.job_progress_item_expand), insideItem(progress2))).perform(click())
@@ -275,7 +276,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job1",
+                filename = "Job1.txt",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 10,
                 requiredBytes = 20,
@@ -286,7 +288,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId2",
                 operationType = FileOperationService.OPERATION_EXTRACT,
                 state = Job.STATE_CREATED,
-                msg = "Job2",
+                filename = "Job2.txt",
+                numFiles = 1,
                 hasFailures = false,
             )
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
@@ -299,20 +302,15 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         openPanel()
 
         // Check both items are displayed.
-        onView(withText(progress1.msg)).check(matches(isDisplayed()))
-        onView(withText(progress2.msg)).check(matches(isDisplayed()))
+        onView(withText(containsString(progress1.filename))).check(matches(isDisplayed()))
+        onView(withText(containsString(progress2.filename))).check(matches(isDisplayed()))
 
         // Cancel the first job.
         progress1.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress1.toJobProgress(), progress2.toJobProgress()))
-        onView(withChild(withText(progress1.msg)))
-            .check(
-                selectedDescendantsMatch(
-                    withText(R.string.job_progress_item_canceled),
-                    isDisplayed(),
-                )
-            )
-        onView(withText(progress2.msg)).check(matches(isDisplayed()))
+        onView(allOf(withText(R.string.job_progress_item_canceled), insideItem(progress1)))
+            .check(matches(isDisplayed()))
+        onView(withText(containsString(progress2.filename))).check(matches(isDisplayed()))
 
         // Overall progress should be 50% as the first job is finished. We need to close the popup
         // panel first in order to check the menu item behind.
@@ -323,20 +321,10 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         // Cancel the second job.
         progress2.state = Job.STATE_CANCELED
         sendProgress(arrayListOf(progress2.toJobProgress()))
-        onView(withChild(withText(progress1.msg)))
-            .check(
-                selectedDescendantsMatch(
-                    withText(R.string.job_progress_item_canceled),
-                    isDisplayed(),
-                )
-            )
-        onView(withChild(withText(progress2.msg)))
-            .check(
-                selectedDescendantsMatch(
-                    withText(R.string.job_progress_item_canceled),
-                    isDisplayed(),
-                )
-            )
+        onView(allOf(withText(R.string.job_progress_item_canceled), insideItem(progress1)))
+            .check(matches(isDisplayed()))
+        onView(allOf(withText(R.string.job_progress_item_canceled), insideItem(progress2)))
+            .check(matches(isDisplayed()))
         Espresso.pressBack()
         onView(withId(R.id.job_progress_toolbar_indicator)).check(matches(withProgress(100)))
     }
@@ -348,7 +336,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId1",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job started",
+                filename = "job1.png",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 4,
                 requiredBytes = 10,
@@ -370,7 +359,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "jobId2",
                 operationType = FileOperationService.OPERATION_MOVE,
                 state = Job.STATE_SET_UP,
-                msg = "Job started",
+                filename = "job2.jpg",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 6,
                 requiredBytes = 10,
@@ -428,7 +418,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "in_progress_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job in progress",
+                filename = "in_progress.txt",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 40,
                 requiredBytes = 100,
@@ -439,7 +430,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "failed_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job failed",
+                filename = "failed.txt",
+                numFiles = 1,
                 hasFailures = true,
             )
 
@@ -479,7 +471,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "failed_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job failed",
+                filename = "failed.txt",
+                numFiles = 1,
                 hasFailures = true,
                 failedDocs = arrayListOf(doc),
                 failedUris = arrayListOf(uri),
@@ -489,7 +482,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Click the see details button of the failed item.
         openPanel()
-        onView(withText(failed.msg)).perform(click())
+        onView(withText(containsString(failed.filename))).perform(click())
         onView(withId(R.id.job_progress_item_see_details)).perform(click())
 
         // A dialog should pop up with the failed path inside.
@@ -512,7 +505,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "in_progress_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_SET_UP,
-                msg = "Job in progress",
+                filename = "in_progress.txt",
+                numFiles = 1,
                 hasFailures = false,
                 currentBytes = 40,
                 requiredBytes = 100,
@@ -523,7 +517,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "succeeded_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job succeeded",
+                numFiles = 1,
+                filename = "success.png",
                 hasFailures = false,
             )
 
@@ -532,7 +527,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
                 id = "failed_job",
                 operationType = FileOperationService.OPERATION_COPY,
                 state = Job.STATE_COMPLETED,
-                msg = "Job failed",
+                numFiles = 1,
+                filename = "failed.png",
                 hasFailures = true,
             )
         sendProgress(arrayListOf(inProgress.toJobProgress()))
@@ -558,9 +554,9 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         // Click dismiss all. Only the two completed jobs should disappear.
         openPanel()
         onView(withId(R.id.job_progress_panel_dismiss_all)).perform(RelaxedClickAction())
-        onView(withText(succeeded.msg)).check(doesNotExist())
-        onView(withText(failed.msg)).check(doesNotExist())
-        onView(withText(inProgress.msg)).check(matches(isDisplayed()))
+        onView(withText(containsString(succeeded.filename))).check(doesNotExist())
+        onView(withText(containsString(failed.filename))).check(doesNotExist())
+        onView(withText(containsString(inProgress.filename))).check(matches(isDisplayed()))
 
         // The button should also disappear afterwards.
         onView(allOf(withId(R.id.job_progress_panel_dismiss_all), isDisplayed()))
@@ -592,14 +588,8 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         assumeTrue(context.resources.getBoolean(R.bool.force_material3))
 
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
+        // TODO(b/457843307): Verify after the SDK is finalized. This test depends on StubProvider,
+        //  which currently encounters a NoSuchMethodError when the platform flag is used.
         assumeTrue(VersionUtils.isGreaterThanB())
 
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)

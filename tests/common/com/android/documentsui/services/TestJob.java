@@ -95,7 +95,8 @@ public class TestJob extends Job {
     }
 
     JobProgress getJobProgress() {
-        return new JobProgress(id, operationType, getState(), "test job", false);
+        return new JobProgress(
+                id, operationType, getState(), "testFile.txt", mResourceUris.getItemCount(), false);
     }
 
     @Override

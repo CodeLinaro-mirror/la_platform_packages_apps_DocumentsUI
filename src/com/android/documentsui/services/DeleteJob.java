@@ -98,18 +98,14 @@ final class DeleteJob extends ResolvedResourcesJob {
                 getRes(R.drawable.ic_menu_delete));
     }
 
-    private String getProgressMessage() {
-        return getProgressMessage(
-                R.string.delete_specific_file_in_progress, R.string.delete_in_progress);
-    }
-
     @Override
     JobProgress getJobProgress() {
         return new JobProgress(
                 id,
                 operationType,
                 getState(),
-                getProgressMessage(),
+                getFilename(),
+                mResourceUris.getItemCount(),
                 hasFailures(),
                 failedDocs,
                 failedUris,
