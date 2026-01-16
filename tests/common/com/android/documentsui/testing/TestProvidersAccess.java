@@ -93,9 +93,11 @@ public class TestProvidersAccess implements ProvidersAccess {
         DOWNLOADS.rootId = Providers.ROOT_ID_DOWNLOADS;
         DOWNLOADS.title = "Downloads";
         DOWNLOADS.derivedType = SidebarEntryItemInfo.TYPE_DOWNLOADS;
-        DOWNLOADS.flags = Root.FLAG_LOCAL_ONLY
-                | Root.FLAG_SUPPORTS_CREATE
-                | Root.FLAG_SUPPORTS_RECENTS;
+        DOWNLOADS.flags =
+                Root.FLAG_LOCAL_ONLY
+                        | Root.FLAG_SUPPORTS_CREATE
+                        | Root.FLAG_SUPPORTS_RECENTS
+                        | RootInfo.FLAG_QUERY_SUPPORTS_TRASH;
         // This DocumentsProvider supports limiting the results returned
         DOWNLOADS.queryArgs = ContentResolver.QUERY_ARG_LIMIT;
         DOWNLOADS.documentId = DOWNLOADS_DOC_ID;
@@ -106,10 +108,12 @@ public class TestProvidersAccess implements ProvidersAccess {
         HOME.rootId = Providers.ROOT_ID_HOME;
         HOME.title = "Home";
         HOME.derivedType = SidebarEntryItemInfo.TYPE_LOCAL;
-        HOME.flags = Root.FLAG_LOCAL_ONLY
-                | Root.FLAG_SUPPORTS_CREATE
-                | Root.FLAG_SUPPORTS_IS_CHILD
-                | Root.FLAG_SUPPORTS_RECENTS;
+        HOME.flags =
+                Root.FLAG_LOCAL_ONLY
+                        | Root.FLAG_SUPPORTS_CREATE
+                        | Root.FLAG_SUPPORTS_IS_CHILD
+                        | Root.FLAG_SUPPORTS_RECENTS
+                        | RootInfo.FLAG_QUERY_SUPPORTS_TRASH;
 
         HAMMY = new RootInfo();
         HAMMY.userId = userId;

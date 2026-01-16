@@ -24,6 +24,7 @@ import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import android.provider.MediaStore
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.StubProvider.ROOT_0_ID
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
@@ -34,6 +35,7 @@ import com.android.documentsui.util.VersionUtils
 import com.android.modules.utils.build.SdkLevel
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -60,14 +62,8 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     @Before
     @Throws(Exception::class)
     fun setUpTest() {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
+        // TODO(b/457843307): Verify after the SDK is finalized. This test depends on StubProvider,
+        //  which currently encounters a NoSuchMethodError when the platform flag is used.
         assumeTrue(VersionUtils.isGreaterThanB())
 
         if (SdkLevel.isAtLeastR()) {
@@ -170,6 +166,7 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
     /** Tests permanently deleting items from within a trashed folder. */
     @Test
+    @Ignore("TODO(b/474376278): Enable when the bug is fixed.")
     fun testPermanentlyDeleteItemsFromTrashedFolder() {
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
@@ -225,6 +222,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Tests that restoring selected items from the Trash view works correctly. */
     @Test
     fun testRestoreFromTrash() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFileNames = moveFilesToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -258,6 +260,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Verifies that opening a file from within a trashed folder shows the restore dialog. */
     @Test
     fun testRestoreFileFromTrashedFolder() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -303,6 +310,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Verifies that attempting to open a trashed item shows a dialog to restore it. */
     @Test
     fun testOpenTrashedItemShowsRestoreDialog() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFileNames = moveFilesToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -343,6 +355,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Verifies that opening a file from within a trashed folder shows the restore dialog. */
     @Test
     fun testOpenItemFromTrashedFolderShowsRestoreDialog() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 

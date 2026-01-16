@@ -293,6 +293,13 @@ final class RuntimeDocumentClipper implements DocumentClipper {
         }
 
         @OpType int opType = getOpType(bundle);
+        if (opType == FileOperationService.OPERATION_UNKNOWN) {
+            // Copying from clip data only supports copying content URIs currently. If raw file
+            // contents are on the clipboard, ignore that for now with a rejection status.
+            callback.onOperationResult(FileOperations.Callback.STATUS_REJECTED, opType, 0);
+            return;
+        }
+
         try {
             if (!canCopy(dstStack.peek())) {
                 callback.onOperationResult(
@@ -332,6 +339,9 @@ final class RuntimeDocumentClipper implements DocumentClipper {
             Log.e(TAG, "Cannot create uris supplier.", e);
             callback.onOperationResult(FileOperations.Callback.STATUS_REJECTED, opType, 0);
             return;
+        } catch (UnsupportedOperationException e) {
+            Log.e(TAG, "Operation type is not supported", e);
+            callback.onOperationResult(FileOperations.Callback.STATUS_REJECTED, opType, 0);
         }
     }
 
@@ -419,7 +429,7 @@ final class RuntimeDocumentClipper implements DocumentClipper {
     }
 
     private @OpType int getOpType(PersistableBundle bundle) {
-        return bundle.getInt(OP_TYPE_KEY);
+        return bundle.getInt(OP_TYPE_KEY, FileOperationService.OPERATION_UNKNOWN);
     }
 
     private static ClipData createClipData(

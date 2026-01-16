@@ -29,7 +29,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
@@ -84,7 +83,6 @@ import com.android.documentsui.testing.TestIconHelper;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.testing.Views;
-import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -1522,8 +1520,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Trashes_DropOnTrashRoot() throws Exception {
-        assumeTrashApiIsAvailable();
-
         mActions.nextRootDocument = null;
         mManager.startDrag(
                 mStartDragView,
@@ -1560,7 +1556,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Rejects_DropOnDocumentInTrash() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK),
@@ -1587,7 +1582,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToTrash_WhenDropOnTrashRoot() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_SUPPORTS_TRASH),
@@ -1610,7 +1604,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToNotAllowed_WhenDropOnDocumentInTrash() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK),
@@ -1634,7 +1627,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToNotAllowed_WhenFileDoesNotSupportTrash() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_JPG),
@@ -1658,7 +1650,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testCanSpringOpen_ReturnsFalse_ForTrashRoot() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK),
@@ -1677,7 +1668,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Restores_DropOnValidRoot() throws Exception {
-        assumeTrashApiIsAvailable();
         mActions.nextRootDocument = TestEnv.FOLDER_1;
 
         // Start dragging a trashed file.
@@ -2006,7 +1996,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToRestore_WhenDropOnValidRoot() {
-        assumeTrashApiIsAvailable();
         // Start dragging a trashed file.
         mManager.startDrag(
                 mStartDragView,
@@ -2032,7 +2021,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Rejects_RestoreToDifferentAuthority() {
-        assumeTrashApiIsAvailable();
         // Start dragging a trashed file from HOME provider.
         mManager.startDrag(
                 mStartDragView,
@@ -2195,7 +2183,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToNotAllowed_WhenRestoringToDifferentAuthority() {
-        assumeTrashApiIsAvailable();
         // Start dragging a trashed file from HOME provider.
         mManager.startDrag(
                 mStartDragView,
@@ -2267,19 +2254,6 @@ public class DragAndDropManagerTests {
     private void assertStateUpdated(@State int expected) {
         mShadowBuilder.state.assertLastArgument(expected);
         mShadowUpdateListener.assertCalled();
-    }
-
-    /**
-     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
-     * The Trash feature under test relies on DocumentsContract APIs introduced in the
-     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
-     * subject to MTS testing, which runs on older Android base builds to verify backward
-     * compatibility. However, this specific Trash feature lacks backward compatibility
-     * with platforms at or below Baklava. This assumption prevents failures when the
-     * test runs on an older base OS without the necessary APIs.
-     */
-    private void assumeTrashApiIsAvailable() {
-        assumeTrue(VersionUtils.isGreaterThanB());
     }
 
     public static class TestDragShadowBuilder extends DragShadowBuilder {

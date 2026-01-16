@@ -46,25 +46,6 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         mOpType = opType;
     }
 
-    private String getVerb() {
-        switch (mOpType) {
-            case FileOperationService.OPERATION_COPY:
-            case FileOperationService.OPERATION_EXTRACT:
-                return "Copying";
-            case FileOperationService.OPERATION_COMPRESS:
-                return "Zipping";
-            case FileOperationService.OPERATION_MOVE:
-                return "Moving";
-
-            // DeleteJob does not inherit from CopyJob
-            case FileOperationService.OPERATION_DELETE:
-            case FileOperationService.OPERATION_UNPACK:
-            case FileOperationService.OPERATION_UNKNOWN:
-            default:
-                return "";
-        }
-    }
-
     protected void runCopyFilesTest() throws Exception {
         Uri testFile1 = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
         mDocs.writeDocument(testFile1, HAM_BYTES);
@@ -96,7 +77,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         assertEquals(job.id, progress.id);
         assertEquals(mOpType, progress.operationType);
         assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals(getVerb() + " 2 files to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals(2, progress.numFiles);
         assertFalse(progress.hasFailures);
 
         job.run();
@@ -112,7 +93,7 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
-        assertEquals(getVerb() + " 2 files to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals(2, progress.numFiles);
         assertEquals(HAM_BYTES.length + FRUITY_BYTES.length, progress.currentBytes);
         assertEquals(HAM_BYTES.length + FRUITY_BYTES.length, progress.requiredBytes);
     }
@@ -140,7 +121,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         assertEquals(job.id, progress.id);
         assertEquals(mOpType, progress.operationType);
         assertEquals(Job.STATE_CREATED, progress.state);
-        assertEquals("Copying “virtual.sth” to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("virtual.sth", progress.filename);
+        assertEquals(1, progress.numFiles);
         assertFalse(progress.hasFailures);
 
         job.run();
@@ -154,7 +136,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
-        assertEquals("Copying “virtual.sth” to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("virtual.sth", progress.filename);
+        assertEquals(1, progress.numFiles);
         assertEquals(FRUITY_BYTES.length, progress.currentBytes);
         assertEquals(FRUITY_BYTES.length, progress.requiredBytes);
     }
@@ -191,7 +174,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(mOpType, progress.operationType);
         assertTrue(progress.hasFailures);
-        assertEquals(getVerb() + " “virtual.sth” to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("virtual.sth", progress.filename);
+        assertEquals(1, progress.numFiles);
         assertEquals(0, progress.currentBytes);
         assertEquals(FRUITY_BYTES.length, progress.requiredBytes);
     }
@@ -235,7 +219,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         assertEquals(Job.STATE_COMPLETED, progress.state);
         assertEquals(mOpType, progress.operationType);
         assertFalse(progress.hasFailures);
-        assertEquals(getVerb() + " “emptyDir” to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("emptyDir", progress.filename);
+        assertEquals(1, progress.numFiles);
         assertEquals(-1, progress.currentBytes);
         assertEquals(-1, progress.requiredBytes);
     }
@@ -315,7 +300,8 @@ public abstract class AbstractCopyJobTest<T extends CopyJob> extends AbstractJob
         job.run();
 
         JobProgress progress = job.getJobProgress();
-        assertEquals(getVerb() + " 1 file to “" + mDestRoot.title + "”", progress.msg);
+        assertEquals("", progress.filename);
+        assertEquals(1, progress.numFiles);
     }
 
     protected void runCopyProgressForFileCountTest() throws Exception {

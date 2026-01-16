@@ -130,17 +130,11 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
 
         @JvmStatic
         fun isTrashFlowEnabled(): Boolean {
-            // Check if the platform SDK is newer than Android Baklava (SDK 36).
-            // The Trash feature relies on DocumentsContract APIs introduced in the
-            // Android release after Baklava.
-            // This specific Trash feature is NOT backward compatible with platforms
-            // at or below Baklava because the required APIs are missing.
-            // This check ensures the feature is only considered enabled on
-            // supported platform versions, preventing runtime errors if the module
-            // runs on an older base OS.
-            if (!VersionUtils.isGreaterThanB()) {
+            // TODO(b/457843307): Replace with isAtLeastC when the new SDK is finalised.
+            if (!SdkLevel.isAtLeastB()) {
                 return false
             }
+
             // If API flag is not enabled, then trash flow will be disabled
             if (!enableDocumentsTrashApi()) {
                 return false

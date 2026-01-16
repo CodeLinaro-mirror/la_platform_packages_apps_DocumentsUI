@@ -59,6 +59,11 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
 
     private static final String TAG = "RootInfo";
     public static final int LOAD_FROM_CONTENT_RESOLVER = -1;
+
+    // TODO(b/457843307): Delete this and use Root.FLAG_SUPPORTS_QUERY_TRASH instead when it
+    //  exists in the SDK.
+    @VisibleForTesting public static final int FLAG_QUERY_SUPPORTS_TRASH = 1 << 20;
+
     // TODO(b/458129770): Delete this and use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead
     // when it exists in the SDK.
     @VisibleForTesting public static final int FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE = 1 << 21;
