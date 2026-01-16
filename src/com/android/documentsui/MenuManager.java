@@ -751,6 +751,11 @@ public abstract class MenuManager {
             return mActivity.isInRecents();
         }
 
+        /** Is the current directory the trash root. */
+        public boolean isTrashTopLevel() {
+            return mActivity.mState.stack.isTrashTopLevel();
+        }
+
         /** Is the current directory showing the contents of an archive? */
         public boolean isInArchive() {
             final DocumentInfo dir = mActivity.getCurrentDirectory();
@@ -762,7 +767,7 @@ public abstract class MenuManager {
         }
 
         public boolean canInspectDirectory() {
-            return mActivity.canInspectDirectory() && !isInRecents();
+            return mActivity.canInspectDirectory() && !isInRecents() && !isTrashTopLevel();
         }
     }
 }
