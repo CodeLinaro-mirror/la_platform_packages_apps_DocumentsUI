@@ -21,20 +21,16 @@ import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
-import static com.android.documentsui.util.Material3Config.getRes;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-
 import static org.junit.Assume.assumeTrue;
 
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
@@ -42,17 +38,13 @@ import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
-
 import androidx.annotation.StringRes;
+import androidx.lifecycle.Lifecycle;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.filters.LargeTest;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.rule.ActivityTestRule;
-import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
-
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
-import com.android.documentsui.bots.Bots;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
@@ -70,21 +62,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @LargeTest
-@RunWith(Parameterized.class)
-public class PickActivityTest {
+public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
 
     private static final String RESULT_EXTRA = "test_result_extra";
     private static final String RESULT_DATA = "123321";
 
-    private UiDevice mDevice;
-    private Context mTargetContext;
-    private Intent mIntentGetContent;
     private TestDialogController mTestDialogs;
     private TestConfigStore mTestConfigStore;
 
@@ -115,36 +101,23 @@ public class PickActivityTest {
                                         root, "image/png", TestFilesRule.FILE_NAME_2);
                             });
 
-    @Rule
-    public final ActivityTestRule<PickActivity> mRule =
-            new ActivityTestRule<>(PickActivity.class, false, false);
+    @Override
+    protected void launchActivity() {
+        Intent getContentIntent = new Intent(context, PickActivity.class);
+        getContentIntent.setAction(Intent.ACTION_GET_CONTENT);
+        getContentIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        getContentIntent.setType("*/*");
+        Uri hintUri = DocumentsContract.buildRootUri(AUTHORITY_STORAGE, "primary");
+        getContentIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, hintUri);
 
-    private Bots mBots = null;
+        mActivityScenario = ActivityScenario.launchActivityForResult(getContentIntent);
+    }
 
     @Before
-    public void setUp() throws Exception {
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        mDevice = UiDevice.getInstance(instrumentation);
-        mTargetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
-        mIntentGetContent = new Intent(Intent.ACTION_GET_CONTENT);
-        mIntentGetContent.addCategory(Intent.CATEGORY_OPENABLE);
-        mIntentGetContent.setType("*/*");
-        Uri hintUri = DocumentsContract.buildRootUri(AUTHORITY_STORAGE, "primary");
-        mIntentGetContent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, hintUri);
-
+    public void setUpTest() throws Exception {
         mTestDialogs = new TestDialogController();
         mTestConfigStore = new TestConfigStore();
-
         isPrivateSpaceEnabled = SdkLevel.isAtLeastS() && isPrivateSpaceEnabled;
-
-        mBots =
-                new Bots(
-                        mDevice,
-                        instrumentation.getUiAutomation(),
-                        mTargetContext,
-                        5000,
-                        getRes(R.layout.documents_activity));
     }
 
     @Test
@@ -154,19 +127,22 @@ public class PickActivityTest {
         doc.authority = "authority";
         doc.documentId = "documentId";
 
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        pickActivity.mState.configStore = mTestConfigStore;
-        if (isPrivateSpaceEnabled) {
-            mTestConfigStore.enablePrivateSpaceInPhotoPicker();
-            pickActivity.mState.canForwardToProfileIdMap.put(TestProvidersAccess.USER_ID, true);
-        } else {
-            pickActivity.mState.canShareAcrossProfile = true;
-        }
-        pickActivity.onDocumentPicked(doc);
+        mActivityScenario.onActivity(
+                pickActivity -> {
+                    pickActivity.mState.configStore = mTestConfigStore;
+                    if (isPrivateSpaceEnabled) {
+                        mTestConfigStore.enablePrivateSpaceInPhotoPicker();
+                        pickActivity.mState.canForwardToProfileIdMap.put(
+                                TestProvidersAccess.USER_ID, true);
+                    } else {
+                        pickActivity.mState.canShareAcrossProfile = true;
+                    }
+                    pickActivity.onDocumentPicked(doc);
+                });
         SystemClock.sleep(3000);
 
-        Instrumentation.ActivityResult result = mRule.getActivityResult();
-        assertThat(pickActivity.isFinishing()).isTrue();
+        Instrumentation.ActivityResult result = mActivityScenario.getResult();
+        assertThat(mActivityScenario.getState()).isEqualTo(Lifecycle.State.DESTROYED);
         assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_OK);
         assertThat(result.getResultData().getData()).isEqualTo(doc.getDocumentUri());
     }
@@ -179,20 +155,23 @@ public class PickActivityTest {
             doc.authority = "authority";
             doc.documentId = "documentId";
 
-            PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-            pickActivity.mState.configStore = mTestConfigStore;
-            if (isPrivateSpaceEnabled) {
-                mTestConfigStore.enablePrivateSpaceInPhotoPicker();
-                pickActivity.mState.canForwardToProfileIdMap.put(TestProvidersAccess.USER_ID, true);
-                pickActivity.mState.canForwardToProfileIdMap.put(
-                        TestProvidersAccess.OtherUser.USER_ID, true);
-            } else {
-                pickActivity.mState.canShareAcrossProfile = true;
-            }
-            pickActivity.onDocumentPicked(doc);
+            mActivityScenario.onActivity(
+                    pickActivity -> {
+                        pickActivity.mState.configStore = mTestConfigStore;
+                        if (isPrivateSpaceEnabled) {
+                            mTestConfigStore.enablePrivateSpaceInPhotoPicker();
+                            pickActivity.mState.canForwardToProfileIdMap.put(
+                                    TestProvidersAccess.USER_ID, true);
+                            pickActivity.mState.canForwardToProfileIdMap.put(
+                                    TestProvidersAccess.OtherUser.USER_ID, true);
+                        } else {
+                            pickActivity.mState.canShareAcrossProfile = true;
+                        }
+                        pickActivity.onDocumentPicked(doc);
+                    });
             SystemClock.sleep(3000);
 
-            Instrumentation.ActivityResult result = mRule.getActivityResult();
+            Instrumentation.ActivityResult result = mActivityScenario.getResult();
             assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_OK);
             assertThat(result.getResultData().getData()).isEqualTo(doc.getDocumentUri());
         }
@@ -205,91 +184,86 @@ public class PickActivityTest {
         doc.authority = "authority";
         doc.documentId = "documentId";
 
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        pickActivity.mState.configStore = mTestConfigStore;
-        if (isPrivateSpaceEnabled) {
-            mTestConfigStore.enablePrivateSpaceInPhotoPicker();
-            pickActivity.mState.canForwardToProfileIdMap.put(TestProvidersAccess.USER_ID, true);
-        } else {
-            pickActivity.mState.canShareAcrossProfile = false;
-        }
-        pickActivity.getInjector().dialogs = mTestDialogs;
-        pickActivity.onDocumentPicked(doc);
+        mActivityScenario.onActivity(
+                pickActivity -> {
+                    pickActivity.mState.configStore = mTestConfigStore;
+                    if (isPrivateSpaceEnabled) {
+                        mTestConfigStore.enablePrivateSpaceInPhotoPicker();
+                        pickActivity.mState.canForwardToProfileIdMap.put(
+                                TestProvidersAccess.USER_ID, true);
+                    } else {
+                        pickActivity.mState.canShareAcrossProfile = false;
+                    }
+                    pickActivity.getInjector().dialogs = mTestDialogs;
+                    pickActivity.onDocumentPicked(doc);
+                });
         SystemClock.sleep(3000);
 
-        assertThat(pickActivity.isFinishing()).isFalse();
         mTestDialogs.assertActionNotAllowedShown();
+        assertThat(mActivityScenario.getState()).isNotEqualTo(Lifecycle.State.DESTROYED);
     }
 
     @Test
     public void testOptionMenuWorksWhileOptionSelected() throws UiObjectNotFoundException {
-        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Switch to list mode and select the test document.
-        mBots.main.switchToListMode();
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.main.switchToListMode();
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         // Open the overflow menu and assert that the Sort by menu option is there.
-        mBots.main.openOverflowMenu();
-        mBots.menu.hasMenuItem("Sort by...");
+        bots.main.openOverflowMenu();
+        bots.menu.hasMenuItem("Sort by...");
     }
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testOptionMenuWorksWhileOptionSelected_M3Enabled()
             throws UiObjectNotFoundException {
-        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Switch to list mode and select the test document.
-        mBots.main.switchToListMode();
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.main.switchToListMode();
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         // Open the overflow menu and assert that the expected menu options are there.
-        mBots.main.openOverflowMenu();
-        mBots.menu.hasMenuItem(mTargetContext.getString(R.string.menu_rename));
-        mBots.menu.hasMenuItem(mTargetContext.getString(R.string.menu_inspect));
+        bots.main.openOverflowMenu();
+        bots.menu.hasMenuItem(context.getString(R.string.menu_rename));
+        bots.menu.hasMenuItem(context.getString(R.string.menu_inspect));
         final @StringRes int zipMenuId =
                 isZipNgFlagEnabled() ? R.string.menu_zip : R.string.menu_compress;
-        mBots.menu.hasMenuItem(mTargetContext.getString(zipMenuId));
+        bots.menu.hasMenuItem(context.getString(zipMenuId));
     }
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_rename() throws UiObjectNotFoundException {
-        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Right click FILE_NAME_1 to trigger rename.
-        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
-        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_rename));
-        mDevice.waitForIdle();
+        bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        bots.menu.clickMenuItem(context.getString(R.string.menu_rename));
+        device.waitForIdle();
 
         // Input a new name.
         final String newName = "renamed inside picker";
-        mBots.main.setDialogText(newName);
-        mBots.keyboard.pressEnter();
+        bots.main.setDialogText(newName);
+        bots.keyboard.pressEnter();
 
         // Assert the old file is gone, the new file appears.
-        mBots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
-        mBots.directory.assertDocumentsPresent(newName);
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsPresent(newName);
     }
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_getInfo() throws UiObjectNotFoundException {
-        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Right click FILE_NAME_1 to trigger get info.
-        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
-        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_inspect));
-        mDevice.waitForIdle();
+        bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        bots.menu.clickMenuItem(context.getString(R.string.menu_inspect));
+        device.waitForIdle();
 
         // Assert inspector activity is shown.
         if (!isUsePeekPreviewFlagEnabled()) {
@@ -303,18 +277,16 @@ public class PickActivityTest {
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_delete() throws UiObjectNotFoundException {
-        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Right click FILE_NAME_1 to trigger delete.
-        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
-        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_permanently_delete));
-        mBots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
-        mDevice.waitForIdle();
+        bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        bots.menu.clickMenuItem(context.getString(R.string.menu_permanently_delete));
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
+        device.waitForIdle();
 
         // Assert the file is gone.
-        mBots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
     }
 
     @Test
@@ -328,158 +300,165 @@ public class PickActivityTest {
                 "Skipping test: the use_material3 flag is OFF on the test device.",
                 isUseMaterial3FlagEnabled());
 
-        // Launch the PickActivity using `GET_CONTENT` action, and navigate to test root.
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Right click FILE_NAME_1 to trigger zip.
-        mBots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
-        mBots.menu.clickMenuItem(mTargetContext.getString(R.string.menu_zip));
-        mDevice.waitForIdle();
+        bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
+        bots.menu.clickMenuItem(context.getString(R.string.menu_zip));
+        device.waitForIdle();
 
         // Assert a zip file is created.
-        mBots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_1);
         final String zipFileName = isZipNgFlagEnabled() ? "file1.zip" : "file1.log.zip";
-        mBots.directory.assertDocumentsPresent(zipFileName);
+        bots.directory.assertDocumentsPresent(zipFileName);
     }
 
     @DesktopTest(cujs = {"b/434068578"})
     @Test
-    @Ignore("TODO(b/471548378): temporarily disable this for train boarding")
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionOpenDocument_SingleFile()
             throws UiObjectNotFoundException {
-
-        Intent intentOpenDocument = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        // Close the existing activity first because we need a different intent.
+        mActivityScenario.close();
+        // Wait some time before launching the new activity to make it more stable.
+        SystemClock.sleep(1000);
+        Intent intentOpenDocument = new Intent(context, PickActivity.class);
+        intentOpenDocument.setAction(Intent.ACTION_OPEN_DOCUMENT);
         intentOpenDocument.addCategory(Intent.CATEGORY_OPENABLE);
         intentOpenDocument.setType("*/*");
-        PickActivity pickActivity = mRule.launchActivity(intentOpenDocument);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        mActivityScenario = ActivityScenario.launchActivityForResult(intentOpenDocument);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
-                mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button);
+                context.getResources().getBoolean(R.bool.show_picker_cancel_button);
         if (showPickerCancelButton) {
-            mBots.picker.checkCancelButtonDisplayed();
-            mBots.picker.checkCancelButtonEnabled();
+            bots.picker.checkCancelButtonDisplayed();
+            bots.picker.checkCancelButtonEnabled();
         }
-        mBots.picker.checkPickButtonDisplayed();
+        bots.picker.checkPickButtonDisplayed();
         // The Select button should be disabled since there are no selected files.
 
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         // The Select button should be enabled since there is a selected file.
-        mBots.picker.checkPickButtonEnabled();
+        bots.picker.checkPickButtonEnabled();
 
         // Click the Select button to pick the selected file.
-        mBots.picker.clickPickButton();
+        bots.picker.clickPickButton();
         SystemClock.sleep(3000);
 
         // Check that the file was picked.
-        Instrumentation.ActivityResult result = mRule.getActivityResult();
+        Instrumentation.ActivityResult result = mActivityScenario.getResult();
         assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_OK);
-        assertThat(result.getResultData().getData()).isEqualTo(
-                mTestFilesRule.getUriInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1));
+        assertThat(result.getResultData().getData())
+                .isEqualTo(mTestFilesRule.getUriInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1));
 
         // Check that the activity is finishing.
-        assertThat(pickActivity.isFinishing()).isTrue();
+        assertThat(mActivityScenario.getState()).isEqualTo(Lifecycle.State.DESTROYED);
     }
 
     @DesktopTest(cujs = {"b/434068578"})
     @Test
-    @Ignore("TODO(b/471548378): temporarily disable this for train boarding")
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ActionGetContent_MultiFiles() throws Exception {
-        // Allow multiple files to be selected.
-        mIntentGetContent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        // Close the existing activity first because we need a different intent.
+        mActivityScenario.close();
+        // Wait some time before launching the new activity to make it more stable.
+        SystemClock.sleep(1000);
+        Intent intent = new Intent(context, PickActivity.class);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        Uri hintUri = DocumentsContract.buildRootUri(AUTHORITY_STORAGE, "primary");
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, hintUri);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        mActivityScenario = ActivityScenario.launchActivityForResult(intent);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
-                mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button);
+                context.getResources().getBoolean(R.bool.show_picker_cancel_button);
         if (showPickerCancelButton) {
-            mBots.picker.checkCancelButtonDisplayed();
-            mBots.picker.checkCancelButtonEnabled();
+            bots.picker.checkCancelButtonDisplayed();
+            bots.picker.checkCancelButtonEnabled();
         }
-        mBots.picker.checkPickButtonDisplayed();
+        bots.picker.checkPickButtonDisplayed();
         // The Select button should be disabled since there are no selected files.
-        mBots.picker.checkPickButtonDisabled();
+        bots.picker.checkPickButtonDisabled();
 
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 2);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 2);
 
         // The Select button should be enabled since there are selected files.
-        mBots.picker.checkPickButtonEnabled();
+        bots.picker.checkPickButtonEnabled();
 
-        mBots.directory.clearSelection();
+        bots.directory.clearSelection();
 
         // The Select button should be disabled since there are no selected files.
-        mBots.picker.checkPickButtonDisabled();
+        bots.picker.checkPickButtonDisabled();
 
         // Select the files again and click the Select button to pick the selected files.
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 2);
-        mBots.picker.checkPickButtonEnabled();
-        mBots.picker.clickPickButton();
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 2);
+        bots.picker.checkPickButtonEnabled();
+        bots.picker.clickPickButton();
         SystemClock.sleep(3000);
 
         // Check that the files were picked.
-        Instrumentation.ActivityResult result = mRule.getActivityResult();
+        Instrumentation.ActivityResult result = mActivityScenario.getResult();
         assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_OK);
         ClipData clipData = result.getResultData().getClipData();
         assertNotNull(clipData);
         assertEquals(clipData.getItemCount(), 2);
-        assertEquals(mTestFilesRule.getUriInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1),
+        assertEquals(
+                mTestFilesRule.getUriInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_1),
                 clipData.getItemAt(0).getUri());
-        assertEquals(mTestFilesRule.getUriInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_2),
+        assertEquals(
+                mTestFilesRule.getUriInRoot(ROOT_0_ID, TestFilesRule.FILE_NAME_2),
                 clipData.getItemAt(1).getUri());
 
         // Check that the activity is finishing.
-        assertThat(pickActivity.isFinishing()).isTrue();
+        assertThat(mActivityScenario.getState()).isEqualTo(Lifecycle.State.DESTROYED);
     }
 
     @DesktopTest(cujs = {"b/434068578"})
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_ClickCancel() throws UiObjectNotFoundException {
-        assume().that(mTargetContext.getResources().getBoolean(R.bool.show_picker_cancel_button))
-                .isTrue();
+        assume().that(context.getResources().getBoolean(R.bool.show_picker_cancel_button)).isTrue();
 
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
-        mBots.picker.checkCancelButtonDisplayed();
-        mBots.picker.checkCancelButtonEnabled();
-        mBots.picker.checkPickButtonDisplayed();
+        bots.picker.checkCancelButtonDisplayed();
+        bots.picker.checkCancelButtonEnabled();
+        bots.picker.checkPickButtonDisplayed();
 
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         // Click Cancel.
-        mBots.picker.clickCancelButton();
+        bots.picker.clickCancelButton();
+        SystemClock.sleep(3000);
 
         // Check that the files weren't picked.
-        Instrumentation.ActivityResult result = mRule.getActivityResult();
+        Instrumentation.ActivityResult result = mActivityScenario.getResult();
         assertThat(result.getResultCode()).isEqualTo(Activity.RESULT_CANCELED);
 
         // Check that the activity is finishing.
-        assertThat(pickActivity.isFinishing()).isTrue();
+        assertThat(mActivityScenario.getState()).isEqualTo(Lifecycle.State.DESTROYED);
     }
 
     @DesktopTest(cujs = {"b/434068578"})
     @Test
     @DisableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_FlagDisabled() throws UiObjectNotFoundException {
-        PickActivity pickActivity = mRule.launchActivity(mIntentGetContent);
-        EspressoBotsKt.openRoot(mTargetContext, ROOT_0_ID, pickActivity.getLayoutId());
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
-        mBots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         // The Cancel (button2) and Select (button1) buttons should not exist.
-        mBots.picker.checkCancelButtonDoesNotExist();
-        mBots.picker.checkPickButtonDoesNotExist();
+        bots.picker.checkCancelButtonDoesNotExist();
+        bots.picker.checkPickButtonDoesNotExist();
     }
 }

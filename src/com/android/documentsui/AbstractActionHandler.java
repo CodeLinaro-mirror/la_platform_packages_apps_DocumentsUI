@@ -1038,6 +1038,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             loadRecent();
             return;
         }
+        if (DocumentsContract.isDocumentUri(mActivity, uri)) {
+            launchToDocument(uri);
+            return;
+        }
         new LoadRootTask<>(mActivity, mProviders, uri, userId, this::onRootLoaded)
                 .executeOnExecutor(mExecutors.lookup(uri.getAuthority()));
     }

@@ -357,8 +357,12 @@ public final class Shared {
 
         if (!DocumentsContract.isRootUri(activity, defaultUri)) {
             Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");
-            defaultUri = DocumentsContract.buildRootUri(Providers.AUTHORITY_DOWNLOADS,
-                    Providers.ROOT_ID_DOWNLOADS);
+            defaultUri =
+                    FlagUtils.isHomeScreenFilesFlagEnabled()
+                            ? DocumentsContract.buildDocumentUri(
+                                    Providers.AUTHORITY_STORAGE, Providers.DOWNLOAD_DOCUMENT_ID)
+                            : DocumentsContract.buildRootUri(
+                                    Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS);
         }
 
         return defaultUri;

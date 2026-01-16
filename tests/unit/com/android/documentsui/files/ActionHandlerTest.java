@@ -866,6 +866,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
     public void testInitLocation_LaunchToDownloads() throws Exception {
         Intent intent = mActivity.getIntent();
         intent.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
