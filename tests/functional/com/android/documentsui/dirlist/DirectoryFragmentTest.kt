@@ -23,12 +23,14 @@ import android.database.MatrixCursor
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.os.SystemClock
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.view.LayoutInflater
+import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.SelectionTracker
@@ -55,6 +57,7 @@ import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.SortModels
 import com.android.documentsui.testing.TestEnv
+import com.android.documentsui.testing.TestEvents
 import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
@@ -71,6 +74,7 @@ import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
@@ -301,6 +305,44 @@ class DirectoryFragmentTest {
     @EnableFlags(Flags.FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
     fun testAddsNetworkListener() {
         verify(networkMonitor).addNetworkListener(any())
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testOnItemActivated_doubleTap_opensItemOnce() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened only once.
+        verify(injector.actions, times(1))
+            .openItem(item, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testOnItemActivated_tapTwiceWithGap_opensItemTwice() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Wait for double tap timeout.
+        SystemClock.sleep(ViewConfiguration.getDoubleTapTimeout().toLong() + 100L)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened only once.
+        verify(injector.actions, times(2))
+            .openItem(item, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR)
     }
 }
 
