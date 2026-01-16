@@ -383,8 +383,7 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
                 || derivedType == TYPE_AUDIO
                 || derivedType == TYPE_RECENTS
                 || derivedType == TYPE_DOCUMENTS
-                || derivedType == TYPE_FILES
-                || derivedType == TYPE_TRASH;
+                || derivedType == TYPE_FILES;
     }
 
     /*

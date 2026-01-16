@@ -20,6 +20,7 @@ import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -517,6 +518,7 @@ public class RootsFragment extends Fragment {
         final RootItemListBuilder storageProvidersBuilder = new RootItemListBuilder(selectedUser,
                 userIds);
         final List<RootItem> otherProviders = new ArrayList<>();
+        final List<Item> trashItems = new ArrayList<>();
         final boolean hideMediaRoots =
                 isUseMaterial3FlagEnabled()
                         && !context.getResources().getBoolean(R.bool.show_media_roots);
@@ -582,7 +584,13 @@ public class RootsFragment extends Fragment {
                                 ? new NavRailRootItem(root, mActionHandler, maybeShowBadge)
                                 : new RootItem(root, mActionHandler, maybeShowBadge);
                 storageProvidersBuilder.add(item);
-            } else {
+            } else if (isTrashFlowEnabled() && root.isTrash()) {
+                item =
+                        mUseRailAsContainer
+                                ? new NavRailRootItem(root, mActionHandler, maybeShowBadge)
+                                : new RootItem(root, mActionHandler, maybeShowBadge);
+                trashItems.add(item);
+            } else if (root.authority != null) {
                 item =
                         mUseRailAsContainer
                                 ? new NavRailRootItem(
@@ -660,6 +668,7 @@ public class RootsFragment extends Fragment {
                         getPresentableListPrivateSpaceDisabled(context, state, rootList,
                                 rootListOtherUser);
         addListToResult(result, presentableList);
+        addListToResult(result, trashItems);
         return result;
     }
 

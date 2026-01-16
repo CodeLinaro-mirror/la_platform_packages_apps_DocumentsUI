@@ -137,8 +137,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return false;
         }
 
-        // Except trash root, other library roots do not support drag & drop operations.
-        if (root.isLibrary() && !root.isTrash()) {
+        // Library roots do not support drag & drop operations.
+        if (root.isLibrary()) {
             return false;
         }
 
