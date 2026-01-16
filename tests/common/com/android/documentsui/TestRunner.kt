@@ -19,6 +19,7 @@ package com.android.documentsui
 import android.content.pm.PackageManager
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
+import android.platform.test.microbenchmark.Functional
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.flags.Flags
@@ -108,7 +109,8 @@ annotation class ParameterizeScreenSizes(vararg val value: ScreenSize)
  * TestRunner is a JUnit4 `Suite` that supports parameterization of flags and screen sizes.
  *
  * <p>When parameterization is enabled, it creates a `ArtifactSaverRunnerWithParameters` runner for
- * each combination of parameters.
+ * each combination of parameters. Without parameterization, it creates a single `Functional`
+ * runner.
  *
  * <p>This runner supports three annotations for parameterization:
  * <li>`@ParameterizeSyntheticTargets`: Runs tests against a list of synthetic targets that mimic a
@@ -189,8 +191,10 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
         private fun createRunners(klass: Class<*>): List<Runner> {
             val args = InstrumentationRegistry.getArguments()
             if (args.getString("documentsui_disable_parameterization") == "true") {
-                val testWithParams = TestWithParameters("", TestClass(klass), listOf())
-                return listOf(ArtifactSaverRunnerWithParameters(testWithParams))
+                // Use Functional runner to run the test without parameterization because
+                // TestWithParameters (used by ArtifactSaverRunnerWithParameters) with an empty name
+                // will fail the test.
+                return listOf(Functional(klass))
             }
 
             val syntheticTargets = getSyntheticTargets(klass)
@@ -204,8 +208,10 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
                     screenSizes == listOf(ScreenSize.NO_OVERRIDE) &&
                     junitParameters == null
             ) {
-                val testWithParams = TestWithParameters("", TestClass(klass), listOf())
-                return listOf(ArtifactSaverRunnerWithParameters(testWithParams))
+                // Use Functional runner to run the test without parameterization because
+                // TestWithParameters (used by ArtifactSaverRunnerWithParameters) with an empty name
+                // will fail the test.
+                return listOf(Functional(klass))
             }
 
             val junitParamsOrNull = junitParameters ?: listOf(null)
