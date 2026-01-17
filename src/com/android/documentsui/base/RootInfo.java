@@ -23,7 +23,7 @@ import static com.android.documentsui.base.DocumentInfo.getCursorLong;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -64,9 +64,6 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
     //  exists in the SDK.
     @VisibleForTesting public static final int FLAG_QUERY_SUPPORTS_TRASH = 1 << 20;
 
-    // TODO(b/458129770): Delete this and use Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE instead
-    // when it exists in the SDK.
-    @VisibleForTesting public static final int FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE = 1 << 21;
     // private static final int VERSION_INIT = 1; // Not used anymore
     private static final int VERSION_DROP_TYPE = 2;
     private static final int VERSION_SEARCH_TYPE = 3;
@@ -465,12 +462,10 @@ public class RootInfo implements Durable, Parcelable, SidebarEntryItemInfo {
 
     /** Returns true for the `DocumentsProvider`s that have limited functionality when offline. */
     public boolean hasLimitedFunctionalityWhenOffline() {
-        if (!isCloudFeaturesFlagEnabled()) {
+        if (!isSyncStateEnabled()) {
             return false;
         }
-        // TODO(b/458129770): Update to using Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE when it
-        // exists in the SDK.
-        return (flags & FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE) != 0;
+        return (flags & Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE) != 0;
     }
 
     /** Return true if the root is one of the local providers. */

@@ -30,7 +30,7 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFIL
 import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFILE_NOT_ALLOWED_TITLE;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -202,7 +202,7 @@ abstract class Message {
                         mEnv.getContext().getString(getRes(R.string.empty_trash_banner_button)),
                         null,
                         /* isButtonEnabled */ !isEmptyPage);
-            } else if (isCloudFeaturesFlagEnabled()
+            } else if (isSyncStateEnabled()
                     && !mEnv.isOnline()
                     && mEnv.getDisplayState()
                             .stack
@@ -213,9 +213,7 @@ abstract class Message {
                         mEnv.getContext()
                                 .getString(getRes(R.string.you_are_offline_banner_message)),
                         mEnv.getContext().getString(getRes(R.string.button_dismiss)),
-                        isUseMaterial3FlagEnabled()
-                                ? mEnv.getContext().getDrawable(R.drawable.ic_wifi_off_m3)
-                                : null);
+                        mEnv.getContext().getDrawable(R.drawable.ic_wifi_off_m3));
             } else if (mEnv.getModel().error != null) {
                 update(
                         null,

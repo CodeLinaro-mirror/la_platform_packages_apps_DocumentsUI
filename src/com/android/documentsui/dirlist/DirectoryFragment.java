@@ -16,6 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
@@ -26,14 +27,15 @@ import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -51,6 +53,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
@@ -62,9 +65,11 @@ import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
+import android.view.InputDevice;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -256,6 +261,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private ContentLock mContentLock = new ContentLock();
 
     @VisibleForTesting @Nullable ItemDecorationInvalidator mItemDecorationInvalidator;
+    private long mLastActivationTapTime;
 
     private SortModel.UpdateListener mSortListener = (model, updateType) -> {
         // Only when sort order has changed do we need to trigger another loading.
@@ -569,7 +575,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mItemDecorationInvalidator = null;
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mInjector.networkMonitor.removeNetworkListener(mAdapter.getNetworkListener());
         }
 
@@ -606,7 +612,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mAdapter = getModelBackedDocumentsAdapter();
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mInjector.networkMonitor.addNetworkListener(mAdapter.getNetworkListener());
         }
 
@@ -999,13 +1005,36 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         return true;
     }
 
-    private boolean onItemActivated(ItemDetails<String> item, MotionEvent e) {
+    @VisibleForTesting
+    public boolean onItemActivated(ItemDetails<String> item, MotionEvent e) {
+        if (isUseMaterial3FlagEnabled()) {
+            if (e.getSource() == InputDevice.SOURCE_TOUCHSCREEN) {
+                // If this tap happens within the double tap timeout, we consider it as a double tap
+                // and will not activate the item because the previous tap should have already
+                // activated the item. This is to avoid double tap on touchscreen accidentally
+                // opening the file twice.
+                if (SystemClock.uptimeMillis() - mLastActivationTapTime
+                        < ViewConfiguration.getDoubleTapTimeout()) {
+                    return true;
+                }
+                mLastActivationTapTime = SystemClock.uptimeMillis();
+            }
+        }
+
         if (item instanceof DocumentItemDetails) {
             final DocumentItemDetails docDetails = (DocumentItemDetails) item;
             if (docDetails.inPreviewIconHotspot(e)) return mActions.previewItem(item);
             if (startUnpackingArchive(docDetails)) return true;
         }
 
+        // This was reverted as desktop file handling was rolling out until
+        // we have default file opening apps out-of-the box.
+        // Since the default file opening app uses a build flag, we're using
+        // another flag that's rolling out in the same cycle to flag protect
+        // the revert^2.
+        if (isDesktopFileHandlingFlagEnabled() && isUseNewOpenWithEnabled()) {
+            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -1458,7 +1487,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            // This was reverted as desktop file handling was rolling out until
+            // we have default file opening apps out-of-the box.
+            // Since the default file opening app uses a build flag, we're using
+            // another flag that's rolling out in the same cycle to flag protect
+            // the revert^2.
+            if (isDesktopFileHandlingFlagEnabled() && isUseNewOpenWithEnabled()) {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+            } else {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            }
         }
         return true;
     }
@@ -2033,7 +2071,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         public boolean isOnline() {
-            if (!isCloudFeaturesFlagEnabled()) {
+            if (!isSyncStateEnabled()) {
                 return true;
             }
             return mInjector.networkMonitor.isOnline();

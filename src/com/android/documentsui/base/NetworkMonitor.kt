@@ -17,7 +17,7 @@ package com.android.documentsui.base
 
 import android.content.Context
 import android.net.NetworkCapabilities
-import com.android.documentsui.util.FlagUtils.Companion.isCloudFeaturesFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 import com.google.common.annotations.VisibleForTesting
 
 /**
@@ -45,7 +45,7 @@ interface NetworkMonitor {
         /** Creates and initializes a NetworkMonitor instance. */
         @JvmStatic
         fun create(context: Context): NetworkMonitor {
-            return if (isCloudFeaturesFlagEnabled()) {
+            return if (isSyncStateEnabled()) {
                 NetworkMonitorImpl(context).apply { init() }
             } else {
                 NetworkMonitorStub()
@@ -62,7 +62,7 @@ interface NetworkMonitor {
             context: Context,
             isCurrentlyOnlineFun: (NetworkCapabilities) -> Boolean,
         ): NetworkMonitor {
-            return if (isCloudFeaturesFlagEnabled()) {
+            return if (isSyncStateEnabled()) {
                 NetworkMonitorImpl(context, isCurrentlyOnlineFun).apply { init() }
             } else {
                 NetworkMonitorStub()

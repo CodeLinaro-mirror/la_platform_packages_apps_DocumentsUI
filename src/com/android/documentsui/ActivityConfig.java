@@ -16,7 +16,7 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
@@ -39,7 +39,7 @@ public abstract class ActivityConfig {
 
     /** Returns whether a document is enabled. */
     public boolean isDocumentEnabled(DocumentInfo doc, State state, boolean isOnline) {
-        if (!isCloudFeaturesFlagEnabled()) {
+        if (!isSyncStateEnabled()) {
             return true;
         }
         if (doc.isDirectory()) {
@@ -59,7 +59,7 @@ public abstract class ActivityConfig {
      * don't have available content.
      */
     public boolean isContentAvailable(DocumentInfo doc, State state, boolean isOnline) {
-        if (!isCloudFeaturesFlagEnabled()) {
+        if (!isSyncStateEnabled()) {
             return true;
         }
 
