@@ -96,6 +96,14 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     }
 
     @Override
+    public void updateContextMenu(Menu menu, SelectionDetails selectionDetails) {
+        super.updateContextMenu(menu, selectionDetails);
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selectionDetails);
+        }
+    }
+
+    @Override
     public void updateKeyboardShortcutsMenu(
             List<KeyboardShortcutGroup> data, IntFunction<String> stringSupplier) {
         KeyboardShortcutGroup group =

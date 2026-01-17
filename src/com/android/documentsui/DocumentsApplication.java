@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.om.OverlayManager;
+import android.content.pm.PackageItemInfo;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.os.UserHandle;
@@ -201,6 +202,10 @@ public class DocumentsApplication extends Application {
                 sConfigStore = new ConfigStore.ConfigStoreImpl();
             }
         }
+
+        // Force all the loadLabel() invocations to sanitize the package labels when loading them
+        // instead of sanitizing at every callsite.
+        PackageItemInfo.forceSafeLabels();
 
         final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final OverlayManager om = getSystemService(OverlayManager.class);

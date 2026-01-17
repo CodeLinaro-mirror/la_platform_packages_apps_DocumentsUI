@@ -208,4 +208,128 @@ class ApprovedDocHandlersTest {
         assertThat(handlers).hasSize(1)
         assertThat(handlers[0].componentName).isEqualTo(testComponent)
     }
+
+    @Test
+    fun testGetApprovedDocHandlers_singleSelection_nullMimeTypes_usesWildcard() {
+        // Verifies that for a single selection with null mime types, the intent type is set to
+        // "*/*".
+        `when`(selectionDetails.size()).thenReturn(1)
+        `when`(selectionDetails.mimeTypes()).thenReturn(null)
+        `when`(resources.getStringArray(R.array.approved_document_handlers))
+            .thenReturn(arrayOf(testPackage))
+        val resolveInfo = ResolveInfo()
+        resolveInfo.activityInfo = activityInfo
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        val handlers = approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+
+        // Assert that the handler is still found
+        assertThat(handlers).hasSize(1)
+        assertThat(handlers[0].componentName).isEqualTo(testComponent)
+
+        // Assert that the intent passed to queryIntentActivities has the correct wildcard type
+        val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+        verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
+        assertThat(intentCaptor.value.type).isEqualTo("*/*")
+        assertThat(intentCaptor.value.action).isEqualTo(Intent.ACTION_SEND)
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_singleSelection_emptyMimeTypes_usesWildcard() {
+        // Verifies that for a single selection with empty mime types, the intent type is set to
+        // "*/*".
+        `when`(selectionDetails.size()).thenReturn(1)
+        `when`(selectionDetails.mimeTypes()).thenReturn(emptySet())
+        `when`(resources.getStringArray(R.array.approved_document_handlers))
+            .thenReturn(arrayOf(testPackage))
+        val resolveInfo = ResolveInfo()
+        resolveInfo.activityInfo = activityInfo
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        val handlers = approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+
+        // Assert that the handler is still found
+        assertThat(handlers).hasSize(1)
+        assertThat(handlers[0].componentName).isEqualTo(testComponent)
+
+        // Assert that the intent passed to queryIntentActivities has the correct wildcard type
+        val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+        verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
+        assertThat(intentCaptor.value.type).isEqualTo("*/*")
+        assertThat(intentCaptor.value.action).isEqualTo(Intent.ACTION_SEND)
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_multipleSelection_nullMimeTypes_usesWildcard() {
+        // Verifies that for multiple selections with null mime types, the intent type is set to
+        // "*/*".
+        `when`(selectionDetails.size()).thenReturn(2)
+        `when`(selectionDetails.mimeTypes()).thenReturn(null)
+        `when`(resources.getStringArray(R.array.approved_document_handlers))
+            .thenReturn(arrayOf(testPackage))
+        val resolveInfo = ResolveInfo()
+        resolveInfo.activityInfo = activityInfo
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        val handlers = approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+
+        // Assert that the handler is still found
+        assertThat(handlers).hasSize(1)
+        assertThat(handlers[0].componentName).isEqualTo(testComponent)
+
+        // Assert that the intent passed to queryIntentActivities has the correct wildcard type
+        val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+        verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
+        assertThat(intentCaptor.value.type).isEqualTo("*/*")
+        assertThat(intentCaptor.value.action).isEqualTo(Intent.ACTION_SEND_MULTIPLE)
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_multipleSelection_emptyMimeTypes_usesWildcard() {
+        // Verifies that for multiple selections with empty mime types, the intent type is set to
+        // "*/*".
+        `when`(selectionDetails.size()).thenReturn(2)
+        `when`(selectionDetails.mimeTypes()).thenReturn(emptySet())
+        `when`(resources.getStringArray(R.array.approved_document_handlers))
+            .thenReturn(arrayOf(testPackage))
+        val resolveInfo = ResolveInfo()
+        resolveInfo.activityInfo = activityInfo
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        val handlers = approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+
+        // Assert that the handler is still found
+        assertThat(handlers).hasSize(1)
+        assertThat(handlers[0].componentName).isEqualTo(testComponent)
+
+        // Assert that the intent passed to queryIntentActivities has the correct wildcard type
+        val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
+        verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
+        assertThat(intentCaptor.value.type).isEqualTo("*/*")
+        assertThat(intentCaptor.value.action).isEqualTo(Intent.ACTION_SEND_MULTIPLE)
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_handlerWithNoLabel_isSkipped() {
+        // Verifies that a handler with no label is skipped.
+        `when`(selectionDetails.size()).thenReturn(1)
+        `when`(selectionDetails.mimeTypes()).thenReturn(setOf("image/png"))
+        `when`(resources.getStringArray(R.array.approved_document_handlers))
+            .thenReturn(arrayOf(testPackage))
+        val resolveInfo = ResolveInfo()
+        resolveInfo.activityInfo = activityInfo
+        // Mock loadLabel to return null
+        doReturn(null).`when`(activityInfo).loadLabel(packageManager)
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        val handlers = approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+
+        // Assert that no handlers are returned because the only available one has no label
+        assertThat(handlers).isEmpty()
+    }
 }

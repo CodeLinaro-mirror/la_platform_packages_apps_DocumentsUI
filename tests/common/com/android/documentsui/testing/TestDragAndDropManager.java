@@ -66,7 +66,8 @@ public class TestDragAndDropManager implements DragAndDropManager {
             SelectionDetails details,
             IconHelper iconHelper,
             @Nullable DocumentInfo parent,
-            boolean canDragAndDrop) {
+            boolean canDragAndDrop,
+            DocumentsAccess docsAccess) {
         startDragHandler.accept(srcs);
         mLastCanDragAndDrop = canDragAndDrop;
     }

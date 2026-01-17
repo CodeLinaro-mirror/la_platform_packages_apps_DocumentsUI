@@ -31,6 +31,7 @@ import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.DocsSelectionHelper;
+import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.base.DocumentInfo;
@@ -40,6 +41,7 @@ import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DragStartListener.RuntimeDragStartListener;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
+import com.android.documentsui.testing.TestDocumentsAccess;
 import com.android.documentsui.testing.TestDragAndDropManager;
 import com.android.documentsui.testing.TestEvents;
 import com.android.documentsui.testing.TestSelectionDetails;
@@ -69,6 +71,7 @@ public class DragStartListenerTest {
     private TestDragAndDropManager mManager;
     private List<DocumentInfo> mSrcs;
     private DocumentInfo mDoc;
+    private DocumentsAccess mDocsAccess;
 
     @Before
     public void setUp() throws Exception {
@@ -81,6 +84,7 @@ public class DragStartListenerTest {
         mDoc.authority = Providers.AUTHORITY_STORAGE;
         mDoc.documentId = "id";
         mDoc.derivedUri = DocumentsContract.buildDocumentUri(mDoc.authority, mDoc.documentId);
+        mDocsAccess = new TestDocumentsAccess();
 
         State state = new State();
         state.stack.push(mDoc);
@@ -110,7 +114,8 @@ public class DragStartListenerTest {
                                             || docInfo.syncStateFlags != sIsUnavailableFlag;
                             return fakeIsContentAvailable;
                         },
-                        mManager);
+                        mManager,
+                        mDocsAccess);
 
         mViewModelId = "1234";
 

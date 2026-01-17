@@ -470,6 +470,11 @@ public class SearchViewManager implements
                 mSearchView.setIconified(true);
             }
 
+            if (isSearchV2Enabled()) {
+                // Show the chips again, once the search has been canceled.
+                useSearchOptions(SearchOptionsControls.CHIPS);
+            }
+
             return true;
         }
         return false;

@@ -1038,6 +1038,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             loadRecent();
             return;
         }
+        if (DocumentsContract.isDocumentUri(mActivity, uri)) {
+            launchToDocument(uri);
+            return;
+        }
         new LoadRootTask<>(mActivity, mProviders, uri, userId, this::onRootLoaded)
                 .executeOnExecutor(mExecutors.lookup(uri.getAuthority()));
     }
@@ -1505,6 +1509,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
             // We only fetch summaries for local files.
             if (!(root != null && (root.isLocalProvider() || root.isRecents()))) {
+                return;
+            }
+
+            // We only fetch summaries for files that are not archives.
+            if (documentInfo == null || documentInfo.isInArchive()) {
                 return;
             }
 

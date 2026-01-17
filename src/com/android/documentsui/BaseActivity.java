@@ -849,21 +849,23 @@ public abstract class BaseActivity
 
     @Override
     public void onRootPicked(RootInfo root) {
-        final RootInfo previousRoot = getCurrentRoot();
-        final int previousStackSize = mState.stack.size();
+        final boolean skipRootRefresh =
+                root.equals(getCurrentRoot())
+                        && getCurrentShortcut() == null
+                        && mState.stack.size() <= 1;
         if (isSearchV2Enabled()) {
-            // Before changing the root, store the current state of the stack.
-            // Before making any updates, set the new root. The code that is called uses the stack's
-            // root, as it has no access to the parameter of this method.
-            mState.stack.changeRoot(root);
-            updateColumnHeaders(root);
+            // If search V2 is enabled, first change the stack, before cancelling search, as that
+            // triggers folder loading, which must know the correct stack content.
+            if (!skipRootRefresh) {
+                mState.stack.changeRoot(root);
+            }
         }
 
         // Clicking on the current root removes search
         mSearchManager.cancelSearch();
 
-        // Skip refreshing if root nor directory didn't change
-        if (root.equals(previousRoot) && getCurrentShortcut() == null && previousStackSize <= 1) {
+        // If we are skipping root refresh, exit immediately.
+        if (skipRootRefresh) {
             return;
         }
 
@@ -877,7 +879,6 @@ public abstract class BaseActivity
         mSortController.onViewModeChanged(mState.derivedMode);
 
         if (!isSearchV2Enabled()) {
-            updateColumnHeaders(root);
             // Clear entire backstack and start in new root
             mState.stack.changeRoot(root);
         }
@@ -935,7 +936,9 @@ public abstract class BaseActivity
     }
 
     private void updateColumnHeaders(@Nullable RootInfo root) {
-        boolean showSummary = displaySummaryForRoot(mInjector.getSummaryProviderManager(), root);
+        boolean showSummary =
+                displaySummaryForRoot(
+                        mInjector.getSummaryProviderManager(), root, mState.stack.peek());
         mState.sortModel.setDimensionVisibility(
                 SortModel.SORT_DIMENSION_ID_SUMMARY, showSummary ? View.VISIBLE : View.GONE);
     }
@@ -1424,6 +1427,7 @@ public abstract class BaseActivity
 
     @VisibleForTesting
     public void notifyDirectoryLoaded(Uri uri) {
+        updateColumnHeaders(mState.stack.getRoot());
         for (EventListener listener : mEventListeners) {
             listener.onDirectoryLoaded(uri);
         }
