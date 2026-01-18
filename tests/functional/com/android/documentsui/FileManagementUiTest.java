@@ -19,6 +19,7 @@ package com.android.documentsui;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static org.junit.Assert.fail;
 
 import android.net.Uri;
@@ -120,6 +121,11 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.waitForIdle();
 
+        if (isUseMaterial3FlagEnabled()) {
+            // file1.png is still selected.
+            bots.directory.assertSelection(1);
+        }
+
         // Keep using the old openRoot. The copy action triggers a system popup and a DocsUI
         // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
         bots.roots.openRoot(ROOT_1_ID);
@@ -141,6 +147,11 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON);
 
         device.waitForIdle();
+
+        if (isUseMaterial3FlagEnabled()) {
+            // file1.png is still selected.
+            bots.directory.assertSelection(1);
+        }
 
         // Keep using the old openRoot. The copy action triggers a system popup and a DocsUI
         // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.

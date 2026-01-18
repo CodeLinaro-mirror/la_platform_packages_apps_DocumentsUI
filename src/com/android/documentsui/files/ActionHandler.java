@@ -253,7 +253,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
         if (mConfig.isDocumentEnabled(doc, mState, mInjector.networkMonitor.isOnline())) {
             onDocumentOpened(doc, type, fallback, false);
-            mSelectionMgr.clearSelection();
+            if (!isUseMaterial3FlagEnabled()) {
+                mSelectionMgr.clearSelection();
+            }
             return !doc.isContainer();
         }
         return false;
@@ -331,7 +333,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
         }
 
-        mSelectionMgr.clearSelection();
+        if (!isUseMaterial3FlagEnabled()) {
+            mSelectionMgr.clearSelection();
+        }
 
         mClipper.clipDocumentsForCut(
                 mModel::getItemUri, selection, mState.stack.peek(), mState.stack.isRecents());
@@ -366,7 +370,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
         }
 
-        mSelectionMgr.clearSelection();
+        if (!isUseMaterial3FlagEnabled()) {
+            mSelectionMgr.clearSelection();
+        }
 
         mClipper.clipDocumentsForCopy(mModel::getItemUri, selection);
 
