@@ -26,6 +26,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentManager
 import com.android.documentsui.R
 import com.android.documentsui.SummaryConsentFragment
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Menus
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
@@ -319,13 +320,18 @@ open class SummaryProviderManager(
 fun displaySummaryForRoot(
     summaryProviderManager: SummaryProviderManager?,
     root: RootInfo?,
+    currentDocument: DocumentInfo?,
 ): Boolean {
     if (!isUseFileSummaryEnabled()) {
         // The condition before this flag was to display for Downloads and Recents.
-        return root != null && (root.isRecents() || root.isDownloads())
+        return root != null && (root.isRecents || root.isDownloads)
     }
     // Defaults to false.
     if (root == null || summaryProviderManager == null) {
+        return false
+    }
+    // When displaying zip even within a root that shows summary, we don't display the summary.
+    if (currentDocument?.isInArchive == true) {
         return false
     }
     if (summaryProviderManager.isEnabled() && (root.isLocalProvider || root.isRecents)) {

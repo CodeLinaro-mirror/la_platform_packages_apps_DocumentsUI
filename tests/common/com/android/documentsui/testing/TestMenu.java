@@ -172,4 +172,11 @@ public abstract class TestMenu implements Menu {
     public TestMenuItem getItem(int index) {
         return items.valueAt(index);
     }
+
+    @Override
+    public TestMenuItem add(int groupId, int itemId, int order, CharSequence title) {
+        TestMenuItem item = TestMenuItem.create(itemId);
+        addMenuItem(itemId, item.setTitle(title));
+        return item;
+    }
 }

@@ -23,11 +23,14 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import android.provider.DocumentsContract
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.R
 import com.android.documentsui.TestSummaryProvider
+import com.android.documentsui.archives.ArchivesProvider
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
@@ -188,19 +191,30 @@ class SummaryProviderManagerTest {
             }
 
         manager.state.first { it is SummaryProviderState.Available && !it.isUserEnabled }
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isFalse()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS, null)).isFalse()
 
         // When provider is enabled and user enabled, it should display summary.
         setSummaryProviderEnabled(enabled = true)
         manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
 
         // Something that isn't local shouldn't display the summary.
-        assertThat(displaySummaryForRoot(manager, testRoot)).isFalse()
+        assertThat(displaySummaryForRoot(manager, testRoot, null)).isFalse()
 
         // Test with roots that are local. These can display the summary.
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isTrue()
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME)).isTrue()
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS, null)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME, null)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS, null)).isTrue()
+
+        // For zip (archives) we don't show summary column when browsing an archive, even if it's
+        // inside a local root which would display summary.
+        val archive = DocumentInfo()
+        // When browsing an archive the provider is this one.
+        archive.authority = ArchivesProvider.AUTHORITY
+        archive.documentId = "random-id"
+        // When browsing an archive it shows the directory mime type.
+        archive.mimeType = DocumentsContract.Document.MIME_TYPE_DIR
+        assertThat(archive.isInArchive).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS, archive)).isFalse()
     }
 
     @Test
