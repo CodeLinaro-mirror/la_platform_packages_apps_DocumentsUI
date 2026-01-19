@@ -95,6 +95,7 @@ open class SummaryProviderManager(
     // Override for tests.
     private var overrideConsentTitle: String? = null
     private var overrideConsentMessage: String? = null
+    private var overrideShowConsentDialog: Boolean? = null
 
     val authority: String? = authorityUri?.authority
     var rootDocumentId: String? = null
@@ -261,6 +262,17 @@ open class SummaryProviderManager(
             return
         }
 
+        val showConsent =
+            overrideShowConsentDialog
+                ?: context.resources.getBoolean(R.bool.show_summary_consent_dialog)
+
+        if (!showConsent) {
+            // This means that the summary feature doesn't require consent.
+            userSwitchSummaryEnabled()
+            refreshCallback()
+            return
+        }
+
         // Enabling the summary column.
         val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
         val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
@@ -304,9 +316,15 @@ open class SummaryProviderManager(
 
     /** Force the consent dialog content to avoid relying on the RRO. */
     @VisibleForTesting
-    fun setConsentMessage(title: String, message: String) {
+    fun setConsentMessage(title: String, message: String, showConsent: Boolean) {
         overrideConsentTitle = title
         overrideConsentMessage = message
+        overrideShowConsentDialog = showConsent
+    }
+
+    @VisibleForTesting
+    fun setShowConsentDialogForTest(show: Boolean) {
+        overrideShowConsentDialog = show
     }
 
     /** Force the local state for unit tests. */
