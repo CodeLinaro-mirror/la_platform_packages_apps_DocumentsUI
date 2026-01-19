@@ -1243,9 +1243,35 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     protected final void loadHomeDir() {
-        Uri defaultUri = Shared.getDefaultRootUri(mActivity, mState.action);
+        Uri defaultUri = getDefaultRootUri(mState.action);
         loadRoot(defaultUri, UserId.DEFAULT_USER);
     }
+
+    /**
+     * Returns the default directory to be presented after starting the activity. It will attempt to
+     * use the default root uri from the resources first and will return a fallback URI based on the
+     * activity type if the default root uri is unsuccessful.
+     */
+    @VisibleForTesting
+    public Uri getDefaultRootUri(@State.ActionType int action) {
+        Uri defaultUri = Uri.parse(mActivity.getResources().getString(R.string.default_root_uri));
+        // These pick actions require the root to allow creation, but Recents doesn't support it.
+        boolean requiresCreate =
+                action == State.ACTION_CREATE || action == State.ACTION_PICK_COPY_DESTINATION;
+        if (FlagUtils.isHomeScreenFilesFlagEnabled()
+                && FlagUtils.isUseAllfilesRootForRecentsEnabled()
+                && Providers.isRecentsRootUri(defaultUri)
+                && !requiresCreate) {
+            return defaultUri;
+        }
+
+        if (!DocumentsContract.isRootUri(mActivity, defaultUri)) {
+            defaultUri = getDefaultFallbackUri();
+        }
+        return defaultUri;
+    }
+
+    protected abstract Uri getDefaultFallbackUri();
 
     protected final void loadRecent() {
         mState.stack.changeRoot(mProviders.getRecentsRoot(UserId.DEFAULT_USER));
