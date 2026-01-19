@@ -29,6 +29,7 @@ import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.selection.Selection;
 
 import com.android.documentsui.base.DocumentInfo;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -65,6 +67,13 @@ final class RuntimeDocumentClipper implements DocumentClipper {
         mContext = context;
         mClipStore = clipStore;
         mClipboard = context.getSystemService(ClipboardManager.class);
+    }
+
+    @VisibleForTesting
+    RuntimeDocumentClipper(Context context, ClipStore clipStore, ClipboardManager clipboard) {
+        mContext = context;
+        mClipStore = clipStore;
+        mClipboard = clipboard;
     }
 
     @Override
@@ -317,6 +326,19 @@ final class RuntimeDocumentClipper implements DocumentClipper {
             String srcParentString = bundle.getString(SRC_PARENT_KEY);
             Uri srcParent = srcParentString == null ? null : Uri.parse(srcParentString);
 
+            if (opType == FileOperationService.OPERATION_MOVE
+                    && Objects.equals(srcParent, dstStack.peek().getDocumentUri())) {
+                Log.i(
+                        TAG,
+                        "Attempting to perform a cut and paste operation within the same folder."
+                                + " Ignoring and treating as no operation.");
+                callback.onOperationResult(
+                        FileOperations.Callback.STATUS_REJECTED,
+                        getOpType(clipData),
+                        uris.getItemCount());
+                return;
+            }
+
             // If the user is in the "Recent" view, there is no meaningful parent URI, but the
             // FileOperationService can successfully deal with this for move operations. This is
             // only enabled for Search v2 as using the old loaders masks out flags like
@@ -334,7 +356,18 @@ final class RuntimeDocumentClipper implements DocumentClipper {
                     .withSrcs(uris)
                     .build();
 
-            FileOperations.start(mContext, operation, callback, FileOperations.createJobId());
+            FileOperations.start(
+                    mContext,
+                    operation,
+                    (status, fileOpType, docCount) -> {
+                        callback.onOperationResult(status, fileOpType, docCount);
+                        if (status == FileOperations.Callback.STATUS_ACCEPTED
+                                && fileOpType == FileOperationService.OPERATION_MOVE) {
+                            Log.i(TAG, "Clearing the primary clip after a move operation.");
+                            mClipboard.clearPrimaryClip();
+                        }
+                    },
+                    FileOperations.createJobId());
         } catch (IOException e) {
             Log.e(TAG, "Cannot create uris supplier.", e);
             callback.onOperationResult(FileOperations.Callback.STATUS_REJECTED, opType, 0);
