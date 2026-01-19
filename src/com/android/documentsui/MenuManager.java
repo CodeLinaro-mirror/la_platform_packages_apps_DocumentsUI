@@ -427,9 +427,15 @@ public abstract class MenuManager {
     }
 
     protected void updateShowHiddenFiles(MenuItem showHidden) {
+        // Don't show "Show/hide hidden files" menu item if trash flow is enabled.
+        if (isTrashFlowEnabled() && mState.stack.isTrashRoot()) {
+            Menus.setEnabledAndVisible(showHidden, false);
+            return;
+        }
+
         Menus.setEnabledAndVisible(showHidden, true);
         showHidden.setTitle(
-                mState.showHiddenFiles
+                mState.shouldShowHiddenFiles()
                         ? getRes(R.string.menu_hide_hidden_files)
                         : getRes(R.string.menu_show_hidden_files));
     }

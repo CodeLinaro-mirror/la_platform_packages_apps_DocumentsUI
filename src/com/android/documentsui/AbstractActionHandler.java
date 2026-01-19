@@ -1468,9 +1468,15 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     acceptMimes = expanded;
                 }
             }
-            QueryOptions options = new QueryOptions(maxResults, maxResults, lastModifiedDelta,
-                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles, acceptMimes,
-                    mSearchMgr.buildQueryArgs());
+            QueryOptions options =
+                    new QueryOptions(
+                            maxResults,
+                            maxResults,
+                            lastModifiedDelta,
+                            Duration.ofMillis(MAX_SEARCH_TIME_MS),
+                            mState.shouldShowHiddenFiles(),
+                            acceptMimes,
+                            mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 if (DEBUG) {
