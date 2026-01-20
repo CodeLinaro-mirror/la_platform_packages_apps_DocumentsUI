@@ -82,16 +82,30 @@ public class DocumentStackTest {
     @Test
     public void testPushDocument_ModifiesStack() {
         mStack.push(DIR_1);
+        assertEquals(1, mStack.size());
+        assertEquals(DIR_1, mStack.peek());
+
         mStack.push(DIR_2);
+        assertEquals(2, mStack.size());
         assertEquals(DIR_2, mStack.peek());
+
+        mStack.push(DIR_1); // DIR_1 again
+        assertEquals(3, mStack.size());
+        assertEquals(DIR_1, mStack.peek());
     }
 
     @Test
     public void testPopDocument_ModifiesStack() {
         mStack.push(DIR_1);
         mStack.push(DIR_2);
-        mStack.pop();
+        assertEquals(2, mStack.size());
+
+        assertEquals(DIR_2, mStack.pop());
+        assertEquals(1, mStack.size());
         assertEquals(DIR_1, mStack.peek());
+
+        assertEquals(DIR_1, mStack.pop());
+        assertEquals(0, mStack.size());
     }
 
     @Test
@@ -196,7 +210,7 @@ public class DocumentStackTest {
         mStack.changeRoot(rootRecent);
 
         assertEquals(1, mStack.size());
-        assertEquals(true, mStack.isRecents());
+        assertTrue(mStack.isRecents());
         assertNotNull(mStack.peek().derivedUri);
     }
 }
