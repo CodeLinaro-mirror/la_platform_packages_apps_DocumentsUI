@@ -339,7 +339,7 @@ public class UiBot extends Bots.BaseBot {
             throw new UiObjectNotFoundException("ActionMode bar not found");
         }
         if (isTrashFlowEnabled()) {
-            clickActionItem("Delete permanently");
+            clickActionItem(mContext.getString(R.string.menu_permanently_delete));
         } else {
             clickToolbarItem(R.id.action_menu_delete);
         }
