@@ -981,7 +981,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         DeleteDocumentFragment.show(
                 mActivity.getSupportFragmentManager(),
                 mModel.getDocuments(selection),
-                parentDocumentInfo);
+                parentDocumentInfo,
+                mState.stack.isTrashRoot());
     }
 
     @Override
