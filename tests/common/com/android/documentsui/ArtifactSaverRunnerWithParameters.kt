@@ -30,7 +30,7 @@ import org.junit.runners.parameterized.TestWithParameters
  * `@Parameters`, while incorporating the features of the `Functional` runner:
  * - Early artifact saving on test failures.
  */
-open class ArtifactSaverRunnerWithParameters(private val test: TestWithParameters) :
+open class ArtifactSaverRunnerWithParameters(val test: TestWithParameters) :
     BlockJUnit4ClassRunnerWithParameters(test) {
 
     private val methodsWithSavedArtifacts: MutableSet<FrameworkMethod> = HashSet()
@@ -55,19 +55,5 @@ open class ArtifactSaverRunnerWithParameters(private val test: TestWithParameter
     override fun methodBlock(method: FrameworkMethod): Statement {
         // Error artifact saver for exceptions thrown outside "method-afters", i.e. in method rules.
         return artifactSaver(super.methodBlock(method), Stream.of(method))
-    }
-
-    override fun getName(): String {
-        // `BlockJUnit4ClassRunnerWithParameters` requires TestWithParameters to have a non-empty
-        // name because it overrides the getName() to return it, and getName() is used by
-        // `ParentRunner` (`BlockJUnit4ClassRunnerWithParameters`'s grand parent) to generate test
-        // name, so an empty name will cause the test to fail. Since we use this runner for both
-        // Parameterized and non-parameterized tests, for non-parameterized tests, an empty name
-        // will cause the test to fail. As a workaround, we return the test class name as the name
-        // for non-parameterized tests (which is the default behavior of the `ParentRunner`).
-        if (test.getName().isEmpty()) {
-            return testClass.getName()
-        }
-        return super.getName()
     }
 }

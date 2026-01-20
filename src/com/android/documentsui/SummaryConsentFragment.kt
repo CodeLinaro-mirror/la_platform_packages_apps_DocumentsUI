@@ -18,6 +18,9 @@ package com.android.documentsui
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
+import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -30,17 +33,28 @@ class SummaryConsentFragment(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args = requireArguments()
         val title = args.getString(EXTRA_TITLE)
-        val message = args.getString(EXTRA_MESSAGE)
+        val message = Html.fromHtml(args.getString(EXTRA_MESSAGE), Html.FROM_HTML_MODE_LEGACY)
 
-        val positiveButton = context?.getString(R.string.menu_open)
-        val negativeButton = context?.getString(R.string.button_back)
+        val positiveButton = context?.getString(R.string.summary_consent_ok_button)
+        val negativeButton = context?.getString(R.string.summary_consent_remind_later_button)
+        val remindLaterButton = context?.getString(R.string.summary_consent_cancel_button)
 
-        return MaterialAlertDialogBuilder(requireContext())
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(positiveButton) { _, _ -> onPositiveButtonClick() }
-            .setNegativeButton(negativeButton) { _, _ -> onNegativeButtonClick() }
-            .create()
+        // TODO: Add the remind later logic.
+        val dialog =
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(positiveButton) { _, _ -> onPositiveButtonClick() }
+                .setNegativeButton(negativeButton) { _, _ -> onNegativeButtonClick() }
+                .setNeutralButton(remindLaterButton) { _, _ -> onNegativeButtonClick() }
+                .create()
+
+        dialog.setOnShowListener {
+            val messageView = dialog.findViewById<TextView>(android.R.id.message)
+            messageView?.movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        return dialog
     }
 
     companion object {

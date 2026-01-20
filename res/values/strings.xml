@@ -41,6 +41,12 @@
     <string name="summary_consent_title"></string>
     <!-- Message for the summary consent dialog. -->
     <string name="summary_consent_message"></string>
+    <!-- Label for the confirmation button for the summary consent dialog. -->
+    <string name="summary_consent_ok_button">Turn on</string>
+    <!-- Label for the cancel button for the summary consent dialog. -->
+    <string name="summary_consent_cancel_button">Don\u2019t ask me again</string>
+    <!-- Label for the remind me later button for the summary consent dialog. -->
+    <string name="summary_consent_remind_later_button">Not now</string>
 
     <!-- Title of the documents application [CHAR LIMIT=32] -->
     <string name="launcher_label">@string/files_label</string>
@@ -117,10 +123,10 @@
     <string name="menu_show_hidden_files">Show hidden files</string>
     <!-- Menu item that hides hidden files [CHAR LIMIT=36] -->
     <string name="menu_hide_hidden_files">Don\u2019t show hidden files</string>
-    <!-- Menu item that shows the summary column [CHAR LIMIT=36] -->
-    <string name="option_show_summary_column">Show summary column</string>
-    <!-- Menu item that hides the summary column [CHAR LIMIT=36] -->
-    <string name="option_hide_summary_column">Don\'t show summary column</string>
+    <!-- Menu item that shows the description/summary column [CHAR LIMIT=36] -->
+    <string name="option_show_summary_column">Show description column</string>
+    <!-- Menu item that hides the description/summary column [CHAR LIMIT=36] -->
+    <string name="option_hide_summary_column">Don\u2019t show description column</string>
     <!-- Menu item that renames the selected document [CHAR LIMIT=28] -->
     <string name="menu_view_in_owner">View in <xliff:g id="source" example="Google Drive">%1$s</xliff:g></string>
 
@@ -171,8 +177,8 @@
     <string name="not_sorted">Not sorted</string>
     <!-- Table header for file name [CHAR_LIMIT=24] -->
     <string name="sort_dimension_name">Name</string>
-    <!-- Table header for metadata of downloaded files, such as download source and progress. [CHAR_LIMIT=24] -->
-    <string name="sort_dimension_summary">Summary</string>
+    <!-- Table header for the description/summary field. [CHAR_LIMIT=24] -->
+    <string name="sort_dimension_summary">Description</string>
     <!-- Table header for file type. [CHAR_LIMIT=12] -->
     <string name="sort_dimension_file_type">Type</string>
     <!-- Table header for file size. [CHAR_LIMIT=12] -->

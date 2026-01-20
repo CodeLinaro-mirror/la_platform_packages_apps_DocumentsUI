@@ -47,7 +47,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 @SmallTest
@@ -79,7 +79,7 @@ class SummaryProviderManagerTest {
     fun setUp() {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = targetContext.contentResolver
-        mockResources = Mockito.mock(Resources::class.java)
+        mockResources = mock(Resources::class.java)
 
         // Use the ContextWrapper to provide the mock Resources.
         context = TestContextWrapper(targetContext, mockResources)
@@ -234,5 +234,48 @@ class SummaryProviderManagerTest {
         manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
 
         assertThat(LocalPreferences.isSummaryEnabled(context)).isTrue()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_withConfigFalse_enablesImmediately() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setShowConsentDialogForTest(false)
+        var refreshCalled = false
+        val mockFragmentManager = mock(androidx.fragment.app.FragmentManager::class.java)
+        manager.onShowSummaryMenuClicked(mock(androidx.fragment.app.FragmentManager::class.java)) {
+            refreshCalled = true
+        }
+
+        assertThat(LocalPreferences.isSummaryEnabled(context)).isTrue()
+        assertThat(refreshCalled).isTrue()
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_withConfigTrue_showsDialog() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+        var refreshCalled = false
+        val mockFragmentManager = mock(androidx.fragment.app.FragmentManager::class.java)
+        `when`(mockFragmentManager.beginTransaction())
+            .thenReturn(mock(androidx.fragment.app.FragmentTransaction::class.java))
+        manager.onShowSummaryMenuClicked(mockFragmentManager) { refreshCalled = true }
+
+        assertThat(LocalPreferences.isSummaryEnabled(context)).isFalse()
+        // The refresh is only called after the dialog is shown, so here in this test it was called.
+        assertThat(refreshCalled).isFalse()
+        manager.stop()
     }
 }
