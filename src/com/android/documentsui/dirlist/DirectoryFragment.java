@@ -63,9 +63,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
+import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
-import android.view.InputDevice;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -232,6 +232,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private GridLayoutManager mLayout;
     private int mColumnCount = 1;  // This will get updated when layout changes.
     private int mColumnUnit = 1;
+
+    // When the `DirectoryFragment` is first attached it kicks of a document load, unfortunately it
+    // happens again in onStart (via onRefresh) which ends up kicking off double loaders. This
+    // ensures the second one is not kicked off if the first has happened.
+    private boolean mDocumentsInitialLoad = false;
 
     private float mLiveScale = 1.0f;
     private @ViewMode int mMode;
@@ -773,6 +778,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         // Kick off loader at least once
         mActions.loadDocumentsForCurrentStack();
+        mDocumentsInitialLoad = isSearchV2Enabled();
 
         if (mState.supportsCrossProfile()) {
             final IntentFilter filter = new IntentFilter();
@@ -1920,6 +1926,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // If there is no root doc, try to reload the root doc from root info.
             Log.w(TAG, "No root document. Try to get root document.");
             getRootDocumentAndMaybeRefreshDocument();
+            return;
+        }
+        if (isSearchV2Enabled() && mDocumentsInitialLoad) {
+            mDocumentsInitialLoad = false;
             return;
         }
         mActions.refreshDocument(doc, (boolean refreshSupported) -> {
