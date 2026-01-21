@@ -16,8 +16,6 @@
 
 package com.android.documentsui.base;
 
-import static androidx.core.util.Preconditions.checkArgument;
-
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
@@ -126,7 +124,6 @@ public class DocumentStack implements Durable, Parcelable {
     }
 
     public void push(DocumentInfo info) {
-        checkArgument(!mList.contains(info));
         if (DEBUG) {
             Log.d(TAG, "Adding doc to stack: " + info);
         }
