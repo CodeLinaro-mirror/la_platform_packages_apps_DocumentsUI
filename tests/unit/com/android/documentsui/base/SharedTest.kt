@@ -17,18 +17,10 @@
 package com.android.documentsui.base
 
 import android.platform.test.annotations.EnableFlags
-import android.provider.DocumentsContract
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.android.documentsui.files.TestActivity
-import com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO
-import com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
-import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.android.documentsui.rules.OverrideFlagsRule
-import com.android.documentsui.testing.TestEnv
 import com.google.common.truth.Truth.assertThat
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
@@ -73,32 +65,6 @@ class SharedTest {
                     CompareTestCase("&3#2kasfdj", "*)(jdh;a", 1),
                 )
             }
-        }
-    }
-
-    @RunWith(AndroidJUnit4::class)
-    class GetDefaultUriTest {
-        @get:Rule val overrideFlagsRule: OverrideFlagsRule = OverrideFlagsRule()
-
-        @Test
-        @EnableFlags(
-            FLAG_HOME_SCREEN_FILES_RO,
-            FLAG_USE_MATERIAL3,
-            FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
-            FLAG_USE_SEARCH_V2_READ_ONLY,
-        )
-        fun testFallbackLoadHomeDirCheckWindowAndBreadcrumb() {
-            val testEnv: TestEnv = TestEnv.create()
-            val testActivity = TestActivity.create(testEnv)
-            val downloadsShortcutUri =
-                DocumentsContract.buildDocumentUri(
-                    Providers.AUTHORITY_STORAGE,
-                    Providers.DOWNLOAD_DOCUMENT_ID,
-                )
-            assertEquals(
-                Shared.getDefaultRootUri(testActivity, State.ACTION_CREATE),
-                downloadsShortcutUri,
-            )
         }
     }
 }

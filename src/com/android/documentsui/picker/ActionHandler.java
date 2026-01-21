@@ -73,6 +73,7 @@ import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.util.FileUtils;
+import com.android.documentsui.util.FlagUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -219,6 +220,20 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         }
 
         return launchToDocument(initialUri);
+    }
+
+    @Override
+    protected Uri getDefaultFallbackUri() {
+        if (FlagUtils.isHomeScreenFilesFlagEnabled()) {
+            Log.e(
+                    TAG,
+                    "Default Root URI is not a valid root URI, falling back to primary storage.");
+            return DocumentsContract.buildRootUri(
+                    Providers.AUTHORITY_STORAGE, Providers.ROOT_ID_DEVICE);
+        }
+        Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");
+        return DocumentsContract.buildRootUri(
+                Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS);
     }
 
     /**

@@ -128,6 +128,7 @@ public final class MenuManagerTest {
     private TestMenuItem rootOpenInNewWindow;
     private TestMenuItem rootPasteIntoFolder;
     private TestMenuItem rootSettings;
+    private TestMenuItem mRootManageDevice;
     private TestMenuItem mRootInspector;
 
     /* Action Mode menu items */
@@ -162,6 +163,7 @@ public final class MenuManagerTest {
     private TestMenuItem optionCreateDir;
     private TestMenuItem optionSelectAll;
     private TestMenuItem optionSettings;
+    private TestMenuItem mOptionManageDevice;
     private TestMenuItem optionInspector;
     private TestMenuItem optionSort;
     private TestMenuItem mOptionLauncher;
@@ -236,6 +238,7 @@ public final class MenuManagerTest {
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
         rootPasteIntoFolder = testMenu.findItem(R.id.root_menu_paste_into_folder);
         rootSettings = testMenu.findItem(R.id.root_menu_settings);
+        mRootManageDevice = testMenu.findItem(R.id.root_menu_manage_device);
         mRootInspector = testMenu.findItem(R.id.root_menu_inspect);
 
         // Menu actions (including overflow) when action mode *is* active.
@@ -270,6 +273,7 @@ public final class MenuManagerTest {
         optionCreateDir = testMenu.findItem(R.id.option_menu_create_dir);
         optionSelectAll = testMenu.findItem(R.id.option_menu_select_all);
         optionSettings = testMenu.findItem(R.id.option_menu_settings);
+        mOptionManageDevice = testMenu.findItem(R.id.option_menu_manage_device);
         optionInspector = testMenu.findItem(R.id.option_menu_inspect);
         optionSort = testMenu.findItem(R.id.option_menu_sort);
         mOptionLauncher = testMenu.findItem(R.id.option_menu_launcher);
@@ -894,6 +898,16 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testOptionMenu_HasManageDevice() {
+        dirDetails.hasRootSettings = true;
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionManageDevice.assertEnabledAndVisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testOptionMenu_HasRootSettings() {
         dirDetails.hasRootSettings = true;
         mgr.updateOptionMenu(testMenu);
@@ -1518,8 +1532,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
-    @Test
-    public void testRootContextMenu() {
+    private void testRootContextMenu() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_CREATE;
 
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
@@ -1527,10 +1540,33 @@ public final class MenuManagerTest {
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertEnabledAndVisible();
         rootPasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_material3() {
+        testRootContextMenu();
+        mRootManageDevice.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_non_material3() {
+        testRootContextMenu();
         rootSettings.assertDisabledAndInvisible();
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_HasManageDevice() {
+        testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
+
+        mRootManageDevice.assertEnabledAndVisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testRootContextMenu_HasRootSettings() {
         testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
@@ -1600,16 +1636,16 @@ public final class MenuManagerTest {
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertEnabledAndVisible();
         rootPasteIntoFolder.assertDisabledAndInvisible();
-        rootSettings.assertDisabledAndInvisible();
+        mRootManageDevice.assertDisabledAndInvisible();
     }
 
     @Test
     @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
-    public void testShortcutContextMenu_HasRootSettings() {
+    public void testShortcutContextMenu_HasManageDevice() {
         mTestShortcutInfo.getRoot().flags = Root.FLAG_HAS_SETTINGS;
         mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, null);
 
-        rootSettings.assertEnabledAndVisible();
+        mRootManageDevice.assertEnabledAndVisible();
     }
 
     @Test

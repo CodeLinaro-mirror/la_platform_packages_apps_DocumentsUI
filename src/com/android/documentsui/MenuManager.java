@@ -166,7 +166,6 @@ public abstract class MenuManager {
         if (isZipNgFlagEnabled()) {
             updateExtractAll(mOptionMenu.findItem(getRes(R.id.option_menu_extract_all)));
         }
-        updateSettings(mOptionMenu.findItem(getRes(R.id.option_menu_settings)));
         updateSelectAll(mOptionMenu.findItem(getRes(R.id.option_menu_select_all)));
         updateNewWindow(mOptionMenu.findItem(getRes(R.id.option_menu_new_window)));
         updateDebug(mOptionMenu.findItem(getRes(R.id.option_menu_debug)));
@@ -177,9 +176,12 @@ public abstract class MenuManager {
         updateShowSummaryColumn(mOptionMenu.findItem(R.id.option_show_summary));
 
         if (isUseMaterial3FlagEnabled()) {
+            updateSettings(mOptionMenu.findItem(getRes(R.id.option_menu_manage_device)));
             updateModePicker(
                     mOptionMenu.findItem(getRes(R.id.sub_menu_grid)),
                     mOptionMenu.findItem(getRes(R.id.sub_menu_list)));
+        } else {
+            updateSettings(mOptionMenu.findItem(getRes(R.id.option_menu_settings)));
         }
 
         mSearchManager.updateMenu();
@@ -395,11 +397,22 @@ public abstract class MenuManager {
         MenuItem openInNewWindow = menu.findItem(getRes(R.id.root_menu_open_in_new_window));
         MenuItem settings = menu.findItem(getRes(R.id.root_menu_settings));
         MenuItem getInfo = menu.findItem(getRes(R.id.root_menu_inspect));
+        MenuItem manageDevice = menu.findItem(getRes(R.id.root_menu_manage_device));
 
         updateEject(eject, itemInfo);
         updatePasteInto(pasteInto, itemInfo, docInfo);
         updateOpenInNewWindow(openInNewWindow, itemInfo);
-        updateSettings(settings, itemInfo);
+        if (isUseMaterial3FlagEnabled()) {
+            updateSettings(manageDevice, itemInfo);
+            if (settings != null) {
+                settings.setVisible(false);
+            }
+        } else {
+            updateSettings(settings, itemInfo);
+            if (manageDevice != null) {
+                manageDevice.setVisible(false);
+            }
+        }
         updateInspect(getInfo, itemInfo);
     }
 
@@ -427,9 +440,15 @@ public abstract class MenuManager {
     }
 
     protected void updateShowHiddenFiles(MenuItem showHidden) {
+        // Don't show "Show/hide hidden files" menu item if trash flow is enabled.
+        if (isTrashFlowEnabled() && mState.stack.isTrashRoot()) {
+            Menus.setEnabledAndVisible(showHidden, false);
+            return;
+        }
+
         Menus.setEnabledAndVisible(showHidden, true);
         showHidden.setTitle(
-                mState.showHiddenFiles
+                mState.shouldShowHiddenFiles()
                         ? getRes(R.string.menu_hide_hidden_files)
                         : getRes(R.string.menu_show_hidden_files));
     }

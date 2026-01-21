@@ -98,11 +98,6 @@ class TrashFileLoader(
         return TrashTask(authority, rootInfos)
     }
 
-    /** Returns {@code false} to ensure hidden files in the trash are displayed. */
-    override fun shouldFilterHiddenFiles(): Boolean {
-        return false
-    }
-
     /**
      * Wraps the merged cursor to mask certain document flags.
      *

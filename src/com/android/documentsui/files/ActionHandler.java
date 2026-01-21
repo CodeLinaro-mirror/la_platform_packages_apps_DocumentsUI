@@ -73,6 +73,7 @@ import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperations;
+import com.android.documentsui.util.FlagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -565,7 +566,6 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         FileOperation operation = new FileOperation.Builder()
                 .withOpType(FileOperationService.OPERATION_RESTORE)
-                .withDestination(mState.stack)
                 .withSrcs(srcs)
                 .build();
 
@@ -774,6 +774,16 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
 
         return false;
+    }
+
+    @Override
+    protected Uri getDefaultFallbackUri() {
+        Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");
+        return FlagUtils.isHomeScreenFilesFlagEnabled()
+                ? DocumentsContract.buildDocumentUri(
+                        Providers.AUTHORITY_STORAGE, Providers.DOWNLOAD_DOCUMENT_ID)
+                : DocumentsContract.buildRootUri(
+                        Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS);
     }
 
     private boolean launchToDownloads(Intent intent) {

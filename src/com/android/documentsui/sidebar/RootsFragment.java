@@ -985,7 +985,8 @@ public class RootsFragment extends Fragment {
         } else if (id == getRes(R.id.root_menu_paste_into_folder)) {
             mActionHandler.pasteIntoFolder(sidebarItem.getItemInfo());
             return true;
-        } else if (id == getRes(R.id.root_menu_settings)) {
+        } else if (id == getRes(R.id.root_menu_settings)
+                || (id == getRes(R.id.root_menu_manage_device))) {
             mActionHandler.openSettings(sidebarItem.getItemInfo().getRoot());
             return true;
         } else if (id == getRes(R.id.root_menu_inspect)) {

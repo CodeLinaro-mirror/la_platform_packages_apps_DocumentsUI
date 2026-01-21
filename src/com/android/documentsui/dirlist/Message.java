@@ -31,6 +31,7 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFIL
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
 import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
+import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -336,7 +337,8 @@ abstract class Message {
                 updateToInflatedErrorMessage();
             } else if (event.hasAuthenticationException()) {
                 updateToCantDisplayContentMessage();
-            } else if (mEnv.getModel().getModelIds().length == 0) {
+            } else if (mEnv.getModel().getModelIds().length == 0
+                    && (!isSearchV2Enabled() || !mEnv.getModel().isLoading())) {
                 updateToInflatedEmptyMessage();
             }
         }

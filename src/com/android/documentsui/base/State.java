@@ -46,6 +46,8 @@ public class State implements android.os.Parcelable {
 
     private static final String TAG = "State";
 
+    private boolean mIsShowHiddenFiles;
+
     @IntDef(flag = true, value = {
             ACTION_BROWSE,
             ACTION_PICK_COPY_DESTINATION,
@@ -100,7 +102,6 @@ public class State implements android.os.Parcelable {
 
     public boolean openableOnly;
     public boolean restrictScopeStorage;
-    public boolean showHiddenFiles;
     public ConfigStore configStore = new ConfigStore.ConfigStoreImpl();
 
     /**
@@ -212,6 +213,29 @@ public class State implements android.os.Parcelable {
      */
     public boolean supportsCrossProfile() {
         return supportsCrossProfile;
+    }
+
+    /**
+     * Sets whether hidden files should be shown.
+     *
+     * @param showHiddenFiles True to show hidden files, false otherwise.
+     */
+    public void setIsShowHiddenFiles(boolean showHiddenFiles) {
+        this.mIsShowHiddenFiles = showHiddenFiles;
+    }
+
+    /**
+     * Returns true if hidden files should be shown.
+     *
+     * @return True if hidden files should be shown, false otherwise.
+     */
+    public boolean shouldShowHiddenFiles() {
+        // Hidden files are always shown in trash root.
+        if (stack.isTrashRoot()) {
+            return true;
+        }
+
+        return mIsShowHiddenFiles;
     }
 
     @Override

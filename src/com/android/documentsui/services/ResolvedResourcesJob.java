@@ -31,7 +31,6 @@ import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.Features;
-import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.services.FileOperationService.OpType;
@@ -127,14 +126,6 @@ public abstract class ResolvedResourcesJob extends Job {
     }
 
     /**
-     * Allows sub-classes to exclude files from processing.
-     * By default all files are eligible.
-     */
-    boolean isEligibleDoc(DocumentInfo doc, RootInfo root) {
-        return true;
-    }
-
-    /**
      * @return number of docs successfully loaded.
      */
     private int buildDocumentList() {
@@ -160,11 +151,7 @@ public abstract class ResolvedResourcesJob extends Job {
                 continue;
             }
 
-            if (isEligibleDoc(doc, stack.getRoot())) {
-                mResolvedDocs.add(doc);
-            } else {
-                onFileFailed(doc);
-            }
+            mResolvedDocs.add(doc);
             docsLoaded++;
 
             if (isCanceled()) {

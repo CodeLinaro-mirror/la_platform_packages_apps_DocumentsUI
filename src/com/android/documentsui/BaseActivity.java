@@ -695,11 +695,13 @@ public abstract class BaseActivity
         state.localOnly = intent.getBooleanExtra(Intent.EXTRA_LOCAL_ONLY, false);
         state.excludedAuthorities = getExcludedAuthorities();
         state.restrictScopeStorage = Shared.shouldRestrictStorageAccessFramework(this);
-        state.showHiddenFiles = LocalPreferences.getShowHiddenFiles(
-                getApplicationContext(),
-                getApplicationContext()
-                        .getResources()
-                        .getBoolean(R.bool.show_hidden_files_by_default));
+        boolean showHiddenFiles =
+                LocalPreferences.getShowHiddenFiles(
+                        getApplicationContext(),
+                        getApplicationContext()
+                                .getResources()
+                                .getBoolean(R.bool.show_hidden_files_by_default));
+        state.setIsShowHiddenFiles(showHiddenFiles);
         state.configStore = mConfigStore;
 
         includeState(state);
@@ -1169,14 +1171,14 @@ public abstract class BaseActivity
      * Updates hidden files visibility based on user action.
      */
     private void onClickedShowHiddenFiles() {
-        boolean showHiddenFiles = !mState.showHiddenFiles;
+        boolean showHiddenFiles = !mState.shouldShowHiddenFiles();
         Context context = getApplicationContext();
 
         Metrics.logUserAction(showHiddenFiles
                 ? MetricConsts.USER_ACTION_SHOW_HIDDEN_FILES
                 : MetricConsts.USER_ACTION_HIDE_HIDDEN_FILES);
         LocalPreferences.setShowHiddenFiles(context, showHiddenFiles);
-        mState.showHiddenFiles = showHiddenFiles;
+        mState.setIsShowHiddenFiles(showHiddenFiles);
 
         // Calls this to trigger either MultiRootDocumentsLoader or DirectoryLoader reloading.
         mInjector.actions.loadDocumentsForCurrentStack();
