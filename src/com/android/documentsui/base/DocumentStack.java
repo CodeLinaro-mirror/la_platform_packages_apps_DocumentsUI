@@ -124,39 +124,39 @@ public class DocumentStack implements Durable, Parcelable {
     }
 
     public void push(DocumentInfo info) {
-        if (DEBUG) {
-            Log.d(TAG, "Adding doc to stack: " + info);
-        }
         mList.addLast(info);
         mStackTouched = true;
+        if (DEBUG) {
+            Log.d(TAG, "Pushed " + quote(info) + " to the stack");
+            Log.d(TAG, "Stack = " + toShortString());
+        }
     }
 
     public DocumentInfo pop() {
-        if (DEBUG) {
-            Log.d(TAG, "Popping doc off stack.");
-        }
         final DocumentInfo result = mList.removeLast();
         mStackTouched = true;
-
+        if (DEBUG) {
+            Log.d(TAG, "Popped " + quote(result) + " from the stack");
+            Log.d(TAG, "Stack = " + toShortString());
+        }
         return result;
     }
 
     public void popToRootDocument() {
-        if (DEBUG) {
-            Log.d(TAG, "Popping docs to root folder.");
-        }
         while (mList.size() > 1) {
             mList.removeLast();
         }
         mStackTouched = true;
+        if (DEBUG) {
+            Log.d(TAG, "Popped all the folders from the stack except the root folder");
+            Log.d(TAG, "Stack = " + toShortString());
+        }
     }
 
     public void changeRoot(RootInfo root) {
-        if (DEBUG) {
-            Log.d(TAG, "Root changed to: " + root);
-        }
         reset();
         mRoot = root;
+        if (DEBUG) Log.d(TAG, "Changed root of the stack to " + quote(root));
 
         // Add this for keep stack size is 1 on recent root.
         if (root.isRecents()) {
@@ -164,6 +164,7 @@ public class DocumentStack implements Durable, Parcelable {
             rootRecent.userId = root.userId;
             rootRecent.deriveFields();
             push(rootRecent);
+            return;
         }
 
         if (root.isTrash()) {
@@ -171,7 +172,10 @@ public class DocumentStack implements Durable, Parcelable {
             trashRoot.userId = root.userId;
             trashRoot.deriveFields();
             push(trashRoot);
+            return;
         }
+
+        if (DEBUG) Log.d(TAG, "Stack = " + toShortString());
     }
 
     /** This will return true even when the initial location is set.
@@ -219,11 +223,13 @@ public class DocumentStack implements Durable, Parcelable {
      * {@link #mRoot} instead of making a copy.
      */
     public void reset(DocumentStack stack) {
-        if (DEBUG) Log.d(TAG, "Reset the whole stack to: " + stack);
-
         mList = stack.mList;
         mRoot = stack.mRoot;
         mStackTouched = true;
+        if (DEBUG) {
+            Log.d(TAG, "Reset the whole stack");
+            Log.d(TAG, "Stack = " + toShortString());
+        }
     }
 
     @Override
@@ -233,6 +239,23 @@ public class DocumentStack implements Durable, Parcelable {
                 + ", docStack=" + mList
                 + ", stackTouched=" + mStackTouched
                 + "}";
+    }
+
+    /** Gets a short string representation of this object for logging and debugging purposes. */
+    public String toShortString() {
+        StringBuilder s = new StringBuilder();
+        s.append('{');
+        s.append(quote(mRoot));
+
+        String separator = ": ";
+        for (DocumentInfo doc : mList) {
+            s.append(separator);
+            s.append(quote(doc));
+            separator = " > ";
+        }
+
+        s.append('}');
+        return s.toString();
     }
 
     @Override
@@ -367,4 +390,15 @@ public class DocumentStack implements Durable, Parcelable {
             return new DocumentStack[size];
         }
     };
+
+    private static String quote(DocumentInfo doc) {
+        if (doc == null) return "(no folder)";
+        if (doc.displayName == null) return "(no name)";
+        return "'" + doc.displayName + "'";
+    }
+
+    private static String quote(RootInfo root) {
+        if (root == null) return "(no root)";
+        return "'" + root.getDirectoryString() + "'";
+    }
 }
