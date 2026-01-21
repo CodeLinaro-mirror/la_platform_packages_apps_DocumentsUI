@@ -169,6 +169,7 @@
   int debug_content_uri;
   int default_root_uri;
   int directory_items;
+  int downloads_label;
   int empty;
   int local_summary_provider;
   int menu_copy;
