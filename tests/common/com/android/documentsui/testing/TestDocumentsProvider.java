@@ -27,7 +27,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
-import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsProvider;
@@ -39,6 +38,8 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Test doubles of {@link DocumentsProvider} to isolate document providers. This is not registered
@@ -75,6 +76,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
     /** Artificial delay added before this provider returns its results, 0 means no delay. */
     private long mQueryDelayMs = 0;
+
+    /**
+     * A Semaphore is used here as a signaling mechanism to allow the main test thread to signal
+     * background threads running queryChildDocuments to return immediately. Typically, a Semaphore
+     * guards a resource with N permits. However, when initialized with 0 permits, it serves as a
+     * blocking gate with built-in concurrency safety, avoiding the need for raw synchronization
+     * primitives.
+     */
+    private final Semaphore mQueryDelaySemaphore = new Semaphore(0);
 
     /** Maps from document ID to a summary, that will be used when querying for summaries. */
     private final Map<String, String> mNextSummaries = new HashMap<>();
@@ -314,6 +324,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
     public void setQueryDelay(long queryDelayMs) {
         Log.d(TAG, "Setting delay " + queryDelayMs + "ms on " + mAuthority);
         mQueryDelayMs = queryDelayMs;
+        mQueryDelaySemaphore.drainPermits();
     }
 
     /**
@@ -326,6 +337,15 @@ public class TestDocumentsProvider extends DocumentsProvider {
         mQueryDelayLatch = latch;
     }
 
+    /**
+     * If a query is currently happening, cancel the query before the `mQueryDelayMs` has fully
+     * finished.
+     */
+    public void cancelQueryDelay() {
+        mQueryDelayMs = 0;
+        mQueryDelaySemaphore.release();
+    }
+
     private void maybeDelayQueryResults() {
         if (mQueryDelayMs <= 0) {
             Log.d(TAG, "Immediate delivery of results for " + mAuthority);
@@ -336,7 +356,16 @@ public class TestDocumentsProvider extends DocumentsProvider {
             mQueryDelayLatch.countDown();
         }
         Log.d(TAG, "Delaying query results by " + mQueryDelayMs + "ms for " + mAuthority);
-        SystemClock.sleep(mQueryDelayMs);
+        try {
+            if (mQueryDelayMs > 0) {
+                // Try to acquire the semaphore, there are no permits available so this will wait
+                // until either the timeout expires OR the semaphore is released (which is the way
+                // to force the flow to continue.
+                mQueryDelaySemaphore.tryAcquire(mQueryDelayMs, TimeUnit.MILLISECONDS);
+            }
+        } catch (InterruptedException e) {
+            Log.w(TAG, "Interrupted while waiting for query delay", e);
+        }
         Log.d(TAG, "Delay of " + mQueryDelayMs + "ms for " + mAuthority + " done");
     }
 
