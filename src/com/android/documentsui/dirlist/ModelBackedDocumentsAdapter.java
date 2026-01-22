@@ -18,8 +18,8 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
@@ -207,9 +207,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
             holder.setAction(mEnv.getDisplayState().action);
         }
         boolean justFinishedSync =
-                isCloudFeaturesFlagEnabled()
-                        ? mJustFinishedSyncingModelIds.contains(modelId)
-                        : false;
+                isSyncStateEnabled() ? mJustFinishedSyncingModelIds.contains(modelId) : false;
         holder.bind(doc, modelId, summary, justFinishedSync);
 
         boolean enabled = mEnv.isDocumentEnabled(doc);
@@ -256,7 +254,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
             mModelIds.add(id);
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             for (String id : mPreviousSyncInProgressModelIds) {
                 if (!model.getSyncInProgressModelIds().contains(id)) {
                     // The item just finished syncing.
@@ -276,7 +274,7 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
      * `mJustFinishedSyncingModelIds` then remove the existing task first.
      */
     private void handleJustFinishedSync(String modelId) {
-        if (!isCloudFeaturesFlagEnabled()) {
+        if (!isSyncStateEnabled()) {
             return;
         }
         // Add the `docId` to this set so that the tick icon is shown.

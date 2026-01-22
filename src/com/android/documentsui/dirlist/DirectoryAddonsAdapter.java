@@ -16,7 +16,7 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
@@ -264,7 +264,7 @@ final class DirectoryAddonsAdapter extends DocumentsAdapter {
     }
 
     private void onNetworkStateChanged(Boolean isOnline) {
-        if (!isCloudFeaturesFlagEnabled()) {
+        if (!isSyncStateEnabled()) {
             return;
         }
         // Network state change only updates UI for roots that have limited functionality when

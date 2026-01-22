@@ -17,6 +17,7 @@
 package com.android.documentsui.files
 
 import android.app.Dialog
+import android.icu.text.MessageFormat
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -28,12 +29,13 @@ import com.android.documentsui.Injector
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.util.Locale
 import kotlin.math.roundToInt
 
-/** Dialog shown to users when performing a empty trash */
+/** Dialog shown to users when opening files from the trash. */
 class FileOpenFromTrashDialogFragment : DialogFragment() {
 
-    var mDocuments: List<DocumentInfo>? = null
+    var mDocuments: List<DocumentInfo> = emptyList()
 
     companion object {
         private const val TAG = "FileOpenFromTrash"
@@ -72,6 +74,17 @@ class FileOpenFromTrashDialogFragment : DialogFragment() {
      */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val injector: Injector<*> = (getActivity() as FilesActivity).getInjector()
+        val formatArgs = mapOf("count" to mDocuments.size)
+        val title =
+            MessageFormat(getString(R.string.file_open_in_trash_dialog_title), Locale.getDefault())
+                .format(formatArgs)
+        val message =
+            MessageFormat(
+                    getString(R.string.file_open_in_trash_dialog_message),
+                    Locale.getDefault(),
+                )
+                .format(formatArgs)
+
         val builder =
             MaterialAlertDialogBuilder(requireContext())
                 // We're setting the inset size explicitly so changes to the default inset size in
@@ -79,8 +92,8 @@ class FileOpenFromTrashDialogFragment : DialogFragment() {
                 // because we're overriding the window size to get our desired dialog size).
                 .setBackgroundInsetStart(dpToPx(INSET))
                 .setBackgroundInsetEnd(dpToPx(INSET))
-                .setTitle(getString(R.string.file_open_in_trash_dialog_title))
-                .setMessage(getString(R.string.file_open_in_trash_dialog_message))
+                .setTitle(title)
+                .setMessage(message)
                 .setPositiveButton(
                     getString(R.string.file_open_in_trash_dialog_restore_action_button)
                 ) { dialog, which ->

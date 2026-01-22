@@ -17,8 +17,8 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 
 import android.net.Uri;
 import android.util.Log;
@@ -137,9 +137,7 @@ interface DragStartListener {
             for (DocumentInfo doc : srcs) {
                 invalidDest.add(doc.derivedUri);
                 // Drag and drop should be disabled if content is not available.
-                if (isCloudFeaturesFlagEnabled()
-                        && canDragAndDrop
-                        && !mIsContentAvailable.apply(doc)) {
+                if (isSyncStateEnabled() && canDragAndDrop && !mIsContentAvailable.apply(doc)) {
                     if (DEBUG) {
                         Log.d(TAG, "Content not available for: " + doc.displayName);
                     }

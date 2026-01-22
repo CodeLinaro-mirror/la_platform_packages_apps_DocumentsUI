@@ -365,6 +365,7 @@
 -keep class com.android.documentsui.base.SidebarEntryItemInfo { *; }
 -keep class android.provider.Flags {
   public static boolean enableDocumentsTrashApi();
+  public static boolean enableSyncState();
 }
 -keep class com.android.documentsui.sidebar.BaseSidebarEntryItem { *; }
 -keep class com.android.documentsui.sidebar.ShortcutItem { *; }

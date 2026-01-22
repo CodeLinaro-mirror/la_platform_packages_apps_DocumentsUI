@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.OUTLINE;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_OFF_ICON;
@@ -24,6 +25,8 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CANT_SELECT_
 import static com.android.documentsui.DevicePolicyResources.Strings.CANT_SELECT_WORK_FILES_TITLE;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 import static com.android.documentsui.testing.DrawableAsserts.assertDrawablesEqual;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -287,6 +290,31 @@ public final class MessageTest {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testInflateMessage_noEmptyMessageWhileLoading() {
+        // Set model to empty.
+        ((TestModel) mEnv.getModel()).clearIds();
+        // Make sure we have a root doc for title access.
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.HOME);
+        // Turn off search mode.
+        ((TestEnvironment) mEnv).setInSearchMode(false);
+
+        // set model to loading state
+        mEnv.getModel().setLoading(true);
+        mInflateMessage.update(Model.Update.UPDATE);
+        assertNull(mInflateMessage.getMessageString());
+        assertNull(mInflateMessage.getIcon());
+
+        // update model state to indicate loading has finished
+        mEnv.getModel().setLoading(false);
+        mInflateMessage.update(Model.Update.UPDATE);
+        Drawable expectedDrawable = mContext.getDrawable(getRes(R.drawable.empty));
+        assertDrawablesEqual(mInflateMessage.getIcon(), expectedDrawable);
+        assertThat(mInflateMessage.getMessageString().toString())
+                .isEqualTo(mContext.getString(R.string.empty));
+    }
+
+    @Test
     public void testInflateMessage_updateToEmptyMessage() {
         // Set model to empty.
         ((TestModel) mEnv.getModel()).clearIds();
@@ -299,6 +327,8 @@ public final class MessageTest {
 
         Drawable expectedDrawable = mContext.getDrawable(getRes(R.drawable.empty));
         assertDrawablesEqual(mInflateMessage.getIcon(), expectedDrawable);
+        assertThat(mInflateMessage.getMessageString().toString())
+                .isEqualTo(mContext.getString(R.string.empty));
     }
 
     @Test
@@ -346,12 +376,14 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_offlineAndLimitedWhenOffline_showsOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -369,12 +401,14 @@ public final class MessageTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testHeaderMessage_flagDisabled_doesNotShowOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -382,12 +416,14 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_onlineAndLimitedWhenOffline_doesNotShowBanner() {
         // Set online.
         ((TestEnvironment) mEnv).setIsOnline(true);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -395,7 +431,9 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_offlineAndNotLimitedWhenOffline_doesNotShowBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);

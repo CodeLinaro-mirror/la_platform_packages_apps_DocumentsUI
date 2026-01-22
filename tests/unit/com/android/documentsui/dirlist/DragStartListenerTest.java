@@ -16,17 +16,24 @@
 
 package com.android.documentsui.dirlist;
 
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
+
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.recyclerview.selection.MutableSelection;
 import androidx.recyclerview.selection.Selection;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -59,6 +66,9 @@ import java.util.List;
 @SmallTest
 public class DragStartListenerTest {
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     private static int sIsUnavailableFlag = 1;
 
@@ -166,7 +176,9 @@ public class DragStartListenerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDragStarted_ContentNotAvailable() {
         // Set one of the source files to be unavailable.
         DocumentInfo unavailableDoc = new DocumentInfo();
@@ -183,6 +195,8 @@ public class DragStartListenerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testDragStarted_ContentNotAvailable_FeatureFlagDisabled() {
         // Set one of the source files to be unavailable.

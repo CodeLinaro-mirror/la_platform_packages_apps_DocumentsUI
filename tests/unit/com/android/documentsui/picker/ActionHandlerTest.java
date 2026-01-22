@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.DocumentsContract.Path;
@@ -50,6 +51,7 @@ import com.android.documentsui.TestConfigStore;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.Lookup;
+import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.State;
@@ -311,6 +313,64 @@ public class ActionHandlerTest {
         mHandler.initLocation(mActivity.getIntent());
 
         assertRootPicked(TestProvidersAccess.EXTERNALSTORAGE.getUri());
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_HOME_SCREEN_FILES_RO,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS
+    })
+    public void testGetDefaultRootUriWithFallback() {
+        mActivity.resources.strings.put(R.string.default_root_uri, "not a uri");
+        assertEquals(
+                DocumentsContract.buildRootUri(
+                        Providers.AUTHORITY_STORAGE, Providers.ROOT_ID_DEVICE),
+                mHandler.getDefaultRootUri(State.ACTION_CREATE));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS
+    })
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testGetDefaultRootUriWithFallbackHomescreenFlagDisabled() {
+        mActivity.resources.strings.put(R.string.default_root_uri, "not a uri");
+        assertEquals(
+                DocumentsContract.buildRootUri(
+                        Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS),
+                mHandler.getDefaultRootUri(State.ACTION_CREATE));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_HOME_SCREEN_FILES_RO,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS
+    })
+    public void testGetDefaultRootUriWithoutFallback() {
+        Uri expected = TestProvidersAccess.DOWNLOADS.getUri();
+        mActivity.resources.strings.put(R.string.default_root_uri, expected.toString());
+
+        assertEquals(expected, mHandler.getDefaultRootUri(State.ACTION_BROWSE));
+    }
+
+    @Test
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS
+    })
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testGetDefaultRootUriWithoutFallbackHomescreenFlagDisabled() {
+        Uri expected = TestProvidersAccess.DOWNLOADS.getUri();
+        mActivity.resources.strings.put(R.string.default_root_uri, expected.toString());
+
+        assertEquals(expected, mHandler.getDefaultRootUri(State.ACTION_BROWSE));
     }
 
     @Test
