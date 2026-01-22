@@ -140,11 +140,11 @@ public class RecentsLoaderTests {
         mEnv.mockProviders.get(TestProvidersAccess.HOME.authority)
                 .setNextRecentDocumentsReturns(doc1, doc2);
 
-        assertFalse(mLoader.mState.showHiddenFiles);
+        assertFalse(mLoader.mState.shouldShowHiddenFiles());
         DirectoryResult result = mLoader.loadInBackground();
         assertEquals(0, result.getCursor().getCount());
 
-        mLoader.mState.showHiddenFiles = true;
+        mLoader.mState.setIsShowHiddenFiles(true);
         result = mLoader.loadInBackground();
         assertEquals(2, result.getCursor().getCount());
     }

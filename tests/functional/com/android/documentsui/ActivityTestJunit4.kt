@@ -39,7 +39,6 @@ import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.Bots
 import com.android.documentsui.files.FilesActivity
-import com.android.documentsui.util.FlagUtils.Companion.isCloudFeaturesFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isGetInfoDialogEnabled
@@ -48,6 +47,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isMovingContentIntoPriva
 import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
 import com.android.documentsui.util.FlagUtils.Companion.isSingleClickToSelectEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isSupportVisibleBackgroundUserFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isTrashFlowEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseAllfilesRootForRecentsEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseFileSummaryEnabled
@@ -263,7 +263,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
         Log.d(TAG, "Flag isUsePeekPreviewFlagEnabled() = ${isUsePeekPreviewFlagEnabled()}")
         Log.d(TAG, "Flag isVisualSignalsFlagEnabled() = ${isVisualSignalsFlagEnabled()}")
         Log.d(TAG, "Flag isZipNgFlagEnabled() = ${isZipNgFlagEnabled()}")
-        Log.d(TAG, "Flag isCloudFeaturesFlagEnabled() = ${isCloudFeaturesFlagEnabled()}")
+        Log.d(TAG, "Flag isSyncStateEnabled() = ${isSyncStateEnabled()}")
         Log.d(TAG, "Flag isDesktopUxPhase2FlagEnabled() = ${isDesktopUxPhase2FlagEnabled()}")
         Log.d(TAG, "Flag isSingleClickToSelectEnabled() = ${isSingleClickToSelectEnabled()}")
         Log.d(TAG, "Flag isTrashFlowEnabled() = ${isTrashFlowEnabled()}")

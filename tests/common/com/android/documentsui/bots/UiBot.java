@@ -339,7 +339,7 @@ public class UiBot extends Bots.BaseBot {
             throw new UiObjectNotFoundException("ActionMode bar not found");
         }
         if (isTrashFlowEnabled()) {
-            clickActionItem("Delete permanently");
+            clickActionItem(mContext.getString(R.string.menu_permanently_delete));
         } else {
             clickToolbarItem(R.id.action_menu_delete);
         }
@@ -478,6 +478,23 @@ public class UiBot extends Bots.BaseBot {
             // Verify the menu popup is closed by checking if "Show hidden files" menu item is gone.
             onView(withText(mContext.getString(R.string.menu_show_hidden_files))).check(
                     doesNotExist());
+        }
+    }
+
+    /** Shows hidden files if the current settings is to hide hidden files. */
+    public void showHiddenFilesIfNeeded() throws Exception {
+        openOverflowMenu();
+        UiObject2 showHiddenFilesMenu =
+                mDevice.findObject(By.text(mContext.getString(R.string.menu_show_hidden_files)));
+        if (showHiddenFilesMenu != null) {
+            showHiddenFilesMenu.click();
+            mDevice.waitForIdle();
+        } else {
+            // Close the menu popup via Back key.
+            pressBack();
+            // Verify the menu popup is closed by checking if "Hide hidden files" menu item is gone.
+            onView(withText(mContext.getString(R.string.menu_hide_hidden_files)))
+                    .check(doesNotExist());
         }
     }
 

@@ -54,7 +54,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String CUT = "Cut";
     private static final String COPY = "Copy";
     private static final String RENAME = "Rename";
-    private static final String DELETE_PERMANENTLY = "Delete permanently";
+    private static final String DELETE_FOREVER = "Delete forever";
     private static final String OPEN_IN_NEW_WINDOW = "Open in new window";
     private static final String SELECT_ALL = "Select all";
     private static final String NEW_FOLDER = "New folder";
@@ -94,7 +94,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(CUT, false);
         menuItems.put(COPY, false);
         menuItems.put(RENAME, false);
-        menuItems.put(DELETE_PERMANENTLY, false);
+        menuItems.put(DELETE_FOREVER, false);
         menuItems.put(OPEN_IN_NEW_WINDOW, false);
         menuItems.put(SELECT_ALL, false);
         menuItems.put(NEW_FOLDER, false);
@@ -109,7 +109,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
 
         bots.directory.rightClickDocument("file1.png");
         bots.menu.assertPresentMenuItems(menuItems);
@@ -130,7 +130,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
 
         bots.directory.rightClickDocument("file1.png");
         bots.menu.assertPresentMenuItems(menuItems);
@@ -158,7 +158,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
 
         bots.directory.rightClickDocument("file2.csv");
         bots.menu.assertPresentMenuItems(menuItems);
@@ -192,7 +192,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(COPY, true);
         menuItems.put(OPEN_IN_NEW_WINDOW, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
         bots.directory.rightClickDocument("Dir1");
         bots.menu.assertPresentMenuItems(menuItems);
     }
@@ -201,7 +201,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testContextMenu_onMixedFileDir() throws Exception {
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
         bots.directory.selectDocument("anotherFile0.log", 1);
         bots.directory.selectDocument("Dir1", 2);
         bots.directory.rightClickDocument("Dir1");

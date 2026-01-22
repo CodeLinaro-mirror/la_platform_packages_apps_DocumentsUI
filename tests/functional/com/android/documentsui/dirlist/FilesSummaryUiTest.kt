@@ -23,6 +23,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.BaseActivity
 import com.android.documentsui.DocumentsProviderHelper
+import com.android.documentsui.R
 import com.android.documentsui.TestSummaryProvider
 import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
 import com.android.documentsui.base.UserId
@@ -99,6 +100,7 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
             baseActivity.injector.summaryProviderManager?.setConsentMessage(
                 consentTitle,
                 consentMessage,
+                showConsent = true,
             )
         }
     }
@@ -113,16 +115,15 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
             bots.directory.openDocument("Download")
 
             // Enable the summary column.
-            bots.main.clickToolbarOverflowItem("Show summary column")
+            bots.main.clickToolbarOverflowItem(
+                context!!.getString(R.string.option_show_summary_column)
+            )
             device!!.waitForIdle()
             bots.main.assertDialogTitle(consentTitle)
             bots.main.assertDialogMessage(consentMessage)
             bots.main.clickDialogOkButton(false)
 
-            // Grid view.
-            bots.main.switchToGridMode()
-            device!!.waitForIdle()
-            bots.directory.assertDocumentSummary(fileName, summary)
+            // Grid view doesn't display the summary, so we don't check it.
 
             // List view.
             bots.main.switchToListMode()

@@ -84,6 +84,9 @@
     <bool name="feature_inspector">true</bool>
     <bool name="feature_debug_mode">false</bool>
 
+    <!-- Indicates whether the summary consent dialog should be shown when enabling summary. -->
+    <bool name="show_summary_consent_dialog">false</bool>
+
     <!-- Indicates if internal storage is shown as default or not. -->
     <bool name="config_default_show_device_root">false</bool>
 

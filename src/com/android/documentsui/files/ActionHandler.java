@@ -17,9 +17,9 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -73,6 +73,7 @@ import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperations;
+import com.android.documentsui.util.FlagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -302,7 +303,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isHomeScreenFilesFlagEnabled() || isCloudFeaturesFlagEnabled()) {
+        if (isHomeScreenFilesFlagEnabled() || isSyncStateEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
                 Log.e(TAG, "No documents available to cut.");
@@ -312,7 +313,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
             List<Uri> uris = new ArrayList<>();
             for (DocumentInfo doc : docs) {
-                if (isCloudFeaturesFlagEnabled()
+                if (isSyncStateEnabled()
                         && !mInjector.config.isContentAvailable(
                                 doc, mState, mInjector.networkMonitor.isOnline())) {
                     Log.e(TAG, "Document does not have available content to cut.");
@@ -348,7 +349,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
                 Log.e(TAG, "No documents available to copy.");
@@ -565,7 +566,6 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         FileOperation operation = new FileOperation.Builder()
                 .withOpType(FileOperationService.OPERATION_RESTORE)
-                .withDestination(mState.stack)
                 .withSrcs(srcs)
                 .build();
 
@@ -774,6 +774,16 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
 
         return false;
+    }
+
+    @Override
+    protected Uri getDefaultFallbackUri() {
+        Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");
+        return FlagUtils.isHomeScreenFilesFlagEnabled()
+                ? DocumentsContract.buildDocumentUri(
+                        Providers.AUTHORITY_STORAGE, Providers.DOWNLOAD_DOCUMENT_ID)
+                : DocumentsContract.buildRootUri(
+                        Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS);
     }
 
     private boolean launchToDownloads(Intent intent) {

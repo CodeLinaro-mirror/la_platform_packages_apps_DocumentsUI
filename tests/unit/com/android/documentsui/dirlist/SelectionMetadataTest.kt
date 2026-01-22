@@ -16,9 +16,13 @@
 package com.android.documentsui.dirlist
 
 import android.content.pm.ResolveInfo
+import android.os.Build
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ModelId
 import com.android.documentsui.base.UserId
@@ -49,7 +53,8 @@ class SelectionMetadataTest {
     val testPackageManager: TestPackageManager = TestPackageManager.create()
 
     @get:Rule(order = 0) val setFlags = OverrideFlagsRule()
-    @get:Rule(order = 1) val testModelRule = TestModelRule(TestAuthority, TestUserId)
+    @get:Rule(order = 1) val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
+    @get:Rule(order = 2) val testModelRule = TestModelRule(TestAuthority, TestUserId)
 
     @Before
     fun setUp() {
@@ -212,7 +217,9 @@ class SelectionMetadataTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
     fun testContainsDocumentsWithUnavailableContent_disabledDocument_cloudFeaturesEnabled() {
         val sm = createSelectionMetadata()
 
@@ -223,7 +230,9 @@ class SelectionMetadataTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
     fun testContainsDocumentsWithUnavailableContent_disabledDocuments_cloudFeaturesEnabled() {
         val sm = createSelectionMetadata()
 
@@ -235,6 +244,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
     @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
     fun testContainsDocumentsWithUnavailableContent_noDisabledDocuments_cloudFeaturesEnabled() {
         val sm = createSelectionMetadata()
@@ -245,6 +256,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     fun testContainsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
         val sm = createSelectionMetadata()

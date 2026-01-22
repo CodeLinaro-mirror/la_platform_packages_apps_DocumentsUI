@@ -109,7 +109,7 @@ open class BaseLoaderTest {
         environment = TestEnv.create(getEnvRootInfo().authority)
         testConfigStore = TestConfigStore()
         environment.state.configStore = testConfigStore
-        environment.state.showHiddenFiles = false
+        environment.state.setIsShowHiddenFiles(false)
         val parcel = Parcel.obtain()
         environment.state.sortModel = SortModel.CREATOR.createFromParcel(parcel)
 

@@ -30,6 +30,7 @@ public class TestDirectoryDetails extends DirectoryDetails {
     public boolean canCreateDoc;
     public boolean canCreateDirectory;
     public boolean canInspectDirectory;
+    public boolean isTrashTopLevel;
 
     public TestDirectoryDetails() {
         super(null);
@@ -48,6 +49,11 @@ public class TestDirectoryDetails extends DirectoryDetails {
     @Override
     public boolean isInRecents() {
         return isInRecents;
+    }
+
+    @Override
+    public boolean isTrashTopLevel() {
+        return isTrashTopLevel;
     }
 
     @Override

@@ -26,7 +26,6 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.MotionEvent;
 import android.view.View;
@@ -316,47 +315,34 @@ final class GridDocumentHolder extends DocumentHolder {
         // Show the full name in a tooltip.
         itemView.setTooltipText(mDoc.displayName);
 
-        // For the second row, when the summary is enabled and it has something, display only the
-        // summary.
-        boolean useSummary = mEnv.shouldDisplaySummary();
-
-        if (useSummary && !TextUtils.isEmpty(summary)) {
+        // If file is partial, we want to show summary field as that's more relevant than
+        // fileSize and date.
+        if (mDoc.isPartial()) {
+            final String docSummary = mDoc.summary;
             mDetails.setVisibility(View.VISIBLE);
-            mDetails.setText(summary);
-            mDate.setVisibility(View.GONE);
-            if (mBullet != null) {
-                mBullet.setVisibility(View.GONE);
+            if (isUseMaterial3FlagEnabled()) {
+                mDate.setVisibility(View.GONE);
+            } else {
+                mDate.setText(null);
             }
+            mDetails.setText(docSummary);
         } else {
-            // If file is partial, we want to show summary field as that's more relevant than
-            // fileSize and date.
-            if (mDoc.isPartial() && !useSummary) {
-                final String docSummary = mDoc.summary;
-                mDetails.setVisibility(View.VISIBLE);
+            if ((isUseMaterial3FlagEnabled() && mDoc.isDirectory()) || mDoc.lastModified <= 0) {
                 if (isUseMaterial3FlagEnabled()) {
                     mDate.setVisibility(View.GONE);
                 } else {
                     mDate.setText(null);
                 }
-                mDetails.setText(docSummary);
             } else {
-                if (mDoc.lastModified <= 0) {
-                    if (isUseMaterial3FlagEnabled()) {
-                        mDate.setVisibility(View.GONE);
-                    } else {
-                        mDate.setText(null);
-                    }
-                } else {
-                    mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
-                }
+                mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
+            }
 
-                final long docSize = mDoc.size;
-                if (mDoc.isDirectory() || docSize == -1) {
-                    mDetails.setVisibility(View.GONE);
-                } else {
-                    mDetails.setVisibility(View.VISIBLE);
-                    mDetails.setText(Formatter.formatFileSize(mContext, docSize));
-                }
+            final long docSize = mDoc.size;
+            if (mDoc.isDirectory() || docSize == -1) {
+                mDetails.setVisibility(View.GONE);
+            } else {
+                mDetails.setVisibility(View.VISIBLE);
+                mDetails.setText(Formatter.formatFileSize(mContext, docSize));
             }
         }
 

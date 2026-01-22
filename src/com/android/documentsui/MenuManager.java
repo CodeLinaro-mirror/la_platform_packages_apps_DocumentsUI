@@ -17,19 +17,16 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import androidx.core.view.ActionProvider;
 import android.view.KeyboardShortcutGroup;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,28 +36,20 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.MenuCompat;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.SidebarEntryItemInfo;
-import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.dirlist.DirectoryFragment;
-import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.sidebar.RootsFragment;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandler;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
@@ -177,7 +166,6 @@ public abstract class MenuManager {
         if (isZipNgFlagEnabled()) {
             updateExtractAll(mOptionMenu.findItem(getRes(R.id.option_menu_extract_all)));
         }
-        updateSettings(mOptionMenu.findItem(getRes(R.id.option_menu_settings)));
         updateSelectAll(mOptionMenu.findItem(getRes(R.id.option_menu_select_all)));
         updateNewWindow(mOptionMenu.findItem(getRes(R.id.option_menu_new_window)));
         updateDebug(mOptionMenu.findItem(getRes(R.id.option_menu_debug)));
@@ -188,9 +176,12 @@ public abstract class MenuManager {
         updateShowSummaryColumn(mOptionMenu.findItem(R.id.option_show_summary));
 
         if (isUseMaterial3FlagEnabled()) {
+            updateSettings(mOptionMenu.findItem(getRes(R.id.option_menu_manage_device)));
             updateModePicker(
                     mOptionMenu.findItem(getRes(R.id.sub_menu_grid)),
                     mOptionMenu.findItem(getRes(R.id.sub_menu_list)));
+        } else {
+            updateSettings(mOptionMenu.findItem(getRes(R.id.option_menu_settings)));
         }
 
         mSearchManager.updateMenu();
@@ -406,11 +397,22 @@ public abstract class MenuManager {
         MenuItem openInNewWindow = menu.findItem(getRes(R.id.root_menu_open_in_new_window));
         MenuItem settings = menu.findItem(getRes(R.id.root_menu_settings));
         MenuItem getInfo = menu.findItem(getRes(R.id.root_menu_inspect));
+        MenuItem manageDevice = menu.findItem(getRes(R.id.root_menu_manage_device));
 
         updateEject(eject, itemInfo);
         updatePasteInto(pasteInto, itemInfo, docInfo);
         updateOpenInNewWindow(openInNewWindow, itemInfo);
-        updateSettings(settings, itemInfo);
+        if (isUseMaterial3FlagEnabled()) {
+            updateSettings(manageDevice, itemInfo);
+            if (settings != null) {
+                settings.setVisible(false);
+            }
+        } else {
+            updateSettings(settings, itemInfo);
+            if (manageDevice != null) {
+                manageDevice.setVisible(false);
+            }
+        }
         updateInspect(getInfo, itemInfo);
     }
 
@@ -438,9 +440,15 @@ public abstract class MenuManager {
     }
 
     protected void updateShowHiddenFiles(MenuItem showHidden) {
+        // Don't show "Show/hide hidden files" menu item if trash flow is enabled.
+        if (isTrashFlowEnabled() && mState.stack.isTrashRoot()) {
+            Menus.setEnabledAndVisible(showHidden, false);
+            return;
+        }
+
         Menus.setEnabledAndVisible(showHidden, true);
         showHidden.setTitle(
-                mState.showHiddenFiles
+                mState.shouldShowHiddenFiles()
                         ? getRes(R.string.menu_hide_hidden_files)
                         : getRes(R.string.menu_show_hidden_files));
     }
@@ -568,8 +576,7 @@ public abstract class MenuManager {
                         && !canRestore;
         final boolean canDelete = selectionDetails.canDelete();
         final boolean canCut = canCopy && canDelete;
-        if (isCloudFeaturesFlagEnabled()
-                && selectionDetails.containsDocumentsWithUnavailableContent()) {
+        if (isSyncStateEnabled() && selectionDetails.containsDocumentsWithUnavailableContent()) {
             // Disable actions as they are not valid right now because the required content is not
             // available.
             Menus.disableAndSetVisibility(copy, /* visible= */ canCopy);
@@ -653,8 +660,7 @@ public abstract class MenuManager {
      */
     protected boolean disableIfContentUnavailable(
             MenuItem item, SelectionDetails selectionDetails, boolean normallyEnabled) {
-        if (isCloudFeaturesFlagEnabled()
-                && selectionDetails.containsDocumentsWithUnavailableContent()) {
+        if (isSyncStateEnabled() && selectionDetails.containsDocumentsWithUnavailableContent()) {
             // Disable action as it is not valid right now because the required content is not
             // available.
             Menus.disableAndSetVisibility(item, /* visible= */ normallyEnabled);
@@ -764,6 +770,11 @@ public abstract class MenuManager {
             return mActivity.isInRecents();
         }
 
+        /** Is the current directory the trash root. */
+        public boolean isTrashTopLevel() {
+            return mActivity.mState.stack.isTrashTopLevel();
+        }
+
         /** Is the current directory showing the contents of an archive? */
         public boolean isInArchive() {
             final DocumentInfo dir = mActivity.getCurrentDirectory();
@@ -775,7 +786,7 @@ public abstract class MenuManager {
         }
 
         public boolean canInspectDirectory() {
-            return mActivity.canInspectDirectory() && !isInRecents();
+            return mActivity.canInspectDirectory() && !isInRecents() && !isTrashTopLevel();
         }
     }
 }

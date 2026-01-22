@@ -35,7 +35,6 @@ import com.android.documentsui.util.VersionUtils
 import com.android.modules.utils.build.SdkLevel
 import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -166,7 +165,6 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
     /** Tests permanently deleting items from within a trashed folder. */
     @Test
-    @Ignore("TODO(b/474376278): Enable when the bug is fixed.")
     fun testPermanentlyDeleteItemsFromTrashedFolder() {
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
@@ -418,6 +416,53 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
         bots.directory.assertDocumentsPresent(fileToOpen)
+    }
+
+    /**
+     * Verifies that restoring a file from the hidden .trash-storage directory works correctly. This
+     * test reproduces the scenario in b/475737649 where restoration from the hidden directory fails
+     * to physically move files back, despite reporting success.
+     */
+    @Test
+    fun testRestoreFromHiddenTrashStorage() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
+        val trashedFileNames = moveFilesToTrash()
+
+        // Navigate to the hidden .trash-storage directory within the root.
+        bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
+        // Enable "Show hidden files" from the overflow menu to reveal hidden folders.
+        bots.main.showHiddenFilesIfNeeded()
+        device!!.waitForIdle()
+        bots.directory.openDocument(".trash-storage")
+        device!!.waitForIdle()
+
+        // Navigate into the subfolder corresponding to the original parent directory.
+        // For this test environment, the files are moved from DIR_NAME_1.
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        device!!.waitForIdle()
+
+        // Identify the trashed file and verify it is present in the hidden folder.
+        val fileToRestore = trashedFileNames.first()
+        bots.directory.assertDocumentsPresent(fileToRestore)
+
+        // Select the file and click "Restore" from the menu.
+        bots.directory.selectDocument(fileToRestore, 1)
+        bots.main.clickActionItem("Restore")
+        device!!.waitForIdle()
+
+        // Verify that the file is physically removed from the hidden trash folder.
+        bots.directory.assertDocumentsAbsent(fileToRestore)
+
+        // Navigate back to the original directory and verify the file is restored.
+        bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        bots.directory.assertDocumentsPresent(fileToRestore)
     }
 
     /**

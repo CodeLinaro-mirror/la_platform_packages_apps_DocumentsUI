@@ -201,11 +201,11 @@ public class GlobalSearchLoaderTest {
         mEnv.mockProviders.get(TestProvidersAccess.DOWNLOADS.authority)
                 .setNextChildDocumentsReturns(doc1, doc2);
 
-        assertEquals(false, mLoader.mState.showHiddenFiles);
+        assertEquals(false, mLoader.mState.shouldShowHiddenFiles());
         DirectoryResult result = mLoader.loadInBackground();
         assertEquals(0, result.getCursor().getCount());
 
-        mLoader.mState.showHiddenFiles = true;
+        mLoader.mState.setIsShowHiddenFiles(true);
         result = mLoader.loadInBackground();
         assertEquals(2, result.getCursor().getCount());
     }
