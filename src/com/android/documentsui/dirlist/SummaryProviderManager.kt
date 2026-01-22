@@ -24,6 +24,7 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentManager
+import com.android.documentsui.ConsentCallbacks
 import com.android.documentsui.R
 import com.android.documentsui.SummaryConsentFragment
 import com.android.documentsui.base.DocumentInfo
@@ -78,6 +79,11 @@ sealed interface SummaryProviderState {
     data class Available(val isUserEnabled: Boolean) : SummaryProviderState
 }
 
+/** Interface used to launch the dialog, used to override the dialog for tests. */
+fun interface ConsentDialogLauncher {
+    fun show(fm: FragmentManager, title: String, message: String, callbacks: ConsentCallbacks)
+}
+
 /**
  * Manages the state of the local summary provider.
  *
@@ -88,7 +94,23 @@ open class SummaryProviderManager(
     private val context: Context,
     private val scope: CoroutineScope,
     val authorityUri: Uri?,
+    /** The function that shows the consent dialog, used to override for tests. */
+    private val dialogLauncher: ConsentDialogLauncher,
 ) {
+    /** Secondary constructor used by Java to ignore the [dialogLauncher] parameter. */
+    constructor(
+        context: Context,
+        scope: CoroutineScope,
+        authorityUri: Uri?,
+    ) : this(
+        context,
+        scope,
+        authorityUri,
+        ConsentDialogLauncher { fm, t, m, callbacks ->
+            SummaryConsentFragment.show(fm, context, t, m, callbacks)
+        },
+    ) {}
+
     private val _state = MutableStateFlow<SummaryProviderState>(SummaryProviderState.Initializing)
     val state: StateFlow<SummaryProviderState> = _state
 
@@ -239,14 +261,14 @@ open class SummaryProviderManager(
 
     @VisibleForTesting
     fun userSwitchSummaryEnabled() {
-        LocalPreferences.setSummaryEnabled(context, true)
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_ACCEPTED)
         _state.value = SummaryProviderState.Available(isUserEnabled = true)
         // We only notify for enablement, so the provider can fully enable itself.
         scope.launch { notifyProvider() }
     }
 
     private fun userSwitchSummaryDisabled() {
-        LocalPreferences.setSummaryEnabled(context, false)
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_UNKNOWN)
         _state.value = SummaryProviderState.Available(isUserEnabled = false)
     }
 
@@ -276,17 +298,22 @@ open class SummaryProviderManager(
         // Enabling the summary column.
         val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
         val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
-        SummaryConsentFragment.show(
+        dialogLauncher.show(
             fragmentManager,
-            context,
             title,
             message,
-            onPositiveButtonClick = {
-                userSwitchSummaryEnabled()
-                refreshCallback()
-            },
-            // Nothing needs to be done if user cancels.
-            onNegativeButtonClick = {},
+            ConsentCallbacks(
+                onEnable = {
+                    userSwitchSummaryEnabled()
+                    refreshCallback()
+                },
+                onCancel = {
+                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
+                },
+                onRemindLater = {
+                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_DEFERRED)
+                },
+            ),
         )
     }
 
