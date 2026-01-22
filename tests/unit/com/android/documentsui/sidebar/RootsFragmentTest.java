@@ -16,6 +16,8 @@
 
 package com.android.documentsui.sidebar;
 
+import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+
 import static junit.framework.Assert.assertTrue;
 
 import static org.junit.Assert.assertEquals;
@@ -27,10 +29,15 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.filters.MediumTest;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.documentsui.R;
@@ -45,8 +52,6 @@ import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestResolveInfo;
 import com.android.modules.utils.build.SdkLevel;
-
-import com.google.android.collect.Lists;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -173,16 +178,28 @@ public class RootsFragmentTest {
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+
     @Parameter(0)
     public boolean isPrivateSpaceEnabled;
 
+    @Parameter(1)
+    public boolean showMediaRoots;
+
     /**
-     * Parametrize values for {@code isPrivateSpaceEnabled} to run all the tests twice once with
-     * private space flag enabled and once with it disabled.
+     * Parameterizes values for {@code isPrivateSpaceEnabled} and {@code showMediaRoots} to run all
+     * tests against every combination of private space and media roots visibility.
      */
-    @Parameters(name = "privateSpaceEnabled={0}")
-    public static Iterable<?> data() {
-        return Lists.newArrayList(true, false);
+    @Parameters(name = "privateSpaceEnabled={0}, showMediaRoots={1}")
+    public static Iterable<Object[]> data() {
+        return Arrays.asList(
+                new Object[][] {
+                    {true, true},
+                    {true, false},
+                    {false, true},
+                    {false, false}
+                });
     }
 
     @Before
@@ -195,6 +212,8 @@ public class RootsFragmentTest {
         mPackageManager = mock(PackageManager.class);
         mResources = mock(Resources.class);
         when(mContext.getResources()).thenReturn(mResources);
+        // Stub the mock to return the parametrize value of media roots visibility.
+        when(mResources.getBoolean(R.bool.show_media_roots)).thenReturn(showMediaRoots);
         when(mContext.getSystemService(Context.DEVICE_POLICY_SERVICE))
                 .thenReturn(mDevicePolicyManager);
         when(mContext.getApplicationContext()).thenReturn(
@@ -386,6 +405,85 @@ public class RootsFragmentTest {
         assertEquals(rootList.get(0).title, TestProvidersAccess.HAMMY.title);
         assertEquals(rootList.get(1).title, TestProvidersAccess.INSPECTOR.title);
         assertEquals(rootList.get(2).title, TestProvidersAccess.PICKLES.title);
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testSortLoadResult_WithCorrectOrder_trashAtBottom() {
+        List<RootInfo> roots = createFakeRootInfoList();
+        roots.add(TestProvidersAccess.TRASH_ROOT);
+
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        roots,
+                        createFakeShortcutInfoList(),
+                        null,
+                        null,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        false,
+                        mTestUserManagerState);
+
+        String[] baseExpectedResult;
+        if (mContext.getResources().getBoolean(R.bool.show_media_roots)) {
+            baseExpectedResult = EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_TRUE;
+        } else {
+            baseExpectedResult = EXPECTED_SORTED_RESULT_SHOW_MEDIA_ROOTS_FALSE;
+        }
+
+        // Add Trash, and convert back to array
+        List<String> expectedList = new ArrayList<>(Arrays.asList(baseExpectedResult));
+        expectedList.add("" /* SpacerItem */);
+        expectedList.add(TestProvidersAccess.TRASH_ROOT.title);
+
+        assertTrue(assertSortedResult(items, expectedList.toArray(new String[0])));
+    }
+
+    @Test
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_HOME_SCREEN_FILES_RO
+    })
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testSortLoadResult_WithCorrectOrder_trashAtBottom_shortcutsEnabled() {
+        List<RootInfo> roots = createFakeRootInfoList();
+        roots.add(TestProvidersAccess.TRASH_ROOT);
+
+        List<Item> items =
+                mRootsFragment.sortLoadResult(
+                        mContext,
+                        mEnv.state,
+                        roots,
+                        createFakeShortcutInfoList(),
+                        null,
+                        null,
+                        new TestProvidersAccess(),
+                        UserId.DEFAULT_USER,
+                        Collections.singletonList(UserId.DEFAULT_USER),
+                        false,
+                        mTestUserManagerState);
+
+        String[] baseExpectedResult;
+        if (mContext.getResources().getBoolean(R.bool.show_media_roots)) {
+            baseExpectedResult = EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_TRUE;
+        } else {
+            baseExpectedResult = EXPECTED_SORTED_RESULT_SHORTCUTS_ENABLED_SHOW_MEDIA_ROOTS_FALSE;
+        }
+
+        // Add Trash, and convert back to array
+        List<String> expectedList = new ArrayList<>(Arrays.asList(baseExpectedResult));
+        expectedList.add("" /* SpacerItem */);
+        expectedList.add(TestProvidersAccess.TRASH_ROOT.title);
+
+        assertTrue(assertSortedResult(items, expectedList.toArray(new String[0])));
     }
 
     private boolean assertSortedResult(List<Item> items, String[] expectedSortedResult) {
