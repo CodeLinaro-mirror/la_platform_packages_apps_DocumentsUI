@@ -384,6 +384,7 @@ class JobPanelUiTest : ActivityTestJunit4<FilesActivity>() {
 
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
         bots.keyboard.pressKey(KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON)
+        bots.directory.clearSelection()
 
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON)
