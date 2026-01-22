@@ -18,8 +18,8 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
-
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+
 import static org.junit.Assert.fail;
 
 import android.net.Uri;
@@ -169,6 +169,10 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testKeyboard_PasteDocumentWhileSelectionActive() throws Exception {
         bots.directory.selectDocument("file1.png", 1);
         bots.keyboard.pressKey(KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON);
+
+        if (isUseMaterial3FlagEnabled()) {
+            bots.directory.clearSelection();
+        }
 
         device.waitForIdle();
         bots.directory.openDocument("Dir1");
