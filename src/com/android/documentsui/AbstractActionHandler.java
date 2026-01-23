@@ -88,6 +88,7 @@ import com.android.documentsui.files.QuickViewIntentBuilder;
 import com.android.documentsui.files.getinfo.GetInfoDialogFragment;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.loaders.FolderLoader;
+import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.loaders.QueryOptions;
 import com.android.documentsui.loaders.SearchLoader;
 import com.android.documentsui.loaders.SummaryLoader;
@@ -133,11 +134,6 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @VisibleForTesting
     public static final int CODE_AUTHENTICATION = 43;
-
-    @VisibleForTesting
-    static final int LOADER_ID = 42;
-
-    static final int SUMMARY_LOADER_ID = 23;
 
     private static final String TAG = "AbstractActionHandler";
     private static final int REFRESH_SPINNER_TIMEOUT = 500;
@@ -323,7 +319,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     /** Shows a dialog with the metadata of the selected document. */
     private void showGetInfoDialog(DocumentInfo doc) {
-        GetInfoDialogFragment.show(mActivity.getSupportFragmentManager(), doc);
+        GetInfoDialogFragment.show(
+                mActivity.getSupportFragmentManager(),
+                doc,
+                mInjector.features.isDebugSupportEnabled()
+                        && (DEBUG || DebugFlags.getDocumentDetailsEnabled()));
     }
 
     private void showInspector(DocumentInfo doc) {
@@ -454,6 +454,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public void deselectAllFiles() {
         mSelectionMgr.clearSelection();
+    }
+
+    @Override
+    public void toggleFocusedItemSelection() {
+        throw new UnsupportedOperationException("Can't toggle selection");
     }
 
     @Override
@@ -879,8 +884,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
-    public boolean sendToApprovedDocHandler(ComponentName app) {
-        throw new UnsupportedOperationException("sendToApprovedDocHandler not supported!");
+    public Intent createApprovedHandlerIntent(ComponentName handler) {
+        throw new UnsupportedOperationException("createApprovedHandlerIntent not supported!");
     }
 
     protected Selection<String> getSelectedOrFocused() {
@@ -1084,7 +1089,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         // multiple active loaders, because restartLoader() does not interrupt previous loaders'
         // loading, therefore may block the UI thread and cause ANR.
         if (mLoaderSemaphore.tryAcquire()) {
-            mActivity.getSupportLoaderManager().restartLoader(LOADER_ID, null, mBindings);
+            mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
         }
     }
 
@@ -1206,7 +1211,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public ActionHandler reset(ContentLock reloadLock) {
         mContentLock = reloadLock;
-        mActivity.getLoaderManager().destroyLoader(LOADER_ID);
+        mActivity.getLoaderManager().destroyLoader(LoaderIds.MAIN);
         return this;
     }
 
@@ -1424,16 +1429,22 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                         mContentLock, AbstractActionHandler.this::loadDocumentsForCurrentStack);
                 Collection<RootInfo> roots = mProviders.getMatchingRootsBlocking(mState);
                 Collection<RootInfo> searchableRoots = mSearchMgr.getSearchRoots(roots, stack);
+                @Nullable
+                RootInfo localSearchRoot =
+                        roots.stream()
+                                .filter(it -> it.isLocalSearch(mActivity))
+                                .findFirst()
+                                .orElse(null);
                 return new SearchLoader(
                         mActivity,
                         searchableRoots,
+                        localSearchRoot,
                         mInjector.fileTypeLookup,
                         observer,
                         mSearchMgr.getCurrentSearch(),
                         options,
                         mState.sortModel,
-                        mExecutorService
-                );
+                        mExecutorService);
             }
             if (DEBUG) {
                 Log.d(TAG, "Creating folder loader V2");
@@ -1503,7 +1514,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             mActivity
                     .getSupportLoaderManager()
                     .restartLoader(
-                            SUMMARY_LOADER_ID,
+                            LoaderIds.SUMMARY,
                             null,
                             SummaryLoader.createCallback(
                                     mActivity,
@@ -1520,7 +1531,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
             mInjector.getModel().updateSummaries(summaries);
-            mActivity.getSupportLoaderManager().destroyLoader(SUMMARY_LOADER_ID);
+            mActivity.getSupportLoaderManager().destroyLoader(LoaderIds.SUMMARY);
         }
     }
 

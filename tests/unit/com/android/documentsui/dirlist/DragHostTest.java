@@ -54,6 +54,7 @@ import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.ClipDatas;
 import com.android.documentsui.testing.DragEvents;
 import com.android.documentsui.testing.TestActionHandler;
+import com.android.documentsui.testing.TestDocumentsAccess;
 import com.android.documentsui.testing.TestDragAndDropManager;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.Views;
@@ -88,6 +89,7 @@ public class DragHostTest {
     private TestActivity mActivity;
     private TestActionHandler mActionHandler;
     private TestDialogController mDialogs;
+    private TestDocumentsAccess mDocs;
     private DragHost<?> dragHost;
     private TestDragAndDropManager mDragAndDropManager;
     private SelectionTracker<String> mSelectionMgr;
@@ -102,6 +104,7 @@ public class DragHostTest {
         mEnv = TestEnv.create();
         mActivity = TestActivity.create(mEnv);
         mDialogs = new TestDialogController();
+        mDocs = new TestDocumentsAccess();
         mDragAndDropManager = new TestDragAndDropManager();
         mSelectionMgr = SelectionHelpers.createTestInstance(ITEMS);
         mActionHandler = new TestActionHandler();
@@ -116,6 +119,7 @@ public class DragHostTest {
                 mActionHandler,
                 mEnv.state,
                 mDialogs,
+                mDocs,
                 (View v) -> mIsDocumentView,
                 (View v) -> mNextDocumentHolder,
                 (View v) -> mNextDocumentInfo

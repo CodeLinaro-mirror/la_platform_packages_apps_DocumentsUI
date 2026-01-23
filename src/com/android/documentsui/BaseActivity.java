@@ -747,14 +747,15 @@ public abstract class BaseActivity
                                         && tappableInsets.bottom < navBarInsets.bottom;
 
                         // System bars includes both status bar (top) and navigation bar (bottom)
-                        // and also others, and display cutout is for the front camera cutout, the
-                        // insets will only have non-zero values when the app might be overlapped
-                        // with these areas (i.e. in fullscreen mode), otherwise (i.e. in window
-                        // mode) they will all be 0.
+                        // and also others, and display cutout is for the front camera cutout, and
+                        // the ime is for the soft keyboard, these insets will only have non-zero
+                        // values when the app might be overlapped with these areas (i.e. in
+                        // fullscreen mode), otherwise (i.e. in window mode) they will all be 0.
                         Insets systemInsets =
                                 insets.getInsets(
                                         WindowInsetsCompat.Type.systemBars()
-                                                | WindowInsetsCompat.Type.displayCutout());
+                                                | WindowInsetsCompat.Type.displayCutout()
+                                                | WindowInsetsCompat.Type.ime());
                         // Bottom padding for the root container is always 0, because we want
                         // different bottom paddings for the left section (navigation tree area) and
                         // the right section (picker saver container).
@@ -848,12 +849,21 @@ public abstract class BaseActivity
 
     @Override
     public void onRootPicked(RootInfo root) {
+        final RootInfo previousRoot = getCurrentRoot();
+        final int previousStackSize = mState.stack.size();
+        if (isSearchV2Enabled()) {
+            // Before changing the root, store the current state of the stack.
+            // Before making any updates, set the new root. The code that is called uses the stack's
+            // root, as it has no access to the parameter of this method.
+            mState.stack.changeRoot(root);
+            updateColumnHeaders(root);
+        }
+
         // Clicking on the current root removes search
         mSearchManager.cancelSearch();
 
         // Skip refreshing if root nor directory didn't change
-        if (root.equals(getCurrentRoot()) && getCurrentShortcut() == null
-                && mState.stack.size() <= 1) {
+        if (root.equals(previousRoot) && getCurrentShortcut() == null && previousStackSize <= 1) {
             return;
         }
 
@@ -866,10 +876,11 @@ public abstract class BaseActivity
         }
         mSortController.onViewModeChanged(mState.derivedMode);
 
-        updateColumnHeaders(root);
-
-        // Clear entire backstack and start in new root
-        mState.stack.changeRoot(root);
+        if (!isSearchV2Enabled()) {
+            updateColumnHeaders(root);
+            // Clear entire backstack and start in new root
+            mState.stack.changeRoot(root);
+        }
 
         // Recents is always in memory, so we just load it directly.
         // Otherwise we delegate loading data from disk to a task
@@ -1048,8 +1059,8 @@ public abstract class BaseActivity
     }
 
     /**
-     * Refreshes the content of the director and the menu/action bar.
-     * The current directory name and selection will get updated.
+     * Refreshes the current window including the root and the directory along with the menu/action
+     * bar. The current directory name and selection will get updated.
      */
     @Override
     public final void refreshCurrentRootAndDirectory(int anim) {
@@ -1060,7 +1071,14 @@ public abstract class BaseActivity
             mHasQueryContentFromIntent = false;
             mSearchManager.setCurrentSearch(mSearchManager.getQueryContentFromIntent());
         }
+        refreshCurrentRootAndDirectoryWithoutSearch(anim);
+    }
 
+    /**
+     * Refreshes the current window including the current root and directory. The current directory
+     * name and selection will get updated.
+     */
+    public final void refreshCurrentRootAndDirectoryWithoutSearch(int anim) {
         final int fallback = isUseMaterial3FlagEnabled() ? MODE_LIST : MODE_GRID;
         mState.derivedMode = LocalPreferences.getViewMode(this, mState.stack.getRoot(), fallback);
 
@@ -1128,6 +1146,10 @@ public abstract class BaseActivity
 
     public State getDisplayState() {
         return mState;
+    }
+
+    public DocumentsAccess getDocumentsAccess() {
+        return mDocs;
     }
 
     /**
@@ -1537,8 +1559,17 @@ public abstract class BaseActivity
 
             // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
             //  localised titles in this method.
-            mProviders.updateAsync(false,
-                () -> RootsFragment.get(getSupportFragmentManager()).reloadRootsAndShortcuts());
+            mProviders.updateAsync(
+                    false,
+                    () -> {
+                        RootsFragment fragment = RootsFragment.get(getSupportFragmentManager());
+                        if (fragment == null) {
+                            fragment = RootsFragment.getNavRail(getSupportFragmentManager());
+                        }
+                        if (fragment != null) {
+                            fragment.reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ true);
+                        }
+                    });
         }
     }
 }

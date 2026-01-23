@@ -18,8 +18,9 @@ package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -81,7 +82,10 @@ public class PickerPreviewAllTypeUiTest extends ActivityTestJunit4<PickActivity>
     }
 
     @Test
-    public void testPreviewVisible_allType_girdMode() throws Exception {
+    public void testPreviewVisible_allType_gridMode() throws Exception {
+        assumeTrue(
+                "Skipping test: show_preview_icon is disabled by configuration.",
+                context.getResources().getBoolean(R.bool.show_preview_icon));
         bots.main.switchToGridMode();
         assertTrue(bots.directory.findDocument("file0.log").isEnabled());
         assertTrue(bots.directory.hasDocumentPreview("file0.log"));
@@ -91,6 +95,9 @@ public class PickerPreviewAllTypeUiTest extends ActivityTestJunit4<PickActivity>
 
     @Test
     public void testPreviewVisible_allType_listMode() throws Exception {
+        assumeTrue(
+                "Skipping test: show_preview_icon is disabled by configuration.",
+                context.getResources().getBoolean(R.bool.show_preview_icon));
         bots.main.switchToListMode();
         assertTrue(bots.directory.findDocument("file0.log").isEnabled());
         assertTrue(bots.directory.hasDocumentPreview("file0.log"));

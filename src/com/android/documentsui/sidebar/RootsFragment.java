@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.UserManager;
@@ -85,6 +84,7 @@ import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AnimationView;
+import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.roots.ProvidersCache;
 import com.android.documentsui.roots.RootsLoader;
@@ -122,6 +122,7 @@ public class RootsFragment extends Fragment {
      */
     private static final String EXTRA_CONTAINER_ID = "containerId";
     private static final int CONTEXT_MENU_ITEM_TIMEOUT = 500;
+    private static final String LOADER_REFRESH_ROOT_AND_DIRECTORY_ID = "refreshRootAndDirectory";
 
     private RootsListHandler mListHandler;
     private LoaderCallbacks<Collection<RootInfo>> mRootsCallbacks;
@@ -298,62 +299,84 @@ public class RootsFragment extends Fragment {
             mDragListener = mListHandler.createDragListener(listener);
         }
 
-        mShortcutsCallbacks = new LoaderCallbacks<>() {
-            @NonNull
-            @Override
-            public Loader<Collection<ShortcutInfo>> onCreateLoader(int id, @Nullable Bundle args) {
-                return new ShortcutsLoader(
-                    getContext(), providers, activity.getSelectedUser());
-            }
+        mShortcutsCallbacks =
+                new LoaderCallbacks<>() {
+                    private Bundle mArgs;
 
-            @Override
-            public void onLoadFinished(@NonNull Loader<Collection<ShortcutInfo>> loader,
-                Collection<ShortcutInfo> shortcuts) {
-                if (!isHomeScreenFilesFlagEnabled()) {
-                    shortcuts = new ArrayList<>();
-                }
-                loadFinished(mLoadedRoots, shortcuts, activity, state);
-            }
+                    @NonNull
+                    @Override
+                    public Loader<Collection<ShortcutInfo>> onCreateLoader(
+                            int id, @Nullable Bundle args) {
+                        mArgs = args;
+                        return new ShortcutsLoader(
+                                getContext(), providers, activity.getSelectedUser());
+                    }
 
-            @Override
-            public void onLoaderReset(@NonNull Loader<Collection<ShortcutInfo>> loader) {
-                mListHandler.resetAdapter();
-            }
-        };
+                    @Override
+                    public void onLoadFinished(
+                            @NonNull Loader<Collection<ShortcutInfo>> loader,
+                            Collection<ShortcutInfo> shortcuts) {
+                        if (!isHomeScreenFilesFlagEnabled()) {
+                            shortcuts = new ArrayList<>();
+                        }
+                        loadFinished(mLoadedRoots, shortcuts, activity, state);
+                        if (isHomeScreenFilesFlagEnabled()
+                                && mArgs != null
+                                && mArgs.getBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID)) {
+                            // Only refresh the current window - we don't want to cancel current
+                            // search results.
+                            getBaseActivity()
+                                    .refreshCurrentRootAndDirectoryWithoutSearch(
+                                            AnimationView.ANIM_NONE);
+                        }
+                    }
 
-        mRootsCallbacks = new LoaderCallbacks<>() {
-            @Override
-            public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
-                return new RootsLoader(activity, providers, state);
-            }
+                    @Override
+                    public void onLoaderReset(@NonNull Loader<Collection<ShortcutInfo>> loader) {
+                        mListHandler.resetAdapter();
+                    }
+                };
 
-            @Override
-            public void onLoadFinished(
-                Loader<Collection<RootInfo>> loader, Collection<RootInfo> roots) {
-                if (!isAdded()) {
-                    return;
-                }
+        mRootsCallbacks =
+                new LoaderCallbacks<>() {
+                    private Bundle mArgs;
 
-                if (isHomeScreenFilesFlagEnabled()) {
-                    mLoadedRoots = roots;
-                    // Load the shortcut roots next
-                    LoaderManager.getInstance(RootsFragment.this).restartLoader(
-                        2, null, mShortcutsCallbacks);
-                    return;
-                }
+                    @Override
+                    public Loader<Collection<RootInfo>> onCreateLoader(int id, Bundle args) {
+                        mArgs = args;
+                        return new RootsLoader(activity, providers, state);
+                    }
 
-                loadFinished(roots, new ArrayList<>(), activity, state);
-            }
+                    @Override
+                    public void onLoadFinished(
+                            Loader<Collection<RootInfo>> loader, Collection<RootInfo> roots) {
+                        if (!isAdded()) {
+                            return;
+                        }
 
-            @Override
-            public void onLoaderReset(Loader<Collection<RootInfo>> loader) {
-                mListHandler.resetAdapter();
-            }
-        };
+                        if (isHomeScreenFilesFlagEnabled()) {
+                            mLoadedRoots = roots;
+                            // Load the shortcut roots next
+                            LoaderManager.getInstance(RootsFragment.this)
+                                    .restartLoader(LoaderIds.SHORTCUTS, mArgs, mShortcutsCallbacks);
+                            mArgs = null;
+                            return;
+                        }
+                        loadFinished(roots, new ArrayList<>(), activity, state);
+                        mArgs = null;
+                    }
+
+                    @Override
+                    public void onLoaderReset(Loader<Collection<RootInfo>> loader) {
+                        mListHandler.resetAdapter();
+                    }
+                };
     }
 
-    public void reloadRootsAndShortcuts() {
-        LoaderManager.getInstance(this).restartLoader(2, null, mRootsCallbacks);
+    public void reloadRootsAndShortcuts(boolean refreshRootAndDirectory) {
+        Bundle args = new Bundle();
+        args.putBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID, refreshRootAndDirectory);
+        LoaderManager.getInstance(this).restartLoader(LoaderIds.ROOTS, args, mRootsCallbacks);
     }
 
     @VisibleForTesting
@@ -439,9 +462,6 @@ public class RootsFragment extends Fragment {
         mInjector.appsRowManager.updateList(mApplicationItemList);
         mInjector.appsRowManager.updateView(activity);
         onCurrentRootChanged();
-        if (isHomeScreenFilesFlagEnabled()) {
-            getBaseActivity().refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
-        }
     }
 
 
@@ -501,6 +521,33 @@ public class RootsFragment extends Fragment {
                 isUseMaterial3FlagEnabled()
                         && !context.getResources().getBoolean(R.bool.show_media_roots);
 
+        boolean hasDownloadsOverlay = false;
+
+        final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
+        if (isHomeScreenFilesFlagEnabled()) {
+            // Handle the shortcuts next. The shortcuts passed in are specific to the user. So we
+            // can just create and add the shortcut items normally as it should already account for
+            // cross profile behaviour.
+            for (final ShortcutInfo shortcut : shortcuts) {
+                if (shortcut.getDerivedType() == SidebarEntryItemInfo.TYPE_DOWNLOADS) {
+                    hasDownloadsOverlay = true;
+                }
+                final ShortcutItem item =
+                        mUseRailAsContainer
+                                ? new NavRailShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge)
+                                : new ShortcutItem(
+                                        shortcut,
+                                        mActionHandler,
+                                        /* packageName= */ "",
+                                        maybeShowBadge);
+                librariesAndShortcuts.add(item);
+            }
+        }
+
         for (final RootInfo root : roots) {
             final RootItem item;
 
@@ -517,6 +564,12 @@ public class RootsFragment extends Fragment {
                             || root.isDocuments()
                             || root.isAudio())) {
                 Log.d(TAG, "Hiding " + root);
+            } else if (isHomeScreenFilesFlagEnabled()
+                    && root.isDownloads()
+                    && hasDownloadsOverlay) {
+                // Hide the DownloadStorageProvider root if we have a shortcut to the Downloads
+                // folder via ExternalStorageProvider.
+                Log.d(TAG, "Hiding DownloadStorageProvider root: " + root);
             } else if (root.isLibrary() || root.isDownloads()) {
                 item =
                         mUseRailAsContainer
@@ -546,32 +599,13 @@ public class RootsFragment extends Fragment {
             }
         }
 
+        final RootComparator comp = new RootComparator();
         final List<RootItem> libraries = librariesBuilder.getList();
         final List<RootItem> storageProviders = storageProvidersBuilder.getList();
 
-        final RootComparator comp = new RootComparator();
         if (isHomeScreenFilesFlagEnabled()) {
-            // Handle the shortcuts next. The shortcuts passed in are specific to the user. So we
-            // can just create and add the shortcut items normally as it should already account for
-            // cross profile behaviour.
-            final List<BaseSidebarEntryItem> librariesAndShortcuts = new ArrayList<>();
-            librariesAndShortcuts.addAll(libraries);
-            for (final ShortcutInfo shortcut : shortcuts) {
-                final ShortcutItem item =
-                        mUseRailAsContainer
-                                ? new NavRailShortcutItem(
-                                        shortcut,
-                                        mActionHandler,
-                                        /* packageName= */ "",
-                                        maybeShowBadge)
-                                : new ShortcutItem(
-                                        shortcut,
-                                        mActionHandler,
-                                        /* packageName= */ "",
-                                        maybeShowBadge);
-                librariesAndShortcuts.add(item);
-            }
             final SidebarEntryItemComparator sidebarItemComp = new SidebarEntryItemComparator();
+            librariesAndShortcuts.addAll(libraries);
             Collections.sort(librariesAndShortcuts, sidebarItemComp);
             Collections.sort(storageProviders, comp);
 
@@ -587,7 +621,6 @@ public class RootsFragment extends Fragment {
             if (VERBOSE) Log.v(TAG, "Adding library roots: " + libraries);
             result.addAll(libraries);
         }
-
 
         // Only add the spacer if it is actually separating something.
         if (!result.isEmpty() && !storageProviders.isEmpty()) {
@@ -847,7 +880,7 @@ public class RootsFragment extends Fragment {
     public void onDisplayStateChanged() {
         mListHandler.onDisplayStateChange();
 
-        reloadRootsAndShortcuts();
+        reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ false);
     }
 
     public void onCurrentRootChanged() {
@@ -894,7 +927,7 @@ public class RootsFragment extends Fragment {
      * Called when the selected user is changed. It reloads roots with the current user.
      */
     public void onSelectedUserChanged() {
-        reloadRootsAndShortcuts();
+        reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ false);
     }
 
     /**

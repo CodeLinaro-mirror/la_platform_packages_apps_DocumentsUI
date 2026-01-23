@@ -27,7 +27,6 @@ import android.text.TextUtils
 import android.util.Log
 import com.android.documentsui.DirectoryResult
 import com.android.documentsui.LockingContentObserver
-import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
@@ -39,6 +38,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProvider
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.measureTime
 
 /**
@@ -74,6 +74,7 @@ private data class QueryResult(var cursor: Cursor? = null)
 class SearchLoader(
     context: Context,
     private val rootInfoList: Collection<RootInfo>,
+    private val semanticSearchRootInfo: RootInfo?,
     mimeTypeLookup: Lookup<String, String>,
     private val observer: LockingContentObserver,
     private val query: String?,
@@ -81,18 +82,6 @@ class SearchLoader(
     private val sortModel: SortModel,
     private val executorService: ExecutorService,
 ) : BaseFileLoader(context, mimeTypeLookup) {
-    // In this class, "local search" is treated as "semantic search"
-    // to make its behavior, such as failure handling, more explicit.
-    private val semanticSearchProvider: Uri by lazy {
-        val providerString =
-            runCatching { context.getString(R.string.local_search_provider) }.getOrNull()
-
-        if (isUseLocalSearchProviderEnabled() && !providerString.isNullOrEmpty()) {
-            Uri.parse(providerString)
-        } else {
-            Uri.EMPTY
-        }
-    }
 
     /**
      * Helper class that runs query on a single user for the given parameter, until the first
@@ -166,7 +155,7 @@ class SearchLoader(
 
     // Indicates if the first pass for results is done. This is used to prevent tasks
     // that completed before the deadline from forcing content change calls.
-    private var firstPassDone = false
+    private var firstPassDone = AtomicBoolean(false)
 
     // A latch that counts the number of tasks done. Used to check if all tasks are completed.
     private var countDownLatch = CountDownLatch(rootInfoList.size)
@@ -189,7 +178,7 @@ class SearchLoader(
      * yet completed tasks the code just waits for them to be completed.
      */
     private fun maybeRefreshContent(taskId: String) {
-        if (firstPassDone) {
+        if (firstPassDone.get()) {
             if (DEBUG) {
                 Log.d(TAG, "Forcing refresh on cursor $taskId completed")
             }
@@ -203,16 +192,16 @@ class SearchLoader(
      * run.
      */
     @Throws(InterruptedException::class)
-    private fun firstPassRun(rejectBeforeTimestamp: Long) {
+    private fun firstPassRun(latch: CountDownLatch, rejectBeforeTimestamp: Long): Boolean {
         // Step 1: Create a list of new search tasks.
-        createSearchTaskList(rejectBeforeTimestamp, countDownLatch)
+        createSearchTaskList(rejectBeforeTimestamp, latch)
         if (DEBUG) {
             Log.d(TAG, "First run created ${searchTaskList.size} tasks")
         }
 
         // Check if we are cancelled; if not copy the task list.
         if (isLoadInBackgroundCanceled) {
-            return
+            return false
         }
 
         // Step 2: Enqueue tasks and wait for them to complete or time out.
@@ -223,21 +212,26 @@ class SearchLoader(
             Log.d(TAG, "Started ${searchTaskList.size} search tasks")
         }
 
+        if (isLoadInBackgroundCanceled) {
+            return false
+        }
+
         // Step 3: Wait for the results.
         if (options.isQueryTimeUnlimited()) {
             if (DEBUG) {
                 Log.d(TAG, "Waiting for results with no time limit")
             }
-            countDownLatch.await()
+            latch.await()
         } else {
             if (DEBUG) {
                 Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
             }
-            countDownLatch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
+            latch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
         }
         if (DEBUG) {
             Log.d(TAG, "Waiting for results is done")
         }
+        return true
     }
 
     /** The loadInBackground code run within a trace. */
@@ -250,10 +244,11 @@ class SearchLoader(
         result.queryOptions = options
         result.query = query
 
-        if (!firstPassDone) {
+        var firstPassComplete = false
+        if (!firstPassDone.get()) {
             try {
                 // Create a new task list and schedule it with the executor.
-                firstPassRun(rejectBeforeTimestamp)
+                firstPassComplete = firstPassRun(countDownLatch, rejectBeforeTimestamp)
             } catch (e: InterruptedException) {
                 if (DEBUG) {
                     Log.d(TAG, "Interrupted during first pass ${options.maxQueryTime}")
@@ -261,7 +256,7 @@ class SearchLoader(
                 // TODO(b:388336095): Record a metrics indicating incomplete search.
                 throw RuntimeException(e)
             } finally {
-                firstPassDone = true
+                firstPassDone.set(firstPassComplete)
             }
         }
 
@@ -326,16 +321,19 @@ class SearchLoader(
 
     private fun shouldUseSemanticSearch(rootInfo: RootInfo): Boolean =
         !isRecentQuery() &&
+            // In this class, "local search" is treated as "semantic search"
+            // to make its behavior, such as failure handling, more explicit.
             isUseLocalSearchProviderEnabled() &&
-            rootInfo.isLocalOnly &&
-            semanticSearchProvider != Uri.EMPTY
+            semanticSearchRootInfo?.supportsSearch() == true &&
+            semanticSearchRootInfo?.isEmpty() == false &&
+            rootInfo.isLocalOnly
 
     /** Gets semantic search URI if applicable, or null otherwise. */
     private fun maybeGetSemanticSearchUri(rootInfo: RootInfo): Uri? {
         if (!shouldUseSemanticSearch(rootInfo)) {
             return null
         }
-        return rootToSearchUri(semanticSearchProvider, query)
+        return semanticSearchRootInfo?.let { rootToSearchUri(it.uri, query) }
     }
 
     private fun buildSearchDocumentsUri(rootInfo: RootInfo): Uri =
@@ -429,5 +427,11 @@ class SearchLoader(
             Log.d(TAG, "Resetting search loader; search task list emptied.")
         }
         super.onReset()
+    }
+
+    /** Overrides the method called when forced load takes place to force full cursor reload. */
+    override fun resetCursors() {
+        firstPassDone.set(false)
+        countDownLatch = CountDownLatch(rootInfoList.size)
     }
 }

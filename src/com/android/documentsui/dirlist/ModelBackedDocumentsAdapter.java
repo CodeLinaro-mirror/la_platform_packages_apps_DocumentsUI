@@ -18,13 +18,17 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.database.Cursor;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +43,10 @@ import com.android.documentsui.base.State;
 import com.android.modules.utils.build.SdkLevel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /** Adapts from dirlist.Model to something RecyclerView understands. */
 final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
@@ -52,24 +59,42 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
     private final IconHelper mIconHelper;  // a transitive dependency of the holders.
     private final Lookup<String, String> mFileTypeLookup;
     private final ConfigStore mConfigStore;
+    private final Handler mHandler;
 
     /**
      * An ordered list of model IDs. This is the data structure that determines what shows up in
      * the UI, and where.
      */
     private List<String> mModelIds = new ArrayList<>();
+
+    private Set<String> mJustFinishedSyncingModelIds = new HashSet<>();
+    private Set<String> mPreviousSyncInProgressModelIds = new HashSet<>();
     private EventListener<Model.Update> mModelUpdateListener;
     private NetworkMonitor.NetworkListener mNetworkListener = isOnline -> {
         // Do nothing. Logic is handled in DirectoryAddonsAdapter.java.
     };
+    @VisibleForTesting public static final int TICK_VISIBLE_DURATION_MS = 1200;
+
+    @VisibleForTesting
+    public HashMap<String, Runnable> mJustFinishedSyncingRemovalTasks = new HashMap<>();
 
     public ModelBackedDocumentsAdapter(
             Environment env, IconHelper iconHelper, Lookup<String, String> fileTypeLookup,
             ConfigStore configStore) {
+        this(env, iconHelper, fileTypeLookup, configStore, new Handler(Looper.getMainLooper()));
+    }
+
+    ModelBackedDocumentsAdapter(
+            Environment env,
+            IconHelper iconHelper,
+            Lookup<String, String> fileTypeLookup,
+            ConfigStore configStore,
+            Handler handler) {
         mEnv = env;
         mIconHelper = iconHelper;
         mFileTypeLookup = fileTypeLookup;
         mConfigStore = configStore;
+        mHandler = handler;
 
         mModelUpdateListener = new EventListener<Model.Update>() {
             @Override
@@ -181,7 +206,11 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
             // Need the action to be set for bind().
             holder.setAction(mEnv.getDisplayState().action);
         }
-        holder.bind(doc, modelId, summary);
+        boolean justFinishedSync =
+                isCloudFeaturesFlagEnabled()
+                        ? mJustFinishedSyncingModelIds.contains(modelId)
+                        : false;
+        holder.bind(doc, modelId, summary, justFinishedSync);
 
         boolean enabled = mEnv.isDocumentEnabled(doc);
         boolean selected = mEnv.isSelected(modelId);
@@ -226,6 +255,54 @@ final class ModelBackedDocumentsAdapter extends DocumentsAdapter {
         for (String id : modelIds) {
             mModelIds.add(id);
         }
+
+        if (isCloudFeaturesFlagEnabled()) {
+            for (String id : mPreviousSyncInProgressModelIds) {
+                if (!model.getSyncInProgressModelIds().contains(id)) {
+                    // The item just finished syncing.
+                    handleJustFinishedSync(id);
+                }
+            }
+
+            // Update mPreviousSyncInProgressModelIds with the current state.
+            mPreviousSyncInProgressModelIds.clear();
+            mPreviousSyncInProgressModelIds.addAll(model.getSyncInProgressModelIds());
+        }
+    }
+
+    /**
+     * Adds the `docId` to the `mJustFinishedSyncingModelIds` and schedules a task to remove it from
+     * that set after `TICK_VISIBLE_DURATION_MS`. If the `docId` is already in
+     * `mJustFinishedSyncingModelIds` then remove the existing task first.
+     */
+    private void handleJustFinishedSync(String modelId) {
+        if (!isCloudFeaturesFlagEnabled()) {
+            return;
+        }
+        // Add the `docId` to this set so that the tick icon is shown.
+        mJustFinishedSyncingModelIds.add(modelId);
+
+        // Remove any existing tasks for this `docId`.
+        Runnable existingTask = mJustFinishedSyncingRemovalTasks.get(modelId);
+        if (existingTask != null) {
+            mHandler.removeCallbacks(existingTask);
+        }
+
+        // Schedule a new task to remove the `docId` from the `mJustFinishedSyncingModelIds` after
+        // `TICK_VISIBLE_DURATION_MS`.
+        Runnable removalTask =
+                () -> {
+                    mJustFinishedSyncingModelIds.remove(modelId);
+                    mJustFinishedSyncingRemovalTasks.remove(modelId);
+
+                    int position = getAdapterPosition(modelId);
+                    if (position != RecyclerView.NO_POSITION) {
+                        // Trigger a directory list refresh so that the tick icon disappears.
+                        notifyItemChanged(position);
+                    }
+                };
+        mJustFinishedSyncingRemovalTasks.put(modelId, removalTask);
+        mHandler.postDelayed(removalTask, TICK_VISIBLE_DURATION_MS);
     }
 
     private void onModelUpdateFailed(Exception e) {

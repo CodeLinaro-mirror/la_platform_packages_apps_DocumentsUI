@@ -17,6 +17,7 @@
 package com.android.documentsui.queries;
 
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -112,14 +113,20 @@ public class SearchChipViewManager {
         sMimeTypesChipItems.put(
                 TYPE_VIDEOS,
                 new SearchChipData(TYPE_VIDEOS, R.string.chip_title_videos, VIDEOS_MIMETYPES));
-        sDefaultChipItems.put(
-                TYPE_LARGE_FILES,
-                new SearchChipData(
-                        TYPE_LARGE_FILES, R.string.chip_title_large_files, EMPTY_MIMETYPES));
-        sDefaultChipItems.put(
-                TYPE_FROM_THIS_WEEK,
-                new SearchChipData(
-                        TYPE_FROM_THIS_WEEK, R.string.chip_title_from_this_week, EMPTY_MIMETYPES));
+        // When use_allfiles_root_for_recents flag is ON, "This week" chip's functionality can be
+        // fulfilled in "Recents" root, so we hide these 2 chips.
+        if (!isUseAllfilesRootForRecentsEnabled()) {
+            sDefaultChipItems.put(
+                    TYPE_LARGE_FILES,
+                    new SearchChipData(
+                            TYPE_LARGE_FILES, R.string.chip_title_large_files, EMPTY_MIMETYPES));
+            sDefaultChipItems.put(
+                    TYPE_FROM_THIS_WEEK,
+                    new SearchChipData(
+                            TYPE_FROM_THIS_WEEK,
+                            R.string.chip_title_from_this_week,
+                            EMPTY_MIMETYPES));
+        }
     }
 
     public SearchChipViewManager(@NonNull ViewGroup chipGroup) {

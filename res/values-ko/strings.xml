@@ -17,11 +17,15 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"이름을 변경해야 합니다."</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"이름이 .로 시작하는 파일은 숨겨집니다."</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"잘못된 문자입니다. "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"폴더 이름을 추가해야 합니다."</string>
     <string name="files_label" msgid="771781190045103748">"파일"</string>
     <string name="downloads_label" msgid="5462789470049501103">"다운로드"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"다음에서 열기:"</string>
@@ -56,6 +60,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"정보 확인"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"숨겨진 파일 표시"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"숨겨진 파일 표시 안함"</string>
+    <string name="option_show_summary_column" msgid="2877633662563512552">"요약 열 표시"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"요약 열 표시 안함"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>에서 보기"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"새 창"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"잘라내기"</string>
@@ -75,6 +81,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"제공업체 앱에서 보기"</string>
     <string name="button_back" msgid="1888621708934742182">"뒤로"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"폴더에서 보기"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"휴지통 열기"</string>
     <string name="not_sorted" msgid="7813496644889115530">"정렬되지 않음"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"이름"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"요약"</string>
@@ -217,6 +224,8 @@
       <item quantity="one">다음 파일이 삭제되지 않았습니다. <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{다음 파일이 삭제되지 않았습니다}other{다음 파일이 삭제되지 않았습니다}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{다음 파일이 휴지통으로 이동되지 않았습니다}other{다음 파일이 휴지통으로 이동되지 않았습니다.}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{다음 파일이 복원되지 않았습니다}other{다음 파일이 복원되지 않았습니다}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">다음 파일이 다른 형식으로 변환되었습니다. <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">다음 파일이 다른 형식으로 변환되었습니다. <xliff:g id="LIST_0">%1$s</xliff:g></item>
@@ -354,6 +363,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"개인정보 보호를 위해 다른 폴더를 선택하세요."</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"새 폴더 만들기"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"이 기기 검색"</string>
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"검색"</string>
     <string name="search_results" msgid="7662182646512984171">"검색 결과"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"텍스트 삭제"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"루트 폴더"</string>
@@ -380,6 +390,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"크기"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"유형"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"수정 날짜"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"확인"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"알 수 없음"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"파일 미리보기 숨기기"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> 이미지 미리보기"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"정보 패널 숨기기"</string>
@@ -390,12 +402,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"휴지통을 비우시겠습니까?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"이 작업은 되돌릴 수 없으며, 파일을 더 이상 복구할 수 없게 됩니다."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"휴지통 비우기"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"파일이 휴지통에 있음"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"이 파일은 휴지통에 있으며 열 수 없습니다. 파일에 액세스하려면 휴지통에서 복원하세요."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"파일 복원"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"현재 오프라인 상태입니다. 일부 파일 및 기능을 사용할 수 없습니다. 모든 기능을 사용하려면 인터넷에 연결하세요."</string>
 </resources>

@@ -148,7 +148,8 @@ final class GridDirectoryHolder extends DocumentHolder {
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         this.mModelId = modelId;
         mTitle.setText(doc.displayName, TextView.BufferType.SPANNABLE);
     }

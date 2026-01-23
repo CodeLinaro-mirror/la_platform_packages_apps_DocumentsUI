@@ -87,32 +87,6 @@ public class MessageBuilder {
         return message;
     }
 
-    public String generateListMessage(
-            @DialogType int dialogType, @OpType int operationType, List<DocumentInfo> docs,
-            List<Uri> uris, List<String> paths) {
-        final int resourceId = getResourceId(dialogType, operationType);
-        final String list = getListContent(docs, uris, paths);
-
-        final int docCount = docs != null ? docs.size() : 0;
-        final int uriCount = uris != null ? uris.size() : 0;
-        final int pathCount = paths != null ? paths.size() : 0;
-        final int count = docCount + uriCount + pathCount;
-
-        if (isZipNgFlagEnabled()) {
-            // When ZipNg is ON, the message is being used as the dialog title (in getResourceId()
-            // below), and the list content will be used as the dialog message separately.
-            // TODO(b/456014591): Remove the empty string once the translation is done.
-            //  We remove one argument during the string update but still pass the empty string
-            //  below, otherwise it will crash before the translation is done for other
-            //  languages.
-            return new MessageFormat(
-                            mContext.getResources().getString(resourceId), Locale.getDefault())
-                    .format(Map.of("count", count, "list", ""));
-        }
-
-        return mContext.getResources().getQuantityString(resourceId, count, list);
-    }
-
     private static int getResourceId(int dialogType, int operationType) {
         switch (dialogType) {
             case DIALOG_TYPE_CONVERTED:
@@ -149,6 +123,10 @@ public class MessageBuilder {
                                 isZipNgFlagEnabled()
                                         ? R.string.move_failure_alert_title
                                         : R.plurals.move_failure_alert_content);
+                    case FileOperationService.OPERATION_TRASH:
+                        return getRes(R.string.trash_failure_alert_title);
+                    case FileOperationService.OPERATION_RESTORE:
+                        return getRes(R.string.restore_from_trash_failure_alert_title);
                     default:
                         throw new UnsupportedOperationException();
                 }
@@ -193,9 +171,66 @@ public class MessageBuilder {
     }
 
     /**
+     * Generates the content for a dialog that displays a list of files from a file operation.
+     *
+     * @param dialogType The type of dialog, e.g. failure or converted.
+     * @param operationType The type of file operation, e.g. copy or delete.
+     * @param docs The list of documents involved in the operation.
+     * @param uris The list of Uris for files that failed to be represented as documents.
+     * @param paths The list of paths for files that failed to be represented as documents or Uris.
+     * @return A {@link ListDialogContent} object containing the title and message for the dialog.
+     */
+    public ListDialogContent generateListDialogContent(
+            @DialogType int dialogType,
+            @OpType int operationType,
+            List<DocumentInfo> docs,
+            List<Uri> uris,
+            List<String> paths) {
+        final int resourceId = getResourceId(dialogType, operationType);
+        final String list = getListContent(docs, uris, paths);
+
+        final int docCount = docs != null ? docs.size() : 0;
+        final int uriCount = uris != null ? uris.size() : 0;
+        final int pathCount = paths != null ? paths.size() : 0;
+        final int count = docCount + uriCount + pathCount;
+
+        boolean isUseNewFormat =
+                isZipNgFlagEnabled()
+                        || operationType == FileOperationService.OPERATION_TRASH
+                        || operationType == FileOperationService.OPERATION_RESTORE;
+        if (isUseNewFormat) {
+            // When ZipNg is ON, the message is being used as the dialog title (in getResourceId()
+            // below), and the list content will be used as the dialog message separately.
+            // TODO(b/456014591): Remove the empty string once the translation is done.
+            // We remove one argument during the string update but still pass the empty string
+            // below, otherwise it will crash before the translation is done for other
+            // languages.
+            final String title =
+                    new MessageFormat(
+                                    mContext.getResources().getString(resourceId),
+                                    Locale.getDefault())
+                            .format(Map.of("count", count, "list", ""));
+            return new ListDialogContent(title, list);
+        }
+
+        final String message = mContext.getResources().getQuantityString(resourceId, count, list);
+        return new ListDialogContent(null, message);
+    }
+
+    /**
      * Generates a formatted quantity string.
      */
     public String getQuantityString(@PluralsRes int stringId, int quantity) {
         return Shared.getQuantityString(mContext, stringId, quantity);
+    }
+
+    public static class ListDialogContent {
+        public final String title;
+        public final String message;
+
+        ListDialogContent(String title, String message) {
+            this.title = title;
+            this.message = message;
+        }
     }
 }

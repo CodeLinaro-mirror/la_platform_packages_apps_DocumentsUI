@@ -44,6 +44,7 @@ import android.annotation.LayoutRes;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.Espresso;
@@ -351,8 +352,30 @@ public class UiBot extends Bots.BaseBot {
         return title;
     }
 
-    public UiObject findRenameErrorMessage() {
-        UiSelector selector = new UiSelector().text(mContext.getString(R.string.name_conflict));
+    /**
+     * Finds a {@link UiObject} containing a rename error message using its resource id.
+     *
+     * @param resId The resource id of the string containing the target error message text.
+     * @return A {@link UiObject} representing the found error message.
+     */
+    public UiObject findRenameErrorMessage(@StringRes int resId) {
+        UiSelector selector = new UiSelector().text(mContext.getString(resId));
+        UiObject title = mDevice.findObject(selector);
+        title.waitForExists(mTimeout);
+        return title;
+    }
+
+    /**
+     * Finds a {@link UiObject} containing text that matches the result of concatenating a
+     * string resource and a suffix string.
+     *
+     * @param resId The resource id of the string containing the target error message text.
+     * @param suffix The string to append to the resource string.
+     * @return A {@link UiObject} matching the concatenated text.
+     */
+    public UiObject findUiObjectWithResIdAndSuffix(@StringRes int resId, String suffix) {
+        String expectedText = mContext.getString(resId) + suffix;
+        UiSelector selector = new UiSelector().text(expectedText);
         UiObject title = mDevice.findObject(selector);
         title.waitForExists(mTimeout);
         return title;

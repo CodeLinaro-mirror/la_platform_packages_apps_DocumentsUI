@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import android.net.Uri;
 import android.os.Bundle;
 import android.platform.test.annotations.DesktopTest;
+import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
 import androidx.test.filters.LargeTest;
@@ -34,11 +35,12 @@ import com.android.documentsui.base.Shared;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.flags.Flags;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -46,6 +48,8 @@ import java.util.List;
 
 @LargeTest
 public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
+
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
     @Rule
     public final TestFilesRule mTestFilesRule =
@@ -63,21 +67,29 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
                                 docsHelper.createDocument(root, "text/plain", "poodles.text");
                             });
 
-    @Ignore
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testCreateDirectory() throws Exception {
-        bots.main.openOverflowMenu();
+        // Disable the root notification because it triggers root list update which then triggers
+        // the fragment recreation, which impacts the focus behavior.
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(StubProvider.EXTRA_ENABLE_ROOT_NOTIFICATION, false);
+        mDocsHelper.configure(null, bundle);
+
+        final String newFolderName = "Kung fu Panda";
+        bots.main.clickToolbarOverflowItem(context.getString(R.string.menu_create_dir));
         device.waitForIdle();
 
-        bots.main.clickToolbarOverflowItem("New folder");
+        bots.main.setDialogText(newFolderName);
         device.waitForIdle();
 
-        bots.main.setDialogText("Kung Fu Panda");
-        device.waitForIdle();
+        // Pressing enter to commit the new folder creation and close the dialog. Note:
+        // pressEnter() doesn't work here, we need an actual keyboard press to trigger focus
+        // change.
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_ENTER);
 
-        bots.keyboard.pressEnter();
-
-        bots.directory.waitForDocument("Kung Fu Panda");
+        bots.directory.waitForDocument(newFolderName);
+        bots.directory.assertDocumentHasFocus(newFolderName);
     }
 
     @Test
@@ -147,7 +159,7 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.keyboard.pressKey(KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
         device.waitForIdle();
 
-        bots.directory.assertDocumentsVisible("file1.png");
+        bots.directory.waitForDocument("file1.png");
     }
 
     @Test

@@ -313,9 +313,9 @@ final class ListDocumentHolder extends DocumentHolder {
         }
 
         if (useSummary()) {
-            if (summary == null) {
-                mSummary.setText("--");
-                mSummary.setTooltipText(summary);
+            if (TextUtils.isEmpty(summary)) {
+                mSummary.setText("—");
+                mSummary.setTooltipText(null);
             } else {
                 mSummary.setText(summary, TextView.BufferType.SPANNABLE);
                 mSummary.setTooltipText(summary);
@@ -337,7 +337,8 @@ final class ListDocumentHolder extends DocumentHolder {
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         mModelId = modelId;
         mDoc = doc;
 
@@ -363,9 +364,9 @@ final class ListDocumentHolder extends DocumentHolder {
 
         mTitle.setVisibility(View.VISIBLE);
 
-        bindSyncIcons(mDoc);
+        bindSyncIcons(mDoc, justFinishedSync);
 
-        if (mDoc.isDirectory()) {
+        if (mDoc.isDirectory() && !isUseMaterial3FlagEnabled()) {
             // Note, we don't show any details for any directory...ever.
             if (mDetails != null) {
                 // Non-tablets
@@ -377,21 +378,28 @@ final class ListDocumentHolder extends DocumentHolder {
             if (mMetadataView != null) {
                 // Non-tablets
                 boolean hasDetails = false;
-                ArrayList<String> metadataList = new ArrayList<>();
-                if (useSummary() && !TextUtils.isEmpty(summary)) {
-                    hasDetails = true;
-                    metadataList.add(summary);
+
+                if (!mDoc.isDirectory()) {
+                    ArrayList<String> metadataList = new ArrayList<>();
+                    if (useSummary() && !TextUtils.isEmpty(summary)) {
+                        hasDetails = true;
+                        metadataList.add(summary);
+                    }
+
+                    if (mDoc.lastModified > 0) {
+                        hasDetails = true;
+                        metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
+                    }
+
+                    if (mDoc.size >= 0) {
+                        hasDetails = true;
+                        metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
+                    }
+
+                    metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
+                    mMetadataView.setText(TextUtils.join(", ", metadataList));
                 }
-                if (mDoc.lastModified > 0) {
-                    hasDetails = true;
-                    metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
-                }
-                if (mDoc.size > -1) {
-                    hasDetails = true;
-                    metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
-                }
-                metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
-                mMetadataView.setText(TextUtils.join(", ", metadataList));
+
                 if (mDetails != null) {
                     mDetails.setVisibility(hasDetails ? View.VISIBLE : View.GONE);
                 } else {
@@ -399,18 +407,30 @@ final class ListDocumentHolder extends DocumentHolder {
                 }
             } else {
                 // Tablets
+                assert mDate != null;
+                assert mSize != null;
+                assert mType != null;
+
                 if (mDoc.lastModified > 0) {
                     mDate.setVisibility(View.VISIBLE);
                     mDate.setText(Shared.formatTime(mContext, mDoc.lastModified));
+                } else if (isUseMaterial3FlagEnabled()) {
+                    mDate.setVisibility(View.VISIBLE);
+                    mDate.setText("—");
                 } else {
                     mDate.setVisibility(View.INVISIBLE);
                 }
-                if (mDoc.size > -1) {
+
+                if (!mDoc.isDirectory() && mDoc.size >= 0) {
                     mSize.setVisibility(View.VISIBLE);
                     mSize.setText(Formatter.formatFileSize(mContext, mDoc.size));
+                } else if (isUseMaterial3FlagEnabled()) {
+                    mSize.setVisibility(View.VISIBLE);
+                    mSize.setText("—");
                 } else {
                     mSize.setVisibility(View.INVISIBLE);
                 }
+
                 mType.setText(mFileTypeLookup.lookup(mDoc.mimeType));
             }
         }

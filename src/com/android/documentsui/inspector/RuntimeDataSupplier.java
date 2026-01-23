@@ -34,6 +34,7 @@ import androidx.loader.content.Loader;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.inspector.InspectorController.DataSupplier;
+import com.android.documentsui.loaders.LoaderIds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,8 +147,8 @@ public class RuntimeDataSupplier implements DataSupplier {
         }
     }
 
-    private int getNextLoaderId() {
-        int id = 0;
+    protected int getNextLoaderId() {
+        int id = LoaderIds.RUNTIME;
         while(mLoaderMgr.getLoader(id) != null) {
             id++;
             checkArgument(id <= Integer.MAX_VALUE);

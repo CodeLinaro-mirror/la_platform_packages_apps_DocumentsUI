@@ -19,5 +19,4 @@ package com.android.documentsui.compose
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
-@HiltAndroidApp(Application::class)
-class DocumentsUIApplication : Hilt_DocumentsUIApplication()
+@HiltAndroidApp(Application::class) class DocumentsUIApplication : Hilt_DocumentsUIApplication()

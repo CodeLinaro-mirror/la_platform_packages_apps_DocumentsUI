@@ -488,6 +488,14 @@ public class DirectoryListBot extends Bots.BaseBot {
         return null;
     }
 
+    /** Assert the document with the specified {@code label} is the focused item. */
+    public void assertDocumentHasFocus(String label) throws UiObjectNotFoundException {
+        final BySelector list = By.res(mDirListId);
+
+        UiObject2 doc = findItemRoot(mDevice.findObject(list).findObject(By.text(label)));
+        assertTrue(doc != null && doc.isFocused());
+    }
+
     public void assertFirstDocumentHasFocus() throws UiObjectNotFoundException {
         final UiSelector docList = findDocumentsListSelector();
 
@@ -498,6 +506,12 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
 
         assertTrue(doc.isFocused());
+    }
+
+    /** Returns whether a document is focused. */
+    public boolean anyDocumentHasFocus() throws UiObjectNotFoundException {
+        UiObject2 o = mDevice.findObject(By.res(mDirListId));
+        return (o != null) && (o.findObject(By.focused(true)) != null);
     }
 
     public UiObject findDocumentsList() {

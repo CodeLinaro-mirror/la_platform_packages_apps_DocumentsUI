@@ -19,10 +19,10 @@
     <dimen name="grid_padding_vert_m3">16dp</dimen>
 
     <dimen name="list_container_padding_m3">@dimen/space_extra_small_6</dimen>
+    <dimen name="list_header_inner_padding">4dp</dimen>
     <dimen name="list_item_height_m3">48dp</dimen>
     <dimen name="list_item_padding_start">20dp</dimen>
     <dimen name="list_item_padding_end">0dp</dimen>
-    <dimen name="list_item_icon_margin_end">@dimen/space_extra_small_4</dimen>
     <dimen name="briefcase_icon_margin_m3">@dimen/space_extra_small_4</dimen>
 
     <dimen name="max_drawer_width_m3">320dp</dimen>

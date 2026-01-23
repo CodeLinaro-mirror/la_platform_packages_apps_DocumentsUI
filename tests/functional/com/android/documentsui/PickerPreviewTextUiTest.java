@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import android.content.Intent;
 import android.provider.DocumentsContract;
@@ -57,6 +58,9 @@ public class PickerPreviewTextUiTest extends ActivityTestJunit4<PickActivity> {
 
     @Test
     public void testPreviewVisible_enabled_gridMode() throws Exception {
+        assumeTrue(
+                "Skipping test: show_preview_icon is disabled by configuration.",
+                context.getResources().getBoolean(R.bool.show_preview_icon));
         bots.main.switchToGridMode();
         assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
         assertTrue(bots.directory.hasDocumentPreview(TestFilesRule.FILE_NAME_1));
@@ -64,6 +68,9 @@ public class PickerPreviewTextUiTest extends ActivityTestJunit4<PickActivity> {
 
     @Test
     public void testPreviewVisible_enabled_listMode() throws Exception {
+        assumeTrue(
+                "Skipping test: show_preview_icon is disabled by configuration.",
+                context.getResources().getBoolean(R.bool.show_preview_icon));
         bots.main.switchToListMode();
         assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_1).isEnabled());
         assertTrue(bots.directory.hasDocumentPreview(TestFilesRule.FILE_NAME_1));

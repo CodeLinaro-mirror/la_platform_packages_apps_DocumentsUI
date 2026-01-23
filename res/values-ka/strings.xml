@@ -17,11 +17,15 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"საჭიროა ამის გადარქმევა"</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"წერტილით დაწყებული ფაილები დამალულია"</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"არასწორი სიმბოლო: "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"საჭიროა საქაღალდის სახელის დამატება"</string>
     <string name="files_label" msgid="771781190045103748">"ფაილები"</string>
     <string name="downloads_label" msgid="5462789470049501103">"ჩამოტვირთვები"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"გახსნა აქედან:"</string>
@@ -56,6 +60,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ინფორმაციის მიღება"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"გამოჩნდეს დამალული ფაილები"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"არ მაჩვენო დამალული ფაილები"</string>
+    <string name="option_show_summary_column" msgid="2877633662563512552">"შეჯამების სვეტის ჩვენება"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"შეჯამების სვეტის დამალვა"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>-ში ნახვა"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ახალი ფანჯარა"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"ამოჭრა"</string>
@@ -75,6 +81,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"პროვაიდერში ჩვენება"</string>
     <string name="button_back" msgid="1888621708934742182">"უკან"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"საქაღალდეში ჩვენება"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"წაშლილების გახსნა"</string>
     <string name="not_sorted" msgid="7813496644889115530">"დაულაგებელი"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"სახელი"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"რეზიუმე"</string>
@@ -217,6 +224,8 @@
       <item quantity="one">შემდეგი ფაილი არ წაიშალა: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{ეს ფაილი არ წაიშალა:}other{ეს ფაილები არ წაიშალა:}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{ეს ფაილი არ გადავიდა წაშლილებში:}other{ეს ფაილები არ გადავიდა წაშლილებში:}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{ეს ფაილი არ აღდგა:}other{ეს ფაილები არ აღდგა:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">შემდეგი ფაილები გარდაქმნილია სხვა ფორმატში: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">შემდეგი ფაილი გარდაქმნილია სხვა ფორმატში: <xliff:g id="LIST_0">%1$s</xliff:g></item>
@@ -354,6 +363,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"თქვენი კონფიდენციალურობის დასაცავად აირჩიეთ სხვა საქაღალდე"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"ახალი საქაღალდის შექმნა"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"ამ მოწყობილობის ძიება"</string>
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"ძიება"</string>
     <string name="search_results" msgid="7662182646512984171">"ძიების შედეგები"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"ტექსტის გასუფთავება"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"ძირეული საქაღალდე"</string>
@@ -380,6 +390,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"ზომა"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"ტიპი"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"შეცვლის თარიღი"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"კარგი"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"უცნობი"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"ფაილის წინასწარი ვერსიის დამალვა"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>-ის სურათის გადახედვა"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"საინფორმაციო არის დამალვა"</string>
@@ -390,12 +402,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"გსურთ წაშლილების გასუფთავება?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ამ მოქმედების გაუქმება ვეღარ მოხერხდება და ფაილების აღდგენა შეუძლებელი იქნება."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"წაშლილების გასუფთავება"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ფაილი წაშლილებშია"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ეს ფაილი თქვენს წაშლილებშია და მისი გახსნა შეუძლებელია. აღადგინეთ ის წაშლილებიდან, რომ მასზე წვდომა მიიღოთ."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ფაილის აღდგენა"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ამჟამად ხაზგარეშე რეჟიმში ხართ. ზოგიერთი ფაილი და ფუნქციონალობა მიუწვდომელია. სრული წვდომისთვის დაუკავშირდით ინტერნეტს."</string>
 </resources>

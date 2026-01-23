@@ -1168,16 +1168,15 @@ public class ActionHandlerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
-    public void testSendToApprovedDocHandler_success() {
+    public void testCreateApprovedHandlerIntent_success() {
         mFeatures.virtualFilesSharing = true;
         mEnv.selectionMgr.clearSelection();
         mEnv.selectDocument(TestEnv.FILE_VIRTUAL);
         ComponentName testComponent = new ComponentName("com.test", "com.test.Activity");
-        boolean result = mHandler.sendToApprovedDocHandler(testComponent);
+        Intent intent = mHandler.createApprovedHandlerIntent(testComponent);
 
-        assertTrue(result);
-        mActivity.assertActivityStarted(Intent.ACTION_SEND);
-        Intent intent = mActivity.startActivity.getLastValue();
+        assertNotNull(intent);
+        assertEquals(Intent.ACTION_SEND, intent.getAction());
         assertEquals(testComponent, intent.getComponent());
         // TODO: b/464388012 - Reference actual intent category when it's available.
         assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
@@ -1185,14 +1184,14 @@ public class ActionHandlerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
-    public void testSendToApprovedDocHandler_failure() {
+    public void testCreateApprovedHandlerIntent_failure() {
         mEnv.selectionMgr.clearSelection();
         mEnv.selectDocument(TestEnv.FILE_PARTIAL);
         ComponentName testComponent = new ComponentName("com.test", "com.test.Activity");
 
-        boolean result = mHandler.sendToApprovedDocHandler(testComponent);
+        Intent intent = mHandler.createApprovedHandlerIntent(testComponent);
 
-        assertFalse(result);
+        assertNull(intent);
         mActivity.startActivity.assertNotCalled();
     }
 

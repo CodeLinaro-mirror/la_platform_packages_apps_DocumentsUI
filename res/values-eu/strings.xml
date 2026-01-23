@@ -17,11 +17,16 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"Izena aldatu behar diozu"</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"Izenaren hasieran . duten fitxategiak ezkutatuta daude"</string>
+    <!-- no translation found for rename_invalid_character (5795828095376129943) -->
+    <skip />
     <string name="add_folder_name_error" msgid="6014615052491406810">"Karpetari izena jarri behar diozu"</string>
     <string name="files_label" msgid="771781190045103748">"Fitxategiak"</string>
     <string name="downloads_label" msgid="5462789470049501103">"Deskargak"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Ireki hemendik"</string>
@@ -56,6 +61,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Lortu informazioa"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Erakutsi fitxategi ezkutuak"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ez erakutsi fitxategi ezkutuak"</string>
+    <string name="option_show_summary_column" msgid="2877633662563512552">"Erakutsi laburpenaren zutabea"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"Ez erakutsi laburpenaren zutabea"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Ikusi <xliff:g id="SOURCE">%1$s</xliff:g> zerbitzuan"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Leiho berria"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Ebaki"</string>
@@ -75,6 +82,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Erakutsi hornitzailean"</string>
     <string name="button_back" msgid="1888621708934742182">"Atzera"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Erakutsi karpetan"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"Ireki zaborrontzia"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Ordenatu gabe"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Izena"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Laburpena"</string>
@@ -217,6 +225,8 @@
       <item quantity="one">Ez da ezabatu fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Ez da ezabatu fitxategi hau:}other{Ez dira ezabatu fitxategi hauek:}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{Ez da eraman fitxategi hau zakarrontzira:}other{Ez dira eraman fitxategi hauek zakarrontzira:}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{Ez da leheneratu fitxategi hau:}other{Ez dira leheneratu fitxategi hauek:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">Beste formatu batera bihurtu dira fitxategi hauek: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">Beste formatu batera bihurtu da fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
@@ -354,6 +364,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Pribatutasuna babesteko, aukeratu beste karpeta bat"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Sortu karpeta bat"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Bilatu gailu honetan"</string>
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"Bilatu"</string>
     <string name="search_results" msgid="7662182646512984171">"Bilaketa-emaitzak"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Garbitu testua"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Erroko karpeta"</string>
@@ -380,6 +391,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"Tamaina"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"Mota"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Aldatze-data"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"Ados"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"Ezezaguna"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Ezkutatu fitxategiaren aurrebista"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> fitxategiaren aurrebista-irudia"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Ezkutatu informazio-panela"</string>
@@ -390,12 +403,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Zaborrontzia hustu nahi duzu?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ezin da desegin ekintza, eta ezingo dira berreskuratu fitxategiak."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Hustu zaborrontzia"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Zaborrontziko fitxategia"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Fitxategia zaborrontzian dago eta ezin da ireki. Hura atzitzeko, lehenera ezazu zaborrontzitik."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Leheneratu fitxategia"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Ez zaude konektatuta. Fitxategi eta funtzio batzuk ez daude erabilgarri. Sarbide osoa izateko, konektatu Internetera."</string>
 </resources>

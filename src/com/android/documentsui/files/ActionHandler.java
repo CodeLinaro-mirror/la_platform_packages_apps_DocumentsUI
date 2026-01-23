@@ -153,6 +153,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 localState,
                 root,
                 this,
+                mDocs,
                 mDialogs::showFileOperationStatus,
                 mDragAndDropManager.getInvalidDestinations());
     }
@@ -172,6 +173,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 localState,
                 shortcut,
                 this,
+                mDocs,
                 mDialogs::showFileOperationStatus,
                 mDragAndDropManager.getInvalidDestinations());
     }
@@ -272,6 +274,18 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             mActionModeAddons.finishActionMode();
         }
         openContainerDocument(doc);
+    }
+
+    @Override
+    public void toggleFocusedItemSelection() {
+        String id = mFocusHandler.getFocusModelId();
+        if (id == null) {
+            // No-op.
+        } else if (mSelectionMgr.isSelected(id)) {
+            mSelectionMgr.deselect(id);
+        } else {
+            mSelectionMgr.select(id);
+        }
     }
 
     @Override
@@ -422,9 +436,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     }
 
     @Override
-    public boolean sendToApprovedDocHandler(ComponentName app) {
+    public @Nullable Intent createApprovedHandlerIntent(ComponentName handler) {
         if (!isUseApprovedDocumentHandlerEnabled()) {
-            return false;
+            return null;
         }
         Selection<String> selection = getSelectedOrFocused();
         final Intent intent = createApprovedHandlerIntent(selection);
@@ -433,16 +447,15 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             if (DEBUG) {
                 Log.d(TAG, "Cannot send to approved document handler, intent is null");
             }
-            return false;
+            return null;
         }
 
-        intent.setComponent(app);
+        intent.setComponent(handler);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (isDesktopFileHandlingFlagEnabled()) {
             intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         }
-        mActivity.startActivity(intent);
-        return true;
+        return intent;
     }
 
     @Override
@@ -765,6 +778,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
     private boolean launchToDownloads(Intent intent) {
         if (DownloadManager.ACTION_VIEW_DOWNLOADS.equals(intent.getAction())) {
+            if (isHomeScreenFilesFlagEnabled()) {
+                Uri uri =
+                        DocumentsContract.buildDocumentUri(
+                                Providers.AUTHORITY_STORAGE, Providers.DOWNLOAD_DOCUMENT_ID);
+                return launchToDocument(uri);
+            }
             Uri uri = DocumentsContract.buildRootUri(Providers.AUTHORITY_DOWNLOADS,
                     Providers.ROOT_ID_DOWNLOADS);
             loadRoot(uri, UserId.DEFAULT_USER);

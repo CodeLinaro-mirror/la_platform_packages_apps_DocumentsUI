@@ -138,6 +138,9 @@ public interface ActionHandler {
      */
     void deselectAllFiles();
 
+    /** Toggles the focused item's selection. Does nothing if no item is focused. */
+    void toggleFocusedItemSelection();
+
     void showCreateDirectoryDialog();
 
     void showPreview(DocumentInfo doc);
@@ -232,11 +235,11 @@ public interface ActionHandler {
     void switchLauncherIcon();
 
     /**
-     * Send the selected document(s) to the approved app.
+     * Creates an intent to be sent to the approved app.
      * @param app - The component name of an approved app to send the document(s) to..
-     * @return true if the send was successful, false otherwise.
+     * @return intent to be sent to the approved app.
      */
-    boolean sendToApprovedDocHandler(ComponentName app);
+    @Nullable Intent createApprovedHandlerIntent(ComponentName app);
 
     /**
      * Allow action handler to be initialized in a new scope.

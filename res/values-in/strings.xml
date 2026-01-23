@@ -17,11 +17,15 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"Anda perlu mengganti nama ini"</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"File yang memiliki . di awal namanya akan disembunyikan"</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"Karakter tidak valid: "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"Anda perlu menambahkan nama folder"</string>
     <string name="files_label" msgid="771781190045103748">"File"</string>
     <string name="downloads_label" msgid="5462789470049501103">"Download"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Buka dari"</string>
@@ -56,6 +60,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Dapatkan info"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Tampilkan file tersembunyi"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Jangan tampilkan file tersembunyi"</string>
+    <string name="option_show_summary_column" msgid="2877633662563512552">"Tampilkan kolom ringkasan"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"Jangan tampilkan kolom ringkasan"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Lihat di <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Jendela baru"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Potong"</string>
@@ -75,6 +81,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Tampilkan di provider"</string>
     <string name="button_back" msgid="1888621708934742182">"Kembali"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Tampilkan dalam folder"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"Buka sampah"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Tidak diurutkan"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nama"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Ringkasan"</string>
@@ -217,6 +224,8 @@
       <item quantity="one">File ini tidak dihapus: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{File ini tidak dihapus:}other{File ini tidak dihapus:}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{File ini tidak dipindahkan ke sampah:}other{File ini tidak dihapus ke folder sampah:}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{File ini tidak dipulihkan:}other{File ini tidak dipulihkan:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="other">File ini telah dikonversi ke format lain: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="one">File ini telah dikonversi ke format lain: <xliff:g id="LIST_0">%1$s</xliff:g></item>
@@ -354,6 +363,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Untuk melindungi privasi, pilih folder lain"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Buat folder baru"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Telusuri perangkat ini"</string>
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"Telusuri"</string>
     <string name="search_results" msgid="7662182646512984171">"Hasil penelusuran"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Hapus teks"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Folder root"</string>
@@ -380,6 +390,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"Ukuran"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"Jenis"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Tanggal diubah"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"Oke"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"Tidak diketahui"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Sembunyikan pratinjau file"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Pratinjau gambar <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Sembunyikan panel info"</string>
@@ -390,12 +402,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Kosongkan sampah?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Tindakan ini tidak dapat diurungkan, dan file tidak akan dapat dipulihkan lagi."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Kosongkan sampah"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"File di Sampah"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"File ini ada di Sampah dan tidak dapat dibuka. Pulihkan file tersebut dari sampah untuk mengaksesnya."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Pulihkan file"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Saat ini Anda offline. Beberapa file dan fungsi tidak tersedia. Hubungkan ke internet untuk akses penuh."</string>
 </resources>

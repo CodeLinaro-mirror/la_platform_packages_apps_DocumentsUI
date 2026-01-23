@@ -36,10 +36,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:layout_marginEnd="12dp"
         android:orientation="horizontal">
 
-         <FrameLayout
+        <FrameLayout
             android:id="@+id/icon_wrapper"
             android:layout_width="@dimen/list_item_icon_wrapper_size"
             android:layout_height="@dimen/list_item_icon_wrapper_size"
@@ -139,8 +138,8 @@
 
             <FrameLayout
                 android:id="@android:id/progress"
-                android:layout_width="@dimen/list_inline_sync_progress_icon_size"
-                android:layout_height="@dimen/list_inline_sync_progress_icon_size"
+                android:layout_width="@dimen/list_inline_circular_icon_size"
+                android:layout_height="@dimen/list_inline_circular_icon_size"
                 android:layout_gravity="bottom|end"
                 android:focusable="false"
                 android:visibility="gone"
@@ -160,6 +159,31 @@
                     android:scaleType="fitCenter"
                     android:indeterminate="true"
                     app:indicatorSize="@dimen/list_inline_sync_progress_indicator_size"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/progress_tick_icon"
+                android:layout_width="@dimen/list_inline_circular_icon_size"
+                android:layout_height="@dimen/list_inline_circular_icon_size"
+                android:layout_gravity="bottom|end"
+                android:visibility="gone"
+                android:focusable="false"
+                android:clickable="false">
+
+                <ImageView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_sync_circle_background_m3" />
+
+                <ImageView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_tick_m3" />
+
             </FrameLayout>
 
             <FrameLayout
@@ -203,6 +227,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginEnd="12dp"
             android:ellipsize="middle"
             android:singleLine="true"
             android:textAlignment="viewStart"
@@ -216,6 +241,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:visibility="gone"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle" />
 
@@ -224,6 +250,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle"/>
 
@@ -232,6 +259,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle"/>
 
@@ -240,6 +268,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2"
+        android:paddingHorizontal="@dimen/list_item_inner_padding"
         android:textAlignment="viewStart"
         style="@style/FileItemLabelStyle"/>
 

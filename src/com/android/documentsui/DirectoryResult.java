@@ -16,12 +16,11 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.base.DocumentInfo.getCursorString;
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.os.FileUtils;
-import android.provider.DocumentsContract;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -44,6 +43,7 @@ public class DirectoryResult implements AutoCloseable {
     private Cursor mCursor;
     private Set<String> mFileNames;
     private String[] mModelIds;
+    private Set<String> mSyncInProgressModelIds;
 
     /** The query used when searching that originated this search result. */
     private @Nullable String mQuery;
@@ -104,6 +104,10 @@ public class DirectoryResult implements AutoCloseable {
         return mFileNames;
     }
 
+    public Set<String> getSyncInProgressModelIds() {
+        return mSyncInProgressModelIds;
+    }
+
     /** Update the cursor and populate cursor-related fields. */
     public void setCursor(Cursor cursor) {
         mCursor = cursor;
@@ -111,6 +115,7 @@ public class DirectoryResult implements AutoCloseable {
         if (mCursor == null) {
             mFileNames = null;
             mModelIds = null;
+            mSyncInProgressModelIds = null;
         } else {
             loadDataFromCursor();
         }
@@ -122,6 +127,7 @@ public class DirectoryResult implements AutoCloseable {
         int cursorCount = mCursor.getCount();
         String[] modelIds = new String[cursorCount];
         Set<String> fileNames = new HashSet<>();
+        Set<String> syncInProgressModelIds = new HashSet<>();
         try {
             mCursor.moveToPosition(-1);
             for (int pos = 0; pos < cursorCount; ++pos) {
@@ -134,8 +140,13 @@ public class DirectoryResult implements AutoCloseable {
                 // ID is a unique string that can be used to identify the document referred to by
                 // the cursor. Prefix the ids with the authority to avoid collisions.
                 modelIds[pos] = ModelId.build(mCursor);
-                fileNames.add(
-                        getCursorString(mCursor, DocumentsContract.Document.COLUMN_DISPLAY_NAME));
+                DocumentInfo docInfo = DocumentInfo.fromDirectoryCursor(mCursor);
+                fileNames.add(docInfo.displayName);
+
+                if (isCloudFeaturesFlagEnabled()
+                        && (docInfo.hasUploadInProgress() || docInfo.hasDownloadInProgress())) {
+                    syncInProgressModelIds.add(modelIds[pos]);
+                }
             }
         } catch (Exception e) {
             Log.e(TAG, "Exception when moving cursor. Stale cursor?", e);
@@ -145,5 +156,6 @@ public class DirectoryResult implements AutoCloseable {
         // Model related data is only non-null when no error iterating through cursor.
         mModelIds = modelIds;
         mFileNames = fileNames;
+        mSyncInProgressModelIds = syncInProgressModelIds;
     }
 }

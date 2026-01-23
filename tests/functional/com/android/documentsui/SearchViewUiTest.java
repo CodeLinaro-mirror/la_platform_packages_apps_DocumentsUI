@@ -47,6 +47,7 @@ import static org.junit.Assert.fail;
 
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -58,6 +59,7 @@ import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -79,6 +81,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @LargeTest
@@ -400,9 +403,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
 
-        // Verify that that the location still shows "Everywhere".
-        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(
-                matches(withText(R.string.search_location_everywhere)));
+        // Verify that that the location shows the name of the new root.
+        bots.search
+                .findDropdownTrigger(R.id.search_location_trigger)
+                .check(matches(withText("Paging Root")));
 
         // Click location trigger, and check that the root folder option is updated to Downloads.
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
@@ -426,8 +430,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
-        onView(withId(R.id.search_last_modified_trigger)).check(matches(withEffectiveVisibility(
-                ViewMatchers.Visibility.GONE)));
+        onView(withId(R.id.search_last_modified_trigger))
+                .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
@@ -462,10 +466,13 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
-        // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
-        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
         device.waitForIdle();
+
+        // Repeat searching: it should still show last week modified option in recents.
         bots.search.doSearch("2");
+        // Click Everywhere, so that the recency choices are revealed.
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
         device.waitForIdle();
 
         bots.search
@@ -897,5 +904,126 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.findDocument(TestFilesRule.FILE_NAME_NO_RENAME).waitUntilGone(mTimeout);
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_NO_RENAME);
         bots.directory.assertDocumentsPresent(TestFilesRule.FILE_NAME_2);
+    }
+
+    /** Change the dark/light theme and wait for the device to settle. */
+    private void changeNightMode(String mode) {
+        try (ParcelFileDescriptor ignored =
+                InstrumentationRegistry.getInstrumentation()
+                        .getUiAutomation()
+                        .executeShellCommand("cmd uimode night " + mode)) {
+            // Use try-with-resources to auto-close the ParcelFileDescriptor and prevent a file
+            // descriptor leak. The command output is ignored.
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+    }
+
+    @Test
+    public void testSearchRetainsFocusOnConfigurationChange() throws UiObjectNotFoundException {
+        try {
+            changeNightMode("yes");
+            bots.search.expand();
+
+            changeNightMode("no");
+            bots.search.assertIsExpanded(true);
+        } finally {
+            changeNightMode("auto");
+        }
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testClickingRootAfterSearchListsRootsFiles() throws UiObjectNotFoundException {
+        // Verify that the files in the current root we expect to see later are here at the start.
+        bots.directory.assertDocumentsPresent(
+                TestFilesRule.FILE_NAME_1,
+                TestFilesRule.FILE_NAME_2,
+                TestFilesRule.FILE_NAME_NO_RENAME);
+        // Change to the Recent view and run a search. Any root would do, but we are certain
+        // Recent root exists.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        // Run any search, the results do not matter.
+        bots.search.doSearch("foo");
+        device.waitForIdle();
+        // Now change back to TEST_ROOT_0. This must result in a regular file listing.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        // Give the app time to list the directory.
+        device.waitForIdle();
+        bots.directory.assertDocumentsPresent(
+                TestFilesRule.FILE_NAME_1,
+                TestFilesRule.FILE_NAME_2,
+                TestFilesRule.FILE_NAME_NO_RENAME);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchV2LastModifiedOptionIsSticky() throws Exception {
+        // Enters a search query and checks that the search_last_modified_trigger shown "Any time"
+        // text.
+        bots.search.doSearch("query1");
+        device.waitForIdle();
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_any_time)));
+
+        // Then selects in the search_last_modified_menu the
+        // search_last_modified_7_days_option.
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_7_days);
+        device.waitForIdle();
+
+        // Next, it closes the search, and enters a new query.
+        bots.search.closeSearch();
+        device.waitForIdle();
+        bots.search.doSearch("query2");
+        device.waitForIdle();
+
+        // It then checks that the search_last_modified_7_days_options is selected.
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_7_days)));
+
+        // It closes the search again.
+        bots.search.closeSearch();
+        device.waitForIdle();
+
+        // It selects the Recent root.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+
+        // Enter the another search query and checks that the search_last_modified_trigger shows
+        // "Last month" text.
+        bots.search.doSearch("another query");
+        device.waitForIdle();
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_30_days)));
+
+        // Next the search changes the search_last_modified_menu to have last_modified_2_days
+        // option selected.
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_2_days);
+        device.waitForIdle();
+
+        // it closes the search.
+        bots.search.closeSearch();
+        device.waitForIdle();
+
+        // Then enters another search query and verifies that the search_last_modified_trigger
+        // shows search_last_modified_2_days string.
+        bots.search.doSearch("yet another query");
+        device.waitForIdle();
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_2_days)));
+
+        // Go back to Downloads and verify that we are back to Any time.
+        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        bots.search.doSearch("last query");
+        device.waitForIdle();
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_any_time)));
     }
 }

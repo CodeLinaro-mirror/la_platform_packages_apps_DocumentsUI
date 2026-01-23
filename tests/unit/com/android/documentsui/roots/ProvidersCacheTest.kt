@@ -86,7 +86,7 @@ class ProvidersCacheTest {
             .thenReturn(arrayOf(parentDocIdsArray[0]))
         whenever(resources.getStringArray(R.array.shortcut_titles))
             .thenReturn(arrayOf(titlesArray[0]))
-        whenever(resources.getStringArray(R.array.shortcut_localized_titles))
+        whenever(resources.getStringArray(R.array.shortcut_folder_names))
             .thenReturn(arrayOf(localizedTitlesArray[0]))
         whenever(iconTypedArray.length()).thenReturn(1)
 
@@ -116,7 +116,7 @@ class ProvidersCacheTest {
         whenever(resources.getStringArray(R.array.shortcut_parent_doc_ids))
             .thenReturn(parentDocIdsArray)
         whenever(resources.getStringArray(R.array.shortcut_titles)).thenReturn(titlesArray)
-        whenever(resources.getStringArray(R.array.shortcut_localized_titles))
+        whenever(resources.getStringArray(R.array.shortcut_folder_names))
             .thenReturn(localizedTitlesArray)
         whenever(iconTypedArray.length()).thenReturn(2)
 
@@ -156,7 +156,7 @@ class ProvidersCacheTest {
         whenever(resources.getStringArray(R.array.shortcut_parent_doc_ids))
             .thenReturn(parentDocIdsArray)
         whenever(resources.getStringArray(R.array.shortcut_titles)).thenReturn(titlesArray)
-        whenever(resources.getStringArray(R.array.shortcut_localized_titles))
+        whenever(resources.getStringArray(R.array.shortcut_folder_names))
             .thenReturn(localizedTitlesArray)
         whenever(iconTypedArray.length()).thenReturn(2)
 

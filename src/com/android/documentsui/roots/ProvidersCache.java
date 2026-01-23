@@ -359,8 +359,8 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
                 context.getResources().getStringArray(R.array.shortcut_parent_doc_ids));
         List<String> folderTitles = List.of(
                 context.getResources().getStringArray(R.array.shortcut_titles));
-        List<String> localizedTitles = List.of(
-                context.getResources().getStringArray(R.array.shortcut_localized_titles));
+        List<String> localizedTitles =
+                List.of(context.getResources().getStringArray(R.array.shortcut_folder_names));
         TypedArray shortcutIcons =
                 context.getResources().obtainTypedArray(R.array.shortcut_icons);
 
@@ -670,6 +670,11 @@ public class ProvidersCache implements ProvidersAccess, LookupApplicationName {
         }
     }
 
+    @Override
+    public @Nullable ProviderInfo getProviderInfo(UserId userId, String authority) {
+        return userId.getPackageManager(mContext)
+                .resolveContentProvider(authority, PackageManager.GET_META_DATA);
+    }
 
     @GuardedBy("mLock")
     private @Nullable ShortcutInfo generateShortcut(

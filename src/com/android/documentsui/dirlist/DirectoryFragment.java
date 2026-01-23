@@ -518,6 +518,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                             mInjector.actions,
                             mActivity.getDisplayState(),
                             mInjector.dialogs,
+                            mActivity.getDocumentsAccess(),
                             (View v) -> {
                                 return getModelId(v) != null;
                             },
@@ -611,13 +612,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mRecView.setAdapter(mAdapter);
 
-        mLayout = new GridLayoutManager(getContext(), mColumnCount) {
-            @Override
-            public void onLayoutCompleted(RecyclerView.State state) {
-                super.onLayoutCompleted(state);
-                mFocusManager.onLayoutCompleted();
-            }
-        };
+        // When mFocusManager.onLayoutCompleted() is called inside the GridLayoutManager's
+        // onLayoutCompleted(), the newly added document (e.g.  after new folder creation)
+        // hasn't appeared in the list yet, which makes focusing on the document fail. Instead, we
+        // need to call it after the model update (e.g. ModelUpdateListener below).
+        mLayout =
+                isUseMaterial3FlagEnabled()
+                        ? new GridLayoutManager(getContext(), mColumnCount)
+                        : new GridLayoutManager(getContext(), mColumnCount) {
+                            @Override
+                            public void onLayoutCompleted(RecyclerView.State state) {
+                                super.onLayoutCompleted(state);
+                                mFocusManager.onLayoutCompleted();
+                            }
+                        };
 
         SpanSizeLookup lookup = mAdapter.createSpanSizeLookup();
         if (lookup != null) {
@@ -1263,15 +1271,25 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         mSelectionMgr.copySelection(selection);
 
         final int id = item.getItemId();
-        if ((isDesktopFileHandlingFlagEnabled() && id == getRes(R.id.dir_menu_open))
-                || (isZipNgFlagEnabled() && (id == getRes(R.id.dir_menu_browse) || id == getRes(
-                R.id.action_menu_browse)))) {
+        if (isDesktopFileHandlingFlagEnabled() && id == getRes(R.id.dir_menu_open)) {
             // The "Open" menu item is displayed in desktop mode.
-            // The "Browse" menu item is displayed for supported archives in advanced ZIP mode.
-            // These menu items behave the same as a double click on the matching document which
-            // is handled by onItemActivated but since onItemActivated requires a RecyclerView
-            // ItemDetails, we're using viewDocument that takes a Selection.
+            // Open behaves the same as a double click on the matching document which is handled by
+            // onItemActivated but since onItemActivated requires a RecyclerView ItemDetails, we're
+            // using viewDocument that takes a Selection.
             viewDocument(selection);
+            return true;
+        } else if (isZipNgFlagEnabled()
+                && (id == getRes(R.id.dir_menu_browse) || id == getRes(R.id.action_menu_browse))) {
+            // Handles "in-place" zip file browsing.
+            viewDocument(selection);
+            if (isSearchV2Enabled()) {
+                // The selected item could have had the path shown in the breadcrumb. Hide it, as
+                // viewing document opens the directory path in another breadcrumb.
+                BreadcrumbController controller = mInjector.getBreadcrumbController();
+                if (controller != null) {
+                    hideSearchResultBreadcrumb(controller);
+                }
+            }
             return true;
         } else if (id == getRes(R.id.action_menu_select) || id == getRes(R.id.dir_menu_open)) {
             // Note: this code path is never executed for `dir_menu_open`. The menu item is always
@@ -1964,6 +1982,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 } else {
                     mActivity.updateHeaderTitle();
                 }
+            }
+            if (isUseMaterial3FlagEnabled()) {
+                mRecView.post(mFocusManager::onLayoutCompleted);
             }
         }
     }

@@ -20,7 +20,7 @@
 
     <item android:id="@android:id/mask">
         <shape>
-            <corners android:radius="@dimen/doc_header_sort_icon_radius" />
+            <corners android:radius="@dimen/list_header_cell_radius" />
             <!-- The color here doesn't matter, it's just being used as a mask. -->
             <solid android:color="@android:color/white" />
         </shape>
@@ -28,17 +28,13 @@
 
     <item>
         <selector>
-            <item android:state_focused="true">
+            <item
+                android:state_focused="true"
+                android:state_window_focused="true">
                 <layer-list>
                     <item>
                         <shape>
-                            <corners android:radius="@dimen/doc_header_sort_icon_radius" />
-                            <solid android:color="?attr/colorSurfaceDim" />
-                        </shape>
-                    </item>
-                    <item>
-                        <shape>
-                            <corners android:radius="@dimen/doc_header_sort_icon_radius" />
+                            <corners android:radius="@dimen/list_header_cell_radius" />
                             <stroke
                                 android:width="@dimen/focus_ring_width"
                                 android:color="?attr/colorSecondary" />
@@ -46,27 +42,17 @@
                     </item>
                 </layer-list>
             </item>
-            <item android:state_hovered="true">
+            <item
+                android:state_hovered="true"
+                android:state_window_focused="true">
                 <layer-list>
                     <item>
-                        <shape>
-                            <corners android:radius="@dimen/doc_header_sort_icon_radius" />
-                            <solid android:color="?attr/colorSurfaceDim" />
-                        </shape>
-                    </item>
-                    <item>
-                        <shape android:tint="@color/overlay_hover_color_percentage">
-                            <corners android:radius="@dimen/doc_header_sort_icon_radius" />
-                            <solid android:color="?attr/colorSurfaceDim" />
+                        <shape android:tint="?attr/colorOnSurface">
+                            <corners android:radius="@dimen/list_header_cell_radius" />
+                            <solid android:color="@color/overlay_hover_color_percentage" />
                         </shape>
                     </item>
                 </layer-list>
-            </item>
-            <item>
-                <shape>
-                    <corners android:radius="@dimen/doc_header_sort_icon_radius" />
-                    <solid android:color="?attr/colorSurfaceDim" />
-                </shape>
             </item>
         </selector>
     </item>

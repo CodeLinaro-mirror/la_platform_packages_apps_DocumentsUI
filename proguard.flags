@@ -350,6 +350,11 @@
   public void removeDrawerListener(androidx.drawerlayout.widget.DrawerLayout$DrawerListener);
 }
 
+-keep class android.content.Context {
+  public android.content.pm.PackageManager getPackageManager();
+}
+-keep class com.android.documentsui.base.UserId { *; }
+
 -keep class com.android.documentsui.BaseActivity {
   public int getLayoutId();
 }
@@ -376,3 +381,5 @@
   public <init>(java.lang.String, int, int, java.lang.String, boolean);
 }
 -keep class com.android.documentsui.sidebar.NavRailShortcutItem { *; }
+-keep class com.android.documentsui.approveddochandlers.ApprovedDocHandlers { *; }
+-keep class com.android.documentsui.approveddochandlers.ApprovedDocHandler { *; }

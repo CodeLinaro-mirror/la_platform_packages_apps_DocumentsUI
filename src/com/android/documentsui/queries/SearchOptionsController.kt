@@ -42,9 +42,6 @@ class SearchOptionsController(private val container: View?) {
     // The value of currently selected options. Initialized to sensible defaults.
     private var lastModifiedOption: LastModifiedOption = LastModifiedOption.ANY_TIME
 
-    // Stores the last modified option value, so that it can be restored if not changed by the user.
-    private var storedLastModifiedOption: LastModifiedOption = LastModifiedOption.ANY_TIME
-
     private var fileTypeOption: FileTypeOption = FileTypeOption.ANY_TYPE
     private var locationOption: SearchLocationOption = SearchLocationOption.ROOT_FOLDER
 
@@ -78,9 +75,9 @@ class SearchOptionsController(private val container: View?) {
 
     private fun getSelectedMenuOption(@MenuRes menuId: Int): Int {
         return when (menuId) {
-            R.menu.search_location_menu -> locationOption.value
-            R.menu.search_last_modified_menu -> lastModifiedOption.value
-            R.menu.search_file_type_menu -> fileTypeOption.value
+            getRes(R.menu.search_location_menu) -> locationOption.value
+            getRes(R.menu.search_last_modified_menu) -> lastModifiedOption.value
+            getRes(R.menu.search_file_type_menu) -> fileTypeOption.value
             else -> throw IllegalArgumentException("Unexpected menu ID $menuId")
         }
     }
@@ -114,8 +111,8 @@ class SearchOptionsController(private val container: View?) {
     }
 
     /**
-     * Updates the location option based on the given resource ID. Returns true, if the option has
-     * been changed. Otherwise, returns false.
+     * Updates the location option based on the given resource ID, and updates the last modified
+     * chip. Returns true, if the option has been changed. Otherwise, returns false.
      */
     fun onLocationSelected(locationId: Int): Boolean {
         val selectedOption = searchLocationOptionFor(locationId) ?: return false
@@ -123,21 +120,18 @@ class SearchOptionsController(private val container: View?) {
             return false
         }
         locationOption = selectedOption
-        updateLastModifiedChip(locationOption == SearchLocationOption.ROOT_FOLDER)
+        updateLastModifiedChip()
         return true
     }
 
     /**
-     * Updates the visibility of the last modified trigger. If we are in the Recent view and the
-     * location is Everywhere the last modified* trigger should be shown. Otherwise, it should be
-     * hidden. If the root is not Recent then the last modified trigger should become visible.
+     * Updates the text shown on the last modified chip to correspond to the currently set
+     * lastModifiedOption. This is needed as we update the last modified option each time the root
+     * is changed, and not only each time the user selects a new last modified option dropdown.
      */
-    private fun updateLastModifiedChip(searchingTopDir: Boolean) {
+    private fun updateLastModifiedChip() {
         val chip = container?.findViewById<Chip>(getRes(R.id.search_last_modified_trigger))
-        if (chip != null) {
-            chip.visibility = if (isInRecentRoot() && searchingTopDir) View.GONE else View.VISIBLE
-            chip.text = container.resources.getString(lastModifiedOption.textId)
-        }
+        chip?.text = container.resources.getString(lastModifiedOption.textId)
     }
 
     /**
@@ -163,9 +157,6 @@ class SearchOptionsController(private val container: View?) {
             return false
         }
         lastModifiedOption = selectedOption
-        // If last modified option is selected via UI set the previous value to the current value.
-        // This way, when "restoring" it, we restore user selected value.
-        storedLastModifiedOption = selectedOption
         return true
     }
 
@@ -225,32 +216,29 @@ class SearchOptionsController(private val container: View?) {
     }
 
     /**
-     * Shows the search dropdown options bar. The root must be the root to which search is limited,
-     * if the user selects current root search, rather than everywhere search.
-     *
-     * @param root The current root in the directory tree.
+     * Shows the search dropdown options bar. Before the dropdowns are made visible, their state and
+     * text is adjusted based on the root set in the #setRoot() method (which must be called before
+     * the show() method is called).
      */
-    fun show(root: RootInfo?) {
+    fun show() {
         if (container == null) {
             return
         }
-        currentRoot = root
-        if (isInRecentRoot()) {
-            // If the user goes into in the Recents view and the last modified option has not been
-            // explicitly set by the user, set the last modified option to 30 days to match the
-            // Recent view defaults.
-            if (lastModifiedOption == LastModifiedOption.ANY_TIME) {
-                lastModifiedOption = LastModifiedOption.LAST_30_DAYS
-            }
-            locationOption = SearchLocationOption.ROOT_FOLDER
+        // If the locationOption is the top folder, update the location trigger text.
+        val chip = container.findViewById<Chip>(getRes(R.id.search_location_trigger))
+        if (chip != null && locationOption == SearchLocationOption.ROOT_FOLDER) {
+            chip.text = getRootFolderFallbackText(container.context)
         }
-        updateUiForRoot(root)
+        updateLastModifiedChip()
+        val typeChip = container.findViewById<Chip>(getRes(R.id.search_file_type_trigger))
+        if (typeChip != null) {
+            typeChip.text = container.resources.getString(fileTypeOption.textId)
+        }
         container.visibility = View.VISIBLE
     }
 
     /** Hides the dropdown bar by making it GONE. */
     fun hide() {
-        lastModifiedOption = storedLastModifiedOption
         container?.visibility = View.GONE
     }
 
@@ -262,34 +250,39 @@ class SearchOptionsController(private val container: View?) {
         return currentRoot?.title ?: context.getString(R.string.search_location_root_folder)
     }
 
-    /** @return A safe version for checking if the current location is the Recents view. */
-    private fun isInRecentRoot(): Boolean {
-        return currentRoot?.isRecents ?: false
-    }
-
     /**
-     * Alters the default UI based on the current root. If this method was called from the show()
-     * method, it adjusts the defaults
+     * Records a root on which search options act. This method does nothing if the search option
+     * container is not set up (pre V2 search), or the set root is the same as the current root. The
+     * latter is done to prevent resetting of the locationOption, which is set to the root folder
+     * (top folder) the first time the root is changed. This method always returns the currently set
+     * location option, so that the caller can keep in sync with what is known to this controller.
+     *
+     * @return The location option for the set root.
      */
-    fun updateUiForRoot(root: RootInfo?) {
+    fun setRoot(root: RootInfo?): SearchLocationOption {
         if (container == null) {
-            return
+            return locationOption
+        }
+        if (currentRoot == root) {
+            // If this root was already set, do nothing. We wish to react to the first setting of
+            // a new root by adjusting location and last modified options. However, if the user
+            // changes the location option we get another call to setRoot(). Yet in such a case we
+            // must not adjust the location, but rather rely on the user set value.
+            return locationOption
         }
         currentRoot = root
-        val searchingTopDir = locationOption == SearchLocationOption.ROOT_FOLDER
-        if (searchingTopDir) {
-            // If the locationOption is the top folder, updated the location trigger text.
-            val chip = container.findViewById<Chip>(R.id.search_location_trigger)
-            if (chip != null) {
-                chip.text = getRootFolderFallbackText(container.context)
-            }
-        }
-        updateLastModifiedChip(searchingTopDir)
-        val typeChip = container.findViewById<Chip>(getRes(R.id.search_file_type_trigger))
-        if (typeChip != null) {
-            typeChip.text = container.resources.getString(fileTypeOption.textId)
-        }
+        locationOption = SearchLocationOption.ROOT_FOLDER
+        lastModifiedOption = getLastModifiedForRoot(root)
+        return locationOption
     }
+
+    /** Returns the starting last modified option for the given root. */
+    private fun getLastModifiedForRoot(root: RootInfo?) =
+        if (root == null || !root.isRecents) {
+            LastModifiedOption.ANY_TIME
+        } else {
+            LastModifiedOption.LAST_30_DAYS
+        }
 
     /** Returns whether or not this controller is visible. */
     fun isVisible(): Boolean {

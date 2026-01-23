@@ -19,6 +19,12 @@
     <!-- Error when rename does not have any string-->
     <string name="missing_rename_error">You need to rename this</string>
 
+    <!-- Error when rename does not have a string prior to file extension -->
+    <string name="hidden_file_rename_warning">Files with "." at the beginning of their name are hidden</string>
+
+    <!-- Error when an invalid character is entered when renaming a file -->
+    <string name="rename_invalid_character">"Invalid character: "</string>
+
     <!-- Error to create new folder when name is not added -->
     <string name="add_folder_name_error">You need to add a folder name</string>
 
@@ -158,6 +164,8 @@
     <string name="button_back">Back</string>
     <!-- Button label that navigates to the destination folder of a copy/move. -->
     <string name="button_show_in_folder">Show in folder</string>
+    <!-- Button label that navigates to the trash page. -->
+    <string name="button_open_trash">Open trash</string>
 
     <!-- A string used to show user that currently documents are not sorted in any given order. [CHAR_LIMIT=30] -->
     <string name="not_sorted">Not sorted</string>
@@ -562,6 +570,21 @@
         =1 {This file wasn\u2019t deleted:}
         other {These files weren\u2019t deleted:}
     }</string>
+
+    <!-- Error dialog title shown by the Android File Manager when one or more files
+         failed to be trashed.  [CHAR_LIMIT=48] -->
+    <string name="trash_failure_alert_title">{count, plural,
+        =1 {This file wasn\u2019t trashed:}
+        other {These files weren\u2019t trashed:}
+    }</string>
+
+    <!-- Error dialog title shown by the Android File Manager when one or more files
+         failed to be restored.  [CHAR_LIMIT=48] -->
+    <string name="restore_from_trash_failure_alert_title">{count, plural,
+        =1 {This file wasn\u2019t restored:}
+        other {These files weren\u2019t restored:}
+    }</string>
+
 
     <!-- Contents of the copying warning dialog due to converted files. [CHAR LIMIT=64] -->
     <plurals name="copy_converted_warning_content">

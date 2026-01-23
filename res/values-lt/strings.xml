@@ -17,11 +17,15 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="missing_rename_error" msgid="9098952207447981103">"Turite tai pervardyti"</string>
+    <string name="hidden_file_rename_warning" msgid="5427365657393208836">"Failai su . pavadinimo pradžioje yra paslėpti"</string>
+    <string name="rename_invalid_character" msgid="5795828095376129943">"Netinkamas simbolis: "</string>
     <string name="add_folder_name_error" msgid="6014615052491406810">"Turite pridėti aplanko pavadinimą"</string>
     <string name="files_label" msgid="771781190045103748">"Failai"</string>
     <string name="downloads_label" msgid="5462789470049501103">"Atsisiuntimai"</string>
     <!-- no translation found for app_label (8089292432455111409) -->
     <skip />
+    <string name="summary_consent_title" msgid="649526095415341516"></string>
+    <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Atidaryti iš"</string>
@@ -56,6 +60,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Gauti informacijos"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Rodyti paslėptus failus"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Nerodyti paslėptų failų"</string>
+    <string name="option_show_summary_column" msgid="2877633662563512552">"Rodyti suvestinės stulpelį"</string>
+    <string name="option_hide_summary_column" msgid="2195115533636850442">"Nerodyti suvestinės stulpelio"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Žr. <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Naujas langas"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Iškirpti"</string>
@@ -75,6 +81,7 @@
     <string name="button_show_provider" msgid="6905880493806292753">"Rodyti naudojant teikėjo programą"</string>
     <string name="button_back" msgid="1888621708934742182">"Atgal"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"Rodyti aplanke"</string>
+    <string name="button_open_trash" msgid="8152584341121216006">"Atidaryti šiukšliadėžę"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nerūšiuota"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Pavadinimas"</string>
     <string name="sort_dimension_summary" msgid="7724534446881397860">"Suvestinė"</string>
@@ -237,6 +244,8 @@
       <item quantity="other">Šie failai nebuvo ištrinti: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="delete_failure_alert_title" msgid="1416471664552009873">"{count,plural, =1{Šis failas nebuvo ištrintas:}one{Šie failai nebuvo ištrinti:}few{Šie failai nebuvo ištrinti:}many{Šie failai nebuvo ištrinti:}other{Šie failai nebuvo ištrinti:}}"</string>
+    <string name="trash_failure_alert_title" msgid="5133847817235721185">"{count,plural, =1{Šis failas nebuvo perkeltas į šiukšliadėžę:}one{Šie failai nebuvo perkelti į šiukšliadėžę:}few{Šie failai nebuvo perkelti į šiukšliadėžę:}many{Šie failai nebuvo perkelti į šiukšliadėžę:}other{Šie failai nebuvo perkelti į šiukšliadėžę:}}"</string>
+    <string name="restore_from_trash_failure_alert_title" msgid="8539033885115121134">"{count,plural, =1{Šis failas nebuvo atkurtas:}one{Šie failai nebuvo atkurti:}few{Šie failai nebuvo atkurti:}many{Šie failai nebuvo atkurti:}other{Šie failai nebuvo atkurti:}}"</string>
     <plurals name="copy_converted_warning_content" formatted="false" msgid="7433742181712126588">
       <item quantity="one">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
       <item quantity="few">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
@@ -390,6 +399,7 @@
     <string name="directory_blocked_header_subtitle" msgid="2829150911849033408">"Kad apsaugotumėte privatumą, pasirinkite kitą aplanką"</string>
     <string name="create_new_folder_button" msgid="8859613309559794890">"Kurti naują aplanką"</string>
     <string name="search_bar_hint" msgid="146031513183888721">"Ieškoti šiame įrenginyje"</string>
+    <string name="search_bar_generic_hint" msgid="8923500515355253888">"Paieška"</string>
     <string name="search_results" msgid="7662182646512984171">"Paieškos rezultatai"</string>
     <string name="search_bar_clear" msgid="2072000748823434188">"Išvalyti tekstą"</string>
     <string name="search_location_root_folder" msgid="4280523560213522303">"Šakninis aplankas"</string>
@@ -416,6 +426,8 @@
     <string name="peek_metadata_size" msgid="2377426288276139988">"Dydis"</string>
     <string name="peek_metadata_type" msgid="1386923517471758392">"Tipas"</string>
     <string name="peek_metadata_date_modified" msgid="5403086549396155362">"Keitimo data"</string>
+    <string name="get_info_positive_button" msgid="667388202590744953">"Gerai"</string>
+    <string name="get_info_unknown_file_type" msgid="7976646447316381912">"Nežinoma"</string>
     <string name="a11y_peek_navigation_icon" msgid="6692873662104342476">"Slėpti failo peržiūrą"</string>
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"„<xliff:g id="FILENAME">%s</xliff:g>“ vaizdo peržiūra"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Slėpti informacijos skydelį"</string>
@@ -426,12 +438,8 @@
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Išvalyti šiukšliadėžę?"</string>
     <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Šio veiksmo negalima anuliuoti, o failų nebebus galima atkurti."</string>
     <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Išvalyti šiukšliadėžę"</string>
-    <!-- no translation found for file_open_in_trash_dialog_title (593884948256127339) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_message (4367068916517352151) -->
-    <skip />
-    <!-- no translation found for file_open_in_trash_dialog_restore_action_button (4265030988869676058) -->
-    <skip />
-    <!-- no translation found for you_are_offline_banner_message (4188603129472293852) -->
-    <skip />
+    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Failas šiukšliadėžėje"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Šis failas yra šiukšliadėžėje ir jo negalima atidaryti. Atkurkite jį iš šiukšliadėžės, kad galėtumėte pasiekti."</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Atkurti failą"</string>
+    <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Šiuo metu esate neprisijungę. Kai kurie failai ir funkcijos nepasiekiami. Prisijunkite prie interneto, kad gautumėte visateisę prieigą."</string>
 </resources>

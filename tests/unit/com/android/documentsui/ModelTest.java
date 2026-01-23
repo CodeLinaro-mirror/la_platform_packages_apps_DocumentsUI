@@ -16,6 +16,8 @@
 
 package com.android.documentsui;
 
+import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
@@ -28,6 +30,7 @@ import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.base.DocumentInfo;
+import com.android.documentsui.base.UserId;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.testing.TestEventListener;
 import com.android.documentsui.testing.TestFeatures;
@@ -36,42 +39,40 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ModelTest {
 
     private static final int ITEM_COUNT = 10;
+    private static final int USER_ID = 0;
     private static final String AUTHORITY = "test_authority";
 
-    private static final String[] COLUMNS = new String[]{
-        RootCursorWrapper.COLUMN_AUTHORITY,
-        Document.COLUMN_DOCUMENT_ID,
-        Document.COLUMN_FLAGS,
-        Document.COLUMN_DISPLAY_NAME,
-        Document.COLUMN_SIZE,
-        Document.COLUMN_LAST_MODIFIED,
-        Document.COLUMN_MIME_TYPE
-    };
+    private static final ArrayList<String> COLUMNS =
+            new ArrayList<>(
+                    Arrays.asList(
+                            RootCursorWrapper.COLUMN_USER_ID,
+                            RootCursorWrapper.COLUMN_AUTHORITY,
+                            Document.COLUMN_DOCUMENT_ID,
+                            Document.COLUMN_FLAGS,
+                            Document.COLUMN_DISPLAY_NAME,
+                            Document.COLUMN_SIZE,
+                            Document.COLUMN_LAST_MODIFIED,
+                            Document.COLUMN_MIME_TYPE));
 
-    private static final String[] NAMES = new String[] {
-            "4",
-            "foo",
-            "1",
-            "bar",
-            "*(Ljifl;a",
-            "0",
-            "baz",
-            "2",
-            "3",
-            "%$%VD"
-        };
+    private static final String[] NAMES =
+            new String[] {"4", "foo", "1", "bar", "*(Ljifl;a", "0", "baz", "2", "3", "%$%VD"};
 
     private Cursor cursor;
     private Model model;
     private TestFeatures features;
+    private Set<String> mIdsForItemsWithSyncInProgress = new HashSet<>();
 
     @Before
     public void setUp() {
@@ -79,9 +80,13 @@ public class ModelTest {
 
         Random rand = new Random();
 
-        MatrixCursor c = new MatrixCursor(COLUMNS);
+        if (isCloudFeaturesFlagEnabled()) {
+            COLUMNS.add(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS);
+        }
+        MatrixCursor c = new MatrixCursor(COLUMNS.toArray(new String[0]));
         for (int i = 0; i < ITEM_COUNT; ++i) {
             MatrixCursor.RowBuilder row = c.newRow();
+            row.add(RootCursorWrapper.COLUMN_USER_ID, USER_ID);
             row.add(RootCursorWrapper.COLUMN_AUTHORITY, AUTHORITY);
             row.add(Document.COLUMN_DOCUMENT_ID, Integer.toString(i));
             row.add(Document.COLUMN_FLAGS, Document.FLAG_SUPPORTS_DELETE);
@@ -89,6 +94,28 @@ public class ModelTest {
             // to actually do something.
             row.add(Document.COLUMN_DISPLAY_NAME, NAMES[i]);
             row.add(Document.COLUMN_SIZE, rand.nextInt());
+            if (isCloudFeaturesFlagEnabled()) {
+                String modelId = ModelId.build(UserId.of(USER_ID), AUTHORITY, Integer.toString(i));
+                // Set 2 items (0 and 1) to have a sync in progress.
+                if (i == 0) {
+                    // Item 0 is uploading.
+                    row.add(
+                            DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS);
+                    mIdsForItemsWithSyncInProgress.add(modelId);
+                } else if (i == 1) {
+                    // Item 1 is downloading.
+                    row.add(
+                            DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS);
+                    mIdsForItemsWithSyncInProgress.add(modelId);
+                } else if (i == 2) {
+                    // Item 1 is available locally.
+                    row.add(
+                            DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS,
+                            DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY);
+                }
+            }
         }
         cursor = c;
 
@@ -111,8 +138,8 @@ public class ModelTest {
     // Tests multiple authorities with clashing document IDs.
     @Test
     public void testModelIdIsUnique() {
-        MatrixCursor cIn1 = new MatrixCursor(COLUMNS);
-        MatrixCursor cIn2 = new MatrixCursor(COLUMNS);
+        MatrixCursor cIn1 = new MatrixCursor(COLUMNS.toArray(new String[0]));
+        MatrixCursor cIn2 = new MatrixCursor(COLUMNS.toArray(new String[0]));
 
         // Make two sets of items with the same IDs, under different authorities.
         final String AUTHORITY0 = "auth0";
@@ -180,5 +207,10 @@ public class ModelTest {
         model.update(result);
 
         assertEquals(0, model.getItemCount());
+    }
+
+    @Test
+    public void testGetSyncInProgressIds() {
+        assertEquals(mIdsForItemsWithSyncInProgress, model.getSyncInProgressModelIds());
     }
 }

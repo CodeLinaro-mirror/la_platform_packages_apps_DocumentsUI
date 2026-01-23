@@ -282,7 +282,8 @@ final class GridDocumentHolder extends DocumentHolder {
      * @param modelId The model ID of the item.
      */
     @Override
-    public void bind(DocumentInfo doc, String modelId, @Nullable String summary) {
+    public void bind(
+            DocumentInfo doc, String modelId, @Nullable String summary, boolean justFinishedSync) {
         mModelId = modelId;
         mDoc = doc;
 
@@ -339,7 +340,7 @@ final class GridDocumentHolder extends DocumentHolder {
                 }
                 mDetails.setText(docSummary);
             } else {
-                if (mDoc.lastModified == -1) {
+                if ((isUseMaterial3FlagEnabled() && mDoc.isDirectory()) || mDoc.lastModified <= 0) {
                     if (isUseMaterial3FlagEnabled()) {
                         mDate.setVisibility(View.GONE);
                     } else {
@@ -365,6 +366,6 @@ final class GridDocumentHolder extends DocumentHolder {
             mBullet.setVisibility(View.GONE);
         }
 
-        bindSyncIcons(mDoc);
+        bindSyncIcons(mDoc, justFinishedSync);
     }
 }
