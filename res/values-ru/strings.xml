@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Включить"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Больше не спрашивать"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Не сейчас"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Открыть"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Список"</string>
     <string name="menu_search" msgid="1876699106790719849">"Найти"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Настройки хранилища"</string>
+    <string name="manage_device" msgid="329180710072251010">"Настройка устройства"</string>
     <string name="menu_open" msgid="9092138100049759315">"Открыть"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Открыть с помощью"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Открыть в новом окне"</string>
     <string name="menu_save" msgid="5195367497138965168">"Сохранить"</string>
     <string name="menu_share" msgid="4307140947108068356">"Поделиться"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Удалить"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Удалить навсегда"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Удалить навсегда"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Переместить в корзину"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Восстановить"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Выбрать все"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Сведения о файле"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Показывать скрытые файлы"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Не показывать скрытые файлы"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Показать столбец сводки"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Не показывать столбец сводки"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Показать столбец описания"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Скрыть столбец описания"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Открыть в приложении \"<xliff:g id="SOURCE">%1$s</xliff:g>\""</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Новое окно"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Вырезать"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Открыть корзину"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Документы не отсортированы"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Имя"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Сведения"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Описание"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Тип"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Размер"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Изменено"</string>
@@ -432,14 +436,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Предварительный просмотр изображения \"<xliff:g id="FILENAME">%s</xliff:g>\""</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Скрыть информационную панель"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Показать информационную панель"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Корзина пуста"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Файлы автоматически удаляются через 30 дней после перемещения в корзину."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Очистить корзину"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Корзина пуста"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Объекты автоматически удаляются через 30 дней после перемещения в корзину."</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Очистить корзину"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Очистить корзину?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Это действие нельзя отменить. Файлы будут удалены безвозвратно."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Очистить корзину"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Файл в корзине"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Этот файл нельзя открыть, так как он находится в корзине. Чтобы получить к нему доступ, восстановите его."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Восстановить файл"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Все объекты в корзине будут удалены навсегда. Отменить это действие нельзя."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Удалить навсегда"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Объект находится в корзине}one{Объекты находятся в корзине}few{Объекты находятся в корзине}many{Объекты находятся в корзине}other{Объекты находятся в корзине}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Чтобы получить доступ к этому объекту, восстановите его или перетащите из корзины.}one{Чтобы получить доступ к этим объектам, восстановите их или перетащите из корзины.}few{Чтобы получить доступ к этим объектам, восстановите их или перетащите из корзины.}many{Чтобы получить доступ к этим объектам, восстановите их или перетащите из корзины.}other{Чтобы получить доступ к этим объектам, восстановите их или перетащите из корзины.}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Восстановить"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Вы офлайн. Некоторые файлы и функции недоступны. Для полного доступа подключитесь к интернету."</string>
 </resources>

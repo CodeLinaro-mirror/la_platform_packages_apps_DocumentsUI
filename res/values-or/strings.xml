@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"ଚାଲୁ କରନ୍ତୁ"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"ମୋତେ ପୁଣି ପଚାରନ୍ତୁ ନାହିଁ"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"ବର୍ତ୍ତମାନ ନୁହେଁ"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"ଏଥିରୁ ଖୋଲନ୍ତୁ"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"ତାଲିକା ଭ୍ୟୁ"</string>
     <string name="menu_search" msgid="1876699106790719849">"ସର୍ଚ୍ଚ କରନ୍ତୁ"</string>
     <string name="menu_settings" msgid="6520844520117939047">"ଷ୍ଟୋରେଜ ସେଟିଂସ"</string>
+    <string name="manage_device" msgid="329180710072251010">"ଡିଭାଇସକୁ ପରିଚାଳନା କରନ୍ତୁ"</string>
     <string name="menu_open" msgid="9092138100049759315">"ଖୋଲନ୍ତୁ"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"ଏଥିରେ ଖୋଲନ୍ତୁ"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"ନୂଆ ୱିଣ୍ଡୋରେ ଖୋଲନ୍ତୁ"</string>
     <string name="menu_save" msgid="5195367497138965168">"ସେଭ କରନ୍ତୁ"</string>
     <string name="menu_share" msgid="4307140947108068356">"ସେୟାର୍‍ କରନ୍ତୁ"</string>
     <string name="menu_delete" msgid="1022254131543256626">"ଡିଲିଟ୍‌ କରନ୍ତୁ"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"ସ୍ଥାୟୀ ଭାବେ ଡିଲିଟ କରିବେ?"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରନ୍ତୁ"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ଟ୍ରାସକୁ ମୁଭ କରନ୍ତୁ"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"ରିଷ୍ଟୋର କରନ୍ତୁ"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"ସବୁ ଚୟନ କରନ୍ତୁ"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ସୂଚନା ପାଆନ୍ତୁ"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ଲୁକ୍କାୟିତ ଫାଇଲ ଦେଖାନ୍ତୁ"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ଲୁକ୍କାୟିତ ଫାଇଲ ଦେଖାଅ ନାହିଁ"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"ସାରାଂଶ ସ୍ତମ୍ଭ ଦେଖାନ୍ତୁ"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"ସାରାଂଶ ସ୍ତମ୍ଭ ଦେଖାନ୍ତୁ ନାହିଁ"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"ବର୍ଣ୍ଣନା ସ୍ତମ୍ଭ ଦେଖାନ୍ତୁ"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"ବର୍ଣ୍ଣନା ସ୍ତମ୍ଭ ଦେଖାନ୍ତୁ ନାହିଁ"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>ରେ ଦେଖନ୍ତୁ"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ନୂଆ ୱିଣ୍ଡୋ"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"କଟ୍‌ କରନ୍ତୁ"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ଟ୍ରାସ ଖୋଲନ୍ତୁ"</string>
     <string name="not_sorted" msgid="7813496644889115530">"କ୍ରମବଦ୍ଧ କରାଯାଇନାହିଁ"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"ନାମ"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"ସାରାଂଶ"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"ବର୍ଣ୍ଣନା"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"ପ୍ରକାର"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"ଆକାର"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"ଗତଥର ସଂଶୋଧିତ"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>ର ଇମେଜ ପ୍ରିଭ୍ୟୁ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ସୂଚନା ପେନେଲକୁ ଲୁଚାନ୍ତୁ"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"ସୂଚନା ପେନେଲକୁ ଦେଖାନ୍ତୁ"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ଟ୍ରାସରେ କିଛି ନାହିଁ"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30ରୁ ଅଧିକ ଦିନ ପାଇଁ ଟ୍ରାସରେ ଥିବା ଫାଇଲଗୁଡ଼ିକ ସ୍ୱତଃ ଡିଲିଟ ହୋଇଯିବ।"</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ଟ୍ରାସକୁ ଏବେ ଖାଲି କରନ୍ତୁ"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ଟ୍ରାସ ଖାଲି ଅଛି"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"30ରୁ ଅଧିକ ଦିନ ପାଇଁ ଟ୍ରାସରେ ଥିବା ଆଇଟମଗୁଡ଼ିକ ସ୍ୱତଃ ଡିଲିଟ ହୋଇଯିବ"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ଟ୍ରାସ ଖାଲି କରନ୍ତୁ"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ଟ୍ରାସ ଖାଲି କରିବେ?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ଏହି କାର୍ଯ୍ୟକୁ ଅନଡୁ କରାଯାଇପାରିବ ନାହିଁ ଏବଂ ଫାଇଲଗୁଡ଼ିକୁ ଆଉ ରିକଭର କରାଯାଇପାରିବ ନାହିଁ।"</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ଟ୍ରାସ ଖାଲି କରନ୍ତୁ"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ଟ୍ରାସରେ ଥିବା ଫାଇଲ"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ଏହି ଫାଇଲ ଆପଣଙ୍କ ଟ୍ରାସରେ ଅଛି ଏବଂ ଏହାକୁ ଖୋଲାଯାଇପାରିବ ନାହିଁ। ଏହାକୁ ଆକ୍ସେସ କରିବା ପାଇଁ ଦୟାକରି ଟ୍ରାସରୁ ଏହାକୁ ରିଷ୍ଟୋର କରନ୍ତୁ।"</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ଫାଇଲ ରିଷ୍ଟୋର କରନ୍ତୁ"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ଟ୍ରାସରେ ଥିବା ସମସ୍ତ ଆଇଟମ ସବୁଦିନ ପାଇଁ ଡିଲିଟ ହୋଇଯିବ। ଏହାକୁ ଅନଡୁ କରାଯାଇପାରିବ ନାହିଁ।"</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରନ୍ତୁ"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{ଆଇଟମ ଟ୍ରାସରେ ଅଛି}other{ଆଇଟମଗୁଡ଼ିକ ଟ୍ରାସରେ ଅଛି}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{ଏହି ଆଇଟମକୁ ଆକ୍ସେସ କରିବା ପାଇଁ ଏହାକୁ ରିଷ୍ଟୋର କରନ୍ତୁ କିମ୍ବା ଟ୍ରାସରୁ ବାହାରକୁ ଡ୍ରାଗ କରନ୍ତୁ}other{ଏହି ଆଇଟମଗୁଡ଼ିକୁ ଆକ୍ସେସ କରିବା ପାଇଁ ସେଗୁଡ଼ିକୁ ରିଷ୍ଟୋର କରନ୍ତୁ କିମ୍ବା ଟ୍ରାସରୁ ବାହାରକୁ ଡ୍ରାଗ କରନ୍ତୁ}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"ରିଷ୍ଟୋର କରନ୍ତୁ"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ବର୍ତ୍ତମାନ ଆପଣ ଅଫଲାଇନ ଅଛନ୍ତି। କିଛି ଫାଇଲ ଏବଂ କାର୍ଯ୍ୟକ୍ଷମତା ଉପଲବ୍ଧ ନାହିଁ। ସମ୍ପୂର୍ଣ୍ଣ ଆକ୍ସେସ ପାଇଁ ଇଣ୍ଟର୍ନେଟ ସହ କନେକ୍ଟ କରନ୍ତୁ।"</string>
 </resources>

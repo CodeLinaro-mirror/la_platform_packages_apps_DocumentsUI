@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"ഓണാക്കുക"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"എന്നോട് വീണ്ടും ചോദിക്കരുത്"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"ഇപ്പോൾ വേണ്ട"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"ഇതിൽ നിന്നും തുറക്കുക"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"ലിസ്റ്റ് കാഴ്‌ച"</string>
     <string name="menu_search" msgid="1876699106790719849">"തിരയുക"</string>
     <string name="menu_settings" msgid="6520844520117939047">"സ്റ്റോറേജ് ക്രമീകരണം"</string>
+    <string name="manage_device" msgid="329180710072251010">"ഉപകരണം മാനേജ് ചെയ്യുക"</string>
     <string name="menu_open" msgid="9092138100049759315">"തുറക്കുക"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"ഇത് ഉപയോഗിച്ച് തുറക്കുക"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"ഒരു പുതിയ വിന്‍‌ഡോയില്‍‌ തുറക്കുക"</string>
     <string name="menu_save" msgid="5195367497138965168">"സംരക്ഷിക്കുക"</string>
     <string name="menu_share" msgid="4307140947108068356">"പങ്കിടുക"</string>
     <string name="menu_delete" msgid="1022254131543256626">"ഇല്ലാതാക്കുക"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"ശാശ്വതമായി ഇല്ലാതാക്കുക"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"ശാശ്വതമായി ഇല്ലാതാക്കുക"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ട്രാഷിലേക്ക് നീക്കുക"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"പുനഃസ്ഥാപിക്കുക"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"എല്ലാം തിരഞ്ഞെടുക്കുക"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"വിവരങ്ങൾ നേടുക"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"മറച്ചിരിക്കുന്ന ഫയൽ കാണിക്കൂ"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"മറച്ച ഫയലുകൾ കാണിക്കരുത്"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"സംഗ്രഹ കോളം കാണിക്കുക"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"സംഗ്രഹ കോളം കാണിക്കരുത്"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"വിവരണ കോളം കാണിക്കുക"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"വിവരണ കോളം കാണിക്കരുത്"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> എന്നതിൽ കാണുക"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"പുതിയ വിന്‍‍ഡോ"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"മുറിക്കുക"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ട്രാഷ് തുറക്കുക"</string>
     <string name="not_sorted" msgid="7813496644889115530">"അടുക്കിയിട്ടില്ല"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"പേര്"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"ചുരുക്കം"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"വിവരണം"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"തരം"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"വലുപ്പം"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"പരിഷ്‌ക്കരിച്ചു"</string>
@@ -136,7 +140,7 @@
     <string name="no_results" msgid="2371026325236359209">"%1$s എന്നതിൽ പൊരുത്തങ്ങളില്ല"</string>
     <string name="toast_no_application" msgid="7555319548595113121">"ഫയൽ തുറക്കാൻ കഴിയില്ല"</string>
     <string name="toast_view_in_archives_unsupported" msgid="1923221390170964845">"ആർക്കൈവുകളിലെ ഫയലുകൾ തുറക്കാൻ കഴിയില്ല"</string>
-    <string name="toast_failed_delete" msgid="3453846588205817591">"ചില പ്രമാണങ്ങൾ ഇല്ലാതാക്കാനായില്ല"</string>
+    <string name="toast_failed_delete" msgid="3453846588205817591">"ചില ഡോക്യുമെൻ്റുകൾ ഇല്ലാതാക്കാനായില്ല"</string>
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>-ൽ കൂടുതൽ ഫയലുകൾ പങ്കിടാനാകില്ല"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"നടപടി അനുവദനീയമല്ല"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"പ്രവർത്തനം അനുവദനീയമല്ല"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> എന്ന ചിത്രത്തിന്റെ പ്രിവ്യൂ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"വിവര പാനൽ മറയ്ക്കുക"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"വിവര പാനൽ കാണിക്കുക"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ട്രാഷിൽ ഒന്നുമില്ല"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30 ദിവസത്തിൽ കൂടുതലായി ട്രാഷിലുള്ള ഫയലുകൾ സ്വയമേവ ഇല്ലാതാക്കും."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ട്രാഷ് ഇപ്പോൾ തന്നെ ശൂന്യമാക്കുക"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ട്രാഷ് ശൂന്യമാണ്"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"30 ദിവസത്തിൽ കൂടുതലായി ട്രാഷിലുള്ള ഫയലുകൾ സ്വയമേവ ഇല്ലാതാക്കും"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ട്രാഷ് ശൂന്യമാക്കുക"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ട്രാഷ് ശൂന്യമാക്കണോ?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ആ പ്രവർത്തനം പഴയപടിയാക്കാനാകില്ല, ഫയലുകൾ വീണ്ടെടുക്കാനുമാകില്ല."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ട്രാഷ് ശൂന്യമാക്കുക"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ഫയൽ ട്രാഷിലാണ്"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ഈ ഫയൽ നിങ്ങളുടെ ട്രാഷിലാണ്, ഇത് തുറക്കാനാകില്ല. അത് ആക്‌സസ് ചെയ്യാൻ, ട്രാഷിൽ നിന്ന് പുനഃസ്ഥാപിക്കുക."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ഫയൽ പുനഃസ്ഥാപിക്കുക"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ട്രാഷിലുള്ള എല്ലാ ഇനങ്ങളും ശാശ്വതമായി ഇല്ലാതാക്കും. ഇത് പഴയപടിയാക്കാനാകില്ല."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"ശാശ്വതമായി ഇല്ലാതാക്കുക"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{ഇനം ട്രാഷിലാണ്}other{ഇനങ്ങൾ ട്രാഷിലാണ്}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{ഈ ഇനം ആക്‌സസ് ചെയ്യാൻ, അത് പുനഃസ്ഥാപിക്കുക അല്ലെങ്കിൽ ട്രാഷിൽ നിന്ന് പുറത്തേക്ക് വലിച്ചിടുക}other{ഈ ഇനങ്ങൾ ആക്‌സസ് ചെയ്യാൻ, അവ പുനഃസ്ഥാപിക്കുക അല്ലെങ്കിൽ ട്രാഷിൽ നിന്ന് പുറത്തേക്ക് വലിച്ചിടുക}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"പുനഃസ്ഥാപിക്കുക"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"നിങ്ങൾ നിലവിൽ ഓഫ്‌ലൈനാണ്. ചില ഫയലുകളും ഫംഗ്‌ഷനുകളും ലഭ്യമല്ല. പൂർണ്ണ ആക്‌സസിന് ഇന്റർനെറ്റിലേക്ക് കണക്റ്റ് ചെയ്യുക."</string>
 </resources>

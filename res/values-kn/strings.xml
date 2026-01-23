@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"ಆನ್ ಮಾಡಿ"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"ಪುನಃ ನನ್ನನ್ನು ಕೇಳಬೇಡಿ"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"ಈಗ ಬೇಡ"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"ಇಲ್ಲಿಂದ ತೆರೆಯಿರಿ"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"ಪಟ್ಟಿ ವೀಕ್ಷಣೆ"</string>
     <string name="menu_search" msgid="1876699106790719849">"ಹುಡುಕಿ"</string>
     <string name="menu_settings" msgid="6520844520117939047">"ಸಂಗ್ರಹಣೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು"</string>
+    <string name="manage_device" msgid="329180710072251010">"ಸಾಧನವನ್ನು ನಿರ್ವಹಿಸಿ"</string>
     <string name="menu_open" msgid="9092138100049759315">"ತೆರೆ"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"ಇದರ ಮೂಲಕ ತೆರೆಯಿರಿ"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"ಹೊಸ ವಿಂಡೋನಲ್ಲಿ ತೆರೆಯಿರಿ"</string>
     <string name="menu_save" msgid="5195367497138965168">"ಸೇವ್ ಮಾಡಿ"</string>
     <string name="menu_share" msgid="4307140947108068356">"ಹಂಚಿಕೊಳ್ಳಿ"</string>
     <string name="menu_delete" msgid="1022254131543256626">"ಅಳಿಸಿ"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ಟ್ರ್ಯಾಶ್‌ಗೆ ಸರಿಸಿ"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"ಮರುಸ್ಥಾಪಿಸಿ"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"ಎಲ್ಲವನ್ನೂ ಆಯ್ಕೆಮಾಡಿ"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ಮಾಹಿತಿಯನ್ನು ಪಡೆಯಿರಿ"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ಮರೆಮಾಡಿದ ಫೈಲ್‌ಗಳನ್ನು ತೋರಿಸಿ"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ಮರೆಮಾಡಿದ ಫೈಲ್‌ ತೋರಿಸಬೇಡಿ"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"ಸಾರಾಂಶ ಕಾಲಮ್ ಅನ್ನು ತೋರಿಸಿ"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"ಸಾರಾಂಶ ಕಾಲಮ್ ಅನ್ನು ತೋರಿಸಬೇಡಿ"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"ವಿವರಣೆ ಕಾಲಮ್ ಅನ್ನು ತೋರಿಸಿ"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"ವಿವರಣೆ ಕಾಲಮ್ ಅನ್ನು ತೋರಿಸಬೇಡಿ"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"ಹೊಸ ವಿಂಡೋ"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"ಕತ್ತರಿಸು"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ಟ್ರ್ಯಾಶ್ ಅನ್ನು ತೆರೆಯಿರಿ"</string>
     <string name="not_sorted" msgid="7813496644889115530">"ವಿಂಗಡಿಸಲಾಗಿಲ್ಲ"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"ಹೆಸರು"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"ಸಾರಾಂಶ"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"ವಿವರಣೆ"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"ಪ್ರಕಾರ"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"ಗಾತ್ರ"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"ಮಾರ್ಪಾಡು"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> ಚಿತ್ರದ ಪೂರ್ವವೀಕ್ಷಣೆ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"ಮಾಹಿತಿ ಪ್ಯಾನೆಲ್ ಅನ್ನು ಮರೆಮಾಡಿ"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"ಮಾಹಿತಿ ಪ್ಯಾನೆಲ್ ಅನ್ನು ತೋರಿಸಿ"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿ ಏನೂ ಇಲ್ಲ"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30 ದಿನಗಳಿಗಿಂತ ಹೆಚ್ಚು ಕಾಲ ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿರುವ ಫೈಲ್‌ಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ಟ್ರ್ಯಾಶ್ ಖಾಲಿ ಮಾಡಿ"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ಟ್ರ್ಯಾಶ್ ಖಾಲಿಯಾಗಿದೆ"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"30 ದಿನಗಳಿಗಿಂತ ಹೆಚ್ಚು ಕಾಲ ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿರುವ ಐಟಂಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ಟ್ರ್ಯಾಶ್ ಅನ್ನು ಖಾಲಿ ಮಾಡಿ"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ಟ್ರ್ಯಾಶ್ ಖಾಲಿ ಮಾಡಬೇಕೇ?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ಈ ಕ್ರಿಯೆಯನ್ನು ರದ್ದುಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ ಮತ್ತು ಫೈಲ್‌ಗಳನ್ನು ಇನ್ನು ರಿಕವರ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ಟ್ರ್ಯಾಶ್ ಖಾಲಿ ಮಾಡಿ"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿರುವ ಫೈಲ್"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ಈ ಫೈಲ್ ನಿಮ್ಮ ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿದೆ ಮತ್ತು ಅದನ್ನು ತೆರೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ. ಅದನ್ನು ಆ್ಯಕ್ಸೆಸ್ ಮಾಡಲು ಅದನ್ನು ಟ್ರ್ಯಾಶ್‌ನಿಂದ ಮರುಸ್ಥಾಪಿಸಿ."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ಫೈಲ್ ಅನ್ನು ಮರುಸ್ಥಾಪಿಸಿ"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿರುವ ಎಲ್ಲಾ ಐಟಂಗಳನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ. ಇದನ್ನು ರದ್ದುಮಾಡಲು ಸಾಧ್ಯವಾಗುವುದಿಲ್ಲ."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{ಐಟಂ ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿದೆ}one{ಐಟಂಗಳು ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿವೆ}other{ಐಟಂಗಳು ಟ್ರ್ಯಾಶ್‌ನಲ್ಲಿವೆ}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{ಈ ಐಟಂ ಅನ್ನು ಆ್ಯಕ್ಸೆಸ್ ಮಾಡಲು, ಅದನ್ನು ಮರುಸ್ಥಾಪಿಸಿ ಅಥವಾ ಅದನ್ನು ಟ್ರ್ಯಾಶ್‌ನಿಂದ ಹೊರಗೆ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ}one{ಈ ಐಟಂಗಳನ್ನು ಆ್ಯಕ್ಸೆಸ್ ಮಾಡಲು, ಅವುಗಳನ್ನು ಮರುಸ್ಥಾಪಿಸಿ ಅಥವಾ ಅವುಗಳನ್ನು ಟ್ರ್ಯಾಶ್‌ನಿಂದ ಹೊರಗೆ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ}other{ಈ ಐಟಂಗಳನ್ನು ಆ್ಯಕ್ಸೆಸ್ ಮಾಡಲು, ಅವುಗಳನ್ನು ಮರುಸ್ಥಾಪಿಸಿ ಅಥವಾ ಅವುಗಳನ್ನು ಟ್ರ್ಯಾಶ್‌ನಿಂದ ಹೊರಗೆ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"ಮರುಸ್ಥಾಪಿಸಿ"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ನೀವು ಪ್ರಸ್ತುತ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ. ಕೆಲವು ಫೈಲ್‌ಗಳು ಮತ್ತು ಕಾರ್ಯಚಟುವಟಿಕೆ ಲಭ್ಯವಿಲ್ಲ. ಪೂರ್ಣ ಆ್ಯಕ್ಸೆಸ್‌ಗಾಗಿ ಇಂಟರ್ನೆಟ್‌ಗೆ ಕನೆಕ್ಟ್ ಮಾಡಿ."</string>
 </resources>
