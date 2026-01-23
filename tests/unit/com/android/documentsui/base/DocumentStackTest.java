@@ -22,6 +22,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 
+import android.net.Uri;
 import android.provider.DocumentsContract;
 
 import androidx.test.filters.SmallTest;
@@ -106,6 +107,35 @@ public class DocumentStackTest {
 
         assertEquals(DIR_1, mStack.pop());
         assertEquals(0, mStack.size());
+    }
+
+    @Test
+    public void testPopTo() {
+        mStack.push(DIR_1);
+        mStack.push(DIR_2);
+        mStack = new DocumentStack(mStack);
+        assertEquals(2, mStack.size());
+        assertFalse(mStack.hasLocationChanged());
+
+        assertFalse(mStack.popTo(Uri.parse("content://unknown")));
+        assertEquals(2, mStack.size());
+        assertFalse(mStack.hasLocationChanged());
+
+        assertTrue(mStack.popTo(DIR_2.derivedUri));
+        assertEquals(2, mStack.size());
+        assertFalse(mStack.hasLocationChanged());
+
+        assertTrue(mStack.popTo(DIR_1.derivedUri));
+        assertEquals(1, mStack.size());
+        assertTrue(mStack.hasLocationChanged());
+
+        mStack = new DocumentStack(mStack);
+        assertEquals(1, mStack.size());
+        assertFalse(mStack.hasLocationChanged());
+
+        assertFalse(mStack.popTo(DIR_2.derivedUri));
+        assertEquals(1, mStack.size());
+        assertFalse(mStack.hasLocationChanged());
     }
 
     @Test
