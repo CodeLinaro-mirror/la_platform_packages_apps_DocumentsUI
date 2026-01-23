@@ -563,7 +563,11 @@ public final class SearchViewManagerTest {
     /** Verifies that the search chips are not displayed when the user is in the trash view. */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY
+    })
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testTrashPage_notShowChips() throws Exception {
         RootInfo root = spy(new RootInfo());
@@ -573,6 +577,13 @@ public final class SearchViewManagerTest {
         mSearchViewManager.showMenu(stack);
 
         verify(mSearchChipViewManager, times(1)).setChipsRowVisible(false);
+
+        // Navigate to a root that supports search
+        RootInfo normalRoot = spy(new RootInfo());
+        mSearchViewManager.showMenu(new DocumentStack(normalRoot, new DocumentInfo()));
+
+        // Verify chips are set to visible again
+        verify(mSearchChipViewManager).setChipsRowVisible(true);
     }
 
     @Test
