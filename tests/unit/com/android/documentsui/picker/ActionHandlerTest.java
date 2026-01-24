@@ -16,6 +16,7 @@
 
 package com.android.documentsui.picker;
 
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -385,9 +386,39 @@ public class ActionHandlerTest {
     @Test
     public void testOpenContainerDocument_sameDocumentInfo() {
         mHandler.openContainerDocument(TestEnv.FOLDER_0);
-        mHandler.openContainerDocument(TestEnv.FOLDER_0);
-
         assertEquals(1, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_0);
+        assertEquals(1, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_1);
+        assertEquals(2, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_1);
+        assertEquals(2, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_2);
+        assertEquals(3, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_2);
+        assertEquals(3, mEnv.state.stack.size());
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testOpenContainerDocument_trimStack() {
+        mHandler.openContainerDocument(TestEnv.FOLDER_0);
+        mHandler.openContainerDocument(TestEnv.FOLDER_1);
+        mHandler.openContainerDocument(TestEnv.FOLDER_2);
+        assertEquals(3, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_0);
+        assertEquals(1, mEnv.state.stack.size());
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
+    public void testOpenContainerDocument_doNotTrimStack() {
+        mHandler.openContainerDocument(TestEnv.FOLDER_0);
+        mHandler.openContainerDocument(TestEnv.FOLDER_1);
+        mHandler.openContainerDocument(TestEnv.FOLDER_2);
+        assertEquals(3, mEnv.state.stack.size());
+        mHandler.openContainerDocument(TestEnv.FOLDER_0);
+        assertEquals(4, mEnv.state.stack.size());
     }
 
     @Test

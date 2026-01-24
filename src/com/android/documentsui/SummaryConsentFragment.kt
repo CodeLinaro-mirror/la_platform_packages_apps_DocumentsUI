@@ -24,10 +24,28 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
+/**
+ * The different types of callbacks for the consent dialog, one for each option that user can take.
+ */
+data class ConsentCallbacks(
+    /** User chose to enable the feature. */
+    val onEnable: () -> Unit,
+
+    /**
+     * User chose to not enable the feature. This is the button "Don't ask me again". This button is
+     * only presented if the dialog is shown proactively.
+     */
+    val onCancel: (() -> Unit)? = null,
+
+    /** User chose to "Not now" option, so we can remind later. This is the button "Not now". */
+    val onRemindLater: () -> Unit,
+)
+
 /** A dialog fragment that asks the user for consent to enable the summary column. */
 class SummaryConsentFragment(
-    private val onPositiveButtonClick: () -> Unit = {},
-    private val onNegativeButtonClick: () -> Unit = {},
+    private val onEnableButtonClick: () -> Unit = {},
+    private val onCancelButtonClick: (() -> Unit)? = null,
+    private val onRemindLaterButtonClick: () -> Unit = {},
 ) : DocumentsUIDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -36,18 +54,22 @@ class SummaryConsentFragment(
         val message = Html.fromHtml(args.getString(EXTRA_MESSAGE), Html.FROM_HTML_MODE_LEGACY)
 
         val positiveButton = context?.getString(R.string.summary_consent_ok_button)
-        val negativeButton = context?.getString(R.string.summary_consent_remind_later_button)
-        val remindLaterButton = context?.getString(R.string.summary_consent_cancel_button)
+        val remindLaterButton = context?.getString(R.string.summary_consent_remind_later_button)
+        val negativeButton = context?.getString(R.string.summary_consent_cancel_button)
 
-        // TODO: Add the remind later logic.
-        val dialog =
+        val builder =
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(positiveButton) { _, _ -> onPositiveButtonClick() }
-                .setNegativeButton(negativeButton) { _, _ -> onNegativeButtonClick() }
-                .setNeutralButton(remindLaterButton) { _, _ -> onNegativeButtonClick() }
-                .create()
+                .setPositiveButton(positiveButton) { _, _ -> onEnableButtonClick() }
+                .setNegativeButton(remindLaterButton) { _, _ -> onRemindLaterButtonClick() }
+
+        // The "Don't ask me again" button is only displayed if the dialog is shown proactively, as
+        // in, not initiated by the user.
+        if (onCancelButtonClick != null) {
+            builder.setNeutralButton(negativeButton) { _, _ -> onCancelButtonClick() }
+        }
+        val dialog = builder.create()
 
         dialog.setOnShowListener {
             val messageView = dialog.findViewById<TextView>(android.R.id.message)
@@ -68,23 +90,24 @@ class SummaryConsentFragment(
             context: Context,
             title: String,
             message: String,
-            onPositiveButtonClick: () -> Unit,
-            onNegativeButtonClick: () -> Unit,
+            callbacks: ConsentCallbacks,
         ) {
-            val dialog =
-                newInstance(context, title, message, onPositiveButtonClick, onNegativeButtonClick)
+            val dialog = newInstance(title, message, callbacks)
             dialog.show(fm, TAG)
         }
 
         @JvmStatic
         private fun newInstance(
-            context: Context,
             title: String,
             message: String,
-            onPositiveButtonClick: () -> Unit,
-            onNegativeButtonClick: () -> Unit,
+            callbacks: ConsentCallbacks,
         ): SummaryConsentFragment {
-            val dialog = SummaryConsentFragment(onPositiveButtonClick, onNegativeButtonClick)
+            val dialog =
+                SummaryConsentFragment(
+                    callbacks.onEnable,
+                    callbacks.onCancel,
+                    callbacks.onRemindLater,
+                )
             val args = Bundle()
             args.putString(EXTRA_TITLE, title)
             args.putString(EXTRA_MESSAGE, message)
