@@ -24,12 +24,14 @@ import android.graphics.Rect;
 import android.os.SystemClock;
 import android.view.InputDevice;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
 
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
@@ -83,6 +85,25 @@ public class GestureBot extends Bots.BaseBot {
             points[i + LONGPRESS_STEPS] = new Point(newX, newY);
         }
         mDevice.swipe(points, STEPS_INBETWEEN_POINTS);
+        Configurator.getInstance().setToolType(toolType);
+    }
+
+    public void dragAndDrop(UiObject source, UiObject destination) throws Exception {
+        int toolType = Configurator.getInstance().getToolType();
+        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_MOUSE);
+
+        Rect sourceBounds = source.getBounds();
+        Rect destinationBounds = destination.getBounds();
+
+        swipe(
+                sourceBounds.centerX(),
+                sourceBounds.centerY(),
+                destinationBounds.centerX(),
+                destinationBounds.centerY(),
+                BAND_SELECTION_DEFAULT_STEPS,
+                MotionEvent.BUTTON_PRIMARY,
+                false);
+
         Configurator.getInstance().setToolType(toolType);
     }
 

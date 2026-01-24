@@ -191,6 +191,8 @@ interface DragStartListener {
                 mSelectionMgr.copySelection(selection);
             } else {
                 selection.add(modelId);
+                // If the drag starts with a unselected item, clear the existing selection so the
+                // drag only happens with this unselected item.
                 mSelectionMgr.clearSelection();
             }
             return selection;
