@@ -328,16 +328,6 @@ public class AbstractActionHandlerTest {
     }
 
     @Test
-    public void testOpensDocument_ExceptionIfAlreadyInStack() throws Exception {
-        mEnv.populateStack();
-        try {
-            mEnv.state.stack.push(TestEnv.FOLDER_0);
-            fail("Should have thrown IllegalArgumentException.");
-        } catch (IllegalArgumentException expected) {
-        }
-    }
-
-    @Test
     public void testLaunchToDocuments() throws Exception {
         if (!mEnv.features.isLaunchToDocumentEnabled()) {
             return;

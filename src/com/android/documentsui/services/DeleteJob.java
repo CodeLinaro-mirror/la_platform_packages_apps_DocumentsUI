@@ -40,7 +40,7 @@ import com.android.documentsui.clipping.UrisSupplier;
 
 import javax.annotation.Nullable;
 
-final class DeleteJob extends ResolvedResourcesJob {
+public class DeleteJob extends ResolvedResourcesJob {
 
     private static final String TAG = "DeleteJob";
 
@@ -129,7 +129,7 @@ final class DeleteJob extends ResolvedResourcesJob {
         for (DocumentInfo doc : mResolvedDocs) {
             if (DEBUG) Log.d(TAG, "Deleting " + redact(doc));
             try {
-                deleteDocument(doc, parentDoc);
+                performDelete(doc, parentDoc);
             } catch (Exception e) {
                 Metrics.logFileOperationFailure(
                         appContext, MetricConsts.SUBFILEOP_DELETE_DOCUMENT, doc.derivedUri);
@@ -144,6 +144,11 @@ final class DeleteJob extends ResolvedResourcesJob {
         }
 
         Metrics.logFileOperation(operationType, mResolvedDocs, null);
+    }
+
+    protected void performDelete(DocumentInfo doc, @Nullable DocumentInfo parent)
+            throws ResourceException {
+        deleteDocument(doc, parent);
     }
 
     @Override

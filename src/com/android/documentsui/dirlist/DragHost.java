@@ -18,6 +18,7 @@ package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
@@ -98,7 +99,9 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
 
     void dragStopped(boolean result) {
         if (result) {
-            mSelectionMgr.clearSelection();
+            if (!isUseMaterial3FlagEnabled()) {
+                mSelectionMgr.clearSelection();
+            }
         }
     }
 

@@ -134,6 +134,11 @@ public class SidebarBot extends Bots.BaseBot {
         return new UiObject(rootsList.childSelector(new UiSelector().text(label)));
     }
 
+    /** Finds the root with the given label. */
+    public UiObject findRoot(String label) throws UiObjectNotFoundException {
+        return findRoot(label, RootListContainerType.FOLLOW_LAYOUT);
+    }
+
     /** Open navigation root either from the Drawer or the Navigation rail. */
     public void openRoot(String label) throws UiObjectNotFoundException {
         if (toolbarHasTitle(label)) {
