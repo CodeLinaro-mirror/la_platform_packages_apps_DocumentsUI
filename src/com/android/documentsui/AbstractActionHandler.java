@@ -848,15 +848,25 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             currentDoc = mDocs.getArchiveDocument(doc.derivedUri, doc.userId);
         }
 
-        assert (currentDoc != null);
-        if (currentDoc.equals(mState.stack.peek())) {
-            Log.w(TAG, "This DocumentInfo is already in current DocumentsStack");
-            return;
+        assert currentDoc != null;
+
+        if (isUseMaterial3FlagEnabled()) {
+            if (mState.stack.popTo(currentDoc.derivedUri)) {
+                currentDoc = mState.stack.peek();
+            } else {
+                mState.stack.push(currentDoc);
+            }
+            mActivity.notifyDirectoryNavigated(currentDoc.derivedUri);
+        } else {
+            if (currentDoc.equals(mState.stack.peek())) {
+                Log.w(TAG, "This DocumentInfo is already in current DocumentsStack");
+                return;
+            }
+
+            mActivity.notifyDirectoryNavigated(currentDoc.derivedUri);
+            mState.stack.push(currentDoc);
         }
 
-        mActivity.notifyDirectoryNavigated(currentDoc.derivedUri);
-
-        mState.stack.push(currentDoc);
         // Show an opening animation only if pressing "back" would get us back to the
         // previous directory. Especially after opening a root document, pressing
         // back, wouldn't go to the previous root, but close the activity.
