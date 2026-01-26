@@ -56,7 +56,8 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
     override fun setUp() {
         // Configure the preferences before launching the activity in the super setup.
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        LocalPreferences.setSummaryEnabled(context, false)
+        // Start with the feature disabled.
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
         super.setUp()
     }
 

@@ -24,6 +24,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
 import android.provider.DocumentsContract
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -47,8 +49,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 @SmallTest
 @RunWith(AndroidJUnit4::class)
@@ -79,7 +82,7 @@ class SummaryProviderManagerTest {
     fun setUp() {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = targetContext.contentResolver
-        mockResources = mock(Resources::class.java)
+        mockResources = mock<Resources>()
 
         // Use the ContextWrapper to provide the mock Resources.
         context = TestContextWrapper(targetContext, mockResources)
@@ -92,7 +95,10 @@ class SummaryProviderManagerTest {
      * visible or hidden.
      */
     private fun setSummaryConsent(enabled: Boolean) {
-        LocalPreferences.setSummaryEnabled(context, enabled)
+        LocalPreferences.setSummaryConsent(
+            context,
+            if (enabled) LocalPreferences.CONSENT_ACCEPTED else LocalPreferences.CONSENT_UNKNOWN,
+        )
     }
 
     /**
@@ -247,10 +253,7 @@ class SummaryProviderManagerTest {
 
         manager.setShowConsentDialogForTest(false)
         var refreshCalled = false
-        val mockFragmentManager = mock(androidx.fragment.app.FragmentManager::class.java)
-        manager.onShowSummaryMenuClicked(mock(androidx.fragment.app.FragmentManager::class.java)) {
-            refreshCalled = true
-        }
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) { refreshCalled = true }
 
         assertThat(LocalPreferences.isSummaryEnabled(context)).isTrue()
         assertThat(refreshCalled).isTrue()
@@ -268,14 +271,97 @@ class SummaryProviderManagerTest {
 
         manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
         var refreshCalled = false
-        val mockFragmentManager = mock(androidx.fragment.app.FragmentManager::class.java)
-        `when`(mockFragmentManager.beginTransaction())
-            .thenReturn(mock(androidx.fragment.app.FragmentTransaction::class.java))
+        val mockFragmentManager =
+            mock<FragmentManager>() {
+                on { beginTransaction() } doReturn mock<FragmentTransaction>()
+            }
         manager.onShowSummaryMenuClicked(mockFragmentManager) { refreshCalled = true }
 
         assertThat(LocalPreferences.isSummaryEnabled(context)).isFalse()
-        // The refresh is only called after the dialog is shown, so here in this test it was called.
+        // The refresh is only called after the dialog is shown, so here in this test it wasn't
+        // called.
         assertThat(refreshCalled).isFalse()
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_positiveButton_setsConsentAccepted() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager =
+            SummaryProviderManager(
+                context,
+                this,
+                Uri.parse(TEST_SUMMARY_PROVIDER),
+                // Fake the dialog launcher to simulate positive click, aka answering "Turn on".
+                { _, _, _, callbacks -> callbacks.onEnable() },
+            )
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+
+        // When the user answer positively in the dialog the refresh callback should be called.
+        var refreshCalled = false
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) { refreshCalled = true }
+
+        assertThat(LocalPreferences.getSummaryConsent(context))
+            .isEqualTo(LocalPreferences.CONSENT_ACCEPTED)
+        assertThat(refreshCalled).isTrue()
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_negativeButton_setsConsentDeferred() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager =
+            SummaryProviderManager(
+                context,
+                this,
+                Uri.parse(TEST_SUMMARY_PROVIDER),
+                // Fake the dialog launcher to simulate negative click, aka answering "Not now".
+                { _, _, _, callbacks -> callbacks.onRemindLater() },
+            )
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+
+        // Simulate user clicking on the menu to enable the summary column.
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) {}
+
+        assertThat(LocalPreferences.getSummaryConsent(context))
+            .isEqualTo(LocalPreferences.CONSENT_DEFERRED)
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_neutralButton_setsConsentRejected() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager =
+            SummaryProviderManager(
+                context,
+                this,
+                Uri.parse(TEST_SUMMARY_PROVIDER),
+                // Fake the dialog launcher to simulate neutral click, aka answering "Don't ask me
+                // again".
+                { _, _, _, callbacks -> callbacks.onCancel?.invoke() },
+            )
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+
+        // Simulate user clicking on the menu to enable the summary column.
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) {}
+
+        assertThat(LocalPreferences.getSummaryConsent(context))
+            .isEqualTo(LocalPreferences.CONSENT_REJECTED)
         manager.stop()
     }
 }

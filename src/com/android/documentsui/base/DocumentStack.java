@@ -21,6 +21,7 @@ import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.DocumentsProvider;
@@ -38,6 +39,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -151,6 +153,31 @@ public class DocumentStack implements Durable, Parcelable {
             Log.d(TAG, "Popped all the folders from the stack except the root folder");
             Log.d(TAG, "Stack = " + toShortString());
         }
+    }
+
+    /**
+     * If this stack contains a folder with the given URI, then all the folders on top of the found
+     * one are popped, otherwise nothing is changed.
+     *
+     * @return whether a folder with the given URI was found in this stack.
+     */
+    public boolean popTo(@Nonnull Uri uri) {
+        int i = 0;
+        for (DocumentInfo doc : mList) {
+            i += 1;
+            if (uri.equals(doc.derivedUri)) {
+                if (DEBUG) Log.d(TAG, "Trim stack to position " + i);
+                while (mList.size() > i) {
+                    mList.removeLast();
+                    mStackTouched = true;
+                }
+                if (DEBUG) Log.d(TAG, "Stack = " + toShortString());
+                assert uri.equals(peek().derivedUri);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void changeRoot(RootInfo root) {
