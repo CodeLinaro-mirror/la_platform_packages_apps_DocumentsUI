@@ -22,6 +22,7 @@ import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
@@ -927,9 +928,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 DocumentStack stack = mPathExtractor.getDocumentStack(info);
                                 mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
                             } catch (Exception e) {
-                                if (DEBUG) {
-                                    Log.d(TAG, "Failed to get stack for " + info, e);
-                                }
+                                Log.e(TAG, "Cannot get stack for " + redact(info), e);
                                 mHandler.post(() -> hideSearchResultBreadcrumb(controller));
                             }
                         });
