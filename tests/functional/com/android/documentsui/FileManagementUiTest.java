@@ -215,7 +215,6 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             nameOfLastFile = nameOfLastFile.compareTo(name) < 0 ? name : nameOfLastFile;
         }
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.openDocument("test");
         bots.sort.sortBy(
                 SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_ASCENDING);

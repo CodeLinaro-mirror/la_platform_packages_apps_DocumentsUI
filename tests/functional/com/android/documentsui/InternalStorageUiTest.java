@@ -21,13 +21,13 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static org.junit.Assert.assertNull;
 
+import android.os.RemoteException;
 import android.platform.test.annotations.EnableFlags;
 
 import androidx.test.filters.LargeTest;
 
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.rules.OverrideFlagsRule;
@@ -54,13 +54,19 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String newFileName = "!9527Test";
     private RootInfo rootPrimary;
 
+    @Override
+    protected void setupTestingRoots() throws RemoteException {
+        mDocsHelper =
+                new DocumentsProviderHelper(
+                        userId, Providers.AUTHORITY_STORAGE, context, Providers.AUTHORITY_STORAGE);
+
+        // Set initial root activity will launch into
+        rootPrimary = mDocsHelper.getRoot(Providers.ROOT_ID_DEVICE);
+        setInitialRoot(rootPrimary);
+    }
+
     @Before
     public void setUpTest() throws Exception {
-        mDocsHelper = new DocumentsProviderHelper(userId, Providers.AUTHORITY_STORAGE, context,
-                Providers.AUTHORITY_STORAGE);
-        rootPrimary = mDocsHelper.getRoot(Providers.ROOT_ID_DEVICE);
-
-        EspressoBotsKt.openRoot(context, rootPrimary.title, getActivityLayoutId());
         deleteTestFiles();
     }
 
