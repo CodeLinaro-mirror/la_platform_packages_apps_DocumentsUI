@@ -143,6 +143,9 @@ public class RootsFragment extends Fragment {
     // This will always be false if isUseMaterial3FlagEnabled() flag is off.
     private boolean mUseRailAsContainer = false;
 
+    // Maintain state of whether a root and directory refresh is pending.
+    private boolean mRefreshPending = false;
+
     /**
      * Show the RootsFragment inside the navigation drawer container.
      */
@@ -375,8 +378,10 @@ public class RootsFragment extends Fragment {
     }
 
     public void reloadRootsAndShortcuts(boolean refreshRootAndDirectory) {
+        // Prevent refresh from being overwritten by repetitive calls during config changes.
+        mRefreshPending |= refreshRootAndDirectory;
         Bundle args = new Bundle();
-        args.putBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID, refreshRootAndDirectory);
+        args.putBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID, mRefreshPending);
         LoaderManager.getInstance(this).restartLoader(LoaderIds.ROOTS, args, mRootsCallbacks);
     }
 
@@ -463,6 +468,7 @@ public class RootsFragment extends Fragment {
         mInjector.appsRowManager.updateList(mApplicationItemList);
         mInjector.appsRowManager.updateView(activity);
         onCurrentRootChanged();
+        mRefreshPending = false;
     }
 
 

@@ -114,6 +114,7 @@ import kotlin.Unit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -157,6 +158,7 @@ public abstract class BaseActivity
 
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
+    private Locale mCurrentLocale;
 
     protected void setInitialStack(DocumentStack stack) {
         if (mInitialStack.isInitialized()) {
@@ -554,6 +556,8 @@ public abstract class BaseActivity
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
         updateRecentsSetting();
+
+        mCurrentLocale = getResources().getConfiguration().getLocales().get(0);
     }
 
     private NavigationViewManager getNavigationViewManager(Breadcrumb breadcrumb,
@@ -1573,6 +1577,11 @@ public abstract class BaseActivity
             // Force the shortcut resources to be reloaded the next time updateAsync() gets called.
             mProviders.resetShortcutResourcesFirstLoadDone();
 
+            // Do not refresh root and directory when called in place of full activity recreation.
+            Locale newLocale = newConfig.getLocales().get(0);
+            final boolean refresh = !mCurrentLocale.equals(newLocale);
+            mCurrentLocale = newLocale;
+
             // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
             //  localised titles in this method.
             mProviders.updateAsync(
@@ -1583,7 +1592,8 @@ public abstract class BaseActivity
                             fragment = RootsFragment.getNavRail(getSupportFragmentManager());
                         }
                         if (fragment != null) {
-                            fragment.reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ true);
+                            fragment.reloadRootsAndShortcuts(
+                                    /* refreshRootAndDirectory= */ refresh);
                         }
                     });
         }
