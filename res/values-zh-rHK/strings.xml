@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"開啟"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"不要再問我"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"暫時不要"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"從以下位置開啟："</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"清單檢視"</string>
     <string name="menu_search" msgid="1876699106790719849">"搜尋"</string>
     <string name="menu_settings" msgid="6520844520117939047">"儲存空間設定"</string>
+    <string name="manage_device" msgid="329180710072251010">"管理裝置"</string>
     <string name="menu_open" msgid="9092138100049759315">"開啟"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"選擇開啟方式"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"在新視窗中開啟"</string>
     <string name="menu_save" msgid="5195367497138965168">"儲存"</string>
     <string name="menu_share" msgid="4307140947108068356">"分享"</string>
     <string name="menu_delete" msgid="1022254131543256626">"刪除"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"永久刪除"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"永久刪除"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"移至垃圾桶"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"還原"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"全選"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"顯示資訊"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"顯示已隱藏的檔案"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"不要顯示已隱藏的檔案"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"顯示摘要欄"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"不要顯示摘要欄"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"顯示描述欄"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"不要顯示描述欄"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"在「<xliff:g id="SOURCE">%1$s</xliff:g>」中查看"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"新視窗"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"剪下"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"開啟垃圾桶"</string>
     <string name="not_sorted" msgid="7813496644889115530">"尚未排序"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"名稱"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"摘要"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"描述"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"類型"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"大小"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"上次修改時間"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> 的圖片預覽"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"隱藏資訊面板"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"顯示資訊面板"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"垃圾桶內沒有任何項目"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"在垃圾桶中超過 30 天的項目將會自動刪除。"</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"立即清空垃圾桶"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"垃圾桶已空"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"在垃圾桶中超過 30 天的項目將會自動刪除"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"清空垃圾桶"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"要清空垃圾桶嗎？"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"此操作無法復原，有關檔案亦無法復原。"</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"清空垃圾桶"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"垃圾桶內的檔案"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"此檔案位於垃圾桶中，無法開啟。如要存取檔案，請從垃圾桶還原。"</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"還原檔案"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"垃圾桶中的所有項目將會自動刪除。此操作無法復原。"</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"永久刪除"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{項目已移至垃圾桶}other{項目已移至垃圾桶}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{如要存取此項目，請還原項目或將項目從垃圾桶中拖曳出來}other{如要存取這些項目，請還原項目或將項目從垃圾桶中拖曳出來}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"還原"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"你目前處於離線狀態。部分檔案和功能無法使用。請連接互聯網以獲取完整的存取權。"</string>
 </resources>
