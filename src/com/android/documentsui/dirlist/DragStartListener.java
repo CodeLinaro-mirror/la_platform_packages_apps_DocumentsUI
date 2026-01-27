@@ -19,6 +19,7 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.net.Uri;
 import android.util.Log;
@@ -191,9 +192,14 @@ interface DragStartListener {
                 mSelectionMgr.copySelection(selection);
             } else {
                 selection.add(modelId);
-                // If the drag starts with a unselected item, clear the existing selection so the
-                // drag only happens with this unselected item.
+                // If the drag starts with an unselected item, clear the existing selection and
+                // select the unselected item so the drag only happens with this item.
                 mSelectionMgr.clearSelection();
+                // We need to update the selection manager because it affects the file operation
+                // type, e.g. move or copy (Check `mMustBeCopied` in DragAndDropManager).
+                if (isUseMaterial3FlagEnabled()) {
+                    mSelectionMgr.select(modelId);
+                }
             }
             return selection;
         }
