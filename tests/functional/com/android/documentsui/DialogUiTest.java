@@ -253,7 +253,7 @@ public class DialogUiTest {
         mFragmentManager = Mockito.mock(FragmentManager.class);
         Mockito.when(mFragmentManager.isStateSaved()).thenReturn(true);
 
-        DeleteDocumentFragment.show(mFragmentManager, null, null);
+        DeleteDocumentFragment.show(mFragmentManager, null, null, /* inTrash */ false);
     }
 
     @Test

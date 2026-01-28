@@ -83,6 +83,10 @@ public class MenuBot extends Bots.BaseBot {
             throw new UiObjectNotFoundException("Cannot find the '" + label + "' menu item");
         }
         item.click();
+
+        // Wait for the menu item to disappear from the view hierarchy.
+        // This ensures the menu is closed after the click.
+        mDevice.wait(Until.gone(By.text(label)), mTimeout);
     }
 
     /** Asserts that some menu items are present (and attempts to scroll to them if not). */

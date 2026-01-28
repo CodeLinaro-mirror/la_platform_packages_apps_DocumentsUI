@@ -16,15 +16,12 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.base.SharedMinimal.TAG;
-import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -48,8 +45,11 @@ import javax.annotation.Nullable;
 public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
     private static final String TAG_DELETE_DOCUMENT = "delete_document";
 
+    private static final String EXTRA_IN_TRASH = "in_trash";
+
     private List<DocumentInfo> mDocuments;
     private DocumentInfo mSrcParent;
+    private boolean mInTrash;
 
     /**
      * Show the dialog UI.
@@ -59,7 +59,10 @@ public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
      * @param srcParent the parent document of the selection
      */
     public static void show(
-            FragmentManager fm, List<DocumentInfo> docs, @Nullable DocumentInfo srcParent) {
+            FragmentManager fm,
+            List<DocumentInfo> docs,
+            @Nullable DocumentInfo srcParent,
+            boolean inTrash) {
         if (fm.isStateSaved()) {
             Log.w(TAG, "Skip show delete dialog because state saved");
             return;
@@ -68,6 +71,7 @@ public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
         final DeleteDocumentFragment dialog = new DeleteDocumentFragment();
         dialog.mDocuments = docs;
         dialog.mSrcParent = srcParent;
+        dialog.mInTrash = inTrash;
         dialog.show(fm, TAG_DELETE_DOCUMENT);
     }
 
@@ -82,25 +86,26 @@ public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
         if (savedInstanceState != null) {
             mSrcParent = savedInstanceState.getParcelable(Shared.EXTRA_DOC);
             mDocuments = savedInstanceState.getParcelableArrayList(Shared.EXTRA_SELECTION);
+            mInTrash = savedInstanceState.getBoolean(EXTRA_IN_TRASH);
         }
 
         Context context = getActivity();
         Injector<?> injector = ((BaseActivity) getActivity()).getInjector();
-        LayoutInflater dialogInflater = LayoutInflater.from(context);
-        TextView message =
-                (TextView)
-                        dialogInflater.inflate(
-                                getRes(R.layout.dialog_delete_confirmation), null, false);
-        message.setText(injector.messages.generateDeleteMessage(mDocuments));
 
-        final AlertDialog alertDialog = new MaterialAlertDialogBuilder(context)
-                .setView(message)
-                .setPositiveButton(
-                        android.R.string.ok,
-                        (dialog, id) ->
-                            injector.actions.deleteSelectedDocuments(mDocuments, mSrcParent))
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
+        String title = getString(R.string.delete_forever_dialog_title);
+        String message = injector.messages.generateDeleteMessage(mDocuments, mInTrash);
+
+        final AlertDialog alertDialog =
+                new MaterialAlertDialogBuilder(context)
+                        .setTitle(title)
+                        .setMessage(message)
+                        .setPositiveButton(
+                                android.R.string.ok,
+                                (dialog, id) ->
+                                        injector.actions.deleteSelectedDocuments(
+                                                mDocuments, mSrcParent))
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .create();
 
         alertDialog.setOnShowListener(
                 (dialogInterface) -> {
@@ -116,5 +121,6 @@ public class DeleteDocumentFragment extends DocumentsUIDialogFragment {
         super.onSaveInstanceState(outState);
         outState.putParcelable(Shared.EXTRA_DOC, mSrcParent);
         outState.putParcelableArrayList(Shared.EXTRA_SELECTION, (ArrayList) mDocuments);
+        outState.putBoolean(EXTRA_IN_TRASH, mInTrash);
     }
 }
