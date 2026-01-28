@@ -50,6 +50,7 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.files.TestActivity;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDirectoryDetails;
@@ -292,6 +293,18 @@ public final class MenuManagerTest {
     }
 
     @Test
+    // Disable M3 flag for the test since the de/select menu options are disabled by default in M3.
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSelectAndDeselectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
     public void testActionMenu_OnArchive() {
         selectionDetails.size = 1;
         selectionDetails.containFiles = true;
@@ -455,6 +468,19 @@ public final class MenuManagerTest {
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_WithFilesInDirectory() {
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertEnabledAndVisible();
     }
 
     @Test
@@ -630,6 +656,15 @@ public final class MenuManagerTest {
 
         dirSelectAll.assertDisabledAndInvisible();
         mDirDeselectAll.assertEnabledAndVisible();
+    }
+
+    @Test
+    public void testContextMenu_EmptyArea_SelectAndDeselectAllWithNoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+
+        dirSelectAll.assertDisabledAndInvisible();
+        mDirDeselectAll.assertDisabledAndInvisible();
     }
 
     @SuppressLint("VisibleForTests")
