@@ -51,24 +51,62 @@ class MessageBuilderTest() {
 
     @Test
     fun generateDeleteMessage() {
-        assertThat(messageBuilder.generateDeleteMessage(listOf(file("File"))))
-            .isEqualTo("Delete \"File\"?")
-        assertThat(messageBuilder.generateDeleteMessage(listOf(directory("Dir"))))
-            .isEqualTo("Delete folder \"Dir\" and its contents?")
-        assertThat(messageBuilder.generateDeleteMessage(listOf(file("File 1"), file("File 2"))))
-            .isEqualTo("Delete 2 files?")
+        val isInTrash = false
+        assertThat(messageBuilder.generateDeleteMessage(listOf(file("File")), isInTrash))
+            .isEqualTo("“File” will be deleted forever. This can’t be undone.")
+        assertThat(messageBuilder.generateDeleteMessage(listOf(directory("Dir")), isInTrash))
+            .isEqualTo("“Dir” will be deleted forever. This can’t be undone.")
         assertThat(
                 messageBuilder.generateDeleteMessage(
-                    listOf(directory("Directory 1"), directory("Directory 2"))
+                    listOf(file("File 1"), file("File 2")),
+                    isInTrash,
                 )
             )
-            .isEqualTo("Delete 2 folders and their contents?")
+            .isEqualTo("2 items will be deleted forever. This can’t be undone.")
         assertThat(
                 messageBuilder.generateDeleteMessage(
-                    listOf(file("File 1"), directory("Directory 1"))
+                    listOf(directory("Directory 1"), directory("Directory 2")),
+                    isInTrash,
                 )
             )
-            .isEqualTo("Delete 2 items?")
+            .isEqualTo("2 items will be deleted forever. This can’t be undone.")
+        assertThat(
+                messageBuilder.generateDeleteMessage(
+                    listOf(file("File 1"), directory("Directory 1")),
+                    isInTrash,
+                )
+            )
+            .isEqualTo("2 items will be deleted forever. This can’t be undone.")
+    }
+
+    @Test
+    fun generateInTrashItemsDeleteMessage() {
+        val isInTrash = true
+        assertThat(messageBuilder.generateDeleteMessage(listOf(file("File")), isInTrash))
+            .isEqualTo("“File” will be deleted forever. This can’t be undone.")
+        assertThat(messageBuilder.generateDeleteMessage(listOf(directory("Dir")), isInTrash))
+            .isEqualTo("“Dir” will be deleted forever. This can’t be undone.")
+        assertThat(
+                messageBuilder.generateDeleteMessage(
+                    listOf(file("File 1"), file("File 2")),
+                    isInTrash,
+                )
+            )
+            .isEqualTo("2 items in trash will be deleted forever. This can’t be undone.")
+        assertThat(
+                messageBuilder.generateDeleteMessage(
+                    listOf(directory("Directory 1"), directory("Directory 2")),
+                    isInTrash,
+                )
+            )
+            .isEqualTo("2 items in trash will be deleted forever. This can’t be undone.")
+        assertThat(
+                messageBuilder.generateDeleteMessage(
+                    listOf(file("File 1"), directory("Directory 1")),
+                    isInTrash,
+                )
+            )
+            .isEqualTo("2 items in trash will be deleted forever. This can’t be undone.")
     }
 
     @Test

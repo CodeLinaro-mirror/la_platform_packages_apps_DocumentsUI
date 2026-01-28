@@ -36,6 +36,7 @@ import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,43 +49,27 @@ public class MessageBuilder {
         mContext = context;
     }
 
-    public String generateDeleteMessage(List<DocumentInfo> docs) {
-        String message;
-        int dirsCount = 0;
-
-        for (DocumentInfo doc : docs) {
-            if (doc.isDirectory()) {
-                ++dirsCount;
-            }
-        }
-
-        if (docs.size() == 1) {
-            // Deleting 1 file xor 1 folder in cwd
-            // Address b/28772371, where including user strings in message can result in
-            // broken bidirectional support.
+    /**
+     * Generates a confirmation message for deleting the given documents.
+     *
+     * @param docs The list of documents to be deleted.
+     * @param inTrash Whether the documents are currently in the trash.
+     */
+    public String generateDeleteMessage(List<DocumentInfo> docs, boolean inTrash) {
+        int count = docs.size();
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("count", count);
+        if (count == 1) {
             String displayName = BidiFormatter.getInstance().unicodeWrap(docs.get(0).displayName);
-            message =
-                    dirsCount == 0
-                            ? mContext.getString(
-                                    getRes(R.string.delete_filename_confirmation_message),
-                                    displayName)
-                            : mContext.getString(
-                                    getRes(R.string.delete_foldername_confirmation_message),
-                                    displayName);
-        } else if (dirsCount == 0) {
-            // Deleting only files in cwd
-            message = getQuantityString(getRes(R.plurals.delete_files_confirmation_message),
-                    docs.size());
-        } else if (dirsCount == docs.size()) {
-            // Deleting only folders in cwd
-            message = getQuantityString(getRes(R.plurals.delete_folders_confirmation_message),
-                    docs.size());
-        } else {
-            // Deleting mixed items (files and folders) in cwd
-            message = getQuantityString(getRes(R.plurals.delete_items_confirmation_message),
-                    docs.size());
+            args.put("name", displayName);
         }
-        return message;
+
+        int resourceId =
+                inTrash
+                        ? R.string.delete_forever_from_trash_confirmation_message
+                        : R.string.delete_forever_confirmation_message;
+
+        return new MessageFormat(mContext.getString(resourceId), Locale.getDefault()).format(args);
     }
 
     private static int getResourceId(int dialogType, int operationType) {
