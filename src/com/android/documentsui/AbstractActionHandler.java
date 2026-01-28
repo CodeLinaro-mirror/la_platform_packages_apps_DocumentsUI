@@ -167,6 +167,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     private Runnable mDisplayStateChangedListener;
 
     private ContentLock mContentLock;
+    protected Uri mToSelect;
 
     @Override
     public void registerDisplayStateChangedListener(Runnable l) {
@@ -1573,10 +1574,33 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             assert (result != null);
             // First: Update the  file list with the new results.
             mInjector.getModel().update(result);
+            if (isHomeScreenFilesFlagEnabled()) {
+                selectDocument();
+            }
             mLoaderSemaphore.release();
 
             // Second: Fetch the summary for the result.
             startLoadingSummaries(result);
+        }
+
+        /**
+         * Selects a document within the directory based on the URI stored in `mToSelect`.
+         * `mToSelect` is set in {@link
+         * com.android.documentsui.files.ActionHandler#launchToDocument(Intent)} if the intent
+         * provided is of application/zip mimetype and the intent originates from the launcher home
+         * screen.
+         */
+        private void selectDocument() {
+            if (mToSelect == null) {
+                return;
+            }
+            for (String modelId : mModel.getModelIds()) {
+                if (mToSelect.equals(mModel.getItemUri(modelId))) {
+                    mSelectionMgr.select(modelId);
+                    mToSelect = null;
+                    return;
+                }
+            }
         }
 
         @Override
