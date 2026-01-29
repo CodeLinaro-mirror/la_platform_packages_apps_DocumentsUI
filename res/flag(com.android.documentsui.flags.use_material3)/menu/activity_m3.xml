@@ -49,6 +49,13 @@
         app:actionLayout="@layout/job_progress_toolbar_item"
         app:showAsAction="always" />
     <item
+        android:id="@+id/option_menu_extract_all"
+        android:enabled="false"
+        android:icon="@drawable/ic_menu_extract_m3"
+        android:title="@string/menu_extract_all"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/sub_menu_grid"
         android:title="@string/menu_grid"
         android:icon="@drawable/ic_menu_view_grid_m3"
@@ -104,13 +111,6 @@
             android:title="@string/menu_inspect"
             android:visible="false"
             app:showAsAction="never" />
-        <item
-            android:id="@+id/option_menu_extract_all"
-            android:enabled="false"
-            android:icon="@drawable/ic_menu_extract_m3"
-            android:title="@string/menu_extract_all"
-            android:visible="false"
-            app:showAsAction="always" />
     </group>
     <group android:id="@+id/menu_settings_group">
         <item
