@@ -429,6 +429,18 @@ public final class MenuManagerTest {
     }
 
     @Test
+    // Disable M3 flag for the test since the de/select menu options are disabled by default in M3.
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSelectAndDeselectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
@@ -951,6 +963,19 @@ public final class MenuManagerTest {
     }
 
     @Test
+    public void testOptionMenu_SelectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_WithFilesInDirectory() {
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertEnabledAndVisible();
+    }
+
+    @Test
     @EnableFlags(Flags.FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testOptionMenu_EmptyArea_NoItemToPaste() {
         assumeTrue("Skip because show_copy_to_move_to_menus is true", shouldShowCopyCutMenus());
@@ -1124,6 +1149,15 @@ public final class MenuManagerTest {
         dirSelectAll.assertEnabledAndVisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertEnabledAndVisible();
+    }
+
+    @Test
+    public void testContextMenu_EmptyArea_SelectAndDeselectAllWithNoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+
+        dirSelectAll.assertDisabledAndInvisible();
+        mDirDeselectAll.assertDisabledAndInvisible();
     }
 
     @SuppressLint("VisibleForTests")

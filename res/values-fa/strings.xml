@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"روشن کردن"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"دوباره از من پرسیده نشود"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"اکنون نه"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"باز کردن از"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"نمای فهرستی"</string>
     <string name="menu_search" msgid="1876699106790719849">"جستجو"</string>
     <string name="menu_settings" msgid="6520844520117939047">"تنظیمات فضای ذخیره‌سازی"</string>
+    <string name="manage_device" msgid="329180710072251010">"مدیریت دستگاه"</string>
     <string name="menu_open" msgid="9092138100049759315">"باز"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"باز کردن با"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"باز کردن در پنجرهٔ جدید"</string>
     <string name="menu_save" msgid="5195367497138965168">"ذخیره"</string>
     <string name="menu_share" msgid="4307140947108068356">"هم‌رسانی"</string>
     <string name="menu_delete" msgid="1022254131543256626">"حذف"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"حذف برای همیشه"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"حذف برای همیشه"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"انتقال به حذف‌شده‌ها"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"بازگرداندن"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"انتخاب همه"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"دریافت اطلاعات"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"فایل‌های پنهان نشان داده شود"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"فایل‌های پنهان نشان داده نشود"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"ستون خلاصه نشان داده شود"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"ستون خلاصه نشان داده نشود"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"نمایش ستون شرح"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"ستون شرح نشان داده نشود"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"مشاهده در <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"پنجره جدید"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"برش"</string>
@@ -79,12 +83,12 @@
     <string name="button_retry" msgid="4011461781916631389">"دوباره امتحان کنید"</string>
     <string name="button_clear" msgid="5412304437764369441">"پاک کردن"</string>
     <string name="button_show_provider" msgid="6905880493806292753">"نمایش در برنامه ارائه‌دهنده"</string>
-    <string name="button_back" msgid="1888621708934742182">"برگشت"</string>
+    <string name="button_back" msgid="1888621708934742182">"برگشتن"</string>
     <string name="button_show_in_folder" msgid="6674673478637689386">"نمایش در پوشه"</string>
     <string name="button_open_trash" msgid="8152584341121216006">"باز کردن حذف‌شده‌ها"</string>
     <string name="not_sorted" msgid="7813496644889115530">"مرتب‌سازی نشده است"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"نام"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"خلاصه"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"شرح"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"نوع"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"اندازه"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"آخرین تغییر"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"پیش‌نمایش تصویر <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"پنهان کردن پانل اطلاعات"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"نشان دادن پانل اطلاعات"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"چیزی در «حذف‌شده‌ها» نیست"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"فایل‌هایی که بیش‌از ۳۰ روز در حذف‌شده‌ها بوده‌اند، به‌طور خودکار حذف می‌شوند."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"خالی کردن حذف‌شده‌ها همین الآن"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"حذف‌شده‌ها خالی است"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"فایل‌هایی که بیش‌از ۳۰ روز در حذف‌شده‌ها بوده‌اند، به‌طور خودکار حذف می‌شوند."</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"خالی کردن حذف‌شده‌ها"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"حذف‌شده‌ها خالی شود؟"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"این کنش واگردشدنی نیست و فایل‌ها دیگر قابل‌بازیابی نیستند."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"خالی کردن حذف‌شده‌ها"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"فایل در «حذف‌شده‌ها»"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"این فایل در «حذف‌شده‌ها» است و امکان باز کردن آن وجود ندارد. لطفاً آن را از حذف‌شده‌ها بازگردانید تا به آن دسترسی پیدا کنید."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"بازگرداندن فایل"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"همه موارد در حذف‌شده‌ها برای همیشه حذف خواهد شد. این کار واگردشدنی نیست."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"حذف برای همیشه"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{مورد در حذف‌شده‌ها است}one{موارد در حذف‌شده‌ها است}other{موارد در حذف‌شده‌ها است}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{برای دسترسی به این مورد، آن را بازیابی کنید یا از «حذف‌شده‌ها» بیرون بکشید}one{‏برای دسترسی به این موارد، آن‌ها را بازیابی کنید یا از «حذف‌شده‌ها» بیرون بکشیدs}other{برای دسترسی به این موارد، آن‌ها را بازیابی کنید یا از «حذف‌شده‌ها» بیرون بکشید}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"بازگرداندن"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"درحال‌حاضر آفلاين هستید. برخی‌از فایل‌ها و عملکردها دردسترس نیستند. برای دسترسی کامل، به اینترنت متصل شوید."</string>
 </resources>

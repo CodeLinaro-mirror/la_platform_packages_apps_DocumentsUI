@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Activar"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"No volver a preguntarme"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Ahora no"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Abrir desde"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Vista de lista"</string>
     <string name="menu_search" msgid="1876699106790719849">"Buscar"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Opciones de almacenamiento"</string>
+    <string name="manage_device" msgid="329180710072251010">"Administrar dispositivo"</string>
     <string name="menu_open" msgid="9092138100049759315">"Abrir"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Abrir con"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Abrir en ventana nueva"</string>
     <string name="menu_save" msgid="5195367497138965168">"Guardar"</string>
     <string name="menu_share" msgid="4307140947108068356">"Compartir"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Borrar"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Borrar definitivamente"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Borrar definitivamente"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Mover a la papelera"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Restablecer"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Seleccionar todo"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Obtener información"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostrar archivos ocultos"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"No mostrar archivos ocultos"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Mostrar columna de resumen"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"No mostrar columna de resumen"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Mostrar la columna de descripción"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"No mostrar la columna de descripción"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Ver en <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Ventana nueva"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Cortar"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Abrir la papelera"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Sin ordenar"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nombre"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Resumen"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Descripción"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Tipo"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Tamaño"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Modificación"</string>
@@ -414,14 +418,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Vista previa de la imagen de <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Ocultar panel de información"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Mostrar panel de información"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"No hay elementos en la papelera"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Los archivos que estén en la papelera durante más de 30 días se borrarán automáticamente."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Vaciar la papelera ahora"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"La papelera está vacía"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Los elementos que estén en la papelera durante más de 30 días se borrarán automáticamente"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Vaciar la papelera"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"¿Quieres vaciar la papelera?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Esta acción no se puede deshacer y los archivos ya no se podrán recuperar."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Vaciar la papelera"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Archivo en la papelera"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Este archivo está en la papelera y no se puede abrir. Restablécelo para acceder a él."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Restablecer archivo"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Se borrarán definitivamente todos los elementos de la papelera. Esta acción no se puede deshacer."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Borrar definitivamente"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{El elemento está en la papelera}many{Los elementos están en la papelera}other{Los elementos están en la papelera}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Para acceder a este elemento, restablécelo o arrástralo fuera de la papelera}many{Para acceder a estos elementos, restablécelos o arrástralos fuera de la papelera}other{Para acceder a estos elementos, restablécelos o arrástralos fuera de la papelera}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Restablecer"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"En este momento, no tienes conexión. Algunos archivos y funciones no están disponibles. Conéctate a Internet para obtener acceso completo."</string>
 </resources>

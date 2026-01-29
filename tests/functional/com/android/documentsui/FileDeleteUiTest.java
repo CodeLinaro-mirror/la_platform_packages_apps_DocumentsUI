@@ -147,7 +147,6 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags(FLAG_HOME_SCREEN_FILES_RO)
     public void testDeleteAllDocument() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         device.waitForIdle();
 
         waitUntilFileCountIs(STUB_FILE_COUNT);
