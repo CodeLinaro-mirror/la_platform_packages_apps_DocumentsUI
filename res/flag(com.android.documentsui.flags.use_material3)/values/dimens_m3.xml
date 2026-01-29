@@ -256,6 +256,7 @@
     <dimen name="search_bar_text_size_m3">16dp</dimen>
 
     <dimen name="docked_searchbar_height">48dp</dimen>
+    <dimen name="docked_searchbar_margin">8dp</dimen>
     <dimen name="docked_searchbar_padding">4dp</dimen>
     <dimen name="docked_searchbar_icon_padding">12dp</dimen>
     <dimen name="docked_searchbar_text_width">250dp</dimen>

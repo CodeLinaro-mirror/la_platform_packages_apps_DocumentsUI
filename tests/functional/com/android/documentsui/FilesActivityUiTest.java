@@ -39,6 +39,8 @@ import static org.junit.Assert.assertTrue;
 import android.annotation.Nullable;
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
@@ -73,6 +75,7 @@ import org.junit.Test;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 @LargeTest
@@ -583,6 +586,55 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
                     dispatchWindowInsets(activity, systemBarsBottom, systemBarsBottom);
                     assertBottomPadding(activity, /* isGestureNav= */ false, systemBarsBottom);
                 });
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
+    public void testOnConfigurationChanged_LocaleResetsSelection() throws Exception {
+        final String[] frenchDownloads = new String[1];
+        device.waitForIdle();
+        bots.directory.selectDocument("file0.log", 1);
+        bots.directory.assertSelection(1);
+
+        mActivityScenario.onActivity(
+                activity -> {
+                    Configuration newConfig =
+                            new Configuration(activity.getResources().getConfiguration());
+                    newConfig.setLocale(Locale.FRENCH);
+
+                    // Create a new context with the new configuration to get the correct string
+                    Context frenchContext = activity.createConfigurationContext(newConfig);
+                    frenchDownloads[0] =
+                            frenchContext.getResources().getString(R.string.downloads_label);
+                    activity.onConfigurationChanged(newConfig);
+                });
+
+        // Wait for the UI to update after the async refresh. The most reliable
+        // signal is waiting for the root item with the new locale's text to appear.
+        device.wait(Until.hasObject(By.text(frenchDownloads[0])), TIMEOUT);
+        bots.directory.assertNoSelection(); // Selection should be cleared
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
+    public void testConfigurationChange_ResizeAppPreservesSelection() throws Exception {
+        final String[] downloads = new String[1];
+        device.waitForIdle();
+        bots.directory.selectDocument("file0.log", 1);
+        bots.directory.assertSelection(1);
+
+        // This simulates a minor config change where the activity is not recreated,
+        // and only onConfigurationChanged is called.
+        mActivityScenario.onActivity(
+                activity -> {
+                    Configuration newConfig =
+                            new Configuration(activity.getResources().getConfiguration());
+                    newConfig.screenHeightDp += 10;
+                    activity.onConfigurationChanged(newConfig);
+                    downloads[0] = activity.getResources().getString(R.string.downloads_label);
+                });
+        device.wait(Until.hasObject(By.text(downloads[0])), TIMEOUT);
+        bots.directory.assertSelection(1); // Selection should be preserved
     }
 
     private void dispatchWindowInsets(
