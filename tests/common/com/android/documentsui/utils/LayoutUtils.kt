@@ -29,7 +29,7 @@ fun inFixedLayout(context: Context, @LayoutRes layoutId: Int?): Boolean {
         throw IllegalArgumentException("layoutId cannot be null.")
     }
     val value = TypedValue()
-    // We alias files_activity and documents_activity to either fixed or drawer or nav_rail layouts
+    // We alias files_activity and pick_activity to either fixed or drawer or nav_rail layouts
     // based on screen dimensions. In order to determine which layout has been selected, we check
     // the resolved value.
     context.getResources().getValue(layoutId, value, true)
