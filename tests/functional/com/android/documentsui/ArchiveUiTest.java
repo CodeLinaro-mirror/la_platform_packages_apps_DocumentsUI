@@ -32,7 +32,6 @@ import android.view.View;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
@@ -53,7 +52,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseArchiveViaDefaultAction() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
@@ -74,7 +73,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void cannotExtractArchiveInReadOnlyFolder() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         assertNotNull("Expect an error snackbar", bots.directory.getSnackbar(
@@ -94,7 +93,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaContextMenu() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Browse");
@@ -119,7 +118,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaActionMenu() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Browse");
@@ -133,7 +132,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO})
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void openArchiveViaContextMenu() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("archive.zip");
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
@@ -146,7 +145,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaDefaultAction() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");
         bots.directory.openDocument("broken.zip");
         bots.directory.waitAndAssertPlaceholderMessageText(context.getString(R.string.empty));
@@ -155,7 +154,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseInvalidArchiveViaContextMenu() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Browse");
@@ -166,7 +165,7 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO})
     @DisableFlags({FLAG_ZIP_NG_RO})
     public void openInvalidArchiveViaContextMenu() throws Exception {
-        EspressoBotsKt.openRoot(context, "ResourcesProvider", getActivityLayoutId());
+        switchRoot("ResourcesProvider");
         bots.directory.waitForDocument("broken.zip");
         bots.directory.rightClickDocument("broken.zip");
         bots.menu.clickMenuItem("Open");

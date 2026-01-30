@@ -79,6 +79,7 @@ public final class Bots {
     public final InspectorBot inspector;
     public final NotificationsBot notifications;
     public final PickerBot picker;
+    public final NavigationBot navigation;
 
     public Bots(
             UiDevice device,
@@ -98,6 +99,7 @@ public final class Bots {
         inspector = new InspectorBot(device, context, TIMEOUT, layoutId);
         notifications = new NotificationsBot(device, context, TIMEOUT, layoutId);
         picker = new PickerBot(device, context, TIMEOUT, layoutId);
+        navigation = new NavigationBot(device, context, TIMEOUT, layoutId);
 
         // Set the Bots instance to each sub bot so inside each sub bot they can access other sub
         // bot.
@@ -113,6 +115,7 @@ public final class Bots {
         inspector.setBots(this);
         notifications.setBots(this);
         picker.setBots(this);
+        navigation.setBots(this);
     }
 
     /**
