@@ -96,7 +96,7 @@ public class DocumentHolderTest {
 
     @Before
     public void setUp() throws Exception {
-        // Required for the progress circle animation.
+        // Required for the setEnabled animation.
         if (Looper.myLooper() == null) {
             Looper.prepare();
         }
@@ -145,7 +145,7 @@ public class DocumentHolderTest {
         }
     }
 
-    private View getProgressCircle(DocumentHolder holder) {
+    private View getProgressIcon(DocumentHolder holder) {
         return holder.itemView.findViewById(android.R.id.progress);
     }
 
@@ -174,15 +174,15 @@ public class DocumentHolderTest {
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        View progressCircle = getProgressCircle(holder);
-        assertNotNull(progressCircle);
-        assertEquals(View.VISIBLE, progressCircle.getVisibility());
+        View progressIcon = getProgressIcon(holder);
+        assertNotNull(progressIcon);
+        assertEquals(View.VISIBLE, progressIcon.getVisibility());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
-                progressCircle.getContentDescription().toString());
+                progressIcon.getContentDescription().toString());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
-                progressCircle.getTooltipText().toString());
+                progressIcon.getTooltipText().toString());
     }
 
     @Test
@@ -194,15 +194,15 @@ public class DocumentHolderTest {
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        View progressCircle = getProgressCircle(holder);
-        assertNotNull(progressCircle);
-        assertEquals(View.VISIBLE, progressCircle.getVisibility());
+        View progressIcon = getProgressIcon(holder);
+        assertNotNull(progressIcon);
+        assertEquals(View.VISIBLE, progressIcon.getVisibility());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
-                progressCircle.getContentDescription().toString());
+                progressIcon.getContentDescription().toString());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
-                progressCircle.getTooltipText().toString());
+                progressIcon.getTooltipText().toString());
     }
 
     @Test
@@ -343,13 +343,13 @@ public class DocumentHolderTest {
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNotNull(getProgressCircle(holder));
+        assertNotNull(getProgressIcon(holder));
         assertNotNull(getSyncErrorIcon(holder));
         assertNotNull(getUploadIcon(holder));
         assertNotNull(getDownloadIcon(holder));
         assertNotNull(getTickIcon(holder));
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -358,7 +358,7 @@ public class DocumentHolderTest {
         mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_UPLOAD_ERROR;
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -375,8 +375,8 @@ public class DocumentHolderTest {
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
         holder.setEnabled(false);
 
-        assertNotNull(getProgressCircle(holder));
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotNull(getProgressIcon(holder));
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
     }
 
     @Test
@@ -388,13 +388,13 @@ public class DocumentHolderTest {
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNotNull(getProgressCircle(holder));
+        assertNotNull(getProgressIcon(holder));
         assertNotNull(getSyncErrorIcon(holder));
         assertNotNull(getUploadIcon(holder));
         assertNotNull(getDownloadIcon(holder));
         assertNotNull(getTickIcon(holder));
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -410,13 +410,13 @@ public class DocumentHolderTest {
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ true);
 
-        assertNotNull(getProgressCircle(holder));
+        assertNotNull(getProgressIcon(holder));
         assertNotNull(getSyncErrorIcon(holder));
         assertNotNull(getUploadIcon(holder));
         assertNotNull(getDownloadIcon(holder));
         assertNotNull(getTickIcon(holder));
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -432,7 +432,7 @@ public class DocumentHolderTest {
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNull(getProgressCircle(holder));
+        assertNull(getProgressIcon(holder));
         assertNull(getSyncErrorIcon(holder));
         assertNull(getUploadIcon(holder));
         assertNull(getDownloadIcon(holder));

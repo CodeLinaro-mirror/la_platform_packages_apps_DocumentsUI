@@ -151,14 +151,12 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_sync_circle_background_m3" />
 
-                <com.google.android.material.progressindicator.CircularProgressIndicator
-                    style="@style/InlineSyncProgressIndicatorStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <ImageView
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
                     android:layout_gravity="center"
                     android:scaleType="fitCenter"
-                    android:indeterminate="true"
-                    app:indicatorSize="@dimen/list_inline_sync_progress_indicator_size"/>
+                    android:src="@drawable/ic_sync_progress_m3" />
             </FrameLayout>
 
             <FrameLayout

@@ -18,6 +18,7 @@ package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
@@ -54,6 +55,7 @@ import com.android.documentsui.testing.TestEvents;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.testing.Views;
 
+import com.android.documentsui.util.FlagUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -236,6 +238,7 @@ public class DragStartListenerTest {
     }
 
     @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testDragStart_newNonSelectedItem() {
         MutableSelection<String> selection = new MutableSelection<>();
         selection.add("5678");
@@ -247,6 +250,23 @@ public class DragStartListenerTest {
         assertTrue(selection.contains("1234"));
         // After this, selection should be cleared
         assertFalse(mSelectionMgr.hasSelection());
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testDragStart_newNonSelectedItem_updateSelection() {
+        MutableSelection<String> selection = new MutableSelection<>();
+        selection.add("5678");
+        mSelectionMgr.replaceSelection(selection);
+
+        selection =
+                mListener.getSelectionToBeCopied(
+                        "1234", mEvent.action(MotionEvent.ACTION_MOVE).build());
+        assertTrue(selection.size() == 1);
+        assertTrue(selection.contains("1234"));
+        // Selection should be updated to the SelectionManager.
+        assertTrue(mSelectionMgr.hasSelection());
+        assertTrue(mSelectionMgr.isSelected("1234"));
     }
 
     @Test
