@@ -168,6 +168,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Display the documents inside a single directory.
@@ -196,6 +197,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private static final String ACTION_MEDIA_REMOVED = "android.intent.action.MEDIA_REMOVED";
     private static final String ACTION_MEDIA_MOUNTED = "android.intent.action.MEDIA_MOUNTED";
     private static final String ACTION_MEDIA_EJECT = "android.intent.action.MEDIA_EJECT";
+
+    @VisibleForTesting public static final int TICK_VISIBLE_DURATION_MS = 1200;
 
     private BaseActivity mActivity;
 
@@ -2121,6 +2124,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public Model getModel() {
             return mModel;
+        }
+
+        /**
+         * Gets the inline sync tick icon visibility duration. In test code this can be overridden
+         * and found with getTickDurationSupplierForTest(). Otherwise, it will be the constant
+         * TICK_VISIBLE_DURATION_MS.
+         */
+        @Override
+        public int getTickDuration() {
+            Supplier<Integer> testSupplier = mActivity.getTickDurationSupplierForTest();
+            // Return the overridden duration only if set by tests.
+            return (testSupplier != null) ? testSupplier.get() : TICK_VISIBLE_DURATION_MS;
         }
 
         @Override

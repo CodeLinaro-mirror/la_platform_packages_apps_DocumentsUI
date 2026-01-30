@@ -32,6 +32,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -50,6 +51,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -512,6 +514,25 @@ public class UiBot extends Bots.BaseBot {
     public void hideHiddenFiles() {
         clickToolbarOverflowItem(mContext.getString(R.string.menu_hide_hidden_files));
         mDevice.waitForIdle();
+    }
+
+    private ViewInteraction getOfflineBanner() {
+        return onView(
+                allOf(
+                        withId(R.id.message_textview),
+                        withText(
+                                mContext.getString(
+                                        getRes(R.string.you_are_offline_banner_message)))));
+    }
+
+    /** Asserts that the "You're offline" banner does not exist. */
+    public void assertOfflineBannerDoesNotExist() {
+        getOfflineBanner().check(doesNotExist());
+    }
+
+    /** Asserts that the "You're offline" banner is currently visible. */
+    public void assertOfflineBannerIsVisible() {
+        getOfflineBanner().check(matches(isDisplayed()));
     }
 
     /**

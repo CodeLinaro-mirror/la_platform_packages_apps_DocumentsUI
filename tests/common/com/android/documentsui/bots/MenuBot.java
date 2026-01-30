@@ -16,13 +16,29 @@
 
 package com.android.documentsui.bots;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.not;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.StringRes;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
@@ -32,12 +48,16 @@ import androidx.test.uiautomator.UiScrollable;
 import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
+import com.android.documentsui.actions.WaitUntilVisible;
+
 import java.util.Map;
 
 /**
  * A test helper class that provides support for controlling menu items.
  */
 public class MenuBot extends Bots.BaseBot {
+
+    private static final String TAG = "MenuBot";
 
     public MenuBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
@@ -99,6 +119,59 @@ public class MenuBot extends Bots.BaseBot {
             } else {
                 assertFalse(key + " expected not to be shown", exists);
             }
+        }
+    }
+
+    /** Finds the action menu item with the given label within the toolbar. */
+    public ViewInteraction findToolbarActionMenuItem(@IdRes int id) {
+        // The label is stored as the content description of the action menu item.
+        return onView(allOf(withClassName(endsWith("ActionMenuItemView")), withId(id)))
+                .perform(new WaitUntilVisible(mTimeout));
+    }
+
+    /** Finds the list menu item with the given label, scrolling to it if necessary. */
+    private ViewInteraction findListMenuItem(String menuLabel) {
+        // A menu item has class name ListMenuItemView and a TextView with the given label.
+        return onView(
+                        allOf(
+                                withClassName(endsWith("ListMenuItemView")),
+                                hasDescendant(withText(menuLabel))))
+                .inRoot(isPlatformPopup())
+                .perform(new WaitUntilVisible(mTimeout));
+    }
+
+    /** Asserts that given menu items are visible and disabled. */
+    public void assertListMenuItemsVisibleAndDisabled(@StringRes int... menuItemResIds) {
+        for (int id : menuItemResIds) {
+            String menuLabel = mContext.getString(id);
+            // Check that the menu item is disabled.
+            findListMenuItem(menuLabel).check(matches(not(isEnabled())));
+        }
+    }
+
+    /**
+     * Asserts that given `expectedMenuItems` are visible and enabled (and attempts to scroll to
+     * them if not in view). .
+     */
+    public void assertListMenuItemsVisibleAndEnabled(@StringRes int... menuItemResIds) {
+        for (int id : menuItemResIds) {
+            String menuLabel = mContext.getString(id);
+            // Check that the menu item is enabled.
+            findListMenuItem(menuLabel).check(matches(isEnabled()));
+        }
+    }
+
+    /** Asserts that given action menu items within the toolbar are visible and disabled. */
+    public void assertToolbarMenuItemsVisibleAndDisabled(@IdRes int... menuItemResIds) {
+        for (int id : menuItemResIds) {
+            findToolbarActionMenuItem(id).check(matches(not(isEnabled())));
+        }
+    }
+
+    /** Asserts that given action menu items within the toolbar are visible and disabled. */
+    public void assertToolbarMenuItemsVisibleAndEnabled(@IdRes int... menuItemResIds) {
+        for (int id : menuItemResIds) {
+            findToolbarActionMenuItem(id).check(matches(isEnabled()));
         }
     }
 }

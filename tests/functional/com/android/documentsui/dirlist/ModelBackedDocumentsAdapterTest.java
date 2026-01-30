@@ -18,7 +18,7 @@ package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
-import static com.android.documentsui.dirlist.ModelBackedDocumentsAdapter.TICK_VISIBLE_DURATION_MS;
+import static com.android.documentsui.dirlist.DirectoryFragment.TICK_VISIBLE_DURATION_MS;
 import static com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
