@@ -150,6 +150,7 @@
             android:name=".files.LauncherActivity"
             android:label="@string/launcher_label"
             android:icon="@drawable/launcher_icon"
+            android:taskAffinity=""
             android:theme="@android:style/Theme.NoDisplay">
         </activity>
 
@@ -166,7 +167,12 @@
             android:targetActivity=".files.LauncherActivity"
             android:label="@string/launcher_label"
             android:exported="true"
-            android:icon="@drawable/launcher_icon" >
+            android:resizeableActivity="true"
+            android:taskAffinity=""
+            android:icon="@drawable/launcher_icon">
+            <property
+                android:name="android.window.PROPERTY_SUPPORTS_MULTI_INSTANCE_SYSTEM_UI"
+                android:value="true"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -176,7 +182,9 @@
 
         <activity
             android:name=".files.FilesActivity"
-            android:documentLaunchMode="intoExisting"
+            android:taskAffinity=""
+            android:launchMode="standard"
+            android:documentLaunchMode="always"
             android:exported="true"
             android:theme="@style/LauncherTheme"
             android:configChanges="locale|layoutDirection">
