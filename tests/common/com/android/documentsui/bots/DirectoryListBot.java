@@ -17,8 +17,11 @@
 package com.android.documentsui.bots;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.isNotEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -47,6 +50,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
+import androidx.annotation.IdRes;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.espresso.matcher.BoundedDiagnosingMatcher;
 import androidx.test.uiautomator.By;
@@ -61,6 +65,10 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.WaitUntilGone;
+import com.android.documentsui.actions.WaitUntilVisible;
+
+import junit.framework.AssertionFailedError;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -243,6 +251,70 @@ public class DirectoryListBot extends Bots.BaseBot {
                 summaryView);
     }
 
+    /**
+     * Asserts that target objects, identified by objectResourceIds, within the bounds of the
+     * document item, found by its label, become (or are already) visible.
+     *
+     * @param label The text label of the document item to find.
+     * @param objectResourceIds The resource IDs of the objects expected to be on the document.
+     */
+    public void assertObjectsEventuallyAppearOnDocument(
+            String label, @IdRes int... objectResourceIds) throws AssertionFailedError {
+        // Find document first.
+        EspressoBotsKt.findDocument(label, mTimeout);
+        for (int id : objectResourceIds) {
+            // Check each object appears on the document.
+            onView(allOf(withId(id), isDescendantOfA(EspressoBotsKt.documentMatcher(label))))
+                    .perform(new WaitUntilVisible(mTimeout));
+        }
+    }
+
+    /**
+     * Asserts that target objects, identified by objectResourceIds, within the bounds of the
+     * document item, found by its label, become (or are already) hidden.
+     *
+     * @param label The text label of the document item to find.
+     * @param objectResourceIds The resource IDs of the objects expected to disappear from the
+     *     document.
+     */
+    public void assertObjectsEventuallyHiddenOnDocument(
+            String label, @IdRes int... objectResourceIds) {
+        // Find document first.
+        EspressoBotsKt.findDocument(label, mTimeout);
+        for (int id : objectResourceIds) {
+            // Check each object disappears from the document.
+            onView(allOf(withId(id), isDescendantOfA(EspressoBotsKt.documentMatcher(label))))
+                    .perform(new WaitUntilGone(mTimeout));
+        }
+    }
+
+    /**
+     * Asserts that the sync state icons are not visible on the document.
+     *
+     * @param label The display name of the document file.
+     */
+    public void assertDocumentSyncIconsNotVisible(String label) {
+        assertObjectsEventuallyHiddenOnDocument(
+                label,
+                android.R.id.progress,
+                R.id.sync_error_icon,
+                R.id.upload_icon,
+                R.id.download_icon,
+                R.id.progress_tick_icon);
+    }
+
+    /** Asserts that the document with the given label is disabled. */
+    public void assertDocumentDisabled(String label) throws AssertionFailedError {
+        // The TextView within the DocumentHolder will share the same enabled state.
+        onView(withText(label)).check(matches(isNotEnabled()));
+    }
+
+    /** Asserts that the document with the given label is enabled. */
+    public void assertDocumentEnabled(String label) throws AssertionFailedError {
+        // The TextView within the DocumentHolder will share the same enabled state.
+        onView(withText(label)).check(matches(isEnabled()));
+    }
+
     public void assertDocumentsCountOnList(boolean exists, int count)
             throws UiObjectNotFoundException {
         UiObject docsList = findDocumentsList();
@@ -325,7 +397,7 @@ public class DirectoryListBot extends Bots.BaseBot {
      * @param number Which nth document it is. The number corresponding to "n selected"
      */
     public void selectDocument(String label, int number) throws UiObjectNotFoundException {
-        waitForDocument(label);
+        waitForDocument(label, /* withScroll= */ true);
 
         // Long finger-click (instead of long mouse-click and instead of regular (not-long)
         // mouse-click) to toggle (instead of set) selection. Toggling (instead of setting) does
@@ -455,7 +527,25 @@ public class DirectoryListBot extends Bots.BaseBot {
         if (withScroll) {
             scrollIntoView(docList, label);
         }
-        return mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
+        UiObject document = mDevice.findObject(docList.childSelector(new UiSelector().text(label)));
+        UiObject2 breadcrumb =
+                mDevice.findObject(By.res(mTargetPackage + ":id/horizontal_breadcrumb"));
+        if (breadcrumb == null) {
+            breadcrumb = mDevice.findObject(By.res(mTargetPackage + ":id/breadcrumb_view_v2"));
+            if (breadcrumb == null) {
+                return document;
+            }
+        }
+        if (withScroll) {
+            int scrolls = 5;
+            // If the document is hidden behind the breadcrumb. Scroll until it appears above the
+            // breadcrumb.
+            while (breadcrumb.getVisibleBounds().intersect(document.getBounds()) && scrolls > 0) {
+                scrollForward(docList);
+                scrolls--;
+            }
+        }
+        return document;
     }
 
     public boolean hasDocuments(String... labels) throws UiObjectNotFoundException {
@@ -612,6 +702,27 @@ public class DirectoryListBot extends Bots.BaseBot {
         mAutomation.injectInputEvent(motionUp, true);
     }
 
+    private UiScrollable getScrollable(UiSelector selector) {
+        UiScrollable scrollable = new UiScrollable(selector);
+        // In drawer_layout the file list occupied the whole app window height because of
+        // the CollapsingToolbarLayout, so "scrollIntoView" might start swipe on the
+        // app bar or breadcrumb area, which doesn't actually trigger the scroll of the list.
+        // Setting a dead zone here to avoid starting swipe on these areas.
+        // Note: 0.2 is just an estimated percentage here (the dead zone ratio on 4 sides, we
+        // only need dead zone for the top and the bottom, but there's no API to set specific
+        // sides).
+        final boolean docListCoveredByOtherViews = inDrawerLayout() && isUseMaterial3FlagEnabled();
+        if (docListCoveredByOtherViews) {
+            scrollable.setSwipeDeadZonePercentage(0.2);
+        }
+        // scrollIntoView will only attempt to scroll MaxSearchSwipes number of times.
+        // For directories containing a large number of files this default value is inadequate.
+        // Replace the default value with a larger one that will ensure the file
+        // is found if it is present.
+        scrollable.setMaxSearchSwipes(MAX_SEARCH_SWIPES);
+        return scrollable;
+    }
+
     /**
      * Scroll the provided on-screen element for text defined by {@code label}.
      *
@@ -624,30 +735,11 @@ public class DirectoryListBot extends Bots.BaseBot {
      */
     private void scrollIntoView(UiSelector selector, String label)
             throws UiObjectNotFoundException {
-        UiScrollable scrollable = new UiScrollable(selector);
-        // In drawer_layout the file list occupied the whole app window height because of
-        // the CollapsingToolbarLayout, so "scrollIntoView" might start swipe on the
-        // app bar or breadcrumb area, which doesn't actually trigger the scroll of the list.
-        // Setting a dead zone here to avoid starting swipe on these areas.
-        // Note: 0.2 is just an estimated percentage here (the dead zone ratio on 4 sides, we
-        // only need dead zone for the top and the bottom, but there's no API to set specific
-        // sides).
-        final double originalPercent = scrollable.getSwipeDeadZonePercentage();
-        final boolean docListCoveredByOtherViews = inDrawerLayout() && isUseMaterial3FlagEnabled();
-        if (docListCoveredByOtherViews) {
-            scrollable.setSwipeDeadZonePercentage(0.2);
-        }
-        // scrollIntoView will only attempt to scroll MaxSearchSwipes number of times.
-        // For directories containing a large number of files this default value is inadequate.
-        // Replace the default value with a larger one that will ensure the file
-        // is found if it is present.
-        final int defaultMaxSwipe = scrollable.getMaxSearchSwipes();
-        scrollable.setMaxSearchSwipes(MAX_SEARCH_SWIPES);
-        scrollable.scrollIntoView(new UiSelector().text(label));
-        if (docListCoveredByOtherViews) {
-            scrollable.setSwipeDeadZonePercentage(originalPercent);
-        }
-        scrollable.setMaxSearchSwipes(defaultMaxSwipe);
+        getScrollable(selector).scrollIntoView(new UiSelector().text(label));
+    }
+
+    private void scrollForward(UiSelector selector) throws UiObjectNotFoundException {
+        getScrollable(selector).scrollForward();
     }
 
     private void checkOrder(String first, String second)

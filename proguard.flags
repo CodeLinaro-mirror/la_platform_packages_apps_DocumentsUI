@@ -173,12 +173,16 @@
   int empty;
   int local_summary_provider;
   int menu_copy;
+  int menu_copy_to_clipboard;
   int menu_inspect;
   int menu_move;
+  int menu_open_with;
+  int menu_open_in_new_window;
   int menu_permanently_delete;
   int menu_rename;
   int menu_select;
   int menu_select_all;
+  int menu_share;
   int menu_sort;
   int menu_view_in_owner;
   int menu_zip;
@@ -358,6 +362,7 @@
 
 -keep class com.android.documentsui.BaseActivity {
   public int getLayoutId();
+  public void setTickDurationSupplierForTest(java.util.function.Supplier);
 }
 
 -keep class com.android.documentsui.base.RootInfo { *; }
