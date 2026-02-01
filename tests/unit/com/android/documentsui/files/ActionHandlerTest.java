@@ -725,20 +725,22 @@ public class ActionHandlerTest {
         mDialogs.assertNoAppFoundShown();
     }
 
-    // Require desktop file handling flag because when it's disabled proguard strips the
-    // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;
 
-        // Test normal picking (i.e. double click) behaviour will quick view
-        mHandler.openDocument(TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW,
-                ActionHandler.VIEW_TYPE_REGULAR);
+        // Test normal picking on mobile will quick view
+        mHandler.openDocument(
+                TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR);
         mActivity.assertActivityStarted(Intent.ACTION_QUICK_VIEW);
 
-        // And verify open via context menu will view instead
+        // Test normal picking on desktop will view
+        mHandler.openDocument(
+                TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE);
+        mActivity.assertActivityStarted(Intent.ACTION_VIEW);
+
+        // And verify open via context menu will view
         mHandler.openDocumentViewOnly(TestEnv.FILE_GIF);
         mActivity.assertActivityStarted(Intent.ACTION_VIEW);
     }
