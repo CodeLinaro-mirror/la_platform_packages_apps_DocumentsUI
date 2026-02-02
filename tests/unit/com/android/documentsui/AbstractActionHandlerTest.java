@@ -147,6 +147,22 @@ public class AbstractActionHandlerTest {
         return Lists.newArrayList(true, false);
     }
 
+    /** Helper to stage a file on the mock authority provider to be returned next. */
+    private void setupFileOnAuthority(String displayName, String authority) {
+        DocumentInfo homeDir = new DocumentInfo();
+        homeDir.authority = authority;
+        homeDir.documentId = "dir-required-for-file-enumeration";
+        homeDir.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        mEnv.state.stack.push(homeDir);
+
+        DocumentInfo file = new DocumentInfo();
+        file.authority = authority;
+        file.documentId = displayName;
+        file.displayName = displayName;
+
+        mEnv.mockProviders.get(authority).setNextChildDocumentsReturns(file);
+    }
+
     @Before
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -876,5 +892,54 @@ public class AbstractActionHandlerTest {
 
         // The model should now show a loading state.
         assertTrue(mEnv.model.isLoading());
+    }
+
+    @Test
+    @SuppressLint("VisibleForTests")
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testLoadDocumentsForCurrentStack_NewLoaderSupersedesOld() throws Exception {
+        mEnv.state.stack.changeRoot(TestProvidersAccess.HOME);
+        setupFileOnAuthority("file1", TestProvidersAccess.HOME.authority);
+
+        // Set up the first query to happen on HOME authority that would return in 10s.
+        CountDownLatch firstLoaderStartedLatch = new CountDownLatch(1);
+        mEnv.mockProviders.get(TestProvidersAccess.HOME.authority).setQueryDelay(10000);
+        mEnv.mockProviders
+                .get(TestProvidersAccess.HOME.authority)
+                .setQueryDelayLatch(firstLoaderStartedLatch);
+
+        // Start the background thread loader for this query.
+        mHandler.loadDocumentsForCurrentStack();
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
+        assertTrue("First query never started", firstLoaderStartedLatch.await(2, TimeUnit.SECONDS));
+
+        // Navigate to another root whilst the loader is still running.
+        mEnv.state.stack.reset();
+        mEnv.state.stack.changeRoot(TestProvidersAccess.HAMMY);
+        setupFileOnAuthority("file2", TestProvidersAccess.HAMMY.authority);
+
+        // The first loader should simulate a slow loading DP, whilst the second loader should
+        // simulate a fast loader that beats the first one to finish. It should "cancel" the first
+        // one causing its results to be ignored when it eventually returns.
+
+        CountDownLatch modelUpdateLatch = new CountDownLatch(1);
+        mEnv.model.addUpdateListener(event -> modelUpdateLatch.countDown());
+        mHandler.loadDocumentsForCurrentStack();
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
+
+        // The second loader should finish immediately.
+        assertTrue("Model was never updated", modelUpdateLatch.await(2, TimeUnit.SECONDS));
+        assertEquals(1, mEnv.model.getItemCount());
+        assertEquals("file2", mEnv.model.getDocument(mEnv.model.getModelIds()[0]).displayName);
+
+        // Now release the first slow loader, the results of which should be ignored.
+        mEnv.mockProviders.get(TestProvidersAccess.HOME.authority).cancelQueryDelay();
+
+        // Wait for all background tasks (including the released slow loader) to finish.
+        mEnv.beforeAsserts();
+
+        // Model should STILL have file2, not file1.
+        assertEquals(1, mEnv.model.getItemCount());
+        assertEquals("file2", mEnv.model.getDocument(mEnv.model.getModelIds()[0]).displayName);
     }
 }
