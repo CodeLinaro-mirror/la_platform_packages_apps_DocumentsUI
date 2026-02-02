@@ -71,6 +71,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.clipping.DocumentClipper;
+import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AppsRowManager;
 import com.android.documentsui.dirlist.DirectoryFragment;
@@ -79,6 +80,8 @@ import com.android.documentsui.sidebar.RootsFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.VersionUtils;
+
+import kotlin.Unit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,6 +137,18 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 });
         initInjector();
         super.onCreate(icicle);
+
+        if (mInjector.getSummaryProviderManager() != null
+                && mInjector.getSummaryProviderManager().shouldShowStartupConsent()) {
+            mInjector
+                    .getSummaryProviderManager()
+                    .showStartupConsent(
+                            getSupportFragmentManager(),
+                            () -> {
+                                onSummaryConsentRefresh();
+                                return Unit.INSTANCE;
+                            });
+        }
 
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
         mInjector.selectionMgr = DocsSelectionHelper.create();
@@ -266,6 +281,11 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         }
 
         presentFileErrors(icicle, intent);
+    }
+
+    private void onSummaryConsentRefresh() {
+        updateColumnHeaders(mState.stack.getRoot());
+        refreshDirectory(AnimationView.ANIM_NONE);
     }
 
     private AppsRowManager getAppsRowManager() {
