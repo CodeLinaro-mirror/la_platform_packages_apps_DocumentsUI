@@ -367,8 +367,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2SearchLocationDropdown() throws Exception {
-        // Start search with term "fred-dog", but rather than searching locally, search everywhere.
-        bots.search.doSearch("fred-dog.jpg");
+        // Open a root that does not have the file we are searching for.
+        EspressoBotsKt.openRoot(context, "Paging Root", getActivityLayoutId());
+        // Start search with term "file1.log", but rather than searching locally, search everywhere.
+        bots.search.doSearch("file1.log");
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
 
         // Click Everywhere, to search everywhere.
@@ -377,6 +379,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
         device.waitForIdle();
+        bots.directory.waitForDocument("file1.log");
         bots.directory.assertDocumentsCountOnList(true, 1);
     }
 
