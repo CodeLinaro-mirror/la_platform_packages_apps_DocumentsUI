@@ -335,33 +335,50 @@ class SummaryProviderManagerTest {
 
         assertThat(LocalPreferences.getSummaryConsent(context))
             .isEqualTo(LocalPreferences.CONSENT_DEFERRED)
+        // It automatically expires the timestamp, by setting it to 0.
+        assertThat(LocalPreferences.getSummaryConsentTimestamp(context)).isEqualTo(0L)
+        // Currently we don't implement the defer/expire logic, so it's always disabled when user
+        // defers.
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
         manager.stop()
     }
 
     @Test
-    fun testOnShowSummaryMenuClicked_neutralButton_setsConsentRejected() = runTestWithTimeout {
-        setSummaryProviderEnabled(enabled = true)
-        setSummaryConsent(enabled = false)
+    fun testShouldShowStartupConsent_InitialState_returnsTrue() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_UNKNOWN)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        // Force the bool config to true, to enable the consent flow.
+        manager.setShowConsentDialogForTest(true)
 
-        val manager =
-            SummaryProviderManager(
-                context,
-                this,
-                Uri.parse(TEST_SUMMARY_PROVIDER),
-                // Fake the dialog launcher to simulate neutral click, aka answering "Don't ask me
-                // again".
-                { _, _, _, callbacks -> callbacks.onCancel?.invoke() },
-            )
-        manager.start()
-        manager.state.first { it is SummaryProviderState.Available }
+        assertThat(manager.shouldShowStartupConsent()).isTrue()
+    }
 
-        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+    @Test
+    fun testShouldShowStartupConsent_Rejected_returnsFalse() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        // Force the bool config to true, to enable the consent flow.
+        manager.setShowConsentDialogForTest(true)
 
-        // Simulate user clicking on the menu to enable the summary column.
-        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) {}
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
+    }
 
-        assertThat(LocalPreferences.getSummaryConsent(context))
-            .isEqualTo(LocalPreferences.CONSENT_REJECTED)
-        manager.stop()
+    @Test
+    fun testShouldShowStartupConsent_DeferredFresh_returnsFalse() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_DEFERRED)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        // Force the bool config to true, to enable the consent flow.
+        manager.setShowConsentDialogForTest(true)
+
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
+    }
+
+    @Test
+    fun testShouldShowStartupConsent_Enabled_returnsFalse() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_ACCEPTED)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.setShowConsentDialogForTest(true)
+
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
     }
 }
