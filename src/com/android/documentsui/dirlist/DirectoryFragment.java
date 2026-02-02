@@ -360,7 +360,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      * results and when a destructive job (file deletion or trashing) finishes, the search results
      * are refreshed.
      */
-    private final BroadcastReceiver mJobProgressObserver =
+    @VisibleForTesting
+    protected final BroadcastReceiver mJobProgressObserver =
             new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {

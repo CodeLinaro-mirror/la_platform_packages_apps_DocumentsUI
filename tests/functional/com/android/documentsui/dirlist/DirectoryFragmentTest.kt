@@ -460,8 +460,6 @@ class DirectoryFragmentWithActivity(
 
     val jobProgressObserver: BroadcastReceiver
         get() {
-            val field = DirectoryFragment::class.java.getDeclaredField("mJobProgressObserver")
-            field.isAccessible = true
-            return field.get(this) as BroadcastReceiver
+            return this.mJobProgressObserver
         }
 }
