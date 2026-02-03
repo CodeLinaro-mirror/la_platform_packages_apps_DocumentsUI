@@ -19,6 +19,7 @@ package com.android.documentsui.dirlist;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import android.database.Cursor;
@@ -130,7 +131,7 @@ public class SelectionMetadata extends SelectionObserver<String>
             if (ArchivesProvider.isSupportedArchiveType(doc.mimeType)) {
                 mArchiveCount += delta;
             }
-            if (isDesktopFileHandlingFlagEnabled()) {
+            if (isDesktopFileHandlingFlagEnabled() && !isUseNewOpenWithEnabled()) {
                 if (selected) {
                     mOpeningAppCountForFile.put(
                             modelId,
@@ -226,13 +227,14 @@ public class SelectionMetadata extends SelectionObserver<String>
 
     @Override
     public boolean hasMultipleOpeningApps() {
-        if (isDesktopFileHandlingFlagEnabled()) {
+        if (isDesktopFileHandlingFlagEnabled() && !isUseNewOpenWithEnabled()) {
             if (mOpeningAppCountForFile.size() == 1) {
                 int openingAppCount = mOpeningAppCountForFile.values().iterator().next();
                 return openingAppCount > 1;
             }
         }
-        // When the flag is disabled, this method is not used anywhere.
+        // This method is only used when file handling flag is enabled but new open-with flag is
+        // disabled.
         return false;
     }
 

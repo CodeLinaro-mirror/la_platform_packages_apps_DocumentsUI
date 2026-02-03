@@ -23,6 +23,7 @@ import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -844,6 +845,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
+            if (isUseNewOpenWithEnabled()) {
+                intent.putExtra(Intent.EXTRA_AUTO_LAUNCH_SINGLE_CHOICE, false);
+            }
 
             try {
                 doc.userId.startActivityAsUser(mActivity, intent);
