@@ -48,11 +48,13 @@
         android:visible="false"
         app:actionLayout="@layout/job_progress_toolbar_item"
         app:showAsAction="always" />
+    <!-- Extracting files opens the picker regardless of whether any files are
+         selected. Therefore, the standard "Extract" title is used. -->
     <item
         android:id="@+id/option_menu_extract_all"
         android:enabled="false"
         android:icon="@drawable/ic_menu_extract_m3"
-        android:title="@string/menu_extract_all"
+        android:title="@string/menu_extract"
         android:visible="false"
         app:showAsAction="always" />
     <item
