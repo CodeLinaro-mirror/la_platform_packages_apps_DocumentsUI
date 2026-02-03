@@ -317,23 +317,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"¿Eliminar <xliff:g id="NAME">%1$s</xliff:g>?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"¿Eliminar la carpeta <xliff:g id="NAME">%1$s</xliff:g> y su contenido?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="many">¿Eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> archivos?</item>
-      <item quantity="other">¿Eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> archivos?</item>
-      <item quantity="one">¿Eliminar <xliff:g id="COUNT_0">%1$d</xliff:g> archivo?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="many">¿Eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> carpetas y su contenido?</item>
-      <item quantity="other">¿Eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> carpetas y su contenido?</item>
-      <item quantity="one">¿Eliminar <xliff:g id="COUNT_0">%1$d</xliff:g> carpeta y su contenido?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="many">¿Eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos?</item>
-      <item quantity="other">¿Eliminar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos?</item>
-      <item quantity="one">¿Eliminar <xliff:g id="COUNT_0">%1$d</xliff:g> elemento?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"¿Eliminar definitivamente?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" se eliminará definitivamente. Esta acción no se puede deshacer.}many{# elementos se eliminarán definitivamente. Esta acción no se puede deshacer.}other{# elementos se eliminarán definitivamente. Esta acción no se puede deshacer.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" se eliminará definitivamente. Esta acción no se puede deshacer.}many{# elementos de la papelera se eliminarán definitivamente. Esta acción no se puede deshacer.}other{# elementos de la papelera se eliminarán definitivamente. Esta acción no se puede deshacer.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Imágenes"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"No se puede abrir el archivo para explorarlo porque está dañado o su formato es incompatible."</string>
     <string name="name_conflict" msgid="28407269328862986">"Ya existe un archivo con este nombre."</string>

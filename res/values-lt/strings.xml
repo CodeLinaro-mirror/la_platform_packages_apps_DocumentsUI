@@ -331,26 +331,9 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> elemento</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementų</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Ištrinti failą „<xliff:g id="NAME">%1$s</xliff:g>“?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Ištrinti aplanką „<xliff:g id="NAME">%1$s</xliff:g>“ ir jo turinį?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failą?</item>
-      <item quantity="few">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failus?</item>
-      <item quantity="many">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failo?</item>
-      <item quantity="other">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failų?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplanką ir jų turinį?</item>
-      <item quantity="few">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplankus ir jų turinį?</item>
-      <item quantity="many">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplanko ir jų turinį?</item>
-      <item quantity="other">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplankų ir jų turinį?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elementą?</item>
-      <item quantity="few">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elementus?</item>
-      <item quantity="many">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elemento?</item>
-      <item quantity="other">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elementų?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Ištrinti visam laikui?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{<xliff:g id="NAME">{name}</xliff:g> bus ištrintas visam laikui. Šio veiksmo negalima anuliuoti.}one{Visam laikui bus ištrintas # elementas. Šio veiksmo negalima anuliuoti.}few{Visam laikui bus ištrinti # elementai. Šio veiksmo negalima anuliuoti.}many{Visam laikui bus ištrinta # elemento. Šio veiksmo negalima anuliuoti.}other{Visam laikui bus ištrinta # elementų. Šio veiksmo negalima anuliuoti.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{<xliff:g id="NAME">{name}</xliff:g> bus ištrintas visam laikui. Šio veiksmo negalima anuliuoti.}one{Visam laikui bus ištrintas # šiukšliadėžėje esantis elementas. Šio veiksmo negalima anuliuoti.}few{Visam laikui bus ištrinti # šiukšliadėžėje esantys elementai. Šio veiksmo negalima anuliuoti.}many{Visam laikui bus ištrinta # šiukšliadėžėje esančio elemento. Šio veiksmo negalima anuliuoti.}other{Visam laikui bus ištrinta # šiukšliadėžėje esančių elementų. Šio veiksmo negalima anuliuoti.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Vaizdai"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Nepavyko atidaryti archyvo, kad jį būtų galima naršyti. Failas sugadintas arba nepalaikomo formato."</string>
     <string name="name_conflict" msgid="28407269328862986">"Failas tokiu pavadinimu jau yra."</string>
