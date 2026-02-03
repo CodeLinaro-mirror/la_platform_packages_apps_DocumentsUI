@@ -38,6 +38,7 @@
             android:layout_width="@dimen/root_icon_size_m3"
             android:layout_height="@dimen/root_icon_size_m3"
             android:scaleType="centerInside"
+            android:duplicateParentState="true"
             android:contentDescription="@null" />
 
     </LinearLayout>
