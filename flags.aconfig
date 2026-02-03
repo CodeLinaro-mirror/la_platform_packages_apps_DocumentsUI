@@ -153,3 +153,11 @@ flag {
     is_fixed_read_only: true
 }
 
+flag {
+    name: "include_remote_roots_in_recents"
+    namespace: "documentsui"
+    description: "Enables remote Roots such as cloud storage providers to show files in Recents"
+    bug: "447970143"
+    is_fixed_read_only: true
+}
+

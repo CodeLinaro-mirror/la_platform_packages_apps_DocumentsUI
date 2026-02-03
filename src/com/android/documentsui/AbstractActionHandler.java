@@ -1139,17 +1139,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         // cross-profile scenario.
         // For RecentsLoader and GlobalSearchLoader, they do not require rootDoc so it is no-op.
         // For DirectoryLoader, the loader needs to handle the case when stack.peek() returns null.
-
-        // Only allow restartLoader when the previous loader is finished or reset. Allowing
-        // multiple consecutive calls to restartLoader() / onCreateLoader() will probably create
-        // multiple active loaders, because restartLoader() does not interrupt previous loaders'
-        // loading, therefore may block the UI thread and cause ANR.
-        if (mLoaderSemaphore.tryAcquire()) {
-            if (isSearchV2Enabled()) {
-                mHandler.removeCallbacks(mShowLoadingRunnable);
-                mHandler.postDelayed(mShowLoadingRunnable, LOADING_DELAY);
-            }
+        if (isSearchV2Enabled()) {
+            mHandler.removeCallbacks(mShowLoadingRunnable);
+            mHandler.postDelayed(mShowLoadingRunnable, LOADING_DELAY);
             mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
+        } else {
+            // Only allow restartLoader when the previous loader is finished or reset. Allowing
+            // multiple consecutive calls to restartLoader() / onCreateLoader() will probably create
+            // multiple active loaders, because restartLoader() does not interrupt previous loaders'
+            // loading, therefore may block the UI thread and cause ANR.
+            if (mLoaderSemaphore.tryAcquire()) {
+                mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
+            }
         }
     }
 
@@ -1573,7 +1574,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             assert (result != null);
             // First: Update the  file list with the new results.
             mInjector.getModel().update(result);
-            mLoaderSemaphore.release();
+            if (!isSearchV2Enabled()) {
+                mLoaderSemaphore.release();
+            }
 
             // Second: Fetch the summary for the result.
             startLoadingSummaries(result);
@@ -1581,7 +1584,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         @Override
         public void onLoaderReset(Loader<DirectoryResult> loader) {
-            mLoaderSemaphore.release();
+            if (!isSearchV2Enabled()) {
+                mLoaderSemaphore.release();
+            }
         }
 
         private void startLoadingSummaries(DirectoryResult result) {

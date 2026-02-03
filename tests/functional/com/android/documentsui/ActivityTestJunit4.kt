@@ -47,6 +47,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFla
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isGetInfoDialogEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isHomeScreenFilesFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isIncludeRemoteRootsInRecentsEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isMovingContentIntoPrivateSpaceEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
 import com.android.documentsui.util.FlagUtils.Companion.isSingleClickToSelectEnabled
@@ -334,6 +335,11 @@ abstract class ActivityTestJunit4<T : Activity?> {
         )
         Log.d(TAG, "Flag isUseNewOpenWithEnabled() = ${isUseNewOpenWithEnabled()}")
         Log.d(TAG, "Flag isGetInfoDialogEnabled() = ${isGetInfoDialogEnabled()}")
+        Log.d(
+            TAG,
+            "Flag isIncludeRemoteRootsInRecentsEnabled() = " +
+                "${isIncludeRemoteRootsInRecentsEnabled()}",
+        )
     }
 
     private fun logLocales() {

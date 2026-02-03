@@ -272,6 +272,58 @@ open class SummaryProviderManager(
         _state.value = SummaryProviderState.Available(isUserEnabled = false)
     }
 
+    /** Returns true if we should show the consent dialog proactively at start up. */
+    fun shouldShowStartupConsent(): Boolean {
+        if (!isUseFileSummaryEnabled()) {
+            return false
+        }
+
+        // Check if it's configured to request consent.
+        val showConsent =
+            overrideShowConsentDialog
+                ?: context.resources.getBoolean(R.bool.show_summary_consent_dialog)
+        if (!showConsent) {
+            return false
+        }
+
+        // If the user has already enabled the feature, we don't need to ask for consent.
+        if (LocalPreferences.isSummaryEnabled(context)) {
+            return false
+        }
+
+        val status = LocalPreferences.getSummaryConsent(context)
+
+        return when (status) {
+            LocalPreferences.CONSENT_UNKNOWN -> true
+            LocalPreferences.CONSENT_REJECTED -> false
+            LocalPreferences.CONSENT_DEFERRED -> false // TODO: Define when to ask again.
+            else -> false
+        }
+    }
+
+    /** Shows the consent dialog proactively at start up. */
+    fun showStartupConsent(fragmentManager: FragmentManager, refreshCallback: () -> Unit) {
+        val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
+        val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
+        dialogLauncher.show(
+            fragmentManager,
+            title,
+            message,
+            ConsentCallbacks(
+                onEnable = {
+                    userSwitchSummaryEnabled()
+                    refreshCallback()
+                },
+                onCancel = {
+                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
+                },
+                onRemindLater = {
+                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_DEFERRED)
+                },
+            ),
+        )
+    }
+
     /**
      * Handles the click on the "Show summary column" menu item. If the summary is already enabled,
      * it disables it. Otherwise, it shows the consent dialog.
@@ -307,11 +359,16 @@ open class SummaryProviderManager(
                     userSwitchSummaryEnabled()
                     refreshCallback()
                 },
-                onCancel = {
-                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
-                },
+                // The "Don't ask me again" button is only displayed if the dialog is shown
+                // proactively.
+                onCancel = null,
                 onRemindLater = {
-                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_DEFERRED)
+                    // When going via menu, we set timestamp to 0 so it's stale immediately.
+                    LocalPreferences.setSummaryConsent(
+                        context,
+                        LocalPreferences.CONSENT_DEFERRED,
+                        0,
+                    )
                 },
             ),
         )
