@@ -197,14 +197,13 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_sync_circle_background_m3" />
 
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                style="@style/InlineSyncProgressIndicatorStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
+            <ImageView
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:indeterminate="true"
-                app:indicatorSize="@dimen/grid_inline_sync_progress_indicator_size"/>
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_sync_progress_m3" />
+
         </FrameLayout>
 
         <FrameLayout

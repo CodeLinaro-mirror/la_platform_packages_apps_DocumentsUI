@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Activa"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"No m\'ho tornis a preguntar"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Ara no"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Obre des de"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Llista"</string>
     <string name="menu_search" msgid="1876699106790719849">"Cerca"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Configuració d\'emmagatz."</string>
+    <string name="manage_device" msgid="329180710072251010">"Gestiona el dispositiu"</string>
     <string name="menu_open" msgid="9092138100049759315">"Obre"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Obre amb"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Obre en una finestra nova"</string>
     <string name="menu_save" msgid="5195367497138965168">"Desa"</string>
     <string name="menu_share" msgid="4307140947108068356">"Comparteix"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Suprimeix"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Suprimeix permanentment"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Suprimeix definitivament"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Mou a la paperera"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Restaura"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Selecciona-ho tot"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Obtén informació"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostra els fitxers amagats"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"No mostris els fitxers amagats"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Mostra la columna de resum"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"No mostris la columna de resum"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Mostra la columna de descripció"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"No mostris la columna de descripció"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Mostra a <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Finestra nova"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Retalla"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Obre la paperera"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Sense ordenar"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nom"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Resum"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Descripció"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Tipus"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Mida"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Modificat"</string>
@@ -414,14 +418,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Previsualització de la imatge <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Amaga el tauler d\'informació"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Mostra el tauler d\'informació"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"No hi ha res a la paperera"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Els fitxers que faci més de 30 dies que són a la paperera se suprimiran automàticament."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Buida la paperera ara"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"La paperera és buida"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Els elements que faci més de 30 dies que són a la paperera se suprimiran automàticament"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Buida la paperera"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vols buidar la paperera?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Aquesta acció no es pot desfer i els fitxers ja no es podran recuperar."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Buida la paperera"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Fitxer a la paperera"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Aquest fitxer és a la paperera i no es pot obrir. Restaura\'l de la paperera per accedir-hi."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Restaura el fitxer"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Tots els elements de la paperera se suprimiran definitivament. Aquesta acció no es pot desfer."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Suprimeix definitivament"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{L\'element és a la paperera}many{Els elements són a la paperera}other{Els elements són a la paperera}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Per accedir a aquest element, restaura\'l o arrossega\'l fora de la paperera}many{Per accedir a aquests elements, restaura\'ls o arrossega\'ls fora de la paperera}other{Per accedir a aquests elements, restaura\'ls o arrossega\'ls fora de la paperera}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Restaura"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"En aquests moments no tens connexió. Alguns fitxers i funcions no estan disponibles. Connecta\'t a Internet per obtenir accés complet."</string>
 </resources>

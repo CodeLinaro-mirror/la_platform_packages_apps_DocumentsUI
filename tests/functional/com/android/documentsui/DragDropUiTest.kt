@@ -16,12 +16,16 @@
 
 package com.android.documentsui
 
+import android.platform.test.annotations.DisableFlags
+import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.LargeTest
+import com.android.documentsui.StubProvider.ROOT_0_ID
 import com.android.documentsui.StubProvider.ROOT_1_ID
 import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.flags.Flags
+import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.rules.TestFilesRule
-import com.android.documentsui.util.FlagUtils.Companion.isUseMaterial3FlagEnabled
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
@@ -29,9 +33,11 @@ import org.junit.Test
 @LargeTest
 class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
 
+    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
     @get:Rule val testFilesRule = TestFilesRule()
 
     @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     fun testDragAndDropToDifferentRoot_fileIsCopied() {
         assumeTrue("skip drag and drop test for DrawerLayout", !bots.main.inDrawerLayout())
 
@@ -41,13 +47,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
         val dst = bots.roots.findRoot(ROOT_1_ID)
 
-        bots.gesture.dragAndDrop(src, dst)
-
-        // The drop will trigger a copy because it's to a different root so the original file still
-        // exists and is selected when use_material3 flag is on.
-        if (isUseMaterial3FlagEnabled()) {
-            bots.directory.assertSelection(1)
-        }
+        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
 
         // Go to the new root and assert the file was copied.
         openRoot(context!!, ROOT_1_ID, activityLayoutId)
@@ -55,6 +55,29 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    fun testDragAndDropToDifferentRoot_fileIsCopiedAndSelected() {
+        assumeTrue("skip drag and drop test for DrawerLayout", !bots.main.inDrawerLayout())
+
+        // Root_0 is selected by default.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
+
+        val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
+        val dst = bots.roots.findRoot(ROOT_1_ID)
+
+        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
+
+        // The drop will trigger a copy because it's to a different root so the original file still
+        // exists and selected.
+        bots.directory.assertSelection(1)
+
+        // Go to the new root and assert the file was copied.
+        openRoot(context!!, ROOT_1_ID, activityLayoutId)
+        bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1)
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     fun testDragAndDropToBrokenRoot_failToDrop() {
         assumeTrue("skip drag and drop test for DrawerLayout", !bots.main.inDrawerLayout())
 
@@ -64,16 +87,60 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
         val dst = bots.roots.findRoot("Broken Root Doc")
 
-        bots.gesture.dragAndDrop(src, dst)
-
-        // The drop will fail because the destination root is broken but the selection remains when
-        // use_material3 flag is on.
-        if (isUseMaterial3FlagEnabled()) {
-            bots.directory.assertSelection(1)
-        }
+        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
 
         // Go to the new root and assert the file was not copied.
         openRoot(context!!, "Broken Root Doc", activityLayoutId)
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    fun testDragAndDropToBrokenRoot_failToDropButSelectionRemains() {
+        assumeTrue("skip drag and drop test for DrawerLayout", !bots.main.inDrawerLayout())
+
+        // Root_0 is selected by default.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1)
+
+        val src = bots.directory.findDocument(TestFilesRule.FILE_NAME_1)
+        val dst = bots.roots.findRoot("Broken Root Doc")
+
+        bots.gesture.dragAndDrop(src.bounds, dst.bounds)
+
+        // The drop will fail because the destination root is broken but the selection remains when
+        // use_material3 flag is on.
+        bots.directory.assertSelection(1)
+
+        // Go to the new root and assert the file was not copied.
+        openRoot(context!!, "Broken Root Doc", activityLayoutId)
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    fun testDragAndDropToSameRoot_unselectedFileIsMoved() {
+        assumeTrue("skip drag and drop test for DrawerLayout", !bots.main.inDrawerLayout())
+
+        // Select FILE_NAME_2 but we will drag FILE_NAME_1.
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1)
+
+        // Trigger dragging directly without selecting the file. Note: for unselected file, using
+        // the selection hotspot (e.g. the thumbnail) to trigger the drag is more stable.
+        val src = bots.directory.findSelectionHotspot(TestFilesRule.FILE_NAME_1)
+        val dst = bots.directory.findDocument(TestFilesRule.DIR_NAME_1)
+
+        bots.gesture.dragAndDrop(src.visibleBounds, dst.bounds)
+
+        // There is a chance that the drag-and-drop of unselected file opens the destination
+        // directory, so we need to re-open the root.
+        openRoot(context!!, ROOT_0_ID, activityLayoutId)
+
+        // The file should be moved to the destination directory, so it doesn't exist in the
+        // original directory.
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
+
+        // Go to the destination directory and assert the file is there.
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1)
     }
 }

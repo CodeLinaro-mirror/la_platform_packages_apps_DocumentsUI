@@ -16,17 +16,27 @@
 
 package com.android.documentsui.dirlist;
 
+import static android.content.Context.RECEIVER_NOT_EXPORTED;
+
+import static androidx.core.content.IntentCompat.getParcelableArrayListExtra;
+
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
+import static com.android.documentsui.services.FileOperationService.ACTION_PROGRESS;
+import static com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS;
+import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
+import static com.android.documentsui.services.FileOperationService.OPERATION_TRASH;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
+import static com.android.documentsui.services.Job.STATE_COMPLETED;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
@@ -139,6 +149,7 @@ import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
+import com.android.documentsui.services.JobProgress;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
 import com.android.documentsui.ui.Snackbars;
@@ -152,6 +163,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -339,6 +351,36 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             }
         }
     };
+
+    /**
+     * This observer ensures that, when the enclosing DirectoryFragment is showing some search
+     * results and when a destructive job (file deletion or trashing) finishes, the search results
+     * are refreshed.
+     */
+    private final BroadcastReceiver mJobProgressObserver =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if (!isUseMaterial3FlagEnabled()
+                            || mActivity == null
+                            || !mActivity.isSearching()) {
+                        return;
+                    }
+
+                    assert ACTION_PROGRESS.equals(intent.getAction());
+                    final Collection<JobProgress> progresses =
+                            getParcelableArrayListExtra(intent, EXTRA_PROGRESS, JobProgress.class);
+                    assert progresses != null;
+                    for (JobProgress p : progresses) {
+                        if (p.state == STATE_COMPLETED
+                                && (p.operationType == OPERATION_DELETE
+                                        || p.operationType == OPERATION_TRASH)) {
+                            onRefresh();
+                            return;
+                        }
+                    }
+                }
+            };
 
     private void onPausedProfileStatusChange(String action, UserId userId) {
         if (Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE.equals(action)
@@ -549,6 +591,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onDestroyView() {
         mInjector.actions.unregisterDisplayStateChangedListener(mOnDisplayStateChanged);
+
+        if (isUseMaterial3FlagEnabled()) {
+            getContext().unregisterReceiver(mJobProgressObserver);
+        }
+
         if (mState.supportsCrossProfile()) {
             LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
             if (mProviderTestRunnable != null) {
@@ -795,6 +842,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // roots are updated.
             LocalBroadcastManager.getInstance(mActivity).registerReceiver(mReceiver, filter);
         }
+
+        if (isUseMaterial3FlagEnabled()) {
+            getContext()
+                    .registerReceiver(
+                            mJobProgressObserver,
+                            new IntentFilter(ACTION_PROGRESS),
+                            RECEIVER_NOT_EXPORTED);
+        }
+
         getContext().registerReceiver(mSdCardBroadcastReceiver, getSdCardStateChangeFilter());
     }
 
@@ -927,9 +983,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 DocumentStack stack = mPathExtractor.getDocumentStack(info);
                                 mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
                             } catch (Exception e) {
-                                if (DEBUG) {
-                                    Log.d(TAG, "Failed to get stack for " + info, e);
-                                }
+                                Log.e(TAG, "Cannot get stack for " + redact(info), e);
                                 mHandler.post(() -> hideSearchResultBreadcrumb(controller));
                             }
                         });
