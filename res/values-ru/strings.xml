@@ -331,26 +331,9 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> объектов</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> объекта</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Удалить файл \"<xliff:g id="NAME">%1$s</xliff:g>\"?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Удалить папку \"<xliff:g id="NAME">%1$s</xliff:g>\" со всем содержимым?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> файл?</item>
-      <item quantity="few">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> файла?</item>
-      <item quantity="many">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> файлов?</item>
-      <item quantity="other">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> файла?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> папку со всем содержимым?</item>
-      <item quantity="few">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> папки со всем содержимым?</item>
-      <item quantity="many">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> папок со всем содержимым?</item>
-      <item quantity="other">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> папки со всем содержимым?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> объект?</item>
-      <item quantity="few">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> объекта?</item>
-      <item quantity="many">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> объектов?</item>
-      <item quantity="other">Удалить <xliff:g id="COUNT_1">%1$d</xliff:g> объекта?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Удалить навсегда?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Объект \"<xliff:g id="NAME">{name}</xliff:g>\" будет удален навсегда. Это действие нельзя отменить.}one{Будет навсегда удален # объект. Это действие нельзя отменить.}few{Будут навсегда удалены # объекта. Это действие нельзя отменить.}many{Будут навсегда удалены # объектов. Это действие нельзя отменить.}other{Будут навсегда удалены # объекта. Это действие нельзя отменить.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Объект \"<xliff:g id="NAME">{name}</xliff:g>\" будет удален навсегда. Это действие нельзя отменить.}one{# объект в корзине будет удален навсегда. Это действие нельзя отменить.}few{# объекта в корзине будут удалены навсегда. Это действие нельзя отменить.}many{# объектов в корзине будут удалены навсегда. Это действие нельзя отменить.}other{# объекта в корзине будут удалены навсегда. Это действие нельзя отменить.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Изображения"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Не удалось открыть архив. Файл поврежден, или такой формат не поддерживается."</string>
     <string name="name_conflict" msgid="28407269328862986">"Файл с таким названием уже существует."</string>

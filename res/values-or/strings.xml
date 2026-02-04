@@ -303,20 +303,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>ଟି ଆଇଟମ୍‍</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g>ଟି ଆଇଟମ୍‍</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ଡିଲିଟ୍‍ କରିବେ?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ଫୋଲ୍ଡର୍‍ ଓ ତାହାର କଣ୍ଟେଣ୍ଟ ଡିଲିଟ୍‍ କରିବେ?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>ଟି ଫାଇଲ୍‍ ଡିଲିଟ୍‍ କରିବେ?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g>ଟି ଫାଇଲ୍‍ ଡିଲିଟ୍‍ କରିବେ?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>ଟି ଫୋଲ୍ଡର୍‍ ଓ ସେଗୁଡ଼ିକର କଣ୍ଟେଣ୍ଟ ଡିଲିଟ୍‍ କରିବେ?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g>ଟି ଫୋଲ୍ଡର୍‍ ଓ ତାହାର କଣ୍ଟେଣ୍ଟ ଡିଲିଟ୍‍ କରିବେ?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>ଟି ଆଇଟମ୍‍ ଡିଲିଟ୍‍ କରିବେ?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g>ଟି ଆଇଟମ୍‍ ଡିଲିଟ୍‍ କରିବେ?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରିବେ?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>”କୁ ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରିଦିଆଯିବ। ଏହାକୁ ଅନଡୁ କରାଯାଇପାରିବ ନାହିଁ।}other{# ଆଇଟମକୁ ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରିଦିଆଯିବ। ଏହାକୁ ଅନଡୁ କରାଯାଇପାରିବ ନାହିଁ।}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>”କୁ ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରିଦିଆଯିବ। ଏହାକୁ ଅନଡୁ କରାଯାଇପାରିବ ନାହିଁ।}other{ଟ୍ରାସରେ ଥିବା # ଆଇଟମକୁ ସବୁଦିନ ପାଇଁ ଡିଲିଟ କରିଦିଆଯିବ। ଏହାକୁ ଅନଡୁ କରାଯାଇପାରିବ ନାହିଁ।}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"ଇମେଜ୍‌"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"ବ୍ରାଉଜ୍‍ କରିବା ପାଇଁ ସଂଗ୍ରହ ଖୋଲିପାରିବ ନାହିଁ। ଫାଇଲ୍‍ ଖରାପ ହୋଇଯାଇଥାଇପାରେ, କିମ୍ବା ଏହାର ଫର୍ମାଟ୍ ସପୋର୍ଟ କରୁନାହିଁ।"</string>
     <string name="name_conflict" msgid="28407269328862986">"ଏହି ନାମରେ ଗୋଟିଏ ଫାଇଲ୍‍ ପୂର୍ବରୁ ରହିଛି।"</string>

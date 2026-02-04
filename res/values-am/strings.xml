@@ -303,20 +303,9 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ንጥሎች</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ንጥሎች</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"«<xliff:g id="NAME">%1$s</xliff:g>» ይሰረዝ?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"አቃፊ «<xliff:g id="NAME">%1$s</xliff:g>» እና ይዘቶቹ ይሰረዙ?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ፋይሎች ይሰረዙ?</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ፋይሎች ይሰረዙ?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> አቃፊ እና ይዘቶቹ ይሰረዙ?</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> አቃፊዎች እና ይዘቶቻቸው ይሰረዙ?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ንጥሎች ይሰረዙ?</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ንጥሎች ይሰረዙ?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"ለዘላለም ይሰረዝ?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{«<xliff:g id="NAME">{name}</xliff:g>» ለዘላለም ይሰረዛል። ይህ ሊቀለበስ አይችልም።}one{# ንጥል ለዘላለም ይሰረዛል። ይህ ሊቀለበስ አይችልም።}other{# ንጥሎች ለዘላለም ይሰረዛሉ። ይህ ሊቀለበስ አይችልም።}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{«<xliff:g id="NAME">{name}</xliff:g>» ለዘላለም ይሰረዛል። ይህ ሊቀለበስ አይችልም።}one{መጣያ ውስጥ ያለ # ንጥል ለዘላለም ይሰረዛል። ይህ ሊቀለበስ አይችልም።}other{መጣያ ውስጥ ያሉ # ንጥሎች ለዘላለም ይሰረዛሉ። ይህ ሊቀለበስ አይችልም።}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"ምስሎች"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"ለአሰሳ ማህደርን ለመክፈት አልተቻለም። ፋይል አሊያም የተባለሸ ወይም የማይደገፍ ቅርጸት ያለው ነው።"</string>
     <string name="name_conflict" msgid="28407269328862986">"ይህን ስም ያለው ፋይል አስቀድሞ አለ።"</string>
