@@ -182,7 +182,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
             if (isSyncStateEnabled()) {
                 // Allow the adjustment of the inline sync tick icon visibility duration.
                 val tickDurationSupplier = Supplier<Int> { testTickDuration }
-                (activity as BaseActivity).setTickDurationSupplierForTest(tickDurationSupplier)
+                (activity as? BaseActivity)?.setTickDurationSupplierForTest(tickDurationSupplier)
             }
         })
 
