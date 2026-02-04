@@ -490,11 +490,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     public void trashSelectedDocuments() {
         Selection selection = getSelectedOrFocused();
         if (selection.isEmpty()) {
+            Log.e(TAG, "Cannot trash: Selection is empty");
             return;
         }
 
         List<DocumentInfo> docs = mModel.getDocuments(selection);
         if (docs == null || docs.isEmpty()) {
+            Log.e(TAG, "Cannot trash: Document list is empty");
             return;
         }
 
@@ -511,17 +513,15 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         if (isHomeScreenFilesFlagEnabled()
                 && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
-            Log.e(TAG, "Failed to trash because a protected folder is selected.");
+            Log.e(TAG, "Cannot trash a protected folder");
             return;
         }
 
         UrisSupplier srcs;
         try {
-            srcs = UrisSupplier.create(
-                    uris,
-                    mClipStore);
+            srcs = UrisSupplier.create(uris, mClipStore);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to trash because we were unable to get item URIs.", e);
+            Log.e(TAG, "Cannot trash: Cannot get item URIs", e);
             mDialogs.showFileOperationStatus(
                     FileOperations.Callback.STATUS_FAILED,
                     FileOperationService.OPERATION_TRASH,

@@ -17,35 +17,36 @@
 package com.android.documentsui;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
-import static com.android.documentsui.base.Providers.AUTHORITY_STORAGE;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.TruthJUnit.assume;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+
 import static org.junit.Assume.assumeTrue;
 
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.ClipData;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.SystemClock;
 import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
+
 import androidx.annotation.StringRes;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.inspector.InspectorActivity;
 import com.android.documentsui.picker.PickActivity;
@@ -59,7 +60,6 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameter;
@@ -107,9 +107,9 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         getContentIntent.setAction(Intent.ACTION_GET_CONTENT);
         getContentIntent.addCategory(Intent.CATEGORY_OPENABLE);
         getContentIntent.setType("*/*");
-        Uri hintUri = DocumentsContract.buildRootUri(AUTHORITY_STORAGE, "primary");
-        getContentIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, hintUri);
 
+        // Open picker in default initial directory.
+        getContentIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, rootDir0.getUri());
         mActivityScenario = ActivityScenario.launchActivityForResult(getContentIntent);
     }
 
@@ -205,8 +205,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
 
     @Test
     public void testOptionMenuWorksWhileOptionSelected() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         // Switch to list mode and select the test document.
         bots.main.switchToListMode();
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
@@ -220,8 +218,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testOptionMenuWorksWhileOptionSelected_M3Enabled()
             throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         // Switch to list mode and select the test document.
         bots.main.switchToListMode();
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
@@ -238,8 +234,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_rename() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         // Right click FILE_NAME_1 to trigger rename.
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
         bots.menu.clickMenuItem(context.getString(R.string.menu_rename));
@@ -258,8 +252,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_getInfo() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         // Right click FILE_NAME_1 to trigger get info.
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
         bots.menu.clickMenuItem(context.getString(R.string.menu_inspect));
@@ -277,8 +269,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testContextMenu_delete() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         // Right click FILE_NAME_1 to trigger delete.
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
         bots.menu.clickMenuItem(context.getString(R.string.menu_permanently_delete));
@@ -299,8 +289,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         assumeTrue(
                 "Skipping test: the use_material3 flag is OFF on the test device.",
                 isUseMaterial3FlagEnabled());
-
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // Right click FILE_NAME_1 to trigger zip.
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_1);
@@ -326,8 +314,9 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         intentOpenDocument.setAction(Intent.ACTION_OPEN_DOCUMENT);
         intentOpenDocument.addCategory(Intent.CATEGORY_OPENABLE);
         intentOpenDocument.setType("*/*");
+        intentOpenDocument.putExtra(
+                DocumentsContract.EXTRA_INITIAL_URI, rootDir0.getUri());
         mActivityScenario = ActivityScenario.launchActivityForResult(intentOpenDocument);
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
@@ -370,11 +359,9 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        Uri hintUri = DocumentsContract.buildRootUri(AUTHORITY_STORAGE, "primary");
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, hintUri);
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, rootDir0.getUri());
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         mActivityScenario = ActivityScenario.launchActivityForResult(intent);
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
 
         // There should be a Cancel (button2) and Select (button1) button.
         boolean showPickerCancelButton =
@@ -428,8 +415,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
     public void testPickFilesFragment_ClickCancel() throws UiObjectNotFoundException {
         assume().that(context.getResources().getBoolean(R.bool.show_picker_cancel_button)).isTrue();
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         // There should be a Cancel (button2) and Select (button1) button.
         bots.picker.checkCancelButtonDisplayed();
         bots.picker.checkCancelButtonEnabled();
@@ -453,8 +438,6 @@ public class PickActivityTest extends ActivityTestJunit4<PickActivity> {
     @Test
     @DisableFlags({Flags.FLAG_USE_MATERIAL3})
     public void testPickFilesFragment_FlagDisabled() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
 
         // The Cancel (button2) and Select (button1) buttons should not exist.

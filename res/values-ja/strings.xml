@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"オンにする"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"今後このメッセージを表示しない"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"後で"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"次から開く:"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"リスト表示"</string>
     <string name="menu_search" msgid="1876699106790719849">"検索"</string>
     <string name="menu_settings" msgid="6520844520117939047">"ストレージの設定"</string>
+    <string name="manage_device" msgid="329180710072251010">"デバイスの管理"</string>
     <string name="menu_open" msgid="9092138100049759315">"開く"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"アプリで開く"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"新しいウィンドウで開く"</string>
     <string name="menu_save" msgid="5195367497138965168">"保存"</string>
     <string name="menu_share" msgid="4307140947108068356">"共有"</string>
     <string name="menu_delete" msgid="1022254131543256626">"削除"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"完全に削除"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"完全に削除"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ゴミ箱に移動"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"復元"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"すべて選択"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"詳細情報"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"隠しファイルを表示"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"隠しファイルを表示しない"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"概要列を表示する"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"概要列を表示しない"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"説明列を表示"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"説明列を表示しない"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>に表示"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"新しいウィンドウ"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"切り取り"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ゴミ箱を開く"</string>
     <string name="not_sorted" msgid="7813496644889115530">"並べ替えなし"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"名前"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"概要"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"説明"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"タイプ"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"サイズ"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"最終変更"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> の画像プレビュー"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"情報パネルを非表示"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"情報パネルを表示"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ゴミ箱は空です"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"ゴミ箱のファイルは 30 日後に自動的に削除されます。"</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ゴミ箱を今すぐ空にする"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ゴミ箱は空です"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"30 日の保存期間がすぎたゴミ箱のアイテムは自動的に削除されます"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ゴミ箱を空にする"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ゴミ箱を空にしますか？"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"この操作は元に戻せません。ファイルは復元できなくなります。"</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ゴミ箱を空にする"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ファイルはゴミ箱に入っています"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"このファイルはゴミ箱に入っているため開けません。アクセスするには、ゴミ箱から復元してください。"</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ファイルを復元"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ゴミ箱内のすべてのアイテムを完全に削除します。この操作は元に戻せません。"</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"完全に削除"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{アイテムがゴミ箱にあります}other{アイテムがゴミ箱にあります}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{このアイテムにアクセスするには、アイテムを復元するか、ドラッグしてゴミ箱から出してください}other{これらのアイテムにアクセスするには、アイテムを復元するか、ドラッグしてゴミ箱から出してください}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"復元"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"現在オフラインです。一部のファイルと機能はご利用いただけません。すべての機能を利用するには、インターネットに接続してください。"</string>
 </resources>

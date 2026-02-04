@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Slå på"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Ikke spør meg igjen"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Ikke nå"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Åpne fra"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Listevisning"</string>
     <string name="menu_search" msgid="1876699106790719849">"Søk"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Lagringsinnstillinger"</string>
+    <string name="manage_device" msgid="329180710072251010">"Administrer enheten"</string>
     <string name="menu_open" msgid="9092138100049759315">"Åpne"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Åpne med"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Åpne i et nytt vindu"</string>
     <string name="menu_save" msgid="5195367497138965168">"Lagre"</string>
     <string name="menu_share" msgid="4307140947108068356">"Del"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Slett"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Slett for godt"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Slett for godt"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Flytt til papirkurven"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Gjenopprett"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Velg alle"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Hent informasjon"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Vis skjulte filer"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ikke vis skjulte filer"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Vis sammendragskolonnen"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Ikke vis sammendragskolonnen"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Vis kolonnen med beskrivelser"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Ikke vis kolonnen med beskrivelser"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Se i <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Nytt vindu"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Klipp ut"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Åpne papirkurven"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Ikke sortert"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Navn"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Sammendrag"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Beskrivelse"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Type"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Størrelse"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Endret"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Bildeforhåndsvisning av <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Skjul informasjonspanelet"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Vis informasjonspanelet"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Papirkurven er tom"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Filer som har ligget i papirkurven i mer enn 30 dager, blir automatisk slettet."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Tøm papirkurven nå"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Papirkurven er tom"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Elementer som har ligget i papirkurven i mer enn 30 dager, slettes automatisk."</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Tøm papirkurven"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vil du tømme papirkurven?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Denne handlingen kan ikke angres, og filene kan ikke gjenopprettes."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tøm papirkurven"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Fil i papirkurven"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Denne filen ligger i papirkurven og kan ikke åpnes. Gjenopprett den fra papirkurven for å få tilgang til den."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Gjenopprett filen"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Alle elementer i papirkurven slettes for godt. Du kan ikke angre denne handlingen."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Slett for godt"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Elementet ligger i papirkurven}other{Elementene ligger i papirkurven}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{For å få tilgang til dette elementet må du gjenopprette det eller dra det ut av papirkurven}other{For å få tilgang til disse elementene må du gjenopprette dem eller dra dem ut av papirkurven}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Gjenopprett"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Du er ikke på nettet for øyeblikket. Noen filer og funksjoner er ikke tilgjengelige. Koble til internett for å få full tilgang."</string>
 </resources>

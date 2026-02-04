@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"ચાલુ કરો"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"મને ફરીથી પૂછશો નહીં"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"હમણાં નહીં"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"અહીંથી ખોલો"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"સૂચિ દૃશ્ય"</string>
     <string name="menu_search" msgid="1876699106790719849">"શોધ"</string>
     <string name="menu_settings" msgid="6520844520117939047">"સ્ટોરેજ સેટિંગ"</string>
+    <string name="manage_device" msgid="329180710072251010">"ડિવાઇસ મેનેજ કરો"</string>
     <string name="menu_open" msgid="9092138100049759315">"ખોલો"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"આની સાથે ખોલો"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"નવી વિંડોમાં ખોલો"</string>
     <string name="menu_save" msgid="5195367497138965168">"સાચવો"</string>
     <string name="menu_share" msgid="4307140947108068356">"શેર કરો"</string>
     <string name="menu_delete" msgid="1022254131543256626">"કાઢી નાખો"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"કાયમ માટે ડિલીટ કરો"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"કાયમ માટે ડિલીટ કરો"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ટ્રેશમાં ખસેડો"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"રિસ્ટોર કરો"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"બધા પસંદ કરો"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"માહિતી મેળવો"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"છુપાવેલી ફાઇલો બતાવો"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"છુપાવેલી ફાઇલો બતાવશો નહીં"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"સારાંશની કૉલમ બતાવો"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"સારાંશની કૉલમ બતાવશો નહીં"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"વર્ણનની કૉલમ બતાવો"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"વર્ણનની કૉલમ બતાવશો નહીં"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>માં જુઓ"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"નવી વિંડો"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"કાપો"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ટ્રેશ ખોલો"</string>
     <string name="not_sorted" msgid="7813496644889115530">"સૉર્ટ કરેલ નથી"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"નામ"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"સારાંશ"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"વર્ણન"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"પ્રકાર"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"કદ"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"સંશોધિત"</string>
@@ -396,14 +400,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>ની છબીનો પ્રીવ્યૂ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"માહિતી પૅનલ છુપાવો"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"માહિતી પૅનલ બતાવો"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ટ્રેશમાં કંઈ નથી"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30 દિવસ કરતાં વધુ દિવસથી ટ્રેશમાં રહેલી ફાઇલોને ઑટોમૅટિક રીતે ડિલીટ કરવામાં આવશે."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ટ્રેશ હમણાં ખાલી કરો"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ટ્રેશ ખાલી છે"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"30 દિવસ કરતાં વધુ દિવસથી ટ્રેશમાં રહેલી આઇટમને ઑટોમૅટિક રીતે ડિલીટ કરવામાં આવશે"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ટ્રેશ ખાલી કરો"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ટ્રેશ ખાલી કરીએ?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"આ ઍક્શન રદ કરી શકાતી નથી અને ફાઇલો હવે રિકવર કરી શકાય એવી રહેશે નહીં."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ટ્રેશ ખાલી કરો"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ટ્રેશમાંની ફાઇલ"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"આ ફાઇલ તમારા ટ્રેશમાં છે અને તેને ખોલી શકાતી નથી. તેને ઍક્સેસ કરવા માટે કૃપા કરીને તેને ટ્રેશમાંથી રિસ્ટોર કરો."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ફાઇલને રિસ્ટોર કરો"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ટ્રેશમાંની બધી આઇટમ કાયમ માટે ડિલીટ કરવામાં આવશે. આ છેલ્લો ફેરફાર રદ કરી શકાતો નથી."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"કાયમ માટે ડિલીટ કરો"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{આઇટમ ટ્રેશમાં છે}one{આઇટમ ટ્રેશમાં છે}other{આઇટમ ટ્રેશમાં છે}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{આ આઇટમને ઍક્સેસ કરવા માટે, તેને રિસ્ટોર કરો અથવા ટ્રેશમાંથી બહાર ખેંચો}one{આ આઇટમને ઍક્સેસ કરવા માટે, તેને રિસ્ટોર કરો અથવા ટ્રેશમાંથી બહાર ખેંચો}other{આ આઇટમને ઍક્સેસ કરવા માટે, તેને રિસ્ટોર કરો અથવા ટ્રેશમાંથી બહાર ખેંચો}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"રિસ્ટોર કરો"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"તમે હાલમાં ઑફલાઇન છો. કેટલીક ફાઇલો અને કાર્યક્ષમતા ઉપલબ્ધ નથી. સંપૂર્ણ ઍક્સેસ માટે ઇન્ટરનેટ સાથે કનેક્ટ કરો."</string>
 </resources>

@@ -45,15 +45,6 @@
         <item name="trackThickness">2.5dp</item>
     </style>
 
-
-    <style name="InlineSyncProgressIndicatorStyle" parent="@style/Widget.Material3Expressive.CircularProgressIndicator">
-        <item name="android:max">100</item>
-        <item name="indicatorInset">0dp</item>
-        <item name="indicatorColor">?attr/colorPrimary</item>
-        <item name="trackThickness">1.5dp</item>
-        <item name="trackColor">?attr/colorSecondaryContainer</item>
-    </style>
-
     <style name="ToolbarStyles" parent="@style/Widget.Material3Expressive.Toolbar">
         <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
         <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>

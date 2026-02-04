@@ -148,8 +148,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testCopyDocument_Cancel() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -168,7 +166,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testCopyDocument_CancelFromNotification() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -196,8 +193,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testMoveDocument_Cancel() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -216,7 +211,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 

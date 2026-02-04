@@ -16,8 +16,10 @@
 package com.android.documentsui.dirlist
 
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.MatrixCursor
 import android.os.Build
@@ -55,6 +57,16 @@ import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
+import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
+import com.android.documentsui.services.FileOperationService.OPERATION_DELETE
+import com.android.documentsui.services.FileOperationService.OPERATION_TRASH
+import com.android.documentsui.services.Job.STATE_CANCELED
+import com.android.documentsui.services.Job.STATE_COMPLETED
+import com.android.documentsui.services.Job.STATE_CREATED
+import com.android.documentsui.services.Job.STATE_SET_UP
+import com.android.documentsui.services.Job.STATE_STARTED
+import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.SortModels
 import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.TestEvents
@@ -89,6 +101,7 @@ class DirectoryFragmentTest {
     private lateinit var injector: Injector<ActionHandler>
     private lateinit var fragment: DirectoryFragmentWithActivity
     private lateinit var networkMonitor: NetworkMonitor
+    private lateinit var activity: BaseActivity
 
     @Before
     fun setUp() {
@@ -125,7 +138,7 @@ class DirectoryFragmentTest {
         // be replaced with something we can't mock.
         doNothing().`when`(injector).updateSharedSelectionTracker(any())
         // Mock the activity and its dependencies.
-        val activity = mock(BaseActivity::class.java)
+        activity = mock(BaseActivity::class.java)
         `when`(activity.displayState).thenReturn(env.state)
         `when`(activity.getInjector()).thenReturn(injector)
         `when`(activity.getSystemService(Context.ACTIVITY_SERVICE))
@@ -344,6 +357,47 @@ class DirectoryFragmentTest {
         verify(injector.actions, times(2))
             .openItem(item, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR)
     }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testJobProgressObserverRefreshesOnDestructiveJobCompletionWhileSearching() {
+        `when`(activity.isSearching).thenReturn(true)
+        val receiver = fragment.jobProgressObserver
+
+        for (opType in listOf(OPERATION_DELETE, OPERATION_TRASH)) {
+            for (state in listOf(STATE_CREATED, STATE_STARTED, STATE_SET_UP, STATE_CANCELED)) {
+                val progress = JobProgress("jobId", opType, state, "file.txt", 1, false)
+                val intent = Intent(ACTION_PROGRESS)
+                intent.putParcelableArrayListExtra(EXTRA_PROGRESS, arrayListOf(progress))
+                fragment.onRefreshCalled = false
+                receiver.onReceive(fragment.context, intent)
+                assertThat(fragment.onRefreshCalled).isFalse()
+            }
+
+            val progress = JobProgress("jobId", opType, STATE_COMPLETED, "file.txt", 1, false)
+            val intent = Intent(ACTION_PROGRESS)
+            intent.putParcelableArrayListExtra(EXTRA_PROGRESS, arrayListOf(progress))
+            fragment.onRefreshCalled = false
+            receiver.onReceive(fragment.context, intent)
+            assertThat(fragment.onRefreshCalled).isTrue()
+        }
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testJobProgressObserverDoesNothingWhileNotSearching() {
+        `when`(activity.isSearching).thenReturn(false)
+        val receiver = fragment.jobProgressObserver
+
+        for (opType in listOf(OPERATION_DELETE, OPERATION_TRASH)) {
+            val progress = JobProgress("jobId", opType, STATE_COMPLETED, "file.txt", 1, false)
+            val intent = Intent(ACTION_PROGRESS)
+            intent.putParcelableArrayListExtra(EXTRA_PROGRESS, arrayListOf(progress))
+            fragment.onRefreshCalled = false
+            receiver.onReceive(fragment.context, intent)
+            assertThat(fragment.onRefreshCalled).isFalse()
+        }
+    }
 }
 
 // DirectoryFragment requires a valid activity, use this class to provide a fake one for it so we
@@ -355,4 +409,17 @@ class DirectoryFragmentWithActivity(
     override fun getBaseActivity(): BaseActivity = fakeActivity
 
     override fun getContext(): Context = context
+
+    var onRefreshCalled = false
+
+    override fun onRefresh() {
+        onRefreshCalled = true
+    }
+
+    val jobProgressObserver: BroadcastReceiver
+        get() {
+            val field = DirectoryFragment::class.java.getDeclaredField("mJobProgressObserver")
+            field.isAccessible = true
+            return field.get(this) as BroadcastReceiver
+        }
 }

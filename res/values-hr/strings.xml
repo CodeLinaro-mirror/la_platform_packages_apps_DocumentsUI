@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Uključi"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Nemoj me pitati ponovno"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Ne sad"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Otvori iz"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Prikaz popisa"</string>
     <string name="menu_search" msgid="1876699106790719849">"Pretraži"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Postavke pohrane"</string>
+    <string name="manage_device" msgid="329180710072251010">"Upravljajte uređajem"</string>
     <string name="menu_open" msgid="9092138100049759315">"Otvori"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Otvori pomoću aplikacije"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Otvori u novom prozoru"</string>
     <string name="menu_save" msgid="5195367497138965168">"Spremi"</string>
     <string name="menu_share" msgid="4307140947108068356">"Dijeli"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Izbriši"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Trajno izbriši"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Trajno izbriši"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Premjesti u otpad"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Vrati"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Odaberi sve"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Informacije"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Prikaži skrivene datoteke"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Ne prikazuj skrivene datot."</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Prikaži stupac sažetka"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Ne prikazuj stupac sažetka"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Prikaži stupac opisa"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Ne prikazuj stupac opisa"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Prikaži na usluzi <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Novi prozor"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Izreži"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Otvori otpad"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nije poredano"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Naziv"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Sažetak"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Opis"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Vrsta"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Veličina"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Izmijenjeno"</string>
@@ -414,14 +418,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Pregled slike <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Sakrij ploču s informacijama"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Prikaži ploču s informacijama"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Nema ničega u otpadu"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Datoteke koje su u otpadu dulje od 30 dana automatski će se izbrisati."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Isprazni otpad sada"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Otpad je prazan"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Stavke koje su u otpadu dulje od 30 dana automatski će se izbrisati"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Isprazni otpad"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Želite li isprazniti otpad?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ta se radnja ne može poništiti, a datoteke se više neće moći oporaviti."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Isprazni otpad"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Datoteka u otpadu"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Ta se datoteka nalazi u vašem otpadu i ne može se otvoriti. Vratite je iz otpada da biste joj pristupili."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Vrati datoteku"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Sve stavke u otpadu trajno će se izbrisati. Ta se radnja ne može poništiti."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Trajno izbriši"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Stavka je u otpadu}one{Stavke su u otpadu}few{Stavke su u otpadu}other{Stavke su u otpadu}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Da biste pristupili toj stavci, vratite je ili je povucite iz otpada}one{Da biste pristupili tim stavkama, vratite ih ili ih povucite iz otpada}few{Da biste pristupili tim stavkama, vratite ih ili ih povucite iz otpada}other{Da biste pristupili tim stavkama, vratite ih ili ih povucite iz otpada}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Vrati"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Trenutačno ste offline. Neke datoteke i funkcije nisu dostupne. Povežite se s internetom za potpuni pristup."</string>
 </resources>
