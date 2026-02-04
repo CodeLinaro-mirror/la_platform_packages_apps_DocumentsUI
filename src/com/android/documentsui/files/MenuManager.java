@@ -20,6 +20,7 @@ import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEn
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -177,7 +178,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         // When desktop file handling is enabled, "open with" opens ResolverActivity.
         // Currently ResolverActivity automatically opens the app when it is the only option for the
         // user. This breaks the expected behaviour for "open with" so we hide "open with".
-        if (isDesktopFileHandlingFlagEnabled()) {
+        // With the new open-with this issue is resolved, so we only disable open-with when desktop
+        // file handling is enabled but new open-with is disabled.
+        if (isDesktopFileHandlingFlagEnabled() && !isUseNewOpenWithEnabled()) {
             enabled = enabled && selectionDetails.hasMultipleOpeningApps();
         }
 

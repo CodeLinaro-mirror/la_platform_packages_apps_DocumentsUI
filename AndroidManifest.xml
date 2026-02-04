@@ -48,6 +48,12 @@
     <!-- Permissions required for reading device configs -->
     <uses-permission android:name="android.permission.READ_DEVICE_CONFIG"/>
 
+    <!-- Declaring the permission for apps wanting to launch DocsUI through the home screen. -->
+    <permission
+        android:name="com.android.documentsui.LAUNCH_FILE_MANAGER"
+        android:featureFlag="com.android.documentsui.flags.home_screen_files_ro"
+        android:protectionLevel="signature|recents" />
+
     <application
         android:name=".DocumentsApplication"
         android:label="@string/app_label"
@@ -194,6 +200,19 @@
                 <data android:mimeType="vnd.android.document/directory" />
             </intent-filter>
         </activity>
+
+        <activity-alias
+            android:name=".LaunchFilesActivity"
+            android:targetActivity=".files.FilesActivity"
+            android:exported="true"
+            android:permission="com.android.documentsui.LAUNCH_FILE_MANAGER"
+            android:featureFlag="com.android.documentsui.flags.home_screen_files_ro">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/zip"/>
+            </intent-filter>
+        </activity-alias>
 
         <activity-alias android:name=".ViewDownloadsActivity"
                         android:targetActivity=".files.FilesActivity"

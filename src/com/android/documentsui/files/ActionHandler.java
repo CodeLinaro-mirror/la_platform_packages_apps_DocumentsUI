@@ -23,6 +23,7 @@ import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -77,6 +78,7 @@ import com.android.documentsui.util.FlagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import javax.annotation.Nullable;
@@ -773,13 +775,22 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 // It is possible that the intent comes from the launcher home screen for which we
                 // need to convert the URI from a MediaStore URI to a DocumentsUI URI.
                 Uri documentUri = mDocs.getDocumentUri(uri);
-                if (DocumentsContract.isDocumentUri(mActivity, documentUri)) {
+                if (DocumentsContract.isDocumentUri(mActivity, documentUri)
+                        && Providers.isSystemProvider(documentUri.getAuthority())) {
+                    if (Objects.equals(intent.getType(), "application/zip")) {
+                        mToSelect = documentUri;
+                    }
                     return launchToDocument(documentUri);
                 }
             }
         }
 
         return false;
+    }
+
+    @VisibleForTesting
+    public Uri getToSelect() {
+        return mToSelect;
     }
 
     @Override
@@ -844,6 +855,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
+            if (isUseNewOpenWithEnabled()) {
+                intent.putExtra(Intent.EXTRA_AUTO_LAUNCH_SINGLE_CHOICE, false);
+            }
 
             try {
                 doc.userId.startActivityAsUser(mActivity, intent);

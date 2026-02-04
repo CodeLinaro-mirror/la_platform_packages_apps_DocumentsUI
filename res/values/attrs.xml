@@ -29,6 +29,7 @@
 
     <declare-styleable name="HighlightedItemView">
         <attr name="state_highlighted" format="boolean"/>
+        <attr name="state_error" format="boolean"/>
     </declare-styleable>
 
 </resources>
