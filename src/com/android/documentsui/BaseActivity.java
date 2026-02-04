@@ -1025,7 +1025,7 @@ public abstract class BaseActivity
         updateHeaderTitle();
     }
 
-    private void updateColumnHeaders(@Nullable RootInfo root) {
+    protected void updateColumnHeaders(@Nullable RootInfo root) {
         boolean showSummary =
                 displaySummaryForRoot(
                         mInjector.getSummaryProviderManager(), root, mState.stack.peek());
