@@ -53,7 +53,9 @@ import com.android.documentsui.base.NetworkMonitor
 import com.android.documentsui.base.State.MODE_GRID
 import com.android.documentsui.base.State.MODE_LIST
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.flags.Flags.FLAG_USE_NEW_OPEN_WITH
 import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -322,7 +324,8 @@ class DirectoryFragmentTest {
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
-    fun testOnItemActivated_doubleTap_opensItemOnce() {
+    @DisableFlags(FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_doubleTap_opensItemOnce_useNewOpenWithFlagDisabled() {
         val documentHolder = mock(DocumentHolder::class.java)
         `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
         val item = DocumentItemDetails(documentHolder)
@@ -339,8 +342,27 @@ class DirectoryFragmentTest {
     }
 
     @Test
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO, FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_doubleTap_opensItemOnce_useNewOpenWithFlagEnabled() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened only once.
+        verify(injector.actions, times(1))
+            .openItem(item, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE)
+    }
+
+    @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
-    fun testOnItemActivated_tapTwiceWithGap_opensItemTwice() {
+    @DisableFlags(FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_tapTwiceWithGap_opensItemTwice_useNewOpenWithFlagDisabled() {
         val documentHolder = mock(DocumentHolder::class.java)
         `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
         val item = DocumentItemDetails(documentHolder)
@@ -353,9 +375,29 @@ class DirectoryFragmentTest {
         // Second tap immediately after.
         fragment.onItemActivated(item, event)
 
-        // Verify that the item is opened only once.
+        // Verify that the item is opened twice.
         verify(injector.actions, times(2))
             .openItem(item, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO, FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_tapTwiceWithGap_opensItemTwice_useNewOpenWithFlagEnabled() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Wait for double tap timeout.
+        SystemClock.sleep(ViewConfiguration.getDoubleTapTimeout().toLong() + 100L)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened twice.
+        verify(injector.actions, times(2))
+            .openItem(item, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE)
     }
 
     @Test
@@ -418,8 +460,6 @@ class DirectoryFragmentWithActivity(
 
     val jobProgressObserver: BroadcastReceiver
         get() {
-            val field = DirectoryFragment::class.java.getDeclaredField("mJobProgressObserver")
-            field.isAccessible = true
-            return field.get(this) as BroadcastReceiver
+            return this.mJobProgressObserver
         }
 }

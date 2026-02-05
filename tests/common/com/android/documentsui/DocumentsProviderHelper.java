@@ -450,6 +450,27 @@ public class DocumentsProviderHelper {
         mClient.call("clear", args, configuration);
     }
 
+    /**
+     * A helper method for TestCloudProvider only. Sets the COLUMN_CONTENT_SYNC_STATE_FLAGS for the
+     * document with the given id.
+     */
+    public void setSyncState(String documentId, int syncState) throws RemoteException {
+        Bundle extras = new Bundle();
+        extras.putString(TestCloudProvider.METHOD_DOC_ID_EXTRA, documentId);
+        extras.putInt(TestCloudProvider.METHOD_STATE_EXTRA, syncState);
+        mClient.call(TestCloudProvider.SET_SYNC_STATE, null, extras);
+    }
+
+    /**
+     * A helper method for TestCloudProvider only. Nullifies the COLUMN_CONTENT_SYNC_STATE_FLAGS for
+     * the document with the given id.
+     */
+    public void nullifySyncState(String documentId) throws RemoteException {
+        Bundle extras = new Bundle();
+        extras.putString(TestCloudProvider.METHOD_DOC_ID_EXTRA, documentId);
+        mClient.call(TestCloudProvider.NULLIFY_SYNC_STATE, null, extras);
+    }
+
     public List<RootInfo> getRootList() throws RemoteException {
         List<RootInfo> list = new ArrayList<>();
         final Uri rootsUri = DocumentsContract.buildRootsUri(mAuthority);

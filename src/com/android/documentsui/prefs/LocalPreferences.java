@@ -73,12 +73,19 @@ public class LocalPreferences {
 
     /** Sets the summary consent status and timestamp. */
     public static void setSummaryConsent(Context context, @ConsentStatus int status) {
+        setSummaryConsent(context, status, System.currentTimeMillis());
+    }
+
+    /** Sets the summary consent status and timestamp. */
+    @VisibleForTesting
+    public static void setSummaryConsent(
+            Context context, @ConsentStatus int status, long timestamp) {
         boolean isEnabled = status == CONSENT_ACCEPTED;
         getPrefs(context)
                 .edit()
                 .putBoolean(KEY_SUMMARY_ENABLED, isEnabled)
                 .putInt(KEY_SUMMARY_CONSENT_STATUS, status)
-                .putLong(KEY_SUMMARY_CONSENT_TIMESTAMP, System.currentTimeMillis())
+                .putLong(KEY_SUMMARY_CONSENT_TIMESTAMP, timestamp)
                 .apply();
     }
 
@@ -86,6 +93,12 @@ public class LocalPreferences {
     @VisibleForTesting
     public static @ConsentStatus int getSummaryConsent(Context context) {
         return getPrefs(context).getInt(KEY_SUMMARY_CONSENT_STATUS, CONSENT_UNKNOWN);
+    }
+
+    /** Returns the summary consent timestamp. */
+    @VisibleForTesting
+    public static long getSummaryConsentTimestamp(Context context) {
+        return getPrefs(context).getLong(KEY_SUMMARY_CONSENT_TIMESTAMP, 0);
     }
 
     public static @ViewMode int getViewMode(Context context, RootInfo root,

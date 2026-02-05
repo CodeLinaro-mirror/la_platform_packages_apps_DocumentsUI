@@ -15,6 +15,6 @@
 -->
 
 <resources>
-    <item name="documents_activity_m3" type="layout">@layout/nav_rail_layout</item>
+    <item name="pick_activity_m3" type="layout">@layout/nav_rail_layout</item>
     <item name="files_activity_m3" type="layout">@layout/nav_rail_layout</item>
 </resources>

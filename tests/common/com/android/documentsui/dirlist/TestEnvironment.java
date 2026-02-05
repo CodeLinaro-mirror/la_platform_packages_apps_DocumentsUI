@@ -16,6 +16,8 @@
 
 package com.android.documentsui.dirlist;
 
+import static com.android.documentsui.dirlist.DirectoryFragment.TICK_VISIBLE_DURATION_MS;
+
 import android.content.Context;
 import android.database.Cursor;
 
@@ -79,6 +81,11 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     @Override
     public Model getModel() {
         return mEnv.model;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return TICK_VISIBLE_DURATION_MS;
     }
 
     @Override

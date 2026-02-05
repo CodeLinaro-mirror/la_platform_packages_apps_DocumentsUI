@@ -258,7 +258,7 @@ private fun initializeIdMapping() {
             R.layout.dialog_sorting to R.layout.dialog_sorting_m3,
             R.layout.directory_app_bar to R.layout.directory_app_bar_m3,
             R.layout.directory_header to R.layout.directory_header_m3,
-            R.layout.documents_activity to R.layout.documents_activity_m3,
+            R.layout.pick_activity to R.layout.pick_activity_m3,
             R.layout.drag_shadow_layout to R.layout.drag_shadow_layout_m3,
             R.layout.drawer_layout to R.layout.drawer_layout_m3,
             R.layout.drop_badge to R.layout.drop_badge_m3,
