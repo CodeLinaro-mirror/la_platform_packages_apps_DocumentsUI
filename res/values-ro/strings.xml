@@ -317,23 +317,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> de elemente</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> element</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Ștergi „<xliff:g id="NAME">%1$s</xliff:g>”?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Ștergi dosarul „<xliff:g id="NAME">%1$s</xliff:g>” și conținutul acestuia?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="few">Ștergi <xliff:g id="COUNT_1">%1$d</xliff:g> fișiere?</item>
-      <item quantity="other">Ștergi <xliff:g id="COUNT_1">%1$d</xliff:g> de fișiere?</item>
-      <item quantity="one">Ștergi <xliff:g id="COUNT_0">%1$d</xliff:g> fișier?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="few">Ștergi <xliff:g id="COUNT_1">%1$d</xliff:g> dosare și conținutul acestora?</item>
-      <item quantity="other">Ștergi <xliff:g id="COUNT_1">%1$d</xliff:g> de dosare și conținutul acestora?</item>
-      <item quantity="one">Ștergi <xliff:g id="COUNT_0">%1$d</xliff:g> dosar și conținutul acestuia?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="few">Ștergi <xliff:g id="COUNT_1">%1$d</xliff:g> elemente?</item>
-      <item quantity="other">Ștergi <xliff:g id="COUNT_1">%1$d</xliff:g> de elemente?</item>
-      <item quantity="one">Ștergi <xliff:g id="COUNT_0">%1$d</xliff:g> element?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Ștergi definitiv?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{<xliff:g id="NAME">{name}</xliff:g> se va șterge definitiv. Această acțiune nu poate fi anulată.}few{Vor fi șterse definitiv # articole. Această acțiune nu poate fi anulată.}other{Vor fi șterse definitiv # de articole. Această acțiune nu poate fi anulată.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{<xliff:g id="NAME">{name}</xliff:g> se va șterge definitiv. Această acțiune nu poate fi anulată.}few{# articole din coșul de gunoi vor fi șterse definitiv. Această acțiune nu poate fi anulată.}other{# de articole din coșul de gunoi vor fi șterse definitiv. Această acțiune nu poate fi anulată.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Imagini"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Nu se poate deschide arhiva pentru răsfoire. Fișierul ori este corupt, ori are un format neacceptat."</string>
     <string name="name_conflict" msgid="28407269328862986">"Există deja un fișier cu acest nume."</string>

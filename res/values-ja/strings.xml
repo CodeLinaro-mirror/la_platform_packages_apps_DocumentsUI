@@ -303,20 +303,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> 個の項目</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> 個の項目</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"「<xliff:g id="NAME">%1$s</xliff:g>」を削除しますか？"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"フォルダ「<xliff:g id="NAME">%1$s</xliff:g>」とそのコンテンツを削除しますか？"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> 個のファイルを削除しますか？</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> 個のファイルを削除しますか？</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> 個のフォルダとそのコンテンツを削除しますか？</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> 個のフォルダとそのコンテンツを削除しますか？</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> 個の項目を削除しますか？</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> 個の項目を削除しますか？</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"完全に削除しますか？"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{「<xliff:g id="NAME">{name}</xliff:g>」を完全に削除します。この操作を元に戻すことはできません。}other{# 個のアイテムを完全に削除します。この操作を元に戻すことはできません。}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{「<xliff:g id="NAME">{name}</xliff:g>」を完全に削除します。この操作を元に戻すことはできません。}other{ゴミ箱内の # 個のアイテムを完全に削除します。この操作を元に戻すことはできません。}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"画像"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"アーカイブを開いてブラウジングできません。ファイルが破損しているか、サポートされていない形式です。"</string>
     <string name="name_conflict" msgid="28407269328862986">"この名前のファイルはすでに存在しています。"</string>

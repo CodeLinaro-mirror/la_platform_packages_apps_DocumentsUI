@@ -331,26 +331,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> položek</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> položka</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Smazat soubor <xliff:g id="NAME">%1$s</xliff:g>?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Smazat složku <xliff:g id="NAME">%1$s</xliff:g> a její obsah?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="few">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> soubory?</item>
-      <item quantity="many">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> souboru?</item>
-      <item quantity="other">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> souborů?</item>
-      <item quantity="one">Smazat <xliff:g id="COUNT_0">%1$d</xliff:g> soubor?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="few">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> složky a jejich obsah?</item>
-      <item quantity="many">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> složky a jejich obsah?</item>
-      <item quantity="other">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> složek a jejich obsah?</item>
-      <item quantity="one">Smazat <xliff:g id="COUNT_0">%1$d</xliff:g> složku a její obsah?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="few">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> položky?</item>
-      <item quantity="many">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> položky?</item>
-      <item quantity="other">Smazat <xliff:g id="COUNT_1">%1$d</xliff:g> položek?</item>
-      <item quantity="one">Smazat <xliff:g id="COUNT_0">%1$d</xliff:g> položku?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Smazat navždy?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Dokument <xliff:g id="NAME">{name}</xliff:g> bude navždy smazán. Akci nelze vrátit zpět.}few{# dokumenty budou navždy smazány. Akci nelze vrátit zpět.}many{# dokumentu bude navždy smazáno. Akci nelze vrátit zpět.}other{# dokumentů bude navždy smazáno. Akci nelze vrátit zpět.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Dokument <xliff:g id="NAME">{name}</xliff:g> bude navždy smazán. Akci nelze vrátit zpět.}few{# položky v koši budou navždy smazány. Akci nelze vrátit zpět.}many{# položky v koši bude navždy smazáno. Akci nelze vrátit zpět.}other{# položek v koši bude navždy smazáno. Akci nelze vrátit zpět.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Obrázky"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Archiv nelze otevřít k prohlížení. Soubor je buď poškozený, nebo nemá podporovaný formát."</string>
     <string name="name_conflict" msgid="28407269328862986">"Soubor s tímto názvem již existuje."</string>

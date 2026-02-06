@@ -288,7 +288,7 @@
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g>కి <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> డైరెక్టరీ యాక్సెస్‌ను మంజూరు చేయాలా?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="STORAGE"><i>^2</i></xliff:g>లోని ఫోటోలు, వీడియోలతో సహా మీ డేటా యాక్సెస్‌ను <xliff:g id="APPNAME"><b>^1</b></xliff:g>కి మంజూరు చేయాలా?"</string>
     <string name="allow" msgid="1275746941353040309">"అనుమతించండి"</string>
-    <string name="deny" msgid="5127201668078153379">"తిరస్కరించు"</string>
+    <string name="deny" msgid="5127201668078153379">"తిరస్కరించండి"</string>
     <plurals name="elements_selected" formatted="false" msgid="4448165978637163692">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఎంచుకోబడ్డాయి</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ఎంచుకోబడింది</item>
@@ -303,20 +303,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> వస్తువులు</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> అంశం</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\"ని తొలగించాలా?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ఫోల్డర్‌ను మరియు దీనిలోని కంటెంట్‌లను తొలగించాలా?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఫైళ్లను తొలగించాలా?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ఫైల్‌ను తొలగించాలా?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఫోల్డర్‌లు మరియు వీటిలోని కంటెంట్‌లను తొలగించాలా?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ఫోల్డర్ మరియు దీనిలోని కంటెంట్‌లను తొలగించాలా?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలను తొలగించాలా?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> అంశాన్ని తొలగించాలా?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"శాశ్వతంగా తొలగించాలా?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” శాశ్వతంగా తొలగించబడుతుంది. ఈ చర్యను రద్దు చేయలేరు.}other{# ఐటెమ్‌లు శాశ్వతంగా తొలగించబడతాయి. ఈ చర్యను రద్దు చేయలేరు.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” శాశ్వతంగా తొలగించబడుతుంది. ఈ చర్యను రద్దు చేయలేరు.}other{ట్రాష్‌లో ఉన్న # ఐటెమ్‌లు శాశ్వతంగా తొలగించబడతాయి. ఈ చర్యను రద్దు చేయలేరు.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"ఇమేజ్‌లు"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"బ్రౌజింగ్‌ కోసం ఆర్కైవ్‌ను తెరవడం సాధ్యపడలేదు. ఫైల్ కరప్ట్ అయింది లేదా సపోర్ట్‌ లేని ఫార్మాట్‌లో ఉంది."</string>
     <string name="name_conflict" msgid="28407269328862986">"ఈ పేరుతో ఇప్పటికే ఒక ఫైల్ ఉంది."</string>
