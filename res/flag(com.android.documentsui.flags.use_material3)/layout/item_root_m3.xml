@@ -47,7 +47,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/drawer_item_text_margin_start"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:duplicateParentState="true">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@android:id/title"
@@ -56,7 +57,8 @@
             android:singleLine="true"
             android:ellipsize="end"
             android:textAlignment="viewStart"
-            android:textAppearance="@style/DrawerMenuPrimaryM3" />
+            android:textAppearance="@style/DrawerMenuPrimaryM3"
+            android:duplicateParentState="true" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@android:id/summary"
@@ -65,7 +67,8 @@
             android:singleLine="true"
             android:ellipsize="end"
             android:textAlignment="viewStart"
-            android:textAppearance="@style/DrawerMenuSecondaryM3" />
+            android:textAppearance="@style/DrawerMenuSecondaryM3"
+            android:duplicateParentState="true" />
 
     </LinearLayout>
 

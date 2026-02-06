@@ -303,20 +303,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ລາຍການ</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ລາຍການ</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"ລຶບ \"<xliff:g id="NAME">%1$s</xliff:g>\" ອອກບໍ?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"ລຶບໂຟນເດີ \"<xliff:g id="NAME">%1$s</xliff:g>\" ແລະ ເນື້ອຫາຂອງມັນອອກບໍ?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other">ລຶບໄຟລ໌ <xliff:g id="COUNT_1">%1$d</xliff:g> ໄຟລ໌ອອກບໍ?</item>
-      <item quantity="one">ລຶບໄຟລ໌ <xliff:g id="COUNT_0">%1$d</xliff:g> ໄຟລ໌ອອກບໍ?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other">ລຶບ <xliff:g id="COUNT_1">%1$d</xliff:g> ໂຟນເດີ ແລະ ເນື້ອຫາຂອງມັນອອກບໍ?</item>
-      <item quantity="one">ລຶບ <xliff:g id="COUNT_0">%1$d</xliff:g> ໂຟນເດີ ແລະ ເນື້ອຫາຂອງມັນອອກບໍ?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other">ລຶບ <xliff:g id="COUNT_1">%1$d</xliff:g> ລາຍການອອກບໍ?</item>
-      <item quantity="one">ລຶບ <xliff:g id="COUNT_0">%1$d</xliff:g> ລາຍການອອກບໍ?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"ລຶບຖາວອນບໍ?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{ລະບົບຈະລຶບ “<xliff:g id="NAME">{name}</xliff:g>” ຖາວອນ. ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.}other{ລະບົບຈະລຶບ # ລາຍການຖາວອນ. ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{ລະບົບຈະລຶບ “<xliff:g id="NAME">{name}</xliff:g>” ຖາວອນ. ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.}other{ລະບົບຈະລຶບ # ລາຍການໃນຖັງຂີ້ເຫຍື້ອຖາວອນ. ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"ຮູບພາບ"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Unable to open archive for browsing. File is either corrupt, or an unsupported format."</string>
     <string name="name_conflict" msgid="28407269328862986">"A file with this name already exists."</string>

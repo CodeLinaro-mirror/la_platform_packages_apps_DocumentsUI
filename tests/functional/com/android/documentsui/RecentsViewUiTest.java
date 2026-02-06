@@ -33,6 +33,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.net.Uri;
 import android.os.SystemClock;
@@ -44,6 +45,7 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.base.DocumentInfo;
@@ -250,8 +252,12 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check: the random test file is not yet in Downloads.
         bots.roots.openRoot("Downloads");
-        UiObject fileInDownloads = bots.directory.findDocument(testFileName, true);
-        assertFalse(fileInDownloads.exists());
+        try {
+            bots.directory.findDocument(testFileName, true);
+            fail("File " + testFileName + " must not be present in Downloads yet");
+        } catch (UiObjectNotFoundException e) {
+            // Working as intended.
+        }
 
         // Move the file to Downloads.
         bots.roots.openRoot("Recent");
@@ -264,7 +270,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check: the random test file is now in Downloads.
         bots.roots.openRoot("Downloads");
-        fileInDownloads = bots.directory.findDocument(testFileName, true);
+        UiObject fileInDownloads = bots.directory.findDocument(testFileName, true);
         assertTrue(fileInDownloads.exists());
     }
 

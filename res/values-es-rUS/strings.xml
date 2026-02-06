@@ -64,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Obtener información"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostrar archivos ocultos"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"No mostrar archivos ocultos"</string>
-    <string name="option_show_summary_column" msgid="1008012395393952119">"Mostrar la columna de descripción"</string>
-    <string name="option_hide_summary_column" msgid="8091410079217079948">"No mostrar la columna de descripción"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Mostrar la columna \"Descripción\""</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"No mostrar la columna \"Descripción\""</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Ver en <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Ventana nueva"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Cortar"</string>
@@ -317,23 +317,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementos</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"¿Deseas borrar el archivo \"<xliff:g id="NAME">%1$s</xliff:g>\"?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"¿Deseas borrar la carpeta \"<xliff:g id="NAME">%1$s</xliff:g>\" y su contenido?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="many">¿Quieres borrar <xliff:g id="COUNT_1">%1$d</xliff:g> de archivos?</item>
-      <item quantity="other">¿Quieres borrar <xliff:g id="COUNT_1">%1$d</xliff:g> archivos?</item>
-      <item quantity="one">¿Quieres borrar <xliff:g id="COUNT_0">%1$d</xliff:g> archivo?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="many">¿Quieres borrar <xliff:g id="COUNT_1">%1$d</xliff:g> de carpetas y su contenido?</item>
-      <item quantity="other">¿Quieres borrar <xliff:g id="COUNT_1">%1$d</xliff:g> carpetas y su contenido?</item>
-      <item quantity="one">¿Quieres borrar <xliff:g id="COUNT_0">%1$d</xliff:g> carpeta y su contenido?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="many">¿Borrar <xliff:g id="COUNT_1">%1$d</xliff:g> de elementos?</item>
-      <item quantity="other">¿Borrar <xliff:g id="COUNT_1">%1$d</xliff:g> elementos?</item>
-      <item quantity="one">¿Borrar <xliff:g id="COUNT_0">%1$d</xliff:g> elemento?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"¿Quieres borrar definitivamente?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Se borrará “<xliff:g id="NAME">{name}</xliff:g>” definitivamente. Esta acción no se puede deshacer.}many{Se borrarán # de elementos definitivamente. Esta acción no se puede deshacer.}other{Se borrarán # elementos definitivamente. Esta acción no se puede deshacer.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Se borrará “<xliff:g id="NAME">{name}</xliff:g>” definitivamente. Esta acción no se puede deshacer.}many{Se borrarán # de elementos de la papelera definitivamente. Esta acción no se puede deshacer.}other{Se borrarán # elementos de la papelera definitivamente. Esta acción no se puede deshacer.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Imágenes"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"No es posible abrir el archivo para navegar, ya que el archivo está dañado o el formato no es compatible."</string>
     <string name="name_conflict" msgid="28407269328862986">"Ya existe un archivo con este nombre."</string>

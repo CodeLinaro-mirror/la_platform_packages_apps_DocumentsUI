@@ -41,16 +41,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/job_progress_item_expand_margin_start"
-            android:layout_marginEnd="@dimen/job_progress_item_padding"
+            android:layout_marginEnd="@dimen/job_progress_item_expand_margin_end"
             app:layout_constraintStart_toEndOf="@id/job_progress_item_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/job_progress_item_title" />
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/job_progress_item_header_barrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="job_progress_item_title,job_progress_item_expand" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/job_progress_item_progress"
@@ -60,7 +54,7 @@
             android:layout_marginTop="@dimen/job_progress_item_progress_margin_top"
             app:layout_constraintStart_toStartOf="@id/job_progress_item_title"
             app:layout_constraintEnd_toEndOf="@id/job_progress_item_expand"
-            app:layout_constraintTop_toBottomOf="@id/job_progress_item_header_barrier"
+            app:layout_constraintTop_toBottomOf="@id/job_progress_item_title"
             app:layout_constraintHorizontal_bias="0" />
 
         <com.google.android.material.textview.MaterialTextView

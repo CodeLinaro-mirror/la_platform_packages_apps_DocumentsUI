@@ -807,8 +807,13 @@ public final class MenuManagerTest {
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
+    /**
+     * Open-with is disabled on files with a single opening app (because ResolverActivity would auto
+     * launch that opening app).
+     */
     @Test
     @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_USE_NEW_OPEN_WITH})
     public void testActionMenu_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -818,6 +823,17 @@ public final class MenuManagerTest {
             actionModeOpen.assertEnabledAndVisible();
         }
         actionModeOpenWith.assertDisabledAndInvisible();
+    }
+
+    /** The new open-with doesn't automatically launch so we can use it for single opening apps. */
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.FLAG_USE_NEW_OPEN_WITH})
+    public void testActionMenu_OpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertEnabledAndVisible();
     }
 
     @Test
@@ -1368,8 +1384,13 @@ public final class MenuManagerTest {
         dirOpenWith.assertEnabledAndVisible();
     }
 
+    /**
+     * Open-with is disabled on files with a single opening app (because ResolverActivity would auto
+     * launch that opening app).
+     */
     @Test
     @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_USE_NEW_OPEN_WITH})
     public void testContextMenu_OnFile_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -1377,6 +1398,18 @@ public final class MenuManagerTest {
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
 
         dirOpenWith.assertDisabledAndInvisible();
+    }
+
+    /** The new open-with doesn't automatically launch so we can use it for single opening apps. */
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.FLAG_USE_NEW_OPEN_WITH})
+    public void testContextMenu_OnFile_OpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        dirOpenWith.assertEnabledAndVisible();
     }
 
     @SuppressLint("VisibleForTests")
