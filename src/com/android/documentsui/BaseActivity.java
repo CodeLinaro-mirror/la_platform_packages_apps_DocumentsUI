@@ -940,6 +940,15 @@ public abstract class BaseActivity
             if (!skipRootRefresh) {
                 mState.stack.changeRoot(root);
             }
+            // Always hide the V2 of the breadcrumb when changing roots, unless we are going into
+            // the Recents view.
+            DirectoryFragment dir = getDirectoryFragment();
+            if (dir != null) {
+                BreadcrumbController controller = mInjector.getBreadcrumbController();
+                if (controller != null) {
+                    dir.setSearchResultBreadcrumbHidden(controller);
+                }
+            }
         }
 
         // Clicking on the current root removes search
