@@ -36,6 +36,9 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject2;
 
+import com.android.documentsui.actions.WaitUntilGone;
+import com.android.documentsui.actions.WaitUntilVisible;
+
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
@@ -179,6 +182,20 @@ public class BreadBot extends Bots.BaseBot {
         ViewMatchers.Visibility effectiveVisibility =
                 ViewMatchers.Visibility.forViewVisibility(visibility);
         onView(withId(breadcrumbId)).check(matches(withEffectiveVisibility(effectiveVisibility)));
+    }
+
+    /**
+     * Waits for the given visibility of the breadcrumb with the specified ID.
+     *
+     * @param breadcrumbId The ID of the breadcrumb.
+     * @param visibility The desired visibility.
+     */
+    public void waitForBreadcrumbVisibility(@IdRes int breadcrumbId, @Visibility int visibility) {
+        if (View.GONE == visibility) {
+            onView(withId(breadcrumbId)).perform(new WaitUntilGone(mTimeout));
+        } else {
+            onView(withId(breadcrumbId)).perform(new WaitUntilVisible(mTimeout));
+        }
     }
 
     private boolean hasHorizontalEntry(String label) {
