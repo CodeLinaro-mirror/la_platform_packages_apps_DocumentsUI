@@ -235,10 +235,8 @@
       <item quantity="one">ဤဖိုင်ကို အြခားပုံစံတစ်ခုအဖြစ် ပြောင်းလဲလိုက်ပါပြီ− <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ဤဖိုင်ကို အခြားဖော်မက်သို့ ပြောင်းထားသည်-}other{ဤဖိုင်များကို အခြားဖော်မက်သို့ ပြောင်းထားသည်-}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">ဖိုင် <xliff:g id="COUNT_1">%1$d</xliff:g> ဖိုင်ကို ကလစ်ဘုတ်သို့ ကူးယူထားသည်။</item>
-      <item quantity="one">ဖိုင် <xliff:g id="COUNT_0">%1$d</xliff:g> ဖိုင်ကို ကလစ်ဘုတ်သို့ ကူးယူထားသည်။</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"ဖတ်ရန်အတွက်သာ"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ဤဖိုင်များကို ကြည့်နိုင်သော်လည်း လုပ်ဆောင်ချက်အချို့ကို မပံ့ပိုးပါ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ဤမှတ်တမ်းသည် ဖတ်ရန်သီးသန့် နေရာဖြစ်ပြီး ဤနေရာတွင် ထုတ်ယူ၍မရပါ။"</string>

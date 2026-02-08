@@ -257,12 +257,8 @@
       <item quantity="one">Tento súbor bol konvertovaný do iného formátu: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tento súbor bol skonvertovaný do iného formátu:}few{Tieto súbory boli skonvertované do iného formátu:}many{These files were converted to another format:}other{Tieto súbory boli skonvertované do iného formátu:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> položky boli skopírované do schránky.</item>
-      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> položky bolo skopírovanej do schránky.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> položiek bolo skopírovaných do schránky.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> položka bola skopírovaná do schránky.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Iba na čítanie"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Tieto súbory si môžete zobraziť, ale niektoré akcie nie sú podporované"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archív je v umiestnení iba na čítanie a nedá sa tu extrahovať."</string>

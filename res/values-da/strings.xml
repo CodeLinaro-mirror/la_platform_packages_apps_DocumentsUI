@@ -235,10 +235,8 @@
       <item quantity="other">Følgende filer blev konverteret til et andet format: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Denne fil blev konverteret til et andet format:}one{Denne fil blev konverteret til et andet format:}other{Disse filer blev konverteret til et andet format:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> element blev kopieret til udklipsholderen.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementer blev kopieret til udklipsholderen.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Skrivebeskyttet"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Du kan se disse filer, men nogle handlinger understøttes ikke"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Dette arkiv er placeret på en skrivebeskyttet lokation og kan ikke udpakkes her."</string>
