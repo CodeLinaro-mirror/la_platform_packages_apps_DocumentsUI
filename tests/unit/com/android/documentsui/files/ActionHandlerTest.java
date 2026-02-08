@@ -725,20 +725,22 @@ public class ActionHandlerTest {
         mDialogs.assertNoAppFoundShown();
     }
 
-    // Require desktop file handling flag because when it's disabled proguard strips the
-    // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;
 
-        // Test normal picking (i.e. double click) behaviour will quick view
-        mHandler.openDocument(TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW,
-                ActionHandler.VIEW_TYPE_REGULAR);
+        // Test normal picking on mobile will quick view
+        mHandler.openDocument(
+                TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR);
         mActivity.assertActivityStarted(Intent.ACTION_QUICK_VIEW);
 
-        // And verify open via context menu will view instead
+        // Test normal picking on desktop will view
+        mHandler.openDocument(
+                TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE);
+        mActivity.assertActivityStarted(Intent.ACTION_VIEW);
+
+        // And verify open via context menu will view
         mHandler.openDocumentViewOnly(TestEnv.FILE_GIF);
         mActivity.assertActivityStarted(Intent.ACTION_VIEW);
     }
@@ -919,6 +921,46 @@ public class ActionHandlerTest {
                 mEnv.state.stack,
                 TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot(),
                 Arrays.asList(homeScreenDoc, TestEnv.FOLDER_0));
+        mActivity.refreshCurrentRootAndDirectory.assertCalled();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testInitLocation_LaunchToZipFolderOnHomeScreen() throws Exception {
+        Uri mediaStoreUri = Uri.parse("content://media/external/file/1");
+
+        // Set the intent data to be the media store uri.
+        Intent intent = mActivity.getIntent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(mediaStoreUri, "application/zip");
+
+        // Set the path to be:
+        // external storage provider root --> home screen folder --> whatsinthere.zip.
+        mEnv.docs.nextPath =
+                new Path(
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot().rootId,
+                        Arrays.asList(
+                                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getDocumentId(),
+                                TestEnv.FILE_ARCHIVE.documentId));
+        // Needed to get the correct results when calling LoadDocStackTask.
+        mEnv.docs.nextIsDocumentsUri = true;
+        DocumentInfo homeScreenDoc = new DocumentInfo();
+        homeScreenDoc.derivedUri = TestProvidersAccess.HOME_SCREEN_SHORTCUT.getUri();
+        mEnv.docs.nextDocuments = Arrays.asList(homeScreenDoc, TestEnv.FILE_ARCHIVE);
+        // Mock the media store uri to convert to FILE_ARCHIVE's uri.
+        mEnv.docs.mNextDocumentUri = TestEnv.FILE_ARCHIVE.derivedUri;
+
+        mHandler.initLocation(intent);
+        mEnv.beforeAsserts();
+
+        // The expected behaviour is that the activity will launch to the home screen document and
+        // select the zip file in the directory list.
+        DocumentStackAsserts.assertEqualsTo(
+                mEnv.state.stack,
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot(),
+                Arrays.asList(homeScreenDoc));
+        assertEquals(TestEnv.FILE_ARCHIVE.derivedUri, mHandler.getToSelect());
+
         mActivity.refreshCurrentRootAndDirectory.assertCalled();
     }
 

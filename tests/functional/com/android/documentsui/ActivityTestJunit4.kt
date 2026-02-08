@@ -43,6 +43,7 @@ import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.Bots
 import com.android.documentsui.dirlist.DirectoryFragment.TICK_VISIBLE_DURATION_MS
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.prefs.LocalPreferences
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isGetInfoDialogEnabled
@@ -156,6 +157,8 @@ abstract class ActivityTestJunit4<T : Activity?> {
         device!!.pressKeyCode(KeyEvent.KEYCODE_WAKEUP)
 
         disableScreenOffAndSleepTimeouts()
+        // Start with the feature disabled, so the welcome dialog doesn't interfere with the test.
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
 
         setupTestingRoots()
         ActivityTest.closeNonDocsUiWindows(context, device)

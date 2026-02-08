@@ -15,7 +15,10 @@
   ~ limitations under the License
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<selector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item app:state_error="true" android:color="?attr/colorOnErrorContainer" />
     <item android:state_activated="true" android:color="?attr/colorSecondary" />
     <item android:color="?attr/colorOnSurfaceVariant" />
 </selector>

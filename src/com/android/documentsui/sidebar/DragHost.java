@@ -17,6 +17,7 @@
 package com.android.documentsui.sidebar;
 
 import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.app.Activity;
 import android.util.Log;
@@ -89,6 +90,13 @@ class DragHost extends AbstractDragHost {
         // If a read-only root, no need to see if top level is writable (it's not)
         if (!item.isDropTarget()) {
             mDragAndDropManager.updateStateToNotAllowed(v);
+
+            if (isUseMaterial3FlagEnabled()) {
+                // SpacerView doesn't have DragListener so this view is guaranteed to be a
+                // RootItemView.
+                RootItemView itemView = (RootItemView) v;
+                itemView.setError(true);
+            }
             return;
         }
 

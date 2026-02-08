@@ -303,20 +303,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\" حذف کریں؟"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" فولڈر اور اس کی مشمولات حذف کریں؟"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> فائلیں حذف کریں؟</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> فائل حذف کریں؟</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> فولڈرز اور ان کے مشمولات حذف کریں؟</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> فولڈر اور اس کے مشمولات حذف کریں؟</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز حذف کریں؟</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم حذف کریں؟</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"ہمیشہ کیلئے حذف کرنا"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{‫\"<xliff:g id="NAME">{name}</xliff:g>\" کو ہمیشہ کے لیے حذف کر دیا جائے گا۔ اسے کالعدم نہیں کیا جا سکتا۔}other{‫# آئٹمز ہمیشہ کے لیے حذف کر دیئے جائیں گے۔ اسے کالعدم نہیں کیا جا سکتا۔}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{‫\"<xliff:g id="NAME">{name}</xliff:g>\" کو ہمیشہ کے لیے حذف کر دیا جائے گا۔ اسے کالعدم نہیں کیا جا سکتا۔}other{کوڑے دان میں موجود # آئٹمز ہمیشہ کے لیے حذف کر دیے جائیں گے۔ اسے کالعدم نہیں کیا جا سکتا۔}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"تصاوير"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"براؤزنگ کیلئے آرکائیو کھولنے سے قاصر ہیں۔  فائل یا تو خراب ہے یا ایک غیر تعاون یافتہ فارمیٹ میں ہے۔"</string>
     <string name="name_conflict" msgid="28407269328862986">"اس نام کی ایک فائل پہلے سے موجود ہے۔"</string>

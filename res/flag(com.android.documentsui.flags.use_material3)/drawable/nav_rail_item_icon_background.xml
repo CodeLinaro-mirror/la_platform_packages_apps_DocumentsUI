@@ -27,6 +27,12 @@
 
     <item>
         <selector>
+            <item app:state_error="true">
+                <shape>
+                    <corners android:radius="@dimen/nav_rail_item_icon_bg_radius"/>
+                    <solid android:color="?attr/colorErrorContainer" />
+                </shape>
+            </item>
             <!-- Selected (activated). -->
             <!-- Highlight: when dragging files over the item. -->
             <item

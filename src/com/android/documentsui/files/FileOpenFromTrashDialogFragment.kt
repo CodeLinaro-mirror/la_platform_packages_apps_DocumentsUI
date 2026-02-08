@@ -20,28 +20,23 @@ import android.app.Dialog
 import android.icu.text.MessageFormat
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
-import android.view.WindowManager
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.FragmentManager
+import com.android.documentsui.DocumentsUIDialogFragment
 import com.android.documentsui.Injector
 import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.base.Shared
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.Locale
-import kotlin.math.roundToInt
 
 /** Dialog shown to users when opening files from the trash. */
-class FileOpenFromTrashDialogFragment : DialogFragment() {
+class FileOpenFromTrashDialogFragment : DocumentsUIDialogFragment() {
 
     var mDocuments: List<DocumentInfo> = emptyList()
 
     companion object {
         private const val TAG = "FileOpenFromTrash"
-
-        private const val INSET = 32f
-        private const val WIDTH = 320f
 
         /**
          * Create and show the dialog UI.
@@ -73,7 +68,16 @@ class FileOpenFromTrashDialogFragment : DialogFragment() {
      * @return an AlertDialog instance.
      */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val injector: Injector<*> = (getActivity() as FilesActivity).getInjector()
+        savedInstanceState?.let { bundle ->
+            mDocuments =
+                BundleCompat.getParcelableArrayList(
+                    bundle,
+                    Shared.EXTRA_SELECTION,
+                    DocumentInfo::class.java,
+                ) ?: emptyList()
+        }
+
+        val injector: Injector<*> = (activity as FilesActivity).injector
         val formatArgs = mapOf("count" to mDocuments.size)
         val title =
             MessageFormat(getString(R.string.file_open_in_trash_dialog_title), Locale.getDefault())
@@ -87,11 +91,6 @@ class FileOpenFromTrashDialogFragment : DialogFragment() {
 
         val builder =
             MaterialAlertDialogBuilder(requireContext())
-                // We're setting the inset size explicitly so changes to the default inset size in
-                // the future don't change our dialog size (the inset size affect the dialog size
-                // because we're overriding the window size to get our desired dialog size).
-                .setBackgroundInsetStart(dpToPx(INSET))
-                .setBackgroundInsetEnd(dpToPx(INSET))
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(
@@ -104,26 +103,8 @@ class FileOpenFromTrashDialogFragment : DialogFragment() {
         return builder.create()
     }
 
-    override fun onStart() {
-        super.onStart()
-        (dialog as? AlertDialog)?.let { d ->
-            d.window?.let { w ->
-                val params = WindowManager.LayoutParams()
-                params.copyFrom(w.attributes)
-                val maxWidth = requireContext().resources.displayMetrics.widthPixels
-                // The window size is dialog size + right & left insets.
-                params.width = dpToPx(WIDTH + (2 * INSET)).coerceAtMost(maxWidth)
-                w.attributes = params
-            }
-        }
-    }
-
-    fun dpToPx(dp: Float): Int {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                requireContext().resources.displayMetrics,
-            )
-            .roundToInt()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(Shared.EXTRA_SELECTION, ArrayList(mDocuments))
     }
 }
