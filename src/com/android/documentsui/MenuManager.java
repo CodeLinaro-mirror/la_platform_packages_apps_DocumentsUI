@@ -141,8 +141,20 @@ public abstract class MenuManager {
         }
 
         if (isUseApprovedDocumentHandlerEnabled()) {
-            mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selection);
+            updateApprovedDocHandlers(menu, selection);
         }
+    }
+
+    /**
+     * Updates the menu with actions from approved document handlers. This method dynamically adds
+     * or removes menu items based on the available approved document handlers and the current
+     * selection.
+     *
+     * @param menu The menu to be updated.
+     * @param selection Details about the current selection of documents.
+     */
+    public void updateApprovedDocHandlers(Menu menu, SelectionDetails selection) {
+        mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selection);
     }
 
     /** @see BaseActivity#onPrepareOptionsMenu */
