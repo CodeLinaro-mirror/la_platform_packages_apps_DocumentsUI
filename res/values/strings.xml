@@ -607,11 +607,12 @@
         other {These files were converted to another format:}
     }</string>
 
-    <!-- Toast shown when a user copies files to clipboard. -->
-    <plurals name="clipboard_files_clipped">
-        <item quantity="one">Copied <xliff:g id="count" example="1">%1$d</xliff:g> item to clipboard.</item>
-        <item quantity="other">Copied <xliff:g id="count" example="3">%1$d</xliff:g> items to clipboard.</item>
-    </plurals>
+    <!-- Toast shown when a user copies or cuts a file and gets added to a clipboard -->
+    <string name="clipboard_files_added">{count, plural,
+        =1 {# item added to Clipboard}
+        other {# items added to Clipboard}
+    }</string>
+
     <!-- This string appears within the Android File Manager as an informative label next to the
     name of the folder being browsed when this folder is a "read-only" folder. "Read-only" means
     that no item can be added, removed or renamed in this folder. [CHAR_LIMIT=28] -->

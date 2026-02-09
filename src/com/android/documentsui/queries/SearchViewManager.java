@@ -463,6 +463,11 @@ public class SearchViewManager implements
      * @return True if it cancels search. False if it does not operate search currently.
      */
     public boolean cancelSearch() {
+        if (isSearchV2Enabled()) {
+            // Show the chips again, once the search has been canceled.
+            useSearchOptions(SearchOptionsControls.CHIPS);
+        }
+
         if ((isExpanded() || isSearching())) {
             cancelQueuedSearch();
 
@@ -471,11 +476,6 @@ public class SearchViewManager implements
             } else if (mSearchView != null) {
                 // Causes calling onClose(). onClose() is triggering directory content update.
                 mSearchView.setIconified(true);
-            }
-
-            if (isSearchV2Enabled()) {
-                // Show the chips again, once the search has been canceled.
-                useSearchOptions(SearchOptionsControls.CHIPS);
             }
 
             return true;

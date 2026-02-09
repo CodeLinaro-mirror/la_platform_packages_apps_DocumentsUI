@@ -24,6 +24,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
@@ -42,6 +43,7 @@ import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
+import android.view.View;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObject;
@@ -408,5 +410,25 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         } finally {
             deleteFileByUri(fileUri);
         }
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testBreadcrumbV2HiddenWhenChangingRoot() throws Exception {
+        // Validates that b/475686340 is fixed.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.directory.selectFirstDocument();
+        // The selectFirstDocument posts a long click, which results in 20 selection events.
+        // We need to give it some time to clear up.
+        device.waitForIdle();
+
+        // Verify that breadcrumb v2 shows the path.
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.horizontal_breadcrumb, View.GONE);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+
+        // Change root, and check that breadcrumb v2 is hidden, while breadcrumb v1 is visible.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.GONE);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
     }
 }
