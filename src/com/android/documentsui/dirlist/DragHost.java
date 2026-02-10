@@ -23,6 +23,7 @@ import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -71,6 +72,7 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
     private final Lookup<View, DocumentHolder> mHolderLookup;
     private final Lookup<View, DocumentInfo> mDestinationLookup;
     private SnackbarFactory mSnackbarFactory;
+    private Drawable mRegularDirListBackground;
 
     DragHost(
             T activity,
@@ -112,6 +114,19 @@ class DragHost<T extends Activity & AbstractActionHandler.CommonAddons> extends 
 
     @Override
     public void setDropTargetHighlight(View v, boolean highlight) {
+        if (v.getId() == getRes(R.id.dir_list)) {
+            if (highlight) {
+                if (mRegularDirListBackground == null) {
+                    mRegularDirListBackground = v.getBackground();
+                }
+                // Highlight the border of the directory list container.
+                v.setBackgroundResource(getRes(R.drawable.dir_list_drag_hover_background));
+            } else {
+                // Set it back to the regular, non-highlighted directory list container.
+                v.setBackground(mRegularDirListBackground);
+                mRegularDirListBackground = null;
+            }
+        }
     }
 
     @Override
