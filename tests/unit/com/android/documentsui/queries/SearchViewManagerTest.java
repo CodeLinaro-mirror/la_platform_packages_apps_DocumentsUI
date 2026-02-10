@@ -657,4 +657,16 @@ public final class SearchViewManagerTest {
 
         assertThat(mSearchViewManager.getSearchRoots(roots, stack)).containsExactly(externalRoot);
     }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testCancellingSearchClearsQuery() throws Exception {
+        mSearchViewManager.onClick(null);
+        mSearchViewManager.onQueryTextChange("query");
+        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs() + 1);
+        assertThat(mSearchViewManager.getCurrentSearch()).isEqualTo("query");
+
+        mSearchViewManager.cancelSearch();
+        assertThat(mSearchViewManager.getCurrentSearch()).isNull();
+    }
 }
