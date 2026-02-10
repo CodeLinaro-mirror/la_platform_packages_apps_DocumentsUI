@@ -32,6 +32,8 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -57,6 +59,7 @@ import androidx.test.rule.provider.ProviderTestRule;
 import com.android.documentsui.InspectorProvider;
 import com.android.documentsui.archives.ArchivesProvider;
 import com.android.documentsui.flags.Flags;
+import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.util.VersionUtils;
@@ -308,6 +311,42 @@ public class DocumentInfoTest {
     public void testUpdateFromCursor_syncStateFlags_flagDisabled() {
         Cursor cursor = mock(Cursor.class);
         verify(cursor, never()).getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS);
+        DocumentInfo info = new DocumentInfo();
+        info.updateFromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertNull(info.syncStateFlags);
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
+    public void testUpdateFromCursor_rootHasLimitedFunctionalityWhenOffline() {
+        Cursor cursor = mock(Cursor.class);
+        int index = 1;
+        int valueAsInt = 1;
+        boolean valueAsBoolean = true;
+
+        when(cursor.getColumnIndex(RootCursorWrapper.COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE))
+                .thenReturn(index);
+        when(cursor.getInt(index)).thenReturn(valueAsInt);
+        DocumentInfo info = new DocumentInfo();
+        info.updateFromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        assertEquals(info.rootHasLimitedFunctionalityWhenOffline, valueAsBoolean);
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testUpdateFromCursor_rootHasLimitedFunctionalityWhenOffline_featureFlagDisabled() {
+        Cursor cursor = mock(Cursor.class);
+
+        verify(cursor, never()).getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS);
+        DocumentInfo info = new DocumentInfo();
+        info.updateFromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
+        // Should have the default value.
+        assertFalse(info.rootHasLimitedFunctionalityWhenOffline);
     }
 
     @Test
@@ -323,7 +362,7 @@ public class DocumentInfoTest {
         DataInputStream input = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
         info2.read(input);
 
-        assert (info.equals(info2));
+        assertEquals(info.syncStateFlags, info2.syncStateFlags);
     }
 
     @Test
@@ -340,7 +379,54 @@ public class DocumentInfoTest {
         DataInputStream input = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
         info2.read(input);
 
-        assert (info.equals(info2));
+        assertEquals(info.syncStateFlags, info2.syncStateFlags);
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
+    public void testWriteRead_rootHasLimitedFunctionalityWhenOffline() throws IOException {
+        // Write info to output.
+        DocumentInfo info = new DocumentInfo();
+        info.displayName = "file";
+        info.rootHasLimitedFunctionalityWhenOffline = true;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        info.write(new DataOutputStream(out));
+
+        // Read input to info2.
+        DocumentInfo info2 = new DocumentInfo();
+        DataInputStream input = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        info2.read(input);
+
+        assertEquals(
+                info.rootHasLimitedFunctionalityWhenOffline,
+                info2.rootHasLimitedFunctionalityWhenOffline);
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
+    public void testWriteRead_rootHasLimitedFunctionalityWhenOffline_featureFlagDisabled()
+            throws IOException {
+        // Write info to output.
+        DocumentInfo info = new DocumentInfo();
+        info.displayName = "file";
+        info.rootHasLimitedFunctionalityWhenOffline = true;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        // rootHasLimitedFunctionalityWhenOffline will not be written.
+        info.write(new DataOutputStream(out));
+
+        // Read input to info2.
+        DocumentInfo info2 = new DocumentInfo();
+        DataInputStream input = new DataInputStream(new ByteArrayInputStream(out.toByteArray()));
+        info2.read(input);
+
+        assertNotEquals(
+                info.rootHasLimitedFunctionalityWhenOffline,
+                info2.rootHasLimitedFunctionalityWhenOffline);
     }
 
     @Test

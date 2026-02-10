@@ -59,6 +59,8 @@ public class DocumentInfo implements Durable, Parcelable {
     private static final int VERSION_INIT = 1;
     private static final int VERSION_SPLIT_URI = 2;
     private static final int VERSION_USER_ID = 3;
+    // Guarded by isSyncStateEnabled().
+    private static final int VERSION_HAS_LIMITED_FUNCTIONALITY = 4;
 
     public UserId userId;
     public String authority;
@@ -71,6 +73,7 @@ public class DocumentInfo implements Durable, Parcelable {
     public long size;
     public int icon;
     public Integer syncStateFlags;
+    public boolean rootHasLimitedFunctionalityWhenOffline;
 
     /** Derived fields that aren't persisted */
     public Uri derivedUri;
@@ -93,12 +96,17 @@ public class DocumentInfo implements Durable, Parcelable {
         icon = 0;
         derivedUri = null;
         syncStateFlags = null;
+        rootHasLimitedFunctionalityWhenOffline = false;
     }
 
     @Override
     public void read(DataInputStream in) throws IOException {
         final int version = in.readInt();
         switch (version) {
+            case VERSION_HAS_LIMITED_FUNCTIONALITY:
+                if (isSyncStateEnabled()) {
+                    rootHasLimitedFunctionalityWhenOffline = in.readBoolean();
+                }
             case VERSION_USER_ID:
                 userId = UserId.read(in);
             case VERSION_SPLIT_URI:
@@ -126,7 +134,12 @@ public class DocumentInfo implements Durable, Parcelable {
 
     @Override
     public void write(DataOutputStream out) throws IOException {
-        out.writeInt(VERSION_USER_ID);
+        if (isSyncStateEnabled()) {
+            out.writeInt(VERSION_HAS_LIMITED_FUNCTIONALITY);
+            out.writeBoolean(rootHasLimitedFunctionalityWhenOffline);
+        } else {
+            out.writeInt(VERSION_USER_ID);
+        }
         UserId.write(out, userId);
         DurableUtils.writeNullableString(out, authority);
         DurableUtils.writeNullableString(out, documentId);
@@ -196,6 +209,12 @@ public class DocumentInfo implements Durable, Parcelable {
                             cursor,
                             Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
                             /* returnIfMissingOrNull= */ null);
+            // Get custom COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE boolean from RootCursorWrapper.
+            this.rootHasLimitedFunctionalityWhenOffline =
+                    getCursorInt(
+                                    cursor,
+                                    RootCursorWrapper.COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE)
+                            != 0;
         }
         this.deriveFields();
     }
@@ -247,24 +266,44 @@ public class DocumentInfo implements Durable, Parcelable {
     @Override
     public String toString() {
         return "DocumentInfo{"
-                + "docId=" + documentId
-                + ", userId=" + userId
-                + ", displayName=" + displayName
-                + ", mimeType=" + mimeType
-                + ", isContainer=" + isContainer()
-                + ", isDirectory=" + isDirectory()
-                + ", isArchive=" + isArchive()
-                + ", isInArchive=" + isInArchive()
-                + ", isPartial=" + isPartial()
-                + ", isVirtual=" + isVirtual()
-                + ", isDeleteSupported=" + isDeleteSupported()
-                + ", isTrashSupported=" + isTrashSupported()
-                + ", isRestoreSupported=" + isRestoreSupported()
-                + ", isCreateSupported=" + isCreateSupported()
-                + ", isMoveSupported=" + isMoveSupported()
-                + ", isRenameSupported=" + isRenameSupported()
-                + ", isMetadataSupported=" + isMetadataSupported()
-                + ", isBlockedFromTree=" + isBlockedFromTree()
+                + "docId="
+                + documentId
+                + ", userId="
+                + userId
+                + ", displayName="
+                + displayName
+                + ", mimeType="
+                + mimeType
+                + ", isContainer="
+                + isContainer()
+                + ", isDirectory="
+                + isDirectory()
+                + ", isArchive="
+                + isArchive()
+                + ", isInArchive="
+                + isInArchive()
+                + ", isPartial="
+                + isPartial()
+                + ", isVirtual="
+                + isVirtual()
+                + ", isDeleteSupported="
+                + isDeleteSupported()
+                + ", isTrashSupported="
+                + isTrashSupported()
+                + ", isRestoreSupported="
+                + isRestoreSupported()
+                + ", isCreateSupported="
+                + isCreateSupported()
+                + ", isMoveSupported="
+                + isMoveSupported()
+                + ", isRenameSupported="
+                + isRenameSupported()
+                + ", isMetadataSupported="
+                + isMetadataSupported()
+                + ", isBlockedFromTree="
+                + isBlockedFromTree()
+                + ", rootHasLimitedFunctionalityWhenOffline="
+                + rootHasLimitedFunctionalityWhenOffline
                 + "} @ "
                 + derivedUri;
     }
