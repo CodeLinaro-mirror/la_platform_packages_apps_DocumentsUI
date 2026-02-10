@@ -1922,4 +1922,46 @@ public final class MenuManagerTest {
         assertFalse("Approved document handler menu item should not be added.", found);
     }
 
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_useApprovedDocumentHandlerEnabled() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is enabled and visible.
+        boolean found = false;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                found = true;
+                item.assertEnabledAndVisible();
+            }
+        }
+        assertTrue("Approved document handler menu item not found.", found);
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_useApprovedDocumentHandlerDisabled() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is not added.
+        boolean found = false;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                found = true;
+            }
+        }
+        assertFalse("Approved document handler menu item should not be added.", found);
+    }
 }

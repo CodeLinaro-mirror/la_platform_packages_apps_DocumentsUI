@@ -33,6 +33,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.IntentCompat
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -397,6 +400,18 @@ class JobPanelController(
     fun setMenuItem(newMenuItem: MenuItem) {
         val progressIcon =
             newMenuItem.actionView!!.findViewById<View>(R.id.job_progress_toolbar_container)
+        ViewCompat.setAccessibilityDelegate(
+            progressIcon,
+            object : AccessibilityDelegateCompat() {
+                override fun onInitializeAccessibilityNodeInfo(
+                    host: View,
+                    info: AccessibilityNodeInfoCompat,
+                ) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.className = Button::class.java.name
+                }
+            },
+        )
         progressIcon.setOnClickListener { view ->
             val panel =
                 LayoutInflater.from(activityContext)
