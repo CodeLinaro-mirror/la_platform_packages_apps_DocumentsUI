@@ -22,7 +22,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
-import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_GET_INFO_DIALOG
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
@@ -49,9 +48,6 @@ class GetInfoDialogUiTest : ActivityTestJunit4<FilesActivity>() {
     fun testGetInfo_showsBasicFileMetadata() {
         val fileName = TestFilesRule.FILE_NAME_1
         val mimeType = "text/plain"
-
-        // Open the root where the default test files are created.
-        openRoot(context!!, testFilesRule.getRoot(StubProvider.ROOT_0_ID).title, activityLayoutId)
 
         // Select the document > 3-dot menu > Get info action.
         bots.directory.selectDocument(fileName, 1)
@@ -81,9 +77,7 @@ class GetInfoDialogUiTest : ActivityTestJunit4<FilesActivity>() {
         val primaryRoot = storageProvider.getRoot("primary")
 
         // Open the root where the default test files are created.
-        openRoot(context!!, primaryRoot.title, activityLayoutId)
-
-        device!!.waitForIdle()
+        switchRoot(primaryRoot!!.title)
 
         // Open the 3-dot menu and click "Get info" option on the root.
         bots.main.openOverflowMenu()
