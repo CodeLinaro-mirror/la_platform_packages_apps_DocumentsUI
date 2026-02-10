@@ -246,11 +246,8 @@
       <item quantity="other">Ове датотеке су конвертоване у неки други формат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Овај фајл је конвертован у други формат:}one{Ови фајлови су конвертовани у други формат:}few{Ови фајлови су конвертовани у други формат:}other{Ови фајлови су конвертовани у други формат:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one">Копирали сте <xliff:g id="COUNT_1">%1$d</xliff:g> ставку у меморију.</item>
-      <item quantity="few">Копирали сте <xliff:g id="COUNT_1">%1$d</xliff:g> ставке у меморију.</item>
-      <item quantity="other">Копирали сте <xliff:g id="COUNT_1">%1$d</xliff:g> ставки у меморију.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Само за читање"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Можете да видите ове фајлове, али неке радње нису подржане"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ова архива је на локацији само за читање и не може да се издвоји овде."</string>

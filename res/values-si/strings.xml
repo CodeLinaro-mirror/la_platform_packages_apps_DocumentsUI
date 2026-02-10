@@ -235,10 +235,8 @@
       <item quantity="other">මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{මෙම ගොනුව වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}one{මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}other{මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
-      <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"(කියවීම-පමණි)"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ඔබට මෙම ගොනු බැලීමට හැකි නමුත් සමහර ක්‍රියා සඳහා සහය නොදක්වයි"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"මෙම ලේඛනාගාරය කියවීමට පමණක් හැකි ස්ථානයක ඇති අතර මෙතැනින් උපුටා ගත නොහැක."</string>

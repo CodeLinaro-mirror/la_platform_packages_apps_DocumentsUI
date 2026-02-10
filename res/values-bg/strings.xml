@@ -235,10 +235,8 @@
       <item quantity="one">Следният файл бе преобразуван в друг формат: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Следният файл бе преобразуван в друг формат:}other{Следните файлове бяха преобраз. в друг формат:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> елемента са копирани в буферната памет.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> елемент е копиран в буферната памет.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Само за четене"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Можете да преглеждате тези файлове, но някои действия не се поддържат"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Този архив е в местоположение само за четене и не може да бъде извлечен тук."</string>

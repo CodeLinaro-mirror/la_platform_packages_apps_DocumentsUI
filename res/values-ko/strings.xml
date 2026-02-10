@@ -235,10 +235,8 @@
       <item quantity="one">다음 파일이 다른 형식으로 변환되었습니다. <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{다음 파일이 다른 형식으로 변환되었습니다}other{다음 파일이 다른 형식으로 변환되었습니다}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">클립보드에 <xliff:g id="COUNT_1">%1$d</xliff:g>개의 항목이 복사되었습니다.</item>
-      <item quantity="one">클립보드에 <xliff:g id="COUNT_0">%1$d</xliff:g>개의 항목이 복사되었습니다.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"읽기 전용"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"이러한 파일을 볼 수 있지만 일부 작업은 지원되지 않습니다."</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"이 보관 파일은 읽기 전용 위치에 있으며, 여기에서 추출할 수 없습니다."</string>

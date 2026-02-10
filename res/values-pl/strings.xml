@@ -257,12 +257,8 @@
       <item quantity="one">Ten plik został przekonwertowany na inny format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ten plik został przekonwertowany na inny format:}few{Pliki zostały przekonwertowane na inny format:}many{Pliki zostały przekonwertowane na inny format:}other{Pliki zostały przekonwertowane na inny format:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="few">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementy do schowka.</item>
-      <item quantity="many">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementów do schowka.</item>
-      <item quantity="other">Skopiowano <xliff:g id="COUNT_1">%1$d</xliff:g> elementu do schowka.</item>
-      <item quantity="one">Skopiowano <xliff:g id="COUNT_0">%1$d</xliff:g> element do schowka.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Tylko do odczytu"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Możesz wyświetlać te pliki, ale niektóre działania są nieobsługiwane"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"To archiwum jest w lokalizacji tylko do odczytu i nie można go tutaj wyodrębnić."</string>
