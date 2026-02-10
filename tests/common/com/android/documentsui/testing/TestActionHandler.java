@@ -42,6 +42,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     public final TestEventHandler<ItemDetails<String>> open = new TestEventHandler<>();
     public boolean mDeleteHappened;
     public boolean mRequestDisablingQuietModeHappened;
+    public boolean throwAtCreateApprovedHandlerIntent = false;
 
     public DocumentInfo nextRootDocument;
 
@@ -111,6 +112,9 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
     @Override
     public Intent createApprovedHandlerIntent(ComponentName handler) {
+        if (throwAtCreateApprovedHandlerIntent) {
+            throw new UnsupportedOperationException();
+        }
         return new Intent();
     }
 }
