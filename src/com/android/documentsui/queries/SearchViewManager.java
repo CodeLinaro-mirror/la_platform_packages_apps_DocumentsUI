@@ -20,6 +20,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
+import static com.android.documentsui.util.FlagUtils.isIncludeRemoteRootsInRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -943,16 +944,25 @@ public class SearchViewManager implements
      */
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
         if (isUseAllfilesRootForRecentsEnabled()) {
-            return roots.filter(r -> r.isLocalOnly()
-                    && r.supportsRecents() && r.userId.equals(userId)
-                    && r.isFiles()).collect(
-                    Collectors.toList());
+            return roots.filter(
+                            r ->
+                                    r.supportsRecents()
+                                            && r.userId.equals(userId)
+                                            && (r.isFiles()
+                                                    || (isIncludeRemoteRootsInRecentsEnabled()
+                                                            && !r.isLocalOnly())))
+                    .collect(Collectors.toList());
         }
 
-        return roots.filter(r -> r.isLocalOnly()
-                && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isExternalStorage() && !r.isFiles()).collect(
-                Collectors.toList());
+        return roots.filter(
+                        r ->
+                                r.supportsRecents()
+                                        && r.userId.equals(userId)
+                                        && !r.isExternalStorage()
+                                        && !r.isFiles()
+                                        && (r.isLocalOnly()
+                                                || isIncludeRemoteRootsInRecentsEnabled()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -987,8 +997,11 @@ public class SearchViewManager implements
             // If we don't know where to search, search nowhere.
             return Collections.emptyList();
         }
-        Stream<RootInfo> core = roots.stream().filter(
-                r -> r.rootId != null && r.authority != null && r.supportsSearch());
+        // TODO(b/483128303) Using r.supportsSearch() artificially constrains the Recent view to
+        // only query DocumentsProviders that also support search.
+        Stream<RootInfo> core =
+                roots.stream()
+                        .filter(r -> r.rootId != null && r.authority != null && r.supportsSearch());
         if (mLocationOption == SearchLocationOption.EVERYWHERE) {
             // If the current location is everywhere get all searchable roots.
             return getAllSearchableRoots(core);

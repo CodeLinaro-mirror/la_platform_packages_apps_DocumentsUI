@@ -26,11 +26,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+import static com.android.documentsui.flags.Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -430,5 +432,87 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.GONE);
         bots.breadcrumb.waitForBreadcrumbVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
+    }
+
+    /**
+     * Ensure that Recents shows files from remote (eg. cloud) Roots when the "all files" and
+     * "include remote roots in recents" flags are enabled.
+     *
+     * <p>Note that this feature requires the enable_media_documents_provider_allfiles_root flag to
+     * be enabled in MediaProvider. We cannot force that from these tests. Don't force our flag on
+     * (as the test will fail if the MediaProvider feature is disabled), but do test the feature if
+     * the flag is on (we will ramp the two flags simultaneously).
+     *
+     * @throws Exception
+     */
+    @Test
+    @RequiresFlagsEnabled({
+        FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+        FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        FLAG_USE_MATERIAL3,
+        FLAG_USE_SEARCH_V2_READ_ONLY
+    })
+    public void testRecentsContainsRemoteRootItemsWhenAllFilesIsEnabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(true);
+    }
+
+    /**
+     * Ensure that Recents shows files from remote (eg. cloud) Roots when the "all files" flag is
+     * not enabled, but the "include remote roots in recents" flag is.
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
+    @EnableFlags({
+        FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        FLAG_USE_MATERIAL3,
+        FLAG_USE_SEARCH_V2_READ_ONLY
+    })
+    public void testRecentsContainsRemoteRootItemsWhenAllFilesIsDisabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(true);
+    }
+
+    /**
+     * Ensure Recents does not show files from remote (eg. cloud) Roots when its flag is disabled.
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisableFlags({FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testRecentsDoesNotContainRemoteRootItemsWhenFlagIsDisabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(false);
+    }
+
+    /**
+     * Ensure Recents does not show files from remote (eg. cloud) Roots when Searchv2 is disabled.
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testRecentsDoesNotContainRemoteRootItemsWhenSearchV2IsDisabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(false);
+    }
+
+    private void createTestCloudProviderFileAndAssertPresenceInRecents(boolean shouldBePresent)
+            throws Exception {
+        final DocumentsProviderHelper cloudDocsHelper =
+                new DocumentsProviderHelper(
+                        userId, TestCloudProvider.AUTHORITY, context, TestCloudProvider.AUTHORITY);
+
+        // Create a file with a random name in TestCloudProvider so we can ensure we're seeing it.
+        final RootInfo cloudRoot = cloudDocsHelper.getRoot(TestCloudProvider.ROOT_ID);
+        final String fileName = Long.toHexString(System.currentTimeMillis()) + ".txt";
+        cloudDocsHelper.createDocument(cloudRoot, "text/plain", fileName);
+
+        // Is the file present in the root of the provider?
+        bots.roots.openRoot("Test Cloud Provider");
+        assertTrue(bots.directory.findDocument(fileName, true).exists());
+
+        // Is the file also present in recents?
+        bots.roots.openRoot("Recent");
+        assertEquals(shouldBePresent, bots.directory.findDocument(fileName, true).exists());
     }
 }
