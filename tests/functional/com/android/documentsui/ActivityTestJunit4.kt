@@ -366,7 +366,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     companion object {
-        const val TIMEOUT = 5000
+        const val TIMEOUT = 5000L
         const val TAG = "ActivityTestJunit4"
     }
 }

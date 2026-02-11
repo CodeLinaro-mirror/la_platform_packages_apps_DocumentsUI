@@ -75,7 +75,7 @@ public class SearchBot extends Bots.BaseBot {
             withId(R.id.option_menu_search),
             anyOf(isClickable(), hasDescendant(isClickable())));
 
-    public SearchBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+    public SearchBot(UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
     }
 

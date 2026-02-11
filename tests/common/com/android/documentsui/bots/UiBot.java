@@ -97,7 +97,7 @@ public class UiBot extends Bots.BaseBot {
 
     public static String targetPackageName;
 
-    public UiBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+    public UiBot(UiDevice device, Context context, Long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         targetPackageName =
                 InstrumentationRegistry.getInstrumentation().getTargetContext().getPackageName();

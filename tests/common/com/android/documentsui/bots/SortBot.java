@@ -61,11 +61,7 @@ public class SortBot extends Bots.BaseBot {
     private final SortModel mSortModel = SortModel.createModel();
     private final ColumnSortBot mColumnBot;
 
-    public SortBot(
-            UiDevice device,
-            Context context,
-            int timeout,
-            @LayoutRes Integer layoutId) {
+    public SortBot(UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mColumnBot = new ColumnSortBot();
     }

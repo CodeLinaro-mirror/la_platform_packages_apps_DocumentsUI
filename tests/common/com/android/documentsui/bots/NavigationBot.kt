@@ -29,7 +29,7 @@ import com.android.documentsui.base.UserId
  * A bot responsible for programmatic navigation within the DocumentsUI application. Bypasses UI
  * interactions to provide faster and more stable navigation for functional tests.
  */
-class NavigationBot(device: UiDevice, context: Context, timeout: Int, @LayoutRes layoutId: Int?) :
+class NavigationBot(device: UiDevice, context: Context, timeout: Long, @LayoutRes layoutId: Int?) :
     Bots.BaseBot(device, context, timeout, layoutId) {
 
     private var cachedRoots: AllRoots? = null
