@@ -740,6 +740,41 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    public void testUpdateState_UpdatesToMove_SameRoot_LeftCtrlReleased_Canceled() {
+        mManager.startDrag(
+                mStartDragView,
+                Arrays.asList(TestEnv.FILE_APK, TestEnv.FILE_JPG),
+                TestProvidersAccess.DOWNLOADS,
+                Arrays.asList(
+                        TestEnv.FOLDER_0.derivedUri,
+                        TestEnv.FILE_APK.derivedUri,
+                        TestEnv.FILE_JPG.derivedUri),
+                mDetails,
+                mIconHelper,
+                TestEnv.FOLDER_0,
+                CAN_DRAG_AND_DROP,
+                mDocs);
+
+        // Press Ctrl -> State becomes COPY.
+        KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
+        mManager.onKeyEvent(event);
+
+        mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
+        assertEquals(DragAndDropManager.STATE_COPY, mShadowBuilder.state.getLastValue().intValue());
+
+        // Release Ctrl with CANCELED flag, and CTRL modifier still on.
+        event =
+                KeyEvents.createTestEvent(
+                        KeyEvent.ACTION_UP, KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_ON);
+        event.setFlags(KeyEvent.FLAG_CANCELED);
+
+        mManager.onKeyEvent(event);
+
+        // State should be back to MOVE.
+        assertStateUpdated(DragAndDropManager.STATE_MOVE);
+    }
+
+    @Test
     public void testUpdateState_UpdatesToMove_SameRoot_RightCtrlReleased() {
         mManager.startDrag(
                 mStartDragView,

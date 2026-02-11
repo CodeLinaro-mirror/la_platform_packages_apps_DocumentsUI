@@ -235,10 +235,8 @@
       <item quantity="one">Tệp này đã được chuyển đổi sang định dạng khác: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tệp này đã được chuyển sang một định dạng khác:}other{Những tệp này đã được chuyển sang một định dạng khác:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">Đã sao chép <xliff:g id="COUNT_1">%1$d</xliff:g> mục vào bảng nhớ tạm.</item>
-      <item quantity="one">Đã sao chép <xliff:g id="COUNT_0">%1$d</xliff:g> mục vào bảng nhớ tạm.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Chỉ có thể đọc"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Bạn có thể xem các tệp này nhưng một số thao tác không được hỗ trợ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tệp lưu trữ này ở vị trí chỉ đọc và không thể giải nén tại đây."</string>

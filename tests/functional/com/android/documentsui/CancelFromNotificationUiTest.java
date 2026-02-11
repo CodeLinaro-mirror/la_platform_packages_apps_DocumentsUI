@@ -172,6 +172,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
+        // Must use openRoot below as the UI itself is being tested
         bots.main.doCopy(
                 () -> {
                     EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
@@ -180,11 +181,11 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         device.waitForIdle();
         assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         device.waitForIdle();
         assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }
@@ -217,6 +218,7 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
+        // Must use openRoot below as the UI itself is being tested
         bots.main.doMove(
                 () -> {
                     EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
@@ -224,11 +226,11 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         device.waitForIdle();
         assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         device.waitForIdle();
         assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }

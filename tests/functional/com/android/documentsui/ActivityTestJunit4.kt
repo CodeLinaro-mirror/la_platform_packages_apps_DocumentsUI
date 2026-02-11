@@ -188,7 +188,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
                 (activity as? BaseActivity)?.setTickDurationSupplierForTest(tickDurationSupplier)
             }
         })
-
         logLocales()
         logFeatureFlags()
 
@@ -246,6 +245,19 @@ abstract class ActivityTestJunit4<T : Activity?> {
         } else {
             mActivityScenario = ActivityScenario.launch(intent)
         }
+    }
+
+    /**
+     * Programmatically switches the root to the one with the given label.
+     *
+     * @param label The label of the root to switch to.
+     */
+    protected fun switchRoot(label: String) {
+        val scenario =
+            checkNotNull(mActivityScenario) {
+                "mActivityScenario is null. Ensure launchActivity() has run."
+            }
+        bots.navigation.switchRoot(label, scenario as ActivityScenario<out BaseActivity>)
     }
 
     protected fun setNotificationAccess(enabled: Boolean) {
