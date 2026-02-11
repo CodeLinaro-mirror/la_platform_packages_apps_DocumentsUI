@@ -32,16 +32,15 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
     private final Context testContext;
     private final TestEnv mEnv;
     private final ActionHandler mActionHandler;
-    private boolean mInSearchMode;
-    private boolean mIsOnTrashPage;
-    private boolean mIsOnline;
+    private boolean mInSearchMode = false;
+    private boolean mIsOnTrashPage = false;
+    private boolean mIsOnline = true;
+    private boolean mShouldDisplaySummary = false;
 
-    public TestEnvironment(Context testContext, TestEnv env, ActionHandler actionHandler) {
-        this.testContext = testContext;
+    public TestEnvironment(Context context, TestEnv env, ActionHandler actionHandler) {
+        testContext = context;
         mEnv = env;
         mActionHandler = actionHandler;
-        mInSearchMode = false;
-        mIsOnline = true;
     }
 
     @Override
@@ -114,7 +113,7 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
 
     @Override
     public boolean shouldDisplaySummary() {
-        return false;
+        return mShouldDisplaySummary;
     }
 
     @Override
@@ -132,5 +131,9 @@ public final class TestEnvironment implements DocumentsAdapter.Environment {
 
     public void setIsOnline(boolean isOnline) {
         mIsOnline = isOnline;
+    }
+
+    public void setShouldDisplaySummary(boolean shouldDisplaySummary) {
+        mShouldDisplaySummary = shouldDisplaySummary;
     }
 }
