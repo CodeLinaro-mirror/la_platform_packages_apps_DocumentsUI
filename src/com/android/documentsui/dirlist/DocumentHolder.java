@@ -69,7 +69,7 @@ public abstract class DocumentHolder
     protected final ConfigStore mConfigStore;
 
     // See #addKeyEventListener for details on the need for this field.
-    private KeyboardEventListener<DocumentItemDetails> mKeyEventListener;
+    private KeyboardEventListener<ItemDetails<String>> mKeyEventListener;
 
     private final DocumentItemDetails mDetails;
 
@@ -233,21 +233,20 @@ public abstract class DocumentHolder
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         assert (mKeyEventListener != null);
-        DocumentItemDetails details = getItemDetails();
+        ItemDetails<String> details = getItemDetails();
         return (details == null)
                 ? false
                 : mKeyEventListener.onKey(details, keyCode, event);
     }
 
     /**
-     * Installs a delegate to receive keyboard input events. This arrangement is necessitated
-     * by the fact that a single listener cannot listen to all keyboard events
-     * on RecyclerView (our parent view). Not sure why this is, but have been
-     * assured it is the case.
+     * Installs a delegate to receive keyboard input events. This arrangement is necessitated by the
+     * fact that a single listener cannot listen to all keyboard events on RecyclerView (our parent
+     * view). Not sure why this is, but have been assured it is the case.
      *
      * <p>Ideally we'd not involve DocumentHolder in propagation of events like this.
      */
-    public void addKeyEventListener(KeyboardEventListener<DocumentItemDetails> listener) {
+    public void addKeyEventListener(KeyboardEventListener<ItemDetails<String>> listener) {
         assert (mKeyEventListener == null);
         mKeyEventListener = listener;
     }

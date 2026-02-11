@@ -25,6 +25,7 @@ import android.platform.test.annotations.EnableFlags;
 import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.test.filters.SmallTest;
@@ -59,19 +60,38 @@ public final class KeyInputHandlerTest {
         mFocusHandler = new TestFocusHandler();
         mCallbacks = new TestCallbacks();
 
-        mInputHandler = new KeyInputHandler(
-                mSelectionHelper,
-                SelectionHelpers.CAN_SET_ANYTHING,
-                mCallbacks);
+        mInputHandler =
+                new KeyInputHandler(
+                        mSelectionHelper,
+                        SelectionHelpers.CAN_SET_ANYTHING,
+                        mFocusHandler,
+                        mCallbacks);
     }
 
-    private void testArrowKey(int expectedSelectionSize) {
+    private void testArrowKey(int expectedSelectionSize, boolean shift) {
+        // Start with item #11 selected but not focused...
         mSelectionHelper.select("11");
 
-        mFocusHandler.handleKey = true;
-        KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP);
-        mInputHandler.onKey(null, event.getKeyCode(), event);
+        // ...and item #7 focused (as we later pass details to onKey) but not selected.
+        TestItemDetails details = new TestItemDetails();
+        details.at(7);
 
+        // Set it up so that hitting the up-arrow key will move focus to item #6.
+        mFocusHandler.focusPos = 6;
+        mFocusHandler.handleKey = true;
+
+        // Hit the up-arrow key.
+        KeyEvent event =
+                new KeyEvent(
+                        0,
+                        0,
+                        KeyEvent.ACTION_DOWN,
+                        KeyEvent.KEYCODE_DPAD_UP,
+                        0,
+                        shift ? KeyEvent.META_SHIFT_ON : 0);
+        mInputHandler.onKey(details, event.getKeyCode(), event);
+
+        // Check the assertion.
         Selection<String> selection = mSelectionHelper.getSelection();
         assertEquals(selection.toString(), expectedSelectionSize, selection.size());
     }
@@ -79,32 +99,41 @@ public final class KeyInputHandlerTest {
     @Test
     @DisableFlags(FLAG_USE_MATERIAL3)
     public void testArrowKey_nonShiftClearsSelection() {
-        testArrowKey(0);
+        // 0 because we should end up with {} selected (the empty set).
+        testArrowKey(0, false);
     }
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
     public void testArrowKey_nonShiftPreservesSelection() {
-        testArrowKey(1);
+        // 1 because we should end up with {#11} selected.
+        testArrowKey(1, false);
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testArrowKey_ShiftExtendsSelection() {
+        // 3 because we should end up with {#6, #7, #11} selected.
+        testArrowKey(3, true);
     }
 
     private static final class TestCallbacks
-            extends KeyInputHandler.Callbacks<DocumentItemDetails> {
+            extends KeyInputHandler.Callbacks<ItemDetails<String>> {
 
-        private @Nullable DocumentItemDetails mActivated;
+        private @Nullable ItemDetails<String> mActivated;
 
         @Override
-        public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
+        public boolean onItemActivated(ItemDetails<String> item, KeyEvent e) {
             mActivated = item;
             return false;
         }
 
-        private void assertActivated(DocumentItemDetails expected) {
+        private void assertActivated(ItemDetails<String> expected) {
             assertEquals(expected, mActivated);
         }
 
         @Override
-        public boolean onFocusItem(DocumentItemDetails details, int keyCode, KeyEvent event) {
+        public boolean onFocusItem(ItemDetails<String> details, int keyCode, KeyEvent event) {
             return true;
         }
     }
