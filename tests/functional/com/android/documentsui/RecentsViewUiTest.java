@@ -54,7 +54,6 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.DirectoryListBot;
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
@@ -383,7 +382,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         try {
             String fileName = Long.toHexString(System.currentTimeMillis()) + ".zip";
             fileUri = createFileInDownloads(fileName, "application/zip");
-            EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+            switchRoot("Recent");
 
             bots.directory.selectFirstDocument();
             bots.directory.assertSelection(1);
@@ -416,7 +415,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testBreadcrumbV2HiddenWhenChangingRoot() throws Exception {
         // Validates that b/475686340 is fixed.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
         bots.directory.selectFirstDocument();
         // The selectFirstDocument posts a long click, which results in 20 selection events.
         // We need to give it some time to clear up.
@@ -427,7 +426,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
 
         // Change root, and check that breadcrumb v2 is hidden, while breadcrumb v1 is visible.
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.GONE);
         bots.breadcrumb.waitForBreadcrumbVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
     }

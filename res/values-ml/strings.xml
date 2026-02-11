@@ -235,10 +235,8 @@
       <item quantity="one">ഈ ഫയൽ മറ്റൊരു ‌ഫോർമാ‌റ്റിലേക്ക് ‌പരിവർത്തിക്കപ്പെട്ടു: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ഈ ഫയൽ മറ്റൊരു ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്തു:}other{ഈ ഫയലുകൾ മറ്റൊരു ഫോർമാറ്റിലേക്ക് പരിവർത്തനം ചെയ്തു:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_1">%1$d</xliff:g> ഇനങ്ങൾ പകർത്തി.</item>
-      <item quantity="one">ക്ലിപ്പ്ബോർഡിലേയ്ക്ക് <xliff:g id="COUNT_0">%1$d</xliff:g> ഇനം പകർത്തി.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"വായന-മാത്രം"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"നിങ്ങൾക്ക് ഈ ഫയലുകൾ കാണാം, എന്നാൽ ചില പ്രവർത്തനങ്ങൾ പിന്തുണയ്ക്കുന്നില്ല"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ഈ ആർക്കൈവ് വായന മാത്രമുള്ള ലൊക്കേഷനിലാണ്, ഇവിടെ എക്‌സ്‌ട്രാക്‌റ്റ് ചെയ്യാനാകില്ല."</string>

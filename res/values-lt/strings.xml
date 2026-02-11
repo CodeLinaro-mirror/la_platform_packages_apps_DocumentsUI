@@ -257,12 +257,8 @@
       <item quantity="other">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Šis failas konvertuotas į kitą formatą:}one{Šie failai konvertuoti į kitą formatą:}few{Šie failai konvertuoti į kitą formatą:}many{Šie failai konvertuoti į kitą formatą:}other{Šie failai konvertuoti į kitą formatą:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> elementas nukopijuotas į iškarpinę.</item>
-      <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> elementai nukopijuoti į iškarpinę.</item>
-      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> elemento nukopijuota į iškarpinę.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementų nukopijuota į iškarpinę.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Tik skaityti"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Galite peržiūrėti šiuos failus, bet kai kurie veiksmai nepalaikomi"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Šis archyvas yra tik skaitomoje vietoje ir jo čia negalima išskleisti."</string>

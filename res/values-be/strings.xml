@@ -257,12 +257,8 @@
       <item quantity="other">Гэтыя файлы былі пераўтвораны ў іншы фармат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Гэты файл быў пераўтвораны ў іншы фармат:}one{Наступныя файлы былі пераўтвораны ў іншы фармат:}few{Наступныя файлы былі пераўтвораны ў іншы фармат:}many{Наступныя файлы былі пераўтвораны ў іншы фармат:}other{Наступныя файлы былі пераўтвораны ў іншы фармат:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> элемент скапіраваны ў буфер абмену.</item>
-      <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> элементы скапіраваны ў буфер абмену.</item>
-      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> элементаў скапіраваны ў буфер абмену.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> элемента скапіраваны ў буфер абмену.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Толькі чытанне"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Вы можаце праглядаць гэтыя файлы, але некаторыя дзеянні не падтрымліваюцца"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Архіў знаходзіцца ў папцы толькі для чытання, таму файл немагчыма выняць тут."</string>

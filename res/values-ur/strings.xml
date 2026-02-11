@@ -235,10 +235,8 @@
       <item quantity="one">یہ فائل دوسرے فارمیٹ میں تبدیل ہوگئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{یہ فائل دوسرے فارمیٹ میں تبدیل ہوگئی:}other{یہ فائلز دوسرے فارمیٹ میں تبدیل ہوگئیں:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">کلپ بورڈ پر <xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز کاپی کئے گئے۔</item>
-      <item quantity="one">کلپ بورڈ پر <xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم کاپی کیا گیا۔</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"صرف پڑھنے کیلئے"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"آپ ان فائلز کو دیکھ سکتے ہیں لیکن کچھ کارروائیاں تعاون یافتہ نہیں ہیں"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"یہ آرکائیو صرف پڑھنے کی جگہ پر ہے اور اسے یہاں نہیں نکالا جا سکتا۔"</string>

@@ -24,7 +24,6 @@ import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 
@@ -36,7 +35,7 @@ public class DirectoryMessagesUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() throws UiObjectNotFoundException {
-        EspressoBotsKt.openRoot(context, "Demo Root", getActivityLayoutId());
+        switchRoot("Demo Root");
         bots.main.switchToListMode();
     }
 

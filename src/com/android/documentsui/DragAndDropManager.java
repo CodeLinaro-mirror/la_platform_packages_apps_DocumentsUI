@@ -368,6 +368,12 @@ public interface DragAndDropManager {
 
         @Override
         public void onKeyEvent(KeyEvent event) {
+            // Any Ctrl key press will trigger this logic even without dragging, the MotionEvent in
+            // DragStartListener::startDrag() also contains the Ctrl key state but it's not
+            // reliable, because in nature the drag event is independent form the keyboard event,
+            // the two can happen in any order, e.g. start dragging first and then press Ctrl key,
+            // or hold Ctrl key first and then start dragging. That's why we need to check Ctrl key
+            // press outside of the drag event.
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_CTRL_LEFT:
                 case KeyEvent.KEYCODE_CTRL_RIGHT:
@@ -379,7 +385,20 @@ public interface DragAndDropManager {
             assert(event.getKeyCode() == KeyEvent.KEYCODE_CTRL_LEFT
                     || event.getKeyCode() == KeyEvent.KEYCODE_CTRL_RIGHT);
 
-            mIsCtrlPressed = event.isCtrlPressed();
+            // In most cases, `event.isCtrlPressed()` returns false when Ctrl key is released with
+            // ACTION_UP, `mIsCtrlPressed` will be false as expected. However, this is not the
+            // case for shortcuts which opens a new window/dialog, e.g. Ctrl+N and Ctrl+E, where
+            // the `event.isCtrlPressed()` returns true when Ctrl key is released with ACTION_UP,
+            // it's because the focus has been moved to the new window/dialog thus the event is
+            // cancelled. In this case, we need to manually update `mIsCtrlPressed` to false to
+            // avoid unexpected Ctrl key persist state.
+            if (event.isCtrlPressed()
+                    && event.getAction() == KeyEvent.ACTION_UP
+                    && event.isCanceled()) {
+                mIsCtrlPressed = false;
+            } else {
+                mIsCtrlPressed = event.isCtrlPressed();
+            }
 
             // There is an ongoing drag and drop if mView is not null.
             if (mView != null) {

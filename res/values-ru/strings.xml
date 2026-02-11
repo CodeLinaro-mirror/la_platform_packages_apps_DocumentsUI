@@ -257,12 +257,8 @@
       <item quantity="other">Формат этих файлов изменен: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Формат этого файла был изменен:}one{Формат этих файлов был изменен:}few{Формат этих файлов был изменен:}many{Формат этих файлов был изменен:}other{Формат этих файлов был изменен:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one">Скопирован <xliff:g id="COUNT_1">%1$d</xliff:g> файл</item>
-      <item quantity="few">Скопировано <xliff:g id="COUNT_1">%1$d</xliff:g> файла</item>
-      <item quantity="many">Скопировано <xliff:g id="COUNT_1">%1$d</xliff:g> файлов</item>
-      <item quantity="other">Скопировано <xliff:g id="COUNT_1">%1$d</xliff:g> файла</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Только чтение"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Вы можете просматривать эти файлы, но некоторые действия с ними недоступны"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"В этой папке архив доступен только для чтения. Его нельзя извлечь здесь."</string>
