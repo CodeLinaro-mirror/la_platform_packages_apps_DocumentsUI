@@ -520,6 +520,16 @@ public class DocumentsProviderHelper {
     }
 
     /**
+     * A helper method for TestCloudProvider only. Cleans up the provider after testing by removing
+     * files added with createDocument().
+     *
+     * @throws RemoteException
+     */
+    public void cleanUpProvider() throws RemoteException {
+        mClient.call(TestCloudProvider.CLEAN_UP, null, null);
+    }
+
+    /**
      * Retrieves a list of all documents in the trash.
      *
      * @return A {@link List} of {@link DocumentInfo} objects for each item in the trash.

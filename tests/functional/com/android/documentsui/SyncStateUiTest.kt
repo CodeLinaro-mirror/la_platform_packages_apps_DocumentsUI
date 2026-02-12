@@ -30,6 +30,7 @@ import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.google.common.collect.Lists
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runners.Parameterized
@@ -69,6 +70,11 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         } else {
             bots.main.switchToGridMode()
         }
+    }
+
+    @After
+    fun tearDownTest() {
+        cloudProviderDocsHelper.cleanUpProvider()
     }
 
     @Test

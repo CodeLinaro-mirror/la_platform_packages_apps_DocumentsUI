@@ -21,9 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.util.HumanReadables
 import java.util.concurrent.TimeoutException
-import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
 /**
@@ -33,7 +34,7 @@ import org.hamcrest.Matcher
  * Typical use:
  *
  *  <pre>
- *   onView(withId(R.id.rec_view_id)).perform(WaitUntilExists(matcher, 500L))
+ *   onView(withId(R.id.rec_view_id)).perform(WaitUntilExistsInRecyclerView(matcher, 500L))
  *  </pre>
  */
 class WaitUntilExistsInRecyclerView(
@@ -41,10 +42,7 @@ class WaitUntilExistsInRecyclerView(
     private val timeoutMs: Long = 500L,
 ) : ViewAction {
     override fun getConstraints(): Matcher<View> {
-        return CoreMatchers.allOf(
-            CoreMatchers.any(View::class.java),
-            CoreMatchers.instanceOf(RecyclerView::class.java),
-        )
+        return isAssignableFrom(RecyclerView::class.java)
     }
 
     override fun getDescription(): String {
@@ -52,25 +50,18 @@ class WaitUntilExistsInRecyclerView(
     }
 
     override fun perform(uiController: UiController, view: View) {
-        val recyclerView = view as RecyclerView
         val endTime = System.currentTimeMillis() + timeoutMs
 
         do {
-            val adapter = recyclerView.adapter
-            if (adapter != null) {
-                for (i in 0 until adapter.itemCount) {
-                    // Scroll to the next item and check if the view is present.
-                    recyclerView.scrollToPosition(i)
-                    uiController.loopMainThreadUntilIdle()
-
-                    for (j in 0 until recyclerView.childCount) {
-                        if (matcher.matches(recyclerView.getChildAt(j))) {
-                            return
-                        }
-                    }
-                }
+            try {
+                // Try to scroll to the document.
+                RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(matcher)
+                    .perform(uiController, view)
+                return
+            } catch (_: Exception) {
+                // If not found, wait a bit and retry until timeout.
+                uiController.loopMainThreadForAtLeast(50L)
             }
-            uiController.loopMainThreadForAtLeast(50L)
         } while (System.currentTimeMillis() < endTime)
 
         throw PerformException.Builder()
