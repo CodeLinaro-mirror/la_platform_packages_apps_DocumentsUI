@@ -235,10 +235,8 @@
       <item quantity="one">ឯកសារ​នេះ​មិនត្រូវ​បាន​បម្លែង​ទៅ​ទម្រង់​ផ្សេង​ទេ៖ <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ឯកសារ​នេះ​ត្រូវ​បាន​បំប្លែង​ទៅជា​ទម្រង់​ផ្សេងទៀត៖}other{ឯកសារ​ទាំងនេះ​ត្រូវ​បាន​បំប្លែង​ទៅជា​ទម្រង់​ផ្សេងទៀត៖}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">បាន​ចម្លងធាតុ <xliff:g id="COUNT_1">%1$d</xliff:g> ទៅអង្គចងចាំ។</item>
-      <item quantity="one">បាន​ចម្លងធាតុ <xliff:g id="COUNT_0">%1$d</xliff:g> ទៅ​អង្គចងចាំ។</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"បាន​តែ​អាន"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"អ្នកអាចមើលឯកសារទាំងនេះបាន ប៉ុន្តែសកម្មភាពមួយចំនួនមិនអាចប្រើបានទេ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"បណ្ណសារនេះស្ថិតនៅក្នុងទីតាំងដែលបានតែអានប៉ុណ្ណោះ និងមិនអាចដកស្រង់នៅទីនេះបានទេ។"</string>

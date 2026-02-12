@@ -235,10 +235,8 @@
       <item quantity="one">已將以下檔案轉換成其他格式：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{這個檔案已轉換成其他格式：}other{這些檔案已轉換成其他格式：}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">已將 <xliff:g id="COUNT_1">%1$d</xliff:g> 個項目複製到剪貼簿。</item>
-      <item quantity="one">已將 <xliff:g id="COUNT_0">%1$d</xliff:g> 個項目複製到剪貼簿。</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"唯讀"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"你可以查看這些檔案，但無法執行某些操作"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"這個封存檔位於唯讀位置，因此無法在這裡解壓縮。"</string>

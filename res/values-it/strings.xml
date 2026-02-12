@@ -246,11 +246,8 @@
       <item quantity="one">Il seguente file è stato convertito in un altro formato: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Il seguente file è stato convertito in un altro formato:}many{I seguenti file sono stati convertiti in un altro formato:}other{I seguenti file sono stati convertiti in un altro formato:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> di elementi copiati negli appunti.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementi copiati negli appunti.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elemento copiato negli appunti.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Sola lettura"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Puoi visualizzare questi file, ma alcune azioni non sono supportate"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Questo archivio si trova in una posizione di sola lettura e non può essere estratto qui."</string>
@@ -318,8 +315,8 @@
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> elemento</item>
     </plurals>
     <string name="delete_forever_dialog_title" msgid="799779565921010957">"Eliminare definitivamente?"</string>
-    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" verrà eliminato definitivamente. Questa operazione non può essere annullata.}many{# di elementi verranno eliminati definitivamente. Questa operazione non può essere annullata.}other{# elementi verranno eliminati definitivamente. Questa operazione non può essere annullata.}}"</string>
-    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" verrà eliminato definitivamente. Questa operazione non può essere annullata.}many{# di elementi nel cestino verranno eliminati definitivamente. Questa operazione non può essere annullata.}other{# elementi nel cestino verranno eliminati definitivamente. Questa operazione non può essere annullata.}}"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" verrà eliminato definitivamente. Questa azione non può essere annullata.}many{# di elementi verranno eliminati definitivamente. Questa azione non può essere annullata.}other{# elementi verranno eliminati definitivamente. Questa azione non può essere annullata.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" verrà eliminato definitivamente. Questa azione non può essere annullata.}many{# di elementi nel cestino verranno eliminati definitivamente. Questa azione non può essere annullata.}other{# elementi nel cestino verranno eliminati definitivamente. Questa azione non può essere annullata.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Immagini"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Impossibile aprire il file di archivio per la navigazione. Il file è corrotto o in un formato non supportato."</string>
     <string name="name_conflict" msgid="28407269328862986">"Esiste già un file con questo nome."</string>

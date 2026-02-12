@@ -62,7 +62,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRootTapped_GoToRootFromChildDir() throws Exception {
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
         bots.main.assertWindowTitle(TestFilesRule.DIR_NAME_1);
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         bots.main.assertWindowTitle(ROOT_0_ID);
         assertDefaultContentOfTestDir0();
     }
@@ -72,7 +72,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         bots.main.assertInActionMode(true);
 
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         bots.main.assertInActionMode(false);
     }
 
@@ -89,7 +89,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
                 context, ROOT_1_ID, "Paste into folder", getActivityLayoutId());
 
         // Navigate to the root and ensure the file has been copied successfully.
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         bots.directory.waitForDocument("file1.log");
     }
 
@@ -97,7 +97,7 @@ public class SidebarUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testOpenInNewWindow_preservesFiles() throws Exception {
         // Select Recents in the existing window and open ROOT_0 in the new window so we can
         // distinguish the two windows by checking the title.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
         bots.main.assertWindowTitle("Recent");
 
         // Open the ROOT_0 node in a new window.

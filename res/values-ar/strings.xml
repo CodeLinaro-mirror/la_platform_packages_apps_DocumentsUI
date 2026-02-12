@@ -279,14 +279,8 @@
       <item quantity="one">تم تحويل هذا الملف إلى تنسيق آخر: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{تم تحويل هذا الملف إلى تنسيق آخر:}zero{تم تحويل هذه الملفات إلى تنسيق آخر:}two{تم تحويل هذين الملفَّين إلى تنسيق آخر:}few{تم تحويل هذه الملفات إلى تنسيق آخر:}many{تم تحويل هذه الملفات إلى تنسيق آخر:}other{تم تحويل هذه الملفات إلى تنسيق آخر:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="zero">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملف إلى الحافظة.</item>
-      <item quantity="two">تم نسخ ملفين (<xliff:g id="COUNT_1">%1$d</xliff:g>) إلى الحافظة.</item>
-      <item quantity="few">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملفات إلى الحافظة.</item>
-      <item quantity="many">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملفًا إلى الحافظة.</item>
-      <item quantity="other">تم نسخ <xliff:g id="COUNT_1">%1$d</xliff:g> ملف إلى الحافظة.</item>
-      <item quantity="one">تم نسخ ملف واحد (<xliff:g id="COUNT_0">%1$d</xliff:g>) إلى الحافظة.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"للقراءة فقط"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"يمكنك الاطّلاع على هذه الملفات، ولكن بعض الإجراءات غير متاحة"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"هذا الأرشيف مخزّن في مكان متاح للقراءة فقط ولا يمكن استخراجه هنا."</string>

@@ -235,10 +235,8 @@
       <item quantity="one">ही फाइल अन्‍य स्‍वरूपात रूपांतरित केली होती: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{या फाइलचे दुसऱ्या फॉरमॅटमध्ये रूपांतर केले आहे:}other{या फाइलचे दुसऱ्या फॉरमॅटमध्ये रूपांतर केले आहे:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> आयटम क्लिपबोर्डवर कॉपी केले.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> आयटम क्लिपबोर्डवर कॉपी केला.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"रीड-ओन्ली"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"तुम्ही या फाइल पाहू शकता, पण काही कृतींना सपोर्ट नाही"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"हे संग्रहण रीड-ओन्ली स्थानावर आहे आणि ते इथे एक्स्ट्रॅक्ट केले जाऊ शकत नाही."</string>
