@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.SelectionTracker.SelectionPredicate;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.documentsui.base.Events;
 
@@ -29,28 +30,30 @@ import javax.annotation.Nullable;
 
 // TODO(b/69058726): Migrate to RecyclerView-Selection
 /**
- * Class that handles keyboard events on RecyclerView items. The input handler
- * must be attached directly to a RecyclerView item since, unlike DOM, events
- * don't appear bubble up.
+ * Class that handles keyboard events on RecyclerView items. The input handler must be attached
+ * directly to a RecyclerView item since, unlike DOM, events don't appear bubble up.
  */
-public final class KeyInputHandler extends KeyboardEventListener<DocumentItemDetails> {
+public final class KeyInputHandler extends KeyboardEventListener<ItemDetails<String>> {
 
     private final SelectionTracker<String> mSelectionHelper;
     private final SelectionPredicate<String> mSelectionPredicate;
-    private final Callbacks<DocumentItemDetails> mCallbacks;
+    private final FocusHandler mFocusHandler;
+    private final Callbacks<ItemDetails<String>> mCallbacks;
 
     public KeyInputHandler(
             SelectionTracker<String> selectionHelper,
             SelectionPredicate<String> selectionPredicate,
-            Callbacks<DocumentItemDetails> callbacks) {
+            FocusHandler focusHandler,
+            Callbacks<ItemDetails<String>> callbacks) {
 
         mSelectionHelper = selectionHelper;
         mSelectionPredicate = selectionPredicate;
+        mFocusHandler = focusHandler;
         mCallbacks = callbacks;
     }
 
     @Override
-    public boolean onKey(@Nullable DocumentItemDetails details, int keyCode, KeyEvent event) {
+    public boolean onKey(@Nullable ItemDetails<String> details, int keyCode, KeyEvent event) {
         // Only handle key-down events. This is simpler, consistent with most other UIs, and
         // enables the handling of repeated key events from holding down a key.
         if (event.getAction() != KeyEvent.ACTION_DOWN) {
@@ -63,8 +66,8 @@ public final class KeyInputHandler extends KeyboardEventListener<DocumentItemDet
         }
 
         // Ignore events sent to Addon Holders.
-        if (details != null) {
-            int itemType = details.getItemViewType();
+        if (details instanceof DocumentItemDetails) {
+            int itemType = ((DocumentItemDetails) details).getItemViewType();
             if (itemType == DocumentsAdapter.ITEM_TYPE_HEADER_MESSAGE
                     || itemType == DocumentsAdapter.ITEM_TYPE_INFLATED_MESSAGE
                     || itemType == DocumentsAdapter.ITEM_TYPE_SECTION_BREAK) {
@@ -81,7 +84,10 @@ public final class KeyInputHandler extends KeyboardEventListener<DocumentItemDet
                     // Start a range selection if one isn't active
                     mSelectionHelper.startRange(details.getPosition());
                 }
-                mSelectionHelper.extendRange(details.getPosition());
+                int focusedPosition = mFocusHandler.getFocusedPosition();
+                if (focusedPosition != RecyclerView.NO_POSITION) {
+                    mSelectionHelper.extendRange(focusedPosition);
+                }
             } else {
                 mSelectionHelper.endRange();
                 if (!isUseMaterial3FlagEnabled()) {
@@ -99,7 +105,7 @@ public final class KeyInputHandler extends KeyboardEventListener<DocumentItemDet
         return mCallbacks.onItemActivated(details, event);
     }
 
-    private boolean shouldExtendSelection(DocumentItemDetails item, KeyEvent event) {
+    private boolean shouldExtendSelection(ItemDetails<String> item, KeyEvent event) {
         if (!Events.isNavigationKeyCode(event.getKeyCode()) || !event.isShiftPressed()) {
             return false;
         }

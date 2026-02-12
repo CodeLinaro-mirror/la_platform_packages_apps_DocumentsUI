@@ -20,6 +20,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
+import static com.android.documentsui.util.FlagUtils.isIncludeRemoteRootsInRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -82,7 +83,15 @@ public class SearchViewManager implements
     private static final String TAG = "SearchManager";
 
     // How long we wait after the user finishes typing before kicking off a search.
-    public static final int SEARCH_DELAY_MS = 750;
+    private static final int SEARCH_DELAY_MS = 750;
+
+    // How long we wait after the user finishes typing before kicking off a search v2.
+    private static final int SEARCH_V2_DELAY_MS = 350;
+
+    /** Returns the current debounce delay in ms, based on the flag settings. */
+    public static int getSearchDebounceDelayMs() {
+        return isSearchV2Enabled() ? SEARCH_V2_DELAY_MS : SEARCH_DELAY_MS;
+    }
 
     private final SearchManagerListener mListener;
     private final EventHandler<String> mCommandProcessor;
@@ -782,7 +791,7 @@ public class SearchViewManager implements
             mQueuedSearchTask = createSearchTask(newText);
 
             // TODO(b/471061093): Can be simplified by using postDelayed rather than a timer.
-            mTimer.schedule(mQueuedSearchTask, SEARCH_DELAY_MS);
+            mTimer.schedule(mQueuedSearchTask, getSearchDebounceDelayMs());
         }
     }
 
@@ -943,16 +952,25 @@ public class SearchViewManager implements
      */
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
         if (isUseAllfilesRootForRecentsEnabled()) {
-            return roots.filter(r -> r.isLocalOnly()
-                    && r.supportsRecents() && r.userId.equals(userId)
-                    && r.isFiles()).collect(
-                    Collectors.toList());
+            return roots.filter(
+                            r ->
+                                    r.supportsRecents()
+                                            && r.userId.equals(userId)
+                                            && (r.isFiles()
+                                                    || (isIncludeRemoteRootsInRecentsEnabled()
+                                                            && !r.isLocalOnly())))
+                    .collect(Collectors.toList());
         }
 
-        return roots.filter(r -> r.isLocalOnly()
-                && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isExternalStorage() && !r.isFiles()).collect(
-                Collectors.toList());
+        return roots.filter(
+                        r ->
+                                r.supportsRecents()
+                                        && r.userId.equals(userId)
+                                        && !r.isExternalStorage()
+                                        && !r.isFiles()
+                                        && (r.isLocalOnly()
+                                                || isIncludeRemoteRootsInRecentsEnabled()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -987,8 +1005,11 @@ public class SearchViewManager implements
             // If we don't know where to search, search nowhere.
             return Collections.emptyList();
         }
-        Stream<RootInfo> core = roots.stream().filter(
-                r -> r.rootId != null && r.authority != null && r.supportsSearch());
+        // TODO(b/483128303) Using r.supportsSearch() artificially constrains the Recent view to
+        // only query DocumentsProviders that also support search.
+        Stream<RootInfo> core =
+                roots.stream()
+                        .filter(r -> r.rootId != null && r.authority != null && r.supportsSearch());
         if (mLocationOption == SearchLocationOption.EVERYWHERE) {
             // If the current location is everywhere get all searchable roots.
             return getAllSearchableRoots(core);

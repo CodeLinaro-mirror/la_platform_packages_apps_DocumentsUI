@@ -26,6 +26,7 @@ import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 
 import android.view.KeyEvent;
 
+import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.SelectionTracker.SelectionPredicate;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,10 +69,10 @@ final class InputHandlers {
     }
 
     KeyInputHandler createKeyHandler() {
-        KeyInputHandler.Callbacks<DocumentItemDetails> callbacks =
-                new KeyInputHandler.Callbacks<DocumentItemDetails>() {
+        KeyInputHandler.Callbacks<ItemDetails<String>> callbacks =
+                new KeyInputHandler.Callbacks<ItemDetails<String>>() {
                     @Override
-                    public boolean onItemActivated(DocumentItemDetails item, KeyEvent e) {
+                    public boolean onItemActivated(ItemDetails<String> item, KeyEvent e) {
                         if (isUseMaterial3FlagEnabled() && !e.hasNoModifiers()) {
                             return false;
                         }
@@ -101,7 +102,7 @@ final class InputHandlers {
 
                     @Override
                     public boolean onFocusItem(
-                            DocumentItemDetails details, int keyCode, KeyEvent event) {
+                            ItemDetails<String> details, int keyCode, KeyEvent event) {
                         ViewHolder holder =
                                 mRecView.findViewHolderForAdapterPosition(details.getPosition());
                         if (holder instanceof DocumentHolder) {
@@ -111,6 +112,6 @@ final class InputHandlers {
                     }
                 };
 
-        return new KeyInputHandler(mSelectionHelper, mSelectionPredicate, callbacks);
+        return new KeyInputHandler(mSelectionHelper, mSelectionPredicate, mFocusHandler, callbacks);
     }
 }

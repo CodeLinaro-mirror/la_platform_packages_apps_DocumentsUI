@@ -23,6 +23,8 @@ import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
 import android.provider.DocumentsContract.Root
 import android.util.Log
+import java.time.LocalDate
+import java.time.ZoneId
 
 /**
  * Test "cloud" provider that sets the FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE root flag and the
@@ -32,11 +34,13 @@ internal class TestCloudProvider :
     TestRootProvider(
         NAME,
         ROOT_ID,
-        // Do not guard with isSyncStateEnabled() as the FlagUtils lib is not available for some
-        // reason and calling this will lead to a NoClassDefFoundError. Accessing this static
-        // constant without the check is safe because it will be available during compilation and
-        // inserted inline.
-        Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE,
+        // Do not guard FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE with isSyncStateEnabled() as the
+        // FlagUtils lib is not available for some reason and calling this will lead to a
+        // NoClassDefFoundError. Accessing this static constant without the check is safe because
+        // it will be available during compilation and inserted inline.
+        (Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE or
+            Root.FLAG_SUPPORTS_RECENTS or
+            Root.FLAG_SUPPORTS_SEARCH),
         ROOT_ID,
     ) {
     companion object {
@@ -68,7 +72,7 @@ internal class TestCloudProvider :
 
     // documentId -> File
     private val files =
-        mapOf<String, Doc>(
+        mutableMapOf<String, Doc>(
             DOC_ID_0 to Doc(DISPLAY_NAME_0, 0, 0, "text/plain"),
             DOC_ID_1 to Doc(DISPLAY_NAME_1, 0, 0, "text/plain"),
             VIRTUAL_ID to
@@ -111,19 +115,45 @@ internal class TestCloudProvider :
         return null
     }
 
-    override fun queryDocument(documentId: String?, projection: Array<out String?>?): Cursor? {
+    /**
+     * Allow test classes to dynamically add files (eg. with random but known filenames) at runtime.
+     */
+    override fun createDocument(
+        parentDocumentId: String,
+        mimeType: String,
+        displayName: String,
+    ): String? {
+        val documentId = "docId${files.count() + 1}"
+        files[documentId] = Doc(displayName, 0, 0, mimeType)
+        return documentId
+    }
+
+    override fun queryRecentDocuments(rootId: String, projection: Array<String>?): Cursor {
+        return buildCursorForDocumentList(projection)
+    }
+
+    override fun queryDocument(documentId: String?, projection: Array<String>?): Cursor? {
         val c = createDocCursor(projection)
-        // Return a folder for the case when the root is queried. The cases for when a file is
-        // queried are not covered.
-        addFolder(c, documentId)
+        if (documentId == ROOT_ID) {
+            // Return a folder for the case when the root is queried. The cases for when a file is
+            // queried are not covered.
+            addFolder(c, documentId)
+        }
         return c
     }
 
     override fun queryChildDocuments(
         parentDocumentId: String?,
-        projection: Array<out String?>?,
+        projection: Array<String>?,
         sortOrder: String?,
-    ): Cursor? {
+    ): Cursor {
+        val cursor = buildCursorForDocumentList(projection)
+        // Set the notificationUri so that the notifyChange calls trigger observers of this cursor.
+        cursor.setNotificationUri(context?.contentResolver, NOTIFY_URI)
+        return cursor
+    }
+
+    private fun buildCursorForDocumentList(projection: Array<String>?): Cursor {
         // Do not guard with isSyncStateEnabled() as the FlagUtils lib is not available for some
         // reason and calling this will lead to a NoClassDefFoundError. Accessing this static
         // constant without the check is safe because it will be available during compilation and
@@ -137,8 +167,19 @@ internal class TestCloudProvider :
                         Document.COLUMN_CONTENT_SYNC_STATE_FLAGS,
                         Document.COLUMN_FLAGS,
                         Document.COLUMN_MIME_TYPE,
+                        Document.COLUMN_LAST_MODIFIED,
                     )
             )
+
+        // This list is also used for queryRecentDocuments(), which requires that a "recent" last
+        // modified time is specified: let's use 3 days.
+        val lastModified =
+            LocalDate.now()
+                .minusDays(3)
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+
         for ((documentId, doc) in files) {
             val row = cursor.newRow()
             row.add(Document.COLUMN_DOCUMENT_ID, documentId)
@@ -146,10 +187,9 @@ internal class TestCloudProvider :
             row.add(Document.COLUMN_CONTENT_SYNC_STATE_FLAGS, doc.syncState)
             row.add(Document.COLUMN_FLAGS, doc.flags)
             row.add(Document.COLUMN_MIME_TYPE, doc.mimeType)
+            row.add(Document.COLUMN_LAST_MODIFIED, lastModified)
             Log.d(TAG, "Add sync state for $documentId: ${doc.syncState}")
         }
-        // Set the notificationUri so that the notifyChange calls trigger observers of this cursor.
-        cursor.setNotificationUri(context?.contentResolver, NOTIFY_URI)
         return cursor
     }
 }

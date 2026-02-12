@@ -289,7 +289,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                         Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
                         Flags.includeRemoteRootsInRecents(),
                     )
-            return flag && isUseAllfilesRootForRecentsEnabled()
+            return flag && isSearchV2Enabled()
         }
     }
 
