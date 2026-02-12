@@ -139,4 +139,45 @@ class PathExtractorTest {
         val stack = pathExtractor.getDocumentStack(docInfo)
         Assert.assertEquals("Recents/Audio/file.mp3", toPath(stack))
     }
+
+    @Test(expected = NoSuchElementException::class)
+    fun testIllegalArgumentException_isWrapped() {
+        // Setup.
+        val docInfo = createTestDocumentInfo()
+        // When getDocumentPath throws an IllegalArgumentException.
+        pathExtractor.exception = IllegalArgumentException("test")
+        // We need to provide a cursor for the root.
+        pathExtractor.displayNameCursorMap =
+            mapOf("content://download.id/root" to createDisplayNameCursor("Downloads"))
+
+        // The actual test.
+        // This should throw NoSuchElementException, which wraps the original exception.
+        pathExtractor.getDocumentStack(docInfo)
+    }
+
+    @Test(expected = RuntimeException::class)
+    fun testRuntimeException_isPropagated() {
+        // Setup.
+        val docInfo = createTestDocumentInfo()
+        // When getDocumentPath throws a RuntimeException.
+        pathExtractor.exception = RuntimeException("test")
+        // We need to provide a cursor for the root.
+        pathExtractor.displayNameCursorMap =
+            mapOf("content://download.id/root" to createDisplayNameCursor("Downloads"))
+
+        // The actual test.
+        // This should throw RuntimeException, as it is not caught.
+        pathExtractor.getDocumentStack(docInfo)
+    }
+
+    private fun createTestDocumentInfo(): DocumentInfo {
+        return DocumentInfo().apply {
+            userId = UserId.DEFAULT_USER
+            authority = "download.id"
+            documentId = "file.txt.id"
+            displayName = "file.txt"
+            mimeType = "text/plain"
+            deriveFields()
+        }
+    }
 }
