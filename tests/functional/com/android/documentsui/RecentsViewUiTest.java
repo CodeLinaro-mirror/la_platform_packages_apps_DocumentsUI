@@ -32,6 +32,7 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -56,6 +57,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Providers;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.bots.DirectoryListBot;
+import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.rules.ExternalStorageProviderTestFilesRule;
@@ -514,4 +516,22 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.roots.openRoot("Recent");
         assertEquals(shouldBePresent, bots.directory.findDocument(fileName, true).exists());
     }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testReSelectingRootClosesSearch() throws Exception {
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.search.doSearch("query");
+        device.waitForIdle();
+        // Dropdown options should be visible when search is active.
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
+
+        // Re-select the Recent view; this should cancel the search.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        device.waitForIdle();
+        onView(withId(R.id.search_location_trigger)).check(matches(not(isDisplayed())));
+        bots.search.findChip(R.string.chip_title_images).check(matches(isDisplayed()));
+        bots.search.assertSearchIsClosed();
+    }
 }
+

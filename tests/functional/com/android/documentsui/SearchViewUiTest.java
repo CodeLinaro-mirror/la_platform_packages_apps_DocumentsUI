@@ -405,7 +405,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
 
-        // Verify that that the location shows the name of the new root.
+        // Verify that the location shows the name of the new root.
         bots.search
                 .findDropdownTrigger(R.id.search_location_trigger)
                 .check(matches(withText("Paging Root")));
