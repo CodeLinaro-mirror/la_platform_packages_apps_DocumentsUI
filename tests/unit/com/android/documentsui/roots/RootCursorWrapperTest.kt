@@ -15,6 +15,7 @@
  */
 package com.android.documentsui.roots
 
+import android.database.Cursor
 import android.database.MatrixCursor
 import android.os.Bundle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -29,12 +30,18 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class RootCursorWrapperTest {
-    @get:Rule
-    val expect: Expect = Expect.create()
+    @get:Rule val expect: Expect = Expect.create()
 
     val baseCursor = MatrixCursor(arrayOf("column-a", "column-b"))
     val rootCursor =
-        RootCursorWrapper(UserId.CURRENT_USER, "com.example.authority", "root-id", baseCursor, 10)
+        RootCursorWrapper(
+            UserId.CURRENT_USER,
+            "com.example.authority",
+            "root-id",
+            LIMITED_FUNCTIONALITY_WHEN_OFFLINE,
+            baseCursor,
+            10,
+        )
 
     @Before
     fun setUp() {
@@ -44,9 +51,7 @@ class RootCursorWrapperTest {
     @Test
     fun testSetExtras() {
         expect.that(rootCursor.extras.isEmpty).isTrue()
-        rootCursor.extras = Bundle().apply {
-            putString("key", "value")
-        }
+        rootCursor.extras = Bundle().apply { putString("key", "value") }
         expect.that(rootCursor.extras.isEmpty).isFalse()
         expect.that(rootCursor.extras.containsKey("key")).isTrue()
         expect.that(rootCursor.extras.getString("key")).isEqualTo("value")
@@ -64,6 +69,8 @@ class RootCursorWrapperTest {
         val rootIdColumnIndex = rootCursor.getColumnIndex(RootCursorWrapper.COLUMN_ROOT_ID)
         expect.that(rootIdColumnIndex).isGreaterThan(-1)
         expect.that(rootCursor.getString(rootIdColumnIndex)).isEqualTo("root-id")
+        expect.that(rootCursor.getType(rootIdColumnIndex)).isEqualTo(Cursor.FIELD_TYPE_STRING)
+        expect.that(rootCursor.isNull(rootIdColumnIndex)).isFalse()
     }
 
     @Test
@@ -71,6 +78,8 @@ class RootCursorWrapperTest {
         val authorityColumnIndex = rootCursor.getColumnIndex(RootCursorWrapper.COLUMN_AUTHORITY)
         expect.that(authorityColumnIndex).isGreaterThan(-1)
         expect.that(rootCursor.getString(authorityColumnIndex)).isEqualTo("com.example.authority")
+        expect.that(rootCursor.getType(authorityColumnIndex)).isEqualTo(Cursor.FIELD_TYPE_STRING)
+        expect.that(rootCursor.isNull(authorityColumnIndex)).isFalse()
     }
 
     @Test
@@ -78,5 +87,37 @@ class RootCursorWrapperTest {
         val userIdColumnIndex = rootCursor.getColumnIndex(RootCursorWrapper.COLUMN_USER_ID)
         expect.that(userIdColumnIndex).isGreaterThan(-1)
         expect.that(rootCursor.getInt(userIdColumnIndex)).isEqualTo(UserId.CURRENT_USER.identifier)
+        expect.that(rootCursor.getType(userIdColumnIndex)).isEqualTo(Cursor.FIELD_TYPE_INTEGER)
+        expect.that(rootCursor.isNull(userIdColumnIndex)).isFalse()
+    }
+
+    @Test
+    fun testLimitedFunctionalityWhenOffline() {
+        val limitedFunctionalityWhenOfflineColumnIndex =
+            rootCursor.getColumnIndex(RootCursorWrapper.COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE)
+        expect.that(limitedFunctionalityWhenOfflineColumnIndex).isGreaterThan(-1)
+        expect
+            .that(rootCursor.getInt(limitedFunctionalityWhenOfflineColumnIndex))
+            .isEqualTo(LIMITED_FUNCTIONALITY_WHEN_OFFLINE_AS_INT)
+        expect
+            .that(rootCursor.getType(limitedFunctionalityWhenOfflineColumnIndex))
+            .isEqualTo(Cursor.FIELD_TYPE_INTEGER)
+        expect.that(rootCursor.isNull(limitedFunctionalityWhenOfflineColumnIndex)).isFalse()
+    }
+
+    @Test
+    fun testColumnNames() {
+        expect.that(rootCursor.columnNames).asList().contains(RootCursorWrapper.COLUMN_AUTHORITY)
+        expect.that(rootCursor.columnNames).asList().contains(RootCursorWrapper.COLUMN_ROOT_ID)
+        expect.that(rootCursor.columnNames).asList().contains(RootCursorWrapper.COLUMN_USER_ID)
+        expect
+            .that(rootCursor.columnNames)
+            .asList()
+            .contains(RootCursorWrapper.COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE)
+    }
+
+    companion object {
+        const val LIMITED_FUNCTIONALITY_WHEN_OFFLINE = true
+        const val LIMITED_FUNCTIONALITY_WHEN_OFFLINE_AS_INT = 1
     }
 }

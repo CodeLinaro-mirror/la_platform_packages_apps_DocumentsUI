@@ -25,8 +25,10 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.android.documentsui.R
+import com.android.documentsui.actions.WaitUntilExistsInRecyclerView
 import com.android.documentsui.actions.WaitUntilVisible
 import com.android.documentsui.actions.actionOnRootItem
 import com.android.documentsui.actions.rightClick
@@ -46,11 +48,18 @@ fun openRoot(context: Context, label: String, @LayoutRes layoutId: Int?) {
  * Return a matcher for the document root container (item_root) with a TextView descendant with the
  * given label.
  */
-fun documentMatcher(label: String?): Matcher<View?> {
-    return Matchers.allOf<View?>(
+fun documentMatcher(label: String?): Matcher<View> {
+    return Matchers.allOf(
         ViewMatchers.withId(R.id.item_root),
         ViewMatchers.hasDescendant(withText(label)),
     )
+}
+
+/** Wait for the document with the given label to exist. */
+fun waitForDocument(label: String?, timeout: Int) {
+    // Wait for the document to exist in the directory list.
+    onView(withId(R.id.dir_list))
+        .perform(WaitUntilExistsInRecyclerView(documentMatcher(label), timeout.toLong()))
 }
 
 /**

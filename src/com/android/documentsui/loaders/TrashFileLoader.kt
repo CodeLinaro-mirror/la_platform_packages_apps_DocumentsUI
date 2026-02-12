@@ -122,7 +122,14 @@ class TrashFileLoader(
             rootInfo: RootInfo,
             oriCursor: Cursor,
         ): RootCursorWrapper {
-            return RootCursorWrapper(rootInfo.userId, authority, rootInfo.rootId, oriCursor, -1)
+            return RootCursorWrapper(
+                rootInfo.userId,
+                authority,
+                rootInfo.rootId,
+                rootInfo.hasLimitedFunctionalityWhenOffline(),
+                oriCursor,
+                -1,
+            )
         }
     }
 
