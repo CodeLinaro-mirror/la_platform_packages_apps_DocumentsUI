@@ -56,19 +56,19 @@ fun documentMatcher(label: String?): Matcher<View> {
 }
 
 /** Wait for the document with the given label to exist. */
-fun waitForDocument(label: String?, timeout: Int) {
+fun waitForDocument(label: String?, timeout: Long) {
     // Wait for the document to exist in the directory list.
     onView(withId(R.id.dir_list))
-        .perform(WaitUntilExistsInRecyclerView(documentMatcher(label), timeout.toLong()))
+        .perform(WaitUntilExistsInRecyclerView(documentMatcher(label), timeout))
 }
 
 /**
  * Find the document with the given label, scrolling if necessary to ensure that the entire document
  * view is visible.
  */
-fun findDocument(label: String?, timeout: Int): ViewInteraction {
+fun findDocument(label: String?, timeout: Long): ViewInteraction {
     return onView(documentMatcher(label))
-        .perform(WaitUntilVisible(timeout.toLong()))
+        .perform(WaitUntilVisible(timeout))
         .perform(ViewActions.scrollCompletelyTo())
 }
 
