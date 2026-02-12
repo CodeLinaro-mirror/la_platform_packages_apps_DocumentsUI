@@ -38,6 +38,7 @@ import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -856,14 +857,20 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("file");
         device.waitForIdle();
         bots.directory.assertDocumentsPresent(expectedMatches);
+        // Verify that only dropdown options are shown, and not chips.
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
+        onView(withId(R.id.search_chip_group)).check(matches(not(isDisplayed())));
 
-        // Relaunch the app, and expect the same result. Also this must never crash.
+        // Relaunch the app, and expect the same result. Also, this must never crash.
         mActivityScenario.recreate();
-        // Close the keyboard because it mgiht appear after activity recreation.
+        // Close the keyboard because it might appear after activity recreation.
         closeSoftKeyboard();
         device.waitForIdle();
         bots.directory.assertDocumentsPresent(expectedMatches);
         bots.search.assertInputEquals("file");
+        // Verify that only dropdown and chips states are preserved.
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
+        onView(withId(R.id.search_chip_group)).check(matches(not(isDisplayed())));
     }
 
     @Test
