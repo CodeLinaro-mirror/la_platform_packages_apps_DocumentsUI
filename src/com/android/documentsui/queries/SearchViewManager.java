@@ -83,15 +83,7 @@ public class SearchViewManager implements
     private static final String TAG = "SearchManager";
 
     // How long we wait after the user finishes typing before kicking off a search.
-    private static final int SEARCH_DELAY_MS = 750;
-
-    // How long we wait after the user finishes typing before kicking off a search v2.
-    private static final int SEARCH_V2_DELAY_MS = 350;
-
-    /** Returns the current debounce delay in ms, based on the flag settings. */
-    public static int getSearchDebounceDelayMs() {
-        return isSearchV2Enabled() ? SEARCH_V2_DELAY_MS : SEARCH_DELAY_MS;
-    }
+    public static final int SEARCH_DELAY_MS = 750;
 
     private final SearchManagerListener mListener;
     private final EventHandler<String> mCommandProcessor;
@@ -799,7 +791,7 @@ public class SearchViewManager implements
             mQueuedSearchTask = createSearchTask(newText);
 
             // TODO(b/471061093): Can be simplified by using postDelayed rather than a timer.
-            mTimer.schedule(mQueuedSearchTask, getSearchDebounceDelayMs());
+            mTimer.schedule(mQueuedSearchTask, SEARCH_DELAY_MS);
         }
     }
 

@@ -370,7 +370,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             device.waitForIdle();
 
             // Search debounce delay + extra buffer to let the search settle
-            int delayMs = SearchViewManager.getSearchDebounceDelayMs() + 250;
+            int delayMs = SearchViewManager.SEARCH_DELAY_MS + 250;
             SystemClock.sleep(delayMs);
             // Select the newly created file and check the expected path.
             bots.directory.assertDocumentsPresent(fileName);

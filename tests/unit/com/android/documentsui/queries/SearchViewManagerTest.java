@@ -297,7 +297,7 @@ public final class SearchViewManagerTest {
     public void testIsSearching_TrueAfterOnQueryTextChangeAndWait() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         assertTrue(mSearchViewManager.isSearching());
     }
 
@@ -305,9 +305,9 @@ public final class SearchViewManagerTest {
     public void testIsSearching_FalseWhenSecondOnQueryTextChangeResetsTimer() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs() - 1);
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS - 1);
         mSearchViewManager.onQueryTextChange("qu");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         assertFalse(mSearchViewManager.isSearching());
     }
 
@@ -315,9 +315,9 @@ public final class SearchViewManagerTest {
     public void testIsSearching_TrueAfterSecondOnQueryTextChangeResetsTimer() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs() - 1);
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS - 1);
         mSearchViewManager.onQueryTextChange("qu");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs() * 2);
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS * 2);
         assertTrue(mSearchViewManager.isSearching());
     }
 
@@ -326,7 +326,7 @@ public final class SearchViewManagerTest {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
         mSearchViewManager.cancelSearch();
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         assertFalse(mSearchViewManager.isSearching());
     }
 
@@ -348,7 +348,7 @@ public final class SearchViewManagerTest {
     public void testOnSearchChanged_CalledAfterOnQueryTextChangedAndWait() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         assertTrue(mListenerOnSearchChangedCalled);
     }
 
@@ -360,7 +360,7 @@ public final class SearchViewManagerTest {
 
         // Clear the flag to check if it gets set again.
         mListenerOnSearchChangedCalled = false;
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         assertFalse(mListenerOnSearchChangedCalled);
     }
 
@@ -369,7 +369,7 @@ public final class SearchViewManagerTest {
             throws Exception {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         // Clear the flag to check if it gets set again.
         mListenerOnSearchChangedCalled = false;
         mSearchViewManager.onQueryTextSubmit("q");
@@ -401,14 +401,14 @@ public final class SearchViewManagerTest {
     @Test
     public void testSearchTriggered_withSameQuery_notifiesListener() {
         mSearchViewManager.onQueryTextChange("query");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
 
         // First search should trigger a notification
         assertEquals(1, mOnSearchChangedCallCount);
 
         // Triggering another search with the same query text (e.g. after a filter change)
         mSearchViewManager.onQueryTextChange("query");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs() * 2);
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS * 2);
 
         // The listener should be notified again, even with the same query text
         assertEquals(2, mOnSearchChangedCallCount);
@@ -435,7 +435,7 @@ public final class SearchViewManagerTest {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
         mSearchViewManager.cancelSearch();
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
         assertTrue(!mSearchChipViewManager.hasCheckedItems());
     }
 
@@ -444,7 +444,7 @@ public final class SearchViewManagerTest {
         final String query = "q";
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("q");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
 
         final Bundle queryArgs = mSearchViewManager.buildQueryArgs();
         assertFalse(queryArgs.isEmpty());
@@ -458,7 +458,7 @@ public final class SearchViewManagerTest {
             throws Exception {
         mSearchViewManager.onClick(null);
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
 
         final String queryString =
                 mSearchViewManager.buildQueryArgs()
@@ -470,7 +470,7 @@ public final class SearchViewManagerTest {
     public void testBuildQueryArgs_emptySearchString_withChipsWithoutExpandedSearch_hasNoSearchString()
             throws Exception {
         mSearchChipViewManager.mCheckedChipItems = getFakeSearchChipDataList();
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
 
         assertFalse(mSearchViewManager.buildQueryArgs().containsKey(QUERY_ARG_DISPLAY_NAME));
     }
@@ -479,7 +479,7 @@ public final class SearchViewManagerTest {
     public void testBuildQueryArgs_emptySearchString_expandedSearchWithNoChips_hasNoSearchString()
             throws Exception {
         mSearchViewManager.onClick(null);
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs());
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS);
 
         assertFalse(mSearchViewManager.buildQueryArgs().containsKey(QUERY_ARG_DISPLAY_NAME));
     }
@@ -663,7 +663,7 @@ public final class SearchViewManagerTest {
     public void testCancellingSearchClearsQuery() throws Exception {
         mSearchViewManager.onClick(null);
         mSearchViewManager.onQueryTextChange("query");
-        fastForwardTo(SearchViewManager.getSearchDebounceDelayMs() + 1);
+        fastForwardTo(SearchViewManager.SEARCH_DELAY_MS + 1);
         assertThat(mSearchViewManager.getCurrentSearch()).isEqualTo("query");
 
         mSearchViewManager.cancelSearch();
