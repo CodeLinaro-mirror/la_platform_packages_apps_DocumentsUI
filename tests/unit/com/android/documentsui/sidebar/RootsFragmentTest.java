@@ -370,7 +370,7 @@ public class RootsFragmentTest {
         final String testPackageName = "com.test1";
         final String errorTestPackageName = "com.test2";
         final RootsFragment.ItemComparator comp = new RootsFragment.ItemComparator(testPackageName);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, null /* actionHandler */,
                 errorTestPackageName, /* maybeShowBadge= */ false));
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, null /* actionHandler */,
@@ -379,16 +379,16 @@ public class RootsFragmentTest {
                 testPackageName, /* maybeShowBadge= */ false));
         Collections.sort(rootList, comp);
 
-        assertEquals(rootList.get(0).title, TestProvidersAccess.PICKLES.title);
-        assertEquals(rootList.get(1).title, TestProvidersAccess.HAMMY.title);
-        assertEquals(rootList.get(2).title, TestProvidersAccess.INSPECTOR.title);
+        assertEquals(rootList.get(0).getTitle(), TestProvidersAccess.PICKLES.title);
+        assertEquals(rootList.get(1).getTitle(), TestProvidersAccess.HAMMY.title);
+        assertEquals(rootList.get(2).getTitle(), TestProvidersAccess.INSPECTOR.title);
     }
 
     @Test
     public void testItemComparator_differentItemTypes_WithCorrectOrder() {
         final String testPackageName = "com.test1";
         final RootsFragment.ItemComparator comp = new RootsFragment.ItemComparator(testPackageName);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, null /* actionHandler */,
                 testPackageName, /* maybeShowBadge= */ false));
 
@@ -402,9 +402,9 @@ public class RootsFragmentTest {
 
         Collections.sort(rootList, comp);
 
-        assertEquals(rootList.get(0).title, TestProvidersAccess.HAMMY.title);
-        assertEquals(rootList.get(1).title, TestProvidersAccess.INSPECTOR.title);
-        assertEquals(rootList.get(2).title, TestProvidersAccess.PICKLES.title);
+        assertEquals(rootList.get(0).getTitle(), TestProvidersAccess.HAMMY.title);
+        assertEquals(rootList.get(1).getTitle(), TestProvidersAccess.INSPECTOR.title);
+        assertEquals(rootList.get(2).getTitle(), TestProvidersAccess.PICKLES.title);
     }
 
     @Test

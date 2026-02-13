@@ -42,15 +42,11 @@ abstract class BaseSidebarEntryItem(
     stringId: String?,
     userId: UserId?,
     val actionHandler: ActionHandler?,
-    private val packageName: String,
+    override val packageName: String,
     val maybeShowBadge: Boolean,
-) : Item(layoutId, title, stringId, userId) {
+) : SortableItem(layoutId, title, stringId, userId) {
     var docInfo: DocumentInfo? = null
     abstract val itemInfo: SidebarEntryItemInfo
-
-    override fun getPackageName(): String? {
-        return packageName
-    }
 
     protected fun bindAction(view: View, visibility: Int, iconId: Int, description: String?) {
         if (isUseMaterial3FlagEnabled()) {
