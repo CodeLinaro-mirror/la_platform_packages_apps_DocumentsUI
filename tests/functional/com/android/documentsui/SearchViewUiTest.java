@@ -405,7 +405,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
 
-        // Verify that that the location shows the name of the new root.
+        // Verify that the location shows the name of the new root.
         bots.search
                 .findDropdownTrigger(R.id.search_location_trigger)
                 .check(matches(withText("Paging Root")));
@@ -1056,7 +1056,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testSearchDropdownsHiddenWhenChangingRoot() throws Exception {
         bots.search.doSearch(TestFilesRule.FILE_NAME_1);
         // Wait for the search to be triggered and then completed.
-        int delayMs = SearchViewManager.getSearchDebounceDelayMs() + 250;
+        int delayMs = SearchViewManager.SEARCH_DELAY_MS + 250;
         SystemClock.sleep(delayMs);
         // Select the first item. We are guaranteed to have at least one of them due to using
         // a name of a known, existing file.

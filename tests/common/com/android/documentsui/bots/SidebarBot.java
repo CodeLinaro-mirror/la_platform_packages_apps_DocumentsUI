@@ -75,7 +75,7 @@ public class SidebarBot extends Bots.BaseBot {
             UiDevice device,
             UiAutomation automation,
             Context context,
-            int timeout,
+            long timeout,
             @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mAutomation = automation;

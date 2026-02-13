@@ -61,7 +61,7 @@ import javax.annotation.Nullable;
  */
 public abstract class ActivityTest<T extends Activity> extends ActivityInstrumentationTestCase2<T> {
 
-    static final int TIMEOUT = 5000;
+    static final long TIMEOUT = 5000L;
     static final int NIGHT_MODE_CHANGE_WAIT_TIME = 1000;
 
     // Testing files. For custom ones, override initTestFiles().

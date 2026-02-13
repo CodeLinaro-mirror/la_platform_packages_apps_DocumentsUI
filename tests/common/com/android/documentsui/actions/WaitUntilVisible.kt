@@ -26,7 +26,7 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
 /**
- * An action that waits until a view becomes visible. Typical use:
+ * An action that waits until a view in the hierarchy becomes visible. Typical use:
  * <pre>
  *  onView(withId(R.id.my_view_id)).perform(WaitUntilVisible(500L))
  * </pre>
@@ -51,9 +51,7 @@ class WaitUntilVisible(private val timeoutMs: Long = 500L) : ViewAction {
 
         throw PerformException.Builder()
             .withActionDescription(description)
-            .withCause(
-                TimeoutException("Waited ${timeoutMs}ms for $view to become visible")
-            )
+            .withCause(TimeoutException("Waited ${timeoutMs}ms for $view to become visible"))
             .withViewDescription(HumanReadables.describe(view))
             .build()
     }

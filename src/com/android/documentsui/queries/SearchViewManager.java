@@ -83,15 +83,7 @@ public class SearchViewManager implements
     private static final String TAG = "SearchManager";
 
     // How long we wait after the user finishes typing before kicking off a search.
-    private static final int SEARCH_DELAY_MS = 750;
-
-    // How long we wait after the user finishes typing before kicking off a search v2.
-    private static final int SEARCH_V2_DELAY_MS = 350;
-
-    /** Returns the current debounce delay in ms, based on the flag settings. */
-    public static int getSearchDebounceDelayMs() {
-        return isSearchV2Enabled() ? SEARCH_V2_DELAY_MS : SEARCH_DELAY_MS;
-    }
+    public static final int SEARCH_DELAY_MS = 750;
 
     private final SearchManagerListener mListener;
     private final EventHandler<String> mCommandProcessor;
@@ -121,7 +113,6 @@ public class SearchViewManager implements
     private @Nullable MenuItem mDockedSearch;
     private @Nullable EditText mDockedSearchEditText;
     private @Nullable FragmentManager mFragmentManager;
-    private @Nullable RootInfo mCurrentRoot;
 
     public SearchViewManager(
             SearchManagerListener listener,
@@ -153,7 +144,6 @@ public class SearchViewManager implements
         mUiHandler = handler;
         mChipViewManager = chipViewManager;
         mChipViewManager.setSearchChipViewManagerListener(this::onChipCheckedStateChanged);
-        mCurrentRoot = null;
         if (!isSearchV2Enabled()) {
             mSearchOptionsController = null;
         } else {
@@ -386,8 +376,7 @@ public class SearchViewManager implements
             if (mCurrentSearch != null) {
                 mDockedSearchEditText.setText(mCurrentSearch);
             } else {
-                mDockedSearchEditText.setText("");
-                mDockedSearchEditText.clearFocus();
+                closeDockedSearch();
             }
         } else {
             if (mMenuItem == null || mSearchView == null) {
@@ -467,6 +456,17 @@ public class SearchViewManager implements
     }
 
     /**
+     * "Closes" docked search. Since the docked search cannot be hidden, all this method does is to
+     * set the text to empty string and transfers focus.
+     */
+    private void closeDockedSearch() {
+        if (isSearchV2Enabled() && mDockedSearchEditText != null) {
+            mDockedSearchEditText.setText("");
+            mDockedSearchEditText.clearFocus();
+        }
+    }
+
+    /**
      * Cancels current search operation. Triggers clearing and collapsing the SearchView.
      *
      * @return True if it cancels search. False if it does not operate search currently.
@@ -475,6 +475,7 @@ public class SearchViewManager implements
         if (isSearchV2Enabled()) {
             // Show the chips again, once the search has been canceled.
             useSearchOptions(SearchOptionsControls.CHIPS);
+            closeDockedSearch();
         }
 
         if ((isExpanded() || isSearching())) {
@@ -571,7 +572,6 @@ public class SearchViewManager implements
      */
     public void setCurrentRoot(RootInfo root) {
         if (isSearchV2Enabled()) {
-            mCurrentRoot = root;
             if (mSearchOptionsController != null) {
                 mLocationOption = mSearchOptionsController.setRoot(root);
             }
@@ -766,7 +766,7 @@ public class SearchViewManager implements
                 useSearchOptions(SearchOptionsControls.DROPDOWNS);
             }
         }
-        //Skip first search when search expanded
+        // Skip first search when search expanded
         if (mCurrentSearch == null && newText.isEmpty()) {
             return true;
         }
@@ -791,7 +791,7 @@ public class SearchViewManager implements
             mQueuedSearchTask = createSearchTask(newText);
 
             // TODO(b/471061093): Can be simplified by using postDelayed rather than a timer.
-            mTimer.schedule(mQueuedSearchTask, getSearchDebounceDelayMs());
+            mTimer.schedule(mQueuedSearchTask, SEARCH_DELAY_MS);
         }
     }
 
@@ -826,12 +826,13 @@ public class SearchViewManager implements
      * @return  Current string on search view
      */
     public String getSearchViewText() {
+        CharSequence text = null;
         if (!mShowDockedSearch && mSearchView != null) {
-            return mSearchView.getQuery().toString();
+            text = mSearchView.getQuery();
         } else if (mShowDockedSearch && mDockedSearchEditText != null) {
-            return mDockedSearchEditText.getText().toString();
+            text = mDockedSearchEditText.getText();
         }
-        return null;
+        return text == null ? null : text.toString();
     }
 
     /**
