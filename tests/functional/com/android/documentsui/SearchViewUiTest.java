@@ -143,6 +143,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @HugeLongTest
     public void testSearchIconHidden() throws Exception {
         switchRoot(ROOT_1_ID);
+        device.waitForIdle();
+
+        // Confirm expected directory has loaded
+        assertDefaultContentOfTestDir1();
         bots.search.assertIsVisible(false);
     }
 
