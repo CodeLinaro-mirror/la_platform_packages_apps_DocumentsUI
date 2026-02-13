@@ -25,4 +25,11 @@ import com.android.documentsui.base.UserId
 abstract class SortableItem(layoutId: Int, val title: String?, stringId: String?, userId: UserId?) :
     Item(layoutId, stringId, userId) {
     abstract val packageName: String
+    abstract val itemType: Int
+
+    companion object {
+        const val BASE_SIDEBAR_ENTRY_ITEM = 1
+        const val APP_ITEM = 2
+        const val TYPE_UNKNOWN = 3
+    }
 }

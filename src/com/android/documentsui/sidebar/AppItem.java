@@ -140,4 +140,9 @@ public class AppItem extends SortableItem {
                 + ", resolveInfo=" + info
                 + "}";
     }
+
+    @Override
+    public int getItemType() {
+        return APP_ITEM;
+    }
 }

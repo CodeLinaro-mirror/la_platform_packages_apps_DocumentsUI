@@ -47,6 +47,8 @@ abstract class BaseSidebarEntryItem(
 ) : SortableItem(layoutId, title, stringId, userId) {
     var docInfo: DocumentInfo? = null
     abstract val itemInfo: SidebarEntryItemInfo
+    override val itemType: Int
+        get() = BASE_SIDEBAR_ENTRY_ITEM
 
     protected fun bindAction(view: View, visibility: Int, iconId: Int, description: String?) {
         if (isUseMaterial3FlagEnabled()) {

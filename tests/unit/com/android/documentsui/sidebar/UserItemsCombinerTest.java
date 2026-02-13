@@ -552,5 +552,10 @@ public class UserItemsCombinerTest {
         public String getPackageName() {
             return "";
         }
+
+        @Override
+        public int getItemType() {
+            return TYPE_UNKNOWN;
+        }
     }
 }

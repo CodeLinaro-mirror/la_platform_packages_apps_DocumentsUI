@@ -673,7 +673,24 @@ public class RootsFragment extends Fragment {
                         context, state, rootListAllUsers, userIds, userManagerState) :
                         getPresentableListPrivateSpaceDisabled(context, state, rootList,
                                 rootListOtherUser);
-        addListToResult(result, presentableList);
+
+        if (isHomeScreenFilesFlagEnabled()) {
+            List<Item> presentableListWithDivider = new ArrayList<>();
+            boolean hasBaseSidebarItems = false;
+            for (Item item : presentableList) {
+                if (item instanceof BaseSidebarEntryItem) {
+                    hasBaseSidebarItems = true;
+                }
+                if (hasBaseSidebarItems && item instanceof AppItem) {
+                    presentableListWithDivider.add(new SpacerItem());
+                    hasBaseSidebarItems = false;
+                }
+                presentableListWithDivider.add(item);
+            }
+            addListToResult(result, presentableListWithDivider);
+        } else {
+            addListToResult(result, presentableList);
+        }
         addListToResult(result, trashItems);
         return result;
     }
@@ -839,20 +856,24 @@ public class RootsFragment extends Fragment {
 
         final String preferredRootPackage =
                 getResources().getString(getRes(R.string.preferred_root_package), "");
-        final ItemComparator comp = new ItemComparator(preferredRootPackage);
+        Comparator<SortableItem> comp;
+        if (isHomeScreenFilesFlagEnabled()) {
+            comp = new SortableItemComparator();
+        } else {
+            comp = new ItemComparator(preferredRootPackage);
+        }
 
         if (state.configStore.isPrivateSpaceInDocsUIEnabled()) {
             addToApplicationItemListPrivateSpaceEnabled(userIds, rootListAllUsers, comp, state);
         } else {
             addToApplicationItemListPrivateSpaceDisabled(rootList, rootListOtherUser, comp, state);
         }
-
     }
 
     private void addToApplicationItemListPrivateSpaceEnabled(
             List<UserId> userIds,
             List<List<SortableItem>> rootListAllUsers,
-            ItemComparator comp,
+            Comparator<SortableItem> comp,
             State state) {
         for (int i = 0; i < userIds.size(); ++i) {
             rootListAllUsers.get(i).sort(comp);
@@ -867,7 +888,7 @@ public class RootsFragment extends Fragment {
     private void addToApplicationItemListPrivateSpaceDisabled(
             List<SortableItem> rootList,
             List<SortableItem> rootListOtherUser,
-            ItemComparator comp,
+            Comparator<SortableItem> comp,
             State state) {
         rootList.sort(comp);
         rootListOtherUser.sort(comp);
@@ -1092,6 +1113,26 @@ public class RootsFragment extends Fragment {
         @Override
         public int compare(BaseSidebarEntryItem lhs, BaseSidebarEntryItem rhs) {
             return lhs.getItemInfo().compareTo(rhs.getItemInfo());
+        }
+    }
+
+    /**
+     * The comparator of {@link SortableItem} which compares the list of other document providers
+     * and apps (e.g. cloud providers and apps like the photopicker). {@link BaseSidebarEntryItem}
+     * has priority over {@link AppItem}. If the two items are of the same type, compare by title.
+     */
+    @VisibleForTesting
+    static class SortableItemComparator implements Comparator<SortableItem> {
+        @Override
+        public int compare(SortableItem lhs, SortableItem rhs) {
+            // AppItems have less priority over BaseSidebarEntryItems.
+            int score = lhs.getItemType() - rhs.getItemType();
+            if (score != 0) {
+                return score;
+            }
+
+            // Sort by title.
+            return compareToIgnoreCaseNullable(lhs.getTitle(), rhs.getTitle());
         }
     }
 
