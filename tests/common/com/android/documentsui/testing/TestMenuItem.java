@@ -19,6 +19,7 @@ package com.android.documentsui.testing;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Intent;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -40,11 +41,14 @@ public abstract class TestMenuItem implements MenuItem {
     View actionView;
     @StringRes int title;
     CharSequence titleCharSequence;
+    Intent mIntent;
+    int itemId;
 
     public static TestMenuItem create(int id) {
         final TestMenuItem mockMenuItem = Mockito.mock(TestMenuItem.class,
                 Mockito.withSettings().defaultAnswer(Mockito.CALLS_REAL_METHODS));
 
+        mockMenuItem.itemId = id;
         // By default all menu items are enabled and visible.
         mockMenuItem.enabled = true;
         mockMenuItem.visible = true;
@@ -100,6 +104,22 @@ public abstract class TestMenuItem implements MenuItem {
     @Override
     final public View getActionView() {
         return this.actionView;
+    }
+
+    @Override
+    public MenuItem setIntent(Intent intent) {
+        mIntent = intent;
+        return this;
+    }
+
+    @Override
+    public Intent getIntent() {
+        return mIntent;
+    }
+
+    @Override
+    public int getItemId() {
+        return itemId;
     }
 
     public void assertEnabledAndVisible() {
