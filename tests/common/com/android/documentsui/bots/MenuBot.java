@@ -59,7 +59,7 @@ public class MenuBot extends Bots.BaseBot {
 
     private static final String TAG = "MenuBot";
 
-    public MenuBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+    public MenuBot(UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
     }
 

@@ -162,6 +162,42 @@ public class RenameDocumentUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    public void testRenameFile_TrimTrailingSpaces() throws Exception {
+        String nameWithSpace = newName + " ";
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
+
+        clickRename();
+
+        device.waitForIdle();
+        bots.main.setDialogText(nameWithSpace);
+
+        device.waitForIdle();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
+
+        bots.directory.waitForDocument(newName);
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1);
+        bots.directory.assertDocumentsCount(4);
+    }
+
+    @Test
+    public void testRenameFile_ToExistingFileAndTrimTrailingSpaces() throws Exception {
+        String nameWithSpace = TestFilesRule.FILE_NAME_1 + " ";
+        bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1);
+
+        clickRename();
+
+        device.waitForIdle();
+        bots.main.setDialogText(nameWithSpace);
+
+        device.waitForIdle();
+        bots.main.clickDialogOkButton(/* closeSoftKeyboard */ true);
+
+        bots.directory.waitForDocument("file1 (1).log");
+        bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_2);
+        bots.directory.assertDocumentsCount(4);
+    }
+
+    @Test
     public void testRenameDir() throws Exception {
         String oldName = "Dir1";
         String newName = "Dir123";

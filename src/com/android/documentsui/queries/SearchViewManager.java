@@ -20,6 +20,7 @@ import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.State.ACTION_GET_CONTENT;
 import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.base.State.ActionType;
+import static com.android.documentsui.util.FlagUtils.isIncludeRemoteRootsInRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseAllfilesRootForRecentsEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
@@ -112,7 +113,6 @@ public class SearchViewManager implements
     private @Nullable MenuItem mDockedSearch;
     private @Nullable EditText mDockedSearchEditText;
     private @Nullable FragmentManager mFragmentManager;
-    private @Nullable RootInfo mCurrentRoot;
 
     public SearchViewManager(
             SearchManagerListener listener,
@@ -144,7 +144,6 @@ public class SearchViewManager implements
         mUiHandler = handler;
         mChipViewManager = chipViewManager;
         mChipViewManager.setSearchChipViewManagerListener(this::onChipCheckedStateChanged);
-        mCurrentRoot = null;
         if (!isSearchV2Enabled()) {
             mSearchOptionsController = null;
         } else {
@@ -377,8 +376,7 @@ public class SearchViewManager implements
             if (mCurrentSearch != null) {
                 mDockedSearchEditText.setText(mCurrentSearch);
             } else {
-                mDockedSearchEditText.setText("");
-                mDockedSearchEditText.clearFocus();
+                closeDockedSearch();
             }
         } else {
             if (mMenuItem == null || mSearchView == null) {
@@ -458,6 +456,17 @@ public class SearchViewManager implements
     }
 
     /**
+     * "Closes" docked search. Since the docked search cannot be hidden, all this method does is to
+     * set the text to empty string and transfers focus.
+     */
+    private void closeDockedSearch() {
+        if (isSearchV2Enabled() && mDockedSearchEditText != null) {
+            mDockedSearchEditText.setText("");
+            mDockedSearchEditText.clearFocus();
+        }
+    }
+
+    /**
      * Cancels current search operation. Triggers clearing and collapsing the SearchView.
      *
      * @return True if it cancels search. False if it does not operate search currently.
@@ -466,6 +475,7 @@ public class SearchViewManager implements
         if (isSearchV2Enabled()) {
             // Show the chips again, once the search has been canceled.
             useSearchOptions(SearchOptionsControls.CHIPS);
+            closeDockedSearch();
         }
 
         if ((isExpanded() || isSearching())) {
@@ -562,7 +572,6 @@ public class SearchViewManager implements
      */
     public void setCurrentRoot(RootInfo root) {
         if (isSearchV2Enabled()) {
-            mCurrentRoot = root;
             if (mSearchOptionsController != null) {
                 mLocationOption = mSearchOptionsController.setRoot(root);
             }
@@ -757,7 +766,7 @@ public class SearchViewManager implements
                 useSearchOptions(SearchOptionsControls.DROPDOWNS);
             }
         }
-        //Skip first search when search expanded
+        // Skip first search when search expanded
         if (mCurrentSearch == null && newText.isEmpty()) {
             return true;
         }
@@ -817,12 +826,13 @@ public class SearchViewManager implements
      * @return  Current string on search view
      */
     public String getSearchViewText() {
+        CharSequence text = null;
         if (!mShowDockedSearch && mSearchView != null) {
-            return mSearchView.getQuery().toString();
+            text = mSearchView.getQuery();
         } else if (mShowDockedSearch && mDockedSearchEditText != null) {
-            return mDockedSearchEditText.getText().toString();
+            text = mDockedSearchEditText.getText();
         }
-        return null;
+        return text == null ? null : text.toString();
     }
 
     /**
@@ -943,16 +953,25 @@ public class SearchViewManager implements
      */
     private Collection<RootInfo> getRecentRoots(Stream<RootInfo> roots, UserId userId) {
         if (isUseAllfilesRootForRecentsEnabled()) {
-            return roots.filter(r -> r.isLocalOnly()
-                    && r.supportsRecents() && r.userId.equals(userId)
-                    && r.isFiles()).collect(
-                    Collectors.toList());
+            return roots.filter(
+                            r ->
+                                    r.supportsRecents()
+                                            && r.userId.equals(userId)
+                                            && (r.isFiles()
+                                                    || (isIncludeRemoteRootsInRecentsEnabled()
+                                                            && !r.isLocalOnly())))
+                    .collect(Collectors.toList());
         }
 
-        return roots.filter(r -> r.isLocalOnly()
-                && r.supportsRecents() && r.userId.equals(userId)
-                && !r.isExternalStorage() && !r.isFiles()).collect(
-                Collectors.toList());
+        return roots.filter(
+                        r ->
+                                r.supportsRecents()
+                                        && r.userId.equals(userId)
+                                        && !r.isExternalStorage()
+                                        && !r.isFiles()
+                                        && (r.isLocalOnly()
+                                                || isIncludeRemoteRootsInRecentsEnabled()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -987,8 +1006,11 @@ public class SearchViewManager implements
             // If we don't know where to search, search nowhere.
             return Collections.emptyList();
         }
-        Stream<RootInfo> core = roots.stream().filter(
-                r -> r.rootId != null && r.authority != null && r.supportsSearch());
+        // TODO(b/483128303) Using r.supportsSearch() artificially constrains the Recent view to
+        // only query DocumentsProviders that also support search.
+        Stream<RootInfo> core =
+                roots.stream()
+                        .filter(r -> r.rootId != null && r.authority != null && r.supportsSearch());
         if (mLocationOption == SearchLocationOption.EVERYWHERE) {
             // If the current location is everywhere get all searchable roots.
             return getAllSearchableRoots(core);

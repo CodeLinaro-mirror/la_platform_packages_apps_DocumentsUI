@@ -146,7 +146,7 @@ public class BreadBot extends Bots.BaseBot {
                 });
     }
 
-    public BreadBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+    public BreadBot(UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mBreadCrumbId = mTargetPackage + ":id/horizontal_breadcrumb";
     }

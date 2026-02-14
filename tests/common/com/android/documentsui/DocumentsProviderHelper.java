@@ -80,6 +80,7 @@ public class DocumentsProviderHelper {
 
     private final UserId mUserId;
     private final String mAuthority;
+    private final Boolean mRootHasLimitedFunctionalityWhenOffline;
     private final ContentProviderClient mClient;
 
     /** A helper constructor for local/internal storage (primary root) with the Download folder. */
@@ -105,11 +106,21 @@ public class DocumentsProviderHelper {
     }
 
     public DocumentsProviderHelper(UserId userId, String authority, Context context, String name) {
+        this(userId, authority, context, name, /* rootHasLimitedFunctionalityWhenOffline= */ false);
+    }
+
+    public DocumentsProviderHelper(
+            UserId userId,
+            String authority,
+            Context context,
+            String name,
+            boolean rootHasLimitedFunctionalityWhenOffline) {
         checkArgument(!TextUtils.isEmpty(authority));
         mUserId = userId;
         mAuthority = authority;
         mClient = userId.getContentResolver(context).acquireContentProviderClient(name);
         assertNotNull(mClient);
+        mRootHasLimitedFunctionalityWhenOffline = rootHasLimitedFunctionalityWhenOffline;
     }
 
     public RootInfo getRoot(String documentId) throws RemoteException {
@@ -368,8 +379,14 @@ public class DocumentsProviderHelper {
             if (cursor == null) {
                 Log.w(TAG, "query() returned null cursor");
             } else {
-                Cursor wrapper = new RootCursorWrapper(mUserId, mAuthority, "totally-fake", cursor,
-                        maxCount);
+                Cursor wrapper =
+                        new RootCursorWrapper(
+                                mUserId,
+                                mAuthority,
+                                "totally-fake",
+                                mRootHasLimitedFunctionalityWhenOffline,
+                                cursor,
+                                maxCount);
                 while (wrapper.moveToNext()) {
                     children.add(DocumentInfo.fromDirectoryCursor(wrapper));
                 }
@@ -389,7 +406,14 @@ public class DocumentsProviderHelper {
                         null,
                         null,
                         null)) {
-            Cursor wrapper = new RootCursorWrapper(mUserId, mAuthority, root.rootId, cursor, 100);
+            Cursor wrapper =
+                    new RootCursorWrapper(
+                            mUserId,
+                            mAuthority,
+                            root.rootId,
+                            root.hasLimitedFunctionalityWhenOffline(),
+                            cursor,
+                            100);
             while (wrapper.moveToNext()) {
                 children.add(DocumentInfo.fromDirectoryCursor(wrapper));
             }
@@ -509,7 +533,13 @@ public class DocumentsProviderHelper {
                 Log.w(TAG, "query() returned null cursor");
             } else {
                 Cursor wrapper =
-                        new RootCursorWrapper(mUserId, mAuthority, "totally-fake", cursor, -1);
+                        new RootCursorWrapper(
+                                mUserId,
+                                mAuthority,
+                                "totally-fake",
+                                mRootHasLimitedFunctionalityWhenOffline,
+                                cursor,
+                                -1);
                 while (wrapper.moveToNext()) {
                     children.add(DocumentInfo.fromDirectoryCursor(wrapper));
                 }

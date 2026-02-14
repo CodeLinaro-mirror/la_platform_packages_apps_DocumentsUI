@@ -21,8 +21,10 @@ import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract.Document
+import android.provider.DocumentsContract.Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE
 import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.test.filters.SdkSuppress
+import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
@@ -46,12 +48,15 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
     override fun setupTestingRoots() {
         super.setupTestingRoots()
+        val rootHasLimitedFunctionalityWhenOffline: Boolean =
+            (TestCloudProvider.ROOT_FLAGS and FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE) != 0
         cloudProviderDocsHelper =
             DocumentsProviderHelper(
                 userId,
                 TestCloudProvider.AUTHORITY,
                 context,
                 TestCloudProvider.AUTHORITY,
+                rootHasLimitedFunctionalityWhenOffline,
             )
         val cloudRoot = cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID)
         this.initialRoot = cloudRoot
@@ -66,8 +71,6 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         }
     }
 
-    // ----- Banner tests -----
-
     @Test
     fun testBanner_isShownWhenOffline() {
         setIsOnline(true)
@@ -78,8 +81,6 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         bots.main.assertOfflineBannerIsVisible()
     }
-
-    // ----- Inline sync state icon tests -----
 
     @Test
     fun testNullSyncState_noIcons() {
@@ -539,7 +540,6 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         )
     }
 
-    // ----- Menu tests -----
     @Test
     fun testCxtMenu_availableLocallyState_contentRequiredActionsEnabledOffline() {
         setIsOnline(true)
@@ -842,6 +842,101 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         bots.main.openOverflowMenu()
         bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredListActionMenuItems)
+    }
+
+    @Test
+    fun testSearchLocally_noAvailableLocallyState() {
+        setIsOnline(true)
+
+        // No sync state flags are set.
+        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
+
+        // Search for the file.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+
+        // A download icon should be shown when online.
+        bots.directory.assertObjectsEventuallyAppearOnDocument(
+            TestCloudProvider.DISPLAY_NAME_0,
+            R.id.download_icon,
+        )
+
+        // TODO(b/482847637): After this bug is fixed, there will be no need to exit from the
+        // search.
+        // Exit the search.
+        bots.search.closeSearch()
+
+        setIsOnline(false)
+
+        // TODO(b/482847637): After this bug is fixed, there will be no need to reopen the search.
+        // Reopen the search.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+
+        // The document should still be disabled and no icons should be shown.
+        bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
+        bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
+
+        // Open the context menu.
+        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+
+        // Check that the items that require content are visible but are disabled offline.
+        val contentRequiredContextMenuItems =
+            intArrayOf(
+                R.string.menu_open_with,
+                R.string.menu_share,
+                R.string.menu_copy_to_clipboard,
+            )
+        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+    }
+
+    @Test
+    fun testSearchEverywhere_noAvailableLocallyState() {
+        setIsOnline(true)
+
+        // Open a root that does not have the file we are searching for.
+        openRoot(context!!, "Paging Root", activityLayoutId)
+
+        // No sync state flags are set.
+        cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
+
+        // Search for the file.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger)
+
+        // Click Everywhere, to search everywhere.
+        bots.search.clickMenuItem(R.string.search_location_everywhere)
+
+        // A download icon should be shown when online.
+        bots.directory.assertObjectsEventuallyAppearOnDocument(
+            TestCloudProvider.DISPLAY_NAME_0,
+            R.id.download_icon,
+        )
+
+        // TODO(b/482847637): After this bug is fixed, there will be no need to exit from the
+        // search.
+        // Exit the search.
+        bots.search.closeSearch()
+
+        setIsOnline(false)
+
+        // TODO(b/482847637): After this bug is fixed, there will be no need to reopen the search.
+        // Reopen the search.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+
+        // The document should still be disabled and no icons should be shown.
+        bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
+        bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
+
+        // Open the context menu.
+        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+
+        // Check that the items that require content are visible but are disabled offline.
+        val contentRequiredContextMenuItems =
+            intArrayOf(
+                R.string.menu_open_with,
+                R.string.menu_share,
+                R.string.menu_copy_to_clipboard,
+            )
+        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
     }
 
     companion object {

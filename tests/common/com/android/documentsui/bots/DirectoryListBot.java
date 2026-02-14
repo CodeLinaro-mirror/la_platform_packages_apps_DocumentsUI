@@ -142,7 +142,7 @@ public class DirectoryListBot extends Bots.BaseBot {
             UiDevice device,
             UiAutomation automation,
             Context context,
-            int timeout,
+            long timeout,
             @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mAutomation = automation;
@@ -260,8 +260,8 @@ public class DirectoryListBot extends Bots.BaseBot {
      */
     public void assertObjectsEventuallyAppearOnDocument(
             String label, @IdRes int... objectResourceIds) throws AssertionFailedError {
-        // Find document first.
-        EspressoBotsKt.findDocument(label, mTimeout);
+        // Wait for the document to exist first.
+        EspressoBotsKt.waitForDocument(label, mTimeout);
         for (int id : objectResourceIds) {
             // Check each object appears on the document.
             onView(allOf(withId(id), isDescendantOfA(EspressoBotsKt.documentMatcher(label))))
@@ -279,8 +279,8 @@ public class DirectoryListBot extends Bots.BaseBot {
      */
     public void assertObjectsEventuallyHiddenOnDocument(
             String label, @IdRes int... objectResourceIds) {
-        // Find document first.
-        EspressoBotsKt.findDocument(label, mTimeout);
+        // Find document to exist first.
+        EspressoBotsKt.waitForDocument(label, mTimeout);
         for (int id : objectResourceIds) {
             // Check each object disappears from the document.
             onView(allOf(withId(id), isDescendantOfA(EspressoBotsKt.documentMatcher(label))))
@@ -305,14 +305,16 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Asserts that the document with the given label is disabled. */
     public void assertDocumentDisabled(String label) throws AssertionFailedError {
-        // The TextView within the DocumentHolder will share the same enabled state.
-        onView(withText(label)).check(matches(isNotEnabled()));
+        // Wait for the document to exist first.
+        EspressoBotsKt.waitForDocument(label, mTimeout);
+        onView(EspressoBotsKt.documentMatcher(label)).check(matches(isNotEnabled()));
     }
 
     /** Asserts that the document with the given label is enabled. */
     public void assertDocumentEnabled(String label) throws AssertionFailedError {
-        // The TextView within the DocumentHolder will share the same enabled state.
-        onView(withText(label)).check(matches(isEnabled()));
+        // Wait for the document to exist first.
+        EspressoBotsKt.waitForDocument(label, mTimeout);
+        onView(EspressoBotsKt.documentMatcher(label)).check(matches(isEnabled()));
     }
 
     public void assertDocumentsCountOnList(boolean exists, int count)
@@ -634,14 +636,14 @@ public class DirectoryListBot extends Bots.BaseBot {
     }
 
     public void assertOrder(String[] dirs, String[] files) throws UiObjectNotFoundException {
-        int remaining = mTimeout;
+        long remaining = mTimeout;
         if (remaining < 0) {
             remaining = 0;
         }
         // 1048576 is (1 << 20), a power of two close to one million. The value is basically
         // arbitrary. We just want our sleeps to start as a small fraction of the default timeout,
         // but double in length each iteration.
-        int retryTimeout = remaining / 1048576;
+        long retryTimeout = remaining / 1048576;
         if ((retryTimeout < 1) && (remaining != 0)) {
             retryTimeout = 1;
         }

@@ -32,23 +32,27 @@ import org.junit.runner.RunWith
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 class ThemeUtilsTest {
-    @get:Rule
-    val setFlags = OverrideFlagsRule()
+    @get:Rule val setFlags = OverrideFlagsRule()
 
     @Before
     fun setUp() {
-        Material3Config.overrideMappingForTest(mapOf(R.id.option_menu_debug to 111))
+        Material3Config.overrideMappingForTest(
+            mapOf(
+                R.id.option_menu_debug to 111,
+                R.string.file_operation_rejected to R.string.file_operation_rejected_m3,
+            )
+        )
     }
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
-    fun testMappingResourceId() {
+    fun testGetRes_forOptionMenuDebug_returnsM3Id() {
         assertEquals(111, Material3Config.getRes(R.id.option_menu_debug))
     }
 
     @Test
     @DisableFlags(FLAG_USE_MATERIAL3)
-    fun testMappingResourceIdDisabled() {
+    fun testGetRes_forOptionMenuDebug_returnsOriginalId() {
         assertEquals(R.id.option_menu_debug, Material3Config.getRes(R.id.option_menu_debug))
     }
 
@@ -60,5 +64,16 @@ class ThemeUtilsTest {
 
         // Verify that the original resource ID is returned when no mapping is found.
         assertEquals(unmappedResourceId, Material3Config.getRes(unmappedResourceId))
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testGetRes_forFileOperationRejected_returnsM3String() {
+        // Verifies that the resource ID for file_operation_rejected string is correctly
+        // mapped to its Material3 version.
+        assertEquals(
+            R.string.file_operation_rejected_m3,
+            Material3Config.getRes(R.string.file_operation_rejected),
+        )
     }
 }

@@ -33,7 +33,7 @@ import androidx.test.uiautomator.UiDevice;
 public class KeyboardBot extends Bots.BaseBot {
 
     public KeyboardBot(
-            UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+            UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
     }
 

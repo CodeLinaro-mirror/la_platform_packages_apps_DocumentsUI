@@ -54,7 +54,7 @@ public class GestureBot extends Bots.BaseBot {
             UiDevice device,
             UiAutomation automation,
             Context context,
-            int timeout,
+            long timeout,
             @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mDirContainerId = mTargetPackage + ":id/container_directory";
