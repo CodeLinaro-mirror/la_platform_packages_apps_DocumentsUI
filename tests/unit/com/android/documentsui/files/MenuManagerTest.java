@@ -31,6 +31,8 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -192,6 +194,7 @@ public final class MenuManagerTest {
     private ResolveInfo resolveInfo = new ResolveInfo();
     private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
+    private TestActionHandler mActionHandler;
 
     private int mFilesCount;
 
@@ -313,7 +316,8 @@ public final class MenuManagerTest {
 
         activity.resources = testResources;
         activity.packageMgr = mPackageManager;
-        ((Injector) activity.injector).actions = new TestActionHandler();
+        mActionHandler = new TestActionHandler();
+        ((Injector) activity.injector).actions = mActionHandler;
 
         mApprovedDocHandlers = new ApprovedDocHandlers(
                 activity, UserId.DEFAULT_USER, activity.injector);
@@ -366,6 +370,16 @@ public final class MenuManagerTest {
     private boolean shouldShowCopyCutMenus() {
         return isDesktopUxPhase2FlagEnabled()
                 && !(activity.getResources().getBoolean(R.bool.show_copy_to_move_to_menus));
+    }
+
+    private TestMenuItem findItemByTitle(TestMenu menu, String title) {
+        for (int i = 0; i < menu.size(); i++) {
+            TestMenuItem item = menu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals(title)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @Test
@@ -1890,15 +1904,9 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is enabled and visible.
-        boolean found = false;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                found = true;
-                item.assertEnabledAndVisible();
-            }
-        }
-        assertTrue("Approved document handler menu item not found.", found);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item not found.", item);
+        item.assertEnabledAndVisible();
     }
 
     @Test
@@ -1912,14 +1920,8 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is not added.
-        boolean found = false;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                found = true;
-            }
-        }
-        assertFalse("Approved document handler menu item should not be added.", found);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should not be added.", item);
     }
 
     @Test
@@ -1933,15 +1935,47 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is enabled and visible.
-        boolean found = false;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                found = true;
-                item.assertEnabledAndVisible();
-            }
-        }
-        assertTrue("Approved document handler menu item not found.", found);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item not found.", item);
+        item.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_removesApprovedDocumentHandler_whenNoFileSelected() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item should be added.", item);
+
+        mActionHandler.returnNullApprovedHandlerIntent = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is removed.
+        item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should be removed.", item);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_removesApprovedDocumentHandler_whenNoFileSelected() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item should be added.", item);
+
+        mActionHandler.returnNullApprovedHandlerIntent = true;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should be removed.", item);
     }
 
     @Test
@@ -1955,13 +1989,7 @@ public final class MenuManagerTest {
         mgr.updateActionMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is not added.
-        boolean found = false;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                found = true;
-            }
-        }
-        assertFalse("Approved document handler menu item should not be added.", found);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should not be added.", item);
     }
 }

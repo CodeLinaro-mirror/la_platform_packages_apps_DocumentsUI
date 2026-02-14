@@ -196,7 +196,14 @@ class ApprovedDocHandlers(
             val component = intent.component!!
             val handler = approvedDocHandlersMap.remove(component)
             if (handler != null) {
-                item.intent = injector.actions.createApprovedHandlerIntent(component)
+                val intent = injector.actions.createApprovedHandlerIntent(component)
+                if (intent != null) {
+                    item.intent = intent
+                } else {
+                    // If the intent is null, the handler is not valid.
+                    // This can happen when selection is cleared before the menu is updated.
+                    toRemove.add(item.itemId)
+                }
             } else {
                 toRemove.add(item.itemId)
             }
@@ -208,9 +215,15 @@ class ApprovedDocHandlers(
 
         // Add new handlers. The map now only contains handlers that are not in the menu.
         for (handler in approvedDocHandlersMap.values) {
+            val intent = injector.actions.createApprovedHandlerIntent(handler.componentName)
+            if (intent == null) {
+                // If the intent is null, the handler is not valid.
+                // This can happen when selection is cleared before the menu is updated.
+                continue
+            }
             // TODO(b/465299476): Truncate the label if it is too long.
             val item = menu.add(Menu.NONE, View.generateViewId(), Menu.NONE, handler.label)
-            item.intent = injector.actions.createApprovedHandlerIntent(handler.componentName)
+            item.intent = intent
             if (handler.isButton && handler.icon != null) {
                 item.icon = handler.icon
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
