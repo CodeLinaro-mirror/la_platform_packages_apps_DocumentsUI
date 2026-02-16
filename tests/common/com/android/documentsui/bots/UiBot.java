@@ -217,8 +217,7 @@ public class UiBot extends Bots.BaseBot {
     }
 
     public void setDialogText(String text) throws UiObjectNotFoundException {
-        onView(TEXT_ENTRY)
-                .perform(ViewActions.replaceText(text));
+        onView(TEXT_ENTRY).check(matches(isDisplayed())).perform(ViewActions.replaceText(text));
     }
 
     public void assertDialogText(String expected) throws UiObjectNotFoundException {
