@@ -55,6 +55,7 @@ import android.view.DragEvent;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
@@ -95,7 +96,7 @@ import com.android.documentsui.loaders.FolderLoader;
 import com.android.documentsui.loaders.LoaderIds;
 import com.android.documentsui.loaders.QueryOptions;
 import com.android.documentsui.loaders.SearchLoader;
-import com.android.documentsui.loaders.SummaryLoader;
+import com.android.documentsui.loaders.SummariesViewModel;
 import com.android.documentsui.loaders.TrashFileLoader;
 import com.android.documentsui.peek.PeekViewManager;
 import com.android.documentsui.queries.SearchViewManager;
@@ -112,8 +113,6 @@ import com.android.documentsui.sorting.SortListFragment;
 import com.android.documentsui.ui.DialogController;
 import com.android.documentsui.ui.Snackbars;
 import com.android.documentsui.util.FlagUtils;
-
-import kotlin.Unit;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -158,6 +157,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     protected final DialogController mDialogs;
     protected final Model mModel;
     protected final Injector<?> mInjector;
+    protected @Nullable SummariesViewModel mSummariesViewModel;
     protected final ActionModeAddons mActionModeAddons;
     protected final Runnable mCloseSelectionBar;
     protected final ClipStore mClipStore;
@@ -248,6 +248,13 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         mBindings = new LoaderBindings();
         mShowLoadingRunnable = () -> mModel.setLoading(true);
+    }
+
+    @Override
+    public void bindSummariesViewModel(
+            LifecycleOwner owner, SummariesViewModel summariesViewModel) {
+        mSummariesViewModel = summariesViewModel;
+        mSummariesViewModel.getSummariesLiveData().observe(owner, this::onSummariesLoaded);
     }
 
     @Override
@@ -1614,7 +1621,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         }
 
         private void startLoadingSummaries(DirectoryResult result) {
-            if (!FlagUtils.isUseFileSummaryEnabled()) {
+            if (!FlagUtils.isUseFileSummaryEnabled() || mSummariesViewModel == null) {
                 return;
             }
             final SummaryProviderManager summaryProviderManager =
@@ -1644,28 +1651,17 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                 return;
             }
 
-            mActivity
-                    .getSupportLoaderManager()
-                    .restartLoader(
-                            LoaderIds.SUMMARY,
-                            null,
-                            SummaryLoader.createCallback(
-                                    mActivity,
-                                    summaryProviderAuthority,
-                                    documentInfo,
-                                    documentIds,
-                                    result.getQueryOptions(),
-                                    result.getQuery(),
-                                    summaries -> {
-                                        onSummariesLoaded(summaries);
-                                        return Unit.INSTANCE;
-                                    }));
+            mSummariesViewModel.update(
+                    summaryProviderAuthority,
+                    documentInfo,
+                    documentIds,
+                    result.getQueryOptions(),
+                    result.getQuery());
         }
+    }
 
-        private void onSummariesLoaded(@NonNull Map<String, String> summaries) {
-            mInjector.getModel().updateSummaries(summaries);
-            mActivity.getSupportLoaderManager().destroyLoader(LoaderIds.SUMMARY);
-        }
+    protected void onSummariesLoaded(@NonNull Map<String, String> summaries) {
+        mModel.updateSummaries(summaries);
     }
 
     /**

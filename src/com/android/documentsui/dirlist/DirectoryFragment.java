@@ -93,6 +93,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.MutableSelection;
@@ -144,6 +145,7 @@ import com.android.documentsui.clipping.DocumentClipper;
 import com.android.documentsui.clipping.UrisSupplier;
 import com.android.documentsui.dirlist.AnimationView.AnimationType;
 import com.android.documentsui.dirlist.AnimationView.OnSizeChangedListener;
+import com.android.documentsui.loaders.SummariesViewModel;
 import com.android.documentsui.picker.PickActivity;
 import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
@@ -717,6 +719,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mFocusManager = mInjector.getFocusManager(mRecView, mModel);
         mActions = mInjector.getActionHandler(mContentLock);
+
+        if (isUseFileSummaryEnabled()) {
+            mActions.bindSummariesViewModel(this, createSummariesViewModel());
+        }
 
         mRecView.setAccessibilityDelegateCompat(
                 new AccessibilityEventRouter(mRecView,
@@ -2073,6 +2079,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         mActions.loadDocumentsForCurrentStack();
                     }
                 });
+    }
+
+    protected SummariesViewModel createSummariesViewModel() {
+        return new ViewModelProvider(
+                        this,
+                        new SummariesViewModel.Factory(getBaseActivity().getContentResolver()))
+                .get(SummariesViewModel.class);
     }
 
     private final class ModelUpdateListener implements EventListener<Model.Update> {
