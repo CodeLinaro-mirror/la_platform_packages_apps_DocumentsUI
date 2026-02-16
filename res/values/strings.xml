@@ -333,8 +333,12 @@
     <!-- Toast shown when a file operation is not allowed for a system-defined shortcut. -->
     <string name="toast_op_not_allowed_for_shortcuts">Action not allowed</string>
 
-    <string name="no_application_dialog_title">Open with\u2026</string>
+    <!-- Title of the dialog that shows when user tries to open a file but there are no supported apps installed. -->
+    <string name="no_application_dialog_title">No app found</string>
+    <!-- Body of the dialog that shows when user tries to open a file but there are no supported apps installed. -->
     <string name="no_application_dialog_message">There are no supported apps installed. Try installing one from the Play Store.</string>
+    <!-- Action button that opens the Play Store with a pre-filled search. This button is in a dialog
+         that shows when user tries to open a file but there are no supported apps installed. -->
     <string name="no_application_dialog_button">Search Play Store</string>
 
     <!-- Title of dialog when prompting user to select an app to share documents with [CHAR LIMIT=32] -->
