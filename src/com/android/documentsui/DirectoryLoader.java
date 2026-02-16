@@ -240,8 +240,14 @@ public class DirectoryLoader extends AsyncTaskLoader<DirectoryResult> {
                                  userId.getContentResolver(getContext()), authority)) {
                 Cursor c = userClient.query(mUri, /* projection= */null, queryArgs, mSignal);
                 if (c != null) {
-                    cursors.add(new RootCursorWrapper(userId, mUri.getAuthority(), mRoot.rootId,
-                            c, /* maxCount= */-1));
+                    cursors.add(
+                            new RootCursorWrapper(
+                                    userId,
+                                    mUri.getAuthority(),
+                                    mRoot.rootId,
+                                    mRoot.hasLimitedFunctionalityWhenOffline(),
+                                    /* cursor= */ c,
+                                    /* maxCount= */ -1));
                 }
             } catch (RemoteException e) {
                 Log.d(TAG, "Failed to query for user " + userId, e);

@@ -39,7 +39,7 @@ import java.util.Map;
 public class InspectorBot extends Bots.BaseBot {
 
     public InspectorBot(
-            UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+            UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
     }
 

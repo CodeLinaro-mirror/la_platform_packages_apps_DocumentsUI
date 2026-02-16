@@ -479,8 +479,31 @@ public class StubProvider extends DocumentsProvider {
         File before = oldDoc.file;
         File after = new File(before.getParentFile(), displayName);
 
-        if (after.exists()) {
-            throw new IllegalStateException("Already exists " + after);
+        // If the file already exists after truncating the trailing spaces, then we append "(n)" to
+        // the filename where "n" is the next available number at which the filename doesn't exist.
+        int n = 1;
+        while (after.exists() && !after.equals(before)) {
+            String name;
+            String extension;
+            if (before.isDirectory()) {
+                name = displayName;
+                extension = "";
+            } else {
+                int dotIndex = displayName.lastIndexOf('.');
+                if (dotIndex >= 0) {
+                    name = displayName.substring(0, dotIndex);
+                    extension = displayName.substring(dotIndex);
+                } else {
+                    name = displayName;
+                    extension = "";
+                }
+            }
+            after = new File(before.getParentFile(), name + " (" + n + ")" + extension);
+            n++;
+        }
+
+        if (after.equals(before)) {
+            return null;
         }
 
         boolean result = before.renameTo(after);

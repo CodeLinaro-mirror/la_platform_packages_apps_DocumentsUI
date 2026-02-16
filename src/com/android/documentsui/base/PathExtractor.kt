@@ -67,8 +67,6 @@ open class PathExtractor(
         } catch (e: UnsupportedOperationException) {
             Log.w(TAG, "$uri does not support path extraction: $e")
             return approximateDocumentStack(rootInfo, docInfo)
-        } catch (e: Exception) {
-            throw e
         }
     }
 

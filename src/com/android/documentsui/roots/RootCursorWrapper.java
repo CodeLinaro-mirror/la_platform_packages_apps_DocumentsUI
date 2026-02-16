@@ -33,6 +33,7 @@ public class RootCursorWrapper extends AbstractCursor {
     private final UserId mUserId;
     private final String mAuthority;
     private final String mRootId;
+    private final boolean mHasLimitedFunctionalityWhenOffline;
 
     private final Cursor mCursor;
     private final int mCount;
@@ -42,17 +43,26 @@ public class RootCursorWrapper extends AbstractCursor {
     private final int mAuthorityIndex;
     private final int mRootIdIndex;
     private final int mUserIdIndex;
+    private final int mLimitedFunctionalityWhenOfflineIndex;
 
     public static final String COLUMN_USER_ID = "android:userId";
     public static final String COLUMN_AUTHORITY = "android:authority";
     public static final String COLUMN_ROOT_ID = "android:rootId";
+    public static final String COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE =
+            "android:limitedFunctionalityWhenOffline";
     private static final String TAG = "RootCursorWrapper";
 
-    public RootCursorWrapper(UserId userId, String authority, String rootId, Cursor cursor,
+    public RootCursorWrapper(
+            UserId userId,
+            String authority,
+            String rootId,
+            boolean hasLimitedFunctionalityWhenOffline,
+            Cursor cursor,
             int maxCount) {
         mUserId = userId;
         mAuthority = authority;
         mRootId = rootId;
+        mHasLimitedFunctionalityWhenOffline = hasLimitedFunctionalityWhenOffline;
         mCursor = cursor;
 
         final int count = cursor.getCount();
@@ -64,20 +74,24 @@ public class RootCursorWrapper extends AbstractCursor {
 
         if (cursor.getColumnIndex(COLUMN_USER_ID) != -1
                 || cursor.getColumnIndex(COLUMN_AUTHORITY) != -1
-                || cursor.getColumnIndex(COLUMN_ROOT_ID) != -1) {
+                || cursor.getColumnIndex(COLUMN_ROOT_ID) != -1
+                || cursor.getColumnIndex(COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE) != -1) {
             throw new IllegalArgumentException("Cursor contains internal columns!");
         }
         final String[] before = cursor.getColumnNames();
         // Create a new columnNames and copy the existing one to it.
         // Add the internal column names to the end of the array.
-        mColumnNames = new String[before.length + 3];
+        mColumnNames = new String[before.length + 4];
         System.arraycopy(before, 0, mColumnNames, 0, before.length);
         mAuthorityIndex = before.length;
         mRootIdIndex = before.length + 1;
         mUserIdIndex = before.length + 2;
+        mLimitedFunctionalityWhenOfflineIndex = before.length + 3;
         mColumnNames[mAuthorityIndex] = COLUMN_AUTHORITY;
         mColumnNames[mRootIdIndex] = COLUMN_ROOT_ID;
         mColumnNames[mUserIdIndex] = COLUMN_USER_ID;
+        mColumnNames[mLimitedFunctionalityWhenOfflineIndex] =
+                COLUMN_LIMITED_FUNCTIONALITY_WHEN_OFFLINE;
     }
 
     @Override
@@ -132,6 +146,8 @@ public class RootCursorWrapper extends AbstractCursor {
     public int getInt(int column) {
         if (column == mUserIdIndex) {
             return mUserId.getIdentifier();
+        } else if (column == mLimitedFunctionalityWhenOfflineIndex) {
+            return mHasLimitedFunctionalityWhenOffline ? 1 : 0;
         } else {
             return mCursor.getInt(column);
         }
@@ -160,12 +176,21 @@ public class RootCursorWrapper extends AbstractCursor {
 
     @Override
     public int getType(int column) {
+        // These columns are added by this class, return the type manually.
+        if (column == mUserIdIndex || column == mLimitedFunctionalityWhenOfflineIndex) {
+            return FIELD_TYPE_INTEGER;
+        } else if (column == mAuthorityIndex || column == mRootIdIndex) {
+            return FIELD_TYPE_STRING;
+        }
         return mCursor.getType(column);
     }
 
     @Override
     public boolean isNull(int column) {
-        if (column == mAuthorityIndex || column == mRootIdIndex || column == mUserIdIndex) {
+        if (column == mAuthorityIndex
+                || column == mRootIdIndex
+                || column == mUserIdIndex
+                || column == mLimitedFunctionalityWhenOfflineIndex) {
             // These columns are added by this class.
             return false;
         }

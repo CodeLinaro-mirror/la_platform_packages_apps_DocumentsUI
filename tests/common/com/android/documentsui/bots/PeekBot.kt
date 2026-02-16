@@ -45,7 +45,7 @@ import org.hamcrest.CoreMatchers.allOf
  * A test helper class that provides support for controlling the peek overlay and making assertions
  * against the state of it.
  */
-class PeekBot(device: UiDevice, context: Context, timeout: Int, @LayoutRes layoutId: Int) :
+class PeekBot(device: UiDevice, context: Context, timeout: Long, @LayoutRes layoutId: Int) :
     Bots.BaseBot(device, context, timeout, layoutId) {
     private val peekOverlayMatcher = withId(R.id.peek_overlay)
     private val peekContainerMatcher =

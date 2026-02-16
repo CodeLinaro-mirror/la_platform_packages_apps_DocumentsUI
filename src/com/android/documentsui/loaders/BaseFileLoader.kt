@@ -263,6 +263,7 @@ abstract class BaseFileLoader(
             rootInfo.userId,
             locationUri.authority,
             rootInfo.rootId,
+            rootInfo.hasLimitedFunctionalityWhenOffline(),
             cursor,
             ALL_RESULTS,
         )

@@ -15,6 +15,7 @@
  */
 package com.android.documentsui
 
+import android.content.Context
 import android.content.Intent
 import android.platform.test.annotations.EnableFlags
 import android.view.MenuItem
@@ -47,6 +48,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 
 @SmallTest
 @EnableFlags(FLAG_USE_MATERIAL3, FLAG_VISUAL_SIGNALS_RO)
@@ -249,5 +252,17 @@ class JobPanelControllerTest {
         assertTrue(menuItem.isVisible())
         assertFalse(progressBar.isIndeterminate)
         assertEquals(20, progressBar.progress)
+    }
+
+    @Test
+    fun onDestroy_unregistersReceiver() {
+        // Create a mock context to verify interactions.
+        val mockContext = mock<Context>()
+        // The controller registers itself as a receiver in the init block.
+        val controller = JobPanelController(mockContext, TestActionHandler(), JobPanelViewModel())
+        // Call onDestroy, which should unregister the receiver.
+        controller.onDestroy(mock())
+        // Verify that unregisterReceiver was called on the context.
+        verify(mockContext).unregisterReceiver(controller)
     }
 }

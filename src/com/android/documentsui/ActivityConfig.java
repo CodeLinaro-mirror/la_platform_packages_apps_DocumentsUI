@@ -63,7 +63,7 @@ public abstract class ActivityConfig {
             return true;
         }
 
-        if (!state.stack.getRoot().hasLimitedFunctionalityWhenOffline()) {
+        if (!doc.rootHasLimitedFunctionalityWhenOffline) {
             // Documents on roots that are not affected by the online status are always available.
             return true;
         }

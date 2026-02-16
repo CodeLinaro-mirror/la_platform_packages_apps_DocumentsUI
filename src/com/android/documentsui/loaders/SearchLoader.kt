@@ -144,6 +144,7 @@ class SearchLoader(
             rootInfo.userId,
             if (shouldUseSemanticSearch(rootInfo)) rootInfo.authority else locationUri.authority,
             rootInfo.rootId,
+            rootInfo.hasLimitedFunctionalityWhenOffline(),
             cursor,
             options.maxResults,
         )
