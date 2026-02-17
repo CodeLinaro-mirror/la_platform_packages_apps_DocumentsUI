@@ -141,6 +141,28 @@ public class UiBot extends Bots.BaseBot {
     }
 
     /**
+     * Waits for and asserts the presence of a window with the {@code expected} title.
+     *
+     * <p>After the wait, {@link #assertWindowTitle(String)} is called.
+     *
+     * @param expected The title string expected to be visible.
+     * @throws AssertionError if the expected window title is not found within {@code mTimeout}.
+     */
+    public void waitForWindowTitle(String expected) {
+        BySelector selector;
+        if (!isUseMaterial3FlagEnabled() && expected.equals("Recent")) {
+            final String resID = mContext.getResources().getResourceEntryName(R.id.header_title);
+            selector = By.res(targetPackageName, resID).text("Recent files");
+
+        } else {
+            final String resID = mContext.getResources().getResourceEntryName(R.id.toolbar);
+            selector = By.res(targetPackageName, resID).hasDescendant(By.text(expected));
+        }
+        mDevice.wait(Until.hasObject(selector), mTimeout);
+        assertWindowTitle(expected);
+    }
+
+    /**
      * Checks that the search bar is visible.
      */
     public void assertSearchBarShow() {
