@@ -45,15 +45,6 @@
         <item name="trackThickness">2.5dp</item>
     </style>
 
-
-    <style name="InlineSyncProgressIndicatorStyle" parent="@style/Widget.Material3Expressive.CircularProgressIndicator">
-        <item name="android:max">100</item>
-        <item name="indicatorInset">0dp</item>
-        <item name="indicatorColor">?attr/colorPrimary</item>
-        <item name="trackThickness">1.5dp</item>
-        <item name="trackColor">?attr/colorSecondaryContainer</item>
-    </style>
-
     <style name="ToolbarStyles" parent="@style/Widget.Material3Expressive.Toolbar">
         <item name="android:paddingStart">@dimen/toolbar_padding_start</item>
         <item name="android:paddingEnd">@dimen/toolbar_padding_end</item>
@@ -269,10 +260,10 @@
     </style>
 
     <style name="JobProgressItemExpandButtonStyle" parent="@style/Widget.Material3Expressive.Button.IconButton.Filled">
-        <item name="android:insetBottom">0dp</item>
-        <item name="android:insetLeft">0dp</item>
-        <item name="android:insetRight">0dp</item>
-        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">16dp</item>
+        <item name="android:insetLeft">8dp</item>
+        <item name="android:insetRight">8dp</item>
+        <item name="android:insetTop">16dp</item>
         <!-- Expressive version of IconButton's default minWidth is too wide, the following value
              is copied from the style "Widget.Material3.Button.IconButton".
         -->

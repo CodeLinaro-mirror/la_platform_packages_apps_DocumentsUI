@@ -23,6 +23,7 @@ import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
 import static com.android.documentsui.flags.Flags.usePeekPreviewRo;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isGetInfoDialogEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
@@ -50,7 +51,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
@@ -60,6 +63,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -110,9 +114,13 @@ import com.google.android.material.color.DynamicColors;
 
 import kotlin.Unit;
 
+import org.jspecify.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -156,6 +164,10 @@ public abstract class BaseActivity
 
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
+    private Locale mCurrentLocale;
+
+    // Supplies the inline sync tick icon visibility duration.
+    private Supplier<Integer> mTestTickDurationSupplier = null;
 
     protected void setInitialStack(DocumentStack stack) {
         if (mInitialStack.isInitialized()) {
@@ -202,6 +214,17 @@ public abstract class BaseActivity
     @VisibleForTesting
     public void setConfigStore(ConfigStore configStore) {
         mConfigStore = configStore;
+    }
+
+    /** Used by tests to set the inline sync tick icon visibility duration. */
+    @VisibleForTesting
+    public void setTickDurationSupplierForTest(Supplier<Integer> testTickVisibleDurationSupplier) {
+        mTestTickDurationSupplier = testTickVisibleDurationSupplier;
+    }
+
+    /** Provides the inline sync tick icon visibility duration when set in tests. */
+    public Supplier<Integer> getTickDurationSupplierForTest() {
+        return mTestTickDurationSupplier;
     }
 
     /**
@@ -262,6 +285,8 @@ public abstract class BaseActivity
         setContentView(mLayoutId);
 
         setContainer();
+
+        handleA11yInitialFocusInDrawerLayout();
 
         initConfigStore();
 
@@ -553,6 +578,8 @@ public abstract class BaseActivity
         // Base classes must update result in their onCreate.
         setResult(AppCompatActivity.RESULT_CANCELED);
         updateRecentsSetting();
+
+        mCurrentLocale = getResources().getConfiguration().getLocales().get(0);
     }
 
     private NavigationViewManager getNavigationViewManager(Breadcrumb breadcrumb,
@@ -694,11 +721,13 @@ public abstract class BaseActivity
         state.localOnly = intent.getBooleanExtra(Intent.EXTRA_LOCAL_ONLY, false);
         state.excludedAuthorities = getExcludedAuthorities();
         state.restrictScopeStorage = Shared.shouldRestrictStorageAccessFramework(this);
-        state.showHiddenFiles = LocalPreferences.getShowHiddenFiles(
-                getApplicationContext(),
-                getApplicationContext()
-                        .getResources()
-                        .getBoolean(R.bool.show_hidden_files_by_default));
+        boolean showHiddenFiles =
+                LocalPreferences.getShowHiddenFiles(
+                        getApplicationContext(),
+                        getApplicationContext()
+                                .getResources()
+                                .getBoolean(R.bool.show_hidden_files_by_default));
+        state.setIsShowHiddenFiles(showHiddenFiles);
         state.configStore = mConfigStore;
 
         includeState(state);
@@ -836,6 +865,58 @@ public abstract class BaseActivity
         getWindow().setNavigationBarContrastEnforced(true);
     }
 
+    /**
+     * The default initial a11y focus (e.g. Talkback) is not correct due to the XML structure of
+     * CollapsingToolbarLayout in the drawer layout, a special handling is needed to make sure the
+     * initial a11y focus goes to the burger menu in the toolbar.
+     */
+    private void handleA11yInitialFocusInDrawerLayout() {
+        if (!isUseMaterial3FlagEnabled()) {
+            return;
+        }
+        // Early return if not in the drawer layout (collapsing_content only exists in drawer
+        // layout).
+        final View collaspingContentView = findViewById(getRes(R.id.collapsing_content));
+        if (collaspingContentView == null) {
+            return;
+        }
+        // <CollapsingToolbarLayout> (in directory_app_bar_m3.xml) requires the collapsing content
+        // to be the first child and then the actual toolbar, this makes the content appears on the
+        // top of the a11y tree than the toolbar. In a result, Talkback will try to focus
+        // the content first, which is not what we want, because visually the toolbar appear on
+        // the top of the view. To fix it, we mark the collapsing content view as not important for
+        // a11y first so that Talkback will not try to focus it, and restore it later.
+        collaspingContentView.setImportantForAccessibility(
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        final View toolbarView = findViewById(getRes(R.id.toolbar));
+        // Set a custom AccessibilityDelegate for the toolbar so we can intercept its a11y events.
+        // When Talkback tries to focus any of its descents, onRequestSendAccessibilityEvent() is
+        // triggered, so we can restore the collasping content's importantForAccessibility property
+        // if the view to be focused is the burger menu.
+        ViewCompat.setAccessibilityDelegate(
+                toolbarView,
+                new AccessibilityDelegateCompat() {
+                    @Override
+                    public boolean onRequestSendAccessibilityEvent(
+                            @NonNull ViewGroup host,
+                            @NonNull View child,
+                            @NonNull AccessibilityEvent event) {
+                        final boolean isBurgerMenu = child instanceof ImageButton;
+                        final boolean isFocusEvent =
+                                event.getEventType()
+                                        == AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED;
+                        if (collaspingContentView.getImportantForAccessibility()
+                                        == View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                                && isBurgerMenu
+                                && isFocusEvent) {
+                            collaspingContentView.setImportantForAccessibility(
+                                    View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+                        }
+                        return super.onRequestSendAccessibilityEvent(host, child, event);
+                    }
+                });
+    }
+
     @Override
     public void setRootsDrawerOpen(boolean open) {
         mNavigator.revealRootsDrawer(open);
@@ -849,21 +930,23 @@ public abstract class BaseActivity
 
     @Override
     public void onRootPicked(RootInfo root) {
-        final RootInfo previousRoot = getCurrentRoot();
-        final int previousStackSize = mState.stack.size();
+        final boolean skipRootRefresh =
+                root.equals(getCurrentRoot())
+                        && getCurrentShortcut() == null
+                        && mState.stack.size() <= 1;
         if (isSearchV2Enabled()) {
-            // Before changing the root, store the current state of the stack.
-            // Before making any updates, set the new root. The code that is called uses the stack's
-            // root, as it has no access to the parameter of this method.
-            mState.stack.changeRoot(root);
-            updateColumnHeaders(root);
+            // If search V2 is enabled, first change the stack, before cancelling search, as that
+            // triggers folder loading, which must know the correct stack content.
+            if (!skipRootRefresh) {
+                mState.stack.changeRoot(root);
+            }
         }
 
         // Clicking on the current root removes search
         mSearchManager.cancelSearch();
 
-        // Skip refreshing if root nor directory didn't change
-        if (root.equals(previousRoot) && getCurrentShortcut() == null && previousStackSize <= 1) {
+        // If we are skipping root refresh, exit immediately.
+        if (skipRootRefresh) {
             return;
         }
 
@@ -877,7 +960,6 @@ public abstract class BaseActivity
         mSortController.onViewModeChanged(mState.derivedMode);
 
         if (!isSearchV2Enabled()) {
-            updateColumnHeaders(root);
             // Clear entire backstack and start in new root
             mState.stack.changeRoot(root);
         }
@@ -889,9 +971,18 @@ public abstract class BaseActivity
             refreshCurrentRootAndDirectory(AnimationView.ANIM_NONE);
         } else {
             mInjector.actions.getDocument(
-                    root.authority, root.documentId, root.userId,
+                    root.authority,
+                    root.documentId,
+                    root.userId,
                     TimeoutTask.DEFAULT_TIMEOUT,
-                    doc -> mInjector.actions.openRootDocument(doc));
+                    doc -> {
+                        if (isGetInfoDialogEnabled() && doc != null) {
+                            // The document info for ESP root documents does not have the correct
+                            // title so use the root title to overwrite this information.
+                            doc.displayName = root.title;
+                        }
+                        mInjector.actions.openRootDocument(doc);
+                    });
         }
 
         expandAppBar();
@@ -934,8 +1025,10 @@ public abstract class BaseActivity
         updateHeaderTitle();
     }
 
-    private void updateColumnHeaders(@Nullable RootInfo root) {
-        boolean showSummary = displaySummaryForRoot(mInjector.getSummaryProviderManager(), root);
+    protected void updateColumnHeaders(@Nullable RootInfo root) {
+        boolean showSummary =
+                displaySummaryForRoot(
+                        mInjector.getSummaryProviderManager(), root, mState.stack.peek());
         mState.sortModel.setDimensionVisibility(
                 SortModel.SORT_DIMENSION_ID_SUMMARY, showSummary ? View.VISIBLE : View.GONE);
     }
@@ -1156,14 +1249,14 @@ public abstract class BaseActivity
      * Updates hidden files visibility based on user action.
      */
     private void onClickedShowHiddenFiles() {
-        boolean showHiddenFiles = !mState.showHiddenFiles;
+        boolean showHiddenFiles = !mState.shouldShowHiddenFiles();
         Context context = getApplicationContext();
 
         Metrics.logUserAction(showHiddenFiles
                 ? MetricConsts.USER_ACTION_SHOW_HIDDEN_FILES
                 : MetricConsts.USER_ACTION_HIDE_HIDDEN_FILES);
         LocalPreferences.setShowHiddenFiles(context, showHiddenFiles);
-        mState.showHiddenFiles = showHiddenFiles;
+        mState.setIsShowHiddenFiles(showHiddenFiles);
 
         // Calls this to trigger either MultiRootDocumentsLoader or DirectoryLoader reloading.
         mInjector.actions.loadDocumentsForCurrentStack();
@@ -1424,6 +1517,7 @@ public abstract class BaseActivity
 
     @VisibleForTesting
     public void notifyDirectoryLoaded(Uri uri) {
+        updateColumnHeaders(mState.stack.getRoot());
         for (EventListener listener : mEventListeners) {
             listener.onDirectoryLoaded(uri);
         }
@@ -1557,6 +1651,11 @@ public abstract class BaseActivity
             // Force the shortcut resources to be reloaded the next time updateAsync() gets called.
             mProviders.resetShortcutResourcesFirstLoadDone();
 
+            // Do not refresh root and directory when called in place of full activity recreation.
+            Locale newLocale = newConfig.getLocales().get(0);
+            final boolean refresh = !mCurrentLocale.equals(newLocale);
+            mCurrentLocale = newLocale;
+
             // TODO: (b/465888139) - Find a way to cleanly update the stale shortcut with the new
             //  localised titles in this method.
             mProviders.updateAsync(
@@ -1567,7 +1666,8 @@ public abstract class BaseActivity
                             fragment = RootsFragment.getNavRail(getSupportFragmentManager());
                         }
                         if (fragment != null) {
-                            fragment.reloadRootsAndShortcuts(/* refreshRootAndDirectory= */ true);
+                            fragment.reloadRootsAndShortcuts(
+                                    /* refreshRootAndDirectory= */ refresh);
                         }
                     });
         }

@@ -20,7 +20,9 @@ import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled
 
 import static org.mockito.Mockito.mock;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
 
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
@@ -100,5 +102,15 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
         mEnv.mExecutor.submit(() -> {
             callback.accept(nextRootDocument);
         });
+    }
+
+    @Override
+    protected Uri getDefaultFallbackUri() {
+        return null;
+    }
+
+    @Override
+    public Intent createApprovedHandlerIntent(ComponentName handler) {
+        return new Intent();
     }
 }

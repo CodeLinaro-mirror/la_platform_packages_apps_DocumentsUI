@@ -49,11 +49,13 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.view.KeyEvent;
+import android.view.View;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -70,6 +72,7 @@ import com.android.documentsui.base.Providers;
 import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
+import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
 
@@ -364,8 +367,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2SearchLocationDropdown() throws Exception {
-        // Start search with term "fred-dog", but rather than searching locally, search everywhere.
-        bots.search.doSearch("fred-dog.jpg");
+        // Open a root that does not have the file we are searching for.
+        EspressoBotsKt.openRoot(context, "Paging Root", getActivityLayoutId());
+        // Start search with term "file1.log", but rather than searching locally, search everywhere.
+        bots.search.doSearch("file1.log");
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
 
         // Click Everywhere, to search everywhere.
@@ -374,6 +379,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
         device.waitForIdle();
+        bots.directory.waitForDocument("file1.log");
         bots.directory.assertDocumentsCountOnList(true, 1);
     }
 
@@ -1025,5 +1031,62 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search
                 .findDropdownTrigger(R.id.search_last_modified_trigger)
                 .check(matches(withText(R.string.search_last_modified_any_time)));
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testRootReselectionDoesNotClobberDocumentStack() throws Exception {
+        // Validates that b/474153259 is fixed.
+
+        // Select Dir1 folder, and click on the root. This triggers onRootPicked, which
+        // before the fix would clobber the stack.
+        bots.directory.selectDocument(TestFilesRule.DIR_NAME_1, 1);
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+
+        // Clear the selection, and enter the new directory. Check the breadcrumb.
+        bots.directory.clearSelection();
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1);
+        bots.breadcrumb.assertItemsPresent(ROOT_0_ID, TestFilesRule.DIR_NAME_1);
+
+        // Open TEST_ROOT_0 again. This should show the root directory, which includes the test
+        // folder.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testBreadcrumbV2HiddenWhenChangingRoot() throws Exception {
+        // Validates that b/475686340 is fixed.
+
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.directory.selectFirstDocument();
+
+        // Verify that breadcrumb v2 shows the path.
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.GONE);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+
+        // Change root, and check that breadcrumb v2 is hidden, while breadcrumb v1 is visible.
+        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
+        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testSearchDropdownsHiddenWhenChangingRoot() throws Exception {
+        bots.search.doSearch(TestFilesRule.FILE_NAME_1);
+        // Wait for the search to be triggered and then completed.
+        int delayMs = SearchViewManager.SEARCH_DELAY_MS + 250;
+        SystemClock.sleep(delayMs);
+        // Select the first item. We are guaranteed to have at least one of them due to using
+        // a name of a known, existing file.
+        bots.directory.selectFirstDocument();
+        // Move to recents without clearing the query or the selection.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        // Here we just check one dropdown for being hidden as they all work in sync.
+        bots.main.assertLocationTriggerHidden();
     }
 }

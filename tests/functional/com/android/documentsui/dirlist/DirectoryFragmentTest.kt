@@ -16,21 +16,29 @@
 package com.android.documentsui.dirlist
 
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.MatrixCursor
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.os.SystemClock
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
 import android.view.LayoutInflater
+import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import androidx.recyclerview.selection.MutableSelection
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.ActionHandler
 import com.android.documentsui.ActionModeController
@@ -45,12 +53,25 @@ import com.android.documentsui.base.NetworkMonitor
 import com.android.documentsui.base.State.MODE_GRID
 import com.android.documentsui.base.State.MODE_LIST
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
+import com.android.documentsui.flags.Flags.FLAG_USE_NEW_OPEN_WITH
 import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.services.FileOperationService.ACTION_PROGRESS
+import com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS
+import com.android.documentsui.services.FileOperationService.OPERATION_DELETE
+import com.android.documentsui.services.FileOperationService.OPERATION_TRASH
+import com.android.documentsui.services.Job.STATE_CANCELED
+import com.android.documentsui.services.Job.STATE_COMPLETED
+import com.android.documentsui.services.Job.STATE_CREATED
+import com.android.documentsui.services.Job.STATE_SET_UP
+import com.android.documentsui.services.Job.STATE_STARTED
+import com.android.documentsui.services.JobProgress
 import com.android.documentsui.testing.SortModels
 import com.android.documentsui.testing.TestEnv
+import com.android.documentsui.testing.TestEvents
 import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import com.google.android.material.appbar.MaterialToolbar
@@ -67,6 +88,7 @@ import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
@@ -74,12 +96,14 @@ import org.mockito.kotlin.any
 @RunWith(AndroidJUnit4::class)
 @MediumTest
 class DirectoryFragmentTest {
+    @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
     private lateinit var env: TestEnv
     private lateinit var injector: Injector<ActionHandler>
     private lateinit var fragment: DirectoryFragmentWithActivity
     private lateinit var networkMonitor: NetworkMonitor
+    private lateinit var activity: BaseActivity
 
     @Before
     fun setUp() {
@@ -116,7 +140,7 @@ class DirectoryFragmentTest {
         // be replaced with something we can't mock.
         doNothing().`when`(injector).updateSharedSelectionTracker(any())
         // Mock the activity and its dependencies.
-        val activity = mock(BaseActivity::class.java)
+        activity = mock(BaseActivity::class.java)
         `when`(activity.displayState).thenReturn(env.state)
         `when`(activity.getInjector()).thenReturn(injector)
         `when`(activity.getSystemService(Context.ACTIVITY_SERVICE))
@@ -291,9 +315,130 @@ class DirectoryFragmentTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+    @EnableFlags(Flags.FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
     fun testAddsNetworkListener() {
         verify(networkMonitor).addNetworkListener(any())
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_doubleTap_opensItemOnce_useNewOpenWithFlagDisabled() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened only once.
+        verify(injector.actions, times(1))
+            .openItem(item, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO, FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_doubleTap_opensItemOnce_useNewOpenWithFlagEnabled() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened only once.
+        verify(injector.actions, times(1))
+            .openItem(item, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    @DisableFlags(FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_tapTwiceWithGap_opensItemTwice_useNewOpenWithFlagDisabled() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Wait for double tap timeout.
+        SystemClock.sleep(ViewConfiguration.getDoubleTapTimeout().toLong() + 100L)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened twice.
+        verify(injector.actions, times(2))
+            .openItem(item, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3, FLAG_DESKTOP_FILE_HANDLING_RO, FLAG_USE_NEW_OPEN_WITH)
+    fun testOnItemActivated_tapTwiceWithGap_opensItemTwice_useNewOpenWithFlagEnabled() {
+        val documentHolder = mock(DocumentHolder::class.java)
+        `when`(documentHolder.inPreviewIconRegion(any())).thenReturn(false)
+        val item = DocumentItemDetails(documentHolder)
+        val event = TestEvents.Touch.TAP
+
+        // First tap.
+        fragment.onItemActivated(item, event)
+        // Wait for double tap timeout.
+        SystemClock.sleep(ViewConfiguration.getDoubleTapTimeout().toLong() + 100L)
+        // Second tap immediately after.
+        fragment.onItemActivated(item, event)
+
+        // Verify that the item is opened twice.
+        verify(injector.actions, times(2))
+            .openItem(item, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE)
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testJobProgressObserverRefreshesOnDestructiveJobCompletionWhileSearching() {
+        `when`(activity.isSearching).thenReturn(true)
+        val receiver = fragment.jobProgressObserver
+
+        for (opType in listOf(OPERATION_DELETE, OPERATION_TRASH)) {
+            for (state in listOf(STATE_CREATED, STATE_STARTED, STATE_SET_UP, STATE_CANCELED)) {
+                val progress = JobProgress("jobId", opType, state, "file.txt", 1, false)
+                val intent = Intent(ACTION_PROGRESS)
+                intent.putParcelableArrayListExtra(EXTRA_PROGRESS, arrayListOf(progress))
+                fragment.onRefreshCalled = false
+                receiver.onReceive(fragment.context, intent)
+                assertThat(fragment.onRefreshCalled).isFalse()
+            }
+
+            val progress = JobProgress("jobId", opType, STATE_COMPLETED, "file.txt", 1, false)
+            val intent = Intent(ACTION_PROGRESS)
+            intent.putParcelableArrayListExtra(EXTRA_PROGRESS, arrayListOf(progress))
+            fragment.onRefreshCalled = false
+            receiver.onReceive(fragment.context, intent)
+            assertThat(fragment.onRefreshCalled).isTrue()
+        }
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testJobProgressObserverDoesNothingWhileNotSearching() {
+        `when`(activity.isSearching).thenReturn(false)
+        val receiver = fragment.jobProgressObserver
+
+        for (opType in listOf(OPERATION_DELETE, OPERATION_TRASH)) {
+            val progress = JobProgress("jobId", opType, STATE_COMPLETED, "file.txt", 1, false)
+            val intent = Intent(ACTION_PROGRESS)
+            intent.putParcelableArrayListExtra(EXTRA_PROGRESS, arrayListOf(progress))
+            fragment.onRefreshCalled = false
+            receiver.onReceive(fragment.context, intent)
+            assertThat(fragment.onRefreshCalled).isFalse()
+        }
     }
 }
 
@@ -306,4 +451,15 @@ class DirectoryFragmentWithActivity(
     override fun getBaseActivity(): BaseActivity = fakeActivity
 
     override fun getContext(): Context = context
+
+    var onRefreshCalled = false
+
+    override fun onRefresh() {
+        onRefreshCalled = true
+    }
+
+    val jobProgressObserver: BroadcastReceiver
+        get() {
+            return this.mJobProgressObserver
+        }
 }

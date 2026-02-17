@@ -32,16 +32,19 @@ import static junit.framework.Assert.fail;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
@@ -64,6 +67,7 @@ import com.android.documentsui.base.DebugFlags;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventListener;
+import com.android.documentsui.base.LoadingHandler;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.Shared;
 import com.android.documentsui.base.ShortcutInfo;
@@ -128,6 +132,7 @@ public class AbstractActionHandlerTest {
     private TestPeekViewManager mPeekViewManager;
     private TestFeatures mFeatures;
     @Mock private Runnable mMockCloseSelectionBar;
+    @Mock private LoadingHandler mMockHandler;
     private TestActionModeAddons mActionModeAddons;
 
     @Parameter(0)
@@ -140,6 +145,22 @@ public class AbstractActionHandlerTest {
     @Parameters(name = "privateSpaceEnabled={0}")
     public static Iterable<?> data() {
         return Lists.newArrayList(true, false);
+    }
+
+    /** Helper to stage a file on the mock authority provider to be returned next. */
+    private void setupFileOnAuthority(String displayName, String authority) {
+        DocumentInfo homeDir = new DocumentInfo();
+        homeDir.authority = authority;
+        homeDir.documentId = "dir-required-for-file-enumeration";
+        homeDir.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        mEnv.state.stack.push(homeDir);
+
+        DocumentInfo file = new DocumentInfo();
+        file.authority = authority;
+        file.documentId = displayName;
+        file.displayName = displayName;
+
+        mEnv.mockProviders.get(authority).setNextChildDocumentsReturns(file);
     }
 
     @Before
@@ -170,7 +191,8 @@ public class AbstractActionHandlerTest {
                         mPeekViewManager,
                         mActionModeAddons,
                         mMockCloseSelectionBar,
-                        null) {
+                        null,
+                        mMockHandler) {
 
                     @Override
                     public void openRoot(RootInfo root) {
@@ -191,6 +213,11 @@ public class AbstractActionHandlerTest {
                     @Override
                     protected void launchToDefaultLocation() {
                         throw new UnsupportedOperationException();
+                    }
+
+                    @Override
+                    protected Uri getDefaultFallbackUri() {
+                        return null;
                     }
                 };
         mHandler.reset(new ContentLock());
@@ -314,16 +341,6 @@ public class AbstractActionHandlerTest {
         assertEquals(TestEnv.FILE_IN_ARCHIVE, mEnv.state.stack.pop());
         assertEquals(TestEnv.FOLDER_2, mEnv.state.stack.pop());
         assertEquals(TestEnv.FOLDER_1, mEnv.state.stack.pop());
-    }
-
-    @Test
-    public void testOpensDocument_ExceptionIfAlreadyInStack() throws Exception {
-        mEnv.populateStack();
-        try {
-            mEnv.state.stack.push(TestEnv.FOLDER_0);
-            fail("Should have thrown IllegalArgumentException.");
-        } catch (IllegalArgumentException expected) {
-        }
     }
 
     @Test
@@ -843,5 +860,86 @@ public class AbstractActionHandlerTest {
         } else {
             Assert.assertTrue(mActionModeAddons.finishActionModeCalled);
         }
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testLoadDocumentsForCurrentStack_DebouncesLoading() {
+        mEnv.state.stack.changeRoot(TestProvidersAccess.HOME);
+        mEnv.state.stack.push(TestEnv.FOLDER_0);
+
+        final Runnable[] captured = new Runnable[1];
+
+        doAnswer(
+                        invocation -> {
+                            captured[0] = invocation.getArgument(0); // Capture the Runnable
+                            return null;
+                        })
+                .when(mMockHandler)
+                .postDelayed(any(), eq(200L));
+
+        mHandler.loadDocumentsForCurrentStack();
+
+        // The model should initially NOT set loading state to enable any directories that load
+        // instantly (i.e. within the current 200ms timeout) to just show their contents and avoid a
+        // flicker of the loading bar.
+        assertFalse(mEnv.model.isLoading());
+
+        // Run the delayed Runnable.
+        assertNotNull(captured[0]);
+        captured[0].run();
+
+        // The model should now show a loading state.
+        assertTrue(mEnv.model.isLoading());
+    }
+
+    @Test
+    @SuppressLint("VisibleForTests")
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testLoadDocumentsForCurrentStack_NewLoaderSupersedesOld() throws Exception {
+        mEnv.state.stack.changeRoot(TestProvidersAccess.HOME);
+        setupFileOnAuthority("file1", TestProvidersAccess.HOME.authority);
+
+        // Set up the first query to happen on HOME authority that would return in 10s.
+        CountDownLatch firstLoaderStartedLatch = new CountDownLatch(1);
+        mEnv.mockProviders.get(TestProvidersAccess.HOME.authority).setQueryDelay(10000);
+        mEnv.mockProviders
+                .get(TestProvidersAccess.HOME.authority)
+                .setQueryDelayLatch(firstLoaderStartedLatch);
+
+        // Start the background thread loader for this query.
+        mHandler.loadDocumentsForCurrentStack();
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
+        assertTrue("First query never started", firstLoaderStartedLatch.await(2, TimeUnit.SECONDS));
+
+        // Navigate to another root whilst the loader is still running.
+        mEnv.state.stack.reset();
+        mEnv.state.stack.changeRoot(TestProvidersAccess.HAMMY);
+        setupFileOnAuthority("file2", TestProvidersAccess.HAMMY.authority);
+
+        // The first loader should simulate a slow loading DP, whilst the second loader should
+        // simulate a fast loader that beats the first one to finish. It should "cancel" the first
+        // one causing its results to be ignored when it eventually returns.
+
+        CountDownLatch modelUpdateLatch = new CountDownLatch(1);
+        mEnv.model.addUpdateListener(event -> modelUpdateLatch.countDown());
+        mHandler.loadDocumentsForCurrentStack();
+        mActivity.supportLoaderManager.runAsyncTaskLoader(LoaderIds.MAIN);
+
+        // The second loader should finish immediately.
+        assertTrue("Model was never updated", modelUpdateLatch.await(2, TimeUnit.SECONDS));
+        assertEquals(1, mEnv.model.getItemCount());
+        assertEquals("file2", mEnv.model.getDocument(mEnv.model.getModelIds()[0]).displayName);
+
+        // Now release the first slow loader, the results of which should be ignored.
+        mEnv.mockProviders.get(TestProvidersAccess.HOME.authority).cancelQueryDelay();
+
+        // Wait for all background tasks (including the released slow loader) to finish.
+        mEnv.beforeAsserts();
+
+        // Model should STILL have file2, not file1.
+        assertEquals(1, mEnv.model.getItemCount());
+        assertEquals("file2", mEnv.model.getDocument(mEnv.model.getModelIds()[0]).displayName);
     }
 }

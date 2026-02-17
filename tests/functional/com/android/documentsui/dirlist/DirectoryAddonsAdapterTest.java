@@ -17,12 +17,12 @@
 package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 import android.content.Context;
 import android.os.Build;
@@ -243,16 +243,6 @@ public class DirectoryAddonsAdapterTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testAddsEmptyTrashBanner_OnTrashPage() {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
-        assumeTrue(VersionUtils.isGreaterThanB());
-
         mTestEnvironment.setIsOnTrashPage(true);
         String[] names = {"123.txt", "234.jpg", "abc.pdf"};
         for (String name : names) {
@@ -269,7 +259,9 @@ public class DirectoryAddonsAdapterTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void
             testOnNetworkStateChanged_onRootWithLimitedFunctionalityWhenOffline_modifiesHeader() {
         // Create a file to avoid the no items inflated message showing.
@@ -277,7 +269,7 @@ public class DirectoryAddonsAdapterTest {
 
         // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
         mEnv.model.update();
 
         // Check header is shown.
@@ -301,6 +293,8 @@ public class DirectoryAddonsAdapterTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testOnNetworkStateChanged_flagDisabled_doesNotShowHeader() {
         // Create a file to avoid the no items inflated message showing.
@@ -308,7 +302,7 @@ public class DirectoryAddonsAdapterTest {
 
         // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         // Clear any default messages set by the model update
         mEnv.model.update();
@@ -318,14 +312,16 @@ public class DirectoryAddonsAdapterTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testUpdate_toRootWithoutLimitedFunctionalityWhenOffline_removesHeader() {
         // Create a file to avoid the no items inflated message showing.
         mEnv.model.createFile("a.txt");
 
         // Start offline, on a Cloud root which has limited functionality when offline.
         mTestEnvironment.setIsOnline(false);
-        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mTestEnvironment.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
         mEnv.model.update();
 
         // Check header is shown.

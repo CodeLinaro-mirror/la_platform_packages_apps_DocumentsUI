@@ -86,6 +86,22 @@ public class GestureBot extends Bots.BaseBot {
         Configurator.getInstance().setToolType(toolType);
     }
 
+    public void dragAndDrop(Rect source, Rect destination) throws Exception {
+        int toolType = Configurator.getInstance().getToolType();
+        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_MOUSE);
+
+        swipe(
+                source.centerX(),
+                source.centerY(),
+                destination.centerX(),
+                destination.centerY(),
+                BAND_SELECTION_DEFAULT_STEPS,
+                MotionEvent.BUTTON_PRIMARY,
+                false);
+
+        Configurator.getInstance().setToolType(toolType);
+    }
+
     public void bandSelection(Point start, Point end) throws Exception {
         bandSelection(start, end, BAND_SELECTION_DEFAULT_STEPS);
     }

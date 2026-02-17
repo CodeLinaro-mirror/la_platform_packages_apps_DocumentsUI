@@ -21,6 +21,7 @@ import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -31,6 +32,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.Material3Config.getRes;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -39,6 +41,7 @@ import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.not;
 
 import android.annotation.LayoutRes;
 import android.content.Context;
@@ -48,6 +51,7 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -170,6 +174,11 @@ public class UiBot extends Bots.BaseBot {
      */
     public void assertLocationTriggerShows() {
         onView(withId(R.id.search_location_trigger)).check(matches(isDisplayed()));
+    }
+
+    /** Checks that the UI chip that toggles location search menu is visible. */
+    public void assertLocationTriggerHidden() {
+        onView(withId(R.id.search_location_trigger)).check(matches(not(isDisplayed())));
     }
 
     /**
@@ -296,8 +305,9 @@ public class UiBot extends Bots.BaseBot {
 
     public void clickToolbarOverflowItem(String label) {
         onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
+        mDevice.waitForIdle();
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
-        onView(withText(label)).perform(click());
+        onView(withText(label)).inRoot(isPlatformPopup()).perform(click());
     }
 
     public boolean waitForActionModeBarToAppear() {
@@ -331,7 +341,7 @@ public class UiBot extends Bots.BaseBot {
             throw new UiObjectNotFoundException("ActionMode bar not found");
         }
         if (isTrashFlowEnabled()) {
-            clickActionItem("Delete permanently");
+            clickActionItem(mContext.getString(R.string.menu_permanently_delete));
         } else {
             clickToolbarItem(R.id.action_menu_delete);
         }
@@ -473,6 +483,23 @@ public class UiBot extends Bots.BaseBot {
         }
     }
 
+    /** Shows hidden files if the current settings is to hide hidden files. */
+    public void showHiddenFilesIfNeeded() throws Exception {
+        openOverflowMenu();
+        UiObject2 showHiddenFilesMenu =
+                mDevice.findObject(By.text(mContext.getString(R.string.menu_show_hidden_files)));
+        if (showHiddenFilesMenu != null) {
+            showHiddenFilesMenu.click();
+            mDevice.waitForIdle();
+        } else {
+            // Close the menu popup via Back key.
+            pressBack();
+            // Verify the menu popup is closed by checking if "Hide hidden files" menu item is gone.
+            onView(withText(mContext.getString(R.string.menu_hide_hidden_files)))
+                    .check(doesNotExist());
+        }
+    }
+
     /**
      * Click the toolbar menu to show hidden files.
      */
@@ -489,19 +516,57 @@ public class UiBot extends Bots.BaseBot {
         mDevice.waitForIdle();
     }
 
-    /**
-     * Asserts that the "Empty Trash" banner is currently visible. This banner only appears
-     * on the trash page.
-     */
-    public void assertEmptyTrashBannerIsVisible() {
-        onView(
+    private ViewInteraction getOfflineBanner() {
+        return onView(
                 allOf(
                         withId(R.id.message_textview),
                         withText(
-                                "Files in the trash for more than 30 days will be "
-                                        + "automatically deleted."),
-                        isDisplayed()))
+                                mContext.getString(
+                                        getRes(R.string.you_are_offline_banner_message)))));
+    }
+
+    /** Asserts that the "You're offline" banner does not exist. */
+    public void assertOfflineBannerDoesNotExist() {
+        getOfflineBanner().check(doesNotExist());
+    }
+
+    /** Asserts that the "You're offline" banner is currently visible. */
+    public void assertOfflineBannerIsVisible() {
+        getOfflineBanner().check(matches(isDisplayed()));
+    }
+
+    /**
+     * Asserts that the "Empty Trash" banner is currently visible. This banner only appears on the
+     * trash page.
+     */
+    public void assertEmptyTrashBannerIsVisible() {
+        onView(
+                        allOf(
+                                withId(R.id.message_textview),
+                                withText(mContext.getString(R.string.empty_trash_banner_message)),
+                                isDisplayed()))
                 .check(matches(isDisplayed()));
+    }
+
+    /**
+     * Asserts whether the "Empty Trash" button is enabled or disabled.
+     *
+     * @param enabled Expected enabled state of the button.
+     */
+    public void assertEmptyTrashNowButtonEnabled(boolean enabled) {
+        // Define the matcher for the "Empty Trash now" button
+        Matcher<View> buttonMatcher =
+                allOf(
+                        withId(R.id.dismiss_button),
+                        withText(mContext.getString(R.string.empty_trash_banner_button)),
+                        isDisplayed());
+
+        // Check the enabled state
+        if (enabled) {
+            onView(buttonMatcher).check(matches(ViewMatchers.isEnabled()));
+        } else {
+            onView(buttonMatcher).check(matches(not(ViewMatchers.isEnabled())));
+        }
     }
 
     /**

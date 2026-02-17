@@ -16,9 +16,13 @@
 
 package com.android.documentsui
 
+import android.os.Build
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract.Document
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import androidx.test.runner.AndroidJUnit4
 import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.NO_FLAGS
@@ -31,7 +35,6 @@ import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestEnv
 import com.android.documentsui.testing.TestProvidersAccess
-import kotlin.collections.listOf
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -43,9 +46,12 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
+// A rootInfoProvider is required instead of just a rootInfo because getCloudRoot() relies on the
+// flags being properly initialised. If a rootInfo was set in data() then the flags might not be
+// initialised in time.
 data class ActivityConfigTestParams(
     val testName: String,
-    val rootInfo: RootInfo,
+    val rootInfoProvider: () -> RootInfo,
     val mimeType: String,
     val docFlags: Int,
     val syncStateFlags: Int?,
@@ -63,6 +69,7 @@ class ActivityConfigTest {
     class ParameterizedTests(private val testParams: ActivityConfigTestParams) {
 
         @get:Rule val overrideFlagsRule = OverrideFlagsRule()
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
 
         private lateinit var config: TestActivityConfig
         private lateinit var env: TestEnv
@@ -76,9 +83,12 @@ class ActivityConfigTest {
         }
 
         @Test
-        @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
         fun testIsDocumentEnabled() {
-            state.stack.changeRoot(testParams.rootInfo)
+            val rootInfo = testParams.rootInfoProvider()
+            state.stack.changeRoot(rootInfo)
             var doc = DocumentInfo()
             doc.mimeType = testParams.mimeType
             doc.flags = testParams.docFlags
@@ -95,7 +105,8 @@ class ActivityConfigTest {
             const val OFFLINE = false
             const val NO_FLAGS = 0
             private val NO_SYNC_STATE: Int? = null
-            private val SYNC_AVAILABLE_LOCALLY: Int = DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
+            private const val SYNC_AVAILABLE_LOCALLY: Int =
+                Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
             const val SYNC_UNAVAILABLE_LOCALLY = 0
 
             @JvmStatic
@@ -104,7 +115,7 @@ class ActivityConfigTest {
                 return listOf(
                     ActivityConfigTestParams(
                         "cloudRoot_unavailableLocally_offline",
-                        TestProvidersAccess.CLOUD,
+                        { TestProvidersAccess.getCloudRoot() },
                         "image/png",
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
@@ -113,7 +124,7 @@ class ActivityConfigTest {
                     ),
                     ActivityConfigTestParams(
                         "cloudRoot_online",
-                        TestProvidersAccess.CLOUD,
+                        { TestProvidersAccess.getCloudRoot() },
                         "image/png",
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
@@ -122,7 +133,7 @@ class ActivityConfigTest {
                     ),
                     ActivityConfigTestParams(
                         "cloudRoot_virtualDocument",
-                        TestProvidersAccess.CLOUD,
+                        { TestProvidersAccess.getCloudRoot() },
                         "image/png",
                         Document.FLAG_VIRTUAL_DOCUMENT,
                         SYNC_UNAVAILABLE_LOCALLY,
@@ -131,7 +142,7 @@ class ActivityConfigTest {
                     ),
                     ActivityConfigTestParams(
                         "cloudRoot_folder",
-                        TestProvidersAccess.CLOUD,
+                        { TestProvidersAccess.getCloudRoot() },
                         Document.MIME_TYPE_DIR,
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
@@ -140,7 +151,7 @@ class ActivityConfigTest {
                     ),
                     ActivityConfigTestParams(
                         "notCloudRoot",
-                        TestProvidersAccess.DOWNLOADS,
+                        { TestProvidersAccess.DOWNLOADS },
                         "image/png",
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
@@ -149,7 +160,7 @@ class ActivityConfigTest {
                     ),
                     ActivityConfigTestParams(
                         "cloudRoot_noSyncState",
-                        TestProvidersAccess.CLOUD,
+                        { TestProvidersAccess.getCloudRoot() },
                         "image/png",
                         NO_FLAGS,
                         NO_SYNC_STATE,
@@ -158,7 +169,7 @@ class ActivityConfigTest {
                     ),
                     ActivityConfigTestParams(
                         "cloudRoot_availableLocally",
-                        TestProvidersAccess.CLOUD,
+                        { TestProvidersAccess.getCloudRoot() },
                         "image/png",
                         NO_FLAGS,
                         SYNC_AVAILABLE_LOCALLY,
@@ -172,6 +183,7 @@ class ActivityConfigTest {
 
     @RunWith(AndroidJUnit4::class)
     class NonParameterizedTests {
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
         @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
         private lateinit var config: TestActivityConfig
@@ -186,9 +198,11 @@ class ActivityConfigTest {
         }
 
         @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
         @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsDocumentEnabled_featureFlagDisabled() {
-            state.stack.changeRoot(TestProvidersAccess.CLOUD)
+            state.stack.changeRoot(TestProvidersAccess.getCloudRoot())
             var doc = DocumentInfo()
             doc.mimeType = "image/png"
             doc.flags = 0
@@ -197,9 +211,11 @@ class ActivityConfigTest {
         }
 
         @Test
-        @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
         fun testIsContentAvailable_folder() {
-            state.stack.changeRoot(TestProvidersAccess.CLOUD)
+            state.stack.changeRoot(TestProvidersAccess.getCloudRoot())
             var doc = DocumentInfo()
             doc.mimeType = Document.MIME_TYPE_DIR
             doc.flags = NO_FLAGS

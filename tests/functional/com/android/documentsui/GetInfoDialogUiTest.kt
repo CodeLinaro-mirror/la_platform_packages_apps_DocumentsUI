@@ -74,4 +74,31 @@ class GetInfoDialogUiTest : ActivityTestJunit4<FilesActivity>() {
         // Size.
         onView(withText("0 B")).check(matches(isDisplayed()))
     }
+
+    @Test
+    fun testGetInfo_showsCorrectExternalStorageProviderName() {
+        val storageProvider = DocumentsProviderHelper.setupStorageAuthorityDocsHelper(context)
+        val primaryRoot = storageProvider.getRoot("primary")
+
+        // Open the root where the default test files are created.
+        openRoot(context!!, primaryRoot.title, activityLayoutId)
+
+        device!!.waitForIdle()
+
+        // Open the 3-dot menu and click "Get info" option on the root.
+        bots.main.openOverflowMenu()
+        bots.menu.clickMenuItem("Get info")
+
+        device!!.waitForIdle()
+
+        // Ensure the information in the dialog that appears matches what we expect (along with the
+        // labels that describe the information.
+        // Name.
+        onView(withText(primaryRoot.title)).check(matches(isDisplayed()))
+
+        // Type.
+        onView(withText(context!!.getString(R.string.peek_metadata_type)))
+            .check(matches(isDisplayed()))
+        onView(withText("Folder")).check(matches(isDisplayed()))
+    }
 }

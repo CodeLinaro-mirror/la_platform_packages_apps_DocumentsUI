@@ -73,6 +73,7 @@ import com.android.documentsui.queries.SearchViewManager;
 import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.util.FileUtils;
+import com.android.documentsui.util.FlagUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -181,7 +182,7 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
     private boolean launchHomeForCopyDestination(Intent intent) {
         // As a matter of policy we don't load the last used stack for the copy
         // destination picker (user is already in Files app).
-        // Consensus was that the experice was too confusing.
+        // Consensus was that the experience was too confusing.
         // In all other cases, where the user is visiting us from another app
         // we restore the stack as last used from that app.
         if (Shared.ACTION_PICK_COPY_DESTINATION.equals(intent.getAction())) {
@@ -219,6 +220,20 @@ class ActionHandler<T extends FragmentActivity & Addons> extends AbstractActionH
         }
 
         return launchToDocument(initialUri);
+    }
+
+    @Override
+    protected Uri getDefaultFallbackUri() {
+        if (FlagUtils.isHomeScreenFilesFlagEnabled()) {
+            Log.e(
+                    TAG,
+                    "Default Root URI is not a valid root URI, falling back to primary storage.");
+            return DocumentsContract.buildRootUri(
+                    Providers.AUTHORITY_STORAGE, Providers.ROOT_ID_DEVICE);
+        }
+        Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");
+        return DocumentsContract.buildRootUri(
+                Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS);
     }
 
     /**

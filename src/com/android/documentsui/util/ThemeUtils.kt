@@ -254,12 +254,11 @@ private fun initializeIdMapping() {
             R.layout.apps_item to R.layout.apps_item_m3,
             R.layout.apps_row to R.layout.apps_row_m3,
             R.layout.column_headers to R.layout.column_headers_m3,
-            R.layout.dialog_delete_confirmation to R.layout.dialog_delete_confirmation_m3,
             R.layout.dialog_file_name to R.layout.dialog_file_name_m3,
             R.layout.dialog_sorting to R.layout.dialog_sorting_m3,
             R.layout.directory_app_bar to R.layout.directory_app_bar_m3,
             R.layout.directory_header to R.layout.directory_header_m3,
-            R.layout.documents_activity to R.layout.documents_activity_m3,
+            R.layout.pick_activity to R.layout.pick_activity_m3,
             R.layout.drag_shadow_layout to R.layout.drag_shadow_layout_m3,
             R.layout.drawer_layout to R.layout.drawer_layout_m3,
             R.layout.drop_badge to R.layout.drop_badge_m3,
@@ -339,6 +338,7 @@ private fun initializeIdMapping() {
             R.style.TabTextAppearance to R.style.TabTextAppearanceM3,
             R.style.ToolbarTitle to R.style.ToolbarTitleM3,
         )
+    initialized = true
 }
 
 abstract class Material3Config private constructor() {

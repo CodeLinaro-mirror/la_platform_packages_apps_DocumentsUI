@@ -18,8 +18,8 @@ package com.android.documentsui;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 
 import android.app.AuthenticationRequiredException;
 import android.database.Cursor;
@@ -168,7 +168,7 @@ public class Model {
             }
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mSyncInProgressModelIds.clear();
             mSyncInProgressModelIds.addAll(result.getSyncInProgressModelIds());
         }

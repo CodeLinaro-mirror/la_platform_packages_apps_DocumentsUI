@@ -65,14 +65,8 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
     @get:Rule val checkFlagsRule: CheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule()
 
     override fun setUp() {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
+        // TODO(b/457843307): Verify after the SDK is finalized. This test depends on StubProvider,
+        //  which currently encounters a NoSuchMethodError when the platform flag is used.
         assumeTrue(VersionUtils.isGreaterThanB())
         super.setUp()
     }
@@ -105,7 +99,8 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Restoring “.trashed-12345-document.txt”")
+            assertThat(filename).isEqualTo("document.txt")
+            assertThat(numFiles).isEqualTo(1)
         }
 
         // Verify filesystem changes: trash is empty, and the file is restored to the source root.
@@ -149,7 +144,7 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Restoring 2 files")
+            assertThat(numFiles).isEqualTo(2)
         }
 
         // Verify filesystem changes: trash is empty, files are in the source root
@@ -197,7 +192,8 @@ internal class RestoreJobTest : AbstractJobTest<TrashJob>() {
             assertThat(id).isEqualTo(job.id)
             assertThat(state).isEqualTo(Job.STATE_COMPLETED)
             assertThat(hasFailures).isFalse()
-            assertThat(msg).isEqualTo("Restoring “.trashed-12345-dir1”")
+            assertThat(filename).isEqualTo("dir1")
+            assertThat(numFiles).isEqualTo(1)
         }
 
         // Verify the changes: trash should be empty, and the folder should be restored.

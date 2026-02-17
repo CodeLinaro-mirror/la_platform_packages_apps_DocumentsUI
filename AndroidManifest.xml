@@ -17,6 +17,7 @@
  */
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="com.android.documentsui">
 
     <uses-sdk android:minSdkVersion="30"/>
@@ -46,6 +47,12 @@
 
     <!-- Permissions required for reading device configs -->
     <uses-permission android:name="android.permission.READ_DEVICE_CONFIG"/>
+
+    <!-- Declaring the permission for apps wanting to launch DocsUI through the home screen. -->
+    <permission
+        android:name="com.android.documentsui.LAUNCH_FILE_MANAGER"
+        android:featureFlag="com.android.documentsui.flags.home_screen_files_ro"
+        android:protectionLevel="signature|recents" />
 
     <application
         android:name=".DocumentsApplication"
@@ -194,6 +201,19 @@
             </intent-filter>
         </activity>
 
+        <activity-alias
+            android:name=".LaunchFilesActivity"
+            android:targetActivity=".files.FilesActivity"
+            android:exported="true"
+            android:permission="com.android.documentsui.LAUNCH_FILE_MANAGER"
+            android:featureFlag="com.android.documentsui.flags.home_screen_files_ro">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/zip"/>
+            </intent-filter>
+        </activity-alias>
+
         <activity-alias android:name=".ViewDownloadsActivity"
                         android:targetActivity=".files.FilesActivity"
                         android:exported="true"
@@ -234,6 +254,12 @@
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
+
+        <!-- Disable automatic initialization of androidx.startup to avoid crash -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
 
         <receiver android:name=".PackageReceiver"
             android:exported="true">

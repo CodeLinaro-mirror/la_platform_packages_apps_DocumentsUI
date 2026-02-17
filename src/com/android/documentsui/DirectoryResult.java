@@ -16,7 +16,7 @@
 
 package com.android.documentsui;
 
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 
 import android.content.ContentProviderClient;
 import android.database.Cursor;
@@ -143,7 +143,7 @@ public class DirectoryResult implements AutoCloseable {
                 DocumentInfo docInfo = DocumentInfo.fromDirectoryCursor(mCursor);
                 fileNames.add(docInfo.displayName);
 
-                if (isCloudFeaturesFlagEnabled()
+                if (isSyncStateEnabled()
                         && (docInfo.hasUploadInProgress() || docInfo.hasDownloadInProgress())) {
                     syncInProgressModelIds.add(modelIds[pos]);
                 }

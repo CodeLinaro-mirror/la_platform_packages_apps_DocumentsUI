@@ -316,9 +316,11 @@ final class ListDocumentHolder extends DocumentHolder {
             if (TextUtils.isEmpty(summary)) {
                 mSummary.setText("—");
                 mSummary.setTooltipText(null);
+                mSummary.setCompoundDrawables(null, null, null, null);
             } else {
                 mSummary.setText(summary, TextView.BufferType.SPANNABLE);
                 mSummary.setTooltipText(summary);
+                mSummary.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_summary, 0, 0, 0);
             }
             mSummary.setVisibility(View.VISIBLE);
         } else {
@@ -373,31 +375,46 @@ final class ListDocumentHolder extends DocumentHolder {
                 mDetails.setVisibility(View.GONE);
             }
         } else {
-            // For tablets metadata is provided in columns mDate, mSize, mType.
-            // For other devices mMetadataView consolidates the metadata info.
             if (mMetadataView != null) {
-                // Non-tablets
+                // In narrow list view, mMetadataView consolidates the metadata info.
                 boolean hasDetails = false;
 
                 if (!mDoc.isDirectory()) {
-                    ArrayList<String> metadataList = new ArrayList<>();
+                    ArrayList<String> metadataList = new ArrayList<>(4);
+
                     if (useSummary() && !TextUtils.isEmpty(summary)) {
-                        hasDetails = true;
                         metadataList.add(summary);
+                        mMetadataView.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_summary, 0, 0, 0);
+                    } else {
+                        mMetadataView.setCompoundDrawables(null, null, null, null);
                     }
 
-                    if (mDoc.lastModified > 0) {
-                        hasDetails = true;
-                        metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
-                    }
+                    if (isUseMaterial3FlagEnabled()) {
+                        if (mDoc.size >= 0) {
+                            metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
+                        }
 
-                    if (mDoc.size >= 0) {
-                        hasDetails = true;
-                        metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
-                    }
+                        if (mDoc.lastModified > 0) {
+                            metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
+                        }
 
-                    metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
-                    mMetadataView.setText(TextUtils.join(", ", metadataList));
+                        hasDetails = !metadataList.isEmpty();
+                        mMetadataView.setText(TextUtils.join(" • ", metadataList));
+                    } else {
+                        if (mDoc.lastModified > 0) {
+                            metadataList.add(Shared.formatTime(mContext, mDoc.lastModified));
+                        }
+
+                        if (mDoc.size >= 0) {
+                            metadataList.add(Formatter.formatFileSize(mContext, mDoc.size));
+                        }
+
+                        hasDetails = !metadataList.isEmpty();
+                        metadataList.add(mFileTypeLookup.lookup(mDoc.mimeType));
+
+                        mMetadataView.setText(TextUtils.join(", ", metadataList));
+                    }
                 }
 
                 if (mDetails != null) {
@@ -406,7 +423,7 @@ final class ListDocumentHolder extends DocumentHolder {
                     Log.w(TAG, "mDetails is unexpectedly null for non-tablet devices!");
                 }
             } else {
-                // Tablets
+                // In wide list view, metadata is provided in columns mDate, mSize, mType.
                 assert mDate != null;
                 assert mSize != null;
                 assert mType != null;

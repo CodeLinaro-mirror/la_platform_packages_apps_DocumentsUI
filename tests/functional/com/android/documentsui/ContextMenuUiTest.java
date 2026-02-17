@@ -19,8 +19,8 @@ package com.android.documentsui;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_NEW_OPEN_WITH;
 import static com.android.documentsui.flags.Flags.FLAG_ZIP_NG_RO;
-import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -54,7 +54,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     private static final String CUT = "Cut";
     private static final String COPY = "Copy";
     private static final String RENAME = "Rename";
-    private static final String DELETE_PERMANENTLY = "Delete permanently";
+    private static final String DELETE_FOREVER = "Delete forever";
     private static final String OPEN_IN_NEW_WINDOW = "Open in new window";
     private static final String SELECT_ALL = "Select all";
     private static final String NEW_FOLDER = "New folder";
@@ -94,7 +94,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(CUT, false);
         menuItems.put(COPY, false);
         menuItems.put(RENAME, false);
-        menuItems.put(DELETE_PERMANENTLY, false);
+        menuItems.put(DELETE_FOREVER, false);
         menuItems.put(OPEN_IN_NEW_WINDOW, false);
         menuItems.put(SELECT_ALL, false);
         menuItems.put(NEW_FOLDER, false);
@@ -104,33 +104,40 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testContextMenu_onFile() throws Exception {
         menuItems.put(SHARE, true);
-        menuItems.put(OPEN, isDesktopFileHandlingFlagEnabled());
+        menuItems.put(OPEN, false);
         menuItems.put(OPEN_WITH, true);
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
 
         bots.directory.rightClickDocument("file1.png");
         bots.menu.assertPresentMenuItems(menuItems);
     }
 
+    /*
+     * Test files with <2 opening apps don't get open-with when file handling flag is enabled but
+     * new open-with is disabled.
+     *
+     * PNGs usually have 2+ opening apps. This test is repeated with CSV below.
+     */
     @Test
     @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_onFilePngDesktop() throws Exception {
+    @DisableFlags({FLAG_USE_NEW_OPEN_WITH})
+    public void testContextMenu_onFilePngDesktop_oldOpenWith() throws Exception {
         RootInfo root = mDocsHelper.getRoot(ROOT_0_ID);
         DocumentInfo doc = mDocsHelper.findFile(root.documentId, "file1.png");
         int pngOpeningApps = FileUtils.countOpeningApps(doc, context.getPackageManager());
 
         menuItems.put(SHARE, true);
-        menuItems.put(OPEN, isDesktopFileHandlingFlagEnabled());
+        menuItems.put(OPEN, true);
         // On desktop, "open with" is only shown when the file has multiple opening apps.
         // Ideally we would mock this, but we can't in these functional tests.
         menuItems.put(OPEN_WITH, pngOpeningApps > 1);
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
 
         bots.directory.rightClickDocument("file1.png");
         bots.menu.assertPresentMenuItems(menuItems);
@@ -145,20 +152,40 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
      */
     @Test
     @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO})
-    public void testContextMenu_onFileCsvDesktop() throws Exception {
+    @DisableFlags({FLAG_USE_NEW_OPEN_WITH})
+    public void testContextMenu_onFileCsvDesktop_oldOpenWith() throws Exception {
         RootInfo root = mDocsHelper.getRoot(ROOT_0_ID);
         DocumentInfo doc = mDocsHelper.findFile(root.documentId, "file2.csv");
         int csvOpeningApps = FileUtils.countOpeningApps(doc, context.getPackageManager());
 
         menuItems.put(SHARE, true);
-        menuItems.put(OPEN, isDesktopFileHandlingFlagEnabled());
+        menuItems.put(OPEN, true);
         // On desktop, "open with" is only shown when the file has multiple opening apps.
         // Ideally we would mock this, but we can't in these functional tests.
         menuItems.put(OPEN_WITH, csvOpeningApps > 1);
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
+
+        bots.directory.rightClickDocument("file2.csv");
+        bots.menu.assertPresentMenuItems(menuItems);
+    }
+
+    @Test
+    @EnableFlags({FLAG_DESKTOP_FILE_HANDLING_RO, FLAG_USE_NEW_OPEN_WITH})
+    public void testContextMenu_onFileDesktop_newOpenWith() throws Exception {
+        menuItems.put(SHARE, true);
+        menuItems.put(OPEN, true);
+        // New open-with doesn't auto-launch so it shows for all files (not just files with 2+
+        // opening apps). There is no guarantee that CSV has <2 opening apps but it's likely.
+        // Ideally we would mock the number of opening apps but it's not possible in these
+        // functional tests.
+        menuItems.put(OPEN_WITH, true);
+        menuItems.put(CUT, true);
+        menuItems.put(COPY, true);
+        menuItems.put(RENAME, true);
+        menuItems.put(DELETE_FOREVER, true);
 
         bots.directory.rightClickDocument("file2.csv");
         bots.menu.assertPresentMenuItems(menuItems);
@@ -192,7 +219,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
         menuItems.put(COPY, true);
         menuItems.put(OPEN_IN_NEW_WINDOW, true);
         menuItems.put(RENAME, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
         bots.directory.rightClickDocument("Dir1");
         bots.menu.assertPresentMenuItems(menuItems);
     }
@@ -201,7 +228,7 @@ public class ContextMenuUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testContextMenu_onMixedFileDir() throws Exception {
         menuItems.put(CUT, true);
         menuItems.put(COPY, true);
-        menuItems.put(DELETE_PERMANENTLY, true);
+        menuItems.put(DELETE_FOREVER, true);
         bots.directory.selectDocument("anotherFile0.log", 1);
         bots.directory.selectDocument("Dir1", 2);
         bots.directory.rightClickDocument("Dir1");

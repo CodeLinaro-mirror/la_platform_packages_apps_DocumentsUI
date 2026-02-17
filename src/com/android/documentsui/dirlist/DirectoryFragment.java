@@ -16,24 +16,36 @@
 
 package com.android.documentsui.dirlist;
 
+import static android.content.Context.RECEIVER_NOT_EXPORTED;
+
+import static androidx.core.content.IntentCompat.getParcelableArrayListExtra;
+
+import static com.android.documentsui.ActionHandler.VIEW_TYPE_NONE;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_PREVIEW;
 import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
 import static com.android.documentsui.dirlist.SummaryProviderManagerKt.displaySummaryForRoot;
+import static com.android.documentsui.services.FileOperationService.ACTION_PROGRESS;
+import static com.android.documentsui.services.FileOperationService.EXTRA_PROGRESS;
+import static com.android.documentsui.services.FileOperationService.OPERATION_DELETE;
+import static com.android.documentsui.services.FileOperationService.OPERATION_TRASH;
 import static com.android.documentsui.services.FileOperationService.OPERATION_UNPACK;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
+import static com.android.documentsui.services.Job.STATE_COMPLETED;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopUxPhase2FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseFileSummaryEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -51,6 +63,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.os.SystemClock;
 import android.os.Trace;
 import android.os.UserHandle;
 import android.os.UserManager;
@@ -60,11 +73,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
+import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -134,6 +149,7 @@ import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperationService.OpType;
 import com.android.documentsui.services.FileOperations;
+import com.android.documentsui.services.JobProgress;
 import com.android.documentsui.sorting.SortDimension;
 import com.android.documentsui.sorting.SortModel;
 import com.android.documentsui.ui.Snackbars;
@@ -147,10 +163,12 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Display the documents inside a single directory.
@@ -179,6 +197,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private static final String ACTION_MEDIA_REMOVED = "android.intent.action.MEDIA_REMOVED";
     private static final String ACTION_MEDIA_MOUNTED = "android.intent.action.MEDIA_MOUNTED";
     private static final String ACTION_MEDIA_EJECT = "android.intent.action.MEDIA_EJECT";
+
+    @VisibleForTesting public static final int TICK_VISIBLE_DURATION_MS = 1200;
 
     private BaseActivity mActivity;
 
@@ -228,6 +248,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private int mColumnCount = 1;  // This will get updated when layout changes.
     private int mColumnUnit = 1;
 
+    // When the `DirectoryFragment` is first attached it kicks of a document load, unfortunately it
+    // happens again in onStart (via onRefresh) which ends up kicking off double loaders. This
+    // ensures the second one is not kicked off if the first has happened.
+    private boolean mDocumentsInitialLoad = false;
+
     private float mLiveScale = 1.0f;
     private @ViewMode int mMode;
     private int mAppBarHeight;
@@ -256,6 +281,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private ContentLock mContentLock = new ContentLock();
 
     @VisibleForTesting @Nullable ItemDecorationInvalidator mItemDecorationInvalidator;
+    private long mLastActivationTapTime;
 
     private SortModel.UpdateListener mSortListener = (model, updateType) -> {
         // Only when sort order has changed do we need to trigger another loading.
@@ -328,6 +354,37 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             }
         }
     };
+
+    /**
+     * This observer ensures that, when the enclosing DirectoryFragment is showing some search
+     * results and when a destructive job (file deletion or trashing) finishes, the search results
+     * are refreshed.
+     */
+    @VisibleForTesting
+    protected final BroadcastReceiver mJobProgressObserver =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if (!isUseMaterial3FlagEnabled()
+                            || mActivity == null
+                            || !mActivity.isSearching()) {
+                        return;
+                    }
+
+                    assert ACTION_PROGRESS.equals(intent.getAction());
+                    final Collection<JobProgress> progresses =
+                            getParcelableArrayListExtra(intent, EXTRA_PROGRESS, JobProgress.class);
+                    assert progresses != null;
+                    for (JobProgress p : progresses) {
+                        if (p.state == STATE_COMPLETED
+                                && (p.operationType == OPERATION_DELETE
+                                        || p.operationType == OPERATION_TRASH)) {
+                            onRefresh();
+                            return;
+                        }
+                    }
+                }
+            };
 
     private void onPausedProfileStatusChange(String action, UserId userId) {
         if (Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE.equals(action)
@@ -538,6 +595,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onDestroyView() {
         mInjector.actions.unregisterDisplayStateChangedListener(mOnDisplayStateChanged);
+
+        if (isUseMaterial3FlagEnabled()) {
+            getContext().unregisterReceiver(mJobProgressObserver);
+        }
+
         if (mState.supportsCrossProfile()) {
             LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
             if (mProviderTestRunnable != null) {
@@ -569,7 +631,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             mItemDecorationInvalidator = null;
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mInjector.networkMonitor.removeNetworkListener(mAdapter.getNetworkListener());
         }
 
@@ -606,7 +668,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         mAdapter = getModelBackedDocumentsAdapter();
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             mInjector.networkMonitor.addNetworkListener(mAdapter.getNetworkListener());
         }
 
@@ -674,7 +736,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 this::getModelId,
                                 mRecView::findChildViewUnder,
                                 mAdapterEnv::isContentAvailable,
-                                DocumentsApplication.getDragAndDropManager(mActivity))
+                                DocumentsApplication.getDragAndDropManager(mActivity),
+                                mActivity.getDocumentsAccess())
                         : DragStartListener.STUB;
 
         {
@@ -766,6 +829,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         // Kick off loader at least once
         mActions.loadDocumentsForCurrentStack();
+        mDocumentsInitialLoad = isSearchV2Enabled();
 
         if (mState.supportsCrossProfile()) {
             final IntentFilter filter = new IntentFilter();
@@ -782,6 +846,15 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             // roots are updated.
             LocalBroadcastManager.getInstance(mActivity).registerReceiver(mReceiver, filter);
         }
+
+        if (isUseMaterial3FlagEnabled()) {
+            getContext()
+                    .registerReceiver(
+                            mJobProgressObserver,
+                            new IntentFilter(ACTION_PROGRESS),
+                            RECEIVER_NOT_EXPORTED);
+        }
+
         getContext().registerReceiver(mSdCardBroadcastReceiver, getSdCardStateChangeFilter());
     }
 
@@ -874,18 +947,22 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (!isSearchV2Enabled()) {
             return;
         }
+        BreadcrumbController controller = mInjector.getBreadcrumbController();
+        if (controller == null) {
+            return;
+        }
         // If the path extractor or the breadcrumb model were not set up or the
         // activity is either null or indicating that it is neither in the
         // recents view or is searching, do not extract paths from the currently
         // selected files. The extracted path is used only in recent and search
         // results to show the location of the selected file.
-        if (mPathExtractor == null
-                || mActivity == null
-                || !(mActivity.isSearching() || mActivity.isInRecents())) {
+        if (mPathExtractor == null || mActivity == null) {
             return;
         }
-        BreadcrumbController controller = mInjector.getBreadcrumbController();
-        if (controller == null) {
+        if (!(mActivity.isSearching() || mActivity.isInRecents())) {
+            // Just in case, since breadcrumb V2 is only visible while searching or in recents, and
+            // we are neither searching nor in recent, hide the breadcrumb v2.
+            hideSearchResultBreadcrumb(controller);
             return;
         }
         String selectedId = null;
@@ -910,9 +987,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 DocumentStack stack = mPathExtractor.getDocumentStack(info);
                                 mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
                             } catch (Exception e) {
-                                if (DEBUG) {
-                                    Log.d(TAG, "Failed to get stack for " + info, e);
-                                }
+                                Log.e(TAG, "Cannot get stack for " + redact(info), e);
                                 mHandler.post(() -> hideSearchResultBreadcrumb(controller));
                             }
                         });
@@ -994,13 +1069,36 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         return true;
     }
 
-    private boolean onItemActivated(ItemDetails<String> item, MotionEvent e) {
+    @VisibleForTesting
+    public boolean onItemActivated(ItemDetails<String> item, MotionEvent e) {
+        if (isUseMaterial3FlagEnabled()) {
+            if (e.getSource() == InputDevice.SOURCE_TOUCHSCREEN) {
+                // If this tap happens within the double tap timeout, we consider it as a double tap
+                // and will not activate the item because the previous tap should have already
+                // activated the item. This is to avoid double tap on touchscreen accidentally
+                // opening the file twice.
+                if (SystemClock.uptimeMillis() - mLastActivationTapTime
+                        < ViewConfiguration.getDoubleTapTimeout()) {
+                    return true;
+                }
+                mLastActivationTapTime = SystemClock.uptimeMillis();
+            }
+        }
+
         if (item instanceof DocumentItemDetails) {
             final DocumentItemDetails docDetails = (DocumentItemDetails) item;
             if (docDetails.inPreviewIconHotspot(e)) return mActions.previewItem(item);
             if (startUnpackingArchive(docDetails)) return true;
         }
 
+        // This was reverted as desktop file handling was rolling out until
+        // we have default file opening apps out-of-the box.
+        // Since the default file opening app uses a build flag, we're using
+        // another flag that's rolling out in the same cycle to flag protect
+        // the revert^2.
+        if (isDesktopFileHandlingFlagEnabled() && isUseNewOpenWithEnabled()) {
+            return mActions.openItem(item, VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+        }
         return mActions.openItem(item, VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
     }
 
@@ -1453,7 +1551,16 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             selectItem(child);
         } else {
             DocumentHolder holder = getDocumentHolder(child);
-            mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            // This was reverted as desktop file handling was rolling out until
+            // we have default file opening apps out-of-the box.
+            // Since the default file opening app uses a build flag, we're using
+            // another flag that's rolling out in the same cycle to flag protect
+            // the revert^2.
+            if (isDesktopFileHandlingFlagEnabled() && isUseNewOpenWithEnabled()) {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_REGULAR, VIEW_TYPE_NONE);
+            } else {
+                mActions.openItem(holder.getItemDetails(), VIEW_TYPE_PREVIEW, VIEW_TYPE_REGULAR);
+            }
         }
         return true;
     }
@@ -1879,6 +1986,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             getRootDocumentAndMaybeRefreshDocument();
             return;
         }
+        if (isSearchV2Enabled() && mDocumentsInitialLoad) {
+            mDocumentsInitialLoad = false;
+            return;
+        }
         mActions.refreshDocument(doc, (boolean refreshSupported) -> {
             if (refreshSupported) {
                 mRefreshLayout.setRefreshing(false);
@@ -2016,6 +2127,18 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return mModel;
         }
 
+        /**
+         * Gets the inline sync tick icon visibility duration. In test code this can be overridden
+         * and found with getTickDurationSupplierForTest(). Otherwise, it will be the constant
+         * TICK_VISIBLE_DURATION_MS.
+         */
+        @Override
+        public int getTickDuration() {
+            Supplier<Integer> testSupplier = mActivity.getTickDurationSupplierForTest();
+            // Return the overridden duration only if set by tests.
+            return (testSupplier != null) ? testSupplier.get() : TICK_VISIBLE_DURATION_MS;
+        }
+
         @Override
         public int getColumnCount() {
             return mColumnCount;
@@ -2028,7 +2151,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
         @Override
         public boolean isOnline() {
-            if (!isCloudFeaturesFlagEnabled()) {
+            if (!isSyncStateEnabled()) {
                 return true;
             }
             return mInjector.networkMonitor.isOnline();
@@ -2068,7 +2191,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public boolean shouldDisplaySummary() {
             return displaySummaryForRoot(
-                    mInjector.getSummaryProviderManager(), mState.stack.getRoot());
+                    mInjector.getSummaryProviderManager(),
+                    mState.stack.getRoot(),
+                    mState.stack.peek());
         }
     }
 }

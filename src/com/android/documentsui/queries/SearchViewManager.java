@@ -451,6 +451,9 @@ public class SearchViewManager implements
             mChipViewManager.setChipsRowVisible(false);
         } else if (!isSearchV2Enabled()) {
             mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
+        } else {
+            // Always show chips in search v2.
+            mChipViewManager.setChipsRowVisible(/* show */ true);
         }
     }
 
@@ -468,6 +471,11 @@ public class SearchViewManager implements
             } else if (mSearchView != null) {
                 // Causes calling onClose(). onClose() is triggering directory content update.
                 mSearchView.setIconified(true);
+            }
+
+            if (isSearchV2Enabled()) {
+                // Show the chips again, once the search has been canceled.
+                useSearchOptions(SearchOptionsControls.CHIPS);
             }
 
             return true;

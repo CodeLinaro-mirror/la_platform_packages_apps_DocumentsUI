@@ -19,24 +19,17 @@ package com.android.documentsui.files
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
-import android.view.WindowManager
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.android.documentsui.DocumentsUIDialogFragment
 import com.android.documentsui.Injector
 import com.android.documentsui.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlin.math.roundToInt
 
 /** Dialog shown to users when performing a empty trash */
-class EmptyTrashDialogFragment : DialogFragment() {
+class EmptyTrashDialogFragment : DocumentsUIDialogFragment() {
 
     companion object {
         private const val TAG = "EmptyTrashDialog"
-
-        private const val INSET = 32f
-        private const val WIDTH = 320f
 
         /**
          * Create and show the dialog UI.
@@ -67,14 +60,9 @@ class EmptyTrashDialogFragment : DialogFragment() {
      * @return an AlertDialog instance.
      */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val injector: Injector<*> = (getActivity() as FilesActivity).getInjector()
+        val injector: Injector<*> = (activity as FilesActivity).injector
         val builder =
             MaterialAlertDialogBuilder(requireContext())
-                // We're setting the inset size explicitly so changes to the default inset size in
-                // the future don't change our dialog size (the inset size affect the dialog size
-                // because we're overriding the window size to get our desired dialog size).
-                .setBackgroundInsetStart(dpToPx(INSET))
-                .setBackgroundInsetEnd(dpToPx(INSET))
                 .setTitle(getString(R.string.empty_trash_dialog_title))
                 .setMessage(getString(R.string.empty_trash_dialog_message))
                 .setPositiveButton(getString(R.string.empty_trash_dialog_action_button)) {
@@ -85,28 +73,5 @@ class EmptyTrashDialogFragment : DialogFragment() {
                 .setNegativeButton(getString(android.R.string.cancel), null)
 
         return builder.create()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        (dialog as? AlertDialog)?.let { d ->
-            d.window?.let { w ->
-                val params = WindowManager.LayoutParams()
-                params.copyFrom(w.attributes)
-                val maxWidth = requireContext().resources.displayMetrics.widthPixels
-                // The window size is dialog size + right & left insets.
-                params.width = dpToPx(WIDTH + (2 * INSET)).coerceAtMost(maxWidth)
-                w.attributes = params
-            }
-        }
-    }
-
-    fun dpToPx(dp: Float): Int {
-        return TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                requireContext().resources.displayMetrics,
-            )
-            .roundToInt()
     }
 }

@@ -67,6 +67,7 @@ public abstract class TestMenu implements Menu {
                 R.id.root_menu_open_in_new_window,
                 R.id.root_menu_paste_into_folder,
                 R.id.root_menu_settings,
+                R.id.root_menu_manage_device,
                 R.id.root_menu_inspect,
                 R.id.action_menu_open,
                 R.id.action_menu_open_with,
@@ -98,6 +99,7 @@ public abstract class TestMenu implements Menu {
                 R.id.option_menu_extract_all,
                 R.id.option_menu_select_all,
                 R.id.option_menu_settings,
+                R.id.option_menu_manage_device,
                 R.id.option_menu_inspect,
                 R.id.option_menu_sort,
                 R.id.option_menu_show_hidden_files,
@@ -171,5 +173,12 @@ public abstract class TestMenu implements Menu {
     @Override
     public TestMenuItem getItem(int index) {
         return items.valueAt(index);
+    }
+
+    @Override
+    public TestMenuItem add(int groupId, int itemId, int order, CharSequence title) {
+        TestMenuItem item = TestMenuItem.create(itemId);
+        addMenuItem(itemId, item.setTitle(title));
+        return item;
     }
 }

@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
@@ -28,6 +29,7 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +39,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
@@ -52,6 +56,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
+import com.android.documentsui.Injector;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
@@ -65,16 +70,18 @@ import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.dirlist.TestData;
 import com.android.documentsui.flags.Flags;
 import com.android.documentsui.rules.OverrideFlagsRule;
+import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuInflater;
 import com.android.documentsui.testing.TestMenuItem;
+import com.android.documentsui.testing.TestPackageManager;
 import com.android.documentsui.testing.TestProvidersAccess;
+import com.android.documentsui.testing.TestResources;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
-import com.android.documentsui.util.VersionUtils;
 
 import kotlinx.coroutines.CoroutineScopeKt;
 import kotlinx.coroutines.Dispatchers;
@@ -83,6 +90,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -117,6 +128,7 @@ public final class MenuManagerTest {
     private TestMenuItem rootOpenInNewWindow;
     private TestMenuItem rootPasteIntoFolder;
     private TestMenuItem rootSettings;
+    private TestMenuItem mRootManageDevice;
     private TestMenuItem mRootInspector;
 
     /* Action Mode menu items */
@@ -151,6 +163,7 @@ public final class MenuManagerTest {
     private TestMenuItem optionCreateDir;
     private TestMenuItem optionSelectAll;
     private TestMenuItem optionSettings;
+    private TestMenuItem mOptionManageDevice;
     private TestMenuItem optionInspector;
     private TestMenuItem optionSort;
     private TestMenuItem mOptionLauncher;
@@ -174,6 +187,10 @@ public final class MenuManagerTest {
     private TestActivity activity = TestActivity.create(TestEnv.create());
     private SelectionTracker<String> selectionManager;
     private SummaryProviderManager mSummaryProviderManager;
+    private TestPackageManager mPackageManager;
+    private ActivityInfo activityInfo;
+    private ResolveInfo resolveInfo = new ResolveInfo();
+    private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
 
     private int mFilesCount;
@@ -221,6 +238,7 @@ public final class MenuManagerTest {
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
         rootPasteIntoFolder = testMenu.findItem(R.id.root_menu_paste_into_folder);
         rootSettings = testMenu.findItem(R.id.root_menu_settings);
+        mRootManageDevice = testMenu.findItem(R.id.root_menu_manage_device);
         mRootInspector = testMenu.findItem(R.id.root_menu_inspect);
 
         // Menu actions (including overflow) when action mode *is* active.
@@ -255,6 +273,7 @@ public final class MenuManagerTest {
         optionCreateDir = testMenu.findItem(R.id.option_menu_create_dir);
         optionSelectAll = testMenu.findItem(R.id.option_menu_select_all);
         optionSettings = testMenu.findItem(R.id.option_menu_settings);
+        mOptionManageDevice = testMenu.findItem(R.id.option_menu_manage_device);
         optionInspector = testMenu.findItem(R.id.option_menu_inspect);
         optionSort = testMenu.findItem(R.id.option_menu_sort);
         mOptionLauncher = testMenu.findItem(R.id.option_menu_launcher);
@@ -280,10 +299,25 @@ public final class MenuManagerTest {
         selectionManager.select("0");
 
         selectionDetails.size = 1;
+        selectionDetails.mimeTypes = new HashSet<>(Collections.singleton("text/plain"));
+
         mFilesCount = 10;
+
+        mPackageManager = TestPackageManager.create();
+        activityInfo = spy(new ActivityInfo());
+        activityInfo.packageName = "com.test.package";
+        activityInfo.name = "test.class";
+        resolveInfo.activityInfo = activityInfo;
+
+        testResources = TestResources.create();
+
+        activity.resources = testResources;
+        activity.packageMgr = mPackageManager;
+        ((Injector) activity.injector).actions = new TestActionHandler();
 
         mApprovedDocHandlers = new ApprovedDocHandlers(
                 activity, UserId.DEFAULT_USER, activity.injector);
+
 
         mSummaryProviderManager =
                 spy(
@@ -327,19 +361,6 @@ public final class MenuManagerTest {
 
     private int getFilesCount() {
         return mFilesCount;
-    }
-
-    /**
-     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
-     * The Trash feature under test relies on DocumentsContract APIs introduced in the
-     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
-     * subject to MTS testing, which runs on older Android base builds to verify backward
-     * compatibility. However, this specific Trash feature lacks backward compatibility
-     * with platforms at or below Baklava. This assumption prevents failures when the
-     * test runs on an older base OS without the necessary APIs.
-     */
-    private void assumeTrashApiIsAvailable() {
-        assumeTrue(VersionUtils.isGreaterThanB());
     }
 
     private boolean shouldShowCopyCutMenus() {
@@ -408,6 +429,20 @@ public final class MenuManagerTest {
     }
 
     @Test
+    // Disable M3 flag for the test since the de/select menu options are disabled by default in M3.
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSelectAndDeselectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
     public void testActionMenu_containsDocumentsWithUnavailableContent() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -459,15 +494,14 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API, FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({
         Flags.FLAG_CLOUD_FEATURES,
         Flags.FLAG_USE_MATERIAL3,
         Flags.FLAG_ENABLE_TRASH_FLOW_RO
     })
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_containsDocumentsWithUnavailableContent_trash() {
-        assumeTrashApiIsAvailable();
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.canTrash = true;
         selectionDetails.canRestore = true;
@@ -481,6 +515,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_ZIP_NG_RO, Flags.FLAG_USE_MATERIAL3})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
     public void testActionMenu_containsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
@@ -771,8 +807,13 @@ public final class MenuManagerTest {
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
+    /**
+     * Open-with is disabled on files with a single opening app (because ResolverActivity would auto
+     * launch that opening app).
+     */
     @Test
     @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_USE_NEW_OPEN_WITH})
     public void testActionMenu_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -782,6 +823,17 @@ public final class MenuManagerTest {
             actionModeOpen.assertEnabledAndVisible();
         }
         actionModeOpenWith.assertDisabledAndInvisible();
+    }
+
+    /** The new open-with doesn't automatically launch so we can use it for single opening apps. */
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.FLAG_USE_NEW_OPEN_WITH})
+    public void testActionMenu_OpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertEnabledAndVisible();
     }
 
     @Test
@@ -874,6 +926,16 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testOptionMenu_HasManageDevice() {
+        dirDetails.hasRootSettings = true;
+        mgr.updateOptionMenu(testMenu);
+
+        mOptionManageDevice.assertEnabledAndVisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testOptionMenu_HasRootSettings() {
         dirDetails.hasRootSettings = true;
         mgr.updateOptionMenu(testMenu);
@@ -914,6 +976,19 @@ public final class MenuManagerTest {
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_WithFilesInDirectory() {
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertEnabledAndVisible();
     }
 
     @Test
@@ -1092,6 +1167,15 @@ public final class MenuManagerTest {
         dirCreateDir.assertEnabledAndVisible();
     }
 
+    @Test
+    public void testContextMenu_EmptyArea_SelectAndDeselectAllWithNoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+
+        dirSelectAll.assertDisabledAndInvisible();
+        mDirDeselectAll.assertDisabledAndInvisible();
+    }
+
     @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnFile() {
@@ -1109,6 +1193,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testContextMenu_containsDocumentsWithUnavailableContent() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -1139,7 +1225,7 @@ public final class MenuManagerTest {
     }
 
     @Test
-    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
+    @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API, FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags({
         Flags.FLAG_CLOUD_FEATURES,
         Flags.FLAG_USE_MATERIAL3,
@@ -1147,7 +1233,6 @@ public final class MenuManagerTest {
     })
     @SdkSuppress(minSdkVersion = 37)
     public void testContextMenu_containsDocumentsWithUnavailableContent_trash() {
-        assumeTrashApiIsAvailable();
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.canTrash = true;
 
@@ -1160,6 +1245,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
     public void testContextMenu_containsDocumentsWithUnavailableContent_cloudFeaturesDisabled() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -1184,6 +1271,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
     public void testContextMenuForFiles_containsDocumentsWithUnavailableContent() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
@@ -1214,6 +1303,8 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ZIP_NG_RO})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES})
     public void testContextMenuForFiles_containsDocumentsWithUnavailableContent_disabled() {
@@ -1293,8 +1384,13 @@ public final class MenuManagerTest {
         dirOpenWith.assertEnabledAndVisible();
     }
 
+    /**
+     * Open-with is disabled on files with a single opening app (because ResolverActivity would auto
+     * launch that opening app).
+     */
     @Test
     @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_USE_NEW_OPEN_WITH})
     public void testContextMenu_OnFile_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -1302,6 +1398,18 @@ public final class MenuManagerTest {
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
 
         dirOpenWith.assertDisabledAndInvisible();
+    }
+
+    /** The new open-with doesn't automatically launch so we can use it for single opening apps. */
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.FLAG_USE_NEW_OPEN_WITH})
+    public void testContextMenu_OnFile_OpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        dirOpenWith.assertEnabledAndVisible();
     }
 
     @SuppressLint("VisibleForTests")
@@ -1357,6 +1465,26 @@ public final class MenuManagerTest {
         dirDetails.canInspectDirectory = true;
         mgr.updateContextMenuForContainer(testMenu, selectionDetails);
         dirInspect.assertEnabledAndVisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    public void testContextMenu_CantInspectRecents() {
+        features.inspector = true;
+
+        dirDetails.isInRecents = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        dirInspect.assertDisabledAndInvisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    public void testContextMenu_CantInspectTrash() {
+        features.inspector = true;
+
+        dirDetails.isTrashTopLevel = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        dirInspect.assertDisabledAndInvisible();
     }
 
     @SuppressLint("VisibleForTests")
@@ -1471,8 +1599,7 @@ public final class MenuManagerTest {
         mDirBrowse.assertDisabledAndInvisible();
     }
 
-    @Test
-    public void testRootContextMenu() {
+    private void testRootContextMenu() {
         testRootInfo.flags = Root.FLAG_SUPPORTS_CREATE;
 
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
@@ -1480,10 +1607,33 @@ public final class MenuManagerTest {
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertEnabledAndVisible();
         rootPasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_material3() {
+        testRootContextMenu();
+        mRootManageDevice.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_non_material3() {
+        testRootContextMenu();
         rootSettings.assertDisabledAndInvisible();
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_HasManageDevice() {
+        testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
+
+        mRootManageDevice.assertEnabledAndVisible();
+    }
+
+    @Test
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
     public void testRootContextMenu_HasRootSettings() {
         testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
@@ -1553,16 +1703,16 @@ public final class MenuManagerTest {
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertEnabledAndVisible();
         rootPasteIntoFolder.assertDisabledAndInvisible();
-        rootSettings.assertDisabledAndInvisible();
+        mRootManageDevice.assertDisabledAndInvisible();
     }
 
     @Test
     @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
-    public void testShortcutContextMenu_HasRootSettings() {
+    public void testShortcutContextMenu_HasManageDevice() {
         mTestShortcutInfo.getRoot().flags = Root.FLAG_HAS_SETTINGS;
         mgr.updateSidebarItemContextMenu(testMenu, mTestShortcutInfo, null);
 
-        rootSettings.assertEnabledAndVisible();
+        mRootManageDevice.assertEnabledAndVisible();
     }
 
     @Test
@@ -1620,7 +1770,6 @@ public final class MenuManagerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canTrash_enabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canTrash = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
         mActionModeTrash.assertDisabledAndInvisible();
@@ -1635,7 +1784,6 @@ public final class MenuManagerTest {
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canTrash_disabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canTrash = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
         mActionModeTrash.assertDisabledAndInvisible();
@@ -1651,7 +1799,6 @@ public final class MenuManagerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canRestoreFromTrash_enabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canRestore = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
         mActionModeRestoreFromTrash.assertDisabledAndInvisible();
@@ -1666,7 +1813,6 @@ public final class MenuManagerTest {
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_canRestoreFromTrash_disabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canRestore = false;
         mgr.updateActionMenu(testMenu, selectionDetails);
         mActionModeRestoreFromTrash.assertDisabledAndInvisible();
@@ -1681,7 +1827,6 @@ public final class MenuManagerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canTrash_enabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canTrash = false;
         mgr.updateContextMenu(testMenu, selectionDetails);
         mDirMoveToTrash.assertDisabledAndInvisible();
@@ -1696,7 +1841,6 @@ public final class MenuManagerTest {
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canTrash_disabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canTrash = false;
         mgr.updateContextMenu(testMenu, selectionDetails);
         mDirMoveToTrash.assertDisabledAndInvisible();
@@ -1712,7 +1856,6 @@ public final class MenuManagerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canRestoreFromTrash_enabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canRestore = false;
         mgr.updateContextMenu(testMenu, selectionDetails);
         mDirRestoreFromTrash.assertDisabledAndInvisible();
@@ -1727,7 +1870,6 @@ public final class MenuManagerTest {
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_canRestoreFromTrash_disabled() {
-        assumeTrashApiIsAvailable();
         selectionDetails.canRestore = false;
         mgr.updateContextMenu(testMenu, selectionDetails);
         mDirRestoreFromTrash.assertDisabledAndInvisible();
@@ -1736,4 +1878,48 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
         mDirRestoreFromTrash.assertDisabledAndInvisible();
     }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_useApprovedDocumentHandlerEnabled() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is enabled and visible.
+        boolean found = false;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                found = true;
+                item.assertEnabledAndVisible();
+            }
+        }
+        assertTrue("Approved document handler menu item not found.", found);
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_useApprovedDocumentHandlerDisabled() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is not added.
+        boolean found = false;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                found = true;
+            }
+        }
+        assertFalse("Approved document handler menu item should not be added.", found);
+    }
+
 }

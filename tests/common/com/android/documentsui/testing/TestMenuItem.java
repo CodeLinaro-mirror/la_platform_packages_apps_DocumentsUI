@@ -39,6 +39,7 @@ public abstract class TestMenuItem implements MenuItem {
     boolean visible;
     View actionView;
     @StringRes int title;
+    CharSequence titleCharSequence;
 
     public static TestMenuItem create(int id) {
         final TestMenuItem mockMenuItem = Mockito.mock(TestMenuItem.class,
@@ -58,8 +59,14 @@ public abstract class TestMenuItem implements MenuItem {
     }
 
     @Override
-    public TestMenuItem setTitle(@StringRes CharSequence title) {
+    public TestMenuItem setTitle(CharSequence title) {
+        this.titleCharSequence = title;
         return this;
+    }
+
+    @Override
+    public CharSequence getTitle() {
+        return this.titleCharSequence;
     }
 
     @Override

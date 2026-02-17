@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Aktivizo"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Mos më pyet përsëri"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Jo tani"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Hap nga"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Pamje liste"</string>
     <string name="menu_search" msgid="1876699106790719849">"Kërko"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Cilësimet e hapësirës ruajtëse"</string>
+    <string name="manage_device" msgid="329180710072251010">"Menaxho pajisjen"</string>
     <string name="menu_open" msgid="9092138100049759315">"Hap"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Hap me"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Hape në një dritare të re"</string>
     <string name="menu_save" msgid="5195367497138965168">"Ruaj"</string>
     <string name="menu_share" msgid="4307140947108068356">"Ndaj"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Fshi"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Fshi përgjithmonë"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Fshi përgjithmonë"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Zhvendos te koshi"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Restauro"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Zgjidhi të gjitha"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Merr informacione"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Shfaq skedarët e fshehur"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Mos shfaq skedarët e fshehur"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Shfaq kolonën e përmbledhjes"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Mos e shfaq kolonën e përmbledhjes"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Shfaq kolonën e përshkrimit"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Mos shfaq kolonën e përshkrimit"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Shikoje në <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Dritare e re"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Prit"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Hap koshin"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nuk janë të renditura"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Emri"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Përmbledhja"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Përshkrimi"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Lloji"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Madhësia"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Modifikuar"</string>
@@ -299,20 +303,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> artikuj</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> artikull</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Të fshihet \"<xliff:g id="NAME">%1$s</xliff:g>\"?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Të fshihet dosja \"<xliff:g id="NAME">%1$s</xliff:g>\" dhe përmbajtja e saj?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other">Të fshihen <xliff:g id="COUNT_1">%1$d</xliff:g> skedarë?</item>
-      <item quantity="one">Të fshihet <xliff:g id="COUNT_0">%1$d</xliff:g> skedar?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other">Të fshihen <xliff:g id="COUNT_1">%1$d</xliff:g> dosje dhe përmbajtja e tyre?</item>
-      <item quantity="one">Të fshihet <xliff:g id="COUNT_0">%1$d</xliff:g> dosje dhe përmbajtja e saj?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other">Të fshihen <xliff:g id="COUNT_1">%1$d</xliff:g> artikuj?</item>
-      <item quantity="one">Të fshihet <xliff:g id="COUNT_0">%1$d</xliff:g> artikull?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Të fshihet përgjithmonë?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" do të fshihet përgjithmonë. Kjo nuk mund të zhbëhet.}other{# artikuj do të fshihen përgjithmonë. Kjo nuk mund të zhbëhet.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" do të fshihet përgjithmonë. Kjo nuk mund të zhbëhet.}other{# artikuj te koshi do të fshihen përgjithmonë. Kjo nuk mund të zhbëhet.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Imazhet"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Arkivi nuk mund të hapet për të shfletuar. Skedari është i dëmtuar ose në një format që nuk mbështetet."</string>
     <string name="name_conflict" msgid="28407269328862986">"Ekziston një skedar me këtë emër."</string>
@@ -396,14 +389,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Pamja paraprake e imazhit për <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Fshih panelin e informacioneve"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Shfaq panelin e informacioneve"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Asgjë në kosh"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Skedarët që ndodhen te koshi për më shumë se 30 ditë do të fshihen automatikisht."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Boshatise koshin tani"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Koshi është bosh"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Artikujt që ndodhen te koshi për më shumë se 30 ditë do të fshihen automatikisht."</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Boshatis koshin"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Të boshatiset koshi?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ky veprim nuk mund të zhbëhet dhe skedarët nuk do të mund të rikuperohen më."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Boshatis koshin"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Skedari te \"Koshi\""</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Ky skedar është te \"Koshi\" dhe nuk mund të hapet. Restauroje atë nga koshi për t\'u qasur tek ai."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Restauro skedarin"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Të gjithë artikujt te koshi do të fshihen përgjithmonë. Kjo nuk mund të zhbëhet."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Fshi përgjithmonë"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Artikulli është te koshi}other{Artikujt janë te koshi}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Për t\'u qasur te ky artikull, restauroje ose zvarrite jashtë koshit}other{Për t\'u qasur te këta artikuj, restauroji ata ose zvarriti jashtë koshit}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Restauro"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Aktualisht je offline. Disa skedarë dhe funksionalitete nuk ofrohen. Lidhu me internetin për qasje të plotë."</string>
 </resources>

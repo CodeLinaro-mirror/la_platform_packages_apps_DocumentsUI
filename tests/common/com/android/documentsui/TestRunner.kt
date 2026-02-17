@@ -26,11 +26,16 @@ import com.android.documentsui.flags.Flags
 import com.android.documentsui.util.FlagUtils
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.reflect.Modifier
+import java.text.MessageFormat
 import org.junit.runner.Runner
 import org.junit.runner.notification.RunNotifier
+import org.junit.runners.Parameterized.Parameters
 import org.junit.runners.Suite
 import org.junit.runners.model.FrameworkMethod
 import org.junit.runners.model.InitializationError
+import org.junit.runners.model.TestClass
+import org.junit.runners.parameterized.TestWithParameters
 
 /** Enum for different synthetic target profiles. */
 enum class SyntheticTarget(val flags: Map<String, Boolean>) {
@@ -103,17 +108,20 @@ annotation class ParameterizeScreenSizes(vararg val value: ScreenSize)
 /**
  * TestRunner is a JUnit4 `Suite` that supports parameterization of flags and screen sizes.
  *
- * <p>When parameterization is enabled, it creates a `Functional` runner for each combination of
- * parameters. Without parameterization, it creates a single `Functional` runner.
+ * <p>When parameterization is enabled, it creates a `ArtifactSaverRunnerWithParameters` runner for
+ * each combination of parameters. Without parameterization, it creates a single `Functional`
+ * runner.
  *
- * <p>This runner supports two annotations for parameterization:
+ * <p>This runner supports three annotations for parameterization:
  * <li>`@ParameterizeSyntheticTargets`: Runs tests against a list of synthetic targets that mimic a
  *   specific environment (e.g. STAGING, PROD).
  * <li>`@ParameterizeScreenSizes`: Runs tests on different screen sizes (e.g. PHONE, DESKTOP).
+ * <li>JUnit's `@Parameters` and `@Parameter` for general-purpose parameterization.
  *
  * <p>The runner creates a JUnit `Suite` containing a separate runner for every combination of
- * synthetic targets and screen sizes. The test name is suffixed with the parameters, for example:
- * `testMethod[SyntheticTarget=STAGING,ScreenSize=PHONE]`
+ * synthetic targets, screen sizes, and JUnit parameters. The test name is suffixed with the
+ * parameters, for example:
+ * `testMethod[SyntheticTarget=STAGING,ScreenSize=PHONE,generalParameter=true]`
  *
  * <p>If an annotation is not provided, a default `NO_OVERRIDE` value is used, and the corresponding
  * part of the test name suffix is omitted.
@@ -140,25 +148,86 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
     companion object {
         private const val TAG = "TestRunner"
 
+        private data class JunitParametersInfo(val parameters: List<Any?>, val nameFormat: String)
+
+        private fun getJunitParameters(klass: Class<*>): JunitParametersInfo? {
+            val parametersMethods =
+                klass.methods.filter { it.isAnnotationPresent(Parameters::class.java) }
+
+            if (parametersMethods.isEmpty()) {
+                return null
+            }
+
+            if (parametersMethods.size > 1) {
+                throw InitializationError("Only one @Parameters method is allowed.")
+            }
+
+            val method = parametersMethods.single()
+            if (!Modifier.isStatic(method.modifiers) || !Modifier.isPublic(method.modifiers)) {
+                throw InitializationError("@Parameters method must be public static.")
+            }
+
+            val parametersAnnotation = method.getAnnotation(Parameters::class.java)!!
+            val nameFormat = parametersAnnotation.name
+
+            try {
+                val params = method.invoke(null)
+                val paramList =
+                    when (params) {
+                        is Iterable<*> -> params.toList()
+                        is Array<*> -> params.toList()
+                        else ->
+                            throw InitializationError(
+                                "@Parameters method must return an Iterable or an array."
+                            )
+                    }
+                return JunitParametersInfo(paramList, nameFormat)
+            } catch (e: Exception) {
+                throw InitializationError("Failed to invoke @Parameters method: ${e.message}")
+            }
+        }
+
         /** Creates a runner for every combination of synthetic targets and screen sizes. */
         private fun createRunners(klass: Class<*>): List<Runner> {
             val args = InstrumentationRegistry.getArguments()
             if (args.getString("documentsui_disable_parameterization") == "true") {
-                return listOf(object : Functional(klass) {})
+                // Use Functional runner to run the test without parameterization because
+                // TestWithParameters (used by ArtifactSaverRunnerWithParameters) with an empty name
+                // will fail the test.
+                return listOf(Functional(klass))
             }
 
             val syntheticTargets = getSyntheticTargets(klass)
             val screenSizes = getScreenSizes(klass)
+            val junitParamsInfo = getJunitParameters(klass)
+            val junitParameters = junitParamsInfo?.parameters
+            val junitParamsNameFormat = junitParamsInfo?.nameFormat
+
             if (
                 syntheticTargets == listOf(SyntheticTarget.NO_OVERRIDE) &&
-                    screenSizes == listOf(ScreenSize.NO_OVERRIDE)
+                    screenSizes == listOf(ScreenSize.NO_OVERRIDE) &&
+                    junitParameters == null
             ) {
-                return listOf(object : Functional(klass) {})
+                // Use Functional runner to run the test without parameterization because
+                // TestWithParameters (used by ArtifactSaverRunnerWithParameters) with an empty name
+                // will fail the test.
+                return listOf(Functional(klass))
             }
 
+            val junitParamsOrNull = junitParameters ?: listOf(null)
+
             return syntheticTargets.flatMap { syntheticTarget ->
-                screenSizes.map { screenSize ->
-                    createParameterizedRunner(klass, syntheticTarget, screenSize)
+                screenSizes.flatMap { screenSize ->
+                    junitParamsOrNull.mapIndexed { index, junitParameterSet ->
+                        createParameterizedRunner(
+                            klass,
+                            syntheticTarget,
+                            screenSize,
+                            junitParameterSet,
+                            index,
+                            junitParamsNameFormat,
+                        )
+                    }
                 }
             }
         }
@@ -168,8 +237,33 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
             klass: Class<*>,
             syntheticTarget: SyntheticTarget,
             screenSize: ScreenSize,
+            junitParameterSet: Any?,
+            junitParameterIndex: Int,
+            junitParamsNameFormat: String?,
         ): Runner {
-            return object : Functional(klass) {
+            val junitParamsAsList =
+                when (junitParameterSet) {
+                    null -> listOf()
+                    is Array<*> -> junitParameterSet.toList()
+                    else -> listOf(junitParameterSet)
+                }
+
+            val testNameParametersParts =
+                createTestNameParametersParts(
+                    syntheticTarget,
+                    screenSize,
+                    junitParameterSet,
+                    junitParameterIndex,
+                    junitParamsNameFormat,
+                )
+
+            // TestWithParameters's first argument (i.e. name) is the name for the parameter part,
+            // which doesn't include the method name, the BlockJUnit4ClassRunnerWithParameters will
+            // add the method name in front of the parameter part.
+            val testWithParams =
+                TestWithParameters(testNameParametersParts, TestClass(klass), junitParamsAsList)
+
+            return object : ArtifactSaverRunnerWithParameters(testWithParams) {
                 override fun runChild(method: FrameworkMethod, notifier: RunNotifier) {
                     val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
                     val originalOverrides = FlagUtils.getInstance().copyOverrideState()
@@ -193,21 +287,38 @@ class TestRunner(klass: Class<*>) : Suite(klass, createRunners(klass)) {
                         }
                     }
                 }
-
-                override fun testName(method: FrameworkMethod): String {
-                    val parts = mutableListOf<String>()
-                    if (syntheticTarget != SyntheticTarget.NO_OVERRIDE) {
-                        parts.add("SyntheticTarget=${syntheticTarget.name}")
-                    }
-                    if (screenSize != ScreenSize.NO_OVERRIDE) {
-                        parts.add("ScreenSize=${screenSize.name}")
-                    }
-                    if (parts.isEmpty()) {
-                        return method.name
-                    }
-                    return "${method.name}[${parts.joinToString(separator = ",")}]"
-                }
             }
+        }
+
+        private fun createTestNameParametersParts(
+            syntheticTarget: SyntheticTarget,
+            screenSize: ScreenSize,
+            junitParameterSet: Any?,
+            junitParameterIndex: Int,
+            junitParamsNameFormat: String?,
+        ): String {
+            val parts = mutableListOf<String>()
+            if (syntheticTarget != SyntheticTarget.NO_OVERRIDE) {
+                parts.add("SyntheticTarget=${syntheticTarget.name}")
+            }
+            if (screenSize != ScreenSize.NO_OVERRIDE) {
+                parts.add("ScreenSize=${screenSize.name}")
+            }
+            if (junitParameterSet != null && junitParamsNameFormat != null) {
+                val nameFormat =
+                    junitParamsNameFormat.replace("{index}", junitParameterIndex.toString())
+                val paramsArray =
+                    when (junitParameterSet) {
+                        is Array<*> -> junitParameterSet
+                        else -> arrayOf(junitParameterSet)
+                    }
+                val args: Array<Any?> = paramsArray.map { it }.toTypedArray()
+                parts.add(MessageFormat.format(nameFormat, *args))
+            }
+            if (parts.isEmpty()) {
+                return ""
+            }
+            return "[${parts.joinToString(separator = ",")}]"
         }
 
         /**

@@ -16,16 +16,17 @@
 
 package com.android.documentsui.base;
 
+import static android.provider.DocumentsContract.Document.COLUMN_CONTENT_SYNC_STATE_FLAGS;
 import static android.provider.DocumentsContract.Document.MIME_TYPE_DIR;
+import static android.provider.DocumentsContract.Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
+import static android.provider.DocumentsContract.Document.SYNC_STATE_FLAG_DOWNLOAD_ERROR;
+import static android.provider.DocumentsContract.Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS;
+import static android.provider.DocumentsContract.Document.SYNC_STATE_FLAG_LOCAL_CHANGES;
+import static android.provider.DocumentsContract.Document.SYNC_STATE_FLAG_UPLOAD_ERROR;
+import static android.provider.DocumentsContract.Document.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static androidx.core.util.Preconditions.checkArgument;
-
-import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
-import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_ERROR;
-import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS;
-import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_LOCAL_CHANGES;
-import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_UPLOAD_ERROR;
-import static com.android.documentsui.base.DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -40,11 +41,16 @@ import static org.mockito.kotlin.VerificationKt.verify;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.rule.provider.ProviderTestRule;
 
@@ -73,9 +79,14 @@ import java.util.Set;
 public class DocumentInfoTest {
 
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
     @Rule
-    public ProviderTestRule mProviderTestRule = new ProviderTestRule.Builder(
-            InspectorProvider.class, InspectorProvider.AUTHORITY).build();
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+
+    @Rule
+    public ProviderTestRule mProviderTestRule =
+            new ProviderTestRule.Builder(InspectorProvider.class, InspectorProvider.AUTHORITY)
+                    .build();
 
     private static final DocumentInfo TEST_DOC
             = createDocInfo("authority.a", "doc.1", "text/plain");
@@ -275,13 +286,15 @@ public class DocumentInfoTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testUpdateFromCursor_syncStateFlags_flagEnabled() {
         Cursor cursor = mock(Cursor.class);
         int index = 1;
         int value = 2;
 
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(value);
         DocumentInfo info = new DocumentInfo();
         info.updateFromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
@@ -289,10 +302,12 @@ public class DocumentInfoTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testUpdateFromCursor_syncStateFlags_flagDisabled() {
         Cursor cursor = mock(Cursor.class);
-        verify(cursor, never()).getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS);
+        verify(cursor, never()).getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS);
     }
 
     @Test
@@ -387,17 +402,19 @@ public class DocumentInfoTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHasSyncState() {
         // No sync state when the column doesn't exist.
         Cursor cursor = mock(Cursor.class);
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(-1);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(-1);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasSyncState());
 
         // No sync state when the column value is null.
         int index = 1;
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.isNull(index)).thenReturn(true);
         info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasSyncState());
@@ -410,25 +427,29 @@ public class DocumentInfoTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testHasSyncState_featureDisabled() {
         Cursor cursor = mock(Cursor.class);
         int index = 1;
 
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(2);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasSyncState());
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHasUploadInProgress() {
         // No upload in progress when column value doesn't contain the right flag.
         Cursor cursor = mock(Cursor.class);
         int index = 1;
         int value = 0;
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(value);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasUploadInProgress());
@@ -441,13 +462,15 @@ public class DocumentInfoTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHasDownloadInProgress() {
         // No download in progress when column value doesn't contain the right flag.
         Cursor cursor = mock(Cursor.class);
         int index = 1;
         int value = 0;
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(value);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasDownloadInProgress());
@@ -460,13 +483,15 @@ public class DocumentInfoTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHasSyncError() {
         // No sync error when column value doesn't contain the right flags.
         Cursor cursor = mock(Cursor.class);
         int index = 1;
         int value = 0;
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.getInt(index)).thenReturn(value);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasSyncError());
@@ -485,13 +510,15 @@ public class DocumentInfoTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHasLocalChanges() {
         // No local changes when column value is null.
         Cursor cursor = mock(Cursor.class);
         int index = 1;
         int value = 0;
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(index);
         when(cursor.isNull(index)).thenReturn(true);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertFalse(info.hasLocalChanges());
@@ -510,14 +537,15 @@ public class DocumentInfoTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testIsContentAvailableLocally() {
         // Available locally when column value is null.
         Cursor cursor = mock(Cursor.class);
         int sync_index = 1;
         int value = 0;
-        when(cursor.getColumnIndex(DocumentInfo.COLUMN_CONTENT_SYNC_STATE_FLAGS))
-                .thenReturn(sync_index);
+        when(cursor.getColumnIndex(COLUMN_CONTENT_SYNC_STATE_FLAGS)).thenReturn(sync_index);
         when(cursor.isNull(sync_index)).thenReturn(true);
         DocumentInfo info = DocumentInfo.fromCursor(cursor, UserId.DEFAULT_USER, "authority.a");
         assertTrue(info.isContentAvailableLocally());

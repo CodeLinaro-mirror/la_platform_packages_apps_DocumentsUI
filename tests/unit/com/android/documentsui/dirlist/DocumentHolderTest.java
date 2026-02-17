@@ -16,6 +16,8 @@
 
 package com.android.documentsui.dirlist;
 
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
+
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import static org.junit.Assert.assertEquals;
@@ -24,14 +26,20 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Looper;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract;
+import android.provider.DocumentsContract.Document;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -60,6 +68,9 @@ import java.util.Collection;
 @SmallTest
 public class DocumentHolderTest {
 
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
+
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
     @Rule public final MockitoRule mMocks = MockitoJUnit.rule();
 
@@ -85,7 +96,7 @@ public class DocumentHolderTest {
 
     @Before
     public void setUp() throws Exception {
-        // Required for the progress circle animation.
+        // Required for the setEnabled animation.
         if (Looper.myLooper() == null) {
             Looper.prepare();
         }
@@ -134,7 +145,7 @@ public class DocumentHolderTest {
         }
     }
 
-    private View getProgressCircle(DocumentHolder holder) {
+    private View getProgressIcon(DocumentHolder holder) {
         return holder.itemView.findViewById(android.R.id.progress);
     }
 
@@ -155,45 +166,51 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testProgressCircleShown_ForUpload() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        View progressCircle = getProgressCircle(holder);
-        assertNotNull(progressCircle);
-        assertEquals(View.VISIBLE, progressCircle.getVisibility());
+        View progressIcon = getProgressIcon(holder);
+        assertNotNull(progressIcon);
+        assertEquals(View.VISIBLE, progressIcon.getVisibility());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
-                progressCircle.getContentDescription().toString());
+                progressIcon.getContentDescription().toString());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.uploading_description_m3)),
-                progressCircle.getTooltipText().toString());
+                progressIcon.getTooltipText().toString());
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testProgressCircleShown_ForDownload() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_DOWNLOAD_PROGRESS;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        View progressCircle = getProgressCircle(holder);
-        assertNotNull(progressCircle);
-        assertEquals(View.VISIBLE, progressCircle.getVisibility());
+        View progressIcon = getProgressIcon(holder);
+        assertNotNull(progressIcon);
+        assertEquals(View.VISIBLE, progressIcon.getVisibility());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
-                progressCircle.getContentDescription().toString());
+                progressIcon.getContentDescription().toString());
         assertEquals(
                 mEnv.getContext().getString(getRes(R.string.downloading_description_m3)),
-                progressCircle.getTooltipText().toString());
+                progressIcon.getTooltipText().toString());
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testSyncErrorIconShown() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_DOWNLOAD_ERROR;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_DOWNLOAD_ERROR;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
@@ -209,9 +226,11 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testUploadIconShown() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_LOCAL_CHANGES;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_LOCAL_CHANGES;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
@@ -227,6 +246,8 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDownloadIconShown_forFiles() {
         mDoc.syncStateFlags = 0;
@@ -246,10 +267,12 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDownloadIconNotShown_forFolders() {
         mDoc.syncStateFlags = 0;
-        mDoc.mimeType = DocumentsContract.Document.MIME_TYPE_DIR;
+        mDoc.mimeType = Document.MIME_TYPE_DIR;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
@@ -258,11 +281,13 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDownloadIconNotShown_forVirtualFiles() {
         mDoc.syncStateFlags = 0;
         mDoc.mimeType = "text/plain";
-        mDoc.flags = DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT;
+        mDoc.flags = Document.FLAG_VIRTUAL_DOCUMENT;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
@@ -271,9 +296,11 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testTickIconShown_whenJustFinishedSyncAndNoOtherSyncState() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ true);
 
@@ -289,6 +316,8 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testTickIconNotShown_whenJustFinishedSyncButOtherSyncState() {
         mDoc.syncStateFlags = 0;
@@ -306,28 +335,30 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testOnlyOneSyncIconShownAtATime() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_LOCAL_CHANGES;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_LOCAL_CHANGES;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNotNull(getProgressCircle(holder));
+        assertNotNull(getProgressIcon(holder));
         assertNotNull(getSyncErrorIcon(holder));
         assertNotNull(getUploadIcon(holder));
         assertNotNull(getDownloadIcon(holder));
         assertNotNull(getTickIcon(holder));
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getTickIcon(holder).getVisibility());
 
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_UPLOAD_ERROR;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_UPLOAD_ERROR;
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -335,31 +366,35 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testNoIconsShownWhenDisabled() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
         holder.setEnabled(false);
 
-        assertNotNull(getProgressCircle(holder));
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotNull(getProgressIcon(holder));
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testNoIconsShownWhenAvailable() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNotNull(getProgressCircle(holder));
+        assertNotNull(getProgressIcon(holder));
         assertNotNull(getSyncErrorIcon(holder));
         assertNotNull(getUploadIcon(holder));
         assertNotNull(getDownloadIcon(holder));
         assertNotNull(getTickIcon(holder));
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -367,19 +402,21 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testNoIconsShownWhenNoSyncState() {
         mDoc.syncStateFlags = null;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ true);
 
-        assertNotNull(getProgressCircle(holder));
+        assertNotNull(getProgressIcon(holder));
         assertNotNull(getSyncErrorIcon(holder));
         assertNotNull(getUploadIcon(holder));
         assertNotNull(getDownloadIcon(holder));
         assertNotNull(getTickIcon(holder));
 
-        assertNotEquals(View.VISIBLE, getProgressCircle(holder).getVisibility());
+        assertNotEquals(View.VISIBLE, getProgressIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getSyncErrorIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
         assertNotEquals(View.VISIBLE, getDownloadIcon(holder).getVisibility());
@@ -387,16 +424,38 @@ public class DocumentHolderTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testIconsDoNotExistWhenFlagsNotEnabled() {
-        mDoc.syncStateFlags = DocumentInfo.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_UPLOAD_PROGRESS;
         DocumentHolder holder = createHolder();
         holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
 
-        assertNull(getProgressCircle(holder));
+        assertNull(getProgressIcon(holder));
         assertNull(getSyncErrorIcon(holder));
         assertNull(getUploadIcon(holder));
         assertNull(getDownloadIcon(holder));
         assertNull(getTickIcon(holder));
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
+    public void testIconDisappearsWhenSyncStateDisappears() {
+        mDoc.syncStateFlags = Document.SYNC_STATE_FLAG_LOCAL_CHANGES;
+        DocumentHolder holder = createHolder();
+        holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
+
+        assertNotNull(getUploadIcon(holder));
+        assertEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
+
+        // Rebind with a null sync state.
+        mDoc.syncStateFlags = null;
+        holder.bind(mDoc, MODEL_ID, null, /* justFinishedSync= */ false);
+
+        assertNotNull(getUploadIcon(holder));
+        assertNotEquals(View.VISIBLE, getUploadIcon(holder).getVisibility());
     }
 }

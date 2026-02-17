@@ -17,8 +17,9 @@
 package com.android.documentsui.dirlist;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 
 import android.net.Uri;
 import android.util.Log;
@@ -30,6 +31,7 @@ import androidx.recyclerview.selection.MutableSelection;
 import androidx.recyclerview.selection.Selection;
 import androidx.recyclerview.selection.SelectionTracker;
 
+import com.android.documentsui.DocumentsAccess;
 import com.android.documentsui.DragAndDropManager;
 import com.android.documentsui.MenuManager.SelectionDetails;
 import com.android.documentsui.Model;
@@ -74,6 +76,7 @@ interface DragStartListener {
         private final Function<Selection<String>, List<DocumentInfo>> mDocsConverter;
         private final Function<DocumentInfo, Boolean> mIsContentAvailable;
         private final DragAndDropManager mDragAndDropManager;
+        private final DocumentsAccess mDocsAccess;
 
         // use DragStartListener.create
         @VisibleForTesting
@@ -86,7 +89,8 @@ interface DragStartListener {
                 Function<View, String> idFinder,
                 Function<Selection<String>, List<DocumentInfo>> docsConverter,
                 Function<DocumentInfo, Boolean> isContentAvailable,
-                DragAndDropManager dragAndDropManager) {
+                DragAndDropManager dragAndDropManager,
+                DocumentsAccess docsAccess) {
 
             mIconHelper = iconHelper;
             mState = state;
@@ -97,6 +101,7 @@ interface DragStartListener {
             mDocsConverter = docsConverter;
             mIsContentAvailable = isContentAvailable;
             mDragAndDropManager = dragAndDropManager;
+            mDocsAccess = docsAccess;
         }
 
         @Override
@@ -133,9 +138,7 @@ interface DragStartListener {
             for (DocumentInfo doc : srcs) {
                 invalidDest.add(doc.derivedUri);
                 // Drag and drop should be disabled if content is not available.
-                if (isCloudFeaturesFlagEnabled()
-                        && canDragAndDrop
-                        && !mIsContentAvailable.apply(doc)) {
+                if (isSyncStateEnabled() && canDragAndDrop && !mIsContentAvailable.apply(doc)) {
                     if (DEBUG) {
                         Log.d(TAG, "Content not available for: " + doc.displayName);
                     }
@@ -164,7 +167,8 @@ interface DragStartListener {
                     mSelectionDetails,
                     mIconHelper,
                     parent,
-                    canDragAndDrop);
+                    canDragAndDrop,
+                    mDocsAccess);
 
             return true;
         }
@@ -188,7 +192,14 @@ interface DragStartListener {
                 mSelectionMgr.copySelection(selection);
             } else {
                 selection.add(modelId);
+                // If the drag starts with an unselected item, clear the existing selection and
+                // select the unselected item so the drag only happens with this item.
                 mSelectionMgr.clearSelection();
+                // We need to update the selection manager because it affects the file operation
+                // type, e.g. move or copy (Check `mMustBeCopied` in DragAndDropManager).
+                if (isUseMaterial3FlagEnabled()) {
+                    mSelectionMgr.select(modelId);
+                }
             }
             return selection;
         }
@@ -203,7 +214,8 @@ interface DragStartListener {
             Function<View, String> idFinder,
             ViewFinder viewFinder,
             Function<DocumentInfo, Boolean> isContentAvailable,
-            DragAndDropManager dragAndDropManager) {
+            DragAndDropManager dragAndDropManager,
+            DocumentsAccess docsAccess) {
 
         return new RuntimeDragStartListener(
                 iconHelper,
@@ -214,7 +226,8 @@ interface DragStartListener {
                 idFinder,
                 model::getDocuments,
                 isContentAvailable,
-                dragAndDropManager);
+                dragAndDropManager,
+                docsAccess);
     }
 
     @FunctionalInterface

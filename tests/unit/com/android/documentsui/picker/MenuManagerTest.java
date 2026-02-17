@@ -42,6 +42,7 @@ import androidx.test.filters.SmallTest;
 import com.android.documentsui.DirectoryResult;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
@@ -49,6 +50,7 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.dirlist.SummaryProviderState;
 import com.android.documentsui.files.TestActivity;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestDirectoryDetails;
@@ -58,7 +60,6 @@ import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
 import kotlinx.coroutines.CoroutineScopeKt;
 import kotlinx.coroutines.Dispatchers;
@@ -102,6 +103,7 @@ public final class MenuManagerTest {
     private TestMenuItem rootOpenInNewWindow;
     private TestMenuItem rootPasteIntoFolder;
     private TestMenuItem rootSettings;
+    private TestMenuItem mRootManageDevice;
 
     /* Action Mode menu items */
     private TestMenuItem actionModeOpen;
@@ -129,6 +131,7 @@ public final class MenuManagerTest {
     private TestMenuItem optionCreateDir;
     private TestMenuItem optionSelectAll;
     private TestMenuItem optionSettings;
+    private TestMenuItem mOptionManageDevice;
     private TestMenuItem optionSort;
     private TestMenuItem mOptionLauncher;
     private TestMenuItem mOptionShowHiddenFiles;
@@ -180,6 +183,7 @@ public final class MenuManagerTest {
         rootOpenInNewWindow = testMenu.findItem(R.id.root_menu_open_in_new_window);
         rootPasteIntoFolder = testMenu.findItem(R.id.root_menu_paste_into_folder);
         rootSettings = testMenu.findItem(R.id.root_menu_settings);
+        mRootManageDevice = testMenu.findItem(R.id.root_menu_manage_device);
 
         actionModeOpenWith = testMenu.findItem(R.id.action_menu_open_with);
         actionModeSelect = testMenu.findItem(R.id.action_menu_select);
@@ -204,6 +208,7 @@ public final class MenuManagerTest {
         optionCreateDir = testMenu.findItem(R.id.option_menu_create_dir);
         optionSelectAll = testMenu.findItem(R.id.option_menu_select_all);
         optionSettings = testMenu.findItem(R.id.option_menu_settings);
+        mOptionManageDevice = testMenu.findItem(R.id.option_menu_manage_device);
         optionSort = testMenu.findItem(R.id.option_menu_sort);
         mOptionLauncher = testMenu.findItem(R.id.option_menu_launcher);
         mOptionShowHiddenFiles = testMenu.findItem(R.id.option_menu_show_hidden_files);
@@ -283,6 +288,18 @@ public final class MenuManagerTest {
 
         actionModeSelect.assertDisabledAndInvisible();
         actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    // Disable M3 flag for the test since the de/select menu options are disabled by default in M3.
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSelectAndDeselectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
         actionModeSelectAll.assertDisabledAndInvisible();
         mActionModeDeselectAll.assertDisabledAndInvisible();
     }
@@ -451,6 +468,19 @@ public final class MenuManagerTest {
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_WithFilesInDirectory() {
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertEnabledAndVisible();
     }
 
     @Test
@@ -628,6 +658,15 @@ public final class MenuManagerTest {
         mDirDeselectAll.assertEnabledAndVisible();
     }
 
+    @Test
+    public void testContextMenu_EmptyArea_SelectAndDeselectAllWithNoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+
+        dirSelectAll.assertDisabledAndInvisible();
+        mDirDeselectAll.assertDisabledAndInvisible();
+    }
+
     @SuppressLint("VisibleForTests")
     @Test
     public void testContextMenu_OnFile() {
@@ -773,16 +812,59 @@ public final class MenuManagerTest {
     }
 
     @Test
-    public void testRootContextMenu() {
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testContextMenu_CantInspectRecents() {
+        mFeatures.inspector = true;
+
+        dirDetails.isInRecents = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        mDirInspect.assertDisabledAndInvisible();
+    }
+
+    @SuppressLint("VisibleForTests")
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testContextMenu_CantInspectTrash() {
+        mFeatures.inspector = true;
+
+        dirDetails.isTrashTopLevel = true;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+        mDirInspect.assertDisabledAndInvisible();
+    }
+
+    private void testRootContextMenu() {
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
 
         rootEjectRoot.assertDisabledAndInvisible();
         rootOpenInNewWindow.assertDisabledAndInvisible();
         rootPasteIntoFolder.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_material3() {
+        testRootContextMenu();
+        mRootManageDevice.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_non_material3() {
+        testRootContextMenu();
         rootSettings.assertDisabledAndInvisible();
     }
 
     @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testRootContextMenu_hasManageDevice() {
+        testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
+        mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);
+
+        mRootManageDevice.assertDisabledAndInvisible();
+    }
+
+    @Test
+    @DisableFlags(FLAG_USE_MATERIAL3)
     public void testRootContextMenu_hasRootSettings() {
         testRootInfo.flags = Root.FLAG_HAS_SETTINGS;
         mgr.updateSidebarItemContextMenu(testMenu, testRootInfo, testDocInfo);

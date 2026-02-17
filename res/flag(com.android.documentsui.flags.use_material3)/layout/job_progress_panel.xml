@@ -53,6 +53,7 @@
             android:paddingBottom="@dimen/job_progress_list_margin"
             android:clipToPadding="false"
             android:scrollbars="vertical"
+            app:layout_constrainedHeight="true"
             app:layout_constraintHeight_max="@dimen/job_progress_list_max_height"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -17,6 +17,7 @@
 package com.android.documentsui.files;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.testing.IntentAsserts.assertHasAction;
 import static com.android.documentsui.testing.IntentAsserts.assertHasExtraIntent;
@@ -134,8 +135,6 @@ public class ActionHandlerTest {
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
-
-    // TODO(b/433858983): Remove CheckFlagsRule once peek is overridable in FlagUtils.
     @Rule
     public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
@@ -280,7 +279,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCutSelectedDocuments_ContainsUnavailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -295,7 +296,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCutSelectedDocuments_ContainsUnavailableDocument_AndAvailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -311,6 +314,8 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testCutSelectedDocuments_ContainsUnavailableDocument_FeatureFlagDisabled() {
         mEnv.populateStack();
@@ -346,7 +351,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCopySelectedDocuments_ContainsUnavailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -361,7 +368,9 @@ public class ActionHandlerTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testCopySelectedDocuments_ContainsUnavailableDocument_AndAvailableDocument() {
         mEnv.populateStack();
         mEnv.selectDocument(TestEnv.FILE_PDF);
@@ -377,6 +386,8 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testCopySelectedDocuments_ContainsUnavailableDocument_FeatureFlagDisabled() {
         mEnv.populateStack();
@@ -412,7 +423,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_trashesTrashableDocuments_whenTrashIsEnabled() {
-        assumeTrashApiIsAvailable();
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
 
@@ -438,7 +448,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_deletesNonTrashableDocuments_whenTrashIsEnabled() {
-        assumeTrashApiIsAvailable();
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
 
@@ -464,7 +473,6 @@ public class ActionHandlerTest {
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testRunDeleteOrTrashHandler_deletesAllDocuments_whenTrashIsDisabled() {
-        assumeTrashApiIsAvailable();
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
 
@@ -717,20 +725,22 @@ public class ActionHandlerTest {
         mDialogs.assertNoAppFoundShown();
     }
 
-    // Require desktop file handling flag because when it's disabled proguard strips the
-    // openDocumentViewOnly function because it's not used anywhere reachable by production code.
     @Test
-    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
     public void testDocumentContextMenuOpen() throws Exception {
         mActivity.resources.setQuickViewerPackage("corptropolis.viewer");
         mActivity.currentRoot = TestProvidersAccess.HOME;
 
-        // Test normal picking (i.e. double click) behaviour will quick view
-        mHandler.openDocument(TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW,
-                ActionHandler.VIEW_TYPE_REGULAR);
+        // Test normal picking on mobile will quick view
+        mHandler.openDocument(
+                TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_PREVIEW, ActionHandler.VIEW_TYPE_REGULAR);
         mActivity.assertActivityStarted(Intent.ACTION_QUICK_VIEW);
 
-        // And verify open via context menu will view instead
+        // Test normal picking on desktop will view
+        mHandler.openDocument(
+                TestEnv.FILE_GIF, ActionHandler.VIEW_TYPE_REGULAR, ActionHandler.VIEW_TYPE_NONE);
+        mActivity.assertActivityStarted(Intent.ACTION_VIEW);
+
+        // And verify open via context menu will view
         mHandler.openDocumentViewOnly(TestEnv.FILE_GIF);
         mActivity.assertActivityStarted(Intent.ACTION_VIEW);
     }
@@ -869,6 +879,7 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
     public void testInitLocation_LaunchToDownloads() throws Exception {
         Intent intent = mActivity.getIntent();
         intent.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
@@ -910,6 +921,46 @@ public class ActionHandlerTest {
                 mEnv.state.stack,
                 TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot(),
                 Arrays.asList(homeScreenDoc, TestEnv.FOLDER_0));
+        mActivity.refreshCurrentRootAndDirectory.assertCalled();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testInitLocation_LaunchToZipFolderOnHomeScreen() throws Exception {
+        Uri mediaStoreUri = Uri.parse("content://media/external/file/1");
+
+        // Set the intent data to be the media store uri.
+        Intent intent = mActivity.getIntent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(mediaStoreUri, "application/zip");
+
+        // Set the path to be:
+        // external storage provider root --> home screen folder --> whatsinthere.zip.
+        mEnv.docs.nextPath =
+                new Path(
+                        TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot().rootId,
+                        Arrays.asList(
+                                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getDocumentId(),
+                                TestEnv.FILE_ARCHIVE.documentId));
+        // Needed to get the correct results when calling LoadDocStackTask.
+        mEnv.docs.nextIsDocumentsUri = true;
+        DocumentInfo homeScreenDoc = new DocumentInfo();
+        homeScreenDoc.derivedUri = TestProvidersAccess.HOME_SCREEN_SHORTCUT.getUri();
+        mEnv.docs.nextDocuments = Arrays.asList(homeScreenDoc, TestEnv.FILE_ARCHIVE);
+        // Mock the media store uri to convert to FILE_ARCHIVE's uri.
+        mEnv.docs.mNextDocumentUri = TestEnv.FILE_ARCHIVE.derivedUri;
+
+        mHandler.initLocation(intent);
+        mEnv.beforeAsserts();
+
+        // The expected behaviour is that the activity will launch to the home screen document and
+        // select the zip file in the directory list.
+        DocumentStackAsserts.assertEqualsTo(
+                mEnv.state.stack,
+                TestProvidersAccess.HOME_SCREEN_SHORTCUT.getRoot(),
+                Arrays.asList(homeScreenDoc));
+        assertEquals(TestEnv.FILE_ARCHIVE.derivedUri, mHandler.getToSelect());
+
         mActivity.refreshCurrentRootAndDirectory.assertCalled();
     }
 
@@ -1067,7 +1118,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testShowEmptyTrashConfirmationDialog_NoDialog() {
-        assumeTrashApiIsAvailable();
         // Clear the environment to ensure trash is empty
         mEnv.clear();
         mEnv.state.stack.changeRoot(TestProvidersAccess.TRASH_ROOT);
@@ -1089,7 +1139,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testPermanentlyDeleteTrashDocuments() {
-        assumeTrashApiIsAvailable();
         // Add a file and move it to the trash
         mEnv.populateStack();
         mEnv.selectionMgr.clearSelection();
@@ -1201,7 +1250,6 @@ public class ActionHandlerTest {
     @EnableFlags({Flags.FLAG_ENABLE_TRASH_FLOW_RO, Flags.FLAG_USE_MATERIAL3})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testPermanentlyDeleteTrashDocuments_NoItems() {
-        assumeTrashApiIsAvailable();
         // Ensure the environment and trash are empty
         mEnv.clear();
 
@@ -1246,18 +1294,5 @@ public class ActionHandlerTest {
                 mDragAndDropManager,
                 mPeekViewManager,
                 mEnv.injector);
-    }
-
-    /**
-     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
-     * The Trash feature under test relies on DocumentsContract APIs introduced in the
-     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
-     * subject to MTS testing, which runs on older Android base builds to verify backward
-     * compatibility. However, this specific Trash feature lacks backward compatibility
-     * with platforms at or below Baklava. This assumption prevents failures when the
-     * test runs on an older base OS without the necessary APIs.
-     */
-    private void assumeTrashApiIsAvailable() {
-        assumeTrue(VersionUtils.isGreaterThanB());
     }
 }

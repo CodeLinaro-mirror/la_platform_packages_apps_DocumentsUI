@@ -24,8 +24,10 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentManager
+import com.android.documentsui.ConsentCallbacks
 import com.android.documentsui.R
 import com.android.documentsui.SummaryConsentFragment
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Menus
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
@@ -77,6 +79,11 @@ sealed interface SummaryProviderState {
     data class Available(val isUserEnabled: Boolean) : SummaryProviderState
 }
 
+/** Interface used to launch the dialog, used to override the dialog for tests. */
+fun interface ConsentDialogLauncher {
+    fun show(fm: FragmentManager, title: String, message: String, callbacks: ConsentCallbacks)
+}
+
 /**
  * Manages the state of the local summary provider.
  *
@@ -87,13 +94,30 @@ open class SummaryProviderManager(
     private val context: Context,
     private val scope: CoroutineScope,
     val authorityUri: Uri?,
+    /** The function that shows the consent dialog, used to override for tests. */
+    private val dialogLauncher: ConsentDialogLauncher,
 ) {
+    /** Secondary constructor used by Java to ignore the [dialogLauncher] parameter. */
+    constructor(
+        context: Context,
+        scope: CoroutineScope,
+        authorityUri: Uri?,
+    ) : this(
+        context,
+        scope,
+        authorityUri,
+        ConsentDialogLauncher { fm, t, m, callbacks ->
+            SummaryConsentFragment.show(fm, context, t, m, callbacks)
+        },
+    ) {}
+
     private val _state = MutableStateFlow<SummaryProviderState>(SummaryProviderState.Initializing)
     val state: StateFlow<SummaryProviderState> = _state
 
     // Override for tests.
     private var overrideConsentTitle: String? = null
     private var overrideConsentMessage: String? = null
+    private var overrideShowConsentDialog: Boolean? = null
 
     val authority: String? = authorityUri?.authority
     var rootDocumentId: String? = null
@@ -237,15 +261,67 @@ open class SummaryProviderManager(
 
     @VisibleForTesting
     fun userSwitchSummaryEnabled() {
-        LocalPreferences.setSummaryEnabled(context, true)
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_ACCEPTED)
         _state.value = SummaryProviderState.Available(isUserEnabled = true)
         // We only notify for enablement, so the provider can fully enable itself.
         scope.launch { notifyProvider() }
     }
 
     private fun userSwitchSummaryDisabled() {
-        LocalPreferences.setSummaryEnabled(context, false)
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_UNKNOWN)
         _state.value = SummaryProviderState.Available(isUserEnabled = false)
+    }
+
+    /** Returns true if we should show the consent dialog proactively at start up. */
+    fun shouldShowStartupConsent(): Boolean {
+        if (!isUseFileSummaryEnabled()) {
+            return false
+        }
+
+        // Check if it's configured to request consent.
+        val showConsent =
+            overrideShowConsentDialog
+                ?: context.resources.getBoolean(R.bool.show_summary_consent_dialog)
+        if (!showConsent) {
+            return false
+        }
+
+        // If the user has already enabled the feature, we don't need to ask for consent.
+        if (LocalPreferences.isSummaryEnabled(context)) {
+            return false
+        }
+
+        val status = LocalPreferences.getSummaryConsent(context)
+
+        return when (status) {
+            LocalPreferences.CONSENT_UNKNOWN -> true
+            LocalPreferences.CONSENT_REJECTED -> false
+            LocalPreferences.CONSENT_DEFERRED -> false // TODO: Define when to ask again.
+            else -> false
+        }
+    }
+
+    /** Shows the consent dialog proactively at start up. */
+    fun showStartupConsent(fragmentManager: FragmentManager, refreshCallback: () -> Unit) {
+        val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
+        val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
+        dialogLauncher.show(
+            fragmentManager,
+            title,
+            message,
+            ConsentCallbacks(
+                onEnable = {
+                    userSwitchSummaryEnabled()
+                    refreshCallback()
+                },
+                onCancel = {
+                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
+                },
+                onRemindLater = {
+                    LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_DEFERRED)
+                },
+            ),
+        )
     }
 
     /**
@@ -260,20 +336,41 @@ open class SummaryProviderManager(
             return
         }
 
+        val showConsent =
+            overrideShowConsentDialog
+                ?: context.resources.getBoolean(R.bool.show_summary_consent_dialog)
+
+        if (!showConsent) {
+            // This means that the summary feature doesn't require consent.
+            userSwitchSummaryEnabled()
+            refreshCallback()
+            return
+        }
+
         // Enabling the summary column.
         val title = overrideConsentTitle ?: context.getString(R.string.summary_consent_title)
         val message = overrideConsentMessage ?: context.getString(R.string.summary_consent_message)
-        SummaryConsentFragment.show(
+        dialogLauncher.show(
             fragmentManager,
-            context,
             title,
             message,
-            onPositiveButtonClick = {
-                userSwitchSummaryEnabled()
-                refreshCallback()
-            },
-            // Nothing needs to be done if user cancels.
-            onNegativeButtonClick = {},
+            ConsentCallbacks(
+                onEnable = {
+                    userSwitchSummaryEnabled()
+                    refreshCallback()
+                },
+                // The "Don't ask me again" button is only displayed if the dialog is shown
+                // proactively.
+                onCancel = null,
+                onRemindLater = {
+                    // When going via menu, we set timestamp to 0 so it's stale immediately.
+                    LocalPreferences.setSummaryConsent(
+                        context,
+                        LocalPreferences.CONSENT_DEFERRED,
+                        0,
+                    )
+                },
+            ),
         )
     }
 
@@ -303,9 +400,15 @@ open class SummaryProviderManager(
 
     /** Force the consent dialog content to avoid relying on the RRO. */
     @VisibleForTesting
-    fun setConsentMessage(title: String, message: String) {
+    fun setConsentMessage(title: String, message: String, showConsent: Boolean) {
         overrideConsentTitle = title
         overrideConsentMessage = message
+        overrideShowConsentDialog = showConsent
+    }
+
+    @VisibleForTesting
+    fun setShowConsentDialogForTest(show: Boolean) {
+        overrideShowConsentDialog = show
     }
 
     /** Force the local state for unit tests. */
@@ -319,13 +422,18 @@ open class SummaryProviderManager(
 fun displaySummaryForRoot(
     summaryProviderManager: SummaryProviderManager?,
     root: RootInfo?,
+    currentDocument: DocumentInfo?,
 ): Boolean {
     if (!isUseFileSummaryEnabled()) {
         // The condition before this flag was to display for Downloads and Recents.
-        return root != null && (root.isRecents() || root.isDownloads())
+        return root != null && (root.isRecents || root.isDownloads)
     }
     // Defaults to false.
     if (root == null || summaryProviderManager == null) {
+        return false
+    }
+    // When displaying zip even within a root that shows summary, we don't display the summary.
+    if (currentDocument?.isInArchive == true) {
         return false
     }
     if (summaryProviderManager.isEnabled() && (root.isLocalProvider || root.isRecents)) {

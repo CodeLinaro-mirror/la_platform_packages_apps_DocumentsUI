@@ -40,15 +40,65 @@ public class LocalPreferences {
     private static final String VIEW_MODE_STATE = "viewModeState";
     private static final String SHOW_HIDDEN_FILES = "showHiddenFiles";
     public static final String KEY_SUMMARY_ENABLED = "summaryEnabled";
+    public static final String KEY_SUMMARY_CONSENT_STATUS = "summaryConsentStatus";
+    public static final String KEY_SUMMARY_CONSENT_TIMESTAMP = "summaryConsentTimestamp";
+
+    /** User hasn't answered anything. */
+    public static final int CONSENT_UNKNOWN = 0;
+
+    /** User has accepted to enable the feature. */
+    public static final int CONSENT_ACCEPTED = 1;
+
+    /** User has answered "not now", so we might prompt again. */
+    public static final int CONSENT_DEFERRED = 2;
+
+    /** User has answered "Don't ask me again". */
+    public static final int CONSENT_REJECTED = 3;
+
+    @IntDef(
+            flag = false,
+            value = {
+                CONSENT_UNKNOWN,
+                CONSENT_ACCEPTED,
+                CONSENT_DEFERRED,
+                CONSENT_REJECTED,
+            })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ConsentStatus {}
 
     /** Returns if the summary preference is enabled. */
     public static Boolean isSummaryEnabled(Context context) {
         return getPrefs(context).getBoolean(KEY_SUMMARY_ENABLED, false);
     }
 
-    /** Sets the summary preference. */
-    public static void setSummaryEnabled(Context context, boolean enabled) {
-        getPrefs(context).edit().putBoolean(KEY_SUMMARY_ENABLED, enabled).apply();
+    /** Sets the summary consent status and timestamp. */
+    public static void setSummaryConsent(Context context, @ConsentStatus int status) {
+        setSummaryConsent(context, status, System.currentTimeMillis());
+    }
+
+    /** Sets the summary consent status and timestamp. */
+    @VisibleForTesting
+    public static void setSummaryConsent(
+            Context context, @ConsentStatus int status, long timestamp) {
+        boolean isEnabled = status == CONSENT_ACCEPTED;
+        getPrefs(context)
+                .edit()
+                .putBoolean(KEY_SUMMARY_ENABLED, isEnabled)
+                .putInt(KEY_SUMMARY_CONSENT_STATUS, status)
+                .putLong(KEY_SUMMARY_CONSENT_TIMESTAMP, timestamp)
+                .apply();
+    }
+
+    /** Returns the summary consent status. */
+    @VisibleForTesting
+    public static @ConsentStatus int getSummaryConsent(Context context) {
+        return getPrefs(context).getInt(KEY_SUMMARY_CONSENT_STATUS, CONSENT_UNKNOWN);
+    }
+
+    /** Returns the summary consent timestamp. */
+    @VisibleForTesting
+    public static long getSummaryConsentTimestamp(Context context) {
+        return getPrefs(context).getLong(KEY_SUMMARY_CONSENT_TIMESTAMP, 0);
     }
 
     public static @ViewMode int getViewMode(Context context, RootInfo root,

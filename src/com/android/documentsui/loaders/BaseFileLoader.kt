@@ -89,6 +89,12 @@ abstract class BaseFileLoader(
     protected val mimeTypeLookup: Lookup<String, String>,
 ) : AsyncTaskLoader<DirectoryResult>(context) {
 
+    companion object {
+        var instanceCounter = 0
+    }
+
+    val myInstance = ++instanceCounter
+
     /**
      * The cancellation signal passed to the `client.query()` method that allows us to notify the
      * client about the query being cancelled while it is still being run. Extending classes need to
@@ -104,7 +110,7 @@ abstract class BaseFileLoader(
      */
     override fun cancelLoadInBackground() {
         if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}.cancelLoadInBackground")
+            Log.d(TAG, "${this::class.simpleName}#$myInstance.cancelLoadInBackground")
         }
         super.cancelLoadInBackground()
 
@@ -113,7 +119,7 @@ abstract class BaseFileLoader(
 
     override fun deliverResult(result: DirectoryResult?) {
         if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}.deliverResult")
+            Log.d(TAG, "${this::class.simpleName}#$myInstance.deliverResult")
         }
         if (isReset) {
             closeResult(result)
@@ -133,38 +139,40 @@ abstract class BaseFileLoader(
 
     override fun onStartLoading() {
         if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}.onStartLoading")
+            Log.d(TAG, "${this::class.simpleName}#$myInstance.onStartLoading")
         }
         val isCursorStale: Boolean = checkIfCursorStale(storedResult)
         if (storedResult != null && !isCursorStale) {
             deliverResult(storedResult)
         }
+        if (isCursorStale) {
+            resetInternal()
+        }
         if (takeContentChanged() || storedResult == null || isCursorStale) {
-            resetCursors()
             forceLoad()
         }
     }
 
-    /** Used when start loading detects stale cursor or content changed to reset cursors. */
-    open fun resetCursors() {}
+    /** Used when start loading detects stale cursor or content changed to reset internal data. */
+    open fun resetInternal() {}
 
     override fun onStopLoading() {
         if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}.onStopLoading")
+            Log.d(TAG, "${this::class.simpleName}#$myInstance.onStopLoading")
         }
         cancelLoad()
     }
 
     override fun onCanceled(result: DirectoryResult?) {
         if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}.onCanceled")
+            Log.d(TAG, "${this::class.simpleName}#$myInstance.onCanceled")
         }
         closeResult(result)
     }
 
     override fun onReset() {
         if (DEBUG) {
-            Log.d(TAG, "${this::class.simpleName}.onReset")
+            Log.d(TAG, "${this::class.simpleName}#$myInstance.onReset")
         }
         super.onReset()
 

@@ -28,7 +28,8 @@ import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.DocumentStack
 import com.android.documentsui.base.Features
-import com.android.documentsui.base.SharedMinimal
+import com.android.documentsui.base.SharedMinimal.DEBUG
+import com.android.documentsui.base.SharedMinimal.redact
 import com.android.documentsui.clipping.UrisSupplier
 import kotlin.concurrent.Volatile
 
@@ -90,10 +91,8 @@ class TrashJob(
             id,
             operationType,
             state,
-            getProgressMessage(
-                R.string.trash_specific_file_in_progress,
-                R.string.trash_in_progress,
-            ),
+            filename,
+            mResourceUris.itemCount,
             hasFailures(),
             failedDocs,
             failedUris,
@@ -103,9 +102,7 @@ class TrashJob(
 
     override fun start() {
         for (doc in mResolvedDocs) {
-            if (SharedMinimal.DEBUG) {
-                Log.d(TAG, "Trashing document @ " + doc.derivedUri)
-            }
+            if (DEBUG) Log.d(TAG, "Trashing ${redact(doc.derivedUri)}")
             try {
                 trashDocument(doc)
             } catch (e: ResourceException) {
@@ -114,7 +111,7 @@ class TrashJob(
                     MetricConsts.SUBFILEOP_TRASH_DOCUMENT,
                     doc.derivedUri,
                 )
-                Log.e(TAG, "Failed to trash document @ " + doc.derivedUri, e)
+                Log.e(TAG, "Cannot trash ${redact(doc.derivedUri)}", e)
                 onFileFailed(doc)
             }
 

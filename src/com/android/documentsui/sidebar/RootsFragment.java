@@ -20,6 +20,7 @@ import static com.android.documentsui.base.Shared.compareToIgnoreCaseNullable;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -141,6 +142,9 @@ public class RootsFragment extends Fragment {
     // Weather the fragment is using nav_rail_container_roots as its container (in nav_rail_layout).
     // This will always be false if isUseMaterial3FlagEnabled() flag is off.
     private boolean mUseRailAsContainer = false;
+
+    // Maintain state of whether a root and directory refresh is pending.
+    private boolean mRefreshPending = false;
 
     /**
      * Show the RootsFragment inside the navigation drawer container.
@@ -374,8 +378,10 @@ public class RootsFragment extends Fragment {
     }
 
     public void reloadRootsAndShortcuts(boolean refreshRootAndDirectory) {
+        // Prevent refresh from being overwritten by repetitive calls during config changes.
+        mRefreshPending |= refreshRootAndDirectory;
         Bundle args = new Bundle();
-        args.putBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID, refreshRootAndDirectory);
+        args.putBoolean(LOADER_REFRESH_ROOT_AND_DIRECTORY_ID, mRefreshPending);
         LoaderManager.getInstance(this).restartLoader(LoaderIds.ROOTS, args, mRootsCallbacks);
     }
 
@@ -462,6 +468,7 @@ public class RootsFragment extends Fragment {
         mInjector.appsRowManager.updateList(mApplicationItemList);
         mInjector.appsRowManager.updateView(activity);
         onCurrentRootChanged();
+        mRefreshPending = false;
     }
 
 
@@ -517,6 +524,7 @@ public class RootsFragment extends Fragment {
         final RootItemListBuilder storageProvidersBuilder = new RootItemListBuilder(selectedUser,
                 userIds);
         final List<RootItem> otherProviders = new ArrayList<>();
+        final List<Item> trashItems = new ArrayList<>();
         final boolean hideMediaRoots =
                 isUseMaterial3FlagEnabled()
                         && !context.getResources().getBoolean(R.bool.show_media_roots);
@@ -582,7 +590,13 @@ public class RootsFragment extends Fragment {
                                 ? new NavRailRootItem(root, mActionHandler, maybeShowBadge)
                                 : new RootItem(root, mActionHandler, maybeShowBadge);
                 storageProvidersBuilder.add(item);
-            } else {
+            } else if (isTrashFlowEnabled() && root.isTrash()) {
+                item =
+                        mUseRailAsContainer
+                                ? new NavRailRootItem(root, mActionHandler, maybeShowBadge)
+                                : new RootItem(root, mActionHandler, maybeShowBadge);
+                trashItems.add(item);
+            } else if (root.authority != null) {
                 item =
                         mUseRailAsContainer
                                 ? new NavRailRootItem(
@@ -660,6 +674,7 @@ public class RootsFragment extends Fragment {
                         getPresentableListPrivateSpaceDisabled(context, state, rootList,
                                 rootListOtherUser);
         addListToResult(result, presentableList);
+        addListToResult(result, trashItems);
         return result;
     }
 
@@ -985,7 +1000,8 @@ public class RootsFragment extends Fragment {
         } else if (id == getRes(R.id.root_menu_paste_into_folder)) {
             mActionHandler.pasteIntoFolder(sidebarItem.getItemInfo());
             return true;
-        } else if (id == getRes(R.id.root_menu_settings)) {
+        } else if (id == getRes(R.id.root_menu_settings)
+                || (id == getRes(R.id.root_menu_manage_device))) {
             mActionHandler.openSettings(sidebarItem.getItemInfo().getRoot());
             return true;
         } else if (id == getRes(R.id.root_menu_inspect)) {

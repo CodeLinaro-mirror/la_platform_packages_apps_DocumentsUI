@@ -41,6 +41,12 @@
     <string name="summary_consent_title"></string>
     <!-- Message for the summary consent dialog. -->
     <string name="summary_consent_message"></string>
+    <!-- Label for the confirmation button for the summary consent dialog. -->
+    <string name="summary_consent_ok_button">Turn on</string>
+    <!-- Label for the cancel button for the summary consent dialog. -->
+    <string name="summary_consent_cancel_button">Don\u2019t ask me again</string>
+    <!-- Label for the remind me later button for the summary consent dialog. -->
+    <string name="summary_consent_remind_later_button">Not now</string>
 
     <!-- Title of the documents application [CHAR LIMIT=32] -->
     <string name="launcher_label">@string/files_label</string>
@@ -60,6 +66,8 @@
     <string name="menu_search">Search</string>
     <!-- Menu item that opens settings/options for a device (like an SD card). [CHAR LIMIT=28] -->
     <string name="menu_settings">Storage settings</string>
+    <!-- Alternative menu item that opens settings/options for a device (like an SD card). [CHAR LIMIT=28] -->
+    <string name="manage_device">Manage device</string>
 
     <!-- Menu item title that opens the selected documents [CHAR LIMIT=28] -->
     <string name="menu_open">Open</string>
@@ -74,7 +82,7 @@
     <!-- Menu item title that deletes the selected documents [CHAR LIMIT=28] -->
     <string name="menu_delete">Delete</string>
     <!-- Menu item title that permanently deletes the selected documents [CHAR LIMIT=28] -->
-    <string name="menu_permanently_delete">Delete permanently</string>
+    <string name="menu_permanently_delete">Delete forever</string>
     <!-- Menu item title that trashes the selected documents [CHAR LIMIT=28] -->
     <string name="menu_move_to_trash">Move to trash</string>
     <!-- Menu item title that restores the selected trashed documents [CHAR LIMIT=28] -->
@@ -117,10 +125,10 @@
     <string name="menu_show_hidden_files">Show hidden files</string>
     <!-- Menu item that hides hidden files [CHAR LIMIT=36] -->
     <string name="menu_hide_hidden_files">Don\u2019t show hidden files</string>
-    <!-- Menu item that shows the summary column [CHAR LIMIT=36] -->
-    <string name="option_show_summary_column">Show summary column</string>
-    <!-- Menu item that hides the summary column [CHAR LIMIT=36] -->
-    <string name="option_hide_summary_column">Don\'t show summary column</string>
+    <!-- Menu item that shows the description/summary column [CHAR LIMIT=36] -->
+    <string name="option_show_summary_column">Show description column</string>
+    <!-- Menu item that hides the description/summary column [CHAR LIMIT=36] -->
+    <string name="option_hide_summary_column">Don\u2019t show description column</string>
     <!-- Menu item that renames the selected document [CHAR LIMIT=28] -->
     <string name="menu_view_in_owner">View in <xliff:g id="source" example="Google Drive">%1$s</xliff:g></string>
 
@@ -171,8 +179,8 @@
     <string name="not_sorted">Not sorted</string>
     <!-- Table header for file name [CHAR_LIMIT=24] -->
     <string name="sort_dimension_name">Name</string>
-    <!-- Table header for metadata of downloaded files, such as download source and progress. [CHAR_LIMIT=24] -->
-    <string name="sort_dimension_summary">Summary</string>
+    <!-- Table header for the description/summary field. [CHAR_LIMIT=24] -->
+    <string name="sort_dimension_summary">Description</string>
     <!-- Table header for file type. [CHAR_LIMIT=12] -->
     <string name="sort_dimension_file_type">Type</string>
     <!-- Table header for file size. [CHAR_LIMIT=12] -->
@@ -627,7 +635,7 @@
     <string name="notification_copy_files_converted_title">Some files were converted</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being copied.
-         [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         [CHAR_LIMIT=48] -->
     <string name="copy_specific_file_in_progress">Copying \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being copied.
@@ -638,7 +646,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being extracted from
-         an archive.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         an archive.  [CHAR_LIMIT=48] -->
     <string name="extract_specific_file_in_progress">Extracting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being
@@ -649,7 +657,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being moved from one
-         folder to another.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         folder to another.  [CHAR_LIMIT=48] -->
     <string name="move_specific_file_in_progress">Moving \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D to \u201C<xliff:g id="directory" example="example folder">{directory}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being moved
@@ -660,7 +668,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being deleted.
-         [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         [CHAR_LIMIT=48] -->
     <string name="delete_specific_file_in_progress">Deleting \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being
@@ -671,7 +679,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being moved to the
-         trash bin.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         trash bin.  [CHAR_LIMIT=48] -->
     <string name="trash_specific_file_in_progress">Trashing \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being moved
@@ -682,7 +690,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being restored from the
-         trash bin. [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         trash bin. [CHAR_LIMIT=48] -->
     <string name="restore_specific_file_in_progress">Restoring \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more
@@ -693,7 +701,7 @@
     }</string>
 
     <!-- Progress message shown by the Android File Manager when one file is being zipped, i.e.
-         bundled together and compressed into a ZIP archive.  [CHAR_LIMIT=48] [ICU SYNTAX] -->
+         bundled together and compressed into a ZIP archive.  [CHAR_LIMIT=48] -->
     <string name="compress_specific_file_in_progress">Zipping \u201C<xliff:g id="filename" example="foobar.txt">{filename}</xliff:g>\u201D</string>
 
     <!-- Progress message shown by the Android File Manager when one or more files are being zipped,
@@ -831,25 +839,20 @@
         <item quantity="other"><xliff:g id="count" example="3">%1$d</xliff:g> items</item>
     </plurals>
 
-    <!-- Dialog text shown to users when asking if they want to delete a file (a confirmation) -->
-    <string name="delete_filename_confirmation_message">Delete \"<xliff:g id="name" example="cat.jpg">%1$s</xliff:g>\"?</string>
-    <!-- Dialog text shown to users when asking if they want to delete a folder (a confirmation) -->
-    <string name="delete_foldername_confirmation_message">Delete folder \"<xliff:g id="name" example="Photos">%1$s</xliff:g>\" and its contents?</string>
-    <!-- Dialog text shown to users when asking if they want to delete files (a confirmation). -->
-    <plurals name="delete_files_confirmation_message">
-        <item quantity="one">Delete <xliff:g id="count" example="1">%1$d</xliff:g> file?</item>
-        <item quantity="other">Delete <xliff:g id="count" example="3">%1$d</xliff:g> files?</item>
-    </plurals>
-    <!-- Dialog text shown to users when asking if they want to delete folders (a confirmation). -->
-    <plurals name="delete_folders_confirmation_message">
-        <item quantity="one">Delete <xliff:g id="count" example="1">%1$d</xliff:g> folder and its contents?</item>
-        <item quantity="other">Delete <xliff:g id="count" example="3">%1$d</xliff:g> folders and their contents?</item>
-    </plurals>
-    <!-- Dialog text shown to users when asking if they want to delete mixed type items: files and folders (a confirmation). -->
-    <plurals name="delete_items_confirmation_message">
-        <item quantity="one">Delete <xliff:g id="count" example="1">%1$d</xliff:g> item?</item>
-        <item quantity="other">Delete <xliff:g id="count" example="3">%1$d</xliff:g> items?</item>
-    </plurals>
+    <!-- Dialog title shown to users when asking if they want to delete documents. -->
+    <string name="delete_forever_dialog_title">Delete forever?</string>
+
+    <!-- Dialog text shown to users when asking if they want to delete documents (a confirmation). -->
+    <string name="delete_forever_confirmation_message">{count, plural,
+        =1 {\u201C<xliff:g id="name" example="image.jpg">{name}</xliff:g>\u201D will be deleted forever. This can\u2019t be undone.}
+        other {# items will be deleted forever. This can\u2019t be undone.}
+    }</string>
+
+    <!-- Dialog text shown to users when asking if they want to delete documents (a confirmation). -->
+    <string name="delete_forever_from_trash_confirmation_message">{count, plural,
+        =1 {\u201C<xliff:g id="name" example="image.jpg">{name}</xliff:g>\u201D will be deleted forever. This can\u2019t be undone.}
+        other {# items in trash will be deleted forever. This can\u2019t be undone.}
+    }</string>
 
     <!-- Shortcut label of Images root folder -->
     <string name="images_shortcut_label">Images</string>
@@ -1069,31 +1072,37 @@
     <string name="a11y_peek_show_info_button">Show info panel</string>
 
     <!-- Title displayed on the trash page when it contains no files. [CHAR_LIMIT=48] -->
-    <string name="trash_page_empty_title">Nothing in trash</string>
+    <string name="trash_page_empty_title">Trash is empty</string>
 
     <!-- Message shown in a banner on the trash page informing users about automatic deletion. [CHAR_LIMIT=100] -->
-    <string name="empty_trash_banner_message">Files in the trash for more than 30 days will be automatically deleted.</string>
+    <string name="empty_trash_banner_message">Items in the trash for more than 30 days will be automatically deleted</string>
 
     <!-- Button text in the trash page banner to manually empty the trash. [CHAR_LIMIT=48] -->
-    <string name="empty_trash_banner_button">Empty trash now</string>
+    <string name="empty_trash_banner_button">Empty trash</string>
 
     <!-- Title of the confirmation dialog when emptying the trash. [CHAR_LIMIT=48] -->
     <string name="empty_trash_dialog_title">Empty trash?</string>
 
     <!-- Message in the confirmation dialog when emptying the trash, warning the user about permanent deletion. [CHAR_LIMIT=NONE] -->
-    <string name="empty_trash_dialog_message">This action cannot be undone, and the files will no longer be recoverable.</string>
+    <string name="empty_trash_dialog_message">All items in trash will be deleted forever. This can\u2019t be undone.</string>
 
     <!-- Action button text in the dialog to confirm emptying the trash. [CHAR_LIMIT=48] -->
-    <string name="empty_trash_dialog_action_button">Empty trash</string>
+    <string name="empty_trash_dialog_action_button">Delete forever</string>
 
     <!-- Title of the dialog when opening a file in the trash. [CHAR_LIMIT=48] -->
-    <string name="file_open_in_trash_dialog_title">File in Trash</string>
+    <string name="file_open_in_trash_dialog_title">{count, plural,
+        =1 {Item is in trash}
+        other {Items are in trash}
+    }</string>
 
     <!-- Message in the dialog when opening a file in the trash. [CHAR_LIMIT=NONE] -->
-    <string name="file_open_in_trash_dialog_message">This file is in your Trash and cannot be opened. Please restore it from trash to access it.</string>
+    <string name="file_open_in_trash_dialog_message">{count, plural,
+        =1 {To access this item, restore it or drag it out of the trash}
+        other {To access these items, restore them or drag them out of the trash}
+    }</string>
 
     <!-- Restore action button text in the dialog to restore the file from the trash. [CHAR_LIMIT=48] -->
-    <string name="file_open_in_trash_dialog_restore_action_button">Restore file</string>
+    <string name="file_open_in_trash_dialog_restore_action_button">Restore</string>
 
     <!-- Message shown in a banner when offline for roots that have limited functionality when offline. [CHAR_LIMIT=NONE] -->
     <string name="you_are_offline_banner_message">You are currently offline. Some files and functionality are not available. Connect to the internet for full access.</string>

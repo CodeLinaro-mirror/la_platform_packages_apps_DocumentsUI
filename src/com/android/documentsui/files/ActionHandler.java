@@ -17,12 +17,13 @@
 package com.android.documentsui.files;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -73,9 +74,11 @@ import com.android.documentsui.roots.ProvidersAccess;
 import com.android.documentsui.services.FileOperation;
 import com.android.documentsui.services.FileOperationService;
 import com.android.documentsui.services.FileOperations;
+import com.android.documentsui.util.FlagUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import javax.annotation.Nullable;
@@ -136,8 +139,8 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return false;
         }
 
-        // Except trash root, other library roots do not support drag & drop operations.
-        if (root.isLibrary() && !root.isTrash()) {
+        // Library roots do not support drag & drop operations.
+        if (root.isLibrary()) {
             return false;
         }
 
@@ -253,7 +256,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
         }
         if (mConfig.isDocumentEnabled(doc, mState, mInjector.networkMonitor.isOnline())) {
             onDocumentOpened(doc, type, fallback, false);
-            mSelectionMgr.clearSelection();
+            if (!isUseMaterial3FlagEnabled()) {
+                mSelectionMgr.clearSelection();
+            }
             return !doc.isContainer();
         }
         return false;
@@ -302,7 +307,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isHomeScreenFilesFlagEnabled() || isCloudFeaturesFlagEnabled()) {
+        if (isHomeScreenFilesFlagEnabled() || isSyncStateEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
                 Log.e(TAG, "No documents available to cut.");
@@ -312,7 +317,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
             List<Uri> uris = new ArrayList<>();
             for (DocumentInfo doc : docs) {
-                if (isCloudFeaturesFlagEnabled()
+                if (isSyncStateEnabled()
                         && !mInjector.config.isContentAvailable(
                                 doc, mState, mInjector.networkMonitor.isOnline())) {
                     Log.e(TAG, "Document does not have available content to cut.");
@@ -331,7 +336,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
         }
 
-        mSelectionMgr.clearSelection();
+        if (!isUseMaterial3FlagEnabled()) {
+            mSelectionMgr.clearSelection();
+        }
 
         mClipper.clipDocumentsForCut(
                 mModel::getItemUri, selection, mState.stack.peek(), mState.stack.isRecents());
@@ -348,7 +355,7 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             return;
         }
 
-        if (isCloudFeaturesFlagEnabled()) {
+        if (isSyncStateEnabled()) {
             List<DocumentInfo> docs = mModel.getDocuments(selection);
             if (docs == null || docs.isEmpty()) {
                 Log.e(TAG, "No documents available to copy.");
@@ -366,7 +373,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
         }
 
-        mSelectionMgr.clearSelection();
+        if (!isUseMaterial3FlagEnabled()) {
+            mSelectionMgr.clearSelection();
+        }
 
         mClipper.clipDocumentsForCopy(mModel::getItemUri, selection);
 
@@ -483,11 +492,13 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     public void trashSelectedDocuments() {
         Selection selection = getSelectedOrFocused();
         if (selection.isEmpty()) {
+            Log.e(TAG, "Cannot trash: Selection is empty");
             return;
         }
 
         List<DocumentInfo> docs = mModel.getDocuments(selection);
         if (docs == null || docs.isEmpty()) {
+            Log.e(TAG, "Cannot trash: Document list is empty");
             return;
         }
 
@@ -504,17 +515,15 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         if (isHomeScreenFilesFlagEnabled()
                 && blockOperationForShortcuts(uris, mActivity.getSelectedUser())) {
-            Log.e(TAG, "Failed to trash because a protected folder is selected.");
+            Log.e(TAG, "Cannot trash a protected folder");
             return;
         }
 
         UrisSupplier srcs;
         try {
-            srcs = UrisSupplier.create(
-                    uris,
-                    mClipStore);
+            srcs = UrisSupplier.create(uris, mClipStore);
         } catch (Exception e) {
-            Log.e(TAG, "Failed to trash because we were unable to get item URIs.", e);
+            Log.e(TAG, "Cannot trash: Cannot get item URIs", e);
             mDialogs.showFileOperationStatus(
                     FileOperations.Callback.STATUS_FAILED,
                     FileOperationService.OPERATION_TRASH,
@@ -565,7 +574,6 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
 
         FileOperation operation = new FileOperation.Builder()
                 .withOpType(FileOperationService.OPERATION_RESTORE)
-                .withDestination(mState.stack)
                 .withSrcs(srcs)
                 .build();
 
@@ -767,13 +775,32 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
                 // It is possible that the intent comes from the launcher home screen for which we
                 // need to convert the URI from a MediaStore URI to a DocumentsUI URI.
                 Uri documentUri = mDocs.getDocumentUri(uri);
-                if (DocumentsContract.isDocumentUri(mActivity, documentUri)) {
+                if (DocumentsContract.isDocumentUri(mActivity, documentUri)
+                        && Providers.isSystemProvider(documentUri.getAuthority())) {
+                    if (Objects.equals(intent.getType(), "application/zip")) {
+                        mToSelect = documentUri;
+                    }
                     return launchToDocument(documentUri);
                 }
             }
         }
 
         return false;
+    }
+
+    @VisibleForTesting
+    public Uri getToSelect() {
+        return mToSelect;
+    }
+
+    @Override
+    protected Uri getDefaultFallbackUri() {
+        Log.e(TAG, "Default Root URI is not a valid root URI, falling back to Downloads.");
+        return FlagUtils.isHomeScreenFilesFlagEnabled()
+                ? DocumentsContract.buildDocumentUri(
+                        Providers.AUTHORITY_STORAGE, Providers.DOWNLOAD_DOCUMENT_ID)
+                : DocumentsContract.buildRootUri(
+                        Providers.AUTHORITY_DOWNLOADS, Providers.ROOT_ID_DOWNLOADS);
     }
 
     private boolean launchToDownloads(Intent intent) {
@@ -828,6 +855,9 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
             }
             intent.setComponent(
                     new ComponentName("android", "com.android.internal.app.ResolverActivity"));
+            if (isUseNewOpenWithEnabled()) {
+                intent.putExtra(Intent.EXTRA_AUTO_LAUNCH_SINGLE_CHOICE, false);
+            }
 
             try {
                 doc.userId.startActivityAsUser(mActivity, intent);

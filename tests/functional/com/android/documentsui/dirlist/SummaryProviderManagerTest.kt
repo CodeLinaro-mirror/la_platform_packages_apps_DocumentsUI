@@ -23,11 +23,16 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import android.provider.DocumentsContract
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.R
 import com.android.documentsui.TestSummaryProvider
+import com.android.documentsui.archives.ArchivesProvider
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
@@ -44,8 +49,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 @SmallTest
 @RunWith(AndroidJUnit4::class)
@@ -76,7 +82,7 @@ class SummaryProviderManagerTest {
     fun setUp() {
         val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
         contentResolver = targetContext.contentResolver
-        mockResources = Mockito.mock(Resources::class.java)
+        mockResources = mock<Resources>()
 
         // Use the ContextWrapper to provide the mock Resources.
         context = TestContextWrapper(targetContext, mockResources)
@@ -89,7 +95,10 @@ class SummaryProviderManagerTest {
      * visible or hidden.
      */
     private fun setSummaryConsent(enabled: Boolean) {
-        LocalPreferences.setSummaryEnabled(context, enabled)
+        LocalPreferences.setSummaryConsent(
+            context,
+            if (enabled) LocalPreferences.CONSENT_ACCEPTED else LocalPreferences.CONSENT_UNKNOWN,
+        )
     }
 
     /**
@@ -188,19 +197,30 @@ class SummaryProviderManagerTest {
             }
 
         manager.state.first { it is SummaryProviderState.Available && !it.isUserEnabled }
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isFalse()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS, null)).isFalse()
 
         // When provider is enabled and user enabled, it should display summary.
         setSummaryProviderEnabled(enabled = true)
         manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
 
         // Something that isn't local shouldn't display the summary.
-        assertThat(displaySummaryForRoot(manager, testRoot)).isFalse()
+        assertThat(displaySummaryForRoot(manager, testRoot, null)).isFalse()
 
         // Test with roots that are local. These can display the summary.
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS)).isTrue()
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME)).isTrue()
-        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS, null)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.HOME, null)).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.RECENTS, null)).isTrue()
+
+        // For zip (archives) we don't show summary column when browsing an archive, even if it's
+        // inside a local root which would display summary.
+        val archive = DocumentInfo()
+        // When browsing an archive the provider is this one.
+        archive.authority = ArchivesProvider.AUTHORITY
+        archive.documentId = "random-id"
+        // When browsing an archive it shows the directory mime type.
+        archive.mimeType = DocumentsContract.Document.MIME_TYPE_DIR
+        assertThat(archive.isInArchive).isTrue()
+        assertThat(displaySummaryForRoot(manager, TestProvidersAccess.DOWNLOADS, archive)).isFalse()
     }
 
     @Test
@@ -220,5 +240,145 @@ class SummaryProviderManagerTest {
         manager.state.first { it is SummaryProviderState.Available && it.isUserEnabled }
 
         assertThat(LocalPreferences.isSummaryEnabled(context)).isTrue()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_withConfigFalse_enablesImmediately() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setShowConsentDialogForTest(false)
+        var refreshCalled = false
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) { refreshCalled = true }
+
+        assertThat(LocalPreferences.isSummaryEnabled(context)).isTrue()
+        assertThat(refreshCalled).isTrue()
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_withConfigTrue_showsDialog() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+        var refreshCalled = false
+        val mockFragmentManager =
+            mock<FragmentManager>() {
+                on { beginTransaction() } doReturn mock<FragmentTransaction>()
+            }
+        manager.onShowSummaryMenuClicked(mockFragmentManager) { refreshCalled = true }
+
+        assertThat(LocalPreferences.isSummaryEnabled(context)).isFalse()
+        // The refresh is only called after the dialog is shown, so here in this test it wasn't
+        // called.
+        assertThat(refreshCalled).isFalse()
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_positiveButton_setsConsentAccepted() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager =
+            SummaryProviderManager(
+                context,
+                this,
+                Uri.parse(TEST_SUMMARY_PROVIDER),
+                // Fake the dialog launcher to simulate positive click, aka answering "Turn on".
+                { _, _, _, callbacks -> callbacks.onEnable() },
+            )
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+
+        // When the user answer positively in the dialog the refresh callback should be called.
+        var refreshCalled = false
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) { refreshCalled = true }
+
+        assertThat(LocalPreferences.getSummaryConsent(context))
+            .isEqualTo(LocalPreferences.CONSENT_ACCEPTED)
+        assertThat(refreshCalled).isTrue()
+        manager.stop()
+    }
+
+    @Test
+    fun testOnShowSummaryMenuClicked_negativeButton_setsConsentDeferred() = runTestWithTimeout {
+        setSummaryProviderEnabled(enabled = true)
+        setSummaryConsent(enabled = false)
+
+        val manager =
+            SummaryProviderManager(
+                context,
+                this,
+                Uri.parse(TEST_SUMMARY_PROVIDER),
+                // Fake the dialog launcher to simulate negative click, aka answering "Not now".
+                { _, _, _, callbacks -> callbacks.onRemindLater() },
+            )
+        manager.start()
+        manager.state.first { it is SummaryProviderState.Available }
+
+        manager.setConsentMessage("Test Title", "Test Message", showConsent = true)
+
+        // Simulate user clicking on the menu to enable the summary column.
+        manager.onShowSummaryMenuClicked(mock<FragmentManager>()) {}
+
+        assertThat(LocalPreferences.getSummaryConsent(context))
+            .isEqualTo(LocalPreferences.CONSENT_DEFERRED)
+        // It automatically expires the timestamp, by setting it to 0.
+        assertThat(LocalPreferences.getSummaryConsentTimestamp(context)).isEqualTo(0L)
+        // Currently we don't implement the defer/expire logic, so it's always disabled when user
+        // defers.
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
+        manager.stop()
+    }
+
+    @Test
+    fun testShouldShowStartupConsent_InitialState_returnsTrue() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_UNKNOWN)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        // Force the bool config to true, to enable the consent flow.
+        manager.setShowConsentDialogForTest(true)
+
+        assertThat(manager.shouldShowStartupConsent()).isTrue()
+    }
+
+    @Test
+    fun testShouldShowStartupConsent_Rejected_returnsFalse() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        // Force the bool config to true, to enable the consent flow.
+        manager.setShowConsentDialogForTest(true)
+
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
+    }
+
+    @Test
+    fun testShouldShowStartupConsent_DeferredFresh_returnsFalse() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_DEFERRED)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        // Force the bool config to true, to enable the consent flow.
+        manager.setShowConsentDialogForTest(true)
+
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
+    }
+
+    @Test
+    fun testShouldShowStartupConsent_Enabled_returnsFalse() = runTestWithTimeout {
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_ACCEPTED)
+        val manager = SummaryProviderManager(context, this, Uri.parse(TEST_SUMMARY_PROVIDER))
+        manager.setShowConsentDialogForTest(true)
+
+        assertThat(manager.shouldShowStartupConsent()).isFalse()
     }
 }

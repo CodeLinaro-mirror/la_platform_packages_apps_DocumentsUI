@@ -25,6 +25,8 @@ import android.provider.DocumentsContract
 import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
+import com.android.documentsui.base.DocumentInfo
+import com.android.documentsui.base.DocumentStack
 import com.android.documentsui.base.State
 import com.android.documentsui.base.UserId
 import com.android.documentsui.flags.Flags
@@ -36,11 +38,9 @@ import com.android.documentsui.testing.TestFileTypeLookup
 import com.android.documentsui.testing.TestImmediateExecutor
 import com.android.documentsui.testing.TestProvidersAccess
 import com.android.documentsui.testing.UserManagers
-import com.android.documentsui.util.VersionUtils
 import com.android.modules.utils.build.SdkLevel
 import com.google.common.collect.Lists
 import junit.framework.Assert
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -67,16 +67,6 @@ internal class TrashFileLoaderTest {
 
     @Before
     fun setUp() {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
-        assumeTrue(VersionUtils.isGreaterThanB())
-
         mEnv = TestEnv.create()
         mActivity = TestActivity.create(mEnv)
         mActivity.activityManager = ActivityManagers.create(false)
@@ -94,6 +84,9 @@ internal class TrashFileLoaderTest {
         } else {
             mEnv.state.canShareAcrossProfile = true
         }
+        // Set the stack to the trash root. This is needed to ensure that the loader correctly
+        // identifies the trash root.
+        mEnv.state.stack.reset(DocumentStack(TestProvidersAccess.TRASH_ROOT, DocumentInfo()))
     }
 
     /** Tests that the loader correctly fetches trashed documents. */
@@ -130,11 +123,11 @@ internal class TrashFileLoaderTest {
 
         val loader = createTrashFileLoader()
 
-        Assert.assertFalse(loader.mState.showHiddenFiles)
+        Assert.assertTrue(loader.mState.shouldShowHiddenFiles())
         var result = loader.loadInBackground()!!
         Assert.assertEquals(2, result.cursor.getCount())
 
-        loader.mState.showHiddenFiles = true
+        loader.mState.setIsShowHiddenFiles(true)
         result = loader.loadInBackground()!!
         Assert.assertEquals(2, result.cursor.getCount())
     }
@@ -243,7 +236,7 @@ internal class TrashFileLoaderTest {
         } else {
             mEnv.state.canShareAcrossProfile = false
         }
-        val loader = createTrashFileLoader(mEnv)
+        val loader = createTrashFileLoader(mEnv, TestProvidersAccess.OtherUser.USER_ID)
         val result = loader.loadInBackground()!!
 
         Assert.assertNull(result.cursor)
@@ -265,37 +258,44 @@ internal class TrashFileLoaderTest {
         Assert.assertTrue(result.exception is CrossProfileQuietModeException)
     }
 
-    /** Test to ensure a provider is not queried more than once even if it has duplicate roots. */
+    /**
+     * Verifies that the loader correctly identifies which roots to ignore based on their support
+     * for querying trashed documents.
+     */
     @Test
-    fun testShouldIgnoreDuplicateRoot() {
-        val doc1 = mEnv.model.createFile("test1")
-        mEnv.mockProviders
-            .get(TestProvidersAccess.HOME.authority)!!
-            .setNextTrashDocumentsReturns(doc1)
+    fun testShouldIgnoreRoot() {
         val loader = createTrashFileLoader()
 
-        val roots =
+        // Verify that the HOME root, which supports query trash, is NOT ignored.
+        val homeRoots =
             mEnv.providers.getRootsForAuthorityBlocking(
                 TestProvidersAccess.OtherUser.USER_ID,
                 TestProvidersAccess.HOME.authority,
             )
-        val firstRoot = roots.first()
+        val homeRoot = homeRoots.first()
+        Assert.assertFalse(loader.shouldIgnoreRoot(homeRoot))
 
-        // The first call to shouldIgnoreRoot with a new root should return false.
-        Assert.assertFalse(loader.shouldIgnoreRoot(firstRoot))
-
-        // A subsequent call with the same root should now return true.
-        Assert.assertTrue(loader.shouldIgnoreRoot(firstRoot))
+        // Verify that the PICKLES root, which does NOT support query trash, IS ignored.
+        val pickleRoots =
+            mEnv.providers.getRootsForAuthorityBlocking(
+                TestProvidersAccess.OtherUser.USER_ID,
+                TestProvidersAccess.PICKLES.authority,
+            )
+        val pickleRoot = pickleRoots.first()
+        Assert.assertTrue(loader.shouldIgnoreRoot(pickleRoot))
     }
 
-    private fun createTrashFileLoader(env: TestEnv = mEnv): TrashFileLoader {
+    private fun createTrashFileLoader(
+        env: TestEnv = mEnv,
+        userId: UserId = TestProvidersAccess.USER_ID,
+    ): TrashFileLoader {
         return TrashFileLoader(
             mActivity,
             env.providers,
             env.state,
             TestImmediateExecutor.createLookup(),
             TestFileTypeLookup(),
-            TestProvidersAccess.OtherUser.USER_ID,
+            userId,
         )
     }
 

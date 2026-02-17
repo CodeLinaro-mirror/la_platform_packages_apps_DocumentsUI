@@ -22,9 +22,9 @@ import static android.provider.DocumentsContract.findDocumentPath;
 import static android.provider.DocumentsContract.getDocumentId;
 
 import static com.android.documentsui.services.FileOperations.Callback.STATUS_FAILED;
-import static com.android.documentsui.util.FlagUtils.isCloudFeaturesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isDragsFromOtherAppsEnabled;
 import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -153,7 +153,8 @@ public interface DragAndDropManager {
             SelectionDetails selectionDetails,
             IconHelper iconHelper,
             @Nullable DocumentInfo parent,
-            boolean canDragAndDrop);
+            boolean canDragAndDrop,
+            DocumentsAccess docsAccess);
 
     /**
      * Checks whether the document can be spring opened.
@@ -398,7 +399,8 @@ public interface DragAndDropManager {
                 SelectionDetails selectionDetails,
                 IconHelper iconHelper,
                 @Nullable DocumentInfo parent,
-                boolean canDragAndDrop) {
+                boolean canDragAndDrop,
+                DocumentsAccess docsAccess) {
 
             Trace.beginAsyncSection("RuntimeDragAndDropManager.dragStartToDragEnd",
                     DRAG_EVENT_COOKIE);
@@ -415,6 +417,21 @@ public interface DragAndDropManager {
             boolean isFilesSupportTrash = isTrashFlowEnabled();
             for (DocumentInfo doc : srcs) {
                 isFilesSupportTrash &= doc.isTrashSupported();
+                if (isHomeScreenFilesFlagEnabled()
+                        && itemInfo.getRoot().derivedType == SidebarEntryItemInfo.TYPE_RECENTS) {
+                    try {
+                        Uri newUri =
+                                docsAccess.getDocumentUri(
+                                        docsAccess.getMediaStoreUri(doc.derivedUri));
+                        if (DocumentsContract.isDocumentUri(mContext, newUri)) {
+                            doc.derivedUri = newUri;
+                        }
+                    } catch (Exception e) {
+                        Log.w(
+                                TAG,
+                                "Unable to convert uri: " + doc.derivedUri + " to a document uri.");
+                    }
+                }
                 uris.add(doc.derivedUri);
 
                 if (isTrashFlowEnabled() && mIsSrcRootTrash && doc.isRestoreSupported()) {
@@ -515,7 +532,7 @@ public interface DragAndDropManager {
             mDestRoot = destItemInfo.getRoot();
             mDestDoc = destDoc;
 
-            if (isCloudFeaturesFlagEnabled() && !mCanDragAndDrop) {
+            if (isSyncStateEnabled() && !mCanDragAndDrop) {
                 updateState(STATE_NOT_ALLOWED);
                 return STATE_NOT_ALLOWED;
             }
@@ -642,7 +659,7 @@ public interface DragAndDropManager {
             final String dstRootDocId = itemInfo.getDocumentId();
             final Uri dstRootDocUri = buildDocumentUri(dstRootAuthority, dstRootDocId);
 
-            if ((isCloudFeaturesFlagEnabled() && !mCanDragAndDrop)
+            if ((isSyncStateEnabled() && !mCanDragAndDrop)
                     || !isValidDestination(itemInfo, dstRootDocUri, invalidDest)) {
                 if (permissions != null) permissions.release();
                 return false;
@@ -697,8 +714,7 @@ public interface DragAndDropManager {
                 DocumentsAccess docs,
                 FileOperations.Callback callback) {
 
-            if ((isCloudFeaturesFlagEnabled() && !mCanDragAndDrop)
-                    || !isValidDocumentStack(dstStack)) {
+            if ((isSyncStateEnabled() && !mCanDragAndDrop) || !isValidDocumentStack(dstStack)) {
                 if (permissions != null) permissions.release();
                 return false;
             }

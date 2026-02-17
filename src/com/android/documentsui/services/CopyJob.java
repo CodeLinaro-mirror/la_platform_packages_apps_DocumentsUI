@@ -71,7 +71,6 @@ import android.system.Int64Ref;
 import android.system.Os;
 import android.system.OsConstants;
 import android.system.StructStat;
-import android.text.BidiFormatter;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -99,7 +98,6 @@ import java.io.InputStream;
 import java.io.SyncFailedException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -211,13 +209,6 @@ class CopyJob extends ResolvedResourcesJob {
         return warningBuilder.build();
     }
 
-    protected String getProgressMessage() {
-        Map<String, Object> formatArgs = new HashMap<>();
-        formatArgs.put("directory", BidiFormatter.getInstance().unicodeWrap(stack.getTitle()));
-        return getProgressMessage(
-                R.string.copy_specific_file_in_progress, R.string.copy_in_progress, formatArgs);
-    }
-
     @Override
     JobProgress getJobProgress() {
         if (mProgressTracker == null) {
@@ -225,7 +216,8 @@ class CopyJob extends ResolvedResourcesJob {
                     id,
                     operationType,
                     getState(),
-                    getProgressMessage(),
+                    getFilename(),
+                    mResourceUris.getItemCount(),
                     hasFailures(),
                     failedDocs,
                     failedUris,
@@ -237,7 +229,8 @@ class CopyJob extends ResolvedResourcesJob {
                 id,
                 operationType,
                 getState(),
-                getProgressMessage(),
+                getFilename(),
+                mResourceUris.getItemCount(),
                 hasFailures(),
                 failedDocs,
                 failedUris,

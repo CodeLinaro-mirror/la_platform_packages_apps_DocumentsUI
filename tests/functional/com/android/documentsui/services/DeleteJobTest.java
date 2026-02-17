@@ -47,7 +47,7 @@ import org.junit.Test;
 import java.util.List;
 
 @MediumTest
-public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
+public class DeleteJobTest extends AbstractJobTest<DeleteJobKt> {
 
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
@@ -63,7 +63,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         Uri invalidParentUri = Uri.parse("content://i.do.not.exist/doc/ghost");
 
         // Create and run the job with the invalid source parent.
-        final DeleteJob job = createJob(newArrayList(testFile), invalidParentUri);
+        final DeleteJobKt job = createJob(newArrayList(testFile), invalidParentUri);
 
         {
             final Notification notification = job.getSetupNotification();
@@ -108,8 +108,10 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         final Uri uri = mDocs.createDocument(mSrcRoot, "text/plain", "test1.txt");
         mDocs.writeDocument(uri, HAM_BYTES);
 
-        final DeleteJob job = createJob(newArrayList(uri),
-                DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
+        final DeleteJobKt job =
+                createJob(
+                        newArrayList(uri),
+                        DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
 
         {
             final JobProgress progress = job.getJobProgress();
@@ -117,7 +119,8 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_CREATED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting “test1.txt”");
+            assertThat(progress.filename).isEqualTo("test1.txt");
+            assertThat(progress.numFiles).isEqualTo(1);
         }
 
         job.run();
@@ -129,7 +132,8 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_COMPLETED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting “test1.txt”");
+            assertThat(progress.filename).isEqualTo("test1.txt");
+            assertThat(progress.numFiles).isEqualTo(1);
         }
 
         // All the files should have been deleted.
@@ -145,8 +149,10 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         final Uri uri2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
         mDocs.writeDocument(uri2, FRUITY_BYTES);
 
-        final DeleteJob job = createJob(newArrayList(uri1, uri2),
-                DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
+        final DeleteJobKt job =
+                createJob(
+                        newArrayList(uri1, uri2),
+                        DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId));
 
         {
             final JobProgress progress = job.getJobProgress();
@@ -154,7 +160,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_CREATED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         job.run();
@@ -166,7 +172,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_COMPLETED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         // All the files should have been deleted.
@@ -182,7 +188,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
         final Uri uri2 = mDocs.createDocument(mSrcRoot, "text/plain", "test2.txt");
         mDocs.writeDocument(uri2, FRUITY_BYTES);
 
-        final DeleteJob job = createJob(newArrayList(uri1, uri2), null);
+        final DeleteJobKt job = createJob(newArrayList(uri1, uri2), null);
 
         {
             final JobProgress progress = job.getJobProgress();
@@ -190,7 +196,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_CREATED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         job.run();
@@ -202,7 +208,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
             assertThat(progress.id).isEqualTo(job.id);
             assertThat(progress.state).isEqualTo(STATE_COMPLETED);
             assertThat(progress.hasFailures).isFalse();
-            assertThat(progress.msg).isEqualTo("Deleting 2 files");
+            assertThat(progress.numFiles).isEqualTo(2);
         }
 
         // All the files should have been deleted.
@@ -210,7 +216,7 @@ public class DeleteJobTest extends AbstractJobTest<DeleteJob> {
     }
 
     /** Creates a job with a stack consisting of the default source directory. */
-    private DeleteJob createJob(List<Uri> srcs, Uri srcParent) throws Exception {
+    private DeleteJobKt createJob(List<Uri> srcs, Uri srcParent) throws Exception {
         final Uri stack = DocumentsContract.buildDocumentUri(AUTHORITY, mSrcRoot.documentId);
         return createJob(OPERATION_DELETE, srcs, srcParent, stack);
     }

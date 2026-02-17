@@ -16,8 +16,11 @@
 
 package com.android.documentsui.dirlist;
 
-import static com.android.documentsui.dirlist.ModelBackedDocumentsAdapter.TICK_VISIBLE_DURATION_MS;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
+
+import static com.android.documentsui.dirlist.DirectoryFragment.TICK_VISIBLE_DURATION_MS;
 import static com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -29,13 +32,18 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.SystemClock;
 import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.documentsui.ActionHandler;
@@ -61,6 +69,9 @@ import org.mockito.junit.MockitoRule;
 @RunWith(AndroidJUnit4.class)
 @MediumTest
 public class ModelBackedDocumentsAdapterTest {
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
     @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -125,7 +136,9 @@ public class ModelBackedDocumentsAdapterTest {
      * removal task.
      */
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3})
     public void testJustFinishedSync_stateRemainsForDuration() {
         // The document at position 0 has ID `TEST_MODEL_ID_0`.
         mEnv.model.setModelIds(new String[] {TEST_MODEL_ID_0});
@@ -191,7 +204,9 @@ public class ModelBackedDocumentsAdapterTest {
      * removal tasks.
      */
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3})
     public void testJustFinishedSync_multipleSyncs() {
         // The document at position 0 has ID `TEST_MODEL_ID_0` and the document at position 1 has ID
         // `TEST_MODEL_ID_1`.
@@ -295,7 +310,9 @@ public class ModelBackedDocumentsAdapterTest {
      * replaced with a new one when it finishes another sync.
      */
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3})
     public void testJustFinishedSync_stateNotExitedWhenAnotherSyncFinished() {
         // The document at position 0 has ID `TEST_MODEL_ID_0`.
         mEnv.model.setModelIds(new String[] {TEST_MODEL_ID_0});
@@ -332,7 +349,9 @@ public class ModelBackedDocumentsAdapterTest {
     // Tests that the task to remove the item from the "just finished sync" also sends an item
     // changed notification.
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3})
     public void testJustFinishedSync_removalTaskSendsItemChangedNotification() {
         // The document at position 0 has ID `TEST_MODEL_ID_0`.
         mEnv.model.setModelIds(new String[] {TEST_MODEL_ID_0});

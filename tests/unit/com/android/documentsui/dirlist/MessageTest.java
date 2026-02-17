@@ -17,6 +17,7 @@
 package com.android.documentsui.dirlist;
 
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.DevicePolicyResources.Drawables.Style.OUTLINE;
 import static com.android.documentsui.DevicePolicyResources.Drawables.WORK_PROFILE_OFF_ICON;
@@ -24,6 +25,8 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CANT_SELECT_
 import static com.android.documentsui.DevicePolicyResources.Strings.CANT_SELECT_WORK_FILES_TITLE;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
+import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
+import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 import static com.android.documentsui.testing.DrawableAsserts.assertDrawablesEqual;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -34,7 +37,6 @@ import static com.google.common.truth.TruthJUnit.assume;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -74,7 +76,6 @@ import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestModel;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.UserManagers;
-import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
 
 import com.google.common.collect.Lists;
@@ -289,6 +290,31 @@ public final class MessageTest {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testInflateMessage_noEmptyMessageWhileLoading() {
+        // Set model to empty.
+        ((TestModel) mEnv.getModel()).clearIds();
+        // Make sure we have a root doc for title access.
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.HOME);
+        // Turn off search mode.
+        ((TestEnvironment) mEnv).setInSearchMode(false);
+
+        // set model to loading state
+        mEnv.getModel().setLoading(true);
+        mInflateMessage.update(Model.Update.UPDATE);
+        assertNull(mInflateMessage.getMessageString());
+        assertNull(mInflateMessage.getIcon());
+
+        // update model state to indicate loading has finished
+        mEnv.getModel().setLoading(false);
+        mInflateMessage.update(Model.Update.UPDATE);
+        Drawable expectedDrawable = mContext.getDrawable(getRes(R.drawable.empty));
+        assertDrawablesEqual(mInflateMessage.getIcon(), expectedDrawable);
+        assertThat(mInflateMessage.getMessageString().toString())
+                .isEqualTo(mContext.getString(R.string.empty));
+    }
+
+    @Test
     public void testInflateMessage_updateToEmptyMessage() {
         // Set model to empty.
         ((TestModel) mEnv.getModel()).clearIds();
@@ -301,6 +327,8 @@ public final class MessageTest {
 
         Drawable expectedDrawable = mContext.getDrawable(getRes(R.drawable.empty));
         assertDrawablesEqual(mInflateMessage.getIcon(), expectedDrawable);
+        assertThat(mInflateMessage.getMessageString().toString())
+                .isEqualTo(mContext.getString(R.string.empty));
     }
 
     @Test
@@ -328,15 +356,6 @@ public final class MessageTest {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testInflateMessage_updateToEmptyMessage_InTrashPage() {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
-        assumeTrue(VersionUtils.isGreaterThanB());
         // Set model to empty.
         ((TestModel) mEnv.getModel()).clearIds();
         // Set is on trash page.
@@ -357,12 +376,14 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_offlineAndLimitedWhenOffline_showsOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -380,12 +401,14 @@ public final class MessageTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
     public void testHeaderMessage_flagDisabled_doesNotShowOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -393,12 +416,14 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_onlineAndLimitedWhenOffline_doesNotShowBanner() {
         // Set online.
         ((TestEnvironment) mEnv).setIsOnline(true);
         // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.CLOUD);
+        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -406,7 +431,9 @@ public final class MessageTest {
     }
 
     @Test
-    @EnableFlags(Flags.FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testHeaderMessage_offlineAndNotLimitedWhenOffline_doesNotShowBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);

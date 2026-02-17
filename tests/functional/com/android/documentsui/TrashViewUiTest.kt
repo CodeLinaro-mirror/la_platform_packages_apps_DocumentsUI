@@ -24,6 +24,7 @@ import android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API
 import android.provider.MediaStore
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
+import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.StubProvider.ROOT_0_ID
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
@@ -60,14 +61,8 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     @Before
     @Throws(Exception::class)
     fun setUpTest() {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
+        // TODO(b/457843307): Verify after the SDK is finalized. This test depends on StubProvider,
+        //  which currently encounters a NoSuchMethodError when the platform flag is used.
         assumeTrue(VersionUtils.isGreaterThanB())
 
         if (SdkLevel.isAtLeastR()) {
@@ -121,6 +116,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         // Then, ensure the "Empty Trash" banner is visible.
         bots.main.assertEmptyTrashBannerIsVisible()
 
+        // Check that the "Empty Trash" button is enabled.
+        bots.main.assertEmptyTrashNowButtonEnabled(true)
+
         // Trigger the "Empty Trash" flow and confirm.
         bots.main.clickEmptyTrashNowButton()
         device!!.waitForIdle()
@@ -129,6 +127,9 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Verify that the previously trashed files are now gone.
         bots.directory.assertDocumentsAbsent(*trashedFileNames.toTypedArray())
+
+        // Verify that Empty trash bin button is disabled.
+        bots.main.assertEmptyTrashNowButtonEnabled(false)
     }
 
     /** Tests that permanently deleting selected items from the Trash view works correctly. */
@@ -219,6 +220,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Tests that restoring selected items from the Trash view works correctly. */
     @Test
     fun testRestoreFromTrash() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFileNames = moveFilesToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -252,6 +258,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Verifies that opening a file from within a trashed folder shows the restore dialog. */
     @Test
     fun testRestoreFileFromTrashedFolder() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -297,6 +308,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Verifies that attempting to open a trashed item shows a dialog to restore it. */
     @Test
     fun testOpenTrashedItemShowsRestoreDialog() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFileNames = moveFilesToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -337,6 +353,11 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
     /** Verifies that opening a file from within a trashed folder shows the restore dialog. */
     @Test
     fun testOpenItemFromTrashedFolderShowsRestoreDialog() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
         val trashedFolderName = moveFolderToTrash()
         bots.roots.openRoot(TRASH_ROOT.title)
 
@@ -395,6 +416,53 @@ class TrashViewUiTest : ActivityTestJunit4<FilesActivity>() {
         device!!.waitForIdle()
         bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
         bots.directory.assertDocumentsPresent(fileToOpen)
+    }
+
+    /**
+     * Verifies that restoring a file from the hidden .trash-storage directory works correctly. This
+     * test reproduces the scenario in b/475737649 where restoration from the hidden directory fails
+     * to physically move files back, despite reporting success.
+     */
+    @Test
+    fun testRestoreFromHiddenTrashStorage() {
+        // This test relies on the force_material3 config value being true in the out of process
+        // FileOperationService which invokes RestoreJob, which we cannot easily force from test.
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        assumeTrue(context.resources.getBoolean(R.bool.force_material3))
+
+        val trashedFileNames = moveFilesToTrash()
+
+        // Navigate to the hidden .trash-storage directory within the root.
+        bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
+        // Enable "Show hidden files" from the overflow menu to reveal hidden folders.
+        bots.main.showHiddenFilesIfNeeded()
+        device!!.waitForIdle()
+        bots.directory.openDocument(".trash-storage")
+        device!!.waitForIdle()
+
+        // Navigate into the subfolder corresponding to the original parent directory.
+        // For this test environment, the files are moved from DIR_NAME_1.
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        device!!.waitForIdle()
+
+        // Identify the trashed file and verify it is present in the hidden folder.
+        val fileToRestore = trashedFileNames.first()
+        bots.directory.assertDocumentsPresent(fileToRestore)
+
+        // Select the file and click "Restore" from the menu.
+        bots.directory.selectDocument(fileToRestore, 1)
+        bots.main.clickActionItem("Restore")
+        device!!.waitForIdle()
+
+        // Verify that the file is physically removed from the hidden trash folder.
+        bots.directory.assertDocumentsAbsent(fileToRestore)
+
+        // Navigate back to the original directory and verify the file is restored.
+        bots.roots.openRoot(ROOT_0_ID)
+        device!!.waitForIdle()
+        bots.directory.openDocument(TestFilesRule.DIR_NAME_1)
+        bots.directory.assertDocumentsPresent(fileToRestore)
     }
 
     /**

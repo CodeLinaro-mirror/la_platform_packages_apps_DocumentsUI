@@ -18,6 +18,7 @@ package com.android.documentsui;
 
 import static android.provider.DocumentsContract.EXTERNAL_STORAGE_PROVIDER_AUTHORITY;
 import static android.provider.Flags.FLAG_ENABLE_DOCUMENTS_TRASH_API;
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
 
 import static com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
@@ -29,11 +30,11 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import android.annotation.SuppressLint;
@@ -84,7 +85,6 @@ import com.android.documentsui.testing.TestIconHelper;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestSelectionDetails;
 import com.android.documentsui.testing.Views;
-import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -215,7 +215,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mStartDragListener.assertLastArgument(mClipper.nextClip);
     }
@@ -233,7 +234,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 null,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mStartDragListener.assertLastArgument(mClipper.nextClip);
     }
@@ -248,7 +250,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mShadowBuilder.title.assertLastArgument(TestEnv.FILE_APK.displayName);
         mShadowBuilder.icon.assertLastArgument(mIconHelper.nextDocumentIcon);
@@ -268,7 +271,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mShadowBuilder.title.assertLastArgument(mActivity.getResources().getQuantityString(
                 R.plurals.elements_dragged, 2, 2));
@@ -289,7 +293,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mShadowBuilder.title.assertLastArgument(TestEnv.FILE_APK.displayName);
         mShadowBuilder.icon.assertLastArgument(mIconHelper.nextDocumentIcon);
@@ -297,7 +302,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testStartDrag_CannotDragAndDrop_StillStartsDrag() {
         mManager.startDrag(
                 mStartDragView,
@@ -310,9 +317,41 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         mStartDragListener.assertLastArgument(mClipper.nextClip);
+    }
+
+    @Test
+    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
+    public void testStartDrag_DragFromRecents_SetsCorrectClipData() {
+        TestDocumentClipper spyClipper = spy(mClipper);
+        DragAndDropManager newManager = createNewManagerWithSpyClipper(spyClipper);
+
+        DocumentInfo recentsDoc = new DocumentInfo();
+        Uri mediaUri = Uri.parse("media uri");
+        recentsDoc.derivedUri = mediaUri;
+        mDocs.mNextMediaUri = mediaUri;
+
+        Uri docUri = TestEnv.FOLDER_0.derivedUri;
+        mDocs.mNextDocumentUri = docUri;
+
+        newManager.startDrag(
+                mStartDragView,
+                List.of(recentsDoc),
+                TestProvidersAccess.RECENTS,
+                List.of(),
+                mDetails,
+                mIconHelper,
+                null,
+                CAN_DRAG_AND_DROP,
+                mDocs);
+
+        // Verify that the uri passed in when dragging from the Recents root should be the doc uri
+        // and not the media uri.
+        verify(spyClipper, times(1))
+                .getClipDataForDocuments(List.of(docUri), FileOperationService.OPERATION_UNKNOWN);
     }
 
     @Test
@@ -328,7 +367,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.HAMMY, TestEnv.FOLDER_2));
     }
@@ -344,7 +384,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FILE_ARCHIVE,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mFlagListener.assertLastArgument(View.DRAG_FLAG_GLOBAL | View.DRAG_FLAG_OPAQUE);
     }
@@ -362,7 +403,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1));
     }
@@ -380,7 +422,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         assertTrue(mManager.canSpringOpen(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2));
     }
@@ -398,7 +441,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mShadowBuilder.state.assertLastArgument(DragAndDropManager.STATE_UNKNOWN);
     }
@@ -416,7 +460,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateStateToNotAllowed(mUpdateShadowView);
 
@@ -436,7 +481,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_2);
@@ -458,7 +504,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.DOWNLOADS, null);
@@ -480,7 +527,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
@@ -502,7 +550,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
@@ -524,7 +573,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -549,7 +599,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         assertTrue(mManager.isDragFromSameApp());
     }
@@ -572,7 +623,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
         assertTrue(mManager.isDragFromSameApp());
 
         mManager.dragEnded();
@@ -593,7 +645,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -618,7 +671,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -643,7 +697,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -668,7 +723,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -696,7 +752,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -724,7 +781,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -752,7 +810,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -780,7 +839,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createRightCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -808,7 +868,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
@@ -835,7 +896,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -866,7 +928,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -897,7 +960,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
@@ -925,7 +989,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.LIVE_IMAGES_SHORTCUT.getUri();
@@ -954,7 +1019,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         DocumentInfo docInfo = new DocumentInfo();
         docInfo.derivedUri = TestProvidersAccess.TEST_SHORTCUT.getUri();
@@ -980,7 +1046,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateStateToNotAllowed(mUpdateShadowView);
 
@@ -1002,7 +1069,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_1);
 
@@ -1037,7 +1105,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_0);
 
@@ -1068,7 +1137,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
@@ -1103,7 +1173,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
@@ -1141,7 +1212,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
@@ -1180,7 +1252,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         mManager.onKeyEvent(event);
@@ -1222,7 +1295,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HAMMY, TestEnv.FOLDER_2);
 
@@ -1248,7 +1322,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
@@ -1279,7 +1354,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
@@ -1308,7 +1384,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
@@ -1342,7 +1419,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.PEPPER, TestEnv.FOLDER_1);
@@ -1384,7 +1462,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.EXTERNALSTORAGE, TestEnv.FOLDER_1);
@@ -1421,7 +1500,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         int state = mManager.updateState(
                 mUpdateShadowView, TestProvidersAccess.EXTERNALSTORAGE, TestEnv.FOLDER_1);
@@ -1460,7 +1540,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         KeyEvent event = KeyEvents.createLeftCtrlKey(KeyEvent.ACTION_DOWN);
         newManager.onKeyEvent(event);
@@ -1522,8 +1603,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Trashes_DropOnTrashRoot() throws Exception {
-        assumeTrashApiIsAvailable();
-
         mActions.nextRootDocument = null;
         mManager.startDrag(
                 mStartDragView,
@@ -1533,7 +1612,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
 
@@ -1560,7 +1640,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Rejects_DropOnDocumentInTrash() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK),
@@ -1569,7 +1648,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_JPG);
 
@@ -1587,7 +1667,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToTrash_WhenDropOnTrashRoot() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_SUPPORTS_TRASH),
@@ -1596,7 +1675,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state =
                 mManager.updateState(mUpdateShadowView, TestProvidersAccess.TRASH_ROOT, null);
@@ -1610,7 +1690,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToNotAllowed_WhenDropOnDocumentInTrash() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK),
@@ -1619,7 +1698,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state =
                 mManager.updateState(
@@ -1634,7 +1714,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToNotAllowed_WhenFileDoesNotSupportTrash() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_JPG),
@@ -1643,7 +1722,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state =
                 mManager.updateState(
@@ -1658,7 +1738,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testCanSpringOpen_ReturnsFalse_ForTrashRoot() {
-        assumeTrashApiIsAvailable();
         mManager.startDrag(
                 mStartDragView,
                 Arrays.asList(TestEnv.FILE_APK),
@@ -1667,7 +1746,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         assertFalse(mManager.canSpringOpen(TestProvidersAccess.TRASH_ROOT, TestEnv.FILE_APK));
     }
@@ -1677,7 +1757,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Restores_DropOnValidRoot() throws Exception {
-        assumeTrashApiIsAvailable();
         mActions.nextRootDocument = TestEnv.FOLDER_1;
 
         // Start dragging a trashed file.
@@ -1689,7 +1768,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 null,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         // Update state to a valid destination.
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.HOME, TestEnv.FOLDER_1);
@@ -2006,7 +2086,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToRestore_WhenDropOnValidRoot() {
-        assumeTrashApiIsAvailable();
         // Start dragging a trashed file.
         mManager.startDrag(
                 mStartDragView,
@@ -2016,7 +2095,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 null,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         // Update the state by hovering over a valid destination.
         final @State int state =
@@ -2032,7 +2112,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testDrop_Rejects_RestoreToDifferentAuthority() {
-        assumeTrashApiIsAvailable();
         // Start dragging a trashed file from HOME provider.
         mManager.startDrag(
                 mStartDragView,
@@ -2042,7 +2121,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 null,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         final DocumentStack stack =
                 new DocumentStack(TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
@@ -2054,7 +2134,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDrop_onRoot_Fails_WhenCannotDragAndDrop() {
         mActions.nextRootDocument = TestEnv.FOLDER_1;
 
@@ -2069,7 +2151,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
@@ -2104,7 +2187,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_1);
 
@@ -2129,7 +2213,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testDrop_onTarget_Fails_WhenCannotDragAndDrop() {
         mManager.startDrag(
                 mStartDragView,
@@ -2142,7 +2228,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
@@ -2157,6 +2244,8 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(FLAG_CLOUD_FEATURES)
     public void testDrop_onTarget_Succeeds_WhenCannotDragAndDrop_FeatureFlagDisabled()
             throws Exception {
@@ -2171,7 +2260,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         mManager.updateState(mUpdateShadowView, TestProvidersAccess.DOWNLOADS, TestEnv.FOLDER_2);
 
@@ -2195,7 +2285,6 @@ public class DragAndDropManagerTests {
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testUpdateState_UpdatesToNotAllowed_WhenRestoringToDifferentAuthority() {
-        assumeTrashApiIsAvailable();
         // Start dragging a trashed file from HOME provider.
         mManager.startDrag(
                 mStartDragView,
@@ -2205,7 +2294,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 null,
-                CAN_DRAG_AND_DROP);
+                CAN_DRAG_AND_DROP,
+                mDocs);
 
         // Try to drop on a different authority (DOWNLOADS).
         final @State int state =
@@ -2217,7 +2307,9 @@ public class DragAndDropManagerTests {
     }
 
     @Test
-    @EnableFlags(FLAG_CLOUD_FEATURES)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
     public void testUpdateState_UpdatesToNotAllowed_WhenCannotDragAndDrop() {
         mManager.startDrag(
                 mStartDragView,
@@ -2230,7 +2322,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state =
                 mManager.updateState(
@@ -2241,6 +2334,8 @@ public class DragAndDropManagerTests {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
     @DisableFlags(FLAG_CLOUD_FEATURES)
     public void testUpdateState_UpdatesToMove_WhenCannotDragAndDrop_FeatureFlagDisabled() {
         mManager.startDrag(
@@ -2254,7 +2349,8 @@ public class DragAndDropManagerTests {
                 mDetails,
                 mIconHelper,
                 TestEnv.FOLDER_0,
-                CANNOT_DRAG_AND_DROP);
+                CANNOT_DRAG_AND_DROP,
+                mDocs);
 
         final @State int state =
                 mManager.updateState(
@@ -2267,19 +2363,6 @@ public class DragAndDropManagerTests {
     private void assertStateUpdated(@State int expected) {
         mShadowBuilder.state.assertLastArgument(expected);
         mShadowUpdateListener.assertCalled();
-    }
-
-    /**
-     * Skips the test if the platform SDK is not newer than Android Baklava (SDK 36).
-     * The Trash feature under test relies on DocumentsContract APIs introduced in the
-     * Android release after Baklava (SDK 36). As DocumentsUI is a Mainline module, it's
-     * subject to MTS testing, which runs on older Android base builds to verify backward
-     * compatibility. However, this specific Trash feature lacks backward compatibility
-     * with platforms at or below Baklava. This assumption prevents failures when the
-     * test runs on an older base OS without the necessary APIs.
-     */
-    private void assumeTrashApiIsAvailable() {
-        assumeTrue(VersionUtils.isGreaterThanB());
     }
 
     public static class TestDragShadowBuilder extends DragShadowBuilder {

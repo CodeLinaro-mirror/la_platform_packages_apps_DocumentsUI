@@ -26,22 +26,26 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"চালু করুন"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"এই প্রশ্ন আর দেখতে চাই না"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"এখন নয়"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"এখান থেকে খুলুন"</string>
     <string name="title_save" msgid="4384490653102710025">"এতে সেভ করুন"</string>
     <string name="menu_create_dir" msgid="2413624798689091042">"নতুন ফোল্ডার"</string>
     <string name="menu_grid" msgid="1453636521731880680">"গ্রিড দৃশ্য"</string>
-    <string name="menu_list" msgid="6714267452146410402">"তালিকা দৃশ্য"</string>
+    <string name="menu_list" msgid="6714267452146410402">"লিস্ট ভিউ"</string>
     <string name="menu_search" msgid="1876699106790719849">"সার্চ"</string>
     <string name="menu_settings" msgid="6520844520117939047">"সঞ্চয়স্থানের সেটিংস"</string>
+    <string name="manage_device" msgid="329180710072251010">"ডিভাইস ম্যানেজ করুন"</string>
     <string name="menu_open" msgid="9092138100049759315">"খুলুন"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"এর মাধ্যমে খুলুন"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"নতুন উইন্ডোতে খুলুন"</string>
     <string name="menu_save" msgid="5195367497138965168">"সেভ করুন"</string>
     <string name="menu_share" msgid="4307140947108068356">"শেয়ার করুন"</string>
     <string name="menu_delete" msgid="1022254131543256626">"মুছুন"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"স্থায়ীভাবে মুছুন"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"স্থায়ীভাবে মুছুন"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ট্র্যাশে পাঠান"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"ফিরিয়ে আনুন"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"সবগুলি বেছে নিন"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"তথ্য পান"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"লুকানো ফাইল দেখুন"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"লুকানো ফাইল দেখাবেন না"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"সারাংশের কলাম দেখুন"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"সারাংশের কলাম দেখতে চাই না"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"বিবরণের কলাম দেখুন"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"বিবরণের কলাম দেখতে চাই না"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>-এ দেখুন"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"নতুন উইন্ডো"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"কাট করুন"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ট্র্যাশ খুলুন"</string>
     <string name="not_sorted" msgid="7813496644889115530">"সাজানো নেই"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"নাম"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"সারাংশ"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"বিবরণ"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"ধরণ"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"আকার"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"শেষ সংশোধিত"</string>
@@ -299,20 +303,9 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\" মুছবেন?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ফোল্ডার এবং এটির সামগ্রীগুলি মুছবেন?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি ফাইল মুছবেন?</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি ফাইল মুছবেন?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি ফোল্ডার এবং সেগুলির কন্টেন্ট মুছবেন?</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি ফোল্ডার এবং সেগুলির কন্টেন্ট মুছবেন?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম মুছবেন?</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>টি আইটেম মুছবেন?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"চিরদিনের জন্য মুছে ফেলতে চান?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” চিরদিনের জন্য মুছে ফেলা হবে। এটি আগের অবস্থায় ফেরানো যাবে না।}one{#টি আইটেম চিরদিনের জন্য মুছে ফেলা হবে। এটি আগের অবস্থায় ফেরানো যাবে না।}other{#টি আইটেম চিরদিনের জন্য মুছে ফেলা হবে। এটি আগের অবস্থায় ফেরানো যাবে না।}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” চিরদিনের জন্য মুছে ফেলা হবে। এটি আগের অবস্থায় ফেরানো যাবে না।}one{ট্র্যাশে থাকা #টি আইটেম চিরদিনের জন্য মুছে যাবে। এটি আগের অবস্থায় ফেরানো যাবে না।}other{ট্র্যাশে থাকা #টি আইটেম চিরদিনের জন্য মুছে যাবে। এটি আগের অবস্থায় ফেরানো যাবে না।}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"ছবি"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"ব্রাউজ করার জন্য আর্কাইভ খোলা গেল না৷ হয় ফাইলটি ক্ষতিগ্রস্ত বা কোনো অসমর্থিত বিন্যাসে রয়েছে৷"</string>
     <string name="name_conflict" msgid="28407269328862986">"এই নামে আগেই আর একটি ফাইল আছে।"</string>
@@ -396,14 +389,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>-এর ছবির প্রিভিউ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"তথ্যের প্যানেল লুকান"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"তথ্যের প্যানেল দেখান"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ট্র্যাশে কিছুই নেই"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"ট্র্যাশে ৩০ দিনের বেশি থাকা ফাইলগুলি অটোমেটিক মুছে দেওয়া হবে।"</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ট্র্যাশ এখনি খালি করুন"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ট্র্যাশে কিছু নেই"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"ট্র্যাশে ৩০ দিনের বেশি থাকা আইটেমগুলি অটোমেটিক মুছে দেওয়া হবে।"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ট্র্যাশ খালি করুন"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ট্র্যাশ খালি করবেন?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"এই অ্যাকশন আগের অবস্থায় ফেরানো যাবে না এবং ফাইলগুলি আর ফিরিয়ে আনা যাবে না।"</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ট্র্যাশ খালি করুন"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ট্র্যাশে থাকা ফাইল"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"এই ফাইলটি আপনার ট্র্যাশে থাকায় এটি খোলা যাচ্ছে না। এটি অ্যাক্সেস করার জন্য, ট্র্যাশ থেকে এটি ফিরিয়ে আনুন।"</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ফাইল রিস্টোর করুন"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ট্র্যাশে থাকা সব আইটেম চিরদিনের জন্য মুছে ফেলা হবে। এটি আগের অবস্থায় ফেরানো যাবে না।"</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"স্থায়ীভাবে মুছুন"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{আইটেম ট্র্যাশে আছে}one{আইটেম ট্র্যাশে আছে}other{আইটেম ট্র্যাশে আছে}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{এই আইটেম অ্যাক্সেস করতে, এটি ফিরিয়ে আনুন অথবা ট্র্যাশ থেকে টেনে বের করুন}one{এইসব আইটেম অ্যাক্সেস করতে, এগুলি ফিরিয়ে আনুন অথবা ট্র্যাশ থেকে টেনে বের করুন}other{এইসব আইটেম অ্যাক্সেস করতে, এগুলি ফিরিয়ে আনুন অথবা ট্র্যাশ থেকে টেনে বের করুন}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"ফিরিয়ে আনুন"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"আপনি বর্তমানে অফলাইন আছেন। কিছু ফাইল ও ফাংশনালিটি উপলভ্য নেই। সম্পূর্ণ অ্যাক্সেস পেতে ইন্টারনেটের সাথে কানেক্ট করুন।"</string>
 </resources>

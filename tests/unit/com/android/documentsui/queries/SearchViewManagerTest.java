@@ -32,7 +32,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -77,7 +76,6 @@ import com.android.documentsui.testing.TestHandler;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
 import com.android.documentsui.testing.TestTimer;
-import com.android.documentsui.util.VersionUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -565,18 +563,13 @@ public final class SearchViewManagerTest {
     /** Verifies that the search chips are not displayed when the user is in the trash view. */
     @Test
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API})
-    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_ENABLE_TRASH_FLOW_RO})
+    @EnableFlags({
+        Flags.FLAG_USE_MATERIAL3,
+        Flags.FLAG_ENABLE_TRASH_FLOW_RO,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY
+    })
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testTrashPage_notShowChips() throws Exception {
-        // Skip test if the platform SDK is not newer than Android Baklava (SDK 36).
-        // The Trash feature under test relies on DocumentsContract APIs introduced in the
-        // Android release after Baklava (SDK 36).
-        // As DocumentsUI is a Mainline module, it's subject to MTS testing, which runs on
-        // older Android base builds to verify backward compatibility. However, this specific
-        // Trash feature lacks backward compatibility with platforms at or below Baklava.
-        // This assumption prevents failures when the test runs on an older base OS
-        // without the necessary APIs.
-        assumeTrue(VersionUtils.isGreaterThanB());
         RootInfo root = spy(new RootInfo());
         when(root.isTrash()).thenReturn(true);
         DocumentStack stack = new DocumentStack(root, new DocumentInfo());
@@ -584,6 +577,13 @@ public final class SearchViewManagerTest {
         mSearchViewManager.showMenu(stack);
 
         verify(mSearchChipViewManager, times(1)).setChipsRowVisible(false);
+
+        // Navigate to a root that supports search
+        RootInfo normalRoot = spy(new RootInfo());
+        mSearchViewManager.showMenu(new DocumentStack(normalRoot, new DocumentInfo()));
+
+        // Verify chips are set to visible again
+        verify(mSearchChipViewManager).setChipsRowVisible(true);
     }
 
     @Test

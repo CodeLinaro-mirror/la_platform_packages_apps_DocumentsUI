@@ -43,6 +43,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileUtils;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.text.TextUtils;
@@ -67,6 +69,8 @@ import com.android.documentsui.base.BooleanConsumer;
 import com.android.documentsui.base.DebugFlags;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
+import com.android.documentsui.base.LoadingHandler;
+import com.android.documentsui.base.LoadingHandlerImpl;
 import com.android.documentsui.base.Lookup;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.Providers;
@@ -137,7 +141,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     private static final String TAG = "AbstractActionHandler";
     private static final int REFRESH_SPINNER_TIMEOUT = 500;
+    private static final int LOADING_DELAY = 200;
     private final Semaphore mLoaderSemaphore = new Semaphore(1);
+    private final @Nullable LoadingHandler mHandler;
+    private final @Nullable Runnable mShowLoadingRunnable;
     private final @Nullable PeekViewManager mPeekViewManager;
 
     protected final T mActivity;
@@ -160,6 +167,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     private Runnable mDisplayStateChangedListener;
 
     private ContentLock mContentLock;
+    protected Uri mToSelect;
 
     @Override
     public void registerDisplayStateChangedListener(Runnable l) {
@@ -185,6 +193,34 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             @Nullable ActionModeAddons actionModeAddons,
             Runnable closeSelectionBar,
             ClipStore clipStore) {
+        this(
+                activity,
+                state,
+                providers,
+                docs,
+                searchMgr,
+                executors,
+                injector,
+                peekViewManager,
+                actionModeAddons,
+                closeSelectionBar,
+                clipStore,
+                new LoadingHandlerImpl(new Handler(Looper.getMainLooper())));
+    }
+
+    protected AbstractActionHandler(
+            T activity,
+            State state,
+            ProvidersAccess providers,
+            DocumentsAccess docs,
+            SearchViewManager searchMgr,
+            Lookup<String, Executor> executors,
+            Injector<?> injector,
+            @Nullable PeekViewManager peekViewManager,
+            @Nullable ActionModeAddons actionModeAddons,
+            Runnable closeSelectionBar,
+            ClipStore clipStore,
+            LoadingHandler handler) {
 
         assert (activity != null);
         assert (state != null);
@@ -208,8 +244,10 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         mActionModeAddons = actionModeAddons;
         mCloseSelectionBar = closeSelectionBar;
         mClipStore = clipStore;
+        mHandler = handler;
 
         mBindings = new LoaderBindings();
+        mShowLoadingRunnable = isSearchV2Enabled() ? () -> mModel.setLoading(true) : null;
     }
 
     @Override
@@ -811,15 +849,25 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             currentDoc = mDocs.getArchiveDocument(doc.derivedUri, doc.userId);
         }
 
-        assert (currentDoc != null);
-        if (currentDoc.equals(mState.stack.peek())) {
-            Log.w(TAG, "This DocumentInfo is already in current DocumentsStack");
-            return;
+        assert currentDoc != null;
+
+        if (isUseMaterial3FlagEnabled()) {
+            if (mState.stack.popTo(currentDoc.derivedUri)) {
+                currentDoc = mState.stack.peek();
+            } else {
+                mState.stack.push(currentDoc);
+            }
+            mActivity.notifyDirectoryNavigated(currentDoc.derivedUri);
+        } else {
+            if (currentDoc.equals(mState.stack.peek())) {
+                Log.w(TAG, "This DocumentInfo is already in current DocumentsStack");
+                return;
+            }
+
+            mActivity.notifyDirectoryNavigated(currentDoc.derivedUri);
+            mState.stack.push(currentDoc);
         }
 
-        mActivity.notifyDirectoryNavigated(currentDoc.derivedUri);
-
-        mState.stack.push(currentDoc);
         // Show an opening animation only if pressing "back" would get us back to the
         // previous directory. Especially after opening a root document, pressing
         // back, wouldn't go to the previous root, but close the activity.
@@ -934,7 +982,8 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         DeleteDocumentFragment.show(
                 mActivity.getSupportFragmentManager(),
                 mModel.getDocuments(selection),
-                parentDocumentInfo);
+                parentDocumentInfo,
+                mState.stack.isTrashRoot());
     }
 
     @Override
@@ -1034,6 +1083,14 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
     @Override
     public final void loadRoot(Uri uri, UserId userId) {
+        if (Providers.isRecentsRootUri(uri)) {
+            loadRecent();
+            return;
+        }
+        if (DocumentsContract.isDocumentUri(mActivity, uri)) {
+            launchToDocument(uri);
+            return;
+        }
         new LoadRootTask<>(mActivity, mProviders, uri, userId, this::onRootLoaded)
                 .executeOnExecutor(mExecutors.lookup(uri.getAuthority()));
     }
@@ -1083,13 +1140,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         // cross-profile scenario.
         // For RecentsLoader and GlobalSearchLoader, they do not require rootDoc so it is no-op.
         // For DirectoryLoader, the loader needs to handle the case when stack.peek() returns null.
-
-        // Only allow restartLoader when the previous loader is finished or reset. Allowing
-        // multiple consecutive calls to restartLoader() / onCreateLoader() will probably create
-        // multiple active loaders, because restartLoader() does not interrupt previous loaders'
-        // loading, therefore may block the UI thread and cause ANR.
-        if (mLoaderSemaphore.tryAcquire()) {
+        if (isSearchV2Enabled()) {
+            mHandler.removeCallbacks(mShowLoadingRunnable);
+            mHandler.postDelayed(mShowLoadingRunnable, LOADING_DELAY);
             mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
+        } else {
+            // Only allow restartLoader when the previous loader is finished or reset. Allowing
+            // multiple consecutive calls to restartLoader() / onCreateLoader() will probably create
+            // multiple active loaders, because restartLoader() does not interrupt previous loaders'
+            // loading, therefore may block the UI thread and cause ANR.
+            if (mLoaderSemaphore.tryAcquire()) {
+                mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
+            }
         }
     }
 
@@ -1194,8 +1256,35 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     protected final void loadHomeDir() {
-        loadRoot(Shared.getDefaultRootUri(mActivity), UserId.DEFAULT_USER);
+        Uri defaultUri = getDefaultRootUri(mState.action);
+        loadRoot(defaultUri, UserId.DEFAULT_USER);
     }
+
+    /**
+     * Returns the default directory to be presented after starting the activity. It will attempt to
+     * use the default root uri from the resources first and will return a fallback URI based on the
+     * activity type if the default root uri is unsuccessful.
+     */
+    @VisibleForTesting
+    public Uri getDefaultRootUri(@State.ActionType int action) {
+        Uri defaultUri = Uri.parse(mActivity.getResources().getString(R.string.default_root_uri));
+        // These pick actions require the root to allow creation, but Recents doesn't support it.
+        boolean requiresCreate =
+                action == State.ACTION_CREATE || action == State.ACTION_PICK_COPY_DESTINATION;
+        if (FlagUtils.isHomeScreenFilesFlagEnabled()
+                && FlagUtils.isUseAllfilesRootForRecentsEnabled()
+                && Providers.isRecentsRootUri(defaultUri)
+                && !requiresCreate) {
+            return defaultUri;
+        }
+
+        if (!DocumentsContract.isRootUri(mActivity, defaultUri)) {
+            defaultUri = getDefaultFallbackUri();
+        }
+        return defaultUri;
+    }
+
+    protected abstract Uri getDefaultFallbackUri();
 
     protected final void loadRecent() {
         mState.stack.changeRoot(mProviders.getRecentsRoot(UserId.DEFAULT_USER));
@@ -1211,6 +1300,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     @Override
     public ActionHandler reset(ContentLock reloadLock) {
         mContentLock = reloadLock;
+        if (isSearchV2Enabled()) {
+            mHandler.removeCallbacks(mShowLoadingRunnable);
+        }
         mActivity.getLoaderManager().destroyLoader(LoaderIds.MAIN);
         return this;
     }
@@ -1415,9 +1507,15 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
                     acceptMimes = expanded;
                 }
             }
-            QueryOptions options = new QueryOptions(maxResults, maxResults, lastModifiedDelta,
-                    Duration.ofMillis(MAX_SEARCH_TIME_MS), mState.showHiddenFiles, acceptMimes,
-                    mSearchMgr.buildQueryArgs());
+            QueryOptions options =
+                    new QueryOptions(
+                            maxResults,
+                            maxResults,
+                            lastModifiedDelta,
+                            Duration.ofMillis(MAX_SEARCH_TIME_MS),
+                            mState.shouldShowHiddenFiles(),
+                            acceptMimes,
+                            mSearchMgr.buildQueryArgs());
 
             if (stack.isRecents() || mSearchMgr.isSearching()) {
                 if (DEBUG) {
@@ -1465,6 +1563,9 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
         @Override
         public void onLoadFinished(Loader<DirectoryResult> loader, DirectoryResult result) {
+            if (isSearchV2Enabled()) {
+                mHandler.removeCallbacks(mShowLoadingRunnable);
+            }
             if (DEBUG) {
                 Log.d(
                         TAG,
@@ -1474,15 +1575,42 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             assert (result != null);
             // First: Update the  file list with the new results.
             mInjector.getModel().update(result);
-            mLoaderSemaphore.release();
+            if (isHomeScreenFilesFlagEnabled()) {
+                selectDocument();
+            }
+            if (!isSearchV2Enabled()) {
+                mLoaderSemaphore.release();
+            }
 
             // Second: Fetch the summary for the result.
             startLoadingSummaries(result);
         }
 
+        /**
+         * Selects a document within the directory based on the URI stored in `mToSelect`.
+         * `mToSelect` is set in {@link
+         * com.android.documentsui.files.ActionHandler#launchToDocument(Intent)} if the intent
+         * provided is of application/zip mimetype and the intent originates from the launcher home
+         * screen.
+         */
+        private void selectDocument() {
+            if (mToSelect == null) {
+                return;
+            }
+            for (String modelId : mModel.getModelIds()) {
+                if (mToSelect.equals(mModel.getItemUri(modelId))) {
+                    mSelectionMgr.select(modelId);
+                    mToSelect = null;
+                    return;
+                }
+            }
+        }
+
         @Override
         public void onLoaderReset(Loader<DirectoryResult> loader) {
-            mLoaderSemaphore.release();
+            if (!isSearchV2Enabled()) {
+                mLoaderSemaphore.release();
+            }
         }
 
         private void startLoadingSummaries(DirectoryResult result) {
@@ -1500,6 +1628,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
 
             // We only fetch summaries for local files.
             if (!(root != null && (root.isLocalProvider() || root.isRecents()))) {
+                return;
+            }
+
+            // We only fetch summaries for files that are not archives.
+            if (documentInfo == null || documentInfo.isInArchive()) {
                 return;
             }
 

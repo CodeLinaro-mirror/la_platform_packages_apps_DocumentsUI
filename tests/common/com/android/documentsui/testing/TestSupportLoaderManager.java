@@ -71,6 +71,8 @@ public class TestSupportLoaderManager extends LoaderManager {
     public void destroyLoader(int id) {
         Loader loader = getLoader(id);
         if (loader != null) {
+            loader.unregisterListener(mListeners.get(id));
+            loader.cancelLoad();
             loader.abandon();
             mLoaders.remove(id);
             mListeners.remove(id);

@@ -103,7 +103,7 @@ public class PickActivity extends BaseActivity implements ActionHandler.Addons {
     private SharedInputHandler mSharedInputHandler;
 
     public PickActivity() {
-        super(getRes(R.layout.documents_activity), TAG);
+        super(getRes(R.layout.pick_activity), TAG);
     }
 
     // make these methods visible in this package to work around compiler bug http://b/62218600

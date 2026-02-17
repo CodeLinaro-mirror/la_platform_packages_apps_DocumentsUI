@@ -45,6 +45,7 @@
     <dimen name="list_item_height">72dp</dimen>
     <dimen name="list_item_padding">16dp</dimen>
     <dimen name="list_item_icon_padding">16dp</dimen>
+    <dimen name="summary_drawable_padding">0dp</dimen>
     <dimen name="breadcrumb_item_padding">8dp</dimen>
     <dimen name="breadcrumb_item_height">36dp</dimen>
     <dimen name="list_divider_inset">72dp</dimen>

@@ -17,7 +17,8 @@ package com.android.documentsui.base
 
 import android.content.Context
 import android.net.NetworkCapabilities
-import com.android.documentsui.util.FlagUtils.Companion.isCloudFeaturesFlagEnabled
+import android.util.Log
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 import com.google.common.annotations.VisibleForTesting
 
 /**
@@ -41,11 +42,25 @@ interface NetworkMonitor {
     fun removeNetworkListener(listener: NetworkListener)
 
     companion object {
+        private const val TAG = "NetworkMonitor"
+
+        private var testInstance: NetworkMonitor? = null
+
+        /** Used for tests to set a NetworkMonitor, with a custom isCurrentlyOnlineFun. */
+        @VisibleForTesting
+        @JvmStatic
+        fun setTestInstance(instance: NetworkMonitor?) {
+            testInstance = instance
+        }
 
         /** Creates and initializes a NetworkMonitor instance. */
         @JvmStatic
         fun create(context: Context): NetworkMonitor {
-            return if (isCloudFeaturesFlagEnabled()) {
+            testInstance?.let {
+                Log.i(TAG, "NetworkMonitor.create() returning testInstance")
+                return it
+            }
+            return if (isSyncStateEnabled()) {
                 NetworkMonitorImpl(context).apply { init() }
             } else {
                 NetworkMonitorStub()
@@ -62,7 +77,7 @@ interface NetworkMonitor {
             context: Context,
             isCurrentlyOnlineFun: (NetworkCapabilities) -> Boolean,
         ): NetworkMonitor {
-            return if (isCloudFeaturesFlagEnabled()) {
+            return if (isSyncStateEnabled()) {
                 NetworkMonitorImpl(context, isCurrentlyOnlineFun).apply { init() }
             } else {
                 NetworkMonitorStub()
