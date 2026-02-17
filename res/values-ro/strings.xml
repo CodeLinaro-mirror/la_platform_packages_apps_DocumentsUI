@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Numărul de fișiere distribuite nu poate depăși <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acțiunea nu este permisă"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Acțiunea nu este permisă"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Deschide cu…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nu sunt instalate aplicații acceptate. Încearcă să instalezi una din Magazinul Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Caută în Magazinul Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Trimite prin"</string>
@@ -246,8 +247,7 @@
       <item quantity="one">Acest fișier a fost convertit în alt format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Acest fișier a fost convertit în alt format:}few{Aceste fișiere au fost convertite în alt format:}other{Aceste fișiere au fost convertite în alt format:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{A fost adăugat un articol în Clipboard.}few{Au fost adăugate # articole în Clipboard.}other{Au fost adăugate # de articole în Clipboard.}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Doar pentru citire"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Poți să vezi aceste fișiere, dar unele acțiuni nu sunt acceptate"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Arhiva se află într-o locație numai în citire și nu poate fi extrasă aici."</string>

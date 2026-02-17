@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"แชร์มากกว่า <xliff:g id="COUNT">%1$d</xliff:g> ไฟล์ไม่ได้"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ไม่อนุญาตให้ดำเนินการนี้"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ไม่อนุญาตให้ดำเนินการนี้"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"เปิดด้วย…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ไม่มีการติดตั้งแอปที่รองรับ ลองติดตั้งแอปจาก Google Play Store"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"ค้นหาใน Google Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"แชร์ผ่าน"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">แปลงไฟล์นี้เป็นอีกรูปแบบหนึ่งแล้ว: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{แปลงไฟล์นี้เป็นรูปแบบอื่นแล้ว:}other{แปลงไฟล์เหล่านี้เป็นรูปแบบอื่นแล้ว:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{เพิ่ม # รายการไปยังคลิปบอร์ดแล้ว}other{เพิ่ม # รายการไปยังคลิปบอร์ดแล้ว}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"อ่านอย่างเดียว"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"คุณจะดูไฟล์เหล่านี้ได้ แต่ระบบไม่รองรับการดำเนินการบางอย่าง"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ไฟล์เก็บถาวรนี้อยู่ในตำแหน่งแบบอ่านอย่างเดียวและจะแตกไฟล์ที่นี่ไม่ได้"</string>

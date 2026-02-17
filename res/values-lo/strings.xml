@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ບໍ່ສາມາດແບ່ງປັນໄດ້ຫຼາຍກວ່າ <xliff:g id="COUNT">%1$d</xliff:g> ໄຟລ໌"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ບໍ່ອະນຸຍາດໃຫ້ໃຊ້ຄຳສັ່ງ"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ບໍ່ອະນຸຍາດໃຫ້ດຳເນີນການ"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"ເປີດດ້ວຍ…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ບໍ່ມີການຕິດຕັ້ງແອັບທີ່ຮອງຮັບ. ລອງຕິດຕັ້ງແອັບຈາກ Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"ຊອກຫາໃນ Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"ແບ່ງປັນຜ່ານ"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ໄຟລ໌ນີ້ຖືກແປງເປັນຮູບແບບອື່ນແລ້ວ: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ໄຟລ໌ນີ້ຖືກປ່ຽນແປງເປັນຮູບແບບອື່ນ:}other{ໄຟລ໌ເຫຼົ່ານີ້ຖືກປ່ຽນແປງເປັນຮູບແບບອື່ນ:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{ເພີ່ມ # ລາຍການໃສ່ໃນຄລິບບອດແລ້ວ}other{ເພີ່ມ # ລາຍການໃສ່ໃນຄລິບບອດແລ້ວ}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"ອ່ານຢ່າງດຽວ"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ທ່ານສາມາດເບິ່ງໄຟລ໌ເຫຼົ່ານີ້ໄດ້ ແຕ່ລະບົບບໍ່ຮອງຮັບຄຳສັ່ງບາງຢ່າງ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ໄຟລ໌ທີ່ເກັບໄວ້ໃນແຟ້ມນີ້ຢູ່ໃນສະຖານທີ່ແບບອ່ານຢ່າງດຽວ ແລະ ບໍ່ສາມາດແຕກໄຟລ໌ຢູ່ບ່ອນນີ້ໄດ້."</string>

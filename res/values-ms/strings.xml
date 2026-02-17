@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Tidak boleh berkongsi lebih daripada <xliff:g id="COUNT">%1$d</xliff:g> fail"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Tindakan tidak dibenarkan"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Tindakan tidak dibenarkan"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Buka dengan…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Tiada apl yang disokong dipasang. Cuba pasang apl tersebut daripada Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buat carian pada Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Kongsi melalui"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Fail ini telah ditukarkan kepada format lain: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Fail ini telah ditukarkan kepada format lain:}other{Fail ini telah ditukarkan kepada format lain:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# item ditambahkan pada Papan Keratan}other{# item ditambahkan pada Papan keratan}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Baca sahaja"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Anda boleh melihat fail ini tetapi sesetengah tindakan tidak disokong"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Arkib ini berada di lokasi baca sahaja dan tidak boleh diekstrak di sini."</string>

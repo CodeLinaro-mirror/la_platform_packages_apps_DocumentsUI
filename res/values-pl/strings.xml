@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nie możesz udostępnić więcej plików niż <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Niedozwolona czynność"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Niedozwolone działanie"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Otwórz za pomocą…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nie zainstalowano obsługiwanych aplikacji. Zainstaluj jakąś ze Sklepu Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Szukaj w Sklepie Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Udostępnij przez"</string>
@@ -257,8 +258,7 @@
       <item quantity="one">Ten plik został przekonwertowany na inny format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ten plik został przekonwertowany na inny format:}few{Pliki zostały przekonwertowane na inny format:}many{Pliki zostały przekonwertowane na inny format:}other{Pliki zostały przekonwertowane na inny format:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# element został dodany do schowka}few{# elementy zostały dodane do schowka}many{# elementów zostało dodanych do schowka}other{# elementu zostało dodanego do schowka}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Tylko do odczytu"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Możesz wyświetlać te pliki, ale niektóre działania są nieobsługiwane"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"To archiwum jest w lokalizacji tylko do odczytu i nie można go tutaj wyodrębnić."</string>

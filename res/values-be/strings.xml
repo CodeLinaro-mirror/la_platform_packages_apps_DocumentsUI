@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Не ўдалося абагуліць, таму што файлаў больш за <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Дзеянне забаронена"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Дзеянне забаронена"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Адкрыць з дапамогай…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Праграмы, якія падтрымліваюцца, не ўсталяваны. Усталюйце такую праграму з Крамы Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Шукаць у Краме Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Абагуліць праз"</string>
@@ -257,8 +258,7 @@
       <item quantity="other">Гэтыя файлы былі пераўтвораны ў іншы фармат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Гэты файл быў пераўтвораны ў іншы фармат:}one{Наступныя файлы былі пераўтвораны ў іншы фармат:}few{Наступныя файлы былі пераўтвораны ў іншы фармат:}many{Наступныя файлы былі пераўтвораны ў іншы фармат:}other{Наступныя файлы былі пераўтвораны ў іншы фармат:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# элемент дададзены ў буфер абмену}one{# элемент дададзены ў буфер абмену}few{# элементы дададзены ў буфер абмену}many{# элементаў дададзены ў буфер абмену}other{# элемента дададзены ў буфер абмену}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Толькі чытанне"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Вы можаце праглядаць гэтыя файлы, але некаторыя дзеянні не падтрымліваюцца"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Архіў знаходзіцца ў папцы толькі для чытання, таму файл немагчыма выняць тут."</string>

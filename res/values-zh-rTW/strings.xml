@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"最多只能分享 <xliff:g id="COUNT">%1$d</xliff:g> 個檔案"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"此操作無法進行"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"不允許執行此動作"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"選擇開啟工具…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"未安裝支援的應用程式，請嘗試從 Play 商店安裝。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"搜尋 Play 商店"</string>
     <string name="share_via" msgid="8725082736005677161">"分享方式："</string>
@@ -235,8 +236,7 @@
       <item quantity="one">已將以下檔案轉換成其他格式：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{這個檔案已轉換成其他格式：}other{這些檔案已轉換成其他格式：}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{已新增 # 個項目至剪貼簿}other{已新增 # 個項目至剪貼簿}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"唯讀"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"你可以查看這些檔案，但無法執行某些操作"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"這個封存檔位於唯讀位置，因此無法在這裡解壓縮。"</string>
