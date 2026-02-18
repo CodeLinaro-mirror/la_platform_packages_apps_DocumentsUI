@@ -366,11 +366,12 @@ public class RootsFragmentTest {
     }
 
     @Test
-    public void testItemComparator_WithCorrectOrder() {
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testProvidersAndAppsComp_WithCorrectOrder_HomeScreenFlagOff() {
         final String testPackageName = "com.test1";
         final String errorTestPackageName = "com.test2";
         final RootsFragment.ItemComparator comp = new RootsFragment.ItemComparator(testPackageName);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, null /* actionHandler */,
                 errorTestPackageName, /* maybeShowBadge= */ false));
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, null /* actionHandler */,
@@ -379,32 +380,108 @@ public class RootsFragmentTest {
                 testPackageName, /* maybeShowBadge= */ false));
         Collections.sort(rootList, comp);
 
-        assertEquals(rootList.get(0).title, TestProvidersAccess.PICKLES.title);
-        assertEquals(rootList.get(1).title, TestProvidersAccess.HAMMY.title);
-        assertEquals(rootList.get(2).title, TestProvidersAccess.INSPECTOR.title);
+        assertEquals(rootList.get(0).getTitle(), TestProvidersAccess.PICKLES.title);
+        assertEquals(rootList.get(1).getTitle(), TestProvidersAccess.HAMMY.title);
+        assertEquals(rootList.get(2).getTitle(), TestProvidersAccess.INSPECTOR.title);
     }
 
     @Test
-    public void testItemComparator_differentItemTypes_WithCorrectOrder() {
+    @DisableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO})
+    public void testProvidersAndAppsComp_differentItemTypes_WithCorrectOrder_HomeScreenFlagOff() {
         final String testPackageName = "com.test1";
         final RootsFragment.ItemComparator comp = new RootsFragment.ItemComparator(testPackageName);
-        final List<Item> rootList = new ArrayList<>();
-        rootList.add(new RootItem(TestProvidersAccess.HAMMY, null /* actionHandler */,
-                testPackageName, /* maybeShowBadge= */ false));
+        final List<SortableItem> rootList = new ArrayList<>();
+        rootList.add(
+                new RootItem(
+                        TestProvidersAccess.HAMMY,
+                        null /* actionHandler */,
+                        testPackageName,
+                        /* maybeShowBadge= */ false));
+        rootList.add(
+                new RootItem(
+                        TestProvidersAccess.IMAGE,
+                        null /* actionHandler */,
+                        "diff.package.prefix",
+                        /* maybeShowBadge= */ false));
 
         final ResolveInfo info = TestResolveInfo.create();
         info.activityInfo.packageName = testPackageName;
 
-        rootList.add(new AppItem(info, TestProvidersAccess.PICKLES.title, UserId.DEFAULT_USER,
-                null /* actionHandler */));
-        rootList.add(new RootAndAppItem(TestProvidersAccess.INSPECTOR, info,
-                null /* actionHandler */, /* maybeShowBadge= */ false));
+        rootList.add(
+                new AppItem(
+                        info,
+                        TestProvidersAccess.PICKLES.title,
+                        UserId.DEFAULT_USER,
+                        null /* actionHandler */));
+        rootList.add(
+                new RootAndAppItem(
+                        TestProvidersAccess.INSPECTOR,
+                        info,
+                        null /* actionHandler */,
+                        /* maybeShowBadge= */ false));
 
-        Collections.sort(rootList, comp);
+        rootList.sort(comp);
 
-        assertEquals(rootList.get(0).title, TestProvidersAccess.HAMMY.title);
-        assertEquals(rootList.get(1).title, TestProvidersAccess.INSPECTOR.title);
-        assertEquals(rootList.get(2).title, TestProvidersAccess.PICKLES.title);
+        assertSortedResult(
+                rootList,
+                new String[] {
+                    TestProvidersAccess.HAMMY.title,
+                    TestProvidersAccess.INSPECTOR.title,
+                    TestProvidersAccess.PICKLES.title,
+                    TestProvidersAccess.IMAGE.title
+                });
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_HOME_SCREEN_FILES_RO, Flags.FLAG_USE_MATERIAL3})
+    public void testProvidersAndAppsComp_differentItemTypes_WithCorrectOrder_HomeScreenFlagOn() {
+        final String testPackageName = "com.test1";
+        final RootsFragment.SortableItemComparator comp =
+                new RootsFragment.SortableItemComparator();
+        final List<SortableItem> itemList = new ArrayList<>();
+
+        itemList.add(
+                new RootItem(
+                        TestProvidersAccess.HAMMY,
+                        null /* actionHandler */,
+                        "diff.package.prefix",
+                        /* maybeShowBadge= */ false));
+        itemList.add(
+                new ShortcutItem(
+                        TestProvidersAccess.TEST_SHORTCUT,
+                        null /* actionHandler */,
+                        "diff.package.prefix",
+                        /* maybeShowBadge= */ false));
+
+        final ResolveInfo info = TestResolveInfo.create();
+        info.activityInfo.packageName = testPackageName;
+
+        itemList.add(
+                new AppItem(
+                        info,
+                        TestProvidersAccess.PICKLES.title,
+                        UserId.DEFAULT_USER,
+                        null /* actionHandler */));
+        itemList.add(
+                new RootAndAppItem(
+                        TestProvidersAccess.HOME,
+                        info,
+                        null /* actionHandler */,
+                        /* maybeShowBadge= */ false));
+
+        itemList.sort(comp);
+
+        // BaseSidebarEntryItems (RootItem, ShortcutItem and RootAndAppItem) should go before
+        // AppItems regardless of the package name prefix. These BaseSidebarEntryItems are then
+        // ordered by derived type, then title.
+        assertSortedResult(
+                itemList,
+                new String[] {
+                    TestProvidersAccess.HAMMY.title,
+                    TestProvidersAccess.HOME.title,
+                    TestProvidersAccess.TEST_SHORTCUT.getTitle(),
+                    TestProvidersAccess.PICKLES.title
+                });
     }
 
     @Test
@@ -486,16 +563,13 @@ public class RootsFragmentTest {
         assertTrue(assertSortedResult(items, expectedList.toArray(new String[0])));
     }
 
-    private boolean assertSortedResult(List<Item> items, String[] expectedSortedResult) {
+    private boolean assertSortedResult(List<? extends Item> items, String[] expectedSortedResult) {
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
-            if (item instanceof RootItem) {
-                assertEquals(expectedSortedResult[i], ((RootItem) item).root.title);
+            if (item instanceof SortableItem) {
+                assertEquals(expectedSortedResult[i], ((SortableItem) item).getTitle());
             } else if (item instanceof SpacerItem) {
                 assertTrue(expectedSortedResult[i].isEmpty());
-            } else if (item instanceof ShortcutItem) {
-                assertEquals(expectedSortedResult[i],
-                        ((ShortcutItem) item).getShortcut().getTitle());
             } else {
                 return false;
             }
