@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Maximálny počet zdieľaných súborov je <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Akcia nie je povolená"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Akcia nie je povolená"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Otvorte v aplikácii…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nie sú nainštalované žiadne podporované aplikácie. Skúste si nainštalovať nejakú z Obchodu Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Hľadať v Obchode Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Zdieľať prostredníctvom"</string>
@@ -257,8 +258,7 @@
       <item quantity="one">Tento súbor bol konvertovaný do iného formátu: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tento súbor bol skonvertovaný do iného formátu:}few{Tieto súbory boli skonvertované do iného formátu:}many{These files were converted to another format:}other{Tieto súbory boli skonvertované do iného formátu:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# položka bola pridaná do schránky}few{# items added to Clipboard}many{# items added to Clipboard}other{# items added to Clipboard}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Iba na čítanie"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Tieto súbory si môžete zobraziť, ale niektoré akcie nie sú podporované"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archív je v umiestnení iba na čítanie a nedá sa tu extrahovať."</string>

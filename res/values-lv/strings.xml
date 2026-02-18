@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nevar kopīgot vairāk par <xliff:g id="COUNT">%1$d</xliff:g> failu(-iem)."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Darbība nav atļauta"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Darbība nav atļauta"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Atvērt ar…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nav instalēta neviena atbalstīta lietotne. Mēģiniet instalēt atbalstītu lietotni no Play veikala."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Meklēt Play veikalā"</string>
     <string name="share_via" msgid="8725082736005677161">"Kopīgošanas veids"</string>
@@ -246,8 +247,7 @@
       <item quantity="other">Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Šis fails tika pārveidots citā formātā:}zero{Šie faili tika pārveidoti citā formātā:}one{Šie faili tika pārveidoti citā formātā:}other{Šie faili tika pārveidoti citā formātā:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# vienums ir pievienots starpliktuvē.}zero{# vienumi ir pievienoti starpliktuvē.}one{# vienums ir pievienots starpliktuvē.}other{# vienumi ir pievienoti starpliktuvē.}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Tikai lasāma"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Varat skatīt šos failus, taču dažas darbības netiek atbalstītas."</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Šis arhīvs atrodas tikai lasāmā vietā, un to nevar izgūt šeit."</string>

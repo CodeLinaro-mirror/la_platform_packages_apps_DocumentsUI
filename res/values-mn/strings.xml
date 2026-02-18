@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>-с илүү файл хуваалцах боломжгүй"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Үйлдлийг зөвшөөрөөгүй байна"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Үйлдлийг зөвшөөрөөгүй"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Дараахаар нээх…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Дэмжигдсэн ямар ч апп суулгаагүй байна. Play Store-с нэгийг суулгаж үзнэ үү."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store-с хайх"</string>
     <string name="share_via" msgid="8725082736005677161">"Дараахаар хуваалцах"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Энэ файлыг өөр форматад хөрвүүлсэн: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Энэ файлыг өөр формат руу хөрвүүлсэн:}other{Эдгээр файлыг өөр формат руу хөрвүүлсэн:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# зүйлийг Түр санах ойд нэмсэн}other{# зүйлийг Түр санах ойд нэмсэн}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Зөвхөн унших"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Та эдгээр файлыг үзэх боломжтой боловч зарим үйлдлийг дэмждэггүй"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Энэ архив нь зөвхөн унших байршилд байгаа бөгөөд энд задлах боломжгүй."</string>

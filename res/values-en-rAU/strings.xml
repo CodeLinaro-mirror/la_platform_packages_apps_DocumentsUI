@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Can’t share more than <xliff:g id="COUNT">%1$d</xliff:g> files"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Action not allowed"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Action not allowed"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Open with…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"There are no supported apps installed. Try installing one from the Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Search Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Share via"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">This file was converted to another format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{This file was converted to another format:}other{These files were converted to another format:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# item added to clipboard}other{# items added to clipboard}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Read only"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"You can view these files but some actions aren\'t supported"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"This archive is in a read-only location and cannot be extracted here."</string>

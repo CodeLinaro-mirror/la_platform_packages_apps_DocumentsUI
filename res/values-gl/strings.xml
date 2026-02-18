@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Non se poden compartir máis de <xliff:g id="COUNT">%1$d</xliff:g> ficheiros"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acción non permitida"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Non se permite esta acción"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Abrir con…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Non hai instalada ningunha aplicación compatible. Proba a instalar unha desde Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buscar en Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Compartir a través de"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Este ficheiro converteuse a outro formato: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Este ficheiro converteuse a outro formato:}other{Estes ficheiros convertéronse a outro formato:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{Engadiuse # elemento ao portapapeis}other{Engadíronse # elementos ao portapapeis}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Só lectura"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Podes consultar estes ficheiros, pero certas accións non se admiten"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Este arquivo está nunha localización de só lectura e non se pode extraer aquí."</string>

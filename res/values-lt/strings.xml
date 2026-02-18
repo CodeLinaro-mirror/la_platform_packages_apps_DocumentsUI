@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Daugiausia galimų bendrinti failų skaičius: <xliff:g id="COUNT">%1$d</xliff:g>."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Veiksmas neleidžiamas"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Veiksmas neleidžiamas"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Atidaryti naudojant…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nėra įdiegtų palaikomų programų. Pabandykite įdiegti iš „Play“ parduotuvės."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Paieška „Play“ parduotuvėje"</string>
     <string name="share_via" msgid="8725082736005677161">"Bendrinti naudojant"</string>
@@ -257,8 +258,7 @@
       <item quantity="other">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Šis failas konvertuotas į kitą formatą:}one{Šie failai konvertuoti į kitą formatą:}few{Šie failai konvertuoti į kitą formatą:}many{Šie failai konvertuoti į kitą formatą:}other{Šie failai konvertuoti į kitą formatą:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# elementas pridėtas prie iškarpinės}one{# elementas pridėtas prie iškarpinės}few{# elementai pridėti prie iškarpinės}many{# elemento pridėta prie iškarpinės}other{# elementų pridėta prie iškarpinės}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Tik skaityti"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Galite peržiūrėti šiuos failus, bet kai kurie veiksmai nepalaikomi"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Šis archyvas yra tik skaitomoje vietoje ir jo čia negalima išskleisti."</string>

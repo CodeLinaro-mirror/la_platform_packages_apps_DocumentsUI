@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ဖိုင် <xliff:g id="COUNT">%1$d</xliff:g> ခုထက်ပိုပြီး မျှဝေ၍မရပါ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"လုပ်ဆောင်ချက်ကို ခွင့်မပြုပါ"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"လုပ်ဆောင်ချက်ကို ခွင့်မပြုပါ"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"ဖွင့်မည့်အက်ပ်…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ပံ့ပိုးထားသောအက်ပ်များ ထည့်သွင်းမထားပါ။ Google Play Store မှ ထည့်သွင်းကြည့်ပါ။"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Store တွင် ရှာရန်"</string>
     <string name="share_via" msgid="8725082736005677161">"အောက်ပါနည်းလမ်းဖြင့် မျှဝေပါ"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ဤဖိုင်ကို အြခားပုံစံတစ်ခုအဖြစ် ပြောင်းလဲလိုက်ပါပြီ− <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ဤဖိုင်ကို အခြားဖော်မက်သို့ ပြောင်းထားသည်-}other{ဤဖိုင်များကို အခြားဖော်မက်သို့ ပြောင်းထားသည်-}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{ဖိုင် # ခုကို ‘ကလစ်ဘုတ်’ တွင် ထည့်လိုက်သည်}other{ဖိုင် # ခုကို ‘ကလစ်ဘုတ်’ တွင် ထည့်လိုက်သည်}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"ဖတ်ရန်အတွက်သာ"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ဤဖိုင်များကို ကြည့်နိုင်သော်လည်း လုပ်ဆောင်ချက်အချို့ကို မပံ့ပိုးပါ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ဤမှတ်တမ်းသည် ဖတ်ရန်သီးသန့် နေရာဖြစ်ပြီး ဤနေရာတွင် ထုတ်ယူ၍မရပါ။"</string>

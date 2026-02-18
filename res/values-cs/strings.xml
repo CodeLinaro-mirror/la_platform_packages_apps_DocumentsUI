@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Sdílet lze maximálně tento počet souborů: <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Akce není povolena"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Akce není povolena"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Otevřít pomocí aplikace…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nejsou nainstalovány žádné podporované aplikace. Zkuste si nějakou nainstalovat z Obchodu Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Vyhledat v Obchodě Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Sdílet pomocí"</string>
@@ -257,8 +258,7 @@
       <item quantity="one">Tento soubor byl převeden do jiného formátu: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Soubor byl převeden do jiného formátu:}few{Soubory byly převedeny do jiného formátu:}many{Soubory byly převedeny do jiného formátu:}other{Soubory byly převedeny do jiného formátu:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{Do schránky byla přidána # položka}few{Do schránky byly přidány # položky}many{Do schránky bylo přidáno # položky}other{Do schránky bylo přidáno # položek}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Pouze pro čtení"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Tyhle soubory můžete zobrazit, ale některé akce nejsou podporovány"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Tento archiv je v umístění jen pro čtení a nelze ho tu rozbalit."</string>

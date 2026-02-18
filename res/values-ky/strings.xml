@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> файлдан ашык бөлүшүүгө болбойт"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Аракетке тыюу салынган"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Мындай аракетке тыюу салынган"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Төмөнкү менен ачуу…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Колдоого алынган колдонмолор орнотулган эмес. Play Store\'дон бир колдонмону орнотуп көрүңүз."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store\'до издөө"</string>
     <string name="share_via" msgid="8725082736005677161">"Бул аркылуу бөлүшүү"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Төмөнкү файлдын форматы өзгөртүлдү: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Бул файл башка форматка өзгөртүлдү:}other{Бул файлдар башка форматка өзгөртүлдү:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# нерсе алмашуу буферине кошулду}other{# нерсе алмашуу буферине кошулду}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Окуганга гана"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Бул файлдарды көрө аласыз, бирок айрым аракеттер колдоого алынбайт"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Бул архив окуу үчүн гана жана бул жерден чыгарууга болбойт."</string>

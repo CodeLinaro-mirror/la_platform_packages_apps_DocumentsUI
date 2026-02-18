@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Не може да се споделат повеќе од <xliff:g id="COUNT">%1$d</xliff:g> датотеки"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Дејството не е дозволено"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Дејството не е дозволено"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Отворете со…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Нема инсталирани поддржани апликации. Обидете се да инсталирате некоја од Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Пребарај во Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Споделете преку"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">Датотекиве се конвертирани во друг формат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Датотекава е конвертирана во друг формат:}one{Датотекиве се конвертирани во друг формат:}other{Датотекиве се конвертирани во друг формат:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# ставка е додадена во привремената меморија}one{# ставка се додадени во привремената меморија}other{# ставки се додадени во привремената меморија}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Само за преглед"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Може да ги прегледувате датотекиве, но некои дејства не се поддржани"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Оваа архива е на локација само за читање и не може да се отпакува овде."</string>

@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Det går inte att dela fler än <xliff:g id="COUNT">%1$d</xliff:g> filer"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Åtgärden är inte tillåten"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Åtgärden är inte tillåten"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Öppna med …"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Det finns inga installerade appar som stöds. Testa att installera en från Google Play Butik."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Sök i Google Play Butik"</string>
     <string name="share_via" msgid="8725082736005677161">"Dela via"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Den här filen konverterades till ett annat format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Den här filen konverterades till ett annat format:}other{De här filerna konverterades till ett annat format:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# objekt har lagts till i urklipp}other{# objekt har lagts till i urklipp}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Skrivskyddad"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Du kan se de här filerna men vissa åtgärder stöds inte"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Det här arkivet finns på en skrivskyddad plats och kan inte extraheras här."</string>
