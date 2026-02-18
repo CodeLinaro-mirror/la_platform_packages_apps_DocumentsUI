@@ -105,14 +105,10 @@ class SearchLoader(
                 try {
                     result = queryLocation(rootInfo, searchUri, queryArgs)
                 } catch (e: Exception) {
-                    if (DEBUG) {
-                        Log.d(TAG, "Failed to get cursor for ${searchUri.authority}", e)
-                    }
+                    debugLog("failed to get cursor for ${searchUri.authority}", e)
                 }
             }
-            if (DEBUG) {
-                Log.d(TAG, "Query on ${searchUri.authority} took $queryDuration")
-            }
+            debugLog("query on ${searchUri.authority} took $queryDuration")
             return result
         }
 
@@ -161,6 +157,12 @@ class SearchLoader(
     // A latch that counts the number of tasks done. Used to check if all tasks are completed.
     private var countDownLatch = CountDownLatch(rootInfoList.size)
 
+    private fun debugLog(message: String, e: Exception? = null) {
+        if (DEBUG) {
+            Log.d(TAG, "SearchLoader#$myInstance: $message", e)
+        }
+    }
+
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
         try {
@@ -180,9 +182,7 @@ class SearchLoader(
      */
     private fun maybeRefreshContent(taskId: String) {
         if (firstPassDone.get()) {
-            if (DEBUG) {
-                Log.d(TAG, "Forcing refresh on cursor $taskId completed")
-            }
+            debugLog("forcing refresh on cursor $taskId completed")
             onContentChanged()
         }
     }
@@ -196,9 +196,7 @@ class SearchLoader(
     private fun firstPassRun(latch: CountDownLatch, rejectBeforeTimestamp: Long): Boolean {
         // Step 1: Create a list of new search tasks.
         createSearchTaskList(rejectBeforeTimestamp, latch)
-        if (DEBUG) {
-            Log.d(TAG, "First run created ${searchTaskList.size} tasks")
-        }
+        debugLog("first run created ${searchTaskList.size} tasks")
 
         // Check if we are cancelled; if not copy the task list.
         if (isLoadInBackgroundCanceled) {
@@ -209,30 +207,25 @@ class SearchLoader(
         for (task in searchTaskList) {
             executorService.execute(task)
         }
-        if (DEBUG) {
-            Log.d(TAG, "Started ${searchTaskList.size} search tasks")
-        }
+        debugLog("started ${searchTaskList.size} search tasks")
 
         // Step 3: Wait for the results.
         if (options.isQueryTimeUnlimited()) {
-            if (DEBUG) {
-                Log.d(TAG, "Waiting for results with no time limit")
-            }
+            debugLog("waiting for results with no time limit")
             latch.await()
         } else {
-            if (DEBUG) {
-                Log.d(TAG, "Waiting ${options.maxQueryTime!!.toMillis()}ms for results")
-            }
+            debugLog("waiting ${options.maxQueryTime!!.toMillis()}ms for results")
             latch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
         }
-        if (DEBUG) {
-            Log.d(TAG, "Waiting for results is done")
-        }
+        debugLog("waiting for results is done")
         return true
     }
 
     /** The loadInBackground code run within a trace. */
     private fun loadInBackgroundTraced(): DirectoryResult? {
+        // While we are building results we do not wish the observer to send any notifications.
+        debugLog("pausing content change notifications")
+        observer.setPaused(true)
         val rejectBeforeTimestamp = options.getRejectBeforeTimestamp()
         val result = DirectoryResult()
         // TODO(b:378590632): If root list has one root use it to construct result.doc
@@ -247,16 +240,12 @@ class SearchLoader(
                 // Create a new task list and schedule it with the executor.
                 firstPassComplete = firstPassRun(countDownLatch, rejectBeforeTimestamp)
             } catch (e: InterruptedException) {
-                if (DEBUG) {
-                    Log.d(TAG, "Interrupted during first pass ${options.maxQueryTime}")
-                }
+                debugLog("interrupted during first pass ${options.maxQueryTime}")
                 // TODO(b:388336095): Record a metrics indicating incomplete search.
                 throw RuntimeException(e)
             } finally {
                 firstPassDone.set(firstPassComplete)
-                if (DEBUG) {
-                    Log.d(TAG, "SearchLoader#$myInstance set firstPassDone to $firstPassComplete")
-                }
+                debugLog("set firstPassDone to $firstPassComplete")
             }
         }
 
@@ -278,9 +267,7 @@ class SearchLoader(
                 }
             }
         }
-        if (DEBUG) {
-            Log.d(TAG, "Search complete with ${cursorList.size} cursors collected")
-        }
+        debugLog("search complete with ${cursorList.size} cursors collected")
 
         // Assign the cursor, after adding filtering and sorting, to the results.
         val cursorExtras = Bundle().apply { putBoolean(DocumentsContract.EXTRA_LOADING, !allDone) }
@@ -325,7 +312,7 @@ class SearchLoader(
             // to make its behavior, such as failure handling, more explicit.
             isUseLocalSearchProviderEnabled() &&
             semanticSearchRootInfo?.supportsSearch() == true &&
-            semanticSearchRootInfo?.isEmpty() == false &&
+            semanticSearchRootInfo.isEmpty() == false &&
             rootInfo.isLocalOnly
 
     /** Gets semantic search URI if applicable, or null otherwise. */
@@ -406,28 +393,38 @@ class SearchLoader(
             val searchUris = createContentProviderQuery(rootInfo)
             val queryArgs = createQueryArgs(rootInfo, rejectBeforeTimestamp)
             sortModel.addQuerySortArgs(queryArgs)
-            if (DEBUG) {
-                Log.d(TAG, "Querying ${searchUris.map { it.authority }}")
-            }
+            debugLog("querying ${searchUris.map { it.authority }}")
             searchTaskList.add(SearchTask(rootInfo, searchUris, queryArgs, index, countDownLatch))
         }
     }
 
+    override fun deliverResult(result: DirectoryResult?) {
+        super.deliverResult(result)
+        debugLog("unpausing content change notifications")
+        observer.setPaused(false)
+    }
+
+    override fun onStopLoading() {
+        // If this loader is stopped, do not deliver any change notifications.
+        debugLog("pausing content change notifications")
+        observer.setPaused(true)
+        super.onStopLoading()
+    }
+
     override fun onReset() {
-        if (DEBUG) {
-            Log.d(TAG, "SearchLoader#$myInstance resetting.")
-        }
         resetInternal()
         super.onReset()
     }
 
     /** Overrides the method called when forced load takes place to force full cursor reload. */
     override fun resetInternal() {
+        debugLog("resetInternal")
+        observer.setPaused(true)
         for (data in queryResults) {
             val cursor = data?.cursor
             if (cursor != null) {
-                cursor.close()
                 cursor.unregisterContentObserver(observer)
+                cursor.close()
             }
         }
         queryResults.fill(null)
