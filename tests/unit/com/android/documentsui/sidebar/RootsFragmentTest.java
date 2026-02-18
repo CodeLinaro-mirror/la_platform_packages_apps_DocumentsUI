@@ -110,7 +110,6 @@ public class RootsFragmentTest {
         "" /* SpacerItem */,
         TestProvidersAccess.EXTERNALSTORAGE.title,
         TestProvidersAccess.HAMMY.title,
-        "" /* SpacerItem */,
         TestProvidersAccess.INSPECTOR.title,
         TestProvidersAccess.PICKLES.title
     };
@@ -136,7 +135,6 @@ public class RootsFragmentTest {
             "" /* SpacerItem */,
             TestProvidersAccess.EXTERNALSTORAGE.title,
             TestProvidersAccess.HAMMY.title,
-            "" /* SpacerItem */,
             TestProvidersAccess.INSPECTOR.title,
             TestProvidersAccess.PICKLES.title
         };
@@ -155,7 +153,6 @@ public class RootsFragmentTest {
         "" /* SpacerItem */,
         TestProvidersAccess.EXTERNALSTORAGE.title,
         TestProvidersAccess.HAMMY.title,
-        "" /* SpacerItem */,
         TestProvidersAccess.INSPECTOR.title,
         TestProvidersAccess.PICKLES.title
     };
@@ -170,7 +167,6 @@ public class RootsFragmentTest {
         "" /* SpacerItem */,
         TestProvidersAccess.EXTERNALSTORAGE.title,
         TestProvidersAccess.HAMMY.title,
-        "" /* SpacerItem */,
         TestProvidersAccess.INSPECTOR.title,
         TestProvidersAccess.PICKLES.title
     };
