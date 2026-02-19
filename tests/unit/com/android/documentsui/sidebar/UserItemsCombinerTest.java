@@ -40,6 +40,7 @@ import com.android.modules.utils.build.SdkLevel;
 import com.google.common.collect.Lists;
 import com.google.common.truth.Correspondence;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,25 +64,34 @@ public class UserItemsCombinerTest {
     private static final UserId PRIVATE_USER =
             UserId.of(new UserHandle(PERSONAL_USER.getIdentifier() + 2));
 
-    private static final List<Item> PERSONAL_ITEMS = Lists.newArrayList(
-            personalItem("personal 1"),
-            personalItem("personal 2"),
-            personalItem("personal 3")
-    );
+    private static final List<SortableItem> PERSONAL_ITEMS =
+            Lists.newArrayList(
+                    personalItem("personal 1"),
+                    personalItem("personal 2"),
+                    personalItem("personal 3"));
 
-    private static final List<Item> WORK_ITEMS = Lists.newArrayList(
-            workItem("work 1")
-    );
+    private static final List<SortableItem> WORK_ITEMS = Lists.newArrayList(workItem("work 1"));
 
-    private static final List<Item> PRIVATE_ITEMS = Lists.newArrayList(
-            privateItem("private1")
-    );
+    private static final List<SortableItem> PRIVATE_ITEMS =
+            Lists.newArrayList(privateItem("private1"));
 
     private static final Correspondence<Item, Item> ITEM_CORRESPONDENCE =
-            Correspondence.from((Item actual, Item expected) -> {
-                return Objects.equals(actual.title, expected.title)
-                        && Objects.equals(actual.userId, expected.userId);
-            }, "has same title and userId as in");
+            Correspondence.from(
+                    (Item actual, Item expected) -> {
+                        if (!Objects.equals(actual.userId, expected.userId)) {
+                            return false;
+                        }
+                        if (actual instanceof SortableItem && expected instanceof SortableItem) {
+                            return Objects.equals(
+                                    ((SortableItem) actual).getTitle(),
+                                    ((SortableItem) expected).getTitle());
+                        } else if (actual instanceof HeaderItem && expected instanceof HeaderItem) {
+                            return Objects.equals(
+                                    ((HeaderItem) actual).mTitle, ((HeaderItem) expected).mTitle);
+                        }
+                        return false;
+                    },
+                    "has same title and userId as in");
 
     private final State mState = new State();
     private final Resources mResources =
@@ -128,7 +138,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_empty() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Collections.emptyList());
         rootListAllUsers.add(Collections.emptyList());
         if (SdkLevel.isAtLeastV()) {
@@ -168,7 +178,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsPersonal_personalItemsOnly() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Lists.newArrayList(PERSONAL_ITEMS));
         rootListAllUsers.add(Collections.emptyList());
         if (SdkLevel.isAtLeastV()) {
@@ -185,7 +195,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsWork_personalItemsOnly() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Lists.newArrayList(PERSONAL_ITEMS));
         rootListAllUsers.add(Collections.emptyList());
         if (SdkLevel.isAtLeastV()) {
@@ -204,7 +214,7 @@ public class UserItemsCombinerTest {
     @Test
     public void testCreatePresentableListForAllUsers_currentIsPrivate_personalItemsOnly() {
         if (!SdkLevel.isAtLeastV()) return;
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Lists.newArrayList(PERSONAL_ITEMS));
         rootListAllUsers.add(Collections.emptyList());
         rootListAllUsers.add(Collections.emptyList());
@@ -245,7 +255,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsPersonal_workItemsOnly() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Collections.emptyList());
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -263,7 +273,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsWork_workItemsOnly() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Collections.emptyList());
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -282,7 +292,7 @@ public class UserItemsCombinerTest {
     @Test
     public void testCreatePresentableListForAllUsers_currentIsPrivate_workItemsOnly() {
         if (!SdkLevel.isAtLeastV()) return;
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(Collections.emptyList());
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         rootListAllUsers.add(Collections.emptyList());
@@ -338,7 +348,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsPersonal_allUsersItems() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(PERSONAL_ITEMS);
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -366,7 +376,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsWork_allUsersItems() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(PERSONAL_ITEMS);
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -395,7 +405,7 @@ public class UserItemsCombinerTest {
 
     @Test
     public void testCreatePresentableListForAllUsers_currentIsPrivate_allUsersItems() {
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(PERSONAL_ITEMS);
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -452,7 +462,7 @@ public class UserItemsCombinerTest {
     public void testCreatePresentableListForAllUsers_currentIsPersonal_cannotShareToWork() {
         if (!SdkLevel.isAtLeastV()) return;
         mState.canForwardToProfileIdMap.put(WORK_USER, false);
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(PERSONAL_ITEMS);
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -484,7 +494,7 @@ public class UserItemsCombinerTest {
         // be able to share to all the child profiles of the parent/personal profile only if it is
         // able to share with parent/personal profile
         mState.canForwardToProfileIdMap.put(PRIVATE_USER, false);
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         rootListAllUsers.add(PERSONAL_ITEMS);
         rootListAllUsers.add(Lists.newArrayList(WORK_ITEMS));
         if (SdkLevel.isAtLeastV()) {
@@ -513,7 +523,7 @@ public class UserItemsCombinerTest {
         return new TestItem(title, PRIVATE_USER);
     }
 
-    private static class TestItem extends Item {
+    private static class TestItem extends SortableItem {
 
         TestItem(String title, UserId userId) {
             super(/* layoutId= */ 0, title, /* stringId= */ "", userId);
@@ -534,7 +544,18 @@ public class UserItemsCombinerTest {
 
         @Override
         public String toString() {
-            return title + "(" + userId + ")";
+            return getTitle() + "(" + userId + ")";
+        }
+
+        @Override
+        @NotNull
+        public String getPackageName() {
+            return "";
+        }
+
+        @Override
+        public int getItemType() {
+            return TYPE_UNKNOWN;
         }
     }
 }

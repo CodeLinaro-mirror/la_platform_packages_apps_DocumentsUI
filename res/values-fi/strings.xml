@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Voit jakaa enintään <xliff:g id="COUNT">%1$d</xliff:g> tiedostoa"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Tämä ei ole sallitua"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Toiminto ei ole sallittu"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Avaa sovelluksessa"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Tuettuja sovelluksia ei ole asennettu. Kokeile asentaa sellainen Play Kaupasta."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Hae Play Kaupasta"</string>
     <string name="share_via" msgid="8725082736005677161">"Jaa sovelluksessa"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Tiedosto <xliff:g id="LIST_0">%1$s</xliff:g> muunnettiin toiseen muotoon</item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tämä tiedosto on muunnettu toiseen muotoon:}other{Nämä tiedostot on muunnettu toiseen muotoon:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# kohde lisätty leikepöydälle}other{# kohdetta lisätty leikepöydälle}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Vain luku"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Voit nähdä nämä tiedostot, mutta joitakin toimintoja ei tueta"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Arkisto on vain luku ‑tilassa, eikä sitä voi purkaa täällä."</string>

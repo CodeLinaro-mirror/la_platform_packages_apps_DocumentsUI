@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>টাতকৈ অধিক ফাইল শ্বেয়াৰ কৰিব নোৱাৰি"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"এই কাৰ্যৰ অনুমতি নাই"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"এই কাৰ্যৰ অনুমতি নাই"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"এইটোৰ জৰিয়তে খোলক…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"কোনো সমৰ্থিত এপ্‌ ইনষ্টল কৰা হোৱা নাই। Play Storeৰ পৰা এটা ইনষ্টল কৰি চাওক।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Storeত সন্ধান কৰক"</string>
     <string name="share_via" msgid="8725082736005677161">"ইয়াৰ জৰিয়তে শ্বেয়াৰ কৰক"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">এই ফাইলবোৰ অন্য এটা ফৰ্মেটলৈ সলনি কৰা হ’ল: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{এই ফাইলটো অন্য এটা ফৰ্মেটলৈ ৰূপান্তৰ কৰা হৈছে:}one{এই ফাইলসমূহ অন্য এটা ফৰ্মেটলৈ ৰূপান্তৰ কৰা হৈছে:}other{এই ফাইলসমূহ অন্য এটা ফৰ্মেটলৈ ৰূপান্তৰ কৰা হৈছে:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# টা বস্তু ক্লিপব’ৰ্ডত যোগ দিয়া হৈছে}one{# টা বস্তু ক্লিপব’ৰ্ডত যোগ দিয়া হৈছে}other{# টা বস্তু ক্লিপব’ৰ্ডত যোগ দিয়া হৈছে}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"কেৱল পঢ়িব পৰা"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"আপুনি এই ফাইলসমূহ চাব পাৰে কিন্তু কিছুমান কাৰ্য সমৰ্থিত নহয়"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"এই আৰ্কাইভটো এক কেৱল পঢ়িব পৰা অৱস্থানত আছে আৰু ইয়াত আহৰণ কৰিব নোৱাৰি।"</string>

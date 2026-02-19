@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"لا يمكن مشاركة أكثر من <xliff:g id="COUNT">%1$d</xliff:g> ملف."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"غير مسموح بهذا الإجراء"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"غير مسموح بهذا الإجراء"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"فتح باستخدام…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏لم يتم تثبيت أي تطبيقات متوافقة. يُرجى تثبيت تطبيق من \"متجر Play\"."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏البحث في \"متجر Play\""</string>
     <string name="share_via" msgid="8725082736005677161">"مشاركة عبر"</string>
@@ -279,8 +280,7 @@
       <item quantity="one">تم تحويل هذا الملف إلى تنسيق آخر: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{تم تحويل هذا الملف إلى تنسيق آخر:}zero{تم تحويل هذه الملفات إلى تنسيق آخر:}two{تم تحويل هذين الملفَّين إلى تنسيق آخر:}few{تم تحويل هذه الملفات إلى تنسيق آخر:}many{تم تحويل هذه الملفات إلى تنسيق آخر:}other{تم تحويل هذه الملفات إلى تنسيق آخر:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{تمت إضافة عنصر واحد إلى الحافظة}zero{تمت إضافة # عنصر إلى الحافظة}two{تمت إضافة عنصرين إلى الحافظة}few{تمت إضافة # عناصر إلى الحافظة}many{تمت إضافة # عنصرًا إلى الحافظة}other{تمت إضافة # عنصر إلى الحافظة}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"للقراءة فقط"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"يمكنك الاطّلاع على هذه الملفات، ولكن بعض الإجراءات غير متاحة"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"هذا الأرشيف مخزّن في مكان متاح للقراءة فقط ولا يمكن استخراجه هنا."</string>

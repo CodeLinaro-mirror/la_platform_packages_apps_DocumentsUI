@@ -51,9 +51,9 @@ class UserItemsCombiner {
     private final UserManager mUserManager;
     private final DevicePolicyManager mDpm;
     private final State mState;
-    private List<Item> mRootList;
-    private List<Item> mRootListOtherUser;
-    private List<List<Item>> mRootListAllUsers;
+    private List<SortableItem> mRootList;
+    private List<SortableItem> mRootListOtherUser;
+    private List<List<SortableItem>> mRootListAllUsers;
 
     UserItemsCombiner(
             Resources resources, UserManager userManager, DevicePolicyManager dpm, State state) {
@@ -70,17 +70,17 @@ class UserItemsCombiner {
         return this;
     }
 
-    UserItemsCombiner setRootListForCurrentUser(List<Item> rootList) {
+    UserItemsCombiner setRootListForCurrentUser(List<SortableItem> rootList) {
         mRootList = checkNotNull(rootList);
         return this;
     }
 
-    UserItemsCombiner setRootListForOtherUser(List<Item> rootList) {
+    UserItemsCombiner setRootListForOtherUser(List<SortableItem> rootList) {
         mRootListOtherUser = checkNotNull(rootList);
         return this;
     }
 
-    UserItemsCombiner setRootListForAllUsers(List<List<Item>> listOfRootLists) {
+    UserItemsCombiner setRootListForAllUsers(List<List<SortableItem>> listOfRootLists) {
         mRootListAllUsers = checkNotNull(listOfRootLists);
         return this;
     }
@@ -97,8 +97,8 @@ class UserItemsCombiner {
         if (mState.supportsCrossProfile() && mState.canShareAcrossProfile) {
             if (!mRootList.isEmpty() && !mRootListOtherUser.isEmpty()) {
                 // Identify personal and work root list.
-                final List<Item> personalRootList;
-                final List<Item> workRootList;
+                final List<SortableItem> personalRootList;
+                final List<SortableItem> workRootList;
 
                 if (mCurrentUser.isManagedProfile(mUserManager)) {
                     personalRootList = mRootListOtherUser;

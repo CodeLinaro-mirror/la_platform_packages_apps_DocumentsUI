@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>ଟିରୁ ଅଧିକ ଫାଇଲ୍ ସେୟାର୍ କରାଯାଇପାରିବ ନାହିଁ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"କାର୍ଯ୍ୟଟିକୁ ଅନୁମତି ନାହିଁ"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ଏହି କାର୍ଯ୍ୟ ପାଇଁ ଅନୁମତି ନାହିଁ"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"ଏଥିରେ ଖୋଲନ୍ତୁ…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"କୌଣସି ସପୋର୍ଟ କରୁଥିବା ଆପ୍ସ ଇନଷ୍ଟଲ କରାଯାଇନାହିଁ। Google Play Storeରୁ ଗୋଟିଏ ଆପ ଇନଷ୍ଟଲ କରିବାକୁ ଚେଷ୍ଟା କରନ୍ତୁ।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Storeରେ ସର୍ଚ୍ଚ କରନ୍ତୁ"</string>
     <string name="share_via" msgid="8725082736005677161">"ଏହା ମାଧ୍ୟମରେ ସେୟାର୍‌ କରନ୍ତୁ"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">ଏହି ଫାଇଲ୍‍ ଅନ୍ୟ ଫର୍ମାଟରେ ବଦଳାଗଲା: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ଏହି ଫାଇଲକୁ ଅନ୍ୟ ଏକ ଫର୍ମାଟରେ କନଭର୍ଟ କରାଯାଇଛି:}other{ଏହି ଫାଇଲଗୁଡ଼ିକୁ ଅନ୍ୟ ଏକ ଫର୍ମାଟରେ କନଭର୍ଟ କରାଯାଇଛି:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{କ୍ଲିପବୋର୍ଡରେ # ଆଇଟମ ଯୋଗ କରାଯାଇଛି}other{କ୍ଲିପବୋର୍ଡରେ # ଆଇଟମ ଯୋଗ କରାଯାଇଛି}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"କେବଳ-ପଢ଼ିବା ପାଇଁ"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ଆପଣ ଏହି ଫାଇଲଗୁଡ଼ିକୁ ଭ୍ୟୁ କରିପାରିବେ କିନ୍ତୁ କିଛି କାର୍ଯ୍ୟ ସପୋର୍ଟ କରୁନାହିଁ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ଏହି ଆର୍କାଇଭ କେବଳ-ପଢ଼ିବା ଲୋକେସନରେ ଅଛି ଏବଂ ଏହାକୁ ଏଠାରୁ ଏକ୍ସଟ୍ରାକ୍ଟ କରାଯାଇପାରିବ ନାହିଁ।"</string>

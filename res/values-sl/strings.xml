@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ne morete deliti več kot toliko datotek: <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Dejanje ni dovoljeno"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Dejanje ni dovoljeno"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Za odpiranje uporabi …"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nameščena ni nobena podprta aplikacija. Poskusite namestiti eno iz Trgovine Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Iskanje v Trgovini Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Deli z drugimi prek"</string>
@@ -257,8 +258,7 @@
       <item quantity="other">Te datoteke so bile pretvorjene v drugo obliko zapisa: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ta datoteka je bila pretvorjena v drugo obliko zapisa:}one{Te datoteke so bile pretvorjene v drugo obliko zapisa:}two{Te datoteke so bile pretvorjene v drugo obliko zapisa:}few{Te datoteke so bile pretvorjene v drugo obliko zapisa:}other{Te datoteke so bile pretvorjene v drugo obliko zapisa:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# element je dodan v odložišče}one{# element je dodan v odložišče}two{# elementa sta dodana v odložišče}few{# elementi so dodani v odložišče}other{# elementov je dodanih v odložišče}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Samo za branje"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Te datoteke si lahko ogledate, vendar nekatera dejanja niso podprta"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ta arhivska datoteka je na lokaciji, ki je samo za branje, zato je ni mogoče ekstrahirati tukaj."</string>

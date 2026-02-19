@@ -36,8 +36,8 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.AppsRowItemData.AppData;
 import com.android.documentsui.dirlist.AppsRowItemData.RootData;
 import com.android.documentsui.sidebar.AppItem;
-import com.android.documentsui.sidebar.Item;
 import com.android.documentsui.sidebar.RootItem;
+import com.android.documentsui.sidebar.SortableItem;
 import com.android.modules.utils.build.SdkLevel;
 
 import java.util.ArrayList;
@@ -88,12 +88,12 @@ public class AppsRowManager {
         mShouldShowByDefault = shouldShowByDefault;
     }
 
-    public List<AppsRowItemData> updateList(List<Item> itemList) {
+    public List<AppsRowItemData> updateList(List<SortableItem> itemList) {
         mDataList.clear();
 
         // If more than 1 item of the same package, show item summary (e.g. account id).
         Map<String, Integer> packageNameCount = new HashMap<>();
-        for (Item item : itemList) {
+        for (SortableItem item : itemList) {
             String packageName = item.getPackageName();
             int previousCount = packageNameCount.containsKey(packageName)
                     && !TextUtils.isEmpty(packageName)
@@ -101,7 +101,7 @@ public class AppsRowManager {
             packageNameCount.put(packageName, previousCount + 1);
         }
 
-        for (Item item : itemList) {
+        for (SortableItem item : itemList) {
             boolean shouldShowSummary = packageNameCount.get(item.getPackageName()) > 1;
             if (item instanceof RootItem) {
                 mDataList.add(new RootData((RootItem) item, mActionHandler, shouldShowSummary,

@@ -35,10 +35,10 @@ import com.android.documentsui.R;
 import com.android.documentsui.base.UserId;
 
 /**
- * An {@link Item} for apps that supports some picking actions like
- * {@link Intent#ACTION_GET_CONTENT} such as Photos. This is only used in pickers.
+ * An {@link Item} for apps that supports some picking actions like {@link
+ * Intent#ACTION_GET_CONTENT} such as Photos. This is only used in pickers.
  */
-public class AppItem extends Item {
+public class AppItem extends SortableItem {
     private static final String STRING_ID_FORMAT = "AppItem{%s/%s}";
 
     public final ResolveInfo info;
@@ -97,8 +97,9 @@ public class AppItem extends Item {
         final TextView titleView = (TextView) convertView.findViewById(android.R.id.title);
         final TextView summary = (TextView) convertView.findViewById(android.R.id.summary);
 
-        titleView.setText(title);
-        titleView.setContentDescription(userId.getUserBadgedLabel(convertView.getContext(), title));
+        titleView.setText(getTitle());
+        titleView.setContentDescription(
+                userId.getUserBadgedLabel(convertView.getContext(), getTitle()));
 
         bindIcon(icon);
 
@@ -138,5 +139,10 @@ public class AppItem extends Item {
                 + ", userId=" + userId
                 + ", resolveInfo=" + info
                 + "}";
+    }
+
+    @Override
+    public int getItemType() {
+        return APP_ITEM;
     }
 }

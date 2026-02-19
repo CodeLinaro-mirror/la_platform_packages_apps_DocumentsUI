@@ -38,7 +38,6 @@ class SpacerItem extends Item {
         // Multiple spacer items can share the same string id as they're identical.
         super(
                 getRes(R.layout.item_root_spacer),
-                "" /* title */,
                 STRING_ID,
                 UserId.UNSPECIFIED_USER);
     }

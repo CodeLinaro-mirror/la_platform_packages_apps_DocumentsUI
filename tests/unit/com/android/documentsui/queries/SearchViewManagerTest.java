@@ -587,6 +587,21 @@ public final class SearchViewManagerTest {
     }
 
     @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_SEARCH_V2_READ_ONLY})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    public void testIsCurrentlySearching_notShowChips() throws Exception {
+        RootInfo root = new RootInfo();
+        root.flags = FLAG_SUPPORTS_SEARCH;
+        root.queryArgs = QUERY_ARG_MIME_TYPES;
+        DocumentStack stack = new DocumentStack(root, new DocumentInfo());
+        mSearchViewManager.setCurrentSearch("currently searching");
+
+        mSearchViewManager.showMenu(stack);
+
+        verify(mSearchChipViewManager, times(1)).setChipsRowVisible(false);
+    }
+
+    @Test
     public void testSupportsSearch_showMenu() throws Exception {
         RootInfo root = spy(new RootInfo());
         when(root.isRecents()).thenReturn(false);

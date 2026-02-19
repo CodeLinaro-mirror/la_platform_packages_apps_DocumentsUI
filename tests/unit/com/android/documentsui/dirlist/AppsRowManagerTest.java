@@ -46,8 +46,8 @@ import com.android.documentsui.TestUserManagerState;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.sidebar.AppItem;
-import com.android.documentsui.sidebar.Item;
 import com.android.documentsui.sidebar.RootItem;
+import com.android.documentsui.sidebar.SortableItem;
 import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestProvidersAccess;
 import com.android.documentsui.testing.TestResolveInfo;
@@ -156,7 +156,7 @@ public class AppsRowManagerTest {
     @Test
     public void testUpdateList_byRootItem() {
         mActivity.setConfigStore(mTestConfigStore);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.PICKLES, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.PICKLES, mActionHandler, "packageName",
@@ -182,7 +182,7 @@ public class AppsRowManagerTest {
         final ResolveInfo info = TestResolveInfo.create();
         info.activityInfo.packageName = testPackageName;
 
-        List<Item> hybridList = new ArrayList<>();
+        List<SortableItem> hybridList = new ArrayList<>();
         hybridList.add(
                 new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         hybridList.add(new AppItem(info, TestProvidersAccess.PICKLES.title, UserId.DEFAULT_USER,
@@ -203,7 +203,7 @@ public class AppsRowManagerTest {
         mActivity.setConfigStore(mTestConfigStore);
         mState.action = State.ACTION_BROWSE;
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         mAppsRowManager.updateList(rootList);
 
@@ -218,7 +218,7 @@ public class AppsRowManagerTest {
         mActivity.setConfigStore(mTestConfigStore);
         mState.action = State.ACTION_GET_CONTENT;
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.AUDIO, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, mActionHandler, mMaybeShowBadge));
@@ -243,7 +243,7 @@ public class AppsRowManagerTest {
         mState.action = State.ACTION_GET_CONTENT;
         when(mActivity.getSelectedUser()).thenReturn(TestProvidersAccess.OtherUser.USER_ID);
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.AUDIO, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, mActionHandler, mMaybeShowBadge));
@@ -263,7 +263,7 @@ public class AppsRowManagerTest {
     public void testUpdateView_notInRecent_hideRow() {
         mActivity.setConfigStore(mTestConfigStore);
         mState.action = State.ACTION_BROWSE;
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         mAppsRowManager.updateList(rootList);
 
@@ -280,7 +280,7 @@ public class AppsRowManagerTest {
         mState.action = State.ACTION_OPEN_TREE;
 
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         mAppsRowManager.updateList(rootList);
 
@@ -295,7 +295,7 @@ public class AppsRowManagerTest {
         mState.action = State.ACTION_BROWSE;
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
 
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         mAppsRowManager.updateList(rootList);
 
         mAppsRowManager.updateView(mActivity);
@@ -310,7 +310,7 @@ public class AppsRowManagerTest {
         when(mActivity.isSearchExpanded()).thenReturn(true);
 
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.AUDIO, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, mActionHandler, mMaybeShowBadge));
@@ -332,7 +332,7 @@ public class AppsRowManagerTest {
         when(mActivity.isSearchExpanded()).thenReturn(false);
 
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.AUDIO, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, mActionHandler, mMaybeShowBadge));
@@ -354,7 +354,7 @@ public class AppsRowManagerTest {
         mState.stack.changeRoot(TestProvidersAccess.RECENTS);
         when(mActivity.getSelectedUser()).thenReturn(TestProvidersAccess.OtherUser.USER_ID);
 
-        final List<Item> rootList = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
         rootList.add(new RootItem(TestProvidersAccess.INSPECTOR, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.AUDIO, mActionHandler, mMaybeShowBadge));
         rootList.add(new RootItem(TestProvidersAccess.HAMMY, mActionHandler, mMaybeShowBadge));
