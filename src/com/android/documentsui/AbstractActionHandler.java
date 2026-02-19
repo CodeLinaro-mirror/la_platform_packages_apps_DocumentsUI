@@ -144,7 +144,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     private static final int LOADING_DELAY = 200;
     private final Semaphore mLoaderSemaphore = new Semaphore(1);
     private final @Nullable LoadingHandler mHandler;
-    private final @Nullable Runnable mShowLoadingRunnable;
+    private final @NonNull Runnable mShowLoadingRunnable;
     private final @Nullable PeekViewManager mPeekViewManager;
 
     protected final T mActivity;
@@ -247,7 +247,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         mHandler = handler;
 
         mBindings = new LoaderBindings();
-        mShowLoadingRunnable = isSearchV2Enabled() ? () -> mModel.setLoading(true) : null;
+        mShowLoadingRunnable = () -> mModel.setLoading(true);
     }
 
     @Override
