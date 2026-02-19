@@ -98,7 +98,15 @@ public final class KeyInputHandler extends KeyboardEventListener<ItemDetails<Str
         }
 
         // we don't yet have a mechanism to handle opening/previewing multiple documents at once
-        if (mSelectionHelper.getSelection().size() > 1) {
+        //
+        // For UseMaterial3, the intention is to activate what's focused, not what's selected. At
+        // most one document can be focused - that's what in the "details" argument - and so we can
+        // skip this check.
+        //
+        // For !UseMaterial3, the mCallbacks.onItemActivated(details, etc) call still activates
+        // what's focused, not what's selected. That may or may not be a bug, but we leave the
+        // !UseMaterial3 behavior unchanged for now, returning early if the selection size is > 1.
+        if (!isUseMaterial3FlagEnabled() && (mSelectionHelper.getSelection().size() > 1)) {
             return false;
         }
 
