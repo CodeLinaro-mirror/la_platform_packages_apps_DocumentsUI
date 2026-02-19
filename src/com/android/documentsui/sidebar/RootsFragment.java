@@ -66,6 +66,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.documentsui.ActionHandler;
 import com.android.documentsui.BaseActivity;
 import com.android.documentsui.DocumentsApplication;
+import com.android.documentsui.DragHoverListener;
 import com.android.documentsui.Injector;
 import com.android.documentsui.Injector.Injected;
 import com.android.documentsui.ItemDragListener;
@@ -375,6 +376,13 @@ public class RootsFragment extends Fragment {
                         mListHandler.resetAdapter();
                     }
                 };
+    }
+
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        if (mDragListener instanceof DragHoverListener) {
+            ((DragHoverListener) mDragListener).setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
     }
 
     public void reloadRootsAndShortcuts(boolean refreshRootAndDirectory) {

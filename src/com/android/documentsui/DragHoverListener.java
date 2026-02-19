@@ -162,6 +162,11 @@ public class DragHoverListener implements OnDragListener {
         return mDragHandler.onDrag(v, event);
     }
 
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        mDragHandler.setDragSpringTimeoutForTest(testDragSpringTimeout);
+    }
+
     private boolean handleLocationEvent(View v, float x, float y) {
         mCurrentPosition = transformToScrollViewCoordinate(v, x, y);
         if (insideDragZone()) {
