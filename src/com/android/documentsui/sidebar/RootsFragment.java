@@ -687,7 +687,7 @@ public class RootsFragment extends Fragment {
                 }
                 presentableListWithDivider.add(item);
             }
-            addListToResult(result, presentableListWithDivider);
+            result.addAll(presentableListWithDivider);
         } else {
             addListToResult(result, presentableList);
         }
