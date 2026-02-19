@@ -593,6 +593,13 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         return mRootView;
     }
 
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        if (mDragHoverListener != null) {
+            mDragHoverListener.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         mInjector.actions.unregisterDisplayStateChangedListener(mOnDisplayStateChanged);
