@@ -845,6 +845,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     }
 
     @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testRecreatePreservesSearchState() throws Exception {
         String[] expectedMatches =
                 new String[] {
