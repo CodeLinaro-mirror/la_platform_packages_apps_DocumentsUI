@@ -16,6 +16,7 @@
 
 package com.android.documentsui;
 
+import android.annotation.Nullable;
 import android.app.AuthenticationRequiredException;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -44,11 +45,17 @@ public class DemoProvider extends TestRootProvider {
     public static final String MSG_ERROR = "I'm an error. Don't judge me.";
     public static final String MSG_ERROR_AND_INFO = "ERROR: Both ERROR and INFO returned.";
 
+    public static final String NAME = "Demo Root";
     private static final String ROOT_ID = "demo-root";
     private static final String ROOT_DOC_ID = "root0";
 
     public DemoProvider() {
-        super("Demo Root", ROOT_ID, 0, ROOT_DOC_ID);
+        super(
+                NAME,
+                ROOT_ID,
+                DocumentsContract.Root.FLAG_SUPPORTS_SEARCH
+                        | DocumentsContract.Root.FLAG_SUPPORTS_RECENTS,
+                ROOT_DOC_ID);
     }
 
     @Override
@@ -101,15 +108,35 @@ public class DemoProvider extends TestRootProvider {
                         pIntent);
 
             default:
-                addFolder(c, DIR_INFO);
-                addFolder(c, DIR_ERROR);
-                addFolder(c, DIR_ERROR_AND_INFO);
-                addFolder(c, DIR_THROW);
-                addFolder(c, DIR_AUTH);
+                addTopLevelFolders(c);
                 break;
         }
 
         return c;
+    }
+
+    /** Simple implementation that returns items that match the query in the top level directory. */
+    @Override
+    public Cursor querySearchDocuments(String rootId, String query, String[] projection) {
+        MatrixCursor c = createDocCursor(projection);
+        addTopLevelFolders(c, query);
+        return c;
+    }
+
+    private void addTopLevelFolders(MatrixCursor c) {
+        addTopLevelFolders(c, null);
+    }
+
+    private void addTopLevelFolders(MatrixCursor c, @Nullable String query) {
+        var folders =
+                new String[] {
+                    DIR_INFO, DIR_ERROR, DIR_ERROR_AND_INFO, DIR_THROW, DIR_AUTH,
+                };
+        for (String folder : folders) {
+            if (query == null || folder.contains(query)) {
+                addFolder(c, folder);
+            }
+        }
     }
 }
 

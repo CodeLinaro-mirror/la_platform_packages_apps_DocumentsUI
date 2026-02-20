@@ -78,8 +78,155 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     @Test
-    fun testBanner_isShownWhenOffline() {
+    fun testBanner_isShownOffline() {
         setIsOnline(true)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+
+        setIsOnline(true)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    fun testBanner_isNotShownOffline_whenInRootThatDoesNotHaveLimitedFunctionality() {
+        setIsOnline(false)
+
+        // Open root that does not have limited functionality when offline.
+        switchRoot(DemoProvider.NAME)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_andHasNoDisplayedFiles() {
+        setIsOnline(true)
+
+        // Open dir1, it should have no files.
+        bots.directory.openDocument(TestCloudProvider.DIR_DISPLAY_NAME)
+        bots.directory.waitAndAssertPlaceholderMessageText(context!!.getString(R.string.empty))
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_whenSearchingLocally() {
+        setIsOnline(true)
+
+        // Search for the file.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_whenSearchingLocally_andHasNoDisplayedFiles() {
+        setIsOnline(true)
+
+        // Search for a non-existent file and get empty results.
+        bots.search.doSearch("Shouldn't match to anything")
+        bots.directory.waitAndAssertPlaceholderMessageText(
+            String.format(context!!.getString(R.string.no_results), TestCloudProvider.NAME)
+        )
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_whenSearchingEverywhere() {
+        setIsOnline(true)
+
+        // Open a root that does not have limited functionality when offline.
+        switchRoot(DemoProvider.NAME)
+
+        // Search for the file.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger)
+
+        // Click Everywhere, to search everywhere.
+        bots.search.clickMenuItem(R.string.search_location_everywhere)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isNotShownOffline_whenSearchingEverywhere_andHasNoDisplayedTestCloudProvider() {
+        setIsOnline(true)
+
+        // Open a root that does not have the TestCloudProvider file we are searching for.
+        switchRoot(DemoProvider.NAME)
+
+        // Search for a file that only exists in the demo root.
+        bots.search.doSearch(DemoProvider.DIR_ERROR_AND_INFO)
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger)
+
+        // Click Everywhere, to search everywhere.
+        bots.search.clickMenuItem(R.string.search_location_everywhere)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        // No TestCloudProvider files are in the search results, so no banner should be shown.
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    fun testBanner_isNotShownOffline_whenSearchingInARootThatDoesNotHaveLimitedFunctionality() {
+        setIsOnline(true)
+
+        // Open a root that does not have limited functionality when offline.
+        switchRoot(DemoProvider.NAME)
+
+        // Search for a file in the root.
+        bots.search.doSearch(DemoProvider.MSG_ERROR_AND_INFO)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        // No TestCloudProvider files are searched for here, so no banner should be shown.
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    @EnableFlags(
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+        Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+    )
+    fun testBanner_isShownOffline_inRecent() {
+        setIsOnline(true)
+
+        // Create a new file to ensure one exists in Recent.
+        cloudProviderDocsHelper.createDocument(
+            cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID),
+            "text/plain",
+            "recentFile",
+        )
+
+        // Open Recent.
+        switchRoot("Recent")
 
         bots.main.assertOfflineBannerDoesNotExist()
 
@@ -866,16 +1013,7 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             R.id.download_icon,
         )
 
-        // TODO(b/482847637): After this bug is fixed, there will be no need to exit from the
-        // search.
-        // Exit the search.
-        bots.search.closeSearch()
-
         setIsOnline(false)
-
-        // TODO(b/482847637): After this bug is fixed, there will be no need to reopen the search.
-        // Reopen the search.
-        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
 
         // The document should still be disabled and no icons should be shown.
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
@@ -917,16 +1055,7 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             R.id.download_icon,
         )
 
-        // TODO(b/482847637): After this bug is fixed, there will be no need to exit from the
-        // search.
-        // Exit the search.
-        bots.search.closeSearch()
-
         setIsOnline(false)
-
-        // TODO(b/482847637): After this bug is fixed, there will be no need to reopen the search.
-        // Reopen the search.
-        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
 
         // The document should still be disabled and no icons should be shown.
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)

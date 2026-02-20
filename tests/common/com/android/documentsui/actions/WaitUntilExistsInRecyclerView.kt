@@ -28,10 +28,10 @@ import java.util.concurrent.TimeoutException
 import org.hamcrest.Matcher
 
 /**
- * An action that waits until a view matching the given matcher exists within a RecyclerView. It
- * will attempt to scroll through the RecyclerView's items to find a match. This differs from
- * WaitUntilVisible which should be used only if the view already exists in the RecyclerView.
- * Typical use:
+ * An action that waits until a view matching the given matcher exists as a direct child in the
+ * given RecyclerView. It will attempt to scroll through the RecyclerView's items to find a match.
+ * This differs from WaitUntilVisible which should be used only if the view already exists in the
+ * RecyclerView. Typical use:
  *
  *  <pre>
  *   onView(withId(R.id.rec_view_id)).perform(WaitUntilExistsInRecyclerView(matcher, 500L))
@@ -54,7 +54,7 @@ class WaitUntilExistsInRecyclerView(
 
         do {
             try {
-                // Try to scroll to the document.
+                // Try to scroll to the child.
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(matcher)
                     .perform(uiController, view)
                 return
