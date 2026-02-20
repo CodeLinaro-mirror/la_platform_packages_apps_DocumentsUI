@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> हून अधिक फाइल शेअर करू शकत नाही"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"कृतीस अनुमती नाही"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"कृतीला अनुमती नाही"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"कोणतेही अ‍ॅप आढळले नाही"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"सपोर्ट करत असलेली कोणतीही ॲप्स इंस्टॉल केलेली नाहीत. Google Play Store वरून एखादे इंस्टॉल करून पहा."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Store मध्ये शोधा"</string>
     <string name="share_via" msgid="8725082736005677161">"द्वारे शेअर करा"</string>

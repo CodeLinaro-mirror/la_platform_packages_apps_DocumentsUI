@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> ఫైళ్ల కంటే ఎక్కువ షేర్ చేయలేరు"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"చర్యకు అనుమతి లేదు"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"చర్యకు అనుమతి లేదు"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"యాప్ ఏదీ కనుగొనబడలేదు"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"సపోర్ట్ ఉన్న యాప్‌లు ఏవీ ఇన్‌స్టాల్ చేసి లేవు. Play Store నుండి ఒక దాన్ని ఇన్‌స్టాల్ చేయడానికి ట్రై చేయండి."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Storeలో సెర్చ్ చేయండి"</string>
     <string name="share_via" msgid="8725082736005677161">"దీనితో షేర్ చేయండి"</string>
