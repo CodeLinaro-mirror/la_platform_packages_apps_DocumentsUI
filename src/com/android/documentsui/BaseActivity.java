@@ -1465,6 +1465,21 @@ public abstract class BaseActivity
         return mSearchManager.isExpanded();
     }
 
+    /**
+     * Called when the user hits the KeyEvent.KEYCODE_SEARCH key (or Alt-Space, which is an
+     * Android-wide equivalent).
+     */
+    public void onSearchKeyboardShortcut() {
+        if (isUseMaterial3FlagEnabled()) {
+            // The selection bar, visible whenever at least one file or folder is selected, hides
+            // the search bar (whether docked or regular). Since this keyboard shortcut should
+            // focus and/or expand the search bar's text-edit widget, we first clear the selection
+            // (which will hide the selection bar if it was showing).
+            mInjector.selectionMgr.clearSelection();
+        }
+        mInjector.searchManager.onSearchKeyboardShortcut();
+    }
+
     @Override
     public UserId getSelectedUser() {
         return mNavigator.getSelectedUser();
