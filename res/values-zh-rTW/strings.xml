@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"最多只能分享 <xliff:g id="COUNT">%1$d</xliff:g> 個檔案"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"此操作無法進行"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"不允許執行此動作"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"找不到應用程式"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"未安裝支援的應用程式，請嘗試從 Play 商店安裝。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"搜尋 Play 商店"</string>
     <string name="share_via" msgid="8725082736005677161">"分享方式："</string>

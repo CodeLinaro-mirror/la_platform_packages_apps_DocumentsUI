@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"មិនអាច​ចែករំលែក​ឯកសារ​ច្រើន​ជាង <xliff:g id="COUNT">%1$d</xliff:g> បាន​ទេ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"សកម្មភាពមិនត្រូវបានអនុញ្ញាត"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"មិនអនុញ្ញាតឱ្យធ្វើសកម្មភាពនេះទេ"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"រកមិនឃើញកម្មវិធីទេ"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"មិនមានការដំឡើងកម្មវិធី​ដែលអាចប្រើបានទេ។ សាកល្បងដំឡើងកម្មវិធីពី Play Store។"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"ស្វែងរក​នៅលើ Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"ចែករំលែក​តាម"</string>

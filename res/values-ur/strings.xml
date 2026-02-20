@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> سے زیادہ فائلز کا اشتراک نہیں کر سکتے"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"کارروائی کی اجازت نہیں ہے"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"کاروائی کی اجازت نہیں ہے"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"کوئی ایپ نہیں ملی"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"‏کوئی تعاون یافتہ ایپ انسٹال نہیں ہے۔ ‫Play اسٹور سے کوئی ایپ انسٹال کرنے کی کوشش کریں۔"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"‏‫Play اسٹور میں تلاش کریں"</string>
     <string name="share_via" msgid="8725082736005677161">"اشتراک کریں بذریعہ"</string>

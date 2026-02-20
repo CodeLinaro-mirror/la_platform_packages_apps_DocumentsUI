@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Es poden compartir com a màxim <xliff:g id="COUNT">%1$d</xliff:g> fitxers"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Acció no permesa"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Acció no permesa"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"No s\'ha trobat cap aplicació"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"No hi ha cap aplicació admesa instal·lada. Prova d\'instal·lar-ne una des de Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Cerca a Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Comparteix mitjançant"</string>
