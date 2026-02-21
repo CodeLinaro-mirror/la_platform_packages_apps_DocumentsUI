@@ -227,6 +227,27 @@ public abstract class BaseActivity
         return mTestTickDurationSupplier;
     }
 
+    /** Used by tests to set the drag spring timeout (in milliseconds). */
+    @VisibleForTesting
+    public void setDragSpringTimeoutForTest(int testDragSpringTimeout) {
+        // Set the drag spring timeout for the drag-hover on the directory.
+        final DirectoryFragment dir = getDirectoryFragment();
+        if (dir != null) {
+            dir.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+
+        // Set the drag spring timeout for the drag-hover on the sidebar roots.
+        final RootsFragment roots = getRootsFragment();
+        if (roots != null) {
+            roots.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+        // Set the drag spring timeout for the drag-hover on the nav rail roots.
+        final RootsFragment navRailRoots = getNavRailRootsFragment();
+        if (navRailRoots != null) {
+            navRailRoots.setDragSpringTimeoutForTest(testDragSpringTimeout);
+        }
+    }
+
     /**
      * Initialization for the injector that is common between Files and Pick activity. Important:
      * This is called before the BaseActivity.onCreate(), so it can't rely on things initiated
@@ -492,51 +513,51 @@ public abstract class BaseActivity
             mNavigator.update();
         });
 
-        mNavigator.setProfileTabsListener(userId -> {
-            // There are several possible cases that may trigger this callback.
-            // 1. A user click on tab layout.
-            // 2. A user click on tab layout, when filter is checked. (searching = true)
-            // 3. A user click on a open a dir of a different user in search (stack size > 1)
-            // 4. After tab layout is initialized.
+        mNavigator.setProfileTabsListener(
+                userId -> {
+                    // There are several possible cases that may trigger this callback.
+                    // 1. A user click on tab layout.
+                    // 2. A user click on tab layout, when filter is checked. (searching = true)
+                    // 3. A user click on a open a dir of a different user in search (stack size >
+                    // 1)
+                    // 4. After tab layout is initialized.
 
-            if (!mState.stack.isInitialized()) {
-                return;
-            }
+                    if (!mState.stack.isInitialized()) {
+                        return;
+                    }
 
-            // Reload the roots when the selected user is changed.
-            // After reloading, we have visually same roots in the drawer. But they are
-            // different by holding different userId. Next time when user select a root, it can
-            // bring the user to correct root doc.
-            final RootsFragment roots = RootsFragment.get(getSupportFragmentManager());
-            if (roots != null) {
-                roots.onSelectedUserChanged();
-            }
-            if (isUseMaterial3FlagEnabled()) {
-                final RootsFragment navRailRoots =
-                        RootsFragment.getNavRail(getSupportFragmentManager());
-                if (navRailRoots != null) {
-                    navRailRoots.onSelectedUserChanged();
-                }
-            }
+                    // Reload the roots when the selected user is changed.
+                    // After reloading, we have visually same roots in the drawer. But they are
+                    // different by holding different userId. Next time when user select a root, it
+                    // can bring the user to correct root doc.
+                    final RootsFragment roots = getRootsFragment();
+                    if (roots != null) {
+                        roots.onSelectedUserChanged();
+                    }
+                    final RootsFragment navRailRoots = getNavRailRootsFragment();
+                    if (navRailRoots != null) {
+                        navRailRoots.onSelectedUserChanged();
+                    }
 
+                    if (mState.stack.size() <= 1) {
+                        // We do not load cross-profile root if the stack contains two documents.
+                        // The stack may contain >1 docs when the user select a folder of the other
+                        // user in search. In that case, we don't want to reload the root. The whole
+                        // stack and the root will be updated in openFolderInSearchResult.
 
-            if (mState.stack.size() <= 1) {
-                // We do not load cross-profile root if the stack contains two documents. The
-                // stack may contain >1 docs when the user select a folder of the other user in
-                // search. In that case, we don't want to reload the root. The whole stack
-                // and the root will be updated in openFolderInSearchResult.
-
-                // When a user filters files by search chips on the root doc, we will be in
-                // searching mode and with stack size 1 (0 if rootDoc cannot be loaded).
-                // The activity will clear search on root picked. If we don't clear the search,
-                // user may see the search result screen show up briefly and then get cleared.
-                mSearchManager.cancelSearch();
-                // When a profile with user property SHOW_IN_QUIET_MODE_HIDDEN is currently
-                // selected, and it becomes unavailable, we reset the roots to recents.
-                // We do not reset it to recents when pick activity is due to ACTION_CREATE_DOCUMENT
-                mInjector.actions.loadCrossProfileRoot(getCurrentRoot(), userId);
-            }
-        });
+                        // When a user filters files by search chips on the root doc, we will be in
+                        // searching mode and with stack size 1 (0 if rootDoc cannot be loaded).
+                        // The activity will clear search on root picked. If we don't clear the
+                        // search, user may see the search result screen show up briefly and then
+                        // get cleared.
+                        mSearchManager.cancelSearch();
+                        // When a profile with user property SHOW_IN_QUIET_MODE_HIDDEN is currently
+                        // selected, and it becomes unavailable, we reset the roots to recents.
+                        // We do not reset it to recents when pick activity is due to
+                        // ACTION_CREATE_DOCUMENT
+                        mInjector.actions.loadCrossProfileRoot(getCurrentRoot(), userId);
+                    }
+                });
 
         mSortController = SortController.create(this, mState.derivedMode, mState.sortModel);
         if (isUseMaterial3FlagEnabled()) {
@@ -1120,6 +1141,17 @@ public abstract class BaseActivity
         return DirectoryFragment.get(getSupportFragmentManager());
     }
 
+    private @Nullable RootsFragment getRootsFragment() {
+        return RootsFragment.get(getSupportFragmentManager());
+    }
+
+    private @Nullable RootsFragment getNavRailRootsFragment() {
+        if (isUseMaterial3FlagEnabled()) {
+            return RootsFragment.getNavRail(getSupportFragmentManager());
+        }
+        return null;
+    }
+
     /**
      * Returns true if a directory can be created in the current location.
      */
@@ -1188,16 +1220,13 @@ public abstract class BaseActivity
 
         refreshDirectory(anim);
 
-        final RootsFragment roots = RootsFragment.get(getSupportFragmentManager());
+        final RootsFragment roots = getRootsFragment();
         if (roots != null) {
             roots.onCurrentRootChanged();
         }
-        if (isUseMaterial3FlagEnabled()) {
-            final RootsFragment navRailRoots =
-                    RootsFragment.getNavRail(getSupportFragmentManager());
-            if (navRailRoots != null) {
-                navRailRoots.onCurrentRootChanged();
-            }
+        final RootsFragment navRailRoots = getNavRailRootsFragment();
+        if (navRailRoots != null) {
+            navRailRoots.onCurrentRootChanged();
         }
 
         String appName = getString(getRes(R.string.files_label));
@@ -1578,7 +1607,7 @@ public abstract class BaseActivity
     }
 
     protected boolean focusSidebar() {
-        RootsFragment rf = RootsFragment.get(getSupportFragmentManager());
+        RootsFragment rf = getRootsFragment();
         assert (rf != null);
         return rf.requestFocus();
     }
@@ -1670,9 +1699,9 @@ public abstract class BaseActivity
             mProviders.updateAsync(
                     false,
                     () -> {
-                        RootsFragment fragment = RootsFragment.get(getSupportFragmentManager());
+                        RootsFragment fragment = getRootsFragment();
                         if (fragment == null) {
-                            fragment = RootsFragment.getNavRail(getSupportFragmentManager());
+                            fragment = getNavRailRootsFragment();
                         }
                         if (fragment != null) {
                             fragment.reloadRootsAndShortcuts(

@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"共有できるファイルは <xliff:g id="COUNT">%1$d</xliff:g> 件までです"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"操作が許可されていません"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"操作が許可されていません"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"アプリが見つかりませんでした"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"対応するアプリがインストールされていません。Google Play ストアからインストールしてみてください。"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play ストアを検索"</string>
     <string name="share_via" msgid="8725082736005677161">"共有ツール"</string>

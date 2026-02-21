@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> से ज़्यादा फ़ाइलें शेयर नहीं की जा सकतीं"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"शेयर नहीं किया जा सकता"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"इस कार्रवाई की अनुमति नहीं है"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"कोई ऐप्लिकेशन नहीं मिला"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"इस सुविधा के साथ काम करने वाला कोई ऐप्लिकेशन इंस्टॉल नहीं है. Google Play Store से कोई ऐप्लिकेशन इंस्टॉल करें."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play Store पर खोजें"</string>
     <string name="share_via" msgid="8725082736005677161">"इसके ज़रिए शेयर करें"</string>
