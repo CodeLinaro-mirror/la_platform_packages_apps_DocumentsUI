@@ -28,12 +28,14 @@ import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.TestActionModeAddons;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
 
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
@@ -43,8 +45,13 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     public boolean mDeleteHappened;
     public boolean mRequestDisablingQuietModeHappened;
     public boolean throwAtCreateApprovedHandlerIntent = false;
+    public boolean returnNullApprovedHandlerIntent = false;
 
     public DocumentInfo nextRootDocument;
+
+    // TODO(b/464388012): Reference actual intent category when it's available.
+    public static final String APPROVED_HANDLER_CATEGORY =
+            "android.provider.category.APPROVED_DOCUMENT_HANDLER";
 
     public TestActionHandler() {
         this(TestEnv.create());
@@ -111,10 +118,17 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     }
 
     @Override
-    public Intent createApprovedHandlerIntent(ComponentName handler) {
+    public @Nullable Intent createApprovedHandlerIntent(ComponentName handler) {
         if (throwAtCreateApprovedHandlerIntent) {
             throw new UnsupportedOperationException();
         }
-        return new Intent();
+        if (returnNullApprovedHandlerIntent) {
+            return null;
+        }
+
+        final Intent intent = new Intent();
+        intent.setComponent(handler);
+        intent.addCategory(APPROVED_HANDLER_CATEGORY);
+        return intent;
     }
 }
