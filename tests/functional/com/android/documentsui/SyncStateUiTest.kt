@@ -24,7 +24,6 @@ import android.provider.DocumentsContract.Document
 import android.provider.DocumentsContract.Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE
 import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.test.filters.SdkSuppress
-import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
@@ -1015,7 +1014,7 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         setIsOnline(false)
 
-        // The document should still be disabled and no icons should be shown.
+        // The document should be disabled and no icons should be shown.
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
         bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
 
@@ -1037,7 +1036,7 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         setIsOnline(true)
 
         // Open a root that does not have the file we are searching for.
-        openRoot(context!!, "Paging Root", activityLayoutId)
+        switchRoot("Paging Root")
 
         // No sync state flags are set.
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
@@ -1057,12 +1056,56 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         setIsOnline(false)
 
-        // The document should still be disabled and no icons should be shown.
+        // The document should be disabled and no icons should be shown.
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
         bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
 
         // Open the context menu.
         bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+
+        // Check that the items that require content are visible but are disabled offline.
+        val contentRequiredContextMenuItems =
+            intArrayOf(
+                R.string.menu_open_with,
+                R.string.menu_share,
+                R.string.menu_copy_to_clipboard,
+            )
+        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+    }
+
+    @Test
+    @EnableFlags(
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+        Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+    )
+    fun testRecent_noAvailableLocallyState() {
+        setIsOnline(true)
+
+        // Create a new file to ensure one exists in Recent. This won't have any sync state flags
+        // set.
+        cloudProviderDocsHelper.createDocument(
+            cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID),
+            "text/plain",
+            "recentFileInTest",
+        )
+        // Open Recent.
+        switchRoot("Recent")
+
+        // A download icon should be shown when online.
+        bots.directory.assertObjectsEventuallyAppearOnDocument(
+            "recentFileInTest",
+            R.id.download_icon,
+        )
+
+        setIsOnline(false)
+
+        // The document should be disabled and no icons should be shown.
+        bots.directory.assertDocumentDisabled("recentFileInTest")
+        bots.directory.assertDocumentSyncIconsNotVisible("recentFileInTest")
+
+        // Open the context menu.
+        bots.directory.rightClickDocument("recentFileInTest")
 
         // Check that the items that require content are visible but are disabled offline.
         val contentRequiredContextMenuItems =
