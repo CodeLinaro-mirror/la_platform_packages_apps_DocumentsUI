@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> ਤੋਂ ਵੱਧ ਫ਼ਾਈਲਾਂ ਸਾਂਝੀਆਂ ਨਹੀਂ ਕੀਤੀਆਂ ਜਾ ਸਕਦੀਆਂ"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ਕਾਰਵਾਈ ਦੀ ਇਜਾਜ਼ਤ ਨਹੀਂ ਹੈ"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ਕਾਰਵਾਈ ਦੀ ਆਗਿਆ ਨਹੀਂ"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"ਇਸ ਨਾਲ ਖੋਲ੍ਹੋ…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ਕੋਈ ਵੀ ਸਮਰਥਿਤ ਐਪ ਸਥਾਪਤ ਨਹੀਂ ਹੈ। Play Store ਤੋਂ ਕੋਈ ਐਪ ਸਥਾਪਤ ਕਰ ਕੇ ਦੇਖੋ।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store ਵਿੱਚ ਖੋਜੋ"</string>
     <string name="share_via" msgid="8725082736005677161">"ਇਸ ਰਾਹੀਂ ਸਾਂਝਾ ਕਰੋ"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">ਇਹਨਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ:}one{ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ:}other{ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਕਿਸੇ ਹੋਰ ਫਾਰਮੈਟ ਵਿੱਚ ਬਦਲਿਆ ਗਿਆ:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# ਆਈਟਮ ਨੂੰ ਕਲਿੱਪਬੋਰਡ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ ਗਿਆ}one{# ਆਈਟਮ ਨੂੰ ਕਲਿੱਪਬੋਰਡ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ ਗਿਆ}other{# ਆਈਟਮਾਂ ਨੂੰ ਕਲਿੱਪਬੋਰਡ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤਾ ਗਿਆ}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"ਸਿਰਫ਼ ਪੜ੍ਹਨ ਲਈ"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ਤੁਸੀਂ ਇਨ੍ਹਾਂ ਫ਼ਾਈਲਾਂ ਨੂੰ ਦੇਖ ਸਕਦੇ ਹੋ, ਪਰ ਕੁਝ ਕਾਰਵਾਈਆਂ ਸਮਰਥਿਤ ਨਹੀਂ ਹਨ"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ਇਹ ਪੁਰਾਲੇਖ ਸਿਰਫ਼-ਪੜ੍ਹਨ ਲਈ ਟਿਕਾਣੇ \'ਤੇ ਹੈ ਅਤੇ ਇੱਥੇ ਐਕਸਟਰੈਕਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ।"</string>

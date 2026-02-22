@@ -137,7 +137,7 @@ public class RootsFragment extends Fragment {
     @Injected
     private ActionHandler mActionHandler;
 
-    private List<Item> mApplicationItemList;
+    private List<SortableItem> mApplicationItemList;
 
     // Weather the fragment is using nav_rail_container_roots as its container (in nav_rail_layout).
     // This will always be false if isUseMaterial3FlagEnabled() flag is off.
@@ -643,9 +643,9 @@ public class RootsFragment extends Fragment {
         if (VERBOSE) Log.v(TAG, "Adding storage roots: " + storageProviders);
         result.addAll(storageProviders);
 
-        final List<Item> rootList = new ArrayList<>();
-        final List<Item> rootListOtherUser = new ArrayList<>();
-        final List<List<Item>> rootListAllUsers = new ArrayList<>();
+        final List<SortableItem> rootList = new ArrayList<>();
+        final List<SortableItem> rootListOtherUser = new ArrayList<>();
+        final List<List<SortableItem>> rootListAllUsers = new ArrayList<>();
         for (int i = 0; i < userIds.size(); ++i) {
             rootListAllUsers.add(new ArrayList<>());
         }
@@ -673,14 +673,34 @@ public class RootsFragment extends Fragment {
                         context, state, rootListAllUsers, userIds, userManagerState) :
                         getPresentableListPrivateSpaceDisabled(context, state, rootList,
                                 rootListOtherUser);
-        addListToResult(result, presentableList);
+
+        if (isHomeScreenFilesFlagEnabled()) {
+            List<Item> presentableListWithDivider = new ArrayList<>();
+            boolean hasBaseSidebarItems = false;
+            for (Item item : presentableList) {
+                if (item instanceof BaseSidebarEntryItem) {
+                    hasBaseSidebarItems = true;
+                }
+                if (hasBaseSidebarItems && item instanceof AppItem) {
+                    presentableListWithDivider.add(new SpacerItem());
+                    hasBaseSidebarItems = false;
+                }
+                presentableListWithDivider.add(item);
+            }
+            addListToResult(result, presentableListWithDivider);
+        } else {
+            addListToResult(result, presentableList);
+        }
         addListToResult(result, trashItems);
         return result;
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private List<Item> getPresentableListPrivateSpaceEnabled(Context context, State state,
-            List<List<Item>> rootListAllUsers, List<UserId> userIds,
+    private List<Item> getPresentableListPrivateSpaceEnabled(
+            Context context,
+            State state,
+            List<List<SortableItem>> rootListAllUsers,
+            List<UserId> userIds,
             UserManagerState userManagerState) {
         return new UserItemsCombiner(
                         context.getResources(),
@@ -691,8 +711,11 @@ public class RootsFragment extends Fragment {
                 .createPresentableListForAllUsers(userIds, userManagerState.getUserIdToLabelMap());
     }
 
-    private List<Item> getPresentableListPrivateSpaceDisabled(Context context, State state,
-            List<Item> rootList, List<Item> rootListOtherUser) {
+    private List<Item> getPresentableListPrivateSpaceDisabled(
+            Context context,
+            State state,
+            List<SortableItem> rootList,
+            List<SortableItem> rootListOtherUser) {
         return new UserItemsCombiner(
                         context.getResources(),
                         context.getSystemService(UserManager.class),
@@ -711,18 +734,24 @@ public class RootsFragment extends Fragment {
     }
 
     /**
-     * Adds apps capable of handling the original intent will be included in list of roots. If
-     * the providers and apps are the same package name, combine them as RootAndAppItems.
+     * Adds apps capable of handling the original intent will be included in list of roots. If the
+     * providers and apps are the same package name, combine them as RootAndAppItems.
      */
-    private void includeHandlerApps(State state,
-            Intent handlerAppIntent, @Nullable String excludePackage, List<Item> rootList,
-            List<Item> rootListOtherUser, List<List<Item>> rootListAllUsers,
-            List<RootItem> otherProviders, List<UserId> userIds, boolean maybeShowBadge) {
+    private void includeHandlerApps(
+            State state,
+            Intent handlerAppIntent,
+            @Nullable String excludePackage,
+            List<SortableItem> rootList,
+            List<SortableItem> rootListOtherUser,
+            List<List<SortableItem>> rootListAllUsers,
+            List<RootItem> otherProviders,
+            List<UserId> userIds,
+            boolean maybeShowBadge) {
         if (VERBOSE) Log.v(TAG, "Adding handler apps for intent: " + handlerAppIntent);
 
         Context context = getContext();
         final Map<UserPackage, ResolveInfo> appsMapping = new HashMap<>();
-        final Map<UserPackage, Item> appItems = new HashMap<>();
+        final Map<UserPackage, SortableItem> appItems = new HashMap<>();
 
         final String myPackageName = context.getPackageName();
         for (UserId userId : userIds) {
@@ -772,7 +801,7 @@ public class RootsFragment extends Fragment {
                     appsMapping.put(userPackage, info);
 
                     if (!CrossProfileUtils.isCrossProfileIntentForwarderActivity(info)) {
-                        final Item item =
+                        final SortableItem item =
                                 mUseRailAsContainer
                                         ? new NavRailAppItem(
                                                 info,
@@ -797,7 +826,7 @@ public class RootsFragment extends Fragment {
                     rootItem.getPackageName());
             final ResolveInfo resolveInfo = appsMapping.get(userPackage);
 
-            final Item item;
+            final SortableItem item;
             if (resolveInfo != null) {
                 item =
                         mUseRailAsContainer
@@ -817,7 +846,7 @@ public class RootsFragment extends Fragment {
             }
         }
 
-        for (Item item : appItems.values()) {
+        for (SortableItem item : appItems.values()) {
             if (state.configStore.isPrivateSpaceInDocsUIEnabled()) {
                 createRootListsPrivateSpaceEnabled(item, userIds, rootListAllUsers);
             } else {
@@ -827,18 +856,25 @@ public class RootsFragment extends Fragment {
 
         final String preferredRootPackage =
                 getResources().getString(getRes(R.string.preferred_root_package), "");
-        final ItemComparator comp = new ItemComparator(preferredRootPackage);
+        Comparator<SortableItem> comp;
+        if (isHomeScreenFilesFlagEnabled()) {
+            comp = new SortableItemComparator();
+        } else {
+            comp = new ItemComparator(preferredRootPackage);
+        }
 
         if (state.configStore.isPrivateSpaceInDocsUIEnabled()) {
             addToApplicationItemListPrivateSpaceEnabled(userIds, rootListAllUsers, comp, state);
         } else {
             addToApplicationItemListPrivateSpaceDisabled(rootList, rootListOtherUser, comp, state);
         }
-
     }
 
-    private void addToApplicationItemListPrivateSpaceEnabled(List<UserId> userIds,
-            List<List<Item>> rootListAllUsers, ItemComparator comp, State state) {
+    private void addToApplicationItemListPrivateSpaceEnabled(
+            List<UserId> userIds,
+            List<List<SortableItem>> rootListAllUsers,
+            Comparator<SortableItem> comp,
+            State state) {
         for (int i = 0; i < userIds.size(); ++i) {
             rootListAllUsers.get(i).sort(comp);
             if (UserId.CURRENT_USER.equals(userIds.get(i))) {
@@ -849,8 +885,11 @@ public class RootsFragment extends Fragment {
         }
     }
 
-    private void addToApplicationItemListPrivateSpaceDisabled(List<Item> rootList,
-            List<Item> rootListOtherUser, ItemComparator comp, State state) {
+    private void addToApplicationItemListPrivateSpaceDisabled(
+            List<SortableItem> rootList,
+            List<SortableItem> rootListOtherUser,
+            Comparator<SortableItem> comp,
+            State state) {
         rootList.sort(comp);
         rootListOtherUser.sort(comp);
         if (state.supportsCrossProfile() && state.canShareAcrossProfile) {
@@ -861,8 +900,8 @@ public class RootsFragment extends Fragment {
         }
     }
 
-    private void createRootListsPrivateSpaceEnabled(Item item, List<UserId> userIds,
-            List<List<Item>> rootListAllUsers) {
+    private void createRootListsPrivateSpaceEnabled(
+            SortableItem item, List<UserId> userIds, List<List<SortableItem>> rootListAllUsers) {
         for (int i = 0; i < userIds.size(); ++i) {
             if (userIds.get(i).equals(item.userId)) {
                 rootListAllUsers.get(i).add(item);
@@ -871,8 +910,8 @@ public class RootsFragment extends Fragment {
         }
     }
 
-    private void createRootListsPrivateSpaceDisabled(Item item, List<Item> rootList,
-            List<Item> rootListOtherUser) {
+    private void createRootListsPrivateSpaceDisabled(
+            SortableItem item, List<SortableItem> rootList, List<SortableItem> rootListOtherUser) {
         if (UserId.CURRENT_USER.equals(item.userId)) {
             rootList.add(item);
         } else {
@@ -987,14 +1026,36 @@ public class RootsFragment extends Fragment {
             ejectClicked(ejectIcon, sidebarItem.getItemInfo().getRoot(), mActionHandler);
             return true;
         } else if (id == getRes(R.id.root_menu_open_in_new_window)) {
-            if (sidebarItem instanceof RootItem) {
-                mActionHandler.openInNewWindow(new DocumentStack(
-                        sidebarItem.getItemInfo().getRoot(), sidebarItem.getDocInfo()), null);
-            } else if (isHomeScreenFilesFlagEnabled() && sidebarItem instanceof ShortcutItem) {
-                ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
-                mActionHandler.openInNewWindow(
-                        new DocumentStack(shortcut.getRoot(), sidebarItem.getDocInfo()), shortcut);
-                return true;
+            Runnable openInNewWindowRunnable =
+                    () -> {
+                        if (sidebarItem instanceof RootItem) {
+                            mActionHandler.openInNewWindow(
+                                    new DocumentStack(
+                                            sidebarItem.getItemInfo().getRoot(),
+                                            sidebarItem.getDocInfo()),
+                                    null);
+                        } else if (isHomeScreenFilesFlagEnabled()
+                                && sidebarItem instanceof ShortcutItem) {
+                            ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
+                            mActionHandler.openInNewWindow(
+                                    new DocumentStack(shortcut.getRoot(), sidebarItem.getDocInfo()),
+                                    shortcut);
+                        }
+                    };
+            if (sidebarItem.getDocInfo() == null) {
+                mActionHandler.getDocument(
+                        sidebarItem.getItemInfo().getRoot().authority,
+                        sidebarItem.getItemInfo().getDocumentId(),
+                        sidebarItem.getItemInfo().getRoot().userId,
+                        TimeoutTask.DEFAULT_TIMEOUT,
+                        (docInfo) -> {
+                            if (docInfo != null) {
+                                sidebarItem.setDocInfo(docInfo);
+                                openInNewWindowRunnable.run();
+                            }
+                        });
+            } else {
+                openInNewWindowRunnable.run();
             }
             return true;
         } else if (id == getRes(R.id.root_menu_paste_into_folder)) {
@@ -1077,15 +1138,34 @@ public class RootsFragment extends Fragment {
         }
     }
 
-
     /**
-     * The comparator of {@link AppItem}, {@link RootItem} and {@link RootAndAppItem}.
-     * Sort by if the item's package name starts with the preferred package name,
-     * then title, then summary. Because the {@link AppItem} doesn't have summary,
-     * it will have lower order than other same title items.
+     * The comparator of {@link SortableItem} which compares the list of other document providers
+     * and apps (e.g. cloud providers and apps like the photopicker). {@link BaseSidebarEntryItem}
+     * has priority over {@link AppItem}. If the two items are of the same type, compare by title.
      */
     @VisibleForTesting
-    static class ItemComparator implements Comparator<Item> {
+    static class SortableItemComparator implements Comparator<SortableItem> {
+        @Override
+        public int compare(SortableItem lhs, SortableItem rhs) {
+            // AppItems have less priority over BaseSidebarEntryItems.
+            int score = lhs.getItemType() - rhs.getItemType();
+            if (score != 0) {
+                return score;
+            }
+
+            // Sort by title.
+            return compareToIgnoreCaseNullable(lhs.getTitle(), rhs.getTitle());
+        }
+    }
+
+    /**
+     * The comparator of {@link AppItem}, {@link RootItem} and {@link RootAndAppItem}. Sort by if
+     * the item's package name starts with the preferred package name, then title, then summary.
+     * Because the {@link AppItem} doesn't have summary, it will have lower order than other same
+     * title items.
+     */
+    @VisibleForTesting
+    static class ItemComparator implements Comparator<SortableItem> {
         private final String mPreferredPackageName;
 
         ItemComparator(String preferredPackageName) {
@@ -1093,7 +1173,7 @@ public class RootsFragment extends Fragment {
         }
 
         @Override
-        public int compare(Item lhs, Item rhs) {
+        public int compare(SortableItem lhs, SortableItem rhs) {
             // Sort by whether the item starts with preferred package name
             if (!mPreferredPackageName.isEmpty()) {
                 if (lhs.getPackageName().startsWith(mPreferredPackageName)) {
@@ -1110,7 +1190,7 @@ public class RootsFragment extends Fragment {
             }
 
             // Sort by title
-            int score = compareToIgnoreCaseNullable(lhs.title, rhs.title);
+            int score = compareToIgnoreCaseNullable(lhs.getTitle(), rhs.getTitle());
             if (score != 0) {
                 return score;
             }

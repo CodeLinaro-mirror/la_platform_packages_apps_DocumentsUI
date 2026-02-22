@@ -28,6 +28,7 @@ import com.android.documentsui.base.UserId;
 import com.android.documentsui.sidebar.AppItem;
 import com.android.documentsui.sidebar.Item;
 import com.android.documentsui.sidebar.RootItem;
+import com.android.documentsui.sidebar.SortableItem;
 
 /**
  * A bacis data class stored data which apps row chip required.
@@ -42,10 +43,13 @@ public abstract class AppsRowItemData {
     protected final ActionHandler mActionHandler;
     protected final boolean mMaybeShowBadge;
 
-    public AppsRowItemData(Item item, ActionHandler actionHandler, boolean shouldShowSummary,
+    public AppsRowItemData(
+            SortableItem item,
+            ActionHandler actionHandler,
+            boolean shouldShowSummary,
             boolean maybeShowBadge) {
         mUserId = item.userId;
-        mTitle = item.title;
+        mTitle = item.getTitle();
         mSummary = shouldShowSummary ? item.getSummary() : null;
         mActionHandler = actionHandler;
         mMaybeShowBadge = maybeShowBadge;

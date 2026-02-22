@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Impossible de partager plus de <xliff:g id="COUNT">%1$d</xliff:g> fichiers"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Action interdite"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Action interdite"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Ouvrir avec…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Aucune appli compatible n\'est installée. Essayez d\'en installer une depuis le Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Rechercher sur le Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Partager via"</string>
@@ -246,8 +247,7 @@
       <item quantity="other">Ces fichiers ont été convertis dans un autre format : <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ce fichier a été converti dans un autre format :}one{Ce fichier a été converti dans un autre format :}many{Ces fichiers ont été convertis dans un autre format :}other{Ces fichiers ont été convertis dans un autre format :}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# élément ajouté au presse-papiers}one{# élément ajouté au presse-papiers}many{# d\'éléments ajoutés au presse-papiers}other{# éléments ajoutés au presse-papiers}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Lecture seule"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Vous pouvez consulter ces fichiers, mais certaines actions ne sont pas prises en charge"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Cette archive se trouve dans un emplacement en lecture seule et ne peut pas être extraite ici."</string>
