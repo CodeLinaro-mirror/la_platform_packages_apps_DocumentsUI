@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Не ўдалося абагуліць, таму што файлаў больш за <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Дзеянне забаронена"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Дзеянне забаронена"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Няма праграм"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Праграмы, якія падтрымліваюцца, не ўсталяваны. Усталюйце такую праграму з Крамы Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Шукаць у Краме Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Абагуліць праз"</string>
