@@ -1220,7 +1220,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         botPad + mSaveLayoutHeight);
             } else {
                 int pad = getDirectoryPadding(mode);
-                mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight);
+                int botPad =
+                        getResources()
+                                .getDimensionPixelSize(
+                                        getRes(R.dimen.list_container_padding_bottom));
+                mRecView.setPadding(pad, mAppBarHeight, pad, mSaveLayoutHeight + botPad);
             }
             mColumnCount = calculateColumnCount(mode);
             if (mLayout != null) {
@@ -2222,4 +2226,3 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 }
-

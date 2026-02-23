@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ከ <xliff:g id="COUNT">%1$d</xliff:g> በላይ ፋይሎች ማጋራት አይቻልም"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"እርምጃ አይፈቀድም"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"እርምጃ አይፈቀድም"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"ክፈት በ…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"ምንም የሚደገፉ የተጫኑ መተግበሪያዎች የሉም። ከPlay መደብር አንድ መጫን ይሞክሩ።"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play መደብር ላይ ፈልግ"</string>
     <string name="share_via" msgid="8725082736005677161">"በዚህ በኩል ያጋሩ፦"</string>
@@ -235,8 +236,7 @@
       <item quantity="other">እነዚህ ፋይሎች ወደ ሌላ ቅርጸት ተቀይረዋል፦ <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ይህ ፋይል ወደ ሌላ ቅርጸት ተቀይሯል፦}one{ይህ ፋይል ወደ ሌላ ቅርጸት ተቀይሯል፦}other{እነዚህ ፋይሎች ወደ ሌላ ቅርጸት ተቀይረዋል፦}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# ንጥል ወደ ቅንጥብ ሰሌዳ ታክሏል}one{# ንጥል ወደ ቅንጥብ ሰሌዳ ታክሏል}other{# ንጥሎች ወደ ቅንጥብ ሰሌዳ ታክለዋል}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"ተነባቢ ብቻ"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"እነዚህን ፋይሎ መመልከት ይችላሉ ነገር ግን አንዳንድ እርምጃዎች አይደገፉም"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ይህ ማህደር የሚነበብ ብቻ አካባቢ ውስጥ ነው እና እዚህ መውጣት አይችልም።"</string>

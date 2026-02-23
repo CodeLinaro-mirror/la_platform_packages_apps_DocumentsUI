@@ -33,8 +33,6 @@ import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.roots.RootCursorWrapper
 
-const val TAG = "SearchV2"
-
 val FILE_ENTRY_COLUMNS =
     arrayOf(
         Document.COLUMN_DOCUMENT_ID,
@@ -90,6 +88,7 @@ abstract class BaseFileLoader(
 ) : AsyncTaskLoader<DirectoryResult>(context) {
 
     companion object {
+        const val TAG = "SearchV2"
         var instanceCounter = 0
     }
 

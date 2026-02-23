@@ -33,6 +33,8 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
+import com.android.documentsui.base.SharedMinimal.DEBUG
+import com.android.documentsui.base.SharedMinimal.redact
 import com.android.documentsui.sorting.SortModel
 
 /**
@@ -136,8 +138,9 @@ class FolderLoader(
             val resolver = root.userId.getContentResolver(context)
             client = resolver.acquireUnstableContentProviderClient(folderChildrenUri.authority!!)
             ArchivesProvider.acquireArchive(client, folderChildrenUri)
+            if (DEBUG) Log.d(TAG, "Acquired archive ${redact(folderChildrenUri)}")
         } catch (e: RemoteException) {
-            Log.e(TAG, "Failed to acquire archive client", e)
+            Log.e(TAG, "Cannot acquire archive ${redact(folderChildrenUri)}", e)
             client?.close()
         }
         return client

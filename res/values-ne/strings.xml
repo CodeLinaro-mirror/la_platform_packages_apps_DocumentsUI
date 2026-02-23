@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g> भन्दा बढी फाइलहरू आदान प्रदान गर्न सकिँदैन"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"कारबाही गर्ने अनुमति छैन"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"यो कार्य गर्न पाइँदैन"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"यसमार्फत खोल्नुहोस्…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"प्रयोग गर्न मिल्ने कुनै पनि एप इन्स्टल गरिएको छैन। Google Play स्टोरबाट एउटा एप इन्स्टल गरी हेर्नुहोस्।"</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Google Play स्टोरमा खोज्नुहोस्"</string>
     <string name="share_via" msgid="8725082736005677161">"निम्नमार्फत सेयर गर्नुहोस्"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">यो फाइललाई अर्को ढाँचामा रूपान्तरण गरिएको छ: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{यो फाइल अर्को फर्म्याटमा रूपान्तरण गरिएको छ:}other{यी फाइलहरू अर्को फर्म्याटमा रूपान्तरण गरिएका छन्:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# वस्तु क्लिपबोर्डमा हालिएको छ}other{# वटा वस्तु क्लिपबोर्डमा हालिएका छन्}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"पढ्न मात्र मिल्ने"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"तपाईं यी फाइलहरू हेर्न सक्नुहुन्छ तर यिनमा केही कारबाहीहरू गर्न मिल्दैनन्"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"यो अभिलेख पढ्न मात्र मिल्ने लोकेसनमा छ र यसलाई यहाँ एक्स्ट्र्याक्ट गर्न सकिँदैन।"</string>

@@ -450,8 +450,9 @@ public class SearchViewManager implements
         } else if (!isSearchV2Enabled()) {
             mChipViewManager.setChipsRowVisible(supportsSearch && root.supportsMimeTypesSearch());
         } else {
-            // Always show chips in search v2.
-            mChipViewManager.setChipsRowVisible(/* show */ true);
+            // Always show chips in search v2 as long as there is no current search query (i.e.
+            // don't show search options and chips both at the same time).
+            mChipViewManager.setChipsRowVisible(/* show */ !isSearching());
         }
     }
 

@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Nuk mund të ndahen më shumë se <xliff:g id="COUNT">%1$d</xliff:g> skedarë"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Veprimi nuk lejohet"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Veprimi nuk lejohet"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Hap me…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Nuk ka aplikacione të mbështetura të instaluara. Provo të instalosh një nga \"Dyqani i Play\"."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Kërko në \"Dyqanin e Play\""</string>
     <string name="share_via" msgid="8725082736005677161">"Ndaj nëpërmjet"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Ky skedar u konvertua në një format tjetër: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ky skedar u konvertua në një format tjetër:}other{Këta skedarë u konvertuan në një format tjetër:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# artikull u shtua te \"Kujtesa e fragmenteve\"}other{# artikuj u shtuan te \"Kujtesa e fragmenteve\"}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Vetëm për lexim"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Mund t\'i shikosh këta skedarë, por disa veprime nuk mbështeten"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ky arkiv është në një vendndodhje vetëm për lexim dhe nuk mund të nxirret këtu."</string>

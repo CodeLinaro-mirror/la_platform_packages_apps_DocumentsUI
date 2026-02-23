@@ -144,7 +144,8 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ezin dira partekatu <xliff:g id="COUNT">%1$d</xliff:g> fitxategi baino gehiago"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Ez da onartzen ekintza"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Ez da onartzen ekintza"</string>
-    <string name="no_application_dialog_title" msgid="515133936841913019">"Ireki honekin…"</string>
+    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
+    <skip />
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Ez dago aplikazio bateragarririk instalatuta. Instalatu bat Google Play Store-tik."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Bilatu Google Play Store-n"</string>
     <string name="share_via" msgid="8725082736005677161">"Partekatu honekin:"</string>
@@ -235,8 +236,7 @@
       <item quantity="one">Beste formatu batera bihurtu da fitxategi hau: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Beste formatu batera bihurtu da fitxategi hau:}other{Beste formatu batera bihurtu dira fitxategi hauek:}}"</string>
-    <!-- no translation found for clipboard_files_added (168194813269188197) -->
-    <skip />
+    <string name="clipboard_files_added" msgid="168194813269188197">"{count,plural, =1{# elementu gehitu da arbelean}other{# elementu gehitu dira arbelean}}"</string>
     <string name="read_only_label" msgid="894442752344379606">"Irakurtzeko soilik"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Fitxategi hauek ikus ditzakezu, baina ezin dituzu gauzatu ekintza batzuk"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Artxiboa irakurtzeko soilik den kokapen batean dago eta ezin da hemen erauzi."</string>
