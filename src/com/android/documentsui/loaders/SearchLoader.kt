@@ -31,7 +31,6 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
-import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.sorting.SortModel
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
@@ -56,7 +55,7 @@ private data class QueryResult(var cursor: Cursor? = null)
 
 /**
  * A specialization of the BaseFileLoader that searches the set of specified roots. To search the
- * roots you must provider:
+ * roots you must a provider:
  * - The current application context
  * - A content lock for which a locking content observer is built
  * - A list of user IDs, on whose behalf we query content provider clients.
@@ -157,12 +156,6 @@ class SearchLoader(
     // A latch that counts the number of tasks done. Used to check if all tasks are completed.
     private var countDownLatch = CountDownLatch(rootInfoList.size)
 
-    private fun debugLog(message: String, e: Exception? = null) {
-        if (DEBUG) {
-            Log.d(TAG, "SearchLoader#$myInstance: $message", e)
-        }
-    }
-
     // Creates a directory result object corresponding to the current parameters of the loader.
     override fun loadInBackground(): DirectoryResult? {
         try {
@@ -198,7 +191,7 @@ class SearchLoader(
         createSearchTaskList(rejectBeforeTimestamp, latch)
         debugLog("first run created ${searchTaskList.size} tasks")
 
-        // Check if we are cancelled; if not copy the task list.
+        // Check if we are canceled; if not copy the task list.
         if (isLoadInBackgroundCanceled) {
             return false
         }
@@ -215,7 +208,7 @@ class SearchLoader(
             latch.await()
         } else {
             debugLog("waiting ${options.maxQueryTime!!.toMillis()}ms for results")
-            latch.await(options.maxQueryTime!!.toMillis(), TimeUnit.MILLISECONDS)
+            latch.await(options.maxQueryTime.toMillis(), TimeUnit.MILLISECONDS)
         }
         debugLog("waiting for results is done")
         return true
@@ -300,7 +293,7 @@ class SearchLoader(
     /**
      * Determines if the query is for recent or search.
      *
-     * NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus we only
+     * NOTE: recent document URI does not respect query-arg-mime-types restrictions. Thus, we only
      * create the recents URI if both the query and other args are empty.
      */
     private fun isRecentQuery(): Boolean =
@@ -312,7 +305,7 @@ class SearchLoader(
             // to make its behavior, such as failure handling, more explicit.
             isUseLocalSearchProviderEnabled() &&
             semanticSearchRootInfo?.supportsSearch() == true &&
-            semanticSearchRootInfo.isEmpty() == false &&
+            !semanticSearchRootInfo.isEmpty &&
             rootInfo.isLocalOnly
 
     /** Gets semantic search URI if applicable, or null otherwise. */
@@ -329,14 +322,12 @@ class SearchLoader(
     private fun createContentProviderQuery(rootInfo: RootInfo): List<Uri> {
         val semanticSearchUri = maybeGetSemanticSearchUri(rootInfo)
 
-        if (isRecentQuery()) {
-            return listOf(
-                DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId)
-            )
+        return if (isRecentQuery()) {
+            listOf(DocumentsContract.buildRecentDocumentsUri(rootInfo.authority, rootInfo.rootId))
         } else if (semanticSearchUri != null) {
-            return listOf(semanticSearchUri, buildSearchDocumentsUri(rootInfo))
+            listOf(semanticSearchUri, buildSearchDocumentsUri(rootInfo))
         } else {
-            return listOf(buildSearchDocumentsUri(rootInfo))
+            listOf(buildSearchDocumentsUri(rootInfo))
         }
     }
 
