@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"ගොනු <xliff:g id="COUNT">%1$d</xliff:g>කට වඩා බෙදා ගත නොහැකිය"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ක්‍රියාව ඉඩ නොදේ"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ක්‍රියාවට අවසර නොදේ"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"යෙදුමක් හමු නොවුණි"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"සහාය දක්වන යෙදුම් කිසිවක් ස්ථාපනය කර නැත. Play Store වෙතින් එකක් ස්ථාපනය කිරීමට උත්සාහ කරන්න."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store සෙවීම"</string>
     <string name="share_via" msgid="8725082736005677161">"බෙදාගන්නේ"</string>
