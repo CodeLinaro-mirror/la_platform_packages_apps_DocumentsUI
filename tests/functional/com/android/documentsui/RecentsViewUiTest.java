@@ -92,7 +92,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Before
     public void setUpTest() {
-        super.setUp();
         mCloudDocsHelper =
                 new DocumentsProviderHelper(
                         userId, TestCloudProvider.AUTHORITY, context, TestCloudProvider.AUTHORITY);
