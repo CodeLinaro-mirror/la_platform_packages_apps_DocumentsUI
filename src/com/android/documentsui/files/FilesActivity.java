@@ -505,6 +505,8 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
 
     @Override
     public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+        if (DEBUG) Log.d(TAG, "onKeyShortcut: " + keyCode + ", " + event);
+
         // TODO: All key events should be statically bound using alphabeticShortcut.
         // But not working.
 
@@ -527,10 +529,18 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 case KeyEvent.KEYCODE_C:
                     mInjector.actions.copyToClipboard();
                     return true;
+                case KeyEvent.KEYCODE_R:
+                case KeyEvent.KEYCODE_REFRESH:
+                    {
+                        if (!isUseMaterial3FlagEnabled()) break;
+                        final DirectoryFragment dir = getDirectoryFragment();
+                        if (dir != null) dir.onRefresh();
+                    }
+                    return true;
                 case KeyEvent.KEYCODE_V:
-                    DirectoryFragment dir = getDirectoryFragment();
-                    if (dir != null) {
-                        dir.pasteFromClipboard();
+                    {
+                        final DirectoryFragment dir = getDirectoryFragment();
+                        if (dir != null) dir.pasteFromClipboard();
                     }
                     return true;
             }
