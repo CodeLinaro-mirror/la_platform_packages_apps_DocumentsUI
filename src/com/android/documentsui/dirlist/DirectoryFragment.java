@@ -1799,7 +1799,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void renameDocuments(Selection selected) {
+    public void renameDocuments(Selection selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_RENAME);
 
         if (selected.isEmpty()) {
