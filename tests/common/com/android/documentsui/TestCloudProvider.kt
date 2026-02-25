@@ -155,6 +155,10 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
         projection: Array<String>?,
         sortOrder: String?,
     ): Cursor {
+        // Only return files for the root.
+        if (parentDocumentId != ROOT_ID) {
+            return createDocCursor(projection)
+        }
         val cursor = buildCursorForDocumentList(projection)
         // Set the notificationUri so that the notifyChange calls trigger observers of this cursor.
         cursor.setNotificationUri(context?.contentResolver, NOTIFY_URI)

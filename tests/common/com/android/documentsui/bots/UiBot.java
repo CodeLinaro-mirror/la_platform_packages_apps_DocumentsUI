@@ -51,7 +51,6 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -65,6 +64,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.WaitUntilExistsInRecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
@@ -537,23 +537,28 @@ public class UiBot extends Bots.BaseBot {
         mDevice.waitForIdle();
     }
 
-    private ViewInteraction getOfflineBanner() {
-        return onView(
+    private Matcher getOfflineBannerMatcher() {
+        // The banner has id item_root with a TextView descendant with the offline message.
+        var textMessage =
                 allOf(
                         withId(R.id.message_textview),
                         withText(
                                 mContext.getString(
-                                        getRes(R.string.you_are_offline_banner_message)))));
+                                        getRes(R.string.you_are_offline_banner_message))));
+        return allOf(ViewMatchers.withId(R.id.item_root), ViewMatchers.hasDescendant(textMessage));
     }
 
     /** Asserts that the "You're offline" banner does not exist. */
     public void assertOfflineBannerDoesNotExist() {
-        getOfflineBanner().check(doesNotExist());
+        onView(getOfflineBannerMatcher()).check(doesNotExist());
     }
 
     /** Asserts that the "You're offline" banner is currently visible. */
     public void assertOfflineBannerIsVisible() {
-        getOfflineBanner().check(matches(isDisplayed()));
+        // Wait for the banner to exist first.
+        onView(withId(R.id.dir_list))
+                .perform(new WaitUntilExistsInRecyclerView(getOfflineBannerMatcher(), mTimeout));
+        onView(getOfflineBannerMatcher()).check(matches(isDisplayed()));
     }
 
     /**

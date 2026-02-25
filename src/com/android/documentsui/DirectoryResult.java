@@ -45,6 +45,8 @@ public class DirectoryResult implements AutoCloseable {
     private String[] mModelIds;
     private Set<String> mSyncInProgressModelIds;
 
+    private boolean mHasLimitedFunctionalityWhenOffline = false;
+
     /** The query used when searching that originated this search result. */
     private @Nullable String mQuery;
 
@@ -108,6 +110,15 @@ public class DirectoryResult implements AutoCloseable {
         return mSyncInProgressModelIds;
     }
 
+    /**
+     * Whether the directory result is from querying a single root that has limited functionality
+     * when offline or is from querying multiple roots where at least one of them has limited
+     * functionality when offline and contains files.
+     */
+    public boolean getHasLimitedFunctionalityWhenOffline() {
+        return mHasLimitedFunctionalityWhenOffline;
+    }
+
     /** Update the cursor and populate cursor-related fields. */
     public void setCursor(Cursor cursor) {
         mCursor = cursor;
@@ -119,6 +130,10 @@ public class DirectoryResult implements AutoCloseable {
         } else {
             loadDataFromCursor();
         }
+    }
+
+    public void setHasLimitedFunctionalityWhenOffline(boolean hasLimitedFunctionalityWhenOffline) {
+        mHasLimitedFunctionalityWhenOffline = hasLimitedFunctionalityWhenOffline;
     }
 
     /** Populate cursor-related field. Must not be called from UI thread. */
