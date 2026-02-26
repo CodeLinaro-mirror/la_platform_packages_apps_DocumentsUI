@@ -69,6 +69,8 @@ public class Model {
     private final Set<String> mSyncInProgressModelIds = new HashSet<>();
 
     private boolean mIsLoading;
+    private boolean mHasLimitedFunctionalityWhenOffline;
+
     private List<EventListener<Update>> mUpdateListeners = new ArrayList<>();
 
     /** Used to update the summaries. */
@@ -133,6 +135,7 @@ public class Model {
         error = null;
         doc = null;
         mIsLoading = false;
+        mHasLimitedFunctionalityWhenOffline = false;
         mFileNames.clear();
         mSummariesUpdate.reset();
         notifyUpdateListeners();
@@ -171,6 +174,7 @@ public class Model {
         if (isSyncStateEnabled()) {
             mSyncInProgressModelIds.clear();
             mSyncInProgressModelIds.addAll(result.getSyncInProgressModelIds());
+            mHasLimitedFunctionalityWhenOffline = result.getHasLimitedFunctionalityWhenOffline();
         }
 
         final Bundle extras = mCursor.getExtras();
@@ -189,6 +193,15 @@ public class Model {
 
     public Set<String> getSyncInProgressModelIds() {
         return mSyncInProgressModelIds;
+    }
+
+    /**
+     * Whether the directory result is from querying a single root that has limited functionality
+     * when offline or is from querying multiple roots where at least one of them has limited
+     * functionality when offline and contains files.
+     */
+    public boolean hasLimitedFunctionalityWhenOffline() {
+        return mHasLimitedFunctionalityWhenOffline;
     }
 
     /**

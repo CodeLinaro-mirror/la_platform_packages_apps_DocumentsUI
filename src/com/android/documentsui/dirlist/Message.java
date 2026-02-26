@@ -30,8 +30,8 @@ import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFIL
 import static com.android.documentsui.DevicePolicyResources.Strings.CROSS_PROFILE_NOT_ALLOWED_TITLE;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ENABLE_BUTTON;
 import static com.android.documentsui.DevicePolicyResources.Strings.WORK_PROFILE_OFF_ERROR_TITLE;
-import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isSearchV2Enabled;
+import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -205,10 +205,9 @@ abstract class Message {
                         /* isButtonEnabled */ !isEmptyPage);
             } else if (isSyncStateEnabled()
                     && !mEnv.isOnline()
-                    && mEnv.getDisplayState()
-                            .stack
-                            .getRoot()
-                            .hasLimitedFunctionalityWhenOffline()) {
+                    && mEnv.getModel().hasLimitedFunctionalityWhenOffline()) {
+                // Show the offline banner whenever the system is offline and the files/root has
+                // limited functionality when offline.
                 update(
                         null,
                         mEnv.getContext()

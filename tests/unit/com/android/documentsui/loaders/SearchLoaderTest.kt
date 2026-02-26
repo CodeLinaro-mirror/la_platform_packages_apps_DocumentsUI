@@ -18,12 +18,17 @@ package com.android.documentsui.loaders
 import android.database.Cursor
 import android.database.CursorWrapper
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
+import android.platform.test.annotations.RequiresFlagsEnabled
+import android.platform.test.flag.junit.DeviceFlagsValueProvider
 import android.provider.DocumentsContract
+import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.core.os.BundleCompat
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.Loader
+import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ContentLock
 import com.android.documentsui.DirectoryResult
@@ -31,6 +36,7 @@ import com.android.documentsui.LockingContentObserver
 import com.android.documentsui.Model
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.RootInfo
+import com.android.documentsui.flags.Flags.FLAG_CLOUD_FEATURES
 import com.android.documentsui.flags.Flags.FLAG_USE_LOCAL_SEARCH_PROVIDER
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
@@ -360,6 +366,7 @@ class SearchLoaderTest {
     // Collection of plain tests that do not use parameters.
     @SmallTest
     class PlainTests : BaseLoaderTest() {
+        @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
         @get:Rule val setFlags = OverrideFlagsRule()
 
         @get:Rule val expect: Expect = Expect.create()
@@ -838,6 +845,155 @@ class SearchLoaderTest {
             }
 
             expect.that(listener.result).isNull()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenOnlyRootIsCloud_andNoDocs() {
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot()),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(0)
+            // The cloud root has limited functionality when offline.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenOnlyRootIsCloud_andDocsReturned() {
+            // Have the cloud root return documents.
+            environment.mockProviders.apply {
+                get(TestProvidersAccess.getCloudRoot().authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png"))
+                )
+            }
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot()),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(2)
+            // The cloud root has limited functionality when offline.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isNotSet_whenMultipleRoots_butNoCloudDocs() {
+            // Have only the Downloads root return documents.
+            environment.mockProviders.apply {
+                get(TestProvidersAccess.DOWNLOADS.authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png"))
+                )
+            }
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot(), TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(2)
+            // No cloud files present.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isFalse()
+        }
+
+        @Test
+        @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+        @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
+        @EnableFlags(FLAG_CLOUD_FEATURES, FLAG_USE_MATERIAL3)
+        fun testHasLimitedFunctionalityWhenOffline_isSet_whenMultipleRoots_andCloudDocs() {
+            // Have the cloud root return docs.
+            environment.mockProviders.apply {
+                get(TestProvidersAccess.getCloudRoot().authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(1, 1, arrayOf("png"))
+                )
+                get(TestProvidersAccess.DOWNLOADS.authority)!!.setNextChildDocumentsReturns(
+                    *generateDocuments(2, 1, arrayOf("png"))
+                )
+            }
+            val loader =
+                SearchLoader(
+                    activity,
+                    listOf(TestProvidersAccess.getCloudRoot(), TestProvidersAccess.DOWNLOADS),
+                    semanticSearchRootInfo = null,
+                    TestFileTypeLookup(),
+                    contentObserver,
+                    "document",
+                    QueryOptions(
+                        10,
+                        ALL_RESULTS,
+                        null,
+                        null,
+                        false,
+                        arrayOf("image/png"),
+                        Bundle(),
+                    ),
+                    environment.state.sortModel,
+                    executor,
+                )
+            val result = loader.loadInBackground()
+            expect.that(result!!.cursor).isNotNull()
+            expect.that(result.cursor.count).isEqualTo(3)
+            // No cloud files present.
+            expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
         }
     }
 }

@@ -24,7 +24,6 @@ import android.provider.DocumentsContract.Document
 import android.provider.DocumentsContract.Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE
 import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.test.filters.SdkSuppress
-import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
@@ -78,8 +77,155 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
     }
 
     @Test
-    fun testBanner_isShownWhenOffline() {
+    fun testBanner_isShownOffline() {
         setIsOnline(true)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+
+        setIsOnline(true)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    fun testBanner_isNotShownOffline_whenInRootThatDoesNotHaveLimitedFunctionality() {
+        setIsOnline(false)
+
+        // Open root that does not have limited functionality when offline.
+        switchRoot(DemoProvider.NAME)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_andHasNoDisplayedFiles() {
+        setIsOnline(true)
+
+        // Open dir1, it should have no files.
+        bots.directory.openDocument(TestCloudProvider.DIR_DISPLAY_NAME)
+        bots.directory.waitAndAssertPlaceholderMessageText(context!!.getString(R.string.empty))
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_whenSearchingLocally() {
+        setIsOnline(true)
+
+        // Search for the file.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_whenSearchingLocally_andHasNoDisplayedFiles() {
+        setIsOnline(true)
+
+        // Search for a non-existent file and get empty results.
+        bots.search.doSearch("Shouldn't match to anything")
+        bots.directory.waitAndAssertPlaceholderMessageText(
+            String.format(context!!.getString(R.string.no_results), TestCloudProvider.NAME)
+        )
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isShownOffline_whenSearchingEverywhere() {
+        setIsOnline(true)
+
+        // Open a root that does not have limited functionality when offline.
+        switchRoot(DemoProvider.NAME)
+
+        // Search for the file.
+        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger)
+
+        // Click Everywhere, to search everywhere.
+        bots.search.clickMenuItem(R.string.search_location_everywhere)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        bots.main.assertOfflineBannerIsVisible()
+    }
+
+    @Test
+    fun testBanner_isNotShownOffline_whenSearchingEverywhere_andHasNoDisplayedTestCloudProvider() {
+        setIsOnline(true)
+
+        // Open a root that does not have the TestCloudProvider file we are searching for.
+        switchRoot(DemoProvider.NAME)
+
+        // Search for a file that only exists in the demo root.
+        bots.search.doSearch(DemoProvider.DIR_ERROR_AND_INFO)
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger)
+
+        // Click Everywhere, to search everywhere.
+        bots.search.clickMenuItem(R.string.search_location_everywhere)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        // No TestCloudProvider files are in the search results, so no banner should be shown.
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    fun testBanner_isNotShownOffline_whenSearchingInARootThatDoesNotHaveLimitedFunctionality() {
+        setIsOnline(true)
+
+        // Open a root that does not have limited functionality when offline.
+        switchRoot(DemoProvider.NAME)
+
+        // Search for a file in the root.
+        bots.search.doSearch(DemoProvider.MSG_ERROR_AND_INFO)
+
+        bots.main.assertOfflineBannerDoesNotExist()
+
+        setIsOnline(false)
+
+        // No TestCloudProvider files are searched for here, so no banner should be shown.
+        bots.main.assertOfflineBannerDoesNotExist()
+    }
+
+    @Test
+    @EnableFlags(
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+        Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+    )
+    fun testBanner_isShownOffline_inRecent() {
+        setIsOnline(true)
+
+        // Create a new file to ensure one exists in Recent.
+        cloudProviderDocsHelper.createDocument(
+            cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID),
+            "text/plain",
+            "recentFile",
+        )
+
+        // Open Recent.
+        switchRoot("Recent")
 
         bots.main.assertOfflineBannerDoesNotExist()
 
@@ -866,18 +1012,9 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             R.id.download_icon,
         )
 
-        // TODO(b/482847637): After this bug is fixed, there will be no need to exit from the
-        // search.
-        // Exit the search.
-        bots.search.closeSearch()
-
         setIsOnline(false)
 
-        // TODO(b/482847637): After this bug is fixed, there will be no need to reopen the search.
-        // Reopen the search.
-        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
-
-        // The document should still be disabled and no icons should be shown.
+        // The document should be disabled and no icons should be shown.
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
         bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
 
@@ -899,7 +1036,7 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         setIsOnline(true)
 
         // Open a root that does not have the file we are searching for.
-        openRoot(context!!, "Paging Root", activityLayoutId)
+        switchRoot("Paging Root")
 
         // No sync state flags are set.
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
@@ -917,23 +1054,58 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             R.id.download_icon,
         )
 
-        // TODO(b/482847637): After this bug is fixed, there will be no need to exit from the
-        // search.
-        // Exit the search.
-        bots.search.closeSearch()
-
         setIsOnline(false)
 
-        // TODO(b/482847637): After this bug is fixed, there will be no need to reopen the search.
-        // Reopen the search.
-        bots.search.doSearch(TestCloudProvider.DISPLAY_NAME_0)
-
-        // The document should still be disabled and no icons should be shown.
+        // The document should be disabled and no icons should be shown.
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
         bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
 
         // Open the context menu.
         bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+
+        // Check that the items that require content are visible but are disabled offline.
+        val contentRequiredContextMenuItems =
+            intArrayOf(
+                R.string.menu_open_with,
+                R.string.menu_share,
+                R.string.menu_copy_to_clipboard,
+            )
+        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+    }
+
+    @Test
+    @EnableFlags(
+        Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+        Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        Flags.FLAG_USE_SEARCH_V2_READ_ONLY,
+    )
+    fun testRecent_noAvailableLocallyState() {
+        setIsOnline(true)
+
+        // Create a new file to ensure one exists in Recent. This won't have any sync state flags
+        // set.
+        cloudProviderDocsHelper.createDocument(
+            cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID),
+            "text/plain",
+            "recentFileInTest",
+        )
+        // Open Recent.
+        switchRoot("Recent")
+
+        // A download icon should be shown when online.
+        bots.directory.assertObjectsEventuallyAppearOnDocument(
+            "recentFileInTest",
+            R.id.download_icon,
+        )
+
+        setIsOnline(false)
+
+        // The document should be disabled and no icons should be shown.
+        bots.directory.assertDocumentDisabled("recentFileInTest")
+        bots.directory.assertDocumentSyncIconsNotVisible("recentFileInTest")
+
+        // Open the context menu.
+        bots.directory.rightClickDocument("recentFileInTest")
 
         // Check that the items that require content are visible but are disabled offline.
         val contentRequiredContextMenuItems =
