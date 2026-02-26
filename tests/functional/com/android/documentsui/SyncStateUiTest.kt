@@ -16,20 +16,26 @@
 
 package com.android.documentsui
 
+import android.content.Intent
 import android.os.Build
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.annotations.RequiresFlagsEnabled
 import android.platform.test.flag.junit.DeviceFlagsValueProvider
+import android.provider.DocumentsContract
 import android.provider.DocumentsContract.Document
 import android.provider.DocumentsContract.Root.FLAG_LIMITED_FUNCTIONALITY_WHEN_OFFLINE
 import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
+import androidx.annotation.StringRes
+import androidx.test.core.app.ActivityScenario
 import androidx.test.filters.SdkSuppress
-import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
+import com.android.documentsui.picker.PickActivity
 import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
 import com.google.common.collect.Lists
 import org.junit.After
+import org.junit.Assume.assumeFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runners.Parameterized
@@ -38,8 +44,9 @@ import org.junit.runners.Parameterized
 @RequiresFlagsEnabled(FLAG_ENABLE_SYNC_STATE)
 @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
 @HugeLongTest
-class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
+class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
     @JvmField @Parameterized.Parameter(0) var isListView: Boolean = false
+    @JvmField @Parameterized.Parameter(1) var isInPicker: Boolean = false
     @get:Rule val checkFlags = DeviceFlagsValueProvider.createCheckFlagsRule()
     @get:Rule val overrideFlagsRule: OverrideFlagsRule = OverrideFlagsRule()
     private lateinit var cloudProviderDocsHelper: DocumentsProviderHelper
@@ -68,6 +75,24 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             bots.main.switchToListMode()
         } else {
             bots.main.switchToGridMode()
+        }
+    }
+
+    override fun launchActivity() {
+        val cloudRoot = cloudProviderDocsHelper.getRoot(TestCloudProvider.ROOT_ID)
+        if (isInPicker) {
+            val getContentIntent = Intent(context, PickActivity::class.java)
+            getContentIntent.setAction(Intent.ACTION_GET_CONTENT)
+            getContentIntent.addCategory(Intent.CATEGORY_OPENABLE)
+            getContentIntent.setType("*/*")
+
+            // Launch picker in the TestCloudProvider root.
+            getContentIntent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, cloudRoot.uri)
+            mActivityScenario = ActivityScenario.launchActivityForResult(getContentIntent)
+        } else {
+            // Launch browser in the TestCloudProvider root.
+            this.initialRoot = cloudRoot
+            super.launchActivity()
         }
     }
 
@@ -335,8 +360,12 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         setIsOnline(false)
 
-        // The document should be enabled when offline.
-        bots.directory.assertDocumentEnabled(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        if (isInPicker) {
+            // Virtual files are always disabled in the picker.
+        } else {
+            // The document should be enabled when offline in the browser.
+            bots.directory.assertDocumentEnabled(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        }
     }
 
     @Test
@@ -633,10 +662,17 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             TestCloudProvider.DISPLAY_NAME_1,
             android.R.id.progress,
         )
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            TestCloudProvider.VIRTUAL_DISPLAY_NAME,
-            R.id.sync_error_icon,
-        )
+        if (isInPicker) {
+            // The virtual doc will be disabled in the picker and thus won't show any sync error
+            // icons.
+            bots.directory.assertDocumentDisabled(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+            bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        } else {
+            bots.directory.assertObjectsEventuallyAppearOnDocument(
+                TestCloudProvider.VIRTUAL_DISPLAY_NAME,
+                R.id.sync_error_icon,
+            )
+        }
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DIR_DISPLAY_NAME,
             R.id.upload_icon,
@@ -656,10 +692,15 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
             TestCloudProvider.DISPLAY_NAME_1,
             R.id.download_icon,
         )
-        bots.directory.assertObjectsEventuallyAppearOnDocument(
-            TestCloudProvider.VIRTUAL_DISPLAY_NAME,
-            R.id.sync_error_icon,
-        )
+        if (isInPicker) {
+            bots.directory.assertDocumentDisabled(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+            bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        } else {
+            bots.directory.assertObjectsEventuallyAppearOnDocument(
+                TestCloudProvider.VIRTUAL_DISPLAY_NAME,
+                R.id.sync_error_icon,
+            )
+        }
         bots.directory.assertObjectsEventuallyAppearOnDocument(
             TestCloudProvider.DIR_DISPLAY_NAME,
             R.id.upload_icon,
@@ -706,13 +747,9 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
 
         // Check that the items that require content to be available are visible and enabled.
-        val contentRequiredContextMenuItems =
-            intArrayOf(
-                R.string.menu_open_with,
-                R.string.menu_share,
-                R.string.menu_copy_to_clipboard,
-            )
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredContextMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredContextMenuItems(isDir = false)
+        )
 
         // Dismiss the context menu.
         device!!.pressBack()
@@ -723,7 +760,9 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
 
         // Check that the menu items are still visible and enabled offline.
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredContextMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredContextMenuItems(isDir = false)
+        )
     }
 
     @Test
@@ -743,36 +782,31 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.selectDocument(TestCloudProvider.DISPLAY_NAME_0, 1)
         // Check that the toolbar action menu items that require content to be available are visible
         // and enabled.
-        val contentRequiredToolbarActionMenuItems = intArrayOf(R.id.action_menu_share)
-        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(*contentRequiredToolbarActionMenuItems)
+        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(
+            *getContentRequiredToolbarActionMenuItems()
+        )
 
         bots.main.openOverflowMenu()
         // Check that the overflow menu items that require content to be available are visible and
         // enabled.
-        val contentRequiredListActionMenuItems =
-            if (bots.main.isUseCopyCutFlow) {
-                intArrayOf(
-                    R.string.menu_open_with,
-                    R.string.menu_inspect,
-                    R.string.menu_copy_to_clipboard,
-                )
-            } else {
-                intArrayOf(R.string.menu_open_with, R.string.menu_inspect, R.string.menu_copy)
-            }
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredListActionMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredListActionMenuItems(isDir = false)
+        )
 
         // Dismiss the action menu.
         device!!.pressBack()
 
         setIsOnline(false)
 
-        // Reopen the action menu and check that the menu items are still visible and enabled
-        // offline.
-        bots.directory.selectDocument(TestCloudProvider.DISPLAY_NAME_0, 1)
-        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(*contentRequiredToolbarActionMenuItems)
+        // Check that the menu items are still visible and enabled offline.
+        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(
+            *getContentRequiredToolbarActionMenuItems()
+        )
 
         bots.main.openOverflowMenu()
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredListActionMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredListActionMenuItems(isDir = false)
+        )
     }
 
     @Test
@@ -786,25 +820,26 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
 
         // Check that the items that require content to be available are visible and enabled.
-        val contentRequiredContextMenuItems =
-            intArrayOf(
-                R.string.menu_open_with,
-                R.string.menu_share,
-                R.string.menu_copy_to_clipboard,
-            )
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredContextMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredContextMenuItems(isDir = false)
+        )
 
         // Dismiss the context menu.
         device!!.pressBack()
 
         setIsOnline(false)
 
-        // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        // Disabled documents cannot be selected in the picker.
+        if (!isInPicker) {
+            // Reopen the context menu.
+            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
 
-        // Check that the menu items are still visible but those that require content required are
-        // disabled offline.
-        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+            // Check that the menu items are still visible but those that require content required
+            // are disabled offline.
+            bots.menu.assertListMenuItemsVisibleAndDisabled(
+                *getContentRequiredContextMenuItems(isDir = false)
+            )
+        }
     }
 
     @Test
@@ -821,36 +856,40 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.selectDocument(TestCloudProvider.DISPLAY_NAME_0, 1)
         // Check that the toolbar action menu items that require content to be available are visible
         // and enabled.
-        val contentRequiredToolbarActionMenuItems = intArrayOf(R.id.action_menu_share)
-        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(*contentRequiredToolbarActionMenuItems)
+        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(
+            *getContentRequiredToolbarActionMenuItems()
+        )
 
         bots.main.openOverflowMenu()
         // Check that the overflow menu items that require content to be available are visible and
         // enabled.
-        val contentRequiredListActionMenuItems =
-            if (bots.main.isUseCopyCutFlow) {
-                intArrayOf(R.string.menu_open_with, R.string.menu_copy_to_clipboard)
-            } else {
-                intArrayOf(R.string.menu_open_with, R.string.menu_copy)
-            }
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredListActionMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredListActionMenuItems(isDir = false)
+        )
 
         // Dismiss the action menu.
         device!!.pressBack()
 
         setIsOnline(false)
 
-        // Reopen the action menu and check that the menu items are still visible but those that
-        // require content required are disabled offline.
-        bots.directory.selectDocument(TestCloudProvider.DISPLAY_NAME_0, 1)
-        bots.menu.assertToolbarMenuItemsVisibleAndDisabled(*contentRequiredToolbarActionMenuItems)
+        // Disabled documents cannot be selected in the picker.
+        if (!isInPicker) {
+            // Check that the menu items are still visible but those that require content required
+            // are disabled offline.
+            bots.menu.assertToolbarMenuItemsVisibleAndDisabled(
+                *getContentRequiredToolbarActionMenuItems()
+            )
 
-        bots.main.openOverflowMenu()
-        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredListActionMenuItems)
+            bots.main.openOverflowMenu()
+            bots.menu.assertListMenuItemsVisibleAndDisabled(
+                *getContentRequiredListActionMenuItems(isDir = false)
+            )
+        }
     }
 
     @Test
     fun testCxtMenu_noAvailableLocallyState_andFolder_contentRequiredActionsDisabled_openEnabled() {
+        assumeFalse("Folders can't be selected in picker mode and so don't have menus", isInPicker)
         setIsOnline(true)
 
         // Do not set the "available locally" state.
@@ -861,11 +900,9 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // Check that the items that require content to be available are visible and enabled.
         val openContextMenuItems = intArrayOf(R.string.menu_open_in_new_window)
-        val contentRequiredContextMenuItemsExcludingOpen =
-            intArrayOf(R.string.menu_copy_to_clipboard)
         bots.menu.assertListMenuItemsVisibleAndEnabled(
             *openContextMenuItems,
-            *contentRequiredContextMenuItemsExcludingOpen,
+            *getContentRequiredContextMenuItems(isDir = true),
         )
 
         // Dismiss the context menu.
@@ -876,17 +913,18 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         // Reopen the context menu.
         bots.directory.rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME)
 
-        // Check that the menu items are still visible but those that require content required are
-        // disabled offline. However, open menu items are an exception for folders and should remain
-        // enabled.
+        // Check that the menu items are still visible but those that require content required
+        // are disabled offline. However, open menu items are an exception for folders and should
+        // remain enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(*openContextMenuItems)
         bots.menu.assertListMenuItemsVisibleAndDisabled(
-            *contentRequiredContextMenuItemsExcludingOpen
+            *getContentRequiredContextMenuItems(isDir = true)
         )
     }
 
     @Test
     fun testActionMenu_noAvailableLocallyState_folder_contentRequiredActionsEnabled_openEnabled() {
+        assumeFalse("Folders can't be selected in picker mode and so don't have menus", isInPicker)
         setIsOnline(true)
 
         // Do not set the "available locally" state.
@@ -898,15 +936,9 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         // Check that the overflow menu items that require content to be available are visible and
         // enabled.
         val openListActionMenuItems = intArrayOf(R.string.menu_open_in_new_window)
-        val contentRequiredListActionMenuItems =
-            if (bots.main.isUseCopyCutFlow) {
-                intArrayOf(R.string.menu_copy_to_clipboard)
-            } else {
-                intArrayOf(R.string.menu_copy)
-            }
         bots.menu.assertListMenuItemsVisibleAndEnabled(
             *openListActionMenuItems,
-            *contentRequiredListActionMenuItems,
+            *getContentRequiredListActionMenuItems(isDir = true),
         )
 
         // Dismiss the action menu.
@@ -914,17 +946,22 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
 
         setIsOnline(false)
 
-        // Reopen the action menu and check that the menu items are still visible but those that
-        // require content required are disabled offline. However, open menu items are an exception
-        // for folders and should remain enabled.
-        bots.directory.selectDocument(TestCloudProvider.DIR_DISPLAY_NAME, 1)
+        // Check that the menu items are still visible but those that require content required
+        // are disabled offline. However, open menu items are an exception for folders and
+        // should remain enabled.
         bots.main.openOverflowMenu()
         bots.menu.assertListMenuItemsVisibleAndEnabled(*openListActionMenuItems)
-        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredListActionMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndDisabled(
+            *getContentRequiredListActionMenuItems(isDir = true)
+        )
     }
 
     @Test
     fun testCxtMenu_noAvailableLocallyState_butVirtual_contentRequiredActionsEnabledOffline() {
+        assumeFalse(
+            "Virtual files can't be selected in picker mode and so don't have menus",
+            isInPicker,
+        )
         setIsOnline(true)
 
         // Do not set the "available locally" state.
@@ -934,13 +971,9 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
 
         // Check that the items that require content to be available are visible and enabled.
-        val contentRequiredContextMenuItems =
-            intArrayOf(
-                R.string.menu_open_with,
-                R.string.menu_share,
-                R.string.menu_copy_to_clipboard,
-            )
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredContextMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredContextMenuItems(isDir = false)
+        )
 
         // Dismiss the context menu.
         device!!.pressBack()
@@ -951,11 +984,17 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
 
         // Check that the menu items are still visible and enabled offline.
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredContextMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredContextMenuItems(isDir = false)
+        )
     }
 
     @Test
     fun testActionMenu_noAvailableLocallyState_butVirtual_contentRequiredActionsEnabledOffline() {
+        assumeFalse(
+            "Virtual files can't be selected in picker mode and so don't have menus",
+            isInPicker,
+        )
         setIsOnline(true)
 
         // Do not set the "available locally" state.
@@ -968,32 +1007,31 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.selectDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME, 1)
         // Check that the toolbar action menu items that require content to be available are visible
         // and enabled.
-        val contentRequiredToolbarActionMenuItems = intArrayOf(R.id.action_menu_share)
-        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(*contentRequiredToolbarActionMenuItems)
+        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(
+            *getContentRequiredToolbarActionMenuItems()
+        )
 
         bots.main.openOverflowMenu()
         // Check that the overflow menu items that require content to be available are visible and
         // enabled.
-        val contentRequiredListActionMenuItems =
-            if (bots.main.isUseCopyCutFlow) {
-                intArrayOf(R.string.menu_open_with, R.string.menu_copy_to_clipboard)
-            } else {
-                intArrayOf(R.string.menu_open_with, R.string.menu_copy)
-            }
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredListActionMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredListActionMenuItems(isDir = false)
+        )
 
         // Dismiss the action menu.
         device!!.pressBack()
 
         setIsOnline(false)
 
-        // Reopen the action menu and check that the menu items are still visible and enabled
-        // offline.
-        bots.directory.selectDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME, 1)
-        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(*contentRequiredToolbarActionMenuItems)
+        // Check that the menu items are still visible and enabled offline.
+        bots.menu.assertToolbarMenuItemsVisibleAndEnabled(
+            *getContentRequiredToolbarActionMenuItems()
+        )
 
         bots.main.openOverflowMenu()
-        bots.menu.assertListMenuItemsVisibleAndEnabled(*contentRequiredListActionMenuItems)
+        bots.menu.assertListMenuItemsVisibleAndEnabled(
+            *getContentRequiredListActionMenuItems(isDir = false)
+        )
     }
 
     @Test
@@ -1018,17 +1056,16 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
         bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
 
-        // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        // Disabled documents cannot be selected in the picker.
+        if (!isInPicker) {
+            // Open the context menu.
+            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
 
-        // Check that the items that require content are visible but are disabled offline.
-        val contentRequiredContextMenuItems =
-            intArrayOf(
-                R.string.menu_open_with,
-                R.string.menu_share,
-                R.string.menu_copy_to_clipboard,
+            // Check that the items that require content are visible but are disabled offline.
+            bots.menu.assertListMenuItemsVisibleAndDisabled(
+                *getContentRequiredContextMenuItems(isDir = false)
             )
-        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+        }
     }
 
     @Test
@@ -1060,17 +1097,16 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertDocumentDisabled(TestCloudProvider.DISPLAY_NAME_0)
         bots.directory.assertDocumentSyncIconsNotVisible(TestCloudProvider.DISPLAY_NAME_0)
 
-        // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        // Disabled documents cannot be selected in the picker.
+        if (!isInPicker) {
+            // Open the context menu.
+            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
 
-        // Check that the items that require content are visible but are disabled offline.
-        val contentRequiredContextMenuItems =
-            intArrayOf(
-                R.string.menu_open_with,
-                R.string.menu_share,
-                R.string.menu_copy_to_clipboard,
+            // Check that the items that require content are visible but are disabled offline.
+            bots.menu.assertListMenuItemsVisibleAndDisabled(
+                *getContentRequiredContextMenuItems(isDir = false)
             )
-        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+        }
     }
 
     @Test
@@ -1104,28 +1140,83 @@ class SyncStateUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertDocumentDisabled("recentFileInTest")
         bots.directory.assertDocumentSyncIconsNotVisible("recentFileInTest")
 
-        // Open the context menu.
-        bots.directory.rightClickDocument("recentFileInTest")
+        // Disabled documents cannot be selected in the picker.
+        if (!isInPicker) {
+            // Open the context menu.
+            bots.directory.rightClickDocument("recentFileInTest")
 
-        // Check that the items that require content are visible but are disabled offline.
-        val contentRequiredContextMenuItems =
-            intArrayOf(
-                R.string.menu_open_with,
-                R.string.menu_share,
-                R.string.menu_copy_to_clipboard,
+            // Check that the items that require content are visible but are disabled offline.
+            bots.menu.assertListMenuItemsVisibleAndDisabled(
+                *getContentRequiredContextMenuItems(isDir = false, isRecentRoot = true)
             )
-        bots.menu.assertListMenuItemsVisibleAndDisabled(*contentRequiredContextMenuItems)
+        }
+    }
+
+    fun getContentRequiredContextMenuItems(
+        isDir: Boolean,
+        isRecentRoot: Boolean = false,
+    ): IntArray {
+        return getContentRequiredMenuItems(isActionMenu = false, isDir, isRecentRoot)
+    }
+
+    fun getContentRequiredToolbarActionMenuItems(): IntArray {
+        if (isInPicker) {
+            return intArrayOf()
+        }
+
+        return intArrayOf(R.id.action_menu_share)
+    }
+
+    fun getContentRequiredListActionMenuItems(
+        isDir: Boolean,
+        isRecentRoot: Boolean = false,
+    ): IntArray {
+        return getContentRequiredMenuItems(isActionMenu = true, isDir, isRecentRoot)
+    }
+
+    fun getContentRequiredMenuItems(
+        isActionMenu: Boolean,
+        isDir: Boolean,
+        isRecentRoot: Boolean = false,
+    ): IntArray {
+        @StringRes
+        val zipMenuId = if (isZipNgFlagEnabled()) R.string.menu_zip else R.string.menu_compress
+        if (isInPicker) {
+            return if (isRecentRoot) intArrayOf() else intArrayOf(zipMenuId)
+        }
+        val copyMenuId =
+            if (isActionMenu && !bots.main.isUseCopyCutFlow) {
+                R.string.menu_copy
+            } else {
+                R.string.menu_copy_to_clipboard
+            }
+        var items = intArrayOf(copyMenuId)
+        if (!isRecentRoot) {
+            items = items + zipMenuId
+        }
+        if (!isActionMenu && !isDir) {
+            items = items + R.string.menu_share
+        }
+        if (!isDir) {
+            items = items + R.string.menu_open_with
+        }
+        return items
     }
 
     companion object {
         /**
-         * Provides the test parameters for the parameterized test. This allows each test method to
-         * be run with two configurations: one with list view and the other with grid view.
+         * Provides the test parameters for the parameterized test. This allows each test to run
+         * either in list or grid view and either in picker or browser mode.
          */
         @JvmStatic
-        @Parameterized.Parameters(name = "isListView={0}")
-        fun data(): Iterable<*> {
-            return Lists.newArrayList<Boolean?>(true, false)
+        @Parameterized.Parameters(name = "isListView={0}, isInPicker={1}")
+        fun data(): Iterable<Array<Any>> {
+            return Lists.newArrayList(
+                arrayOf(true, true),
+                arrayOf(true, false),
+                arrayOf(false, true),
+                arrayOf(false, false),
+            )
         }
     }
 }
