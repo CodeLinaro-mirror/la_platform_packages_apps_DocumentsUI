@@ -63,6 +63,7 @@ class SearchOptionsController(private val container: View?) {
 
     companion object {
         val LOCATION_KEY = "${SearchOptionsController::class.qualifiedName}:location"
+        val LOCATION_TEXT_KEY = "${SearchOptionsController::class.qualifiedName}:locationText"
         val FILE_TYPE_KEY = "${SearchOptionsController::class.qualifiedName}:fileType"
         val LAST_MODIFIED_KEY = "${SearchOptionsController::class.qualifiedName}:lastModified"
         val CURRENT_ROOT_KEY = "${SearchOptionsController::class.qualifiedName}:currentRoot"
@@ -341,10 +342,14 @@ class SearchOptionsController(private val container: View?) {
 
     /** Stores the current state of the controls. */
     fun saveState(bundle: Bundle?) {
-        if (bundle == null) {
+        if (bundle == null || container == null) {
             return
         }
         bundle.putSerializable(LOCATION_KEY, locationOption)
+        val locationChip = container.findViewById<Chip>(R.id.search_location_trigger)
+        if (locationChip != null) {
+            bundle.putString(LOCATION_TEXT_KEY, locationChip.getText().toString())
+        }
         bundle.putSerializable(FILE_TYPE_KEY, fileTypeOption)
         bundle.putSerializable(LAST_MODIFIED_KEY, lastModifiedOption)
         if (currentRoot != null) {
@@ -358,6 +363,11 @@ class SearchOptionsController(private val container: View?) {
             return
         }
         locationOption = retrieveEnum(LOCATION_KEY, bundle, DEFAULT_LOCATION)
+        val locationText = bundle.getString(LOCATION_TEXT_KEY)
+        if (locationText != null) {
+            val locationChip = container?.findViewById<Chip>(R.id.search_location_trigger)
+            locationChip?.text = locationText
+        }
         fileTypeOption = retrieveEnum(FILE_TYPE_KEY, bundle, DEFAULT_FILE_TYPE)
         lastModifiedOption = retrieveEnum(LAST_MODIFIED_KEY, bundle, DEFAULT_LAST_MODIFIED)
         currentRoot = bundle.getParcelable(CURRENT_ROOT_KEY)
