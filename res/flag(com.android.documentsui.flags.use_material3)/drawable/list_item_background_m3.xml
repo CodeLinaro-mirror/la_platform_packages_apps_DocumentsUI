@@ -15,6 +15,7 @@
 -->
 
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:color="@color/list_item_ripple_color">
 
     <!-- The mask below only works for the ripple itself, doesn't work for other <item>s, we
@@ -28,7 +29,8 @@
                 android:state_selected="true"
                 android:state_focused="true"
                 android:state_hovered="true"
-                android:state_window_focused="true">
+                android:state_window_focused="true"
+                app:state_touch_mode="false">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -95,7 +97,8 @@
             <item
                 android:state_selected="true"
                 android:state_focused="true"
-                android:state_window_focused="true">
+                android:state_window_focused="true"
+                app:state_touch_mode="false">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -144,7 +147,8 @@
             <item
                 android:state_focused="true"
                 android:state_hovered="true"
-                android:state_window_focused="true">
+                android:state_window_focused="true"
+                app:state_touch_mode="false">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -178,7 +182,10 @@
                     <solid android:color="@color/overlay_hover_color_percentage" />
                 </shape>
             </item>
-            <item android:state_focused="true" android:state_window_focused="true">
+            <item
+                android:state_focused="true"
+                android:state_window_focused="true"
+                app:state_touch_mode="false">
                 <shape>
                     <corners android:radius="@dimen/list_item_height_m3" />
                     <stroke

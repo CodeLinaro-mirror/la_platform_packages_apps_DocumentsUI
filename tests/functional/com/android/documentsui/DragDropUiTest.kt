@@ -19,13 +19,13 @@ package com.android.documentsui
 import android.platform.test.annotations.DisableFlags
 import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.LargeTest
-import com.android.documentsui.StubProvider.ROOT_0_ID
 import com.android.documentsui.StubProvider.ROOT_1_ID
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.rules.TestFilesRule
 import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -34,6 +34,15 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
 
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
     @get:Rule val testFilesRule = TestFilesRule()
+
+    @Before
+    fun setUpTest() {
+        mActivityScenario!!.onActivity { activity ->
+            // Set a long spring timeout to prevent the drag/drop from accidentially opening the
+            // drop target root or directory, to avoid the test flakiness.
+            activity!!.setDragSpringTimeoutForTest(60 * 1000)
+        }
+    }
 
     @Test
     @DisableFlags(Flags.FLAG_USE_MATERIAL3)
@@ -118,8 +127,6 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
     fun testDragAndDropToSameRoot_unselectedFileIsMoved() {
-        assumeTrue("skip drag and drop test for DrawerLayout", !bots.main.inDrawerLayout())
-
         // Select FILE_NAME_2 but we will drag FILE_NAME_1.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_2, 1)
 
@@ -129,10 +136,6 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         val dst = bots.directory.findDocument(TestFilesRule.DIR_NAME_1)
 
         bots.gesture.dragAndDrop(src.visibleBounds, dst.bounds)
-
-        // There is a chance that the drag-and-drop of unselected file opens the destination
-        // directory, so we need to re-open the root.
-        switchRoot(ROOT_0_ID)
 
         // The file should be moved to the destination directory, so it doesn't exist in the
         // original directory.

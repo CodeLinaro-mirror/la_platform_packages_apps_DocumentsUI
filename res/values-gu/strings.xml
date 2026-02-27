@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"<xliff:g id="COUNT">%1$d</xliff:g>થી વધુ ફાઇલ શેર કરી શકાતી નથી"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"ક્રિયાની મંજૂરી નથી"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"ઍક્શનને મંજૂરી નથી"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"કોઈ ઍપ મળી નથી"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"કોઈ સપોર્ટેડ ઍપ ઇન્સ્ટૉલ કરેલી નથી. Play Storeમાંથી એક ઍપ ઇન્સ્ટૉલ કરવાનો પ્રયાસ કરી જુઓ."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Play Store પર શોધો"</string>
     <string name="share_via" msgid="8725082736005677161">"આના દ્વારા શેર કરો"</string>
