@@ -64,6 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"정보 확인"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"숨겨진 파일 표시"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"숨겨진 파일 표시 안함"</string>
+    <!-- no translation found for menu_refresh (1724946627254685997) -->
+    <skip />
     <string name="option_show_summary_column" msgid="1008012395393952119">"설명 열 표시"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"설명 열 표시 안함"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>에서 보기"</string>
@@ -390,7 +392,7 @@
     <string name="empty_trash_banner_message" msgid="2993707579621525486">"휴지통에 있는 항목은 30일이 지나면 자동으로 삭제됩니다."</string>
     <string name="empty_trash_banner_button" msgid="1519946484798771236">"휴지통 비우기"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"휴지통을 비우시겠습니까?"</string>
-    <string name="empty_trash_dialog_message" msgid="520865296928962854">"휴지통에 있는 모든 항목이 영구 삭제됩니다. 이 작업은 실행취소할 수 없습니다."</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"휴지통에 있는 모든 항목이 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다."</string>
     <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"영구 삭제"</string>
     <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{항목이 휴지통에 있음}other{항목이 휴지통에 있음}}"</string>
     <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{이 항목에 액세스하려면 복원하거나 휴지통 밖으로 드래그하세요.}other{이 항목에 액세스하려면 복원하거나 휴지통 밖으로 드래그하세요.}}"</string>
