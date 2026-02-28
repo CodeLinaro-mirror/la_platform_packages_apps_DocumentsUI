@@ -1812,7 +1812,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void renameDocuments(Selection selected) {
+    public void renameDocuments(Selection selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_RENAME);
 
         if (selected.isEmpty()) {
@@ -2035,18 +2035,25 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             getRootDocumentAndMaybeRefreshDocument();
             return;
         }
+        boolean initialLoad = isSearchV2Enabled() && mDocumentsInitialLoad;
         if (isSearchV2Enabled() && mDocumentsInitialLoad) {
             mDocumentsInitialLoad = false;
-            return;
         }
-        mActions.refreshDocument(doc, (boolean refreshSupported) -> {
-            if (refreshSupported) {
-                mRefreshLayout.setRefreshing(false);
-            } else {
-                // If Refresh API isn't available, we will explicitly reload the loader
-                mActions.loadDocumentsForCurrentStack();
-            }
-        });
+        mActions.refreshDocument(
+                doc,
+                (boolean refreshSupported) -> {
+                    if (refreshSupported) {
+                        mRefreshLayout.setRefreshing(false);
+                    } else {
+                        // If Refresh API isn't available, we will explicitly reload the loader,
+                        // unless it's the initial load, in which case reloading is redundant, as
+                        // refresh did not happen.
+                        if (isSearchV2Enabled() && initialLoad) {
+                            return;
+                        }
+                        mActions.loadDocumentsForCurrentStack();
+                    }
+                });
     }
 
     private void getRootDocumentAndMaybeRefreshDocument() {

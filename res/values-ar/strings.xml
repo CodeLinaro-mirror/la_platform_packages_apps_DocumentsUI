@@ -64,6 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"الحصول على المعلومات"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"إظهار الملفات المخفية"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"عدم إظهار الملفات المخفية"</string>
+    <!-- no translation found for menu_refresh (1724946627254685997) -->
+    <skip />
     <string name="option_show_summary_column" msgid="1008012395393952119">"عرض عمود الوصف"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"عدم عرض عمود الوصف"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"العرض في <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -443,7 +445,7 @@
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"إخفاء لوحة المعلومات"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"إظهار لوحة المعلومات"</string>
     <string name="trash_page_empty_title" msgid="7738038596025884023">"المهملات فارغة"</string>
-    <string name="empty_trash_banner_message" msgid="2993707579621525486">"سيتم تلقائيًا حذف الملفات التي ظلت في المهملات أكثر من 30 يومًا."</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"سيتم تلقائيًا حذف الملفات التي ظلت في المهملات أكثر من ٣٠ يومًا."</string>
     <string name="empty_trash_banner_button" msgid="1519946484798771236">"إفراغ المهملات"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"إفراغ المهملات؟"</string>
     <string name="empty_trash_dialog_message" msgid="520865296928962854">"سيتم حذف كل الملفات من المهملات نهائيًا. ولا يمكن التراجع عن هذا الإجراء."</string>

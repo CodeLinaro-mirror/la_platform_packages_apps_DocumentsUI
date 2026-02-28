@@ -144,8 +144,9 @@ internal class TestCloudProvider : TestRootProvider(NAME, ROOT_ID, ROOT_FLAGS, R
         val c = createDocCursor(projection)
         if (documentId == ROOT_ID) {
             // Return a folder for the case when the root is queried. The cases for when a file is
-            // queried are not covered.
-            addFolder(c, documentId)
+            // queried are not covered. Set FLAG_DIR_SUPPORTS_CREATE so that the Zip context menu
+            // action is enabled.
+            addFolder(c, documentId, Document.FLAG_DIR_SUPPORTS_CREATE)
         }
         return c
     }

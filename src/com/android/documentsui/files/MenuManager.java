@@ -145,6 +145,11 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                             stringSupplier.apply(getRes(R.string.menu_refresh)),
                             KeyEvent.KEYCODE_R,
                             KeyEvent.META_CTRL_ON));
+            group.addItem(
+                    new KeyboardShortcutInfo(
+                            stringSupplier.apply(getRes(R.string.menu_rename)),
+                            KeyEvent.KEYCODE_ENTER,
+                            KeyEvent.META_CTRL_ON));
         }
         data.add(group);
     }
