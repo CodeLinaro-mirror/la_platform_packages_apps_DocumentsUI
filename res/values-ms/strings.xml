@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Tidak boleh berkongsi lebih daripada <xliff:g id="COUNT">%1$d</xliff:g> fail"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Tindakan tidak dibenarkan"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Tindakan tidak dibenarkan"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Tiada apl ditemukan"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Tiada apl yang disokong dipasang. Cuba pasang apl tersebut daripada Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Buat carian pada Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Kongsi melalui"</string>

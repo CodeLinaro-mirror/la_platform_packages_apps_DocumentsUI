@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Não é possível partilhar mais do que <xliff:g id="COUNT">%1$d</xliff:g> ficheiros."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Ação não permitida"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Ação não permitida"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Não foi encontrada nenhuma app"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Não existem apps compatíveis instaladas. Experimente instalar uma a partir da Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Pesquisar na Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Partilhar através de"</string>

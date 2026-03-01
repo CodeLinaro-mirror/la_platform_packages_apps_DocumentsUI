@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Bạn không thể chia sẻ quá <xliff:g id="COUNT">%1$d</xliff:g> tệp"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Thao tác này không được phép"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Không được thực hiện thao tác này"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Không tìm thấy ứng dụng"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Chưa cài đặt ứng dụng được hỗ trợ nào. Hãy thử cài đặt một ứng dụng trên Cửa hàng Google Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Tìm kiếm trên Cửa hàng Google Play"</string>
     <string name="share_via" msgid="8725082736005677161">"Chia sẻ qua"</string>

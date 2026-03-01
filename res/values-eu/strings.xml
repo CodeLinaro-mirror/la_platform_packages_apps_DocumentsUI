@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ezin dira partekatu <xliff:g id="COUNT">%1$d</xliff:g> fitxategi baino gehiago"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Ez da onartzen ekintza"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Ez da onartzen ekintza"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Ez da aplikaziorik aurkitu"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Ez dago aplikazio bateragarririk instalatuta. Instalatu bat Google Play Store-tik."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Bilatu Google Play Store-n"</string>
     <string name="share_via" msgid="8725082736005677161">"Partekatu honekin:"</string>

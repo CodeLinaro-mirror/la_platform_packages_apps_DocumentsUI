@@ -16,10 +16,14 @@
 
 package com.android.documentsui;
 
-import androidx.annotation.CallSuper;
+import static com.android.documentsui.base.SharedMinimal.DEBUG;
+
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
+import androidx.annotation.CallSuper;
 
 import com.android.documentsui.base.CheckedTask;
 
@@ -31,6 +35,7 @@ public abstract class TimeoutTask<Input, Output> extends CheckedTask<Input, Outp
     public static final int DEFAULT_TIMEOUT = -1;
 
     private long mTimeout = DEFAULT_TIMEOUT;
+    private static final String TAG = "TimeoutTask";
 
     public TimeoutTask(Check check, long timeout) {
         super(check);
@@ -60,5 +65,9 @@ public abstract class TimeoutTask<Input, Output> extends CheckedTask<Input, Outp
      * Override this do more proper clean up in case of timeout, such as using
      * CancellationSignal#cancel.
      */
-    protected void onTimeout() {}
+    protected void onTimeout() {
+        if (DEBUG) {
+            Log.d(TAG, "Task: " + getClass() + " is taking too long to execute.");
+        }
+    }
 }

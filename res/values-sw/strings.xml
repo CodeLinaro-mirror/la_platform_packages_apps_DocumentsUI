@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Huwezi kushiriki zaidi ya faili <xliff:g id="COUNT">%1$d</xliff:g>"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Kitendo hiki hakiruhusiwi"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Kitendo hiki hakiruhusiwi"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Hakuna programu iliyopatikana"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Hujaweka programu zozote zinazotumika. Jaribu kuweka programu moja kutoka kwenye Duka la Google Play."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Tafuta kwenye Duka la Google"</string>
     <string name="share_via" msgid="8725082736005677161">"Shiriki kupitia"</string>
