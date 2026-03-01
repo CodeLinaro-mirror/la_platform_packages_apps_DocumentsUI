@@ -33,7 +33,6 @@ import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.FilteringCursorWrapper
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
-import com.android.documentsui.base.SharedMinimal.DEBUG
 import com.android.documentsui.base.SharedMinimal.redact
 import com.android.documentsui.sorting.SortModel
 
@@ -125,12 +124,12 @@ class FolderLoader(
     }
 
     /**
-     * Helper function that attempts to open an archive and return a long lasting content provider
-     * client to the soon to be scanned archive. This must be done before attempting to acquire the
+     * Helper function that attempts to open an archive and return a long-lasting content provider
+     * client to the soon-to-be scanned archive. This must be done before attempting to acquire the
      * cursor, as we depend on archive content to be read (see acquireArchive method).
      */
     private fun openArchive(folderChildrenUri: Uri): ContentProviderClient? {
-        // If we are opening an archive, we need, in the current approach, to have a long lived
+        // If we are opening an archive, we need, in the current approach, to have a long-lived
         // ContentProviderClient for it. This is so that the archive can be closed, once the
         // loader results are closed.
         var client: ContentProviderClient? = null
@@ -138,7 +137,7 @@ class FolderLoader(
             val resolver = root.userId.getContentResolver(context)
             client = resolver.acquireUnstableContentProviderClient(folderChildrenUri.authority!!)
             ArchivesProvider.acquireArchive(client, folderChildrenUri)
-            if (DEBUG) Log.d(TAG, "Acquired archive ${redact(folderChildrenUri)}")
+            debugLog("Acquired archive ${redact(folderChildrenUri)}")
         } catch (e: RemoteException) {
             Log.e(TAG, "Cannot acquire archive ${redact(folderChildrenUri)}", e)
             client?.close()

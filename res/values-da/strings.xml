@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Der kan højst deles <xliff:g id="COUNT">%1$d</xliff:g> filer"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Handlingen er ikke tilladt"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Handlingen er ikke tilladt"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Der blev ikke fundet nogen app"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Der er ikke installeret nogen understøttede apps. Prøv at installere en fra Play Butik."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Søg i Play Butik"</string>
     <string name="share_via" msgid="8725082736005677161">"Del via"</string>
