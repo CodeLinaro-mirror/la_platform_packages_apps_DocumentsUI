@@ -789,6 +789,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         public void onSelectionChanged() {
                             handleSearchResultSelection();
                         }
+
+                        @Override
+                        public void onSelectionRestored() {
+                            // When selection is restored (e.g. after window size change), it
+                            // doesn't trigger onSelectionChanged(), so we need to call the same
+                            // handleSearchResultSelection() here.
+                            handleSearchResultSelection();
+                        }
                     });
         }
 
@@ -2128,7 +2136,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
             mAdapter.notifyDataSetChanged();
 
-            if (mRestoredState != null) {
+            boolean shouldRestoreSelection = mRestoredState != null;
+            // When search_v2 is ON, we also check if the Model is still in loading state, where
+            // the Model will be empty, so nothing will be restored, we need to wait for the next
+            // update with loading=false.
+            if (isSearchV2Enabled()) {
+                shouldRestoreSelection = shouldRestoreSelection && !mModel.isLoading();
+            }
+            if (shouldRestoreSelection) {
                 mSelectionMgr.onRestoreInstanceState(mRestoredState);
                 mRestoredState = null;
             }
