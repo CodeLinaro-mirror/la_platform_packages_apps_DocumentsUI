@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Ekki er hægt að deila meira en <xliff:g id="COUNT">%1$d</xliff:g> skrám"</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Aðgerð ekki leyfileg"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Aðgerð ekki leyfileg"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Ekkert forrit fannst"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Það eru engin studd forrit uppsett. Prófaðu að setja eitt forrit frá Play Store upp."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Leita í Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Deila í gegnum"</string>

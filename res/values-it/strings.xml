@@ -144,8 +144,7 @@
     <string name="toast_share_over_limit" msgid="5805442886537093015">"Impossibile condividere più di <xliff:g id="COUNT">%1$d</xliff:g> file."</string>
     <string name="toast_action_not_allowed" msgid="1329382474450572415">"Azione non consentita"</string>
     <string name="toast_op_not_allowed_for_shortcuts" msgid="8644996352874874167">"Azione non consentita"</string>
-    <!-- no translation found for no_application_dialog_title (693344961697142788) -->
-    <skip />
+    <string name="no_application_dialog_title" msgid="693344961697142788">"Nessuna app trovata"</string>
     <string name="no_application_dialog_message" msgid="5444094365658346573">"Non sono installate app supportate. Prova a installarne una dal Play Store."</string>
     <string name="no_application_dialog_button" msgid="5317480122655874659">"Cerca nel Play Store"</string>
     <string name="share_via" msgid="8725082736005677161">"Condividi tramite"</string>
