@@ -36,6 +36,7 @@ import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
 import com.google.common.collect.Lists
 import org.junit.After
 import org.junit.Assume.assumeFalse
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runners.Parameterized
@@ -69,8 +70,8 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         this.initialRoot = cloudRoot
     }
 
-    override fun setUp() {
-        super.setUp()
+    @Before
+    fun setUpTest() {
         if (isListView) {
             bots.main.switchToListMode()
         } else {
