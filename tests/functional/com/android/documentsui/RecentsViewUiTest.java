@@ -559,6 +559,9 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Assert the selection is restored and breadcrumb for the selected file is displayed.
         bots.directory.assertSelection(1);
         bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+        if (bots.main.inDrawerLayout()) {
+            onView(withId(R.id.breadcrumb_top_divider)).check(matches(isDisplayed()));
+        }
     }
 
     @Test
@@ -584,6 +587,9 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
                                 ".*",
                                 ExternalStorageProviderTestFilesRule.TEMPORARY_FILES_DIR_NAME,
                                 TestFilesRule.FILE_NAME_2));
+        if (bots.main.inDrawerLayout()) {
+            onView(withId(R.id.breadcrumb_top_divider)).check(matches(isDisplayed()));
+        }
     }
 }
 

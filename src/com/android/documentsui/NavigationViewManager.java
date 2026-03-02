@@ -48,6 +48,7 @@ import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.breadcrumbs.BreadcrumbController;
 import com.android.documentsui.dirlist.AnimationView;
 import com.android.documentsui.util.VersionUtils;
 import com.android.modules.utils.build.SdkLevel;
@@ -69,7 +70,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
     private final View mHeader;
     private final State mState;
     private final NavigationViewManager.Environment mEnv;
-    private final Breadcrumb mBreadcrumb;
+    private final BreadcrumbController mBreadcrumbController;
     private final ProfileTabs mProfileTabs;
     private final View mSearchBarView;
     private final CollapsingToolbarLayout mCollapsingBarLayout;
@@ -90,7 +91,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             DrawerController drawer,
             State state,
             NavigationViewManager.Environment env,
-            Breadcrumb breadcrumb,
+            BreadcrumbController breadcrumbController,
             View tabLayoutContainer,
             UserIdManager userIdManager,
             ConfigStore configStore) {
@@ -99,7 +100,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
                 drawer,
                 state,
                 env,
-                breadcrumb,
+                breadcrumbController,
                 tabLayoutContainer,
                 userIdManager,
                 null,
@@ -111,7 +112,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             DrawerController drawer,
             State state,
             NavigationViewManager.Environment env,
-            Breadcrumb breadcrumb,
+            BreadcrumbController breadcrumbController,
             View tabLayoutContainer,
             UserManagerState userManagerState,
             ConfigStore configStore) {
@@ -120,7 +121,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
                 drawer,
                 state,
                 env,
-                breadcrumb,
+                breadcrumbController,
                 tabLayoutContainer,
                 null,
                 userManagerState,
@@ -132,7 +133,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
             DrawerController drawer,
             State state,
             NavigationViewManager.Environment env,
-            Breadcrumb breadcrumb,
+            BreadcrumbController breadcrumbController,
             View tabLayoutContainer,
             UserIdManager userIdManager,
             UserManagerState userManagerState,
@@ -144,14 +145,8 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         mDrawer = drawer;
         mState = state;
         mEnv = env;
-        mBreadcrumb = breadcrumb;
-        mBreadcrumb.setup(
-                env,
-                state,
-                this::onNavigationItemSelected,
-                isUseMaterial3FlagEnabled()
-                        ? activity.findViewById(getRes(R.id.breadcrumb_top_divider))
-                        : null);
+        mBreadcrumbController = breadcrumbController;
+        mBreadcrumbController.setupNavBreadcrumb(env, state, this::onNavigationItemSelected);
         mConfigStore = configStore;
         mProfileTabs =
                 getProfileTabs(tabLayoutContainer, userIdManager, userManagerState, activity);
@@ -355,7 +350,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         boolean showDockedSearch = mActivity.isSearchDocked();
         if (mEnv.isSearchExpanded() && !(isUseMaterial3FlagEnabled() && showDockedSearch)) {
             mToolbar.setTitle(null);
-            mBreadcrumb.show(false);
+            mBreadcrumbController.setNavBreadcrumbVisible(false);
             return;
         }
 
@@ -375,7 +370,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
 
         if (shouldShowSearchBar()) {
-            mBreadcrumb.show(false);
+            mBreadcrumbController.setNavBreadcrumbVisible(false);
             mToolbar.setTitle(null);
             mSearchBarView.setVisibility(VISIBLE);
             return;
@@ -385,7 +380,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         if (isSearchV2Enabled() && showBreadcrumbV2) {
             // Special case: if search V2 is enabled and we are either searching or in recents, we
             // need to hide the v1 breadcrumb.
-            mBreadcrumb.show(false);
+            mBreadcrumbController.setNavBreadcrumbVisible(false);
             if (mActivity.isSearching()) {
                 mToolbar.setTitle(R.string.search_results);
             } else {
@@ -406,8 +401,7 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         }
         if (VERBOSE) Log.v(TAG, "New toolbar title is: " + title);
         mToolbar.setTitle(title);
-        mBreadcrumb.show(true);
-        mBreadcrumb.postUpdate();
+        mBreadcrumbController.setNavBreadcrumbVisible(true);
     }
 
     private void updateScrollFlag() {
@@ -505,15 +499,20 @@ public class NavigationViewManager implements AppBarLayout.OnOffsetChangedListen
         mDrawer.setOpen(open);
     }
 
-    interface Breadcrumb {
-        void setup(Environment env, State state, IntConsumer listener, @Nullable View topDivider);
+    public interface Breadcrumb {
+        /** Set up the layout and the click listener. */
+        void setup(Environment env, State state, IntConsumer listener);
 
+        /** Show or hide the breadcrumb. */
         void show(boolean visibility);
 
         void postUpdate();
+
+        /** Returns true if the breadcrumb is visible. */
+        boolean isVisible();
     }
 
-    interface Environment {
+    public interface Environment {
         @Deprecated
             // Use CommonAddones#getCurrentRoot
         RootInfo getCurrentRoot();

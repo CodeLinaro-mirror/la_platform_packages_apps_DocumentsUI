@@ -1047,12 +1047,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return;
         }
         controller.getModel().setFromStack(stack);
-        controller.setVisible(true);
+        controller.setSearchBreadcrumbVisible(true);
         if (stack.getRoot() != null && stack.getRoot().isRecents()) {
             // No click consumer for recents, as it would only take us back to recents.
             return;
         }
-        controller.setClickConsumer(
+        controller.setSearchBreadcrumbClickConsumer(
                 (i) -> {
                     // Remove items after the i-th element.
                     while (stack.size() > i + 1) {
@@ -1075,19 +1075,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (isSearchV2Enabled()) {
             mVersion.incrementAndGet();
             mSelectedItemKey = null;
-            hideSearchResultBreadcrumb(controller);
+            controller.setSearchBreadcrumbVisible(false);
         }
-    }
-
-    /**
-     * Hides the breadcrumb path and disables click listener on the given controller.
-     *
-     * @param controller The non-null breadcrumb controller to be adjusted.
-     */
-    private void hideSearchResultBreadcrumb(BreadcrumbController controller) {
-        controller.setVisible(false);
-        controller.getModel().setPath(new String[0]);
-        controller.setClickConsumer(null);
     }
 
     private void onCopyDestinationPicked(int resultCode, Intent data) {

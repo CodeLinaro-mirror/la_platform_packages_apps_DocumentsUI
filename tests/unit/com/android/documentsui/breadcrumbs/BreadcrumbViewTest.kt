@@ -18,15 +18,12 @@ package com.android.documentsui.breadcrumbs
 import android.annotation.SuppressLint
 import android.platform.test.annotations.EnableFlags
 import android.view.View
-import android.widget.FrameLayout
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.android.documentsui.R
 import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
 import com.google.common.truth.Truth.assertThat
 import java.util.function.IntConsumer
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -55,17 +52,8 @@ class BreadcrumbViewTest {
     }
 
     @Test
-    fun testVisibility() {
-        assertEquals(View.GONE, view.visibility)
-        view.setVisible(true)
-        assertEquals(View.VISIBLE, view.visibility)
-        view.setVisible(false)
-        assertEquals(View.GONE, view.visibility)
-    }
-
-    @Test
     fun testSetPath() {
-        view.setVisible(true)
+        view.visibility = View.VISIBLE
         view.setPath(arrayOf("Root", "Folder01", "Folder02"))
         val testOnClickConsumer = TestOnClickConsumer()
         view.setClickConsumer(testOnClickConsumer)
@@ -88,45 +76,9 @@ class BreadcrumbViewTest {
 
     @Test
     fun testClear() {
-        view.setVisible(true)
+        view.visibility = View.VISIBLE
         view.setPath(arrayOf("Root", "Folder01", "Folder02"))
         view.clear()
         assertThat(view.performPathItemClick(0)).isFalse()
-    }
-
-    private fun setupViewWithDivider(): View {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        val parent = FrameLayout(context)
-        val divider = View(context)
-        divider.id = R.id.breadcrumb_top_divider
-        parent.addView(divider)
-        parent.addView(view)
-        return divider
-    }
-
-    @Test
-    fun testSetVisible_true_updatesDividerVisibility() {
-        // Arrange
-        val divider = setupViewWithDivider()
-        divider.visibility = View.GONE
-
-        // Act
-        view.setVisible(true)
-
-        // Assert
-        assertThat(divider.visibility).isEqualTo(View.VISIBLE)
-    }
-
-    @Test
-    fun testSetVisible_false_updatesDividerVisibility() {
-        // Arrange
-        val divider = setupViewWithDivider()
-        divider.visibility = View.VISIBLE
-
-        // Act
-        view.setVisible(false)
-
-        // Assert
-        assertThat(divider.visibility).isEqualTo(View.GONE)
     }
 }

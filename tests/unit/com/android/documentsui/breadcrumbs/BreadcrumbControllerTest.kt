@@ -15,18 +15,22 @@
  */
 package com.android.documentsui.breadcrumbs
 
-import android.platform.test.annotations.EnableFlags
+import android.content.Context
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.documentsui.NavigationViewManager
+import com.android.documentsui.NavigationViewManager.Breadcrumb
 import com.android.documentsui.base.DocumentStack
 import com.android.documentsui.base.RootInfo
-import com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY
+import com.android.documentsui.base.State
 import com.android.documentsui.rules.InstantTaskExecutorRule
 import com.android.documentsui.rules.OverrideFlagsRule
+import java.util.function.IntConsumer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -34,7 +38,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@EnableFlags(FLAG_USE_SEARCH_V2_READ_ONLY)
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class BreadcrumbControllerTest {
@@ -45,52 +48,128 @@ class BreadcrumbControllerTest {
     @get:Rule val setFlags = OverrideFlagsRule()
 
     private lateinit var controller: BreadcrumbController
-    private lateinit var view: BreadcrumbView
+    private lateinit var navBreadcrumb: Breadcrumb
+    private lateinit var searchBreadcrumb: BreadcrumbView
+    private lateinit var topDivider: View
     private val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.STARTED)
 
     @Before
     fun setUpTest() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        view = BreadcrumbView(context)
+        // By default, mark all views as invisible.
+        navBreadcrumb = TestBreadcrumb(context)
+        searchBreadcrumb = BreadcrumbView(context)
+        searchBreadcrumb.visibility = View.GONE
+        topDivider = View(context)
+        topDivider.visibility = View.GONE
+
         val model = BreadcrumbModel()
-        controller = BreadcrumbController(lifecycleOwner, model, view)
+        controller =
+            BreadcrumbController(lifecycleOwner, model, navBreadcrumb, searchBreadcrumb, topDivider)
+
+        assertEquals(View.GONE, searchBreadcrumb.visibility)
+        assertEquals(false, navBreadcrumb.isVisible)
+        assertEquals(View.GONE, topDivider.visibility)
     }
 
     @Test
-    fun testSetVisible() {
-        assertEquals(view.visibility, View.GONE)
-        controller.setVisible(true)
-        assertEquals(view.visibility, View.VISIBLE)
-        controller.setVisible(false)
-        assertEquals(view.visibility, View.GONE)
+    fun testSetSearchBreadcrumbVisible() {
+        controller.setSearchBreadcrumbVisible(true)
+        assertEquals(View.VISIBLE, searchBreadcrumb.visibility)
+        assertEquals(false, navBreadcrumb.isVisible)
+        assertEquals(View.VISIBLE, topDivider.visibility)
+
+        controller.setSearchBreadcrumbVisible(false)
+        assertEquals(View.GONE, searchBreadcrumb.visibility)
+        assertEquals(false, navBreadcrumb.isVisible)
+        assertEquals(View.GONE, topDivider.visibility)
+    }
+
+    @Test
+    fun testSetNavBreadcrumbVisible() {
+        controller.setNavBreadcrumbVisible(true)
+        assertEquals(View.GONE, searchBreadcrumb.visibility)
+        assertEquals(true, navBreadcrumb.isVisible)
+        assertEquals(View.VISIBLE, topDivider.visibility)
+
+        controller.setNavBreadcrumbVisible(false)
+        assertEquals(View.GONE, searchBreadcrumb.visibility)
+        assertEquals(false, navBreadcrumb.isVisible)
+        assertEquals(View.GONE, topDivider.visibility)
+    }
+
+    @Test
+    fun testSetNavBreadcrumbVisible_whenSearchBreadcrumbVisible() {
+        searchBreadcrumb.visibility = View.VISIBLE
+        topDivider.visibility = View.VISIBLE
+
+        controller.setNavBreadcrumbVisible(true)
+        assertEquals(View.GONE, searchBreadcrumb.visibility)
+        assertEquals(true, navBreadcrumb.isVisible)
+        assertEquals(View.VISIBLE, topDivider.visibility)
+    }
+
+    @Test
+    fun testSetSearchBreadcrumbVisible_whenNavBreadcrumbVisible() {
+        navBreadcrumb.show(true)
+        topDivider.visibility = View.VISIBLE
+
+        controller.setSearchBreadcrumbVisible(true)
+        assertEquals(View.VISIBLE, searchBreadcrumb.visibility)
+        assertEquals(false, navBreadcrumb.isVisible)
+        assertEquals(View.VISIBLE, topDivider.visibility)
     }
 
     @Test
     fun testEvents() {
         var folderIndex = -1
-        controller.setVisible(true)
-        controller.setClickConsumer { value -> folderIndex = value }
+        controller.setSearchBreadcrumbVisible(true)
+        controller.setSearchBreadcrumbClickConsumer { value -> folderIndex = value }
+
         val root = RootInfo().apply { title = "root" }
         val stack = DocumentStack()
         stack.changeRoot(root)
-        controller.getModel().setFromStack(stack)
-        assertTrue(view.performPathItemClick(0))
+        controller.getModel()?.setFromStack(stack)
+
+        assertTrue(searchBreadcrumb.performPathItemClick(0))
         assertEquals(0, folderIndex)
 
-        controller.setClickConsumer(null)
+        controller.setSearchBreadcrumbClickConsumer(null)
         folderIndex = -1
         // This event should not be propagated.
-        assertTrue(view.performPathItemClick(0))
+        assertTrue(searchBreadcrumb.performPathItemClick(0))
         assertEquals(-1, folderIndex)
     }
 
     @Test
     fun testClearOnHide() {
-        controller.setVisible(true)
-        controller.getModel().setPath(arrayOf("Foo", "Bar", "baz.txt"))
-        assertEquals(3, view.getPathLength())
-        controller.setVisible(false)
-        controller.setVisible(true)
-        assertEquals(0, view.getPathLength())
+        controller.setSearchBreadcrumbVisible(true)
+        controller.getModel()?.setPath(arrayOf("Foo", "Bar", "baz.txt"))
+        assertEquals(3, searchBreadcrumb.getPathLength())
+        controller.setSearchBreadcrumbVisible(false)
+        controller.setSearchBreadcrumbVisible(true)
+        assertEquals(0, searchBreadcrumb.getPathLength())
     }
+}
+
+class TestBreadcrumb(context: Context) : Breadcrumb {
+    private val fakeView = View(context)
+
+    init {
+        fakeView.visibility = View.GONE
+    }
+
+    override fun setup(
+        env: NavigationViewManager.Environment?,
+        state: State?,
+        listener: IntConsumer?,
+    ) {}
+
+    override fun show(visibility: Boolean) {
+        fakeView.visibility = if (visibility) View.VISIBLE else View.GONE
+    }
+
+    override fun postUpdate() {}
+
+    override fun isVisible(): Boolean = fakeView.isVisible
 }
