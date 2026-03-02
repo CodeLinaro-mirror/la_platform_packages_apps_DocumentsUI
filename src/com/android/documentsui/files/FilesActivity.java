@@ -589,7 +589,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                 case KeyEvent.KEYCODE_ENTER:
                     {
                         if (!isUseMaterial3FlagEnabled()) break;
-                        final Selection<String> selected = mInjector.actions.getSelectedOrFocused();
+                        final Selection<String> selected = mInjector.actions.getFocusedOrSelected();
                         if (selected.size() != 1) return true;
                         final DirectoryFragment dir = getDirectoryFragment();
                         if (dir == null) return true;
