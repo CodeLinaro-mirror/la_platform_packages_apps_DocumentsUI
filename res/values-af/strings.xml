@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Kry inligting"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Wys versteekte lêers"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Wys nie versteekte lêers nie"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"Herlaai"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Wys beskrywingkolom"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Moenie beskrywingkolom wys nie"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Bekyk in <xliff:g id="SOURCE">%1$s</xliff:g>"</string>

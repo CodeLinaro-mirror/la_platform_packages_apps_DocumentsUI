@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Ver informações"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Mostrar arquivos ocultos"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Não mostrar arquivos ocultos"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"Atualizar"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Mostrar coluna de descrição"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Não mostrar coluna de descrição"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Ver em <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
@@ -130,7 +129,7 @@
     <string name="cant_save_to_cross_profile_error_title" msgid="5158984057654779022">"Não é possível salvar no perfil <xliff:g id="PROFILE">%1$s</xliff:g>"</string>
     <string name="cant_save_to_cross_profile_error_message" msgid="5845240315510422749">"Seu administrador de TI não permite que arquivos do perfil <xliff:g id="PROFILE_0">%1$s</xliff:g> sejam salvos no perfil <xliff:g id="PROFILE_1">%2$s</xliff:g>"</string>
     <string name="cross_profile_action_not_allowed_title" msgid="6611281348716476478">"Essa ação não é permitida"</string>
-    <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Para saber mais, entre em contato com o administrador de TI"</string>
+    <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Para saber mais, entre em contato com a equipe de TI"</string>
     <string name="root_recent" msgid="1080156975424341623">"Recentes"</string>
     <string name="root_trash" msgid="1869929519939073178">"Lixeira"</string>
     <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> livres"</string>

@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"詳細情報"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"隠しファイルを表示"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"隠しファイルを表示しない"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"更新"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"説明列を表示"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"説明列を表示しない"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>に表示"</string>
