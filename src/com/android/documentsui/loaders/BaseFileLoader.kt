@@ -28,6 +28,7 @@ import android.provider.DocumentsContract.Document
 import android.util.Log
 import androidx.loader.content.AsyncTaskLoader
 import com.android.documentsui.DirectoryResult
+import com.android.documentsui.DocumentsApplication
 import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.DEBUG
@@ -230,10 +231,7 @@ abstract class BaseFileLoader(
     ): Cursor? {
         val authority = locationUri.authority ?: return null
         val resolver = rootInfo.userId.getContentResolver(context) ?: return null
-        resolver.acquireUnstableContentProviderClient(authority).use { client ->
-            if (client == null) {
-                return null
-            }
+        DocumentsApplication.acquireUnstableProviderOrThrow(resolver, authority).use { client ->
             // TODO(b:440453094): Fix handling of cancel signal is documents providers.
             val cursor = client.query(locationUri, null, queryArgs, cancelNotifier) ?: return null
             return createRootCursorWrapper(rootInfo, locationUri, cursor)
