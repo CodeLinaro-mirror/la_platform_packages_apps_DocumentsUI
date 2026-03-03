@@ -18,6 +18,8 @@ package com.android.documentsui.base;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import android.os.Bundle;
+
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -68,5 +70,20 @@ public class RootInfoTest {
         RootInfo copied = RootInfo.copyRootInfo(rootInfo);
         assertThat(copied).isEqualTo(rootInfo);
         assertThat(copied).isNotSameInstanceAs(rootInfo);
+    }
+
+    @Test
+    public void testSaveStateToBundle() {
+        RootInfo originalRootInfo = new RootInfo();
+        originalRootInfo.userId = UserId.of(100);
+        originalRootInfo.authority = "authority";
+        originalRootInfo.rootId = "root";
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("root", originalRootInfo);
+
+        // Unable to use non-deprecated version due to DocumentsUI required version < 33.
+        RootInfo restoredRootInfo = bundle.getParcelable("root");
+        assertThat(restoredRootInfo).isEqualTo(originalRootInfo);
     }
 }

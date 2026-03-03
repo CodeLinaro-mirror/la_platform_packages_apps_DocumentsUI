@@ -16,26 +16,39 @@
 
 package com.android.documentsui;
 
+import static android.provider.Flags.FLAG_ENABLE_SYNC_STATE;
+
 import static com.android.documentsui.util.FlagUtils.isSyncStateEnabled;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
+import android.os.Build;
+import android.platform.test.annotations.EnableFlags;
+import android.platform.test.annotations.RequiresFlagsEnabled;
+import android.platform.test.flag.junit.CheckFlagsRule;
+import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract.Document;
 
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.roots.RootCursorWrapper;
+import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.testing.TestEventListener;
 import com.android.documentsui.testing.TestFeatures;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,6 +62,10 @@ import java.util.Set;
 @RunWith(AndroidJUnit4.class)
 @SmallTest
 public class ModelTest {
+    @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
+
+    @Rule
+    public final CheckFlagsRule mCheckFlagsRule = DeviceFlagsValueProvider.createCheckFlagsRule();
 
     private static final int ITEM_COUNT = 10;
     private static final int USER_ID = 0;
@@ -77,9 +94,20 @@ public class ModelTest {
     @Before
     public void setUp() {
         features = new TestFeatures();
+        cursor = initCursor();
 
+        DirectoryResult r = new DirectoryResult();
+        r.setCursor(cursor);
+
+        // Instantiate the model with a stub view adapter and listener that (for now) do nothing.
+        model = new Model(features);
+        // not sure why we add a listener here at all.
+        model.addUpdateListener(new TestEventListener<>());
+        model.update(r);
+    }
+
+    private Cursor initCursor() {
         Random rand = new Random();
-
         if (isSyncStateEnabled()) {
             COLUMNS.add(Document.COLUMN_CONTENT_SYNC_STATE_FLAGS);
         }
@@ -117,16 +145,7 @@ public class ModelTest {
                 }
             }
         }
-        cursor = c;
-
-        DirectoryResult r = new DirectoryResult();
-        r.setCursor(cursor);
-
-        // Instantiate the model with a stub view adapter and listener that (for now) do nothing.
-        model = new Model(features);
-        // not sure why we add a listener here at all.
-        model.addUpdateListener(new TestEventListener<>());
-        model.update(r);
+        return c;
     }
 
     // Tests that the item count is correct.
@@ -212,5 +231,21 @@ public class ModelTest {
     @Test
     public void testGetSyncInProgressIds() {
         assertEquals(mIdsForItemsWithSyncInProgress, model.getSyncInProgressModelIds());
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @RequiresFlagsEnabled({FLAG_ENABLE_SYNC_STATE})
+    @EnableFlags({Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3})
+    public void getHasLimitedFunctionalityWhenOffline() {
+        DirectoryResult result = new DirectoryResult();
+        result.setCursor(initCursor());
+        result.setHasLimitedFunctionalityWhenOffline(true);
+        model.update(result);
+        assertTrue(model.hasLimitedFunctionalityWhenOffline());
+
+        result.setHasLimitedFunctionalityWhenOffline(false);
+        model.update(result);
+        assertFalse(model.hasLimitedFunctionalityWhenOffline());
     }
 }

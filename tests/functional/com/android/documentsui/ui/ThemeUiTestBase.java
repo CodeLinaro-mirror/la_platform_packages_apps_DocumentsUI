@@ -25,9 +25,9 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.DisplayMetrics;
 
-import androidx.test.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.android.documentsui.R;
 
@@ -49,7 +49,7 @@ public abstract class ThemeUiTestBase {
 
     @Before
     public void setUp() throws Exception {
-        mTargetContext = InstrumentationRegistry.getTargetContext();
+        mTargetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         mConfiguration = mTargetContext.getResources().getConfiguration();
         mDisplayMetrics = mTargetContext.getResources().getDisplayMetrics();
         mCompatibilityInfo = mTargetContext.getResources().getCompatibilityInfo();

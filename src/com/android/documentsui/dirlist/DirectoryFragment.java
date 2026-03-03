@@ -168,6 +168,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 /**
@@ -267,6 +268,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     private @Nullable PathExtractor mPathExtractor;
     private @Nullable String mSelectedItemKey = null;
+
+    private AtomicInteger mVersion = new AtomicInteger(0);
 
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
@@ -996,12 +999,17 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return;
         }
         mSelectedItemKey = selectedId;
+        final int taskVersion = mVersion.incrementAndGet();
         ProviderExecutor.forAuthority(info.authority)
                 .execute(
                         () -> {
                             try {
                                 DocumentStack stack = mPathExtractor.getDocumentStack(info);
-                                mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
+                                mHandler.post(
+                                        () -> {
+                                            showSearchResultBreadcrumb(
+                                                    controller, stack, taskVersion);
+                                        });
                             } catch (Exception e) {
                                 if (DEBUG) {
                                     Log.d(TAG, "Failed to get stack for " + info, e);
@@ -1018,7 +1026,11 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      * @param controller A non-null breadcrumb controller.
      * @param stack The stack to be used to create a path.
      */
-    private void showSearchResultBreadcrumb(BreadcrumbController controller, DocumentStack stack) {
+    private void showSearchResultBreadcrumb(
+            BreadcrumbController controller, DocumentStack stack, int version) {
+        if (version != mVersion.get()) {
+            return;
+        }
         controller.getModel().setFromStack(stack);
         controller.setVisible(true);
         if (stack.getRoot() != null && stack.getRoot().isRecents()) {
@@ -1046,8 +1058,9 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
      */
     public void setSearchResultBreadcrumbHidden(@NonNull BreadcrumbController controller) {
         if (isSearchV2Enabled()) {
+            mVersion.incrementAndGet();
             mSelectedItemKey = null;
-            mHandler.post(() -> hideSearchResultBreadcrumb(controller));
+            hideSearchResultBreadcrumb(controller);
         }
     }
 
@@ -1799,7 +1812,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    private void renameDocuments(Selection selected) {
+    public void renameDocuments(Selection selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_RENAME);
 
         if (selected.isEmpty()) {
@@ -2022,18 +2035,25 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             getRootDocumentAndMaybeRefreshDocument();
             return;
         }
+        boolean initialLoad = isSearchV2Enabled() && mDocumentsInitialLoad;
         if (isSearchV2Enabled() && mDocumentsInitialLoad) {
             mDocumentsInitialLoad = false;
-            return;
         }
-        mActions.refreshDocument(doc, (boolean refreshSupported) -> {
-            if (refreshSupported) {
-                mRefreshLayout.setRefreshing(false);
-            } else {
-                // If Refresh API isn't available, we will explicitly reload the loader
-                mActions.loadDocumentsForCurrentStack();
-            }
-        });
+        mActions.refreshDocument(
+                doc,
+                (boolean refreshSupported) -> {
+                    if (refreshSupported) {
+                        mRefreshLayout.setRefreshing(false);
+                    } else {
+                        // If Refresh API isn't available, we will explicitly reload the loader,
+                        // unless it's the initial load, in which case reloading is redundant, as
+                        // refresh did not happen.
+                        if (isSearchV2Enabled() && initialLoad) {
+                            return;
+                        }
+                        mActions.loadDocumentsForCurrentStack();
+                    }
+                });
     }
 
     private void getRootDocumentAndMaybeRefreshDocument() {

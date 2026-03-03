@@ -382,8 +382,7 @@ public final class MessageTest {
     public void testHeaderMessage_offlineAndLimitedWhenOffline_showsOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
-        // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
+        ((TestModel) mEnv.getModel()).setHasLimitedFunctionalityWhenOffline(true);
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -407,8 +406,7 @@ public final class MessageTest {
     public void testHeaderMessage_flagDisabled_doesNotShowOfflineBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
-        // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
+        ((TestModel) mEnv.getModel()).setHasLimitedFunctionalityWhenOffline(true);
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -422,8 +420,7 @@ public final class MessageTest {
     public void testHeaderMessage_onlineAndLimitedWhenOffline_doesNotShowBanner() {
         // Set online.
         ((TestEnvironment) mEnv).setIsOnline(true);
-        // A Cloud provider limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.getCloudRoot());
+        ((TestModel) mEnv.getModel()).setHasLimitedFunctionalityWhenOffline(true);
 
         mHeaderMessage.update(new Model.Update(null, false));
 
@@ -437,8 +434,7 @@ public final class MessageTest {
     public void testHeaderMessage_offlineAndNotLimitedWhenOffline_doesNotShowBanner() {
         // Set offline.
         ((TestEnvironment) mEnv).setIsOnline(false);
-        // Downloads doesn't have limited functionality when offline.
-        mEnv.getDisplayState().stack.changeRoot(TestProvidersAccess.DOWNLOADS);
+        ((TestModel) mEnv.getModel()).setHasLimitedFunctionalityWhenOffline(false);
 
         mHeaderMessage.update(new Model.Update(null, false));
 

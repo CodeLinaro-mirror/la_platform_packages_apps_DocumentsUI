@@ -33,6 +33,7 @@ import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.sorting.SortModel
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isUseLocalSearchProviderEnabled
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
@@ -51,7 +52,7 @@ const val EXTRA_URI = "uri"
  * and completed tasks. Completed tasks may have cursor null, if this is what a given content
  * provider returns.
  */
-private data class QueryResult(var cursor: Cursor? = null)
+internal data class QueryResult(var rootInfo: RootInfo, var cursor: Cursor? = null)
 
 /**
  * A specialization of the BaseFileLoader that searches the set of specified roots. To search the
@@ -128,6 +129,9 @@ class SearchLoader(
             latch.countDown()
             Trace.endSection()
         }
+
+        internal val queryResult: QueryResult
+            get() = QueryResult(this.rootInfo, cursor)
     }
 
     override fun createRootCursorWrapper(
@@ -258,7 +262,25 @@ class SearchLoader(
                 if (cursor != null) {
                     cursorList.add(cursor)
                 }
+                if (
+                    isSyncStateEnabled() &&
+                        data.rootInfo.hasLimitedFunctionalityWhenOffline() &&
+                        (cursor?.count ?: 0) > 0
+                ) {
+                    // When there are multiple roots in the result, we set this condition when there
+                    // is at least one file from a root that has limited functionality when offline.
+                    result.hasLimitedFunctionalityWhenOffline = true
+                }
             }
+        }
+        if (
+            isSyncStateEnabled() &&
+                queryResults.size == 1 &&
+                queryResults[0]?.rootInfo?.hasLimitedFunctionalityWhenOffline() ?: false
+        ) {
+            // When there is only one root in the result, we set this condition when that root has
+            // limited functionality when offline. There do not need to be any files present.
+            result.hasLimitedFunctionalityWhenOffline = true
         }
         debugLog("search complete with ${cursorList.size} cursors collected")
 
@@ -286,7 +308,7 @@ class SearchLoader(
      * task we check if we need to refresh the content.
      */
     private fun onTaskCompleted(searchTask: SearchTask) {
-        queryResults[searchTask.index] = QueryResult(searchTask.cursor)
+        queryResults[searchTask.index] = searchTask.queryResult
         maybeRefreshContent(searchTask.taskId)
     }
 

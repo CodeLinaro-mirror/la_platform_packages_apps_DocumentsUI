@@ -64,6 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Сведения о файле"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Показывать скрытые файлы"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Не показывать скрытые файлы"</string>
+    <!-- no translation found for menu_refresh (1724946627254685997) -->
+    <skip />
     <string name="option_show_summary_column" msgid="1008012395393952119">"Показать столбец описания"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Скрыть столбец описания"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Открыть в приложении \"<xliff:g id="SOURCE">%1$s</xliff:g>\""</string>
