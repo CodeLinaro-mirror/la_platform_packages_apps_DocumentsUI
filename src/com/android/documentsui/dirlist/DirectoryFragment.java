@@ -26,6 +26,7 @@ import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
+import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
@@ -1812,27 +1813,37 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         }
     }
 
-    public void renameDocuments(Selection selected) {
+    /**
+     * Displays the "Rename" dialog box for the first selected document. Does nothing if there are
+     * no selected documents. Does nothing if the selected document is a shortcut folder. Does
+     * nothing if the selected document does not support the rename operation.
+     */
+    public void renameDocuments(@NonNull Selection<String> selected) {
         Metrics.logUserAction(MetricConsts.USER_ACTION_RENAME);
 
         if (selected.isEmpty()) {
             return;
         }
 
-        // Batch renaming not supported
-        // Rename option is only available in menu when 1 document selected
-        assert selected.size() == 1;
-
         // Model must be accessed in UI thread, since underlying cursor is not threadsafe.
         List<DocumentInfo> docs = mModel.getDocuments(selected);
 
-        // Block the file operation if the selected document is a shortcut folder.
-        if (isHomeScreenFilesFlagEnabled() && mActions.blockOperationForShortcuts(
-                List.of(docs.get(0).derivedUri), docs.get(0).userId)) {
-            Log.e(TAG, "Failed to rename because a protected folder is selected.");
+        // Batch renaming is not supported. Only consider the first document.
+        final DocumentInfo doc = docs.get(0);
+
+        if (isUseMaterial3FlagEnabled() && !doc.isRenameSupported()) {
+            if (DEBUG) Log.d(TAG, "Cannot rename " + redact(doc) + ": Operation not supported");
             return;
         }
-        RenameDocumentFragment.show(getChildFragmentManager(), docs.get(0));
+
+        // Block the file operation if the selected document is a shortcut folder.
+        if (isHomeScreenFilesFlagEnabled()
+                && mActions.blockOperationForShortcuts(List.of(doc.derivedUri), doc.userId)) {
+            Log.e(TAG, "Cannot rename protected folder " + redact(doc));
+            return;
+        }
+
+        RenameDocumentFragment.show(getChildFragmentManager(), doc);
     }
 
     Model getModel() {
