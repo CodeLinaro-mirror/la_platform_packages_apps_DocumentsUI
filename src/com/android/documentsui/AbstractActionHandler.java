@@ -1310,7 +1310,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     private final class LoaderBindings implements LoaderCallbacks<DirectoryResult> {
 
         private ExecutorService mExecutorService = null;
-        private static final long MAX_SEARCH_TIME_MS = 3000;
+        private static final long MAX_SEARCH_TIME_MS = 500;
         private static final int MAX_RESULTS = 500;
 
         @NonNull
