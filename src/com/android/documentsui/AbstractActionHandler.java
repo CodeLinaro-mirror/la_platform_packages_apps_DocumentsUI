@@ -936,7 +936,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         throw new UnsupportedOperationException("createApprovedHandlerIntent not supported!");
     }
 
-    protected Selection<String> getSelectedOrFocused() {
+    public Selection<String> getSelectedOrFocused() {
         final MutableSelection<String> selection = this.getStableSelection();
         if (selection.isEmpty()) {
             String focusModelId = mFocusHandler.getFocusModelId();

@@ -150,6 +150,7 @@ public class SearchViewManager implements
             mSearchOptionsController = searchOptionsController;
             mLocationOption = SearchLocationOption.ROOT_FOLDER;
             if (mSearchOptionsController != null) {
+                mSearchOptionsController.restoreState(savedState);
                 mSearchOptionsController.setOptionChangeListener(this::onSearchOptionsChanged);
             }
         }
@@ -656,6 +657,9 @@ public class SearchViewManager implements
         }
         state.putString(Shared.EXTRA_QUERY, mCurrentSearch);
         mChipViewManager.onSaveInstanceState(state);
+        if (mSearchOptionsController != null) {
+            mSearchOptionsController.saveState(state);
+        }
     }
 
     /**
@@ -984,6 +988,9 @@ public class SearchViewManager implements
      * @return The subset of roots that can be searched.
      */
     private Collection<RootInfo> getAllSearchableRoots(Stream<RootInfo> roots) {
+        if (mSearchView == null) {
+            return Collections.emptyList();
+        }
         return roots.filter(
                         r ->
                                 !Providers.AUTHORITY_MEDIA.equals(r.authority)

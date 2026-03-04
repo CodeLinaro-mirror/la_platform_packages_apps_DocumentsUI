@@ -64,6 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"जानकारी पाएं"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"छिपी हुई फ़ाइलें दिखाएं"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"छिपी हुई फ़ाइलें न दिखाएं"</string>
+    <!-- no translation found for menu_refresh (1724946627254685997) -->
+    <skip />
     <string name="option_show_summary_column" msgid="1008012395393952119">"जानकारी वाला कॉलम दिखाएं"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"जानकारी वाला कॉलम न दिखाएं"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> में देखें"</string>
@@ -271,7 +273,7 @@
     <string name="compress_completed" msgid="6522047921428919799">"ज़िप किया गया"</string>
     <string name="extract_completed" msgid="8824595789915249972">"एक्सट्रैक्ट की गई फ़ाइल"</string>
     <string name="trash_completed" msgid="5527806383436622529">"ट्रैश में मौजूद है"</string>
-    <string name="restore_completed" msgid="4705296829051759784">"रीस्टोर किया गया"</string>
+    <string name="restore_completed" msgid="4705296829051759784">"वापस लाया गया"</string>
     <string name="copy_failed" msgid="3700193913993844675">"कॉपी नहीं किया जा सका"</string>
     <string name="move_failed" msgid="7692364307225994220">"ट्रांसफ़र नहीं किया जा सका"</string>
     <string name="delete_failed" msgid="2642684566325252513">"मिटाया नहीं जा सका"</string>

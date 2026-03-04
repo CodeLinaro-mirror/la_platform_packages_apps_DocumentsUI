@@ -64,6 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Xem thông tin"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Hiện các tệp bị ẩn"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Không hiện các tệp bị ẩn"</string>
+    <!-- no translation found for menu_refresh (1724946627254685997) -->
+    <skip />
     <string name="option_show_summary_column" msgid="1008012395393952119">"Hiện cột mô tả"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Không hiện cột mô tả"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Xem trong <xliff:g id="SOURCE">%1$s</xliff:g>"</string>

@@ -35,6 +35,7 @@ import com.android.documentsui.base.Lookup
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.SharedMinimal.redact
 import com.android.documentsui.sorting.SortModel
+import com.android.documentsui.util.FlagUtils.Companion.isSyncStateEnabled
 
 /**
  * A specialization of the BaseFileLoader that loads the children of a single folder. To list a
@@ -120,6 +121,10 @@ class FolderLoader(
 
         result.doc = listedDir ?: DocumentInfo()
         result.cursor = sortedCursor
+        if (isSyncStateEnabled()) {
+            // Set if this is a root that has limited functionality when offline.
+            result.hasLimitedFunctionalityWhenOffline = root.hasLimitedFunctionalityWhenOffline()
+        }
         return result
     }
 

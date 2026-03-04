@@ -1078,4 +1078,33 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Here we just check one dropdown for being hidden as they all work in sync.
         bots.main.assertLocationTriggerHidden();
     }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testDropdownOptionsPreserved() throws Exception {
+        bots.search.doSearch("file");
+        bots.search.clickDropdownTrigger(R.id.search_location_trigger);
+        bots.search.clickMenuItem(R.string.search_location_everywhere);
+        bots.search.clickDropdownTrigger(R.id.search_last_modified_trigger);
+        bots.search.clickMenuItem(R.string.search_last_modified_365_days);
+        bots.search.clickDropdownTrigger(R.id.search_file_type_trigger);
+        bots.search.clickMenuItem(R.string.chip_title_images);
+        device.waitForIdle();
+
+        // Relaunch the app, and expect query and dropdown option to keep their state.
+        mActivityScenario.recreate();
+        // Close the keyboard because it mgiht appear after activity recreation.
+        closeSoftKeyboard();
+        device.waitForIdle();
+        bots.search.assertInputEquals("file");
+        bots.search
+                .findDropdownTrigger(R.id.search_location_trigger)
+                .check(matches(withText(R.string.search_location_everywhere)));
+        bots.search
+                .findDropdownTrigger(R.id.search_last_modified_trigger)
+                .check(matches(withText(R.string.search_last_modified_365_days)));
+        bots.search
+                .findDropdownTrigger(R.id.search_file_type_trigger)
+                .check(matches(withText(R.string.chip_title_images)));
+    }
 }

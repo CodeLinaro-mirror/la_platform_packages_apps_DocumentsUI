@@ -41,6 +41,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.selection.Selection;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.ActionModeController;
@@ -541,6 +542,16 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                     {
                         final DirectoryFragment dir = getDirectoryFragment();
                         if (dir != null) dir.pasteFromClipboard();
+                    }
+                    return true;
+                case KeyEvent.KEYCODE_ENTER:
+                    {
+                        if (!isUseMaterial3FlagEnabled()) break;
+                        final Selection<String> selected = mInjector.actions.getSelectedOrFocused();
+                        if (selected.size() != 1) return true;
+                        final DirectoryFragment dir = getDirectoryFragment();
+                        if (dir == null) return true;
+                        dir.renameDocuments(selected);
                     }
                     return true;
             }
