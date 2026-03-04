@@ -531,10 +531,21 @@ abstract class Message {
             final CharSequence message;
             final @DrawableRes int drawableId;
             if (mEnv.isInSearchMode()) {
-                message = String.format(
-                        String.valueOf(
-                                mEnv.getContext().getResources().getText(R.string.no_results)),
-                        mEnv.getDisplayState().stack.getRoot().title);
+                if (isUseMaterial3FlagEnabled()) {
+                    message =
+                            String.valueOf(
+                                    mEnv.getContext()
+                                            .getResources()
+                                            .getText(getRes(R.string.no_results)));
+                } else {
+                    message =
+                            String.format(
+                                    String.valueOf(
+                                            mEnv.getContext()
+                                                    .getResources()
+                                                    .getText(R.string.no_results)),
+                                    mEnv.getDisplayState().stack.getRoot().title);
+                }
                 drawableId =
                         isUseMaterial3FlagEnabled()
                                 ? R.drawable.empty_search
