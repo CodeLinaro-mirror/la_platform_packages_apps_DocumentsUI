@@ -40,6 +40,7 @@ import android.view.View;
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler;
@@ -82,6 +83,7 @@ import com.android.documentsui.ui.MessageBuilder;
 import com.android.documentsui.util.VersionUtils;
 
 import kotlin.Unit;
+import kotlinx.coroutines.Dispatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,6 +155,21 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
+        ApprovedDocHandlers approvedDocHandlers =
+                new ViewModelProvider(
+                                this,
+                                new ViewModelProvider.Factory() {
+                                    @Override
+                                    public <T extends ViewModel> T create(Class<T> modelClass) {
+                                        return (T)
+                                                new ApprovedDocHandlers(
+                                                        FilesActivity.this.getApplicationContext(),
+                                                        mInjector,
+                                                        Dispatchers.getIO());
+                                    }
+                                })
+                        .get(ApprovedDocHandlers.class);
+
         mInjector.focusManager =
                 new FocusManager(
                         mInjector.features,
@@ -178,7 +195,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         mInjector.getModel()::getItemUri,
                         mInjector.getModel()::getItemCount,
                         mInjector,
-                        new ApprovedDocHandlers(this, getSelectedUser(), mInjector));
+                        approvedDocHandlers);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {

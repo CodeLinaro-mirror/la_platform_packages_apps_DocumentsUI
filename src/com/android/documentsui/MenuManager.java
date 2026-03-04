@@ -66,6 +66,7 @@ public abstract class MenuManager {
     protected final Context mContext;
     protected final Features mFeatures;
     protected final Injector<?> mInjector;
+    @Nullable
     protected final ApprovedDocHandlers mApprovedDocHandlers;
 
 
@@ -79,7 +80,7 @@ public abstract class MenuManager {
             Context context,
             Features features,
             Injector<?> injector,
-            ApprovedDocHandlers approvedDocHandlers) {
+            @Nullable ApprovedDocHandlers approvedDocHandlers) {
         mSearchManager = searchManager;
         mState = displayState;
         mDirDetails = dirDetails;
@@ -154,7 +155,9 @@ public abstract class MenuManager {
      * @param selection Details about the current selection of documents.
      */
     public void updateApprovedDocHandlers(Menu menu, SelectionDetails selection) {
-        mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selection);
+        if (mApprovedDocHandlers != null) {
+            mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selection);
+        }
     }
 
     /** @see BaseActivity#onPrepareOptionsMenu */
