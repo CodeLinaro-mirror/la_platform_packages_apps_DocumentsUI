@@ -28,11 +28,13 @@ import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
 import com.android.documentsui.R
+import com.android.documentsui.rules.InstantTaskExecutorRule
 import com.android.documentsui.rules.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -80,6 +82,7 @@ class ApprovedDocHandlersTest {
 
     @get:Rule val mockitoRule = MockitoJUnit.rule()
     @get:Rule val testCoroutineRule = MainDispatcherRule(testDispatcher)
+    @get:Rule val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {
@@ -440,5 +443,23 @@ class ApprovedDocHandlersTest {
 
         // Verify PM queried again
         verify(packageManager, times(2)).queryIntentActivities(any(Intent::class.java), anyInt())
+    }
+
+    @Test
+    fun testUpdateEvents_emitsOnCacheUpdate() = runTest {
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        var emitted = false
+        val observer = Observer<Unit> { emitted = true }
+
+        approvedDocHandlers.updateEvents.observeForever(observer)
+
+        // Trigger update
+        getApprovedDocHandlers(selectionDetails)
+
+        assertThat(emitted).isTrue()
+
+        approvedDocHandlers.updateEvents.removeObserver(observer)
     }
 }

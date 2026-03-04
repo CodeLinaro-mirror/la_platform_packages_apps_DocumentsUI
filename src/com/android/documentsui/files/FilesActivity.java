@@ -18,6 +18,7 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.OperationDialogFragment.DIALOG_TYPE_UNKNOWN;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isVisualSignalsFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
@@ -156,20 +157,34 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         DocumentClipper clipper = DocumentsApplication.getDocumentClipper(this);
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
-        ApprovedDocHandlers approvedDocHandlers =
-                new ViewModelProvider(
-                                this,
-                                new ViewModelProvider.Factory() {
-                                    @Override
-                                    public <T extends ViewModel> T create(Class<T> modelClass) {
-                                        return (T)
-                                                new ApprovedDocHandlers(
-                                                        FilesActivity.this.getApplicationContext(),
-                                                        mInjector,
-                                                        Dispatchers.getIO());
-                                    }
-                                })
-                        .get(ApprovedDocHandlers.class);
+        ApprovedDocHandlers approvedDocHandlers = null;
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            approvedDocHandlers =
+                    new ViewModelProvider(
+                            this,
+                            new ViewModelProvider.Factory() {
+                                @Override
+                                public <T extends ViewModel> T create(Class<T> modelClass) {
+                                    return (T)
+                                            new ApprovedDocHandlers(
+                                                    FilesActivity.this.getApplicationContext(),
+                                                    mInjector,
+                                                    Dispatchers.getIO());
+                                }
+                            })
+                    .get(ApprovedDocHandlers.class);
+
+            approvedDocHandlers.getUpdateEvents().observe(
+                    this,
+                    unit -> {
+                        if (mInjector.selectionBarController != null) {
+                            mInjector.selectionBarController.invalidate();
+                        }
+                        if (mInjector.menuManager != null) {
+                            mInjector.menuManager.updateContextMenu();
+                        }
+                    });
+        }
 
         mInjector.focusManager =
                 new FocusManager(
