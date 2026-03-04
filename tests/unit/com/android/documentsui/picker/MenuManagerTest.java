@@ -46,7 +46,6 @@ import com.android.documentsui.DirectoryResult;
 import com.android.documentsui.Injector;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.State;
@@ -170,7 +169,6 @@ public final class MenuManagerTest {
     private ActivityInfo activityInfo;
     private ResolveInfo resolveInfo = new ResolveInfo();
     private TestResources testResources;
-    private ApprovedDocHandlers mApprovedDocHandlers;
 
     @Before
     public void setUp() {
@@ -265,8 +263,6 @@ public final class MenuManagerTest {
         // Disable the part that kicks off the coroutine.
         doNothing().when(mSummaryProviderManager).start();
         mActivity.injector.setSummaryProviderManager(mSummaryProviderManager);
-        mApprovedDocHandlers =
-                new ApprovedDocHandlers(mActivity, UserId.DEFAULT_USER, mActivity.injector);
         mgr =
                 new MenuManager(
                         testSearchManager,
@@ -276,7 +272,7 @@ public final class MenuManagerTest {
                         mActivity,
                         mFeatures,
                         mActivity.injector,
-                        mApprovedDocHandlers);
+                        null);
         selectionDetails.size = 1;
         mFilesCount = 10;
 
