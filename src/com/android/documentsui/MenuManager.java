@@ -66,11 +66,15 @@ public abstract class MenuManager {
     protected final Context mContext;
     protected final Features mFeatures;
     protected final Injector<?> mInjector;
-    @Nullable
-    protected final ApprovedDocHandlers mApprovedDocHandlers;
-
+    @Nullable protected final ApprovedDocHandlers mApprovedDocHandlers;
 
     protected Menu mOptionMenu;
+
+    /** The current context menu. */
+    protected Menu mContextMenu;
+
+    /** The selection details for the current context menu. */
+    protected SelectionDetails mContextMenuDetails;
 
     public MenuManager(
             SearchViewManager searchManager,
@@ -241,6 +245,9 @@ public abstract class MenuManager {
      */
     public void inflateContextMenuForContainer(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
+        mContextMenu = menu;
+        mContextMenuDetails = selectionDetails;
+
         inflater.inflate(getRes(R.menu.container_context_menu), menu);
         if (isUseMaterial3FlagEnabled()) {
             MenuCompat.setGroupDividerEnabled(menu, true);
@@ -250,6 +257,9 @@ public abstract class MenuManager {
 
     public void inflateContextMenuForDocs(
             Menu menu, MenuInflater inflater, SelectionDetails selectionDetails) {
+        mContextMenu = menu;
+        mContextMenuDetails = selectionDetails;
+
         final boolean hasDir = selectionDetails.containsDirectories();
         final boolean hasFile = selectionDetails.containsFiles();
 
@@ -287,6 +297,19 @@ public abstract class MenuManager {
             MenuCompat.setGroupDividerEnabled(menu, true);
         }
         updateContextMenu(menu, selectionDetails);
+    }
+
+    /**
+     * Updates the current context menu.
+     *
+     * <p>This allows the caller to update the current context menu without knowing what is the
+     * current menu or what is the current selection.
+     */
+    public void updateContextMenu() {
+        if (mContextMenu == null || mContextMenuDetails == null) {
+            return;
+        }
+        updateContextMenu(mContextMenu, mContextMenuDetails);
     }
 
     /**

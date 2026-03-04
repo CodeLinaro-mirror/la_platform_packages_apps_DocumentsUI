@@ -28,7 +28,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
@@ -41,6 +43,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
@@ -116,6 +119,14 @@ class ApprovedDocHandlers(
      */
     private val cache = MutableStateFlow<Map<String, Map<ComponentName, HandlerStatus>>>(emptyMap())
 
+    private val _updateEvents = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+    /**
+     * A LiveData to emit update events. This is used to notify the UI to invalidate menus when the
+     * cache is updated.
+     */
+    val updateEvents: LiveData<Unit> = _updateEvents.asLiveData()
+
     /** A set of package names that are approved document handlers, loaded from resources. */
     private val approvedPackages: Set<String> = getPackageNames().toSet()
 
@@ -189,6 +200,7 @@ class ApprovedDocHandlers(
                 }
             }
         }
+        _updateEvents.tryEmit(Unit)
     }
 
     private fun updateCacheForPackage(
@@ -306,7 +318,6 @@ class ApprovedDocHandlers(
                 intent,
                 PackageManager.MATCH_ALL or PackageManager.GET_META_DATA,
             )
-
         return convertToHandlers(resolveInfos)
     }
 

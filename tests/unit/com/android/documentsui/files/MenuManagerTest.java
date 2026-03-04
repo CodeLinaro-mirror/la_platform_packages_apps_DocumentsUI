@@ -54,8 +54,11 @@ import android.platform.test.flag.junit.DeviceFlagsValueProvider;
 import android.provider.DocumentsContract.Document;
 import android.provider.DocumentsContract.Root;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.testing.TestLifecycleOwner;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
@@ -86,6 +89,7 @@ import com.android.documentsui.testing.TestResources;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
 
+import com.android.documentsui.rules.InstantTaskExecutorRule;
 import com.android.documentsui.rules.MainDispatcherRule;
 
 import kotlinx.coroutines.CoroutineScopeKt;
@@ -200,6 +204,7 @@ public final class MenuManagerTest {
     private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
     private TestActionHandler mActionHandler;
+    private TestLifecycleOwner mLifecycleOwner;
 
     private int mFilesCount;
 
@@ -208,6 +213,9 @@ public final class MenuManagerTest {
 
     @Rule
     public final MainDispatcherRule mainDispatcherRule = new MainDispatcherRule(testDispatcher);
+
+    @Rule
+    public final InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Rule public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
@@ -325,6 +333,8 @@ public final class MenuManagerTest {
         testResources.stringArrays.put(
                 R.array.approved_document_handlers, new String[] {"com.test.package"});
 
+        mLifecycleOwner = new TestLifecycleOwner(Lifecycle.State.STARTED, testDispatcher);
+
         activity.resources = testResources;
         activity.packageMgr = mPackageManager;
         mActionHandler = new TestActionHandler();
@@ -357,6 +367,17 @@ public final class MenuManagerTest {
                         this::getFilesCount,
                         activity.injector,
                         mApprovedDocHandlers);
+
+        mApprovedDocHandlers.getUpdateEvents().observe(
+                mLifecycleOwner,
+                unit -> {
+                    if (mgr != null) {
+                        mgr.updateContextMenu();
+                        if (selectionDetails.size() > 0) {
+                            mgr.updateActionMenu(testMenu, selectionDetails);
+                        }
+                    }
+                });
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -1912,9 +1933,6 @@ public final class MenuManagerTest {
 
         mgr.updateContextMenu(testMenu, selectionDetails);
         testScheduler.advanceUntilIdle();
-        // Call twice to trigger the async loading and then get the result from the cache
-        // This will be removed once the updateContextMenu listens to the coroutine change.
-        mgr.updateContextMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is enabled and visible.
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
@@ -1930,9 +1948,6 @@ public final class MenuManagerTest {
 
         mgr.updateContextMenu(testMenu, selectionDetails);
         testScheduler.advanceUntilIdle();
-        // Call twice to trigger the async loading and then get the result from the cache
-        // This will be removed once the updateContextMenu listens to the coroutine change.
-        mgr.updateContextMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is not added.
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
@@ -1949,9 +1964,6 @@ public final class MenuManagerTest {
 
         mgr.updateActionMenu(testMenu, selectionDetails);
         testScheduler.advanceUntilIdle();
-        // Call twice to trigger the async loading and then get the result from the cache
-        // This will be removed once the updateActionMenu listens to the coroutine change.
-        mgr.updateActionMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is enabled and visible.
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
@@ -1969,9 +1981,6 @@ public final class MenuManagerTest {
 
         mgr.updateActionMenu(testMenu, selectionDetails);
         testScheduler.advanceUntilIdle();
-        // Call twice to trigger the async loading and then get the result from the cache
-        // This will be removed once the updateActionMenu listens to the coroutine change.
-        mgr.updateActionMenu(testMenu, selectionDetails);
 
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
         assertNotNull("Approved document handler menu item should be added.", item);
@@ -1994,9 +2003,6 @@ public final class MenuManagerTest {
 
         mgr.updateContextMenu(testMenu, selectionDetails);
         testScheduler.advanceUntilIdle();
-        // Call twice to trigger the async loading and then get the result from the cache
-        // This will be removed once the updateContextMenu listens to the coroutine change.
-        mgr.updateContextMenu(testMenu, selectionDetails);
 
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
         assertNotNull("Approved document handler menu item should be added.", item);
@@ -2017,9 +2023,6 @@ public final class MenuManagerTest {
 
         mgr.updateActionMenu(testMenu, selectionDetails);
         testScheduler.advanceUntilIdle();
-        // Call twice to trigger the async loading and then get the result from the cache
-        // This will be removed once the updateActionMenu listens to the coroutine change.
-        mgr.updateActionMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is not added.
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
