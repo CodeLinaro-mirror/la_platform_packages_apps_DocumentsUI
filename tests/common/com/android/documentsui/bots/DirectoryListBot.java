@@ -418,7 +418,7 @@ public class DirectoryListBot extends Bots.BaseBot {
         // Long finger-click (instead of long mouse-click and instead of regular (not-long)
         // mouse-click) to toggle (instead of set) selection. Toggling (instead of setting) does
         // not change the selectedness of other documents.
-        longClickWithToolTypeFinger(findSelectionHotspot(label));
+        longClickWithToolTypeFinger(findSelectionHotspot(label).getVisibleCenter());
 
         // Wait until selection is fully done: onSingleTapConfirmed, not just onSingleTapUp. This
         // also avoids a future click being registered as double clicking.
@@ -436,16 +436,27 @@ public class DirectoryListBot extends Bots.BaseBot {
 
     /** Select the first document that has a selectable region in the list or grid view. */
     public void selectFirstDocument() throws UiObjectNotFoundException {
+        // There must be at least one document to proceed to selection.
+        if (!mDevice.wait(Until.hasObject(By.res(mItemRootId)), mTimeout)) {
+            throw new UiObjectNotFoundException("No documents found to select");
+        }
+
         final BySelector list = By.res(mDirListId);
         final BySelector selectionRegionSelector = getSelectionRegionSelector();
-        longClickWithToolTypeFinger(mDevice.findObject(list).findObject(selectionRegionSelector));
+        longClickWithToolTypeFinger(
+                mDevice.findObject(list).findObject(selectionRegionSelector).getVisibleCenter());
         assertSelection(1);
     }
 
-    private void longClickWithToolTypeFinger(UiObject2 uiObject) {
+    private void longClickWithToolTypeFinger(Point center) {
         int toolType = Configurator.getInstance().getToolType();
         Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
-        uiObject.longClick();
+
+        // Use a stationary drag with 0 step to perform a long click.
+        // This bypasses GestureController and uses the stable InteractionController path.
+        // Attempting to use longClick directly will result in scrolling observed on virtual
+        // devices causing test flakiness.
+        mDevice.drag(center.x, center.y, center.x, center.y, 0);
         Configurator.getInstance().setToolType(toolType);
     }
 
