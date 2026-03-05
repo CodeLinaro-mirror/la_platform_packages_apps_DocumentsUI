@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"အချက်အလက် ရယူရန်"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ဝှက်ထားသည့်ဖိုင်များ ပြရန်"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ဝှက်ထားသည့်ဖိုင်များ မပြရန်"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"ပြန်လည်စတင်ရန်"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"ရှင်းလင်းချက်ကော်လံ ပြပါ"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"ရှင်းလင်းချက်ကော်လံ မပြပါနှင့်"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> တွင် ကြည့်ရန်"</string>
