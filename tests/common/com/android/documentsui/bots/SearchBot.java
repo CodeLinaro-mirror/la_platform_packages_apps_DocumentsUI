@@ -21,13 +21,17 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static androidx.test.espresso.matcher.ViewMatchers.doesNotHaveFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
 import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withResourceName;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.util.Material3Config.getRes;
@@ -75,7 +79,7 @@ public class SearchBot extends Bots.BaseBot {
             withId(R.id.option_menu_search),
             anyOf(isClickable(), hasDescendant(isClickable())));
 
-    public SearchBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+    public SearchBot(UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
     }
 
@@ -176,6 +180,21 @@ public class SearchBot extends Bots.BaseBot {
             assertFalse(
                     "Search fragment should be dismissed.",
                     findSearchHistoryView().exists());
+        }
+    }
+
+    /**
+     * Checks that search is in what we consider closed state. This handles both the docked and
+     * undocked cases.
+     */
+    public void assertSearchIsClosed() {
+        if (showsDockedSearch()) {
+            // We never "close" the docked search, but the query must be empty and not focused.
+            onView(withId(R.id.docked_search_text))
+                    .check(matches(allOf(withText(""), doesNotHaveFocus())));
+        } else {
+            // When search is not docked, the edit field must be hidden.
+            onView(withResourceName(mTargetPackage + ":id/search_src_text")).check(doesNotExist());
         }
     }
 

@@ -117,7 +117,12 @@ public class GlobalSearchLoader extends MultiRootDocumentsLoader {
 
         @Override
         protected RootCursorWrapper generateResultCursor(RootInfo rootInfo, Cursor oriCursor) {
-            return new RootCursorWrapper(rootInfo.userId, authority, rootInfo.rootId, oriCursor,
+            return new RootCursorWrapper(
+                    rootInfo.userId,
+                    authority,
+                    rootInfo.rootId,
+                    rootInfo.hasLimitedFunctionalityWhenOffline(),
+                    oriCursor,
                     -1 /* maxCount */);
         }
     }

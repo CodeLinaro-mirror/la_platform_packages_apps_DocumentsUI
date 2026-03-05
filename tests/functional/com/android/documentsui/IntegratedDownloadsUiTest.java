@@ -29,7 +29,6 @@ import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 
 import org.junit.Ignore;
@@ -50,7 +49,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         // We'll still see an entry in the downloads UI with a "Queued" label.
         dm.enqueue(new Request(Uri.parse("http://hammychamp.toodles")));
 
-        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        switchRoot("Downloads");
         bots.directory.assertDocumentsVisible("Queued");
     }
 
@@ -62,7 +61,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         // This downloads fails! But it'll still show up.
         dm.enqueue(new Request(Uri.parse("http://www.google.com/hamfancy")));
 
-        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        switchRoot("Downloads");
         UiObject doc = bots.directory.findDocument("Unsuccessful");
         if (!doc.waitForExists(TIMEOUT)) {
             throw new UiObjectNotFoundException("Unsuccessful document not found after timeout");

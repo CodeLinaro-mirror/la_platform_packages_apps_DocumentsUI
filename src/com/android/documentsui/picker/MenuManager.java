@@ -275,4 +275,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Menus.setEnabledAndVisible(it, false);
         }
     }
+
+    @Override
+    public void updateApprovedDocHandlers(Menu menu, SelectionDetails selection) {
+        // We don't support approved doc handlers inside the picker.
+    }
 }

@@ -34,6 +34,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.graphics.drawable.Drawable;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.view.DragEvent;
@@ -71,6 +72,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
@@ -216,5 +218,21 @@ public class DragHostTest {
         assertFalse(dragHost.handleDropEvent(view, dropEvent));
         mDragAndDropManager.dropOnDocumentHandler.assertNotCalled();
         verifyNoMoreInteractions(mMockRequestPermissionsHandler);
+    }
+
+    @Test
+    public void testDragHoverHighlightsDirListBorder() {
+        final Drawable mockDrawable = Mockito.mock(Drawable.class);
+        final View view = Views.createTestView();
+        doReturn(getRes(R.id.dir_list)).when(view).getId();
+        doReturn(mockDrawable).when(view).getBackground();
+
+        // Highlight the container.
+        dragHost.setDropTargetHighlight(view, true);
+        verify(view).setBackgroundResource(R.drawable.dir_list_drag_hover_background);
+
+        // Turn highlighting off and revert back to regular list directory.
+        dragHost.setDropTargetHighlight(view, false);
+        verify(view).setBackground(mockDrawable);
     }
 }

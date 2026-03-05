@@ -21,7 +21,6 @@ import android.platform.test.annotations.EnableFlags
 import androidx.test.filters.LargeTest
 import com.android.documentsui.StubProvider.ROOT_0_ID
 import com.android.documentsui.StubProvider.ROOT_1_ID
-import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -50,7 +49,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.gesture.dragAndDrop(src.bounds, dst.bounds)
 
         // Go to the new root and assert the file was copied.
-        openRoot(context!!, ROOT_1_ID, activityLayoutId)
+        switchRoot(ROOT_1_ID)
         bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1)
     }
 
@@ -72,7 +71,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertSelection(1)
 
         // Go to the new root and assert the file was copied.
-        openRoot(context!!, ROOT_1_ID, activityLayoutId)
+        switchRoot(ROOT_1_ID)
         bots.directory.assertDocumentsVisible(TestFilesRule.FILE_NAME_1)
     }
 
@@ -90,7 +89,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.gesture.dragAndDrop(src.bounds, dst.bounds)
 
         // Go to the new root and assert the file was not copied.
-        openRoot(context!!, "Broken Root Doc", activityLayoutId)
+        switchRoot("Broken Root Doc")
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
     }
 
@@ -112,7 +111,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
         bots.directory.assertSelection(1)
 
         // Go to the new root and assert the file was not copied.
-        openRoot(context!!, "Broken Root Doc", activityLayoutId)
+        switchRoot("Broken Root Doc")
         bots.directory.assertDocumentsAbsent(TestFilesRule.FILE_NAME_1)
     }
 
@@ -133,7 +132,7 @@ class DragDropUiTest : ActivityTestJunit4<FilesActivity>() {
 
         // There is a chance that the drag-and-drop of unselected file opens the destination
         // directory, so we need to re-open the root.
-        openRoot(context!!, ROOT_0_ID, activityLayoutId)
+        switchRoot(ROOT_0_ID)
 
         // The file should be moved to the destination directory, so it doesn't exist in the
         // original directory.

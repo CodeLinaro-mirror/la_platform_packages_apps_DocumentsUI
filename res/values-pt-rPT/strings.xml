@@ -246,11 +246,8 @@
       <item quantity="one">Este ficheiro foi convertido para outro formato: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Este ficheiro foi convertido noutro formato:}many{Estes ficheiros foram convertidos noutro formato:}other{Estes ficheiros foram convertidos noutro formato:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="many">Copiou <xliff:g id="COUNT_1">%1$d</xliff:g> itens para a área de transferência.</item>
-      <item quantity="other">Copiou <xliff:g id="COUNT_1">%1$d</xliff:g> itens para a área de transferência.</item>
-      <item quantity="one">Copiou <xliff:g id="COUNT_0">%1$d</xliff:g> item para a área de transferência.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Só de leitura"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Pode ver estes ficheiros, mas algumas ações não são compatíveis"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Este arquivo está numa localização só de leitura e não pode ser extraído aqui."</string>

@@ -29,12 +29,10 @@ import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.N
 import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.OFFLINE
 import com.android.documentsui.ActivityConfigTest.ParameterizedTests.Companion.SYNC_UNAVAILABLE_LOCALLY
 import com.android.documentsui.base.DocumentInfo
-import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.State
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestEnv
-import com.android.documentsui.testing.TestProvidersAccess
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -46,15 +44,12 @@ import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 
-// A rootInfoProvider is required instead of just a rootInfo because getCloudRoot() relies on the
-// flags being properly initialised. If a rootInfo was set in data() then the flags might not be
-// initialised in time.
 data class ActivityConfigTestParams(
     val testName: String,
-    val rootInfoProvider: () -> RootInfo,
     val mimeType: String,
     val docFlags: Int,
     val syncStateFlags: Int?,
+    val rootHasLimitedFunctionalityWhenOffline: Boolean,
     val isOnline: Boolean,
     val expectedResult: Boolean,
 ) {
@@ -87,12 +82,12 @@ class ActivityConfigTest {
         @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
         @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
         fun testIsDocumentEnabled() {
-            val rootInfo = testParams.rootInfoProvider()
-            state.stack.changeRoot(rootInfo)
             var doc = DocumentInfo()
             doc.mimeType = testParams.mimeType
             doc.flags = testParams.docFlags
             doc.syncStateFlags = testParams.syncStateFlags
+            doc.rootHasLimitedFunctionalityWhenOffline =
+                testParams.rootHasLimitedFunctionalityWhenOffline
             assertEquals(
                 testParams.expectedResult,
                 config.isDocumentEnabled(doc, state, testParams.isOnline),
@@ -108,71 +103,73 @@ class ActivityConfigTest {
             private const val SYNC_AVAILABLE_LOCALLY: Int =
                 Document.SYNC_STATE_FLAG_AVAILABLE_LOCALLY
             const val SYNC_UNAVAILABLE_LOCALLY = 0
+            private const val LIMITED_FUNCTIONALITY_OFFLINE = true
+            private const val NOT_LIMITED_FUNCTIONALITY_OFFLINE = false
 
             @JvmStatic
             @Parameters(name = "{0}")
             fun data(): Collection<ActivityConfigTestParams> {
                 return listOf(
                     ActivityConfigTestParams(
-                        "cloudRoot_unavailableLocally_offline",
-                        { TestProvidersAccess.getCloudRoot() },
+                        "limitedFunctionality_unavailableLocally_offline",
                         "image/png",
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
+                        LIMITED_FUNCTIONALITY_OFFLINE,
                         OFFLINE,
                         false,
                     ),
                     ActivityConfigTestParams(
-                        "cloudRoot_online",
-                        { TestProvidersAccess.getCloudRoot() },
+                        "assertObjectsEventuallyHiddenlimitedFunctionality_OnDocumentonline",
                         "image/png",
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
+                        LIMITED_FUNCTIONALITY_OFFLINE,
                         ONLINE,
                         true,
                     ),
                     ActivityConfigTestParams(
-                        "cloudRoot_virtualDocument",
-                        { TestProvidersAccess.getCloudRoot() },
+                        "limitedFunctionality_virtualDocument",
                         "image/png",
                         Document.FLAG_VIRTUAL_DOCUMENT,
                         SYNC_UNAVAILABLE_LOCALLY,
+                        LIMITED_FUNCTIONALITY_OFFLINE,
                         OFFLINE,
                         true,
                     ),
                     ActivityConfigTestParams(
-                        "cloudRoot_folder",
-                        { TestProvidersAccess.getCloudRoot() },
+                        "limitedFunctionality_folder",
                         Document.MIME_TYPE_DIR,
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
+                        LIMITED_FUNCTIONALITY_OFFLINE,
                         OFFLINE,
                         true,
                     ),
                     ActivityConfigTestParams(
-                        "notCloudRoot",
-                        { TestProvidersAccess.DOWNLOADS },
+                        "notLimitedFunctionality",
                         "image/png",
                         NO_FLAGS,
                         SYNC_UNAVAILABLE_LOCALLY,
+                        NOT_LIMITED_FUNCTIONALITY_OFFLINE,
                         OFFLINE,
                         true,
                     ),
                     ActivityConfigTestParams(
-                        "cloudRoot_noSyncState",
-                        { TestProvidersAccess.getCloudRoot() },
+                        "limitedFunctionality_noSyncState",
                         "image/png",
                         NO_FLAGS,
                         NO_SYNC_STATE,
+                        LIMITED_FUNCTIONALITY_OFFLINE,
                         OFFLINE,
                         true,
                     ),
                     ActivityConfigTestParams(
-                        "cloudRoot_availableLocally",
-                        { TestProvidersAccess.getCloudRoot() },
+                        "limitedFunctionality_availableLocally",
                         "image/png",
                         NO_FLAGS,
                         SYNC_AVAILABLE_LOCALLY,
+                        LIMITED_FUNCTIONALITY_OFFLINE,
                         OFFLINE,
                         true,
                     ),
@@ -202,11 +199,11 @@ class ActivityConfigTest {
         @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
         @DisableFlags(Flags.FLAG_CLOUD_FEATURES)
         fun testIsDocumentEnabled_featureFlagDisabled() {
-            state.stack.changeRoot(TestProvidersAccess.getCloudRoot())
             var doc = DocumentInfo()
             doc.mimeType = "image/png"
             doc.flags = 0
             doc.syncStateFlags = 0
+            doc.rootHasLimitedFunctionalityWhenOffline = true
             assertTrue(config.isDocumentEnabled(doc, state, false))
         }
 
@@ -215,11 +212,11 @@ class ActivityConfigTest {
         @RequiresFlagsEnabled(android.provider.Flags.FLAG_ENABLE_SYNC_STATE)
         @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
         fun testIsContentAvailable_folder() {
-            state.stack.changeRoot(TestProvidersAccess.getCloudRoot())
             var doc = DocumentInfo()
             doc.mimeType = Document.MIME_TYPE_DIR
             doc.flags = NO_FLAGS
             doc.syncStateFlags = SYNC_UNAVAILABLE_LOCALLY
+            doc.rootHasLimitedFunctionalityWhenOffline = true
             assertFalse(config.isContentAvailable(doc, state, OFFLINE))
         }
     }

@@ -235,10 +235,8 @@
       <item quantity="one">Dit bestand is geconverteerd naar een andere indeling: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Dit bestand is geconverteerd naar een andere indeling:}other{Deze bestanden zijn geconverteerd naar een andere indeling:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> items gekopieerd naar klembord.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> item gekopieerd naar klembord.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Alleen-lezen"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Je kunt deze bestanden bekijken, maar sommige acties worden niet ondersteund"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Dit archief bevindt zich op een locatie die alleen-lezen is en kan hier niet worden uitgepakt."</string>

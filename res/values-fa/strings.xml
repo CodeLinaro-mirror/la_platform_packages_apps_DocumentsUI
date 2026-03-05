@@ -235,10 +235,8 @@
       <item quantity="other">قالب این فایل‌ها تغییر داده شد: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{قالب این فایل تغییر داده شد:}one{قالب این فایل تغییر داده شد:}other{قالب این فایل‌ها تغییر داده شد:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g>مورد در بریده‌دان کپی شد.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"فقط-خواندنی"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"شما میتوانید این فایل‌ها را مشاهده کنید اما برخی‌از اقدامات پشتیبانی نمی‌شوند"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"این بایگانی در مکانی فقط خواندنی است و نمی‌توان آن را در اینجا استخراج کرد."</string>

@@ -27,7 +27,6 @@ import com.android.documentsui.R
 import com.android.documentsui.TestSummaryProvider
 import com.android.documentsui.base.Providers.ROOT_ID_DEVICE
 import com.android.documentsui.base.UserId
-import com.android.documentsui.bots.openRoot
 import com.android.documentsui.files.FilesActivity
 import com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
@@ -112,7 +111,7 @@ class FilesSummaryUiTest : ActivityTestJunit4<FilesActivity>() {
             prepareProviderAndFile()
 
             // Navigate to the Download folder in the primary root.
-            openRoot(context!!, primaryRootTitle, activityLayoutId)
+            switchRoot(primaryRootTitle)
             bots.directory.openDocument("Download")
 
             // Enable the summary column.

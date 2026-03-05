@@ -235,10 +235,8 @@
       <item quantity="one">已将以下文件转换成其他格式：<xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{以下文件已转换为其他格式：}other{以下文件已转换为其他格式：}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">已将 <xliff:g id="COUNT_1">%1$d</xliff:g> 个文件复制到剪贴板。</item>
-      <item quantity="one">已将 <xliff:g id="COUNT_0">%1$d</xliff:g> 个文件复制到剪贴板。</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"只读"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"您可以查看这些文件，但无法执行某些操作"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"此归档文件位于只读位置，无法解压缩到此处。"</string>

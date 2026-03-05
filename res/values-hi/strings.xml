@@ -235,10 +235,8 @@
       <item quantity="other">ये फ़ाइलें किसी और फ़ॉर्मेट में बदल दी गई थीं: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{यह फ़ाइल दूसरे फ़ॉर्मैट में कन्वर्ट की गई:}one{यह फ़ाइल दूसरे फ़ॉर्मैट में कन्वर्ट की गई:}other{ये फ़ाइलें दूसरे फ़ॉर्मैट में कन्वर्ट की गईं:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> आइटम क्‍लिपबोर्ड पर कॉपी किए गए.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> आइटम क्‍लिपबोर्ड पर कॉपी किए गए.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"सिर्फ़ पढ़ने के लिए"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"इन फ़ाइलों को देखा जा सकता है, लेकिन इनमें कुछ कार्रवाइयां नहीं की जा सकतीं"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"यह संग्रह, रीड ओनली लोकेशन है. इसलिए, इसे यहां एक्सट्रैक्ट नहीं किया जा सकता."</string>

@@ -257,12 +257,8 @@
       <item quantity="other">Te datoteke so bile pretvorjene v drugo obliko zapisa: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Ta datoteka je bila pretvorjena v drugo obliko zapisa:}one{Te datoteke so bile pretvorjene v drugo obliko zapisa:}two{Te datoteke so bile pretvorjene v drugo obliko zapisa:}few{Te datoteke so bile pretvorjene v drugo obliko zapisa:}other{Te datoteke so bile pretvorjene v drugo obliko zapisa:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> element je bil kopiran v odložišče.</item>
-      <item quantity="two"><xliff:g id="COUNT_1">%1$d</xliff:g> elementa sta bila kopirana v odložišče.</item>
-      <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> elementi so bili kopirani v odložišče.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementov je bilo kopiranih v odložišče.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Samo za branje"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Te datoteke si lahko ogledate, vendar nekatera dejanja niso podprta"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Ta arhivska datoteka je na lokaciji, ki je samo za branje, zato je ni mogoče ekstrahirati tukaj."</string>

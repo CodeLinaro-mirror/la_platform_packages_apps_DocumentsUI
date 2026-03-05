@@ -232,6 +232,8 @@ public class RenameDocumentFragment extends DocumentsUIDialogFragment {
             mRenameInputWrapper.setError(getContext().getString(getRes(R.string.name_conflict)));
             selectFileName(mEditText);
         } else {
+            // Trim trailing spaces if there are any.
+            newDisplayName = newDisplayName.trim();
             new RenameDocumentsTask(activity, newDisplayName).execute(mDocument);
             if (mDialog != null) {
                 mDialog.dismiss();

@@ -235,10 +235,8 @@
       <item quantity="one">See fail teisendati muusse vormingusse: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{See fail konverditi teise vormingusse:}other{Need failid konverditi teise vormingusse:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> üksust kopeeriti lõikelauale.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> üksus kopeeriti lõikelauale.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Kirjutuskaitstud"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Saate neid faile vaadata, kuid mõni toiming pole toetatud"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"See arhiiv asub kirjutuskaitstud asukohas ja seda ei saa siin ekstraktida."</string>

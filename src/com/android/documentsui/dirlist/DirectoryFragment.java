@@ -26,7 +26,6 @@ import static com.android.documentsui.ActionHandler.VIEW_TYPE_REGULAR;
 import static com.android.documentsui.base.DocumentInfo.getCursorString;
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
 import static com.android.documentsui.base.SharedMinimal.VERBOSE;
-import static com.android.documentsui.base.SharedMinimal.redact;
 import static com.android.documentsui.base.State.ACTION_BROWSE;
 import static com.android.documentsui.base.State.MODE_GRID;
 import static com.android.documentsui.base.State.MODE_LIST;
@@ -87,6 +86,7 @@ import android.widget.ImageView;
 import androidx.annotation.DimenRes;
 import androidx.annotation.FractionRes;
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
@@ -266,6 +266,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
     private Runnable mProviderTestRunnable;
 
     private @Nullable PathExtractor mPathExtractor;
+    private @Nullable String mSelectedItemKey = null;
 
     // getActivity() from Fragment is final and can't be override/mock in the test, so we extract
     // all getActivity() to this method so we can't override it in the unit test.
@@ -962,7 +963,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (!(mActivity.isSearching() || mActivity.isInRecents())) {
             // Just in case, since breadcrumb V2 is only visible while searching or in recents, and
             // we are neither searching nor in recent, hide the breadcrumb v2.
-            hideSearchResultBreadcrumb(controller);
+            setSearchResultBreadcrumbHidden(controller);
             return;
         }
         String selectedId = null;
@@ -972,14 +973,22 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             }
         }
         if (selectedId == null) {
-            hideSearchResultBreadcrumb(controller);
+            setSearchResultBreadcrumbHidden(controller);
             return;
         }
         DocumentInfo info = mModel.getDocument(selectedId);
         if (info == null) {
-            hideSearchResultBreadcrumb(controller);
+            setSearchResultBreadcrumbHidden(controller);
             return;
         }
+        if (selectedId.equals(mSelectedItemKey)) {
+            if (DEBUG) {
+                Log.d(TAG, "Skipping as selected ID key equal to the shown item key");
+            }
+            // Already in progress; skip.
+            return;
+        }
+        mSelectedItemKey = selectedId;
         ProviderExecutor.forAuthority(info.authority)
                 .execute(
                         () -> {
@@ -987,8 +996,10 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                                 DocumentStack stack = mPathExtractor.getDocumentStack(info);
                                 mHandler.post(() -> showSearchResultBreadcrumb(controller, stack));
                             } catch (Exception e) {
-                                Log.e(TAG, "Cannot get stack for " + redact(info), e);
-                                mHandler.post(() -> hideSearchResultBreadcrumb(controller));
+                                if (DEBUG) {
+                                    Log.d(TAG, "Failed to get stack for " + info, e);
+                                }
+                                setSearchResultBreadcrumbHidden(controller);
                             }
                         });
     }
@@ -1017,6 +1028,20 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                     mState.stack.reset(stack);
                     mActivity.getNavigator().forceDirectoryToCurrentStack();
                 });
+    }
+
+    /**
+     * Hides the search result breadcrumb, using the handler. This is done so that the sequence of
+     * hide/show search breadcrumb calls results in the correct state (hidden or visible) of the
+     * breadcrumb.
+     *
+     * @param controller The controller that manages breadcrumb visibility.
+     */
+    public void setSearchResultBreadcrumbHidden(@NonNull BreadcrumbController controller) {
+        if (isSearchV2Enabled()) {
+            mSelectedItemKey = null;
+            mHandler.post(() -> hideSearchResultBreadcrumb(controller));
+        }
     }
 
     /**
@@ -1385,7 +1410,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                 // viewing document opens the directory path in another breadcrumb.
                 BreadcrumbController controller = mInjector.getBreadcrumbController();
                 if (controller != null) {
-                    hideSearchResultBreadcrumb(controller);
+                    setSearchResultBreadcrumbHidden(controller);
                 }
             }
             return true;
