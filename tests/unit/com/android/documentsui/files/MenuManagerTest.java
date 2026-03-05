@@ -30,10 +30,9 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import static kotlinx.coroutines.test.TestCoroutineDispatchersKt.StandardTestDispatcher;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -554,7 +553,7 @@ public final class MenuManagerTest {
 
         mgr.updateActionMenu(testMenu, selectionDetails);
 
-        // These trash items should be be disabled but remain visible as the actions are only
+        // These trash items should be disabled but remain visible as the actions are only
         // temporarily unavailable.
         mActionModeTrash.assertDisabledAndVisible();
         mActionModeRestoreFromTrash.assertDisabledAndVisible();
@@ -1271,20 +1270,21 @@ public final class MenuManagerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @RequiresFlagsEnabled({FLAG_ENABLE_DOCUMENTS_TRASH_API, FLAG_ENABLE_DOCUMENTS_TRASH_API})
     @EnableFlags({
         Flags.FLAG_CLOUD_FEATURES,
         Flags.FLAG_USE_MATERIAL3,
         Flags.FLAG_ENABLE_TRASH_FLOW_RO
     })
-    @SdkSuppress(minSdkVersion = 37)
     public void testContextMenu_containsDocumentsWithUnavailableContent_trash() {
         selectionDetails.containsDocumentsWithUnavailableContent = true;
         selectionDetails.canTrash = true;
+        selectionDetails.canRestore = true;
 
         mgr.updateContextMenu(testMenu, selectionDetails);
 
-        // These trash items should be be disabled but remain visible as the actions are only
+        // These trash items should be disabled but remain visible as the actions are only
         // temporarily unavailable.
         mDirMoveToTrash.assertDisabledAndVisible();
         mDirRestoreFromTrash.assertDisabledAndVisible();
