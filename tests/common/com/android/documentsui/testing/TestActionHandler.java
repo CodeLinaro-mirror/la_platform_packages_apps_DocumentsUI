@@ -16,6 +16,7 @@
 
 package com.android.documentsui.testing;
 
+import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
 import static org.mockito.Mockito.mock;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
@@ -48,10 +50,6 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     public boolean returnNullApprovedHandlerIntent = false;
 
     public DocumentInfo nextRootDocument;
-
-    // TODO(b/464388012): Reference actual intent category when it's available.
-    public static final String APPROVED_HANDLER_CATEGORY =
-            "android.provider.category.APPROVED_DOCUMENT_HANDLER";
 
     public TestActionHandler() {
         this(TestEnv.create());
@@ -128,7 +126,11 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
         final Intent intent = new Intent();
         intent.setComponent(handler);
-        intent.addCategory(APPROVED_HANDLER_CATEGORY);
+        // TODO(b/490258918): After API 37 finalisation guard with the SDK version instead of the
+        // useApprovedDocumentHandler flag in DocsUI
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER);
+        }
         return intent;
     }
 }

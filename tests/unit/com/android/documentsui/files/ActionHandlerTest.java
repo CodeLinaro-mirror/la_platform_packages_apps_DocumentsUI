@@ -1161,6 +1161,8 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
     public void testCreateApprovedHandlerIntent_singleFile() {
         mEnv.selectionMgr.clearSelection();
         mEnv.selectDocument(TestEnv.FILE_PNG);
@@ -1170,11 +1172,12 @@ public class ActionHandlerTest {
         assertEquals(Intent.ACTION_SEND, intent.getAction());
         assertEquals(TestEnv.FILE_PNG.getDocumentUri(),
                 intent.getParcelableExtra(Intent.EXTRA_STREAM));
-        // TODO: b/464388012 - Reference actual intent category when it's available.
-        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+        assertTrue(intent.hasCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER));
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
     public void testCreateApprovedHandlerIntent_multipleFiles() {
         mEnv.selectionMgr.clearSelection();
         mEnv.selectDocument(TestEnv.FILE_PNG);
@@ -1187,11 +1190,12 @@ public class ActionHandlerTest {
         assertEquals(2, uris.size());
         assertTrue(uris.contains(TestEnv.FILE_PNG.getDocumentUri()));
         assertTrue(uris.contains(TestEnv.FILE_PDF.getDocumentUri()));
-        // TODO: b/464388012 - Reference actual intent category when it's available.
-        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+        assertTrue(intent.hasCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER));
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
     public void testCreateApprovedHandlerIntent_noSharableFiles() {
         mEnv.selectionMgr.clearSelection();
         mEnv.selectDocument(TestEnv.FILE_PARTIAL);
@@ -1200,6 +1204,8 @@ public class ActionHandlerTest {
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
     public void testCreateApprovedHandlerIntent_virtualFile() {
         mFeatures.virtualFilesSharing = true;
         mEnv.selectionMgr.clearSelection();
@@ -1211,11 +1217,11 @@ public class ActionHandlerTest {
         assertEquals(TestEnv.FILE_VIRTUAL.getDocumentUri(),
                 intent.getParcelableExtra(Intent.EXTRA_STREAM));
         assertTrue(intent.hasCategory(Intent.CATEGORY_TYPED_OPENABLE));
-        // TODO: b/464388012 - Reference actual intent category when it's available.
-        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+        assertTrue(intent.hasCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER));
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
     public void testCreateApprovedHandlerIntent_success() {
         mFeatures.virtualFilesSharing = true;
@@ -1227,11 +1233,11 @@ public class ActionHandlerTest {
         assertNotNull(intent);
         assertEquals(Intent.ACTION_SEND, intent.getAction());
         assertEquals(testComponent, intent.getComponent());
-        // TODO: b/464388012 - Reference actual intent category when it's available.
-        assertTrue(intent.hasCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER"));
+        assertTrue(intent.hasCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER));
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
     public void testCreateApprovedHandlerIntent_failure() {
         mEnv.selectionMgr.clearSelection();
