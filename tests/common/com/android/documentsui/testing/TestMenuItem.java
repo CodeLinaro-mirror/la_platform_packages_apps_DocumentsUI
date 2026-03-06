@@ -45,6 +45,7 @@ public abstract class TestMenuItem implements MenuItem {
     Intent mIntent;
     int groupId;
     int itemId;
+    int showAsAction;
 
     public static TestMenuItem create(int id) {
         return create(Menu.NONE, id);
@@ -152,5 +153,14 @@ public abstract class TestMenuItem implements MenuItem {
 
     public void assertTitle(@StringRes int title) {
         assertTrue(this.title == title);
+    }
+
+    @Override
+    public void setShowAsAction(int actionEnum) {
+        this.showAsAction = actionEnum;
+    }
+
+    public int getShowAsAction() {
+        return this.showAsAction;
     }
 }

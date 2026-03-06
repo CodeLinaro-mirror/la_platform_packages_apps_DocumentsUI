@@ -158,6 +158,11 @@ class ApprovedDocHandlers(
 
         // A unique ID used to group menu items created for approved document handlers.
         private val HANDLER_GROUP_ID = View.generateViewId()
+
+        // The maximum number of buttons to show in the action bar as agreed in the design.
+        public const val NUMBER_OF_BUTTONS = 1
+        // The maximum number of menu items to show in the menu as agreed in the design.
+        public const val NUMBER_OF_MENU_ITEMS = 2
     }
 
     /**
@@ -413,62 +418,93 @@ class ApprovedDocHandlers(
      * @param selectionDetails Details about the current selection of documents.
      */
     fun updateApprovedDocHandlerMenus(menu: Menu, selectionDetails: MenuManager.SelectionDetails) {
-        val approvedDocHandlersMap =
-            getApprovedDocHandlers(selectionDetails).associateBy { it.componentName }.toMutableMap()
-        // TODO(b/465271277): Implement a limitation of the number of action buttons and menu
-        // items allowed
+        val approvedDocHandlersMap = getApprovedDocHandlers(selectionDetails)
+
+        // The handlers set to be buttons with an icon will attempt to be populated as action
+        // buttons first, if more button handlers exist than available button slots or if the button
+        // handlers do not have an icon, then the remaining button handlers will fall back to be
+        // populated as menu items, however still be prioritized over the rest of the handlers.
+        val (potentialButtons, others) =
+            approvedDocHandlersMap.partition { it.isButton && it.icon != null }
+        val (prioritizedHandlers, regularHandlers) = others.partition { it.isButton }
+        val actionButtonHandlers = potentialButtons.take(NUMBER_OF_BUTTONS)
+        // Priority of menu items:
+        // 1. Action buttons that don't fit in the button slots.
+        // 2. Handlers registered as buttons but don't have an icon.
+        // 3. Handlers registered as menu items.
+        val menuHandlers =
+            (potentialButtons.drop(NUMBER_OF_BUTTONS) + prioritizedHandlers + regularHandlers).take(
+                NUMBER_OF_MENU_ITEMS
+            )
+
+        // The handlers to be shown in the menu.
+        val targetHandlersMap =
+            (actionButtonHandlers + menuHandlers).associateBy { it.componentName }
+        // The handlers to be removed from the menu.
         val toRemove = mutableListOf<Int>()
+        // The handlers that are already in the menu.
+        val foundComponents = mutableSetOf<ComponentName>()
 
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
             if (item.groupId != HANDLER_GROUP_ID) {
                 continue
             }
-            val intent = item.intent
-            val component = intent?.component
-            if (component == null) {
+            val component = item.intent?.component
+            val handler = targetHandlersMap[component]
+
+            if (component == null || handler == null) {
                 toRemove.add(item.itemId)
                 continue
             }
 
-            // Check if the component is still in the list of approved handlers
-            val handler = approvedDocHandlersMap.remove(component)
-            if (handler != null) {
-                val intent = injector.actions.createApprovedHandlerIntent(component)
-                if (intent != null) {
-                    item.intent = intent
-                    item.isEnabled = handler.isEnabled
-                } else {
-                    // If the intent is null, the handler is not valid.
-                    // This can happen when selection is cleared before the menu is updated.
-                    toRemove.add(item.itemId)
-                }
+            val newIntent = injector.actions.createApprovedHandlerIntent(component)
+            if (newIntent != null) {
+                item.intent = newIntent
+                item.isEnabled = handler.isEnabled
+                // Update the label in case it has changed due to package changes.
+                item.title = handler.label
+
+                // If the handler is an action button handler, set the icon and show as action
+                // if room. Otherwise make sure it's shown as a menu item.
+                val isActionButton = handler in actionButtonHandlers
+                item.icon = if (isActionButton) handler.icon else null
+                item.setShowAsAction(
+                    if (isActionButton) MenuItem.SHOW_AS_ACTION_IF_ROOM
+                    else MenuItem.SHOW_AS_ACTION_NEVER
+                )
+                foundComponents.add(component)
             } else {
+                // If the intent is null, the handler is not valid.
+                // This can happen when selection is cleared before the menu is updated.
                 toRemove.add(item.itemId)
             }
         }
 
-        for (i in toRemove) {
-            menu.removeItem(i)
-        }
+        toRemove.forEach { menu.removeItem(it) }
 
-        // Add new handlers. The map now only contains handlers that are not in the menu.
-        for (handler in approvedDocHandlersMap.values) {
-            val intent = injector.actions.createApprovedHandlerIntent(handler.componentName)
+        // Add new handlers.
+        for (handlerComponent in targetHandlersMap.keys) {
+            if (handlerComponent in foundComponents) {
+                continue
+            }
+            val intent = injector.actions.createApprovedHandlerIntent(handlerComponent)
             if (intent == null) {
                 // If the intent is null, the handler is not valid.
                 // This can happen when selection is cleared before the menu is updated.
                 continue
             }
+            val handler = targetHandlersMap[handlerComponent]!!
             val item = menu.add(HANDLER_GROUP_ID, View.generateViewId(), Menu.NONE, handler.label)
             item.intent = intent
             item.isEnabled = handler.isEnabled
-            if (handler.isButton && handler.icon != null) {
-                item.icon = handler.icon
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-            } else {
-                item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            }
+
+            val isActionButton = handler in actionButtonHandlers
+            item.icon = if (isActionButton) handler.icon else null
+            item.setShowAsAction(
+                if (isActionButton) MenuItem.SHOW_AS_ACTION_IF_ROOM
+                else MenuItem.SHOW_AS_ACTION_NEVER
+            )
         }
     }
 }

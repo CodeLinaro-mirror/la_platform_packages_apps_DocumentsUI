@@ -342,7 +342,14 @@ public final class MenuManagerTest {
 
         testResources = TestResources.create();
         testResources.stringArrays.put(
-                R.array.approved_document_handlers, new String[] {"com.test.package"});
+                R.array.approved_document_handlers,
+                new String[] {
+                    "com.test.package",
+                    "com.test.package1",
+                    "com.test.package2",
+                    "com.test.package3",
+                    "com.test.package4"
+                });
 
         mLifecycleOwner = new TestLifecycleOwner(Lifecycle.State.STARTED, testDispatcher);
 
@@ -425,6 +432,67 @@ public final class MenuManagerTest {
             }
         }
         return null;
+    }
+
+    /**
+     * Creates a {@link ResolveInfo} representing an app that can handle a document.
+     * This will be displayed as a regular menu item in the menu.
+     */
+    private ResolveInfo createResolveInfo(String packageName, String name, String label) {
+        ResolveInfo info = new ResolveInfo();
+        info.activityInfo = spy(new ActivityInfo());
+        info.activityInfo.packageName = packageName;
+        info.activityInfo.name = name;
+        doReturn(label).when(info.activityInfo).loadLabel(any());
+        return info;
+    }
+
+    /**
+     * Creates a {@link ResolveInfo} representing an app that can handle a document.
+     * This will be displayed as an action button with an icon.
+     */
+    private ResolveInfo createButtonResolveInfo(String packageName, String name, String label) {
+        ResolveInfo info = createResolveInfo(packageName, name, label);
+        info.activityInfo.metaData = new android.os.Bundle();
+        info.activityInfo.metaData.putBoolean(ApprovedDocHandlers.AS_BUTTON_METADATA_KEY, true);
+        doReturn(Mockito.mock(android.graphics.drawable.Drawable.class))
+                .when(info.activityInfo).loadIcon(any());
+        return info;
+    }
+
+    /**
+     * Counts all menu items (both regular menu items and action buttons) with a matching prefix.
+     */
+    private int countAllMenuItems(TestMenu menu, String prefix) {
+        return countMenuItems(menu, prefix, /* countButtonsOnly= */ false);
+    }
+
+    /**
+     * Counts only menu items displayed as action buttons (icons) with a matching prefix.
+     */
+    private int countActionButtons(TestMenu menu, String prefix) {
+        return countMenuItems(menu, prefix, /* countButtonsOnly= */ true);
+    }
+
+    /**
+     * Counts menu items with a matching prefix.
+     *
+     * @param countButtonsOnly If true, only counts items displayed as action buttons (icons). If
+     *     false, counts all matching items (buttons and regular items).
+     */
+    private int countMenuItems(TestMenu menu, String prefix, boolean countButtonsOnly) {
+        int foundCount = 0;
+        for (int i = 0; i < menu.size(); i++) {
+            TestMenuItem item = menu.getItem(i);
+            String title = String.valueOf(item.getTitle());
+            if (title != null && title.startsWith(prefix)) {
+                if (!countButtonsOnly
+                        || item.getShowAsAction() == android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM) {
+                    foundCount++;
+                }
+            }
+        }
+        return foundCount;
     }
 
     @Test
@@ -2058,17 +2126,111 @@ public final class MenuManagerTest {
         // Call update again to ensure no duplicates.
         mgr.updateContextMenu(testMenu, selectionDetails);
 
-        int foundCount = 0;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                foundCount++;
-            }
-        }
+        int foundCount = countAllMenuItems(testMenu, "Test App");
         assertEquals(
                 "Approved document handler menu item should be present exactly once.",
                 1,
                 foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_limitsNumberOfMenuItems() {
+        ResolveInfo info1 = createResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        assertEquals(
+                "Should limit the number of approved document handlers as menu items",
+                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_limitsNumberOfButtons() {
+        ResolveInfo info1 = createButtonResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createButtonResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        int buttonCount = countActionButtons(testMenu, "App ");
+
+        assertEquals(
+                "Should limit the total number of approved document handlers in the menu including"
+                    + " buttons",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+
+        assertEquals(
+                "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                buttonCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_approvedDocumentHandler_limitsNumberOfMenuItems() {
+        ResolveInfo info1 = createResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        assertEquals(
+                "Should limit the number of approved document handlers as menu items",
+                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_approvedDocumentHandler_limitsNumberOfButtons() {
+        ResolveInfo info1 = createButtonResolveInfo("com.test.package1", "class1", "App 1");
+        ResolveInfo info2 = createButtonResolveInfo("com.test.package2", "class2", "App 2");
+        ResolveInfo info3 = createResolveInfo("com.test.package3", "class3", "App 3");
+        ResolveInfo info4 = createResolveInfo("com.test.package4", "class4", "App 4");
+
+        mPackageManager.queryIntentActivitiesResults.put(
+                "text/plain", Arrays.asList(info1, info2, info3, info4));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        int foundCount = countAllMenuItems(testMenu, "App ");
+        int buttonCount = countActionButtons(testMenu, "App ");
+
+        assertEquals(
+                "Should limit the total number of approved document handlers in the menu including"
+                        + " buttons",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                foundCount);
+
+        assertEquals(
+                "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
+                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                buttonCount);
     }
 
     @Test
