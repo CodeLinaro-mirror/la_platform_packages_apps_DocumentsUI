@@ -57,12 +57,14 @@ import kotlinx.coroutines.launch
  * @property label The user-visible label of the handler.
  * @property isButton Whether the handler registered to be displayed as a button.
  * @property icon The drawable icon for the handler.
+ * @property isEnabled Whether the handler should be enabled.
  */
 data class ApprovedDocHandler(
     val componentName: ComponentName,
     val label: String,
     val isButton: Boolean,
     val icon: Drawable?,
+    val isEnabled: Boolean = true,
 )
 
 /**
@@ -153,6 +155,9 @@ class ApprovedDocHandlers(
         // TODO(b/464388012): Reference actual intent category when it's available.
         public const val APPROVED_HANDLER_CATEGORY =
             "android.provider.category.APPROVED_DOCUMENT_HANDLER"
+
+        // A unique ID used to group menu items created for approved document handlers.
+        private val HANDLER_GROUP_ID = View.generateViewId()
     }
 
     /**
@@ -183,7 +188,12 @@ class ApprovedDocHandlers(
                 }
             }
             is CacheUpdateOp.MarkOutdated -> {
-                updateCacheForPackage(op.packageName) { status -> status.copy(isOutdated = true) }
+                updateCacheForPackage(op.packageName) { status ->
+                    status.copy(
+                        isOutdated = true,
+                        handler = status.handler?.copy(isEnabled = false),
+                    )
+                }
             }
             is CacheUpdateOp.Add -> {
                 cache.update { currentCache ->
@@ -340,8 +350,6 @@ class ApprovedDocHandlers(
         val intent = createIntentForSelection(selectionDetails)
         val key = "${intent.action}:${intent.type}"
 
-        // Check if this kind of intent is already in the cache, then check if it's outdated.
-        // If it's not outdated, return the cached handlers.
         val handlersMap = cache.value[key]
         if (handlersMap != null && handlersMap.values.none { it.isOutdated }) {
             return handlersMap.values.mapNotNull { if (it.isSupported) it.handler else null }
@@ -390,7 +398,7 @@ class ApprovedDocHandlers(
                             true
                     val icon: Drawable? =
                         if (isButton) activityInfo.loadIcon(packageManager) else null
-                    add(ApprovedDocHandler(componentName, label, isButton, icon))
+                    add(ApprovedDocHandler(componentName, label, isButton, icon, true))
                 }
             }
         }
@@ -411,21 +419,25 @@ class ApprovedDocHandlers(
         // items allowed
         val toRemove = mutableListOf<Int>()
 
-        // TODO(b/466832041): Use a <group> in the menu to group the approved handlers together
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
+            if (item.groupId != HANDLER_GROUP_ID) {
+                continue
+            }
             val intent = item.intent
-            if (intent?.component == null || !intent.hasCategory(APPROVED_HANDLER_CATEGORY)) {
+            val component = intent?.component
+            if (component == null) {
+                toRemove.add(item.itemId)
                 continue
             }
 
-            // Have asserted that intent.component is not null above.
-            val component = intent.component!!
+            // Check if the component is still in the list of approved handlers
             val handler = approvedDocHandlersMap.remove(component)
             if (handler != null) {
                 val intent = injector.actions.createApprovedHandlerIntent(component)
                 if (intent != null) {
                     item.intent = intent
+                    item.isEnabled = handler.isEnabled
                 } else {
                     // If the intent is null, the handler is not valid.
                     // This can happen when selection is cleared before the menu is updated.
@@ -448,8 +460,9 @@ class ApprovedDocHandlers(
                 // This can happen when selection is cleared before the menu is updated.
                 continue
             }
-            val item = menu.add(Menu.NONE, View.generateViewId(), Menu.NONE, handler.label)
+            val item = menu.add(HANDLER_GROUP_ID, View.generateViewId(), Menu.NONE, handler.label)
             item.intent = intent
+            item.isEnabled = handler.isEnabled
             if (handler.isButton && handler.icon != null) {
                 item.icon = handler.icon
                 item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)

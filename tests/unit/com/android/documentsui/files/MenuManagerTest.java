@@ -36,11 +36,18 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -96,6 +103,9 @@ import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.test.TestCoroutineScheduler;
 import kotlinx.coroutines.test.TestDispatcher;
 
+import org.mockito.InOrder;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -104,6 +114,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -367,16 +378,18 @@ public final class MenuManagerTest {
                         activity.injector,
                         mApprovedDocHandlers);
 
-        mApprovedDocHandlers.getUpdateEvents().observe(
-                mLifecycleOwner,
-                unit -> {
-                    if (mgr != null) {
-                        mgr.updateContextMenu();
-                        if (selectionDetails.size() > 0) {
-                            mgr.updateActionMenu(testMenu, selectionDetails);
-                        }
-                    }
-                });
+        mApprovedDocHandlers
+                .getUpdateEvents()
+                .observe(
+                        mLifecycleOwner,
+                        unit -> {
+                            if (mgr != null) {
+                                mgr.updateContextMenu();
+                                if (selectionDetails.size() > 0) {
+                                    mgr.updateActionMenu(testMenu, selectionDetails);
+                                }
+                            }
+                        });
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -1987,6 +2000,7 @@ public final class MenuManagerTest {
 
         mActionHandler.returnNullApprovedHandlerIntent = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
 
         // Check that the approved document handler menu item is removed.
         item = findItemByTitle(testMenu, "Test App");
@@ -2009,6 +2023,8 @@ public final class MenuManagerTest {
 
         mActionHandler.returnNullApprovedHandlerIntent = true;
         mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
         item = findItemByTitle(testMenu, "Test App");
         assertNull("Approved document handler menu item should be removed.", item);
     }
@@ -2027,5 +2043,75 @@ public final class MenuManagerTest {
         // Check that the approved document handler menu item is not added.
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
         assertNull("Approved document handler menu item should not be added.", item);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_noDuplicates() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        // First update triggers the load.
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        // Advance scheduler to complete load and trigger observer update.
+        testScheduler.advanceUntilIdle();
+        // Call update again to ensure no duplicates.
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        int foundCount = 0;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                foundCount++;
+            }
+        }
+        assertEquals(
+                "Approved document handler menu item should be present exactly once.",
+                1,
+                foundCount);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_approvedDocumentHandler_disabledWhileUpdating() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        // Initial load to populate cache.
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        testScheduler.advanceUntilIdle();
+
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Item should be present after initial load", item);
+        item.assertEnabledAndVisible();
+        // Reset interactions on the mock item after initial setup
+        reset(item);
+
+        ArgumentCaptor<BroadcastReceiver> receiverCaptor =
+                ArgumentCaptor.forClass(BroadcastReceiver.class);
+        verify(activity).registerReceiver(receiverCaptor.capture(), any(IntentFilter.class));
+        BroadcastReceiver receiver = receiverCaptor.getValue();
+
+        // Mark as outdated via broadcast.
+        Intent intent = new Intent(Intent.ACTION_PACKAGE_CHANGED);
+        intent.setData(Uri.parse("package:com.test.package"));
+        receiver.onReceive(activity, intent);
+
+        // Let the entire sequence of updates complete.
+        testScheduler.advanceUntilIdle();
+
+        // Verify the calls to setEnabled on the mock item.
+        item = findItemByTitle(testMenu, "Test App"); // Get the same item instance
+        assertNotNull("Item should still be present", item);
+
+        InOrder inOrder = inOrder(item);
+        // It should have been disabled first due to the outdated cache
+        inOrder.verify(item).setEnabled(false);
+        // Then re-enabled after the background refresh
+        inOrder.verify(item).setEnabled(true);
+
+        // Finally, check the end state
+        assertTrue("Item should be visible at the end", item.isVisible());
+        assertTrue("Item should be enabled at the end", item.isEnabled());
     }
 }

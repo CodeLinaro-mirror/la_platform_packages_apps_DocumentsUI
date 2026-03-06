@@ -115,9 +115,11 @@ class ApprovedDocHandlersTest {
         val handlers = getApprovedDocHandlers(selectionDetails)
 
         assertThat(handlers).hasSize(1)
-        assertThat(handlers[0].componentName).isEqualTo(testComponent)
-        assertThat(handlers[0].label).isEqualTo("Test App")
-        assertThat(handlers[0].icon).isNull()
+        val handler = handlers[0]
+        assertThat(handler.isEnabled).isTrue()
+        assertThat(handler.componentName).isEqualTo(testComponent)
+        assertThat(handler.label).isEqualTo("Test App")
+        assertThat(handler.icon).isNull()
 
         val intentCaptor = ArgumentCaptor.forClass(Intent::class.java)
         verify(packageManager).queryIntentActivities(intentCaptor.capture(), anyInt())
