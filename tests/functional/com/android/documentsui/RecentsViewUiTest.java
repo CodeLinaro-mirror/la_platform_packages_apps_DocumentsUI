@@ -251,7 +251,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Check: the file can be successfully deleted.
         bots.directory.selectDocument(testFileName, 1);
         device.waitForIdle();
-        bots.main.clickDelete();
+        bots.keyboard.performDeleteAction();
         bots.main.clickDialogOkButton(/* closeSoftKeyboard */ false);
         device.waitForIdle();
         fileInRecents = bots.directory.findDocument(testFileName, true);

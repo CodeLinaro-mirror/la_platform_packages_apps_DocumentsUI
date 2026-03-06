@@ -225,7 +225,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         bots.directory.selectDocument(SHORTCUT_ID, 1)
         device!!.waitForIdle()
 
-        bots.main.clickDelete()
+        bots.keyboard.performDeleteAction()
         bots.main.clickDialogOkButton(false)
         device!!.waitForIdle()
 
@@ -249,7 +249,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         bots.directory.selectDocument(SHORTCUT_ID, 1)
         device!!.waitForIdle()
 
-        bots.main.clickDelete()
+        bots.keyboard.performDeleteAction()
         bots.main.clickDialogOkButton(false)
         device!!.waitForIdle()
 
