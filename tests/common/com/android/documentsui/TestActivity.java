@@ -28,10 +28,12 @@ import static org.mockito.Mockito.doReturn;
 import android.app.ActivityManager;
 import android.app.LoaderManager;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -327,6 +329,14 @@ public abstract class TestActivity extends AbstractBase {
     public final Executor getMainExecutor() {
         return mainExecutor;
     }
+
+    @Override
+    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        return null;
+    }
+
+    @Override
+    public void unregisterReceiver(BroadcastReceiver receiver) {}
 }
 
 // Trick Mockito into finding our Addons methods correctly. W/o this

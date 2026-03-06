@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"ಮಾಹಿತಿಯನ್ನು ಪಡೆಯಿರಿ"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"ಮರೆಮಾಡಿದ ಫೈಲ್‌ಗಳನ್ನು ತೋರಿಸಿ"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"ಮರೆಮಾಡಿದ ಫೈಲ್‌ ತೋರಿಸಬೇಡಿ"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"ರಿಫ್ರೆಶ್ ಮಾಡಿ"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"ವಿವರಣೆ ಕಾಲಮ್ ಅನ್ನು ತೋರಿಸಿ"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"ವಿವರಣೆ ಕಾಲಮ್ ಅನ್ನು ತೋರಿಸಬೇಡಿ"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> ನಲ್ಲಿ ವೀಕ್ಷಿಸಿ"</string>

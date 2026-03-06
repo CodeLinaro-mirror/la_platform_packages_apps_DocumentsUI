@@ -287,16 +287,21 @@ class SearchLoader(
         // Assign the cursor, after adding filtering and sorting, to the results.
         val cursorExtras = Bundle().apply { putBoolean(DocumentsContract.EXTRA_LOADING, !allDone) }
         val mergedCursor = toSingleCursor(cursorList).apply { setExtras(cursorExtras) }
-        val filteringCursor = FilteringCursorWrapper(mergedCursor)
-        filteringCursor.filterHiddenFiles(options.showHidden)
-        filteringCursor.filterMimes(
+        val nonClosingFilteringCursor =
+            object : FilteringCursorWrapper(mergedCursor) {
+                override fun close() {
+                    debugLog("ignoring close action; closing in onReset")
+                }
+            }
+        nonClosingFilteringCursor.filterHiddenFiles(options.showHidden)
+        nonClosingFilteringCursor.filterMimes(
             computeAcceptableMimeTypes(options),
             if (TextUtils.isEmpty(query)) arrayOf(Document.MIME_TYPE_DIR) else null,
         )
         if (rejectBeforeTimestamp > 0L) {
-            filteringCursor.filterLastModified(rejectBeforeTimestamp)
+            nonClosingFilteringCursor.filterLastModified(rejectBeforeTimestamp)
         }
-        result.cursor = sortModel.sortCursor(filteringCursor, mimeTypeLookup)
+        result.cursor = sortModel.sortCursor(nonClosingFilteringCursor, mimeTypeLookup)
 
         // TODO(b:388336095): Record the total time it took to complete search.
         return result

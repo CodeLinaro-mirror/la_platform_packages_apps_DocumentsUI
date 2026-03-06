@@ -32,7 +32,6 @@ import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.DocumentsContract;
 
-import androidx.annotation.VisibleForTesting;
 import androidx.loader.content.CursorLoader;
 
 import com.android.modules.utils.build.SdkLevel;
@@ -89,8 +88,7 @@ public final class UserId {
      *
      * @throws IllegalStateException if android package of the other user does not exist
      */
-    @VisibleForTesting
-    Context asContext(Context context) {
+    public Context asContext(Context context) {
         if (CURRENT_USER.equals(this) || isUnspecified()) {
             return context;
         }

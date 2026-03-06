@@ -28,7 +28,7 @@
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
     <string name="summary_consent_ok_button" msgid="7813177426978382632">"روشن کردن"</string>
     <string name="summary_consent_cancel_button" msgid="2971058893677958570">"دوباره از من پرسیده نشود"</string>
-    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"اکنون نه"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"حالا نه"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"باز کردن از"</string>
@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"دریافت اطلاعات"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"فایل‌های پنهان نشان داده شود"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"فایل‌های پنهان نشان داده نشود"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"بازآوری کردن"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"نمایش ستون شرح"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"ستون شرح نشان داده نشود"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"مشاهده در <xliff:g id="SOURCE">%1$s</xliff:g>"</string>

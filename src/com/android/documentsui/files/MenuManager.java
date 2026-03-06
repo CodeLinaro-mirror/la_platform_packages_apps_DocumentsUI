@@ -74,7 +74,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Lookup<String, Uri> uriLookup,
             IntSupplier filesCountSupplier,
             Injector<?> injector,
-            ApprovedDocHandlers approvedDocHandlers) {
+            @Nullable ApprovedDocHandlers approvedDocHandlers) {
 
         super(
                 searchManager,
@@ -99,7 +99,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     public void updateContextMenu(Menu menu, SelectionDetails selectionDetails) {
         super.updateContextMenu(menu, selectionDetails);
-        if (isUseApprovedDocumentHandlerEnabled()) {
+        if (isUseApprovedDocumentHandlerEnabled() && mApprovedDocHandlers != null) {
             mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selectionDetails);
         }
     }

@@ -103,4 +103,8 @@ class SelectionBarController(
         }
         menuManager.updateActionMenu(selectionBar.menu, selectionDetails)
     }
+
+    fun invalidate() {
+        updateSelectionMenu()
+    }
 }

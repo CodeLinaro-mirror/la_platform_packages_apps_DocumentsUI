@@ -64,8 +64,7 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Получаване на информация"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Показване на скрити файлове"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Без показв. на скрити файлове"</string>
-    <!-- no translation found for menu_refresh (1724946627254685997) -->
-    <skip />
+    <string name="menu_refresh" msgid="1724946627254685997">"Опресняване"</string>
     <string name="option_show_summary_column" msgid="1008012395393952119">"Показване на колоната с описанието"</string>
     <string name="option_hide_summary_column" msgid="8091410079217079948">"Без показв. на колоната с описанието"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Преглед в/ъв <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
