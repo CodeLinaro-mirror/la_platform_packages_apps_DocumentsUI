@@ -18,23 +18,26 @@ package com.android.documentsui.testing;
 
 import static com.android.documentsui.util.FlagUtils.isUsePeekPreviewFlagEnabled;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.AbstractActionHandler;
 import com.android.documentsui.TestActionModeAddons;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.loaders.SummariesViewModel;
 
 import java.util.function.Consumer;
+
 import javax.annotation.Nullable;
 
 public class TestActionHandler extends AbstractActionHandler<TestActivity> {
@@ -58,6 +61,16 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
     }
 
     public TestActionHandler(TestEnv env) {
+        this(env, createMockSummariesViewModel());
+    }
+
+    private static SummariesViewModel createMockSummariesViewModel() {
+        SummariesViewModel mock = mock(SummariesViewModel.class);
+        doReturn(new MutableLiveData<>()).when(mock).getSummariesLiveData();
+        return mock;
+    }
+
+    public TestActionHandler(TestEnv env, SummariesViewModel summariesViewModel) {
         super(
                 TestActivity.create(env),
                 env.state,
@@ -71,6 +84,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
                 mock(Runnable.class),
                 null);
 
+        mSummariesViewModel = summariesViewModel;
         mEnv = env;
     }
 
