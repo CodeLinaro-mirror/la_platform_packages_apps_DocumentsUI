@@ -122,6 +122,12 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
         final ThreadPoolExecutor exec = new ThreadPoolExecutor(
                 5, 5, 1000L, TimeUnit.MILLISECONDS,
                         new ArrayBlockingQueue<Runnable>(100, true));
+
+        // Test cannot succeed if any error occurs during file creation.
+        // Track the first error encountered to report it if setup fails.
+        final java.util.concurrent.atomic.AtomicReference<Exception> creationError =
+                new java.util.concurrent.atomic.AtomicReference<>();
+
         for (int i = 0; i < STUB_FILE_COUNT; i++) {
             final String fileName = "file" + String.format("%04d", i) + ".log";
             if (exec.getQueue().size() >= 80) {
@@ -131,16 +137,25 @@ public class FileDeleteUiTest extends ActivityTestJunit4<FilesActivity> {
                     new Runnable() {
                         @Override
                         public void run() {
-                            Uri uri = docsHelper.createDocument(root, "text/plain", fileName);
                             try {
+                                Uri uri = docsHelper.createDocument(root, "text/plain", fileName);
                                 docsHelper.writeDocument(uri, new byte[1]);
                             } catch (Exception e) {
-                                // ignore
+                                creationError.set(e);
                             }
                         }
                     });
         }
         exec.shutdown();
+
+        // Ensure all background creation tasks have completed without error.
+        if (!exec.awaitTermination(WAIT_TIME_SECONDS, TimeUnit.SECONDS)) {
+            fail("Timed out waiting for file creation tasks to complete");
+        }
+
+        if (creationError.get() != null) {
+            fail("Failed to initialise all test files. Failure: " + creationError.get());
+        }
     }
 
     @HugeLongTest

@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.android.documentsui.Injector;
@@ -63,7 +64,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Context context,
             Features features,
             Injector<?> injector,
-            ApprovedDocHandlers approvedDocHandlers) {
+            @Nullable ApprovedDocHandlers approvedDocHandlers) {
         super(
                 searchManager,
                 displayState,
