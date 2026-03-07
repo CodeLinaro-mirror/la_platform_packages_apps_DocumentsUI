@@ -789,6 +789,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
                         public void onSelectionChanged() {
                             handleSearchResultSelection();
                         }
+
+                        @Override
+                        public void onSelectionRestored() {
+                            // When selection is restored (e.g. after window size change), it
+                            // doesn't trigger onSelectionChanged(), so we need to call the same
+                            // handleSearchResultSelection() here.
+                            handleSearchResultSelection();
+                        }
                     });
         }
 
@@ -1039,12 +1047,12 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
             return;
         }
         controller.getModel().setFromStack(stack);
-        controller.setVisible(true);
+        controller.setSearchBreadcrumbVisible(true);
         if (stack.getRoot() != null && stack.getRoot().isRecents()) {
             // No click consumer for recents, as it would only take us back to recents.
             return;
         }
-        controller.setClickConsumer(
+        controller.setSearchBreadcrumbClickConsumer(
                 (i) -> {
                     // Remove items after the i-th element.
                     while (stack.size() > i + 1) {
@@ -1067,19 +1075,8 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
         if (isSearchV2Enabled()) {
             mVersion.incrementAndGet();
             mSelectedItemKey = null;
-            hideSearchResultBreadcrumb(controller);
+            controller.setSearchBreadcrumbVisible(false);
         }
-    }
-
-    /**
-     * Hides the breadcrumb path and disables click listener on the given controller.
-     *
-     * @param controller The non-null breadcrumb controller to be adjusted.
-     */
-    private void hideSearchResultBreadcrumb(BreadcrumbController controller) {
-        controller.setVisible(false);
-        controller.getModel().setPath(new String[0]);
-        controller.setClickConsumer(null);
     }
 
     private void onCopyDestinationPicked(int resultCode, Intent data) {
@@ -2128,7 +2125,14 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
             mAdapter.notifyDataSetChanged();
 
-            if (mRestoredState != null) {
+            boolean shouldRestoreSelection = mRestoredState != null;
+            // When search_v2 is ON, we also check if the Model is still in loading state, where
+            // the Model will be empty, so nothing will be restored, we need to wait for the next
+            // update with loading=false.
+            if (isSearchV2Enabled()) {
+                shouldRestoreSelection = shouldRestoreSelection && !mModel.isLoading();
+            }
+            if (shouldRestoreSelection) {
                 mSelectionMgr.onRestoreInstanceState(mRestoredState);
                 mRestoredState = null;
             }
