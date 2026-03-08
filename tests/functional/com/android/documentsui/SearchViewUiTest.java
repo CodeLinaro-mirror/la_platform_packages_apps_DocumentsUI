@@ -786,6 +786,17 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
+    public void testKeyboardShortcutFocusesDockedSearchBar() throws Exception {
+        Assume.assumeTrue(
+                "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
+
+        bots.search.assertInputFocused(false);
+        bots.keyboard.pressKey(KeyEvent.KEYCODE_SEARCH);
+        bots.search.assertInputFocused(true);
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testTabNavigationWithDockedSearchBar() throws Exception {
         Assume.assumeTrue(
                 "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
