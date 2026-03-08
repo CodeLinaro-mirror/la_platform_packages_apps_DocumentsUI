@@ -34,7 +34,7 @@ import com.android.documentsui.TestActivity;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.loaders.SummariesViewModel;
+import com.android.documentsui.dirlist.SummariesViewModel;
 
 import java.util.function.Consumer;
 
