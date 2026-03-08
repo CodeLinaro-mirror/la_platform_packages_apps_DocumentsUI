@@ -143,7 +143,8 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         // Remember focus events on items.
-        if (hasFocus && mScope.isValid() && v.getParent() == mScope.view) {
+        mScope.mHasFocus = hasFocus && mScope.isValid() && v.getParent() == mScope.view;
+        if (mScope.mHasFocus) {
             mScope.lastFocusPosition = mScope.view.getChildAdapterPosition(v);
         }
     }
@@ -231,16 +232,25 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
 
     @Override
     public int getFocusedPosition() {
+        if (isUseMaterial3FlagEnabled() && !mScope.mHasFocus) {
+            return RecyclerView.NO_POSITION;
+        }
         return mScope.lastFocusPosition;
     }
 
     @Override
     public boolean hasFocusedItem() {
+        if (isUseMaterial3FlagEnabled() && !mScope.mHasFocus) {
+            return false;
+        }
         return mScope.lastFocusPosition != RecyclerView.NO_POSITION;
     }
 
     @Override
     public @Nullable String getFocusModelId() {
+        if (isUseMaterial3FlagEnabled() && !mScope.mHasFocus) {
+            return null;
+        }
         if (mScope.lastFocusPosition != RecyclerView.NO_POSITION) {
             DocumentHolder holder = (DocumentHolder) mScope.view
                     .findViewHolderForAdapterPosition(mScope.lastFocusPosition);
@@ -680,8 +690,9 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
         mScope.layout = (GridLayoutManager) view.getLayoutManager();
         mScope.model = model;
 
-        mScope.lastFocusPosition = RecyclerView.NO_POSITION;
         mScope.pendingFocusId = null;
+        mScope.lastFocusPosition = RecyclerView.NO_POSITION;
+        mScope.mHasFocus = false;
 
         return this;
     }
@@ -694,6 +705,7 @@ public final class FocusManager extends FocusDelegate<String> implements FocusHa
 
         private @Nullable String pendingFocusId;
         private int lastFocusPosition = RecyclerView.NO_POSITION;
+        private boolean mHasFocus = false;
 
         boolean isValid() {
             return (view != null && model != null);
