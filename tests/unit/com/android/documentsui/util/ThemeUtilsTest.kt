@@ -40,6 +40,7 @@ class ThemeUtilsTest {
             mapOf(
                 R.id.option_menu_debug to 111,
                 R.string.file_operation_rejected to R.string.file_operation_rejected_m3,
+                R.string.no_results to R.string.no_results_m3,
             )
         )
     }
@@ -75,5 +76,13 @@ class ThemeUtilsTest {
             R.string.file_operation_rejected_m3,
             Material3Config.getRes(R.string.file_operation_rejected),
         )
+    }
+
+    @Test
+    @EnableFlags(FLAG_USE_MATERIAL3)
+    fun testGetRes_forNoResults_returnsM3String() {
+        // Verifies that the resource ID for no_results string is correctly mapped to its Material3
+        // version.
+        assertEquals(R.string.no_results_m3, Material3Config.getRes(R.string.no_results))
     }
 }

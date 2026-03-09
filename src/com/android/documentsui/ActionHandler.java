@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.view.DragEvent;
 
 import androidx.annotation.IntDef;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 
 import com.android.documentsui.OperationDialogFragment.DialogType;
@@ -35,6 +36,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.UserId;
+import com.android.documentsui.loaders.SummariesViewModel;
 import com.android.documentsui.services.JobProgress;
 
 import java.lang.annotation.Retention;
@@ -62,6 +64,9 @@ public interface ActionHandler {
     public static final int VIEW_TYPE_PREVIEW = 2;
 
     void onActivityResult(int requestCode, int resultCode, Intent data);
+
+    /** Binds the ActionHandler to the SummariesViewModel and observes it for summary updates. */
+    void bindSummariesViewModel(LifecycleOwner owner, SummariesViewModel summariesViewModel);
 
     void openSettings(RootInfo root);
 
