@@ -2008,6 +2008,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_useApprovedDocumentHandlerEnabled() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
@@ -2023,6 +2024,7 @@ public final class MenuManagerTest {
 
     @Test
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_useApprovedDocumentHandlerDisabled() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
@@ -2037,6 +2039,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_useApprovedDocumentHandlerEnabled() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         testResources.stringArrays.put(
@@ -2054,6 +2057,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_removesApprovedDocumentHandler_whenNoFileSelected() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         testResources.stringArrays.put(
@@ -2077,6 +2081,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_removesApprovedDocumentHandler_whenNoFileSelected() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         testResources.stringArrays.put(
@@ -2099,6 +2104,7 @@ public final class MenuManagerTest {
 
     @Test
     @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_useApprovedDocumentHandlerDisabled() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         testResources.stringArrays.put(
@@ -2115,6 +2121,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_approvedDocumentHandler_noDuplicates() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
@@ -2135,6 +2142,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_approvedDocumentHandler_limitsNumberOfMenuItems() {
         ResolveInfo info1 = createResolveInfo("com.test.package1", "class1", "App 1");
         ResolveInfo info2 = createResolveInfo("com.test.package2", "class2", "App 2");
@@ -2156,6 +2164,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_approvedDocumentHandler_limitsNumberOfButtons() {
         ResolveInfo info1 = createButtonResolveInfo("com.test.package1", "class1", "App 1");
         ResolveInfo info2 = createButtonResolveInfo("com.test.package2", "class2", "App 2");
@@ -2185,6 +2194,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_approvedDocumentHandler_limitsNumberOfMenuItems() {
         ResolveInfo info1 = createResolveInfo("com.test.package1", "class1", "App 1");
         ResolveInfo info2 = createResolveInfo("com.test.package2", "class2", "App 2");
@@ -2206,6 +2216,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_approvedDocumentHandler_limitsNumberOfButtons() {
         ResolveInfo info1 = createButtonResolveInfo("com.test.package1", "class1", "App 1");
         ResolveInfo info2 = createButtonResolveInfo("com.test.package2", "class2", "App 2");
@@ -2235,6 +2246,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_approvedDocumentHandler_disabledWhileUpdating() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
