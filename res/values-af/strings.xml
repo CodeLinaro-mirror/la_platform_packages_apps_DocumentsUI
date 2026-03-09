@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Skakel aan"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Moenie my weer vra nie"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Nie nou nie"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Maak oop vanuit"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Lysaansig"</string>
     <string name="menu_search" msgid="1876699106790719849">"Soek"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Berginginstellings"</string>
+    <string name="manage_device" msgid="329180710072251010">"Bestuur toestel"</string>
     <string name="menu_open" msgid="9092138100049759315">"Maak oop"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Maak oop met"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Open in nuwe venster"</string>
     <string name="menu_save" msgid="5195367497138965168">"Stoor"</string>
     <string name="menu_share" msgid="4307140947108068356">"Deel"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Vee uit"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Vee permanent uit"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Vee vir ewig uit"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Skuif asblik toe"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Stel terug"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Kies almal"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Kry inligting"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Wys versteekte lêers"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Wys nie versteekte lêers nie"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Wys opsommingkolom"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Moenie opsommingkolom wys nie"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Wys beskrywingkolom"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Moenie beskrywingkolom wys nie"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Bekyk in <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Nuwe venster"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Sny"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Maak asblik oop"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nie gerangskik nie"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Naam"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Opsomming"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Beskrywing"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Tipe"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Grootte"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Gewysig"</string>
@@ -231,10 +235,8 @@
       <item quantity="one">Hierdie lêer is in \'n ander formaat omgeskakel: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Hierdie lêer is in ’n ander formaat omgeskakel:}other{Hierdie lêers is in ’n ander formaat omgeskakel:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">Het <xliff:g id="COUNT_1">%1$d</xliff:g> items na knipbord gekopieer.</item>
-      <item quantity="one">Het <xliff:g id="COUNT_0">%1$d</xliff:g> item na knipbord gekopieer.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Leesalleen"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Jy kan hierdie lêers bekyk, maar sommige handelinge word nie gesteun nie"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Hierdie argief is in ’n slegs-lees-ligging en kan nie hier onttrek word nie."</string>
@@ -299,20 +301,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> items</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> item</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Vee \"<xliff:g id="NAME">%1$s</xliff:g>\" uit?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Vee vouer \"<xliff:g id="NAME">%1$s</xliff:g>\" en sy inhoud uit?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other">Vee <xliff:g id="COUNT_1">%1$d</xliff:g> lêers uit?</item>
-      <item quantity="one">Vee <xliff:g id="COUNT_0">%1$d</xliff:g> lêer uit?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other">Vee <xliff:g id="COUNT_1">%1$d</xliff:g> vouers en hul inhoud uit?</item>
-      <item quantity="one">Vee <xliff:g id="COUNT_0">%1$d</xliff:g> vouer en sy inhoud uit?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other">Vee <xliff:g id="COUNT_1">%1$d</xliff:g> items uit?</item>
-      <item quantity="one">Vee <xliff:g id="COUNT_0">%1$d</xliff:g> item uit?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Vee vir ewig uit?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” sal vir ewig uitgevee word. Dit kan nie ontdoen word nie.}other{# items sal vir ewig uitgevee word. Dit kan nie ontdoen word nie.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” sal vir ewig uitgevee word. Dit kan nie ontdoen word nie.}other{# items in die asblik sal vir ewig uitgevee word. Dit kan nie ontdoen word nie.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Prente"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Kon nie argief oopmaak om te blaai nie. Die lêer is óf korrup, óf \'n formaat wat nie gesteun word nie."</string>
     <string name="name_conflict" msgid="28407269328862986">"\'n Lêer met hierdie naam bestaan reeds."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Prentvoorskou van <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Versteek inligtingpaneel"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Wys inligtingpaneel"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Niks in asblik nie"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Lêers wat meer as 30 dae lank in die asblik is, sal outomaties uitgevee word."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Maak asblik nou leeg"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Asblik is leeg"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Items wat meer as 30 dae lank in die asblik is, sal outomaties uitgevee word"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Maak asblik leeg"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Maak asblik leeg?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Hierdie handeling kan nie ontdoen word nie, en die lêers sal nie meer teruggestel kan word nie."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Maak asblik leeg"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Lêer in asblik"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Hierdie lêer is in jou asblik en kan nie oopgemaak word nie. Stel dit terug uit die asblik om toegang daartoe te kry."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Stel lêer terug"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Alle items in die asblik sal vir ewig uitgevee word. Dit kan nie ontdoen word nie."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Vee vir ewig uit"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Item is in die asblik}other{Items is in die asblik}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Stel hierdie item terug of sleep dit uit die asblik om toegang daartoe te kry}other{Stel hierdie items terug of sleep hulle uit die asblik om toegang daartoe te kry}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Stel terug"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Jy is tans vanlyn. Sommige lêers en funksies is nie beskikbaar nie. Verbind aan die internet vir volle toegang."</string>
 </resources>

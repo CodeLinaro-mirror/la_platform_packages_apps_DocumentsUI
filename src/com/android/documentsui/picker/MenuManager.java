@@ -40,12 +40,12 @@ import androidx.fragment.app.Fragment;
 import com.android.documentsui.Injector;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
+import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Menus;
 import com.android.documentsui.base.MimeTypes;
 import com.android.documentsui.base.State;
 import com.android.documentsui.queries.SearchViewManager;
-import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
 
 import java.util.List;
 import java.util.function.IntFunction;
@@ -137,23 +137,28 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateSelectAll(MenuItem selectAll) {
-        boolean visible = mState.allowMultiple && !mOnlyDirectory;
+        boolean visible =
+                mFilesCountSupplier.getAsInt() > 0 && mState.allowMultiple && !mOnlyDirectory;
         Menus.setEnabledAndVisible(selectAll, visible);
     }
 
     @Override
     protected void updateSelectAll(MenuItem selectAll, SelectionDetails selectionDetails) {
-        final boolean visible = mState.allowMultiple
-                && selectionDetails.size() < mFilesCountSupplier.getAsInt()
-                && !mOnlyDirectory;
+        final boolean visible =
+                mFilesCountSupplier.getAsInt() > 0
+                        && mState.allowMultiple
+                        && selectionDetails.size() < mFilesCountSupplier.getAsInt()
+                        && !mOnlyDirectory;
         Menus.setEnabledAndVisible(selectAll, visible);
     }
 
     @Override
     protected void updateDeselectAll(MenuItem deselectAll, SelectionDetails selectionDetails) {
-        final boolean visible = mState.allowMultiple
-                && selectionDetails.size() == mFilesCountSupplier.getAsInt()
-                && !mOnlyDirectory;
+        final boolean visible =
+                mFilesCountSupplier.getAsInt() > 0
+                        && mState.allowMultiple
+                        && selectionDetails.size() == mFilesCountSupplier.getAsInt()
+                        && !mOnlyDirectory;
         Menus.setEnabledAndVisible(deselectAll, visible);
     }
 
@@ -269,5 +274,10 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         } else {
             Menus.setEnabledAndVisible(it, false);
         }
+    }
+
+    @Override
+    public void updateApprovedDocHandlers(Menu menu, SelectionDetails selection) {
+        // We don't support approved doc handlers inside the picker.
     }
 }

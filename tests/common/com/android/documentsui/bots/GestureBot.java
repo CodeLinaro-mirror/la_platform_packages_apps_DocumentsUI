@@ -24,14 +24,12 @@ import android.graphics.Rect;
 import android.os.SystemClock;
 import android.view.InputDevice;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
 
 import androidx.test.uiautomator.Configurator;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.UiSelector;
 
@@ -56,7 +54,7 @@ public class GestureBot extends Bots.BaseBot {
             UiDevice device,
             UiAutomation automation,
             Context context,
-            int timeout,
+            long timeout,
             @LayoutRes Integer layoutId) {
         super(device, context, timeout, layoutId);
         mDirContainerId = mTargetPackage + ":id/container_directory";
@@ -88,18 +86,15 @@ public class GestureBot extends Bots.BaseBot {
         Configurator.getInstance().setToolType(toolType);
     }
 
-    public void dragAndDrop(UiObject source, UiObject destination) throws Exception {
+    public void dragAndDrop(Rect source, Rect destination) throws Exception {
         int toolType = Configurator.getInstance().getToolType();
         Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_MOUSE);
 
-        Rect sourceBounds = source.getBounds();
-        Rect destinationBounds = destination.getBounds();
-
         swipe(
-                sourceBounds.centerX(),
-                sourceBounds.centerY(),
-                destinationBounds.centerX(),
-                destinationBounds.centerY(),
+                source.centerX(),
+                source.centerY(),
+                destination.centerX(),
+                destination.centerY(),
                 BAND_SELECTION_DEFAULT_STEPS,
                 MotionEvent.BUTTON_PRIMARY,
                 false);

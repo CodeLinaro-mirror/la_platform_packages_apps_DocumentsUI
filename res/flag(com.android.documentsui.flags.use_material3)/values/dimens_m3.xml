@@ -23,6 +23,7 @@
     <dimen name="profile_tab_padding_m3">0dp</dimen>
     <dimen name="grid_container_padding_m3">20dp</dimen>
     <dimen name="list_container_padding_m3">@dimen/space_extra_small_4</dimen>
+    <dimen name="list_container_padding_bottom">48dp</dimen>
     <dimen name="icon_size_m3">40dp</dimen>
     <dimen name="button_touch_size_m3">48dp</dimen>
     <dimen name="root_icon_size_m3">24dp</dimen>
@@ -270,8 +271,6 @@
     <dimen name="list_inline_circular_icon_size">15dp</dimen>
     <dimen name="grid_inline_circular_icon_size">17dp</dimen>
     <dimen name="grid_inline_sync_progress_margin">8dp</dimen>
-    <dimen name="list_inline_sync_progress_indicator_size">11dp</dimen>
-    <dimen name="grid_inline_sync_progress_indicator_size">12dp</dimen>
     <dimen name="list_inline_tick_icon_size">14dp</dimen>
     <dimen name="list_inline_sync_error_icon_size">14dp</dimen>
     <dimen name="grid_inline_sync_error_margin">8dp</dimen>
@@ -331,7 +330,8 @@
     <dimen name="job_progress_list_corner_radius">@dimen/space_extra_small_6</dimen>
 
     <dimen name="job_progress_item_padding">@dimen/space_small_1</dimen>
-    <dimen name="job_progress_item_expand_margin_start">@dimen/space_small_4</dimen>
+    <dimen name="job_progress_item_expand_margin_start">16dp</dimen>
+    <dimen name="job_progress_item_expand_margin_end">8dp</dimen>
     <dimen name="job_progress_item_progress_margin_top">@dimen/space_extra_small_4</dimen>
     <dimen name="job_progress_item_status_separator_margin">@dimen/space_extra_small_2</dimen>
     <dimen name="job_progress_item_buttons_margin_start">@dimen/space_extra_small_2</dimen>

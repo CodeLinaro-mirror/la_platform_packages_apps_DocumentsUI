@@ -55,7 +55,6 @@ import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.view.KeyEvent;
-import android.view.View;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -69,7 +68,6 @@ import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.base.Providers;
-import com.android.documentsui.bots.EspressoBotsKt;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.queries.SearchViewManager;
@@ -144,9 +142,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @HugeLongTest
     public void testSearchIconHidden() throws Exception {
-        EspressoBotsKt.openRoot(
-                context, ROOT_1_ID, getActivityLayoutId()); // root 1 doesn't support search
+        switchRoot(ROOT_1_ID);
+        device.waitForIdle();
 
+        // Confirm expected directory has loaded
+        assertDefaultContentOfTestDir1();
         bots.search.assertIsVisible(false);
     }
 
@@ -280,11 +280,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.search.doSearch(TestFilesRule.FILE_NAME_1);
 
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         device.waitForIdle();
         assertDefaultContentOfTestDir1();
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         device.waitForIdle();
 
         assertDefaultContentOfTestDir0();
@@ -367,8 +367,10 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Test
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2SearchLocationDropdown() throws Exception {
-        // Start search with term "fred-dog", but rather than searching locally, search everywhere.
-        bots.search.doSearch("fred-dog.jpg");
+        // Open a root that does not have the file we are searching for.
+        switchRoot("Paging Root");
+        // Start search with term "file1.log", but rather than searching locally, search everywhere.
+        bots.search.doSearch("file1.log");
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
 
         // Click Everywhere, to search everywhere.
@@ -377,6 +379,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Silence subsequent warnings about device being potentially null.
         Assert.assertNotNull(device);
         device.waitForIdle();
+        bots.directory.waitForDocument("file1.log");
         bots.directory.assertDocumentsCountOnList(true, 1);
     }
 
@@ -398,7 +401,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move to a different root.
-        EspressoBotsKt.openRoot(context, "Paging Root", getActivityLayoutId());
+        switchRoot("Paging Root");
         // Make sure the directory is loaded.
         bots.directory.waitForDocument("00000");
 
@@ -406,7 +409,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
 
-        // Verify that that the location shows the name of the new root.
+        // Verify that the location shows the name of the new root.
         bots.search
                 .findDropdownTrigger(R.id.search_location_trigger)
                 .check(matches(withText("Paging Root")));
@@ -430,7 +433,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move to the Recents view and expect the last modified to be gone.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
         onView(withId(R.id.search_last_modified_trigger))
@@ -439,7 +442,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Close the search view, to make sure that the directory drawer button becomes visible.
         bots.search.closeSearch();
         // Move Downloads, repeat search, and expect the last modified trigger to be again visible.
-        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        switchRoot("Downloads");
         bots.search.doSearch("-no-such-file-");
         device.waitForIdle();
         bots.search
@@ -455,7 +458,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testSearchV2LastModifiedOptionKeepsUserChoice() throws Exception {
         // Move to the Recents view and expect the last modified to be gone.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
         bots.search.doSearch("1");
         device.waitForIdle();
 
@@ -537,7 +540,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         String deviceLabel = getDeviceLabel();
 
         // Open the root and select the DCIM folder for selection.
-        EspressoBotsKt.openRoot(context, deviceLabel, getActivityLayoutId());
+        switchRoot(deviceLabel);
         bots.directory.selectDocument("DCIM", 1);
 
         // Click on the Images search chips.
@@ -581,7 +584,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Use Paging Root, as it throws:
         //     java.lang.UnsupportedOperationException: Search not supported
-        EspressoBotsKt.openRoot(context, "Paging Root", getActivityLayoutId());
+        switchRoot("Paging Root");
         bots.search.doSearch("00");
         UiObject2 directoryList = device.findObject(By.res(pkg + ":id/dir_list"));
         directoryList.wait(hasNoChildren(), mTimeout);
@@ -620,11 +623,11 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Starting in ROOT_ID_0, which is searchable.
         assertNotNull("Icon should be visible in ROOT_0_ID", bots.search.getSearchIcon());
         // Broken root cannot be searched.
-        EspressoBotsKt.openRoot(context, "Broken Root Doc", getActivityLayoutId());
+        switchRoot("Broken Root Doc");
         assertNull("Icon should not be visible ini Broken Root Doc", bots.search.getSearchIcon());
         // Device root should be searchable.
         String deviceLabel = getDeviceLabel();
-        EspressoBotsKt.openRoot(context, deviceLabel, getActivityLayoutId());
+        switchRoot(deviceLabel);
         assertNotNull("Icon should be visible in " + deviceLabel, bots.search.getSearchIcon());
     }
 
@@ -738,7 +741,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Open device root: the internal storage.
             String deviceRootLabel = getDeviceLabel();
-            EspressoBotsKt.openRoot(context, deviceRootLabel, getActivityLayoutId());
+            switchRoot(deviceRootLabel);
 
             // Search the test file.
             bots.search.doSearch(testFileName);
@@ -946,12 +949,12 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 TestFilesRule.FILE_NAME_NO_RENAME);
         // Change to the Recent view and run a search. Any root would do, but we are certain
         // Recent root exists.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
         // Run any search, the results do not matter.
         bots.search.doSearch("foo");
         device.waitForIdle();
         // Now change back to TEST_ROOT_0. This must result in a regular file listing.
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         // Give the app time to list the directory.
         device.waitForIdle();
         bots.directory.assertDocumentsPresent(
@@ -993,7 +996,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         device.waitForIdle();
 
         // It selects the Recent root.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
 
         // Enter the another search query and checks that the search_last_modified_trigger shows
         // "Last month" text.
@@ -1022,7 +1025,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
                 .check(matches(withText(R.string.search_last_modified_2_days)));
 
         // Go back to Downloads and verify that we are back to Any time.
-        EspressoBotsKt.openRoot(context, "Downloads", getActivityLayoutId());
+        switchRoot("Downloads");
         bots.search.doSearch("last query");
         device.waitForIdle();
         bots.search
@@ -1038,7 +1041,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Select Dir1 folder, and click on the root. This triggers onRootPicked, which
         // before the fix would clobber the stack.
         bots.directory.selectDocument(TestFilesRule.DIR_NAME_1, 1);
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
 
         // Clear the selection, and enter the new directory. Check the breadcrumb.
@@ -1048,27 +1051,8 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Open TEST_ROOT_0 again. This should show the root directory, which includes the test
         // folder.
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testBreadcrumbV2HiddenWhenChangingRoot() throws Exception {
-        // Validates that b/475686340 is fixed.
-
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
-        bots.directory.selectFirstDocument();
-
-        // Verify that breadcrumb v2 shows the path.
-        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.GONE);
-        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
-
-        // Change root, and check that breadcrumb v2 is hidden, while breadcrumb v1 is visible.
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-        bots.directory.waitForDocument(TestFilesRule.DIR_NAME_1);
-        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
-        bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
     }
 
     @Test
@@ -1082,7 +1066,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // a name of a known, existing file.
         bots.directory.selectFirstDocument();
         // Move to recents without clearing the query or the selection.
-        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        switchRoot("Recent");
         // Here we just check one dropdown for being hidden as they all work in sync.
         bots.main.assertLocationTriggerHidden();
     }

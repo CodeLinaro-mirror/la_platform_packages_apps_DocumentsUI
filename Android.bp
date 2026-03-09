@@ -64,7 +64,6 @@ java_defaults {
         "androidx.lifecycle_lifecycle-livedata-ktx",
         "androidx.lifecycle_lifecycle-viewmodel-ktx",
         "androidx.recyclerview_recyclerview",
-        "androidx.recyclerview_recyclerview-selection",
         "androidx.transition_transition",
         "android.multiuser.flags-aconfig-java",
         "apache-commons-compress",
@@ -84,7 +83,14 @@ java_defaults {
         // Exoplayer dependencies.
         "androidx.media3.media3-exoplayer",
         "androidx.media3.media3-ui",
-    ],
+    ] + select(release_flag("RELEASE_DOCUMENTSUI_RECYCLERVIEW_SELECTION_FORK"), {
+        true: [
+            "recyclerview_selection",
+        ],
+        default: [
+            "androidx.recyclerview_recyclerview-selection",
+        ],
+    }),
     plugins: [
         "glide-annotation-processor",
     ],

@@ -34,7 +34,7 @@ import com.android.documentsui.util.Material3Config.Companion.getRes
  * A test helper class that provides support for controlling picker activities programmatically, and
  * making assertions against the state of the UI.
  */
-class PickerBot(device: UiDevice?, context: Context?, timeout: Int, @LayoutRes layoutId: Int?) :
+class PickerBot(device: UiDevice?, context: Context?, timeout: Long, @LayoutRes layoutId: Int?) :
     BaseBot(device, context, timeout, layoutId) {
     /** Clicks the save button with id button1 */
     fun clickSaveButton() {

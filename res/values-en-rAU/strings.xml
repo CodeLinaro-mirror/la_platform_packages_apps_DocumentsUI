@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Turn on"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Don\'t ask me again"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Not now"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Open from"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"List view"</string>
     <string name="menu_search" msgid="1876699106790719849">"Search"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Storage settings"</string>
+    <string name="manage_device" msgid="329180710072251010">"Manage device"</string>
     <string name="menu_open" msgid="9092138100049759315">"Open"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Open with"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Open in new window"</string>
     <string name="menu_save" msgid="5195367497138965168">"Save"</string>
     <string name="menu_share" msgid="4307140947108068356">"Share"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Delete"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Delete permanently"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Delete forever"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Move to bin"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Restore"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Select all"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Get info"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Show hidden files"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Don’t show hidden files"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Show summary column"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Don\'t show summary column"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Show description column"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Don\'t show description column"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"View in <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"New window"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Cut"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Open bin"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Not sorted"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Name"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Summary"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Description"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Type"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Size"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Modified"</string>
@@ -231,10 +235,8 @@
       <item quantity="one">This file was converted to another format: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{This file was converted to another format:}other{These files were converted to another format:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">Copied <xliff:g id="COUNT_1">%1$d</xliff:g> items to clipboard.</item>
-      <item quantity="one">Copied <xliff:g id="COUNT_0">%1$d</xliff:g> item to clipboard.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Read only"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"You can view these files but some actions aren\'t supported"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"This archive is in a read-only location and cannot be extracted here."</string>
@@ -299,20 +301,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> items</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> item</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Delete \"<xliff:g id="NAME">%1$s</xliff:g>\"?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Delete folder \"<xliff:g id="NAME">%1$s</xliff:g>\" and its contents?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other">Delete <xliff:g id="COUNT_1">%1$d</xliff:g> files?</item>
-      <item quantity="one">Delete <xliff:g id="COUNT_0">%1$d</xliff:g> file?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other">Delete <xliff:g id="COUNT_1">%1$d</xliff:g> folders and their contents?</item>
-      <item quantity="one">Delete <xliff:g id="COUNT_0">%1$d</xliff:g> folder and its contents?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other">Delete <xliff:g id="COUNT_1">%1$d</xliff:g> items?</item>
-      <item quantity="one">Delete <xliff:g id="COUNT_0">%1$d</xliff:g> item?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Delete forever?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{‘<xliff:g id="NAME">{name}</xliff:g>\' will be deleted forever. This can\'t be undone.}other{# items will be deleted forever. This can\'t be undone.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{‘<xliff:g id="NAME">{name}</xliff:g>\' will be deleted forever. This can\'t be undone.}other{# items in the bin will be deleted forever. This can\'t be undone.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Images"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Unable to open archive for browsing. File is either corrupt or an unsupported format."</string>
     <string name="name_conflict" msgid="28407269328862986">"A file with this name already exists."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Image preview of <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Hide info panel"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Show info panel"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Nothing in the bin"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Files in the bin for more than 30 days will be automatically deleted."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Empty bin now"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Bin is empty"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Items in the bin for more than 30 days will be automatically deleted"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Empty bin"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Empty bin?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"This action cannot be undone, and the files will no longer be recoverable."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Empty bin"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"File in bin"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"This file is in your bin and cannot be opened. Please restore it from the bin to access it."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Restore file"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"All items in the bin will be deleted forever. This can\'t be undone."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Delete forever"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Item is in the bin}other{Items are in the bin}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{To access this item, restore it or drag it out of the bin}other{To access these items, restore them or drag them out of the bin}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Restore"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"You are currently offline. Some files and functionality are not available. Connect to the Internet for full access."</string>
 </resources>

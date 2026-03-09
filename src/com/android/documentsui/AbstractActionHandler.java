@@ -167,6 +167,7 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     private Runnable mDisplayStateChangedListener;
 
     private ContentLock mContentLock;
+    protected Uri mToSelect;
 
     @Override
     public void registerDisplayStateChangedListener(Runnable l) {
@@ -1139,17 +1140,18 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
         // cross-profile scenario.
         // For RecentsLoader and GlobalSearchLoader, they do not require rootDoc so it is no-op.
         // For DirectoryLoader, the loader needs to handle the case when stack.peek() returns null.
-
-        // Only allow restartLoader when the previous loader is finished or reset. Allowing
-        // multiple consecutive calls to restartLoader() / onCreateLoader() will probably create
-        // multiple active loaders, because restartLoader() does not interrupt previous loaders'
-        // loading, therefore may block the UI thread and cause ANR.
-        if (mLoaderSemaphore.tryAcquire()) {
-            if (isSearchV2Enabled()) {
-                mHandler.removeCallbacks(mShowLoadingRunnable);
-                mHandler.postDelayed(mShowLoadingRunnable, LOADING_DELAY);
-            }
+        if (isSearchV2Enabled()) {
+            mHandler.removeCallbacks(mShowLoadingRunnable);
+            mHandler.postDelayed(mShowLoadingRunnable, LOADING_DELAY);
             mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
+        } else {
+            // Only allow restartLoader when the previous loader is finished or reset. Allowing
+            // multiple consecutive calls to restartLoader() / onCreateLoader() will probably create
+            // multiple active loaders, because restartLoader() does not interrupt previous loaders'
+            // loading, therefore may block the UI thread and cause ANR.
+            if (mLoaderSemaphore.tryAcquire()) {
+                mActivity.getSupportLoaderManager().restartLoader(LoaderIds.MAIN, null, mBindings);
+            }
         }
     }
 
@@ -1573,15 +1575,42 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
             assert (result != null);
             // First: Update the  file list with the new results.
             mInjector.getModel().update(result);
-            mLoaderSemaphore.release();
+            if (isHomeScreenFilesFlagEnabled()) {
+                selectDocument();
+            }
+            if (!isSearchV2Enabled()) {
+                mLoaderSemaphore.release();
+            }
 
             // Second: Fetch the summary for the result.
             startLoadingSummaries(result);
         }
 
+        /**
+         * Selects a document within the directory based on the URI stored in `mToSelect`.
+         * `mToSelect` is set in {@link
+         * com.android.documentsui.files.ActionHandler#launchToDocument(Intent)} if the intent
+         * provided is of application/zip mimetype and the intent originates from the launcher home
+         * screen.
+         */
+        private void selectDocument() {
+            if (mToSelect == null) {
+                return;
+            }
+            for (String modelId : mModel.getModelIds()) {
+                if (mToSelect.equals(mModel.getItemUri(modelId))) {
+                    mSelectionMgr.select(modelId);
+                    mToSelect = null;
+                    return;
+                }
+            }
+        }
+
         @Override
         public void onLoaderReset(Loader<DirectoryResult> loader) {
-            mLoaderSemaphore.release();
+            if (!isSearchV2Enabled()) {
+                mLoaderSemaphore.release();
+            }
         }
 
         private void startLoadingSummaries(DirectoryResult result) {

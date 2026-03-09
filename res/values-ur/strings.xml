@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"آن کریں"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"مجھ سے دوبارہ نہ پوچھیں"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"ابھی نہیں"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"کھولیں از"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"فہرست منظر"</string>
     <string name="menu_search" msgid="1876699106790719849">"تلاش کریں"</string>
     <string name="menu_settings" msgid="6520844520117939047">"اسٹوریج کی ترتیبات"</string>
+    <string name="manage_device" msgid="329180710072251010">"آلہ کا نظم کریں"</string>
     <string name="menu_open" msgid="9092138100049759315">"کھولیں"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"اس کے ساتھ کھولیں"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"نئی ونڈو میں کھولیں"</string>
     <string name="menu_save" msgid="5195367497138965168">"محفوظ کریں"</string>
     <string name="menu_share" msgid="4307140947108068356">"اشتراک کریں"</string>
     <string name="menu_delete" msgid="1022254131543256626">"حذف کریں"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"مستقل طور پر حذف کریں"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"ہمیشہ کے لیے حذف کریں"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"کوڑے دان میں منتقل کریں"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"بحال کریں"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"سبھی کو منتخب کریں"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"معلومات حاصل کریں"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"پوشیدہ فائلز دکھائیں"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"پوشیدہ فائلز نہ دکھائیں"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"خلاصے کا کالم دکھائیں"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"خلاصے کا کالم نہ دکھائیں"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"تفصیل کا کالم دکھائیں"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"تفصیل کا کالم نہ دکھائیں"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> میں دیکھیں"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"نئی ونڈو"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"کٹ کریں"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"کوڑے دان کھولیں"</string>
     <string name="not_sorted" msgid="7813496644889115530">"ترتیب میں نہیں ہیں"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"نام"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"خلاصہ"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"تفصیل"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"قسم"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"سائز"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"ترمیم ہوئی"</string>
@@ -231,10 +235,8 @@
       <item quantity="one">یہ فائل دوسرے فارمیٹ میں تبدیل ہوگئی: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{یہ فائل دوسرے فارمیٹ میں تبدیل ہوگئی:}other{یہ فائلز دوسرے فارمیٹ میں تبدیل ہوگئیں:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">کلپ بورڈ پر <xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز کاپی کئے گئے۔</item>
-      <item quantity="one">کلپ بورڈ پر <xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم کاپی کیا گیا۔</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"صرف پڑھنے کیلئے"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"آپ ان فائلز کو دیکھ سکتے ہیں لیکن کچھ کارروائیاں تعاون یافتہ نہیں ہیں"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"یہ آرکائیو صرف پڑھنے کی جگہ پر ہے اور اسے یہاں نہیں نکالا جا سکتا۔"</string>
@@ -299,20 +301,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\" حذف کریں؟"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" فولڈر اور اس کی مشمولات حذف کریں؟"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> فائلیں حذف کریں؟</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> فائل حذف کریں؟</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> فولڈرز اور ان کے مشمولات حذف کریں؟</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> فولڈر اور اس کے مشمولات حذف کریں؟</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> آئٹمز حذف کریں؟</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> آئٹم حذف کریں؟</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"ہمیشہ کیلئے حذف کرنا"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{‫\"<xliff:g id="NAME">{name}</xliff:g>\" کو ہمیشہ کے لیے حذف کر دیا جائے گا۔ اسے کالعدم نہیں کیا جا سکتا۔}other{‫# آئٹمز ہمیشہ کے لیے حذف کر دیئے جائیں گے۔ اسے کالعدم نہیں کیا جا سکتا۔}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{‫\"<xliff:g id="NAME">{name}</xliff:g>\" کو ہمیشہ کے لیے حذف کر دیا جائے گا۔ اسے کالعدم نہیں کیا جا سکتا۔}other{کوڑے دان میں موجود # آئٹمز ہمیشہ کے لیے حذف کر دیے جائیں گے۔ اسے کالعدم نہیں کیا جا سکتا۔}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"تصاوير"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"براؤزنگ کیلئے آرکائیو کھولنے سے قاصر ہیں۔  فائل یا تو خراب ہے یا ایک غیر تعاون یافتہ فارمیٹ میں ہے۔"</string>
     <string name="name_conflict" msgid="28407269328862986">"اس نام کی ایک فائل پہلے سے موجود ہے۔"</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"‫<xliff:g id="FILENAME">%s</xliff:g> کی تصویر کا پیش منظر"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"معلوماتی پینل چھپائیں"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"معلوماتی پینل دکھائیں"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"کوڑے دان میں کچھ نہیں ہے"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"کوڑے دان میں موجود 30 دن سے زیادہ کی فائلیں خودکار طور پر حذف ہو جائیں گی۔"</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"کوڑے دان ابھی خالی کریں"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"کوڑا دان خالی ہے"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"کوڑے دان میں موجود 30 دن سے زیادہ کے آئٹمز خودکار طور پر حذف ہو جائیں گی"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"کوڑے دان خالی کریں"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"کوڑے دان خالی کریں؟"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"اس کارروائی کو کالعدم نہیں کیا جا سکتا اور فائلیں مزید بازیافت نہیں ہو سکیں گی۔"</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"کوڑے دان خالی کریں"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"کوڑے دان میں فائل"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"یہ فائل آپ کے کوڑے دان میں ہے اور اسے کھولا نہیں جا سکتا۔ براہ کرم اس تک رسائی حاصل کرنے کے لیے اسے کوڑے دان سے بحال کریں۔"</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"فائل کو بحال کریں"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"کوڑے دان میں موجود تمام آئٹمز ہمیشہ کے لیے حذف کر دیے جائیں گے۔ اسے کالعدم نہیں کیا جا سکتا۔"</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"ہمیشہ کے لیے حذف کریں"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{آئٹم کوڑے دان میں ہے}other{آئٹمز کوڑے دان میں ہیں}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{اس آئٹم تک رسائی حاصل کرنے کے لیے، اسے بحال کریں یا اسے کوڑے دان سے باہر گھسیٹیں}other{ان آئٹمز تک رسائی حاصل کرنے کے لیے، انہیں بحال کریں یا انہیں کوڑے دان سے باہر گھسیٹیں}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"بحال کریں"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"آپ فی الحال آف لائن ہیں۔ کچھ فائلز اور فعالیت دستیاب نہیں ہیں۔ مکمل رسائی حاصل کرنے کے لیے انٹرنیٹ سے منسلک کریں۔"</string>
 </resources>

@@ -65,7 +65,7 @@ public final class Bots {
     }
 
     private static final String TAG = "Bots";
-    private static final int TIMEOUT = 15000;
+    private static final long TIMEOUT = 15000L;
 
     public final BreadBot breadcrumb;
     public final DirectoryListBot directory;
@@ -79,12 +79,13 @@ public final class Bots {
     public final InspectorBot inspector;
     public final NotificationsBot notifications;
     public final PickerBot picker;
+    public final NavigationBot navigation;
 
     public Bots(
             UiDevice device,
             UiAutomation automation,
             Context context,
-            int timeout,
+            long timeout,
             @LayoutRes Integer layoutId) {
         main = new UiBot(device, context, TIMEOUT, layoutId);
         breadcrumb = new BreadBot(device, context, TIMEOUT, layoutId);
@@ -98,6 +99,7 @@ public final class Bots {
         inspector = new InspectorBot(device, context, TIMEOUT, layoutId);
         notifications = new NotificationsBot(device, context, TIMEOUT, layoutId);
         picker = new PickerBot(device, context, TIMEOUT, layoutId);
+        navigation = new NavigationBot(device, context, TIMEOUT, layoutId);
 
         // Set the Bots instance to each sub bot so inside each sub bot they can access other sub
         // bot.
@@ -113,6 +115,7 @@ public final class Bots {
         inspector.setBots(this);
         notifications.setBots(this);
         picker.setBots(this);
+        navigation.setBots(this);
     }
 
     /**
@@ -123,11 +126,11 @@ public final class Bots {
         public final UiDevice mDevice;
         public final String mTargetPackage;
         final Context mContext;
-        final int mTimeout;
+        final long mTimeout;
         @LayoutRes protected Integer mLayoutId;
         public Bots mBots;
 
-        BaseBot(UiDevice device, Context context, int timeout, @LayoutRes Integer layoutId) {
+        BaseBot(UiDevice device, Context context, long timeout, @LayoutRes Integer layoutId) {
             mDevice = device;
             mContext = context;
             mTimeout = timeout;
@@ -239,13 +242,13 @@ public final class Bots {
             int n = selectors.length;
             UiObject2[] result = new UiObject2[n];
             if (n > 0) {
-                int remaining = mTimeout;
+                long remaining = mTimeout;
                 // 1048576 is (1 << 20), a power of two close to one million. The value is
                 // basically arbitrary. We just want our sleeps to start as a small fraction of
                 // mTimeout, but double in length each iteration.
-                int retryTimeout = mTimeout / 1048576;
+                long retryTimeout = mTimeout / 1048576;
                 if (retryTimeout < 1) {
-                    retryTimeout = 1;
+                    retryTimeout = 1L;
                 }
                 for (int retry = 0; true; retry++) {
                     mDevice.wait(Until.findObject(selectors[retry % n]), retryTimeout);

@@ -51,6 +51,7 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
                 Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER,
                 Flags.FLAG_USE_NEW_OPEN_WITH,
                 Flags.FLAG_GET_INFO_DIALOG,
+                Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
             )
 
         @JvmStatic
@@ -277,6 +278,18 @@ private constructor(private val overrides: MutableMap<String, Boolean> = mutable
             // TODO(b/457843307): Replace with isAtLeastC when the new SDK is
             // finalised.
             return SdkLevel.isAtLeastB() && enableContentProviderClientAnrOnCancel()
+        }
+
+        @JvmStatic
+        fun isIncludeRemoteRootsInRecentsEnabled(): Boolean {
+            val flag =
+                getInstance()
+                    .overrides
+                    .getOrDefault(
+                        Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+                        Flags.includeRemoteRootsInRecents(),
+                    )
+            return flag && isSearchV2Enabled()
         }
     }
 

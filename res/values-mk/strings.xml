@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Вклучи"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Не прашувај ме повторно"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Не сега"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Отворете од"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Приказ во список"</string>
     <string name="menu_search" msgid="1876699106790719849">"Пребарај"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Поставки на меморија"</string>
+    <string name="manage_device" msgid="329180710072251010">"Управувајте со уредот"</string>
     <string name="menu_open" msgid="9092138100049759315">"Отвори"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Отвори со"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Отвори во нов прозорец"</string>
     <string name="menu_save" msgid="5195367497138965168">"Зачувај"</string>
     <string name="menu_share" msgid="4307140947108068356">"Сподели"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Избриши"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Избриши трајно"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Избриши трајно"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Премести во корпата"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Врати"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Избери ги сите"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Добијте информации"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Прикажи скриени датотеки"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Не прикажувај скриени датотеки"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Прикажи ја колоната со резиме"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Не прикажувај ја колоната со резиме"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Прикажи ја колоната со опис"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Не прикажувај ја колоната со опис"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Прикажи во <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Нов прозорец"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Исечи"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Отвори ја „Корпата“"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Неподредени"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Име"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Краток преглед"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Опис"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Тип"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Големина"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Изменето"</string>
@@ -231,10 +235,8 @@
       <item quantity="other">Датотекиве се конвертирани во друг формат: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Датотекава е конвертирана во друг формат:}one{Датотекиве се конвертирани во друг формат:}other{Датотекиве се конвертирани во друг формат:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one">Копирана е <xliff:g id="COUNT_1">%1$d</xliff:g> ставка на таблата со исечоци.</item>
-      <item quantity="other">Копирани се <xliff:g id="COUNT_1">%1$d</xliff:g> ставки на таблата со исечоци.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Само за преглед"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Може да ги прегледувате датотекиве, но некои дејства не се поддржани"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Оваа архива е на локација само за читање и не може да се отпакува овде."</string>
@@ -299,20 +301,9 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> ставка</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ставки</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Да се избрише „<xliff:g id="NAME">%1$s</xliff:g>“?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Да се избрише папката „<xliff:g id="NAME">%1$s</xliff:g>“ и нејзините содржини?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">Да се избрише <xliff:g id="COUNT_1">%1$d</xliff:g> датотека?</item>
-      <item quantity="other">Да се избришат <xliff:g id="COUNT_1">%1$d</xliff:g> датотеки?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">Да се избрише <xliff:g id="COUNT_1">%1$d</xliff:g> папка и нивните содржини?</item>
-      <item quantity="other">Да се избришат <xliff:g id="COUNT_1">%1$d</xliff:g> папки и нивните содржини?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">Да се избрише <xliff:g id="COUNT_1">%1$d</xliff:g> ставка?</item>
-      <item quantity="other">Да се избришат <xliff:g id="COUNT_1">%1$d</xliff:g> ставки?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Да се избрише трајно?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{„<xliff:g id="NAME">{name}</xliff:g>“ ќе се избрише трајно. Дејствово не може да се врати.}one{# ставка ќе се избришат трајно. Дејствово не може да се врати.}other{# ставки ќе се избришат трајно. Дејствово не може да се врати.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{„<xliff:g id="NAME">{name}</xliff:g>“ ќе се избрише трајно. Дејствово не може да се врати.}one{# ставка во „Корпа“ ќе се избришат трајно. Дејствово не може да се врати.}other{# ставки во „Корпа“ ќе се избришат трајно. Дејствово не може да се врати.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Слики"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Не може да се отвори архивата за прелистување. Датотека или е оштетена или е со неподдржан формат."</string>
     <string name="name_conflict" msgid="28407269328862986">"Датотека со истото име веќе постои."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Преглед на сликата на <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Скриј ја таблата со информации"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Прикажи ја таблата со информации"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Нема ништо во „Корпа“"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Датотеките што се во „Корпата“ подолго од 30 дена ќе се избришат автоматски."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Испразни ја „Корпата“ сега"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"„Корпата“ е празна"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Ставките што се во „Корпата“ подолго од 30 дена ќе се избришат автоматски"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Испразни ја „Корпата“"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Да се испразни „Корпата“?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Ова дејство не може да се врати, а и датотеките веќе нема да може да се вратат."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Испразни ја „Корпата“"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Датотека во „Корпа“"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Датотекава е во „Корпа“ и не може да се отвори. Вратете ја од „Корпа“ за да пристапите до неа."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Врати ја датотеката"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Сите ставки во „Корпата“ ќе се избришат трајно. Дејствово не може да се врати."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Избриши трајно"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Ставката е во „Корпата“}one{Ставките се во „Корпата“}other{Ставките се во „Корпата“}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{За да пристапите до ставкава, вратете ја или извлечете ја од „Корпата“}one{За да пристапите до ставкиве, вратете ги или извлечете ги од „Корпата“}other{За да пристапите до ставкиве, вратете ги или извлечете ги од „Корпата“}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Врати"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Во моментов сте офлајн. Некои датотеки и функции не се достапни. Поврзете се на интернет за целосен пристап."</string>
 </resources>

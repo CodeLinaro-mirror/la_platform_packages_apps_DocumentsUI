@@ -29,7 +29,6 @@ import com.android.documentsui.base.State
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.testing.TestEnv
-import com.android.documentsui.testing.TestProvidersAccess
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -66,14 +65,14 @@ class ConfigTest {
     @EnableFlags(Flags.FLAG_CLOUD_FEATURES, Flags.FLAG_USE_MATERIAL3)
     fun testIsDocumentEnabled_superReturnsTrue_doesNotAffectResult() {
         state.action = State.ACTION_CREATE
-        // The super method, ActivityConfig.isDocumentEnabled, will return true because the
-        // Downloads root doesn't have limited functionality when offline. However the Config method
-        // should still return false because read-only files are disabled when creating.
-        state.stack.changeRoot(TestProvidersAccess.DOWNLOADS)
+        // The super method, ActivityConfig.isDocumentEnabled, will return true because the root
+        // doesn't have limited functionality when offline. However the Config method should still
+        // return false because read-only files are disabled when creating.
         var doc = DocumentInfo()
         doc.mimeType = "image/png"
         doc.flags = FLAG_READ_ONLY
         doc.syncStateFlags = 0
+        doc.rootHasLimitedFunctionalityWhenOffline = false
         assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
     }
 
@@ -84,20 +83,20 @@ class ConfigTest {
     fun testIsDocumentEnabled_superReturnsFalse_returnsFalse() {
         state.action = State.ACTION_CREATE
         state.acceptMimes = arrayOf("image/png")
-        // The super method, ActivityConfig.isDocumentEnabled, will return true because the
-        // Downloads root doesn't have limited functionality when offline. The Config method should
-        // also return true because the "image/png" mime type is accepted.
-        state.stack.changeRoot(TestProvidersAccess.DOWNLOADS)
+        // The super method, ActivityConfig.isDocumentEnabled, will return true because the root
+        // doesn't have limited functionality when offline. The Config method should also return
+        // true because the "image/png" mime type is accepted.
         var doc = DocumentInfo()
         doc.mimeType = "image/png"
         doc.flags = DocumentsContract.Document.FLAG_SUPPORTS_WRITE
         doc.syncStateFlags = 0
+        doc.rootHasLimitedFunctionalityWhenOffline = false
         assertTrue(config.isDocumentEnabled(doc, state, OFFLINE))
 
         // The super method, ActivityConfig.isDocumentEnabled, will now return false because the
-        // Cloud root has limited functionality when offline. This should cause the Config method
-        // to return false.
-        state.stack.changeRoot(TestProvidersAccess.getCloudRoot())
+        // root has limited functionality when offline. This should cause the Config method to
+        // return false.
+        doc.rootHasLimitedFunctionalityWhenOffline = true
         assertFalse(config.isDocumentEnabled(doc, state, OFFLINE))
     }
 }

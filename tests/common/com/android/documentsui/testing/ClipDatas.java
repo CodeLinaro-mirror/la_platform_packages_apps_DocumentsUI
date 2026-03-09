@@ -16,11 +16,14 @@
 
 package com.android.documentsui.testing;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+
 import android.content.ClipData;
 import android.content.ClipDescription;
 
-import org.mockito.Answers;
 import org.mockito.Mockito;
+
+import java.util.List;
 
 public final class ClipDatas {
 
@@ -36,6 +39,20 @@ public final class ClipDatas {
         final ClipData data = createTestClipData();
 
         Mockito.when(data.getDescription()).thenReturn(description);
+
+        return data;
+    }
+
+    /**
+     * Creates a mock ClipData instance for testing with a ClipDescription and a list of
+     * ClipData.Item objects.
+     */
+    public static ClipData createTestClipData(
+            ClipDescription description, List<ClipData.Item> items) {
+        final ClipData data = createTestClipData(description);
+
+        Mockito.when(data.getItemCount()).thenReturn(items.size());
+        Mockito.when(data.getItemAt(anyInt())).thenAnswer(i -> items.get(i.getArgument(0)));
 
         return data;
     }

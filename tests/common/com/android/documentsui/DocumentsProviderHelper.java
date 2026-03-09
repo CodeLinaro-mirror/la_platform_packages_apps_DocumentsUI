@@ -80,6 +80,7 @@ public class DocumentsProviderHelper {
 
     private final UserId mUserId;
     private final String mAuthority;
+    private final Boolean mRootHasLimitedFunctionalityWhenOffline;
     private final ContentProviderClient mClient;
 
     /** A helper constructor for local/internal storage (primary root) with the Download folder. */
@@ -105,11 +106,21 @@ public class DocumentsProviderHelper {
     }
 
     public DocumentsProviderHelper(UserId userId, String authority, Context context, String name) {
+        this(userId, authority, context, name, /* rootHasLimitedFunctionalityWhenOffline= */ false);
+    }
+
+    public DocumentsProviderHelper(
+            UserId userId,
+            String authority,
+            Context context,
+            String name,
+            boolean rootHasLimitedFunctionalityWhenOffline) {
         checkArgument(!TextUtils.isEmpty(authority));
         mUserId = userId;
         mAuthority = authority;
         mClient = userId.getContentResolver(context).acquireContentProviderClient(name);
         assertNotNull(mClient);
+        mRootHasLimitedFunctionalityWhenOffline = rootHasLimitedFunctionalityWhenOffline;
     }
 
     public RootInfo getRoot(String documentId) throws RemoteException {
@@ -368,8 +379,14 @@ public class DocumentsProviderHelper {
             if (cursor == null) {
                 Log.w(TAG, "query() returned null cursor");
             } else {
-                Cursor wrapper = new RootCursorWrapper(mUserId, mAuthority, "totally-fake", cursor,
-                        maxCount);
+                Cursor wrapper =
+                        new RootCursorWrapper(
+                                mUserId,
+                                mAuthority,
+                                "totally-fake",
+                                mRootHasLimitedFunctionalityWhenOffline,
+                                cursor,
+                                maxCount);
                 while (wrapper.moveToNext()) {
                     children.add(DocumentInfo.fromDirectoryCursor(wrapper));
                 }
@@ -389,7 +406,14 @@ public class DocumentsProviderHelper {
                         null,
                         null,
                         null)) {
-            Cursor wrapper = new RootCursorWrapper(mUserId, mAuthority, root.rootId, cursor, 100);
+            Cursor wrapper =
+                    new RootCursorWrapper(
+                            mUserId,
+                            mAuthority,
+                            root.rootId,
+                            root.hasLimitedFunctionalityWhenOffline(),
+                            cursor,
+                            100);
             while (wrapper.moveToNext()) {
                 children.add(DocumentInfo.fromDirectoryCursor(wrapper));
             }
@@ -450,6 +474,27 @@ public class DocumentsProviderHelper {
         mClient.call("clear", args, configuration);
     }
 
+    /**
+     * A helper method for TestCloudProvider only. Sets the COLUMN_CONTENT_SYNC_STATE_FLAGS for the
+     * document with the given id.
+     */
+    public void setSyncState(String documentId, int syncState) throws RemoteException {
+        Bundle extras = new Bundle();
+        extras.putString(TestCloudProvider.METHOD_DOC_ID_EXTRA, documentId);
+        extras.putInt(TestCloudProvider.METHOD_STATE_EXTRA, syncState);
+        mClient.call(TestCloudProvider.SET_SYNC_STATE, null, extras);
+    }
+
+    /**
+     * A helper method for TestCloudProvider only. Nullifies the COLUMN_CONTENT_SYNC_STATE_FLAGS for
+     * the document with the given id.
+     */
+    public void nullifySyncState(String documentId) throws RemoteException {
+        Bundle extras = new Bundle();
+        extras.putString(TestCloudProvider.METHOD_DOC_ID_EXTRA, documentId);
+        mClient.call(TestCloudProvider.NULLIFY_SYNC_STATE, null, extras);
+    }
+
     public List<RootInfo> getRootList() throws RemoteException {
         List<RootInfo> list = new ArrayList<>();
         final Uri rootsUri = DocumentsContract.buildRootsUri(mAuthority);
@@ -475,6 +520,16 @@ public class DocumentsProviderHelper {
     }
 
     /**
+     * A helper method for TestCloudProvider only. Cleans up the provider after testing by removing
+     * files added with createDocument().
+     *
+     * @throws RemoteException
+     */
+    public void cleanUpProvider() throws RemoteException {
+        mClient.call(TestCloudProvider.CLEAN_UP, null, null);
+    }
+
+    /**
      * Retrieves a list of all documents in the trash.
      *
      * @return A {@link List} of {@link DocumentInfo} objects for each item in the trash.
@@ -488,7 +543,13 @@ public class DocumentsProviderHelper {
                 Log.w(TAG, "query() returned null cursor");
             } else {
                 Cursor wrapper =
-                        new RootCursorWrapper(mUserId, mAuthority, "totally-fake", cursor, -1);
+                        new RootCursorWrapper(
+                                mUserId,
+                                mAuthority,
+                                "totally-fake",
+                                mRootHasLimitedFunctionalityWhenOffline,
+                                cursor,
+                                -1);
                 while (wrapper.moveToNext()) {
                     children.add(DocumentInfo.fromDirectoryCursor(wrapper));
                 }

@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"ක්‍රියාත්මක කරන්න"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"නැවත මගෙන් නොඅසන්න"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"දැන් නොවේ"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"විවෘත වන්නේ"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"ලැයිස්තු පෙනුම"</string>
     <string name="menu_search" msgid="1876699106790719849">"සෙවීම"</string>
     <string name="menu_settings" msgid="6520844520117939047">"ගබඩා සැකසීම්"</string>
+    <string name="manage_device" msgid="329180710072251010">"උපාංගය කළමනාකරණය කරන්න"</string>
     <string name="menu_open" msgid="9092138100049759315">"විවෘත කරන්න"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"සමඟ විවෘත කරන්න"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"නව කවුළුවක විවෘත කරන්න"</string>
     <string name="menu_save" msgid="5195367497138965168">"සුරකින්න"</string>
     <string name="menu_share" msgid="4307140947108068356">"බෙදාගන්න"</string>
     <string name="menu_delete" msgid="1022254131543256626">"මකන්න"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"ස්ථිරවම මකන්න"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"සදහටම මකන්න"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"කුණු කූඩය වෙත ගෙන යන්න"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"ප්‍රතිසාධනය කරන්න"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"සියල්ල තෝරන්න"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"තොරතුරු ලබා ගන්න"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"සැඟවුණු ගොනු පෙන්වන්න"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"සැඟවුණු ගොනු නොපෙන්වන්න"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"සාරාංශ තීරුව පෙන්වන්න"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"සාරාංශ තීරුව නොපෙන්වන්න"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"විස්තර තීරුව පෙන්වන්න"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"විස්තර තීරුව නොපෙන්වන්න"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g> තුළ බලන්න"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"නව කවුළුව"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"කපන්න"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"කුණු කූඩය විවෘත කරන්න"</string>
     <string name="not_sorted" msgid="7813496644889115530">"අනුපිළිවෙළට සකසා නැත"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"නම‍"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"සාරාංශය"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"විස්තරය"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"වර්ගය"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"තරම"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"වෙනස් කළේ"</string>
@@ -231,10 +235,8 @@
       <item quantity="other">මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{මෙම ගොනුව වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}one{මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}other{මෙම ගොනු වෙනත් ආකෘතියකට පරිවර්තනය කරන ලදි:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
-      <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g>ක් පසුරු පුවරුවට පිටපත් කරන ලදී.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"(කියවීම-පමණි)"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"ඔබට මෙම ගොනු බැලීමට හැකි නමුත් සමහර ක්‍රියා සඳහා සහය නොදක්වයි"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"මෙම ලේඛනාගාරය කියවීමට පමණක් හැකි ස්ථානයක ඇති අතර මෙතැනින් උපුටා ගත නොහැක."</string>
@@ -299,20 +301,9 @@
       <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g></item>
       <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g></item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\" මකන්නද?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ෆෝල්ඩරය හා එහි අන්තර්ගත මකන්නද?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">ගොනු <xliff:g id="COUNT_1">%1$d</xliff:g>ක් මකන්නද?</item>
-      <item quantity="other">ගොනු <xliff:g id="COUNT_1">%1$d</xliff:g> ක් මකන්නද?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">ෆෝල්ඩර <xliff:g id="COUNT_1">%1$d</xliff:g> ක් හා එහි අන්තර්ගත මකන්නද?</item>
-      <item quantity="other">ෆෝල්ඩර <xliff:g id="COUNT_1">%1$d</xliff:g> ක් හා එහි අන්තර්ගත මකන්නද?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g> ක් මකන්නද?</item>
-      <item quantity="other">අයිතම <xliff:g id="COUNT_1">%1$d</xliff:g> ක් මකන්නද?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"සදහටම මකන්න ද?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” සදහටම මකනු ඇත. මෙය පසුගමනය කිරීමට නොහැක.}one{අයිතම #ක් සදහටම මැකෙනු ඇත. මෙය පසුගමනය කිරීමට නොහැක.}other{අයිතම #ක් සදහටම මැකෙනු ඇත. මෙය පසුගමනය කිරීමට නොහැක.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” සදහටම මකනු ඇත. මෙය පසුගමනය කිරීමට නොහැක.}one{කුණු කූඩයේ ඇති අයිතම #ක් සදහටම මැකෙනු ඇත. මෙය පසුගමනය කිරීමට නොහැක.}other{කුණු කූඩයේ ඇති අයිතම #ක් සදහටම මැකෙනු ඇත. මෙය පසුගමනය කිරීමට නොහැක.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"රූප"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"බ්‍රවුස් කිරීම සඳහා සංරක්ෂිතය විවෘත කිරීමට නොහැකිය. ගොනුව දූෂිතය, නැතහොත් සහාය නොදක්වන ආකෘතියකි."</string>
     <string name="name_conflict" msgid="28407269328862986">"මෙම නම සහිත ගොනුවක් දැනටමත් පවතියි."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g> හි රූප පෙරදසුන"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"තතු පැනලය සඟවන්න"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"තතු පැනලය පෙන්වන්න"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"කුණු කූඩයෙහි කිසිවක් නැත"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"දින 30කට වඩා වැඩි කාලයක් කුණු කූඩයේ ඇති ගොනු ස්වයංක්‍රීයව මැකී යයි."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"කුණු කූඩය දැන් හිස් කරන්න"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"කුණු කූඩය හිස් ය"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"දින 30කට වඩා වැඩි කාලයක් කුණු කූඩයේ ඇති අයිතම ස්වයංක්‍රීයව මැකී යයි"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"කුණු කුඩය හිස් කරන්න"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"කුණු කූඩය හිස් කරන්න ද?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"මෙම ක්‍රියාව අහෝසි කළ නොහැකි අතර, ගොනු තවදුරටත් ප්‍රතිසාධනය කළ නොහැක."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"කුණු කුඩය හිස් කරන්න"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"කුණු කූඩයේ ගොනුව"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"මෙම ගොනුව ඔබේ කුණු කූඩයේ ඇති අතර විවෘත කළ නොහැක. එයට ප්‍රවේශ වීමට එය කුණු කූඩයෙන් ප්‍රතිසාධනය කරන්න."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ගොනුව ප්‍රතිසාධනය කරන්න"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"කුණු කූඩයේ ඇති සියලු අයිතම සදහටම මැකෙනු ඇත. මෙය අස් කළ නොහැක."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"සදහටම මකන්න"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{අයිතමය කුණු කූඩයේ ඇත}one{අයිතම කුණු කූඩයේ ඇත}other{අයිතම කුණු කූඩයේ ඇත}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{මෙම අයිතමයට ප්‍රවේශ වීමට, එය ප්‍රතිසාධනය කරන්න හෝ කුණු කූඩයෙන් පිටතට අදින්න}one{මෙම අයිතම වෙත ප්‍රවේශ වීමට, ඒවා ප්‍රතිසාධනය කරන්න හෝ කුණු කූඩයෙන් පිටතට ඇද දමන්න}other{මෙම අයිතම වෙත ප්‍රවේශ වීමට, ඒවා ප්‍රතිසාධනය කරන්න හෝ කුණු කූඩයෙන් පිටතට ඇද දමන්න}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"ප්‍රතිසාධනය කරන්න"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"ඔබ දැනට නොබැඳි වේ. සමහර ගොනු සහ ක්‍රියාකාරීත්වය නොමැත. පූර්ණ ප්‍රවේශය සඳහා අන්තර්ජාලයට සම්බන්ධ වන්න."</string>
 </resources>

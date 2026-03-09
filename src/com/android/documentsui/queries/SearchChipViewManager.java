@@ -558,28 +558,35 @@ public class SearchChipViewManager {
         }
 
         if (hasAnim && mChipGroup.isAttachedToWindow()) {
-            // start animation
-            for (Chip chip : chipList) {
-                if (isRtl) {
-                    lastX -= chip.getMeasuredWidth();
-                }
+            final boolean areAnimatorsEnabled = ObjectAnimator.areAnimatorsEnabled();
+            if (areAnimatorsEnabled) {
+                // start animation
+                for (Chip chip : chipList) {
+                    if (isRtl) {
+                        lastX -= chip.getMeasuredWidth();
+                    }
 
-                ObjectAnimator animator = ObjectAnimator.ofFloat(chip, "x", chip.getX(), lastX);
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(chip, "x", chip.getX(), lastX);
 
-                if (isRtl) {
-                    lastX -= chipSpacing;
-                } else {
-                    lastX += chip.getMeasuredWidth() + chipSpacing;
+                    if (isRtl) {
+                        lastX -= chipSpacing;
+                    } else {
+                        lastX += chip.getMeasuredWidth() + chipSpacing;
+                    }
+                    animator.setDuration(CHIP_MOVE_ANIMATION_DURATION);
+                    animator.start();
                 }
-                animator.setDuration(CHIP_MOVE_ANIMATION_DURATION);
-                animator.start();
             }
 
             // Let the first checked chip can be shown.
             View parent = (View) mChipGroup.getParent().getParent();
             if (parent instanceof HorizontalScrollView) {
                 final int scrollToX = isRtl ? parent.getWidth() : 0;
-                ((HorizontalScrollView) parent).smoothScrollTo(scrollToX, 0);
+                if (areAnimatorsEnabled) {
+                    ((HorizontalScrollView) parent).smoothScrollTo(scrollToX, 0);
+                } else {
+                    ((HorizontalScrollView) parent).scrollTo(scrollToX, 0);
+                }
                 if (mChipGroup.getChildCount() > 0) {
                     mChipGroup.getChildAt(0)
                             .sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED);

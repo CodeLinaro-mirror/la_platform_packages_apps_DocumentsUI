@@ -24,26 +24,34 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.flags.Flags.FLAG_DESKTOP_UX_PHASE_2_RO;
+import static com.android.documentsui.flags.Flags.FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_ALLFILES_ROOT_FOR_RECENTS;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.flags.Flags.FLAG_USE_SEARCH_V2_READ_ONLY;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import android.net.Uri;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
 import android.platform.test.flag.junit.CheckFlagsRule;
 import android.platform.test.flag.junit.DeviceFlagsValueProvider;
+import android.view.View;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.actions.WaitForCheckState;
 import com.android.documentsui.base.DocumentInfo;
@@ -59,6 +67,8 @@ import com.android.documentsui.rules.TestFilesRule;
 
 import junit.framework.AssertionFailedError;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -77,6 +87,21 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @Rule
     public final ExternalStorageProviderTestFilesRule mTestFilesRule =
             new ExternalStorageProviderTestFilesRule();
+
+    private DocumentsProviderHelper mCloudDocsHelper;
+
+    @Before
+    public void setUpTest() {
+        super.setUp();
+        mCloudDocsHelper =
+                new DocumentsProviderHelper(
+                        userId, TestCloudProvider.AUTHORITY, context, TestCloudProvider.AUTHORITY);
+    }
+
+    @After
+    public void tearDownTest() throws RemoteException {
+        mCloudDocsHelper.cleanUpProvider();
+    }
 
     /**
      * Ensure that Recents shows all file types if the flag is enabled.
@@ -250,8 +275,12 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check: the random test file is not yet in Downloads.
         bots.roots.openRoot("Downloads");
-        UiObject fileInDownloads = bots.directory.findDocument(testFileName, true);
-        assertFalse(fileInDownloads.exists());
+        try {
+            bots.directory.findDocument(testFileName, true);
+            fail("File " + testFileName + " must not be present in Downloads yet");
+        } catch (UiObjectNotFoundException e) {
+            // Working as intended.
+        }
 
         // Move the file to Downloads.
         bots.roots.openRoot("Recent");
@@ -264,7 +293,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check: the random test file is now in Downloads.
         bots.roots.openRoot("Downloads");
-        fileInDownloads = bots.directory.findDocument(testFileName, true);
+        UiObject fileInDownloads = bots.directory.findDocument(testFileName, true);
         assertTrue(fileInDownloads.exists());
     }
 
@@ -375,7 +404,7 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
         try {
             String fileName = Long.toHexString(System.currentTimeMillis()) + ".zip";
             fileUri = createFileInDownloads(fileName, "application/zip");
-            EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+            switchRoot("Recent");
 
             bots.directory.selectFirstDocument();
             bots.directory.assertSelection(1);
@@ -403,4 +432,120 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             deleteFileByUri(fileUri);
         }
     }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testBreadcrumbV2HiddenWhenChangingRoot() throws Exception {
+        // Validates that b/475686340 is fixed.
+        switchRoot("Recent");
+        bots.directory.selectFirstDocument();
+        // The selectFirstDocument posts a long click, which results in 20 selection events.
+        // We need to give it some time to clear up.
+        device.waitForIdle();
+
+        // Verify that breadcrumb v2 shows the path.
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.horizontal_breadcrumb, View.GONE);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
+
+        // Change root, and check that breadcrumb v2 is hidden, while breadcrumb v1 is visible.
+        switchRoot(ROOT_0_ID);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.GONE);
+        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
+    }
+
+    /**
+     * Ensure that Recents shows files from remote (eg. cloud) Roots when the "all files" and
+     * "include remote roots in recents" flags are enabled.
+     *
+     * <p>Note that this feature requires the enable_media_documents_provider_allfiles_root flag to
+     * be enabled in MediaProvider. We cannot force that from these tests. Don't force our flag on
+     * (as the test will fail if the MediaProvider feature is disabled), but do test the feature if
+     * the flag is on (we will ramp the two flags simultaneously).
+     *
+     * @throws Exception
+     */
+    @Test
+    @RequiresFlagsEnabled({
+        FLAG_USE_ALLFILES_ROOT_FOR_RECENTS,
+        FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        FLAG_USE_MATERIAL3,
+        FLAG_USE_SEARCH_V2_READ_ONLY
+    })
+    public void testRecentsContainsRemoteRootItemsWhenAllFilesIsEnabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(true);
+    }
+
+    /**
+     * Ensure that Recents shows files from remote (eg. cloud) Roots when the "all files" flag is
+     * not enabled, but the "include remote roots in recents" flag is.
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
+    @EnableFlags({
+        FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS,
+        FLAG_USE_MATERIAL3,
+        FLAG_USE_SEARCH_V2_READ_ONLY
+    })
+    public void testRecentsContainsRemoteRootItemsWhenAllFilesIsDisabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(true);
+    }
+
+    /**
+     * Ensure Recents does not show files from remote (eg. cloud) Roots when its flag is disabled.
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisableFlags({FLAG_INCLUDE_REMOTE_ROOTS_IN_RECENTS})
+    @EnableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testRecentsDoesNotContainRemoteRootItemsWhenFlagIsDisabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(false);
+    }
+
+    /**
+     * Ensure Recents does not show files from remote (eg. cloud) Roots when Searchv2 is disabled.
+     *
+     * @throws Exception
+     */
+    @Test
+    @DisableFlags({FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY})
+    public void testRecentsDoesNotContainRemoteRootItemsWhenSearchV2IsDisabled() throws Exception {
+        createTestCloudProviderFileAndAssertPresenceInRecents(false);
+    }
+
+    private void createTestCloudProviderFileAndAssertPresenceInRecents(boolean shouldBePresent)
+            throws Exception {
+        // Create a file with a random name in TestCloudProvider so we can ensure we're seeing it.
+        final RootInfo cloudRoot = mCloudDocsHelper.getRoot(TestCloudProvider.ROOT_ID);
+        final String fileName = Long.toHexString(System.currentTimeMillis()) + ".txt";
+        mCloudDocsHelper.createDocument(cloudRoot, "text/plain", fileName);
+
+        // Is the file present in the root of the provider?
+        bots.roots.openRoot("Test Cloud Provider");
+        assertTrue(bots.directory.findDocument(fileName, true).exists());
+
+        // Is the file also present in recents?
+        bots.roots.openRoot("Recent");
+        assertEquals(shouldBePresent, bots.directory.findDocument(fileName, true).exists());
+    }
+
+    @Test
+    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
+    public void testReSelectingRootClosesSearch() throws Exception {
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        bots.search.doSearch("query");
+        device.waitForIdle();
+        // Dropdown options should be visible when search is active.
+        bots.search.findDropdownTrigger(R.id.search_location_trigger).check(matches(isDisplayed()));
+
+        // Re-select the Recent view; this should cancel the search.
+        EspressoBotsKt.openRoot(context, "Recent", getActivityLayoutId());
+        device.waitForIdle();
+        onView(withId(R.id.search_location_trigger)).check(matches(not(isDisplayed())));
+        bots.search.findChip(R.string.chip_title_images).check(matches(isDisplayed()));
+        bots.search.assertSearchIsClosed();
+    }
 }
+

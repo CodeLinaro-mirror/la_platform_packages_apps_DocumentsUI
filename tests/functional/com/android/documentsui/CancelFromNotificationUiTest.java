@@ -148,8 +148,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testCopyDocument_Cancel() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -168,13 +166,13 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testCopyDocument_CancelFromNotification() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
+        // Must use openRoot below as the UI itself is being tested
         bots.main.doCopy(
                 () -> {
                     EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
@@ -183,11 +181,11 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         device.waitForIdle();
         assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         device.waitForIdle();
         assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }
@@ -196,8 +194,6 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @Test
     @DisableFlags(FLAG_DESKTOP_UX_PHASE_2_RO)
     public void testMoveDocument_Cancel() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
-
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
@@ -216,13 +212,13 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
     @HugeLongTest
     @Test
     public void testMoveDocument_CancelFromNotification() throws Exception {
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
         bots.directory.findDocument(TARGET_FILE);
         device.waitForIdle();
 
         bots.directory.selectDocument(TARGET_FILE, 1);
         device.waitForIdle();
 
+        // Must use openRoot below as the UI itself is being tested
         bots.main.doMove(
                 () -> {
                     EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
@@ -230,11 +226,11 @@ public class CancelFromNotificationUiTest extends ActivityTestJunit4<FilesActivi
         mCountDownLatch.await(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
         assertTrue(mErrorReason, mOperationExecuted);
 
-        EspressoBotsKt.openRoot(context, ROOT_1_ID, getActivityLayoutId());
+        switchRoot(ROOT_1_ID);
         device.waitForIdle();
         assertFalse(bots.directory.hasDocuments(TARGET_FILE));
 
-        EspressoBotsKt.openRoot(context, ROOT_0_ID, getActivityLayoutId());
+        switchRoot(ROOT_0_ID);
         device.waitForIdle();
         assertTrue(bots.directory.hasDocuments(TARGET_FILE));
     }

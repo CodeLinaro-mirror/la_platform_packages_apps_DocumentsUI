@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"I-on"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Huwag na akong tanungin ulit"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Hindi ngayon"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Buksan mula sa"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"List view"</string>
     <string name="menu_search" msgid="1876699106790719849">"Maghanap"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Mga setting ng storage"</string>
+    <string name="manage_device" msgid="329180710072251010">"Pamahalaan ang device"</string>
     <string name="menu_open" msgid="9092138100049759315">"Buksan"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Buksan gamit ang"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Buksan sa bagong window"</string>
     <string name="menu_save" msgid="5195367497138965168">"I-save"</string>
     <string name="menu_share" msgid="4307140947108068356">"Ibahagi"</string>
     <string name="menu_delete" msgid="1022254131543256626">"I-delete"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Permanenteng i-delete"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"I-delete nang tuluyan"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Ilipat sa trash"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"I-restore"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Piliin lahat"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Kumuha ng impormasyon"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Ipakita ang hidden files"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Huwag ipakita hidden files"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Ipakita ang column ng buod"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Huwag ipakita ang column ng buod"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Ipakita ang column ng paglalarawan"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Itago ang column ng paglalarawan"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Tingnan sa <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Bagong window"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"I-cut"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Buksan ang trash"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Hindi napagbukud-bukod"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Pangalan"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Buod"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Paglalarawan"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Uri"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Laki"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Binago"</string>
@@ -231,10 +235,8 @@
       <item quantity="other">Na-convert sa ibang format ang mga file na ito: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Na-convert sa ibang format ang file na ito:}one{Na-convert sa ibang format ang mga file na ito:}other{Na-convert sa ibang format ang mga file na ito:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one">Nakopya ang <xliff:g id="COUNT_1">%1$d</xliff:g> item sa clipboard.</item>
-      <item quantity="other">Nakopya ang <xliff:g id="COUNT_1">%1$d</xliff:g> na item sa clipboard.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Read-only"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Puwede mong tingnan ang mga file na ito pero hindi suportado ang ilang aksyon"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Nasa read-only na lokasyon ang archive na ito at hindi ito mae-extract dito."</string>
@@ -299,20 +301,9 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> item</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> na item</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Gusto mo bang i-delete ang \"<xliff:g id="NAME">%1$s</xliff:g>\"?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Gusto mo bang i-delete ang folder na \"<xliff:g id="NAME">%1$s</xliff:g>\" at ang mga content nito?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">Gusto mo bang i-delete ang <xliff:g id="COUNT_1">%1$d</xliff:g> file?</item>
-      <item quantity="other">Gusto mo bang i-delete ang <xliff:g id="COUNT_1">%1$d</xliff:g> (na) file?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">Gusto mo bang i-delete ang <xliff:g id="COUNT_1">%1$d</xliff:g> folder at mga content ng mga ito?</item>
-      <item quantity="other">Gusto mo bang i-delete ang <xliff:g id="COUNT_1">%1$d</xliff:g> na folder at mga content ng mga ito?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">Gusto mo bang i-delete ang <xliff:g id="COUNT_1">%1$d</xliff:g> item?</item>
-      <item quantity="other">Gusto mo bang i-delete ang <xliff:g id="COUNT_1">%1$d</xliff:g> na item?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"I-delete nang tuluyan?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Tuluyan nang ide-delete ang “<xliff:g id="NAME">{name}</xliff:g>.” Hindi ito maa-undo.}one{# item ang tuluyan nang ide-delete. Hindi ito maa-undo.}other{# na item ang tuluyan nang ide-delete. Hindi ito maa-undo.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Tuluyan nang ide-delete ang “<xliff:g id="NAME">{name}</xliff:g>.” Hindi ito maa-undo.}one{# item sa trash ang ide-delete nang tuluyan. Hindi ito maa-undo.}other{# na item sa trash ang ide-delete nang tuluyan. Hindi ito maa-undo.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Mga Larawan"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Hindi mabuksan ang archive para sa pag-browse. Maaaring corrupt ang file o hindi sinusuportahan ang format."</string>
     <string name="name_conflict" msgid="28407269328862986">"Mayroon nang file na may ganitong pangalan."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Preview ng larawan ng <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Itago ang panel ng impormasyon"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Ipakita ang panel ng impormasyon"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Walang laman ang trash"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Awtomatikong ide-delete ang mga file sa trash na mahigit 30 araw na."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Tanggalan ng laman ang trash ngayon"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Walang laman ang trash"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Awtomatikong ide-delete ang mga item sa trash na mahigit 30 araw na"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Alisin ang laman ng trash"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Tanggalan ng laman ang trash?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Hindi na maa-undo ang aksyong ito, at hindi na mare-recover ang mga file."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tanggalan ng laman ang trash"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"File sa Trash"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Nasa iyong Trash ang file na ito at hindi ito mabubuksan. Paki-restore ito mula sa trash para ma-access ito."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"I-restore ang file"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Ide-delete nang tuluyan ang lahat ng item sa trash. Hindi ito maa-undo."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"I-delete nang tuluyan"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Nasa trash ang item}one{Nasa trash ang mga item}other{Nasa trash ang mga item}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Para ma-access ang item na ito, i-restore ito o i-drag ito palabas ng trash}one{Para ma-access ang mga item na ito, i-restore ang mga ito o i-drag ang mga ito palabas ng trash}other{Para ma-access ang mga item na ito, i-restore ang mga ito o i-drag ang mga ito palabas ng trash}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"I-restore"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Kasalukuyan kang offline. Hindi available ang ilang file at functionality. Kumonekta sa internet para sa ganap na access."</string>
 </resources>

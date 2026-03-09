@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Асаах"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Надаас дахиж бүү асуу"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Одоо биш"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Дараахаас нээх"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Жагсааж харах"</string>
     <string name="menu_search" msgid="1876699106790719849">"Хайх"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Сангийн тохиргоо"</string>
+    <string name="manage_device" msgid="329180710072251010">"Төхөөрөмжийг удирдах"</string>
     <string name="menu_open" msgid="9092138100049759315">"Нээх"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Дараахаар нээх"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Шинэ цонхонд нээх"</string>
     <string name="menu_save" msgid="5195367497138965168">"Хадгалах"</string>
     <string name="menu_share" msgid="4307140947108068356">"Хуваалцах"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Устгах"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Бүрмөсөн устгах"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Үүрд устгах"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Хогийн сав руу зөөх"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Сэргээх"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Бүгдийг сонгох"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Мэдээлэл авах"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Нуусан файлудыг харуул"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Нуусан файлуудыг бүү харуул"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Хураангуйн баганыг харуулах"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Хураангуйн баганыг бүү харуул"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Тайлбарын баганыг харуулах"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Тайлбарын баганыг бүү харуул"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>-д харах"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Шинэ цонх"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Таслах"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Хогийн савыг нээх"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Эрэмбэлээгүй"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Нэр"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Хураангуй"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Тайлбар"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Төрөл"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Хэмжээ"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Өөрчилсөн"</string>
@@ -231,10 +235,8 @@
       <item quantity="one">Энэ файлыг өөр форматад хөрвүүлсэн: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Энэ файлыг өөр формат руу хөрвүүлсэн:}other{Эдгээр файлыг өөр формат руу хөрвүүлсэн:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> зүйлийг түр санах ойд хуулсан.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> зүйлийг түр санах ойд хуулсан.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Зөвхөн унших"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Та эдгээр файлыг үзэх боломжтой боловч зарим үйлдлийг дэмждэггүй"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Энэ архив нь зөвхөн унших байршилд байгаа бөгөөд энд задлах боломжгүй."</string>
@@ -299,20 +301,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> зүйл</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> зүйл</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\"-г устгах уу?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\"-г агуулгатай нь устгах уу?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> файл устгах уу?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> файл устгах уу?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> фолдерыг агуулгатай нь устгах уу?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> фолдерыг агуулгатай нь устгах уу?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> зүйлийг устгах уу?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> зүйлийг устгах уу?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Үүрд устгах уу?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>”-г үүрд устгана. Энэ үйлдлийг буцаах боломжгүй.}other{# зүйлийг үүрд устгана. Энэ үйлдлийг буцаах боломжгүй.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>”-г үүрд устгана. Энэ үйлдлийг буцаах боломжгүй.}other{Хогийн саван дахь # зүйлийг үүрд устгана. Энэ үйлдлийг буцаах боломжгүй.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Зураг"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Хөтчид архив нээх боломжгүй байна. Муудсан, эсвэл дэмжээгүй форматын файл байна."</string>
     <string name="name_conflict" msgid="28407269328862986">"Ижил нэртэй файл аль хэдийн үүсгэсэн байна."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>-н урьдчилан үзэх зураг"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Мэдээллийн түр зуурын самбарыг нуух"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Мэдээллийн түр зуурын самбарыг харуулах"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Хогийн сав хоосон байна"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Хогийн саванд 30 хоногоос удаан байсан файлуудыг автоматаар устгана."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Хогийн савыг одоо хоослох"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Хогийн сав хоосон байна"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Хогийн саванд 30 хоногоос удаан байсан зүйлсийг автоматаар устгана"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Хогийн савыг хоослох"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Хогийн савыг хоослох уу?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Энэ үйлдлийг буцаах боломжгүй ба файлуудыг сэргээх боломжгүй болно."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Хогийн савыг хоослох"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Хогийн саван дахь файл"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Энэ файл таны Хогийн саванд байгаа бөгөөд нээх боломжгүй. Үүнд хандахын тулд хогийн савнаас сэргээнэ үү."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Файлыг сэргээх"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Хогийн саван дахь бүх зүйлийг үүрд устгана. Энэ үйлдлийг буцаах боломжгүй."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Үүрд устгах"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Зүйл хогийн саванд байна}other{Зүйлс хогийн саванд байна}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Энэ зүйлд хандахын тулд сэргээх эсвэл хогийн савнаас гадагш чирнэ үү}other{Эдгээр зүйлд хандахын тулд сэргээх эсвэл хогийн савнаас гадагш чирнэ үү}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Сэргээх"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Та одоогоор офлайн байна. Зарим файл, функцийг ашиглах боломжгүй. Бүрэн хандахын тулд интернэтэд холбогдоно уу."</string>
 </resources>

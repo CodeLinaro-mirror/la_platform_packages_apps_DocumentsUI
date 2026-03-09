@@ -22,13 +22,16 @@ import static com.android.documentsui.base.State.ACTION_OPEN;
 import static com.android.documentsui.flags.Flags.FLAG_USE_FILE_SUMMARY;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.database.MatrixCursor;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
@@ -40,6 +43,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.DirectoryResult;
+import com.android.documentsui.Injector;
 import com.android.documentsui.Model;
 import com.android.documentsui.R;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
@@ -49,24 +53,32 @@ import com.android.documentsui.base.State;
 import com.android.documentsui.base.UserId;
 import com.android.documentsui.dirlist.SummaryProviderManager;
 import com.android.documentsui.dirlist.SummaryProviderState;
-import com.android.documentsui.files.TestActivity;
+import com.android.documentsui.picker.TestActivity;
+import com.android.documentsui.flags.Flags;
 import com.android.documentsui.roots.RootCursorWrapper;
 import com.android.documentsui.rules.OverrideFlagsRule;
+import com.android.documentsui.testing.TestActionHandler;
 import com.android.documentsui.testing.TestDirectoryDetails;
 import com.android.documentsui.testing.TestEnv;
 import com.android.documentsui.testing.TestFeatures;
 import com.android.documentsui.testing.TestMenu;
 import com.android.documentsui.testing.TestMenuItem;
+import com.android.documentsui.testing.TestPackageManager;
+import com.android.documentsui.testing.TestResources;
 import com.android.documentsui.testing.TestSearchViewManager;
 import com.android.documentsui.testing.TestSelectionDetails;
-
-import kotlinx.coroutines.CoroutineScopeKt;
-import kotlinx.coroutines.Dispatchers;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
+import kotlinx.coroutines.CoroutineScopeKt;
+import kotlinx.coroutines.Dispatchers;
 
 @RunWith(AndroidJUnit4.class)
 @SmallTest
@@ -152,8 +164,12 @@ public final class MenuManagerTest {
 
     private int mFilesCount;
 
-    private final com.android.documentsui.files.TestActivity mActivity =
+    private final TestActivity mActivity =
             TestActivity.create(TestEnv.create());
+    private TestPackageManager mPackageManager;
+    private ActivityInfo activityInfo;
+    private ResolveInfo resolveInfo = new ResolveInfo();
+    private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
 
     @Before
@@ -221,6 +237,23 @@ public final class MenuManagerTest {
         mFeatures = new TestFeatures();
 
         selectionDetails = new TestSelectionDetails();
+        selectionDetails.size = 1;
+        selectionDetails.mimeTypes = new HashSet<>(Collections.singleton("text/plain"));
+
+        mPackageManager = TestPackageManager.create();
+        activityInfo = spy(new ActivityInfo());
+        activityInfo.packageName = "com.test.package";
+        activityInfo.name = "test.class";
+        resolveInfo.activityInfo = activityInfo;
+
+        testResources = TestResources.create();
+
+        mActivity.resources = testResources;
+        mActivity.packageMgr = mPackageManager;
+        TestActionHandler testActionHandler = new TestActionHandler();
+        testActionHandler.throwAtCreateApprovedHandlerIntent = true;
+        ((Injector) mActivity.injector).actions = testActionHandler;
+
         dirDetails = new TestDirectoryDetails();
         testSearchManager = new TestSearchViewManager();
         mSummaryProviderManager =
@@ -287,6 +320,18 @@ public final class MenuManagerTest {
 
         actionModeSelect.assertDisabledAndInvisible();
         actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    // Disable M3 flag for the test since the de/select menu options are disabled by default in M3.
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSelectAndDeselectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
         actionModeSelectAll.assertDisabledAndInvisible();
         mActionModeDeselectAll.assertDisabledAndInvisible();
     }
@@ -455,6 +500,19 @@ public final class MenuManagerTest {
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_WithFilesInDirectory() {
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertEnabledAndVisible();
     }
 
     @Test
@@ -630,6 +688,15 @@ public final class MenuManagerTest {
 
         dirSelectAll.assertDisabledAndInvisible();
         mDirDeselectAll.assertEnabledAndVisible();
+    }
+
+    @Test
+    public void testContextMenu_EmptyArea_SelectAndDeselectAllWithNoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+
+        dirSelectAll.assertDisabledAndInvisible();
+        mDirDeselectAll.assertDisabledAndInvisible();
     }
 
     @SuppressLint("VisibleForTests")
@@ -887,6 +954,48 @@ public final class MenuManagerTest {
         mgr.updateOptionMenu(testMenu);
         showSummary.assertEnabledAndVisible();
         showSummary.assertTitle(R.string.option_hide_summary_column);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_notUseApprovedDocumentHandler() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is not added.
+        boolean found = false;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                found = true;
+            }
+        }
+        assertFalse("Approved document handler menu item should not be added.", found);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_notUseApprovedDocumentHandler() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is not added.
+        boolean found = false;
+        for (int i = 0; i < testMenu.size(); i++) {
+            TestMenuItem item = testMenu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals("Test App")) {
+                found = true;
+            }
+        }
+        assertFalse("Approved document handler menu item should not be added.", found);
     }
 
     @SuppressLint("VisibleForTests")

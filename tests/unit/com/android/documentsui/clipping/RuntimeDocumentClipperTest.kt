@@ -16,23 +16,32 @@
 
 package com.android.documentsui.clipping
 
+import android.content.ClipData
 import android.content.ClipDescription
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.PersistableBundle
+import android.provider.DocumentsContract.Document
+import androidx.core.net.toUri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
+import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.DocumentStack
+import com.android.documentsui.services.FileOperationService
 import com.android.documentsui.services.FileOperations
 import com.android.documentsui.testing.ClipDatas
 import com.android.documentsui.testing.TestEventListener
+import com.android.documentsui.testing.TestProvidersAccess
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.mockito.Mockito
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
@@ -49,6 +58,7 @@ class RuntimeDocumentClipperTest {
     private val callbackListener = TestEventListener<Int>()
     private val callback =
         FileOperations.Callback { status, _, _ -> callbackListener.accept(status) }
+    private lateinit var clipboard: ClipboardManager
 
     @Before
     fun setUp() {
@@ -60,7 +70,8 @@ class RuntimeDocumentClipperTest {
         storage = ClipStorage(clipDir, pref)
 
         context = Mockito.mock(Context::class.java)
-        clipper = RuntimeDocumentClipper(context, storage)
+        clipboard = Mockito.mock(ClipboardManager::class.java)
+        clipper = RuntimeDocumentClipper(context, storage, clipboard)
     }
 
     @Test
@@ -103,5 +114,54 @@ class RuntimeDocumentClipperTest {
 
         clipper.copyFromClipData(stack, clipData, callback)
         callbackListener.assertLastArgument(FileOperations.Callback.STATUS_REJECTED)
+    }
+
+    @Test
+    fun testCopyFromClipDataSameSourceAndDestFolderStatusRejected() {
+        val destDoc = DocumentInfo()
+        destDoc.derivedUri = TestProvidersAccess.HAMMY.uri
+        destDoc.mimeType = Document.MIME_TYPE_DIR
+        destDoc.flags = destDoc.flags or Document.FLAG_DIR_SUPPORTS_CREATE
+        val stack = DocumentStack(TestProvidersAccess.HAMMY, destDoc)
+        val description = ClipDescription("", emptyArray<String>())
+
+        // Provide the same source and destination folder in the clip data and stack so that the
+        // move operation is rejected.
+        description.extras =
+            PersistableBundle().apply {
+                putString("clipper:srcParent", destDoc.documentUri.toString())
+                putInt("clipper:opType", FileOperationService.OPERATION_MOVE)
+            }
+        val mockItem = Mockito.mock(ClipData.Item::class.java)
+        whenever(mockItem.uri).thenReturn("some-uri".toUri())
+        val clipData = ClipDatas.createTestClipData(description, listOf(mockItem))
+
+        clipper.copyFromClipData(stack, clipData, callback)
+        callbackListener.assertLastArgument(FileOperations.Callback.STATUS_REJECTED)
+    }
+
+    @Test
+    fun testCopyFromClipDataMoveOpClearClipData() {
+        val destDoc = DocumentInfo()
+        destDoc.derivedUri = TestProvidersAccess.HAMMY.uri
+        destDoc.mimeType = Document.MIME_TYPE_DIR
+        destDoc.flags = destDoc.flags or Document.FLAG_DIR_SUPPORTS_CREATE
+        val stack = DocumentStack(TestProvidersAccess.HAMMY, destDoc)
+        val description = ClipDescription("", emptyArray<String>())
+
+        // Provide a different source to the destination in the clip data and stack  so that a move
+        // operation can be performed and the clipboard will be cleared as a result.
+        description.extras =
+            PersistableBundle().apply {
+                putString("clipper:srcParent", TestProvidersAccess.HOME.uri.toString())
+                putInt("clipper:opType", FileOperationService.OPERATION_MOVE)
+            }
+        val mockItem = Mockito.mock(ClipData.Item::class.java)
+        whenever(mockItem.uri).thenReturn("some-uri".toUri())
+        val clipData = ClipDatas.createTestClipData(description, listOf(mockItem))
+
+        clipper.copyFromClipData(stack, clipData, callback)
+        callbackListener.assertLastArgument(FileOperations.Callback.STATUS_ACCEPTED)
+        verify(clipboard).clearPrimaryClip()
     }
 }

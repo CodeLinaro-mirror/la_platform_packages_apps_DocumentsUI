@@ -987,14 +987,36 @@ public class RootsFragment extends Fragment {
             ejectClicked(ejectIcon, sidebarItem.getItemInfo().getRoot(), mActionHandler);
             return true;
         } else if (id == getRes(R.id.root_menu_open_in_new_window)) {
-            if (sidebarItem instanceof RootItem) {
-                mActionHandler.openInNewWindow(new DocumentStack(
-                        sidebarItem.getItemInfo().getRoot(), sidebarItem.getDocInfo()), null);
-            } else if (isHomeScreenFilesFlagEnabled() && sidebarItem instanceof ShortcutItem) {
-                ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
-                mActionHandler.openInNewWindow(
-                        new DocumentStack(shortcut.getRoot(), sidebarItem.getDocInfo()), shortcut);
-                return true;
+            Runnable openInNewWindowRunnable =
+                    () -> {
+                        if (sidebarItem instanceof RootItem) {
+                            mActionHandler.openInNewWindow(
+                                    new DocumentStack(
+                                            sidebarItem.getItemInfo().getRoot(),
+                                            sidebarItem.getDocInfo()),
+                                    null);
+                        } else if (isHomeScreenFilesFlagEnabled()
+                                && sidebarItem instanceof ShortcutItem) {
+                            ShortcutInfo shortcut = (ShortcutInfo) sidebarItem.getItemInfo();
+                            mActionHandler.openInNewWindow(
+                                    new DocumentStack(shortcut.getRoot(), sidebarItem.getDocInfo()),
+                                    shortcut);
+                        }
+                    };
+            if (sidebarItem.getDocInfo() == null) {
+                mActionHandler.getDocument(
+                        sidebarItem.getItemInfo().getRoot().authority,
+                        sidebarItem.getItemInfo().getDocumentId(),
+                        sidebarItem.getItemInfo().getRoot().userId,
+                        TimeoutTask.DEFAULT_TIMEOUT,
+                        (docInfo) -> {
+                            if (docInfo != null) {
+                                sidebarItem.setDocInfo(docInfo);
+                                openInNewWindowRunnable.run();
+                            }
+                        });
+            } else {
+                openInNewWindowRunnable.run();
             }
             return true;
         } else if (id == getRes(R.id.root_menu_paste_into_folder)) {

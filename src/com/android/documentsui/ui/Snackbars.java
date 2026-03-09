@@ -42,9 +42,11 @@ public final class Snackbars {
     private Snackbars() {}
 
     public static final void showDocumentsClipped(Activity activity, int docCount) {
+        Map<String, Object> args = new HashMap<>();
+        args.put("count", docCount);
         String msg =
-                Shared.getQuantityString(
-                        activity, getRes(R.plurals.clipboard_files_clipped), docCount);
+                MessageFormat.format(
+                        activity.getString(getRes(R.string.clipboard_files_added)), args);
         Snackbars.makeSnackbar(activity, msg, Snackbar.LENGTH_LONG).show();
     }
 

@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Įjungti"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Daugiau neklausti"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Ne dabar"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Atidaryti iš"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Sąrašo rodinys"</string>
     <string name="menu_search" msgid="1876699106790719849">"Ieškoti"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Saugyklos nustatymai"</string>
+    <string name="manage_device" msgid="329180710072251010">"Įrenginio tvarkymas"</string>
     <string name="menu_open" msgid="9092138100049759315">"Atidaryti"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Atidaryti naudojant"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Atidaryti naujame lange"</string>
     <string name="menu_save" msgid="5195367497138965168">"Išsaugoti"</string>
     <string name="menu_share" msgid="4307140947108068356">"Bendrinti"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Ištrinti"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Ištrinti visam laikui"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Ištrinti visam laikui"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Perkelti į šiukšliadėžę"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Atkurti"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Pasirinkti viską"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Gauti informacijos"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Rodyti paslėptus failus"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Nerodyti paslėptų failų"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Rodyti suvestinės stulpelį"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Nerodyti suvestinės stulpelio"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Rodyti aprašo stulpelį"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Nerodyti aprašo stulpelio"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Žr. <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Naujas langas"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Iškirpti"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Atidaryti šiukšliadėžę"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nerūšiuota"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Pavadinimas"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Suvestinė"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Aprašas"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Tipas"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Dydis"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Pakeista"</string>
@@ -253,12 +257,8 @@
       <item quantity="other">Šie failai konvertuoti į kitą formatą: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Šis failas konvertuotas į kitą formatą:}one{Šie failai konvertuoti į kitą formatą:}few{Šie failai konvertuoti į kitą formatą:}many{Šie failai konvertuoti į kitą formatą:}other{Šie failai konvertuoti į kitą formatą:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> elementas nukopijuotas į iškarpinę.</item>
-      <item quantity="few"><xliff:g id="COUNT_1">%1$d</xliff:g> elementai nukopijuoti į iškarpinę.</item>
-      <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> elemento nukopijuota į iškarpinę.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementų nukopijuota į iškarpinę.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Tik skaityti"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Galite peržiūrėti šiuos failus, bet kai kurie veiksmai nepalaikomi"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Šis archyvas yra tik skaitomoje vietoje ir jo čia negalima išskleisti."</string>
@@ -327,26 +327,9 @@
       <item quantity="many"><xliff:g id="COUNT_1">%1$d</xliff:g> elemento</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> elementų</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Ištrinti failą „<xliff:g id="NAME">%1$s</xliff:g>“?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Ištrinti aplanką „<xliff:g id="NAME">%1$s</xliff:g>“ ir jo turinį?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="one">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failą?</item>
-      <item quantity="few">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failus?</item>
-      <item quantity="many">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failo?</item>
-      <item quantity="other">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> failų?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="one">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplanką ir jų turinį?</item>
-      <item quantity="few">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplankus ir jų turinį?</item>
-      <item quantity="many">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplanko ir jų turinį?</item>
-      <item quantity="other">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> aplankų ir jų turinį?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="one">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elementą?</item>
-      <item quantity="few">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elementus?</item>
-      <item quantity="many">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elemento?</item>
-      <item quantity="other">Ištrinti <xliff:g id="COUNT_1">%1$d</xliff:g> elementų?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Ištrinti visam laikui?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{<xliff:g id="NAME">{name}</xliff:g> bus ištrintas visam laikui. Šio veiksmo negalima anuliuoti.}one{Visam laikui bus ištrintas # elementas. Šio veiksmo negalima anuliuoti.}few{Visam laikui bus ištrinti # elementai. Šio veiksmo negalima anuliuoti.}many{Visam laikui bus ištrinta # elemento. Šio veiksmo negalima anuliuoti.}other{Visam laikui bus ištrinta # elementų. Šio veiksmo negalima anuliuoti.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{<xliff:g id="NAME">{name}</xliff:g> bus ištrintas visam laikui. Šio veiksmo negalima anuliuoti.}one{Visam laikui bus ištrintas # šiukšliadėžėje esantis elementas. Šio veiksmo negalima anuliuoti.}few{Visam laikui bus ištrinti # šiukšliadėžėje esantys elementai. Šio veiksmo negalima anuliuoti.}many{Visam laikui bus ištrinta # šiukšliadėžėje esančio elemento. Šio veiksmo negalima anuliuoti.}other{Visam laikui bus ištrinta # šiukšliadėžėje esančių elementų. Šio veiksmo negalima anuliuoti.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Vaizdai"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Nepavyko atidaryti archyvo, kad jį būtų galima naršyti. Failas sugadintas arba nepalaikomo formato."</string>
     <string name="name_conflict" msgid="28407269328862986">"Failas tokiu pavadinimu jau yra."</string>
@@ -432,14 +415,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"„<xliff:g id="FILENAME">%s</xliff:g>“ vaizdo peržiūra"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Slėpti informacijos skydelį"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Rodyti informacijos skydelį"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Šiukšliadėžėje nieko nėra"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Šiukšliadėžėje ilgiau nei 30 dienų prabuvę failai bus ištrinti automatiškai."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Ištuštinti šiukšliadėžę dabar"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Šiukšliadėžė tuščia"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Šiukšliadėžėje ilgiau nei trisdešimt dienų prabuvę elementai bus ištrinti automatiškai"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Išvalyti šiukšliadėžę"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Išvalyti šiukšliadėžę?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Šio veiksmo negalima anuliuoti, o failų nebebus galima atkurti."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Išvalyti šiukšliadėžę"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Failas šiukšliadėžėje"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Šis failas yra šiukšliadėžėje ir jo negalima atidaryti. Atkurkite jį iš šiukšliadėžės, kad galėtumėte pasiekti."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Atkurti failą"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Visi šiukšliadėžėje esantys elementai bus ištrinti visam laikui. Šio veiksmo negalima anuliuoti."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Ištrinti visam laikui"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Elementas yra šiukšliadėžėje}one{Elementai yra šiukšliadėžėje}few{Elementai yra šiukšliadėžėje}many{Elementai yra šiukšliadėžėje}other{Elementai yra šiukšliadėžėje}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Jei norite pasiekti šį elementą, atkurkite jį arba vilkite iš šiukšliadėžės}one{Jei norite pasiekti šiuos elementus, atkurkite juos arba vilkite iš šiukšliadėžės}few{Jei norite pasiekti šiuos elementus, atkurkite juos arba vilkite iš šiukšliadėžės}many{Jei norite pasiekti šiuos elementus, atkurkite juos arba vilkite iš šiukšliadėžės}other{Jei norite pasiekti šiuos elementus, atkurkite juos arba vilkite iš šiukšliadėžės}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Atkurti"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Šiuo metu esate neprisijungę. Kai kurie failai ir funkcijos nepasiekiami. Prisijunkite prie interneto, kad gautumėte visateisę prieigą."</string>
 </resources>

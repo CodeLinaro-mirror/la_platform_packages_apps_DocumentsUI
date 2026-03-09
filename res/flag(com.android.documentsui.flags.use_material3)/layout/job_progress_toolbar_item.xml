@@ -20,6 +20,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/job_progress_toolbar_container"
     android:background="?attr/actionBarItemBackground"
+    android:contentDescription="@string/job_progress_icon_label"
     android:tooltipText="@string/job_progress_icon_label"
     android:clickable="true"
     android:focusable="true"

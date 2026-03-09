@@ -22,6 +22,7 @@ import android.app.WindowConfiguration
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.NetworkCapabilities
 import android.os.LocaleList
 import android.os.RemoteException
 import android.provider.DocumentsContract
@@ -35,14 +36,19 @@ import androidx.test.uiautomator.Configurator
 import androidx.test.uiautomator.UiDevice
 import com.android.documentsui.base.Features
 import com.android.documentsui.base.Features.RuntimeFeatures
+import com.android.documentsui.base.NetworkMonitor
+import com.android.documentsui.base.NetworkMonitorImpl
 import com.android.documentsui.base.RootInfo
 import com.android.documentsui.base.UserId
 import com.android.documentsui.bots.Bots
+import com.android.documentsui.dirlist.DirectoryFragment.TICK_VISIBLE_DURATION_MS
 import com.android.documentsui.files.FilesActivity
+import com.android.documentsui.prefs.LocalPreferences
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopFileHandlingFlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isDesktopUxPhase2FlagEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isGetInfoDialogEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isHomeScreenFilesFlagEnabled
+import com.android.documentsui.util.FlagUtils.Companion.isIncludeRemoteRootsInRecentsEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isMovingContentIntoPrivateSpaceEnabled
 import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
 import com.android.documentsui.util.FlagUtils.Companion.isSingleClickToSelectEnabled
@@ -59,9 +65,13 @@ import com.android.documentsui.util.FlagUtils.Companion.isVisualSignalsFlagEnabl
 import com.android.documentsui.util.FlagUtils.Companion.isZipNgFlagEnabled
 import java.io.IOException
 import java.util.Locale
+import java.util.function.Supplier
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnit
 
 /**
  * Provides basic test environment for UI tests:
@@ -71,6 +81,8 @@ import org.junit.runner.RunWith
  */
 @RunWith(TestRunner::class)
 abstract class ActivityTestJunit4<T : Activity?> {
+    @get:Rule val mockitoRule = MockitoJUnit.rule()
+
     lateinit var bots: Bots
 
     @JvmField var device: UiDevice? = null
@@ -100,6 +112,10 @@ abstract class ActivityTestJunit4<T : Activity?> {
     @LayoutRes protected var activityLayoutId: Int? = null
     private var initialScreenOffTimeoutValue: String? = null
     private var initialSleepTimeoutValue: String? = null
+    private var testIsOnline = true
+    private var testTickDuration = TICK_VISIBLE_DURATION_MS
+    private var networkMonitor: NetworkMonitorImpl? = null
+    @Mock private lateinit var network: android.net.Network
 
     protected val testingProviderAuthority: String
         /**
@@ -141,9 +157,22 @@ abstract class ActivityTestJunit4<T : Activity?> {
         device!!.pressKeyCode(KeyEvent.KEYCODE_WAKEUP)
 
         disableScreenOffAndSleepTimeouts()
+        // Start with the feature disabled, so the welcome dialog doesn't interfere with the test.
+        LocalPreferences.setSummaryConsent(context, LocalPreferences.CONSENT_REJECTED)
 
         setupTestingRoots()
         ActivityTest.closeNonDocsUiWindows(context, device)
+
+        if (isSyncStateEnabled()) {
+            // Fake the online state.
+            val isCurrentlyConnectedFunction: (NetworkCapabilities) -> Boolean = { _ ->
+                testIsOnline
+            }
+            networkMonitor =
+                NetworkMonitor.create(context!!, isCurrentlyConnectedFunction) as NetworkMonitorImpl
+            NetworkMonitor.setTestInstance(networkMonitor)
+        }
+
         launchActivity()
 
         mActivityScenario?.onActivity({ activity ->
@@ -152,8 +181,13 @@ abstract class ActivityTestJunit4<T : Activity?> {
             if (activityLayoutId != null) {
                 logLayout()
             }
-        })
 
+            if (isSyncStateEnabled()) {
+                // Allow the adjustment of the inline sync tick icon visibility duration.
+                val tickDurationSupplier = Supplier<Int> { testTickDuration }
+                (activity as? BaseActivity)?.setTickDurationSupplierForTest(tickDurationSupplier)
+            }
+        })
         logLocales()
         logFeatureFlags()
 
@@ -173,6 +207,23 @@ abstract class ActivityTestJunit4<T : Activity?> {
         device!!.unfreezeRotation()
         restoreScreenOffAndSleepTimeouts()
         mActivityScenario?.close()
+        NetworkMonitor.setTestInstance(null)
+    }
+
+    /** Set the online state that the NetworkMonitor returns and trigger a network notification. */
+    fun setIsOnline(isOnline: Boolean) {
+        if (networkMonitor == null) {
+            Log.w(TAG, "networkMonitor is null")
+            return
+        }
+        testIsOnline = isOnline
+        // Trigger network notification.
+        networkMonitor!!.networkCallback.onCapabilitiesChanged(network, NetworkCapabilities())
+    }
+
+    /* Set the inline sync tick icon visibility duration. */
+    fun setTickVisibleDuration(tickDuration: Int) {
+        testTickDuration = tickDuration
     }
 
     protected open fun launchActivity() {
@@ -194,6 +245,19 @@ abstract class ActivityTestJunit4<T : Activity?> {
         } else {
             mActivityScenario = ActivityScenario.launch(intent)
         }
+    }
+
+    /**
+     * Programmatically switches the root to the one with the given label.
+     *
+     * @param label The label of the root to switch to.
+     */
+    protected fun switchRoot(label: String) {
+        val scenario =
+            checkNotNull(mActivityScenario) {
+                "mActivityScenario is null. Ensure launchActivity() has run."
+            }
+        bots.navigation.switchRoot(label, scenario as ActivityScenario<out BaseActivity>)
     }
 
     protected fun setNotificationAccess(enabled: Boolean) {
@@ -286,6 +350,11 @@ abstract class ActivityTestJunit4<T : Activity?> {
         )
         Log.d(TAG, "Flag isUseNewOpenWithEnabled() = ${isUseNewOpenWithEnabled()}")
         Log.d(TAG, "Flag isGetInfoDialogEnabled() = ${isGetInfoDialogEnabled()}")
+        Log.d(
+            TAG,
+            "Flag isIncludeRemoteRootsInRecentsEnabled() = " +
+                "${isIncludeRemoteRootsInRecentsEnabled()}",
+        )
     }
 
     private fun logLocales() {
@@ -297,7 +366,7 @@ abstract class ActivityTestJunit4<T : Activity?> {
     }
 
     companion object {
-        const val TIMEOUT = 5000
+        const val TIMEOUT = 5000L
         const val TAG = "ActivityTestJunit4"
     }
 }

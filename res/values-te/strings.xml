@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"ఆన్ చేయండి"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"నన్ను మళ్లీ అడగవద్దు"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"ఇప్పుడు కాదు"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"ఫోల్డర్ లొకేషన్‌ను ఎంచుకోండి"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"లిస్ట్‌ వీక్షణ"</string>
     <string name="menu_search" msgid="1876699106790719849">"సెర్చ్"</string>
     <string name="menu_settings" msgid="6520844520117939047">"స్టోరేజ్‌ సెట్టింగ్‌లు"</string>
+    <string name="manage_device" msgid="329180710072251010">"డివైజ్‌ను మేనేజ్ చేయండి"</string>
     <string name="menu_open" msgid="9092138100049759315">"తెరువు"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"దీనితో తెరువు"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"కొత్త విండోలో తెరవండి"</string>
     <string name="menu_save" msgid="5195367497138965168">"సేవ్ చేయండి"</string>
     <string name="menu_share" msgid="4307140947108068356">"షేర్ చేయండి"</string>
     <string name="menu_delete" msgid="1022254131543256626">"తొలగించండి"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"శాశ్వతంగా తొలగించండి"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"శాశ్వతంగా తొలగించు"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"ట్రాష్‌కు తరలించండి"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"రీస్టోర్ చేయండి"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"అన్నింటినీ ఎంచుకోండి"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"సమాచారాన్ని పొందండి"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"దాచబడిన ఫైళ్లను చూపించు"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"దాచబడిన ఫైళ్లను చూపించవద్దు"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"సారాంశ నిలువు వరుసను చూడండి"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"సారాంశం నిలువు వరుసను చూపవద్దు"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"వివరణ నిలువు వరుసను చూపండి"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"వివరణ నిలువు వరుసను చూపవద్దు"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"<xliff:g id="SOURCE">%1$s</xliff:g>లో చూడండి"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"కొత్త విండో"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"కత్తిరించండి"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"ట్రాష్‌ను తెరవండి"</string>
     <string name="not_sorted" msgid="7813496644889115530">"క్రమబద్ధీకరించలేదు"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"పేరు"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"సారాంశం"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"వివరణ"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"రకం"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"సైజ్‌"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"ఎడిట్ చేసిన సమయం"</string>
@@ -231,10 +235,8 @@
       <item quantity="one">ఈ ఫైల్ మరో ఫార్మాట్‌లోకి మార్చబడింది: <xliff:g id="LIST_0">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{ఈ ఫైల్ మరొక ఫార్మాట్‌కు మార్చబడింది:}other{ఈ ఫైల్స్ మరొక ఫార్మాట్‌కు మార్చబడ్డాయి:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలు కాపీ చేయబడ్డాయి.</item>
-      <item quantity="one">క్లిప్‌బోర్డ్‌కు <xliff:g id="COUNT_0">%1$d</xliff:g> అంశం కాపీ చేయబడింది.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"చదవడానికి మాత్రమే"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"మీరు ఈ ఫైళ్లను చూడవచ్చు, కానీ కొన్ని చర్యలకు సపోర్ట్ లేదు"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"ఈ ఆర్కైవ్, రీడ్-ఓన్లీ లొకేషన్‌లో ఉంది, దాన్ని ఇక్కడ ఎక్స్‌ట్రాక్ట్ చేయడం సాధ్యపడదు."</string>
@@ -284,7 +286,7 @@
     <string name="open_external_dialog_request_primary_volume" msgid="2240992164087948176">"<xliff:g id="APPNAME"><b>^1</b></xliff:g>కి <xliff:g id="DIRECTORY"><i>^2</i></xliff:g> డైరెక్టరీ యాక్సెస్‌ను మంజూరు చేయాలా?"</string>
     <string name="open_external_dialog_root_request" msgid="6776729293982633">"<xliff:g id="STORAGE"><i>^2</i></xliff:g>లోని ఫోటోలు, వీడియోలతో సహా మీ డేటా యాక్సెస్‌ను <xliff:g id="APPNAME"><b>^1</b></xliff:g>కి మంజూరు చేయాలా?"</string>
     <string name="allow" msgid="1275746941353040309">"అనుమతించండి"</string>
-    <string name="deny" msgid="5127201668078153379">"తిరస్కరించు"</string>
+    <string name="deny" msgid="5127201668078153379">"తిరస్కరించండి"</string>
     <plurals name="elements_selected" formatted="false" msgid="4448165978637163692">
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఎంచుకోబడ్డాయి</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ఎంచుకోబడింది</item>
@@ -299,20 +301,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> వస్తువులు</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> అంశం</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"\"<xliff:g id="NAME">%1$s</xliff:g>\"ని తొలగించాలా?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"\"<xliff:g id="NAME">%1$s</xliff:g>\" ఫోల్డర్‌ను మరియు దీనిలోని కంటెంట్‌లను తొలగించాలా?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఫైళ్లను తొలగించాలా?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ఫైల్‌ను తొలగించాలా?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> ఫోల్డర్‌లు మరియు వీటిలోని కంటెంట్‌లను తొలగించాలా?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> ఫోల్డర్ మరియు దీనిలోని కంటెంట్‌లను తొలగించాలా?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> అంశాలను తొలగించాలా?</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> అంశాన్ని తొలగించాలా?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"శాశ్వతంగా తొలగించాలా?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” శాశ్వతంగా తొలగించబడుతుంది. ఈ చర్యను రద్దు చేయలేరు.}other{# ఐటెమ్‌లు శాశ్వతంగా తొలగించబడతాయి. ఈ చర్యను రద్దు చేయలేరు.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{“<xliff:g id="NAME">{name}</xliff:g>” శాశ్వతంగా తొలగించబడుతుంది. ఈ చర్యను రద్దు చేయలేరు.}other{ట్రాష్‌లో ఉన్న # ఐటెమ్‌లు శాశ్వతంగా తొలగించబడతాయి. ఈ చర్యను రద్దు చేయలేరు.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"ఇమేజ్‌లు"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"బ్రౌజింగ్‌ కోసం ఆర్కైవ్‌ను తెరవడం సాధ్యపడలేదు. ఫైల్ కరప్ట్ అయింది లేదా సపోర్ట్‌ లేని ఫార్మాట్‌లో ఉంది."</string>
     <string name="name_conflict" msgid="28407269328862986">"ఈ పేరుతో ఇప్పటికే ఒక ఫైల్ ఉంది."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"<xliff:g id="FILENAME">%s</xliff:g>‌కు సంబంధించిన ఇమేజ్ ప్రివ్యూ"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"సమాచారాన్ని దాచండి ప్యానెల్"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"సమాచారాన్ని చూపించండి ప్యానెల్"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"ట్రాష్‌లో ఏమీ లేదు"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"30 రోజుల కంటే ఎక్కువ కాలం పాటు ట్రాష్‌లో ఉండే ఫైళ్లు ఆటోమేటిక్‌గా తొలగించబడతాయి."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"ఇప్పుడే ట్రాష్‌ని ఖాళీ చేయండి"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"ట్రాష్ ఖాళీగా ఉంది"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"30 రోజుల కంటే ఎక్కువ కాలం పాటు ట్రాష్‌లో ఉండే ఐటెమ్‌లు ఆటోమేటిక్‌గా తొలగించబడతాయి"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"ట్రాష్‌ను ఖాళీ చేయండి"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"ట్రాష్‌ని ఖాళీ చేయాలా?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"ఈ చర్యను రద్దు చేయడం సాధ్యం కాదు, ఫైల్‌లను ఇకపై రికవర్ చేయడం సాధ్యం కాదు."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"ట్రాష్‌ని ఖాళీ చేయండి"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"ట్రాష్‌లోని ఫైల్"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"ఈ ఫైల్ మీ ట్రాష్‌లో ఉంది, దాన్ని తెరవడం సాధ్యం కాదు. దయచేసి దాన్ని యాక్సెస్ చేయడానికి ట్రాష్ నుండి రీస్టోర్ చేయండి."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"ఫైల్‌ను రీస్టోర్ చేయండి"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"ట్రాష్‌లోని అన్ని ఐటెమ్‌లు శాశ్వతంగా తొలగించబడతాయి. ఈ చర్యను రద్దు చేయలేరు."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"శాశ్వతంగా తొలగించు"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{ఐటెమ్ ట్రాష్‌లో ఉంది}other{ఐటెమ్‌లు ట్రాష్‌లో ఉన్నాయి}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{ఈ ఐటెమ్‌ను యాక్సెస్ చేయడానికి, దాన్ని రీస్టోర్ చేయండి లేదా ట్రాష్ నుండి బయటకు లాగండి}other{ఈ ఐటెమ్‌లను యాక్సెస్ చేయడానికి, వాటిని రీస్టోర్ చేయండి లేదా ట్రాష్ నుండి బయటకు లాగండి}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"రీస్టోర్ చేయండి"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"మీరు ప్రస్తుతం ఆఫ్‌లైన్‌లో ఉన్నారు. కొన్ని ఫైల్స్, ఫంక్షనాలిటీ అందుబాటులో లేవు. పూర్తి యాక్సెస్ కోసం ఇంటర్నెట్‌కు కనెక్ట్ అవ్వండి."</string>
 </resources>

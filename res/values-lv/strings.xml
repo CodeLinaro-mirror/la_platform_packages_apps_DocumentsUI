@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Ieslēgt"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Turpmāk vairs nejautāt"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Vēlāk"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Atveriet no:"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Saraksts"</string>
     <string name="menu_search" msgid="1876699106790719849">"Meklēt"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Saglabāt iestatījumus"</string>
+    <string name="manage_device" msgid="329180710072251010">"Ierīces pārvaldība"</string>
     <string name="menu_open" msgid="9092138100049759315">"Atvērt"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Atvērt lietotnē"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Atvērt jaunā logā"</string>
     <string name="menu_save" msgid="5195367497138965168">"Saglabāt"</string>
     <string name="menu_share" msgid="4307140947108068356">"Kopīgot"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Dzēst"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Neatgriezeniski dzēst"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Neatgriezeniski dzēst"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Pārvietot uz atkritni"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Atjaunot"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Atlasīt visus"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Iegūt informāciju"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Rādīt paslēptos failus"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Nerādīt paslēptos failus"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Rādīt kopsavilkuma sleju"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Nerādīt kopsavilkuma sleju"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Rādīt apraksta sleju"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Nerādīt apraksta sleju"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Skatīt, izmantojot <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Jauns logs"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Izgriezt"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Atvērt atkritni"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Nav kārtoti"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nosaukums"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Kopsavilkums"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Apraksts"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Veids"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Lielums"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Izmaiņas"</string>
@@ -242,11 +246,8 @@
       <item quantity="other">Šie faili tika pārveidoti citā formātā: <xliff:g id="LIST_1">%1$s</xliff:g></item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Šis fails tika pārveidots citā formātā:}zero{Šie faili tika pārveidoti citā formātā:}one{Šie faili tika pārveidoti citā formātā:}other{Šie faili tika pārveidoti citā formātā:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="zero"><xliff:g id="COUNT_1">%1$d</xliff:g> vienumi ir kopēti starpliktuvē.</item>
-      <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> vienums ir kopēts starpliktuvē.</item>
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> vienumi ir kopēti starpliktuvē.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Tikai lasāma"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Varat skatīt šos failus, taču dažas darbības netiek atbalstītas."</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Šis arhīvs atrodas tikai lasāmā vietā, un to nevar izgūt šeit."</string>
@@ -313,23 +314,9 @@
       <item quantity="one"><xliff:g id="COUNT_1">%1$d</xliff:g> vienums</item>
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> vienumi</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Vai izdzēst failu “<xliff:g id="NAME">%1$s</xliff:g>”?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Vai izdzēst mapi “<xliff:g id="NAME">%1$s</xliff:g>” un tās saturu?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="zero">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> failus?</item>
-      <item quantity="one">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> failu?</item>
-      <item quantity="other">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> failus?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="zero">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> mapes un to saturu?</item>
-      <item quantity="one">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> mapi un to saturu?</item>
-      <item quantity="other">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> mapes un to saturu?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="zero">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> vienumus?</item>
-      <item quantity="one">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> vienumu?</item>
-      <item quantity="other">Vai izdzēst <xliff:g id="COUNT_1">%1$d</xliff:g> vienumus?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Vai neatgriezeniski dzēst?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{Vienums “<xliff:g id="NAME">{name}</xliff:g>” tiks neatgriezeniski dzēsts. Šo darbību nevar atsaukt.}zero{# vienumi tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt.}one{# vienums tiks neatgriezeniski dzēsts. Šo darbību nevar atsaukt.}other{# vienumi tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{Vienums “<xliff:g id="NAME">{name}</xliff:g>” tiks neatgriezeniski dzēsts. Šo darbību nevar atsaukt.}zero{# vienumi, kas atrodas atkritnē, tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt.}one{# vienums, kas atrodas atkritnē, tiks neatgriezeniski dzēsts. Šo darbību nevar atsaukt.}other{# vienumi, kas atrodas atkritnē, tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Attēli"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Nevar atvērt un pārlūkot arhīvu. Vai nu fails ir bojāts, vai arī tā formāts netiek atbalstīts."</string>
     <string name="name_conflict" msgid="28407269328862986">"Fails ar šādu nosaukumu jau pastāv."</string>
@@ -414,14 +401,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Attēla <xliff:g id="FILENAME">%s</xliff:g> priekšskatījums"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Paslēpt informācijas paneli"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Rādīt informācijas paneli"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Atkritnē nekā nav"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Faili, kas atkritnē atrodas ilgāk par 30 dienām, tiek automātiski dzēsti."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Iztukšot atkritni"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Atkritne ir tukša"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Vienumi, kas atkritnē atrodas ilgāk par 30 dienām, tiek automātiski dzēsti."</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Iztukšot atkritni"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Vai iztukšot atkritni?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Šo darbību nevar atsaukt, un failus vairs nevarēs atkopt."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Iztukšot atkritni"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Fails atrodas atkritnē"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Šis fails atrodas jūsu atkritnē, un to nevar atvērt. Lai piekļūtu šim failam, atjaunojiet to no atkritnes."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Atjaunot failu"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Visi vienumi, kas atrodas atkritnē, tiks neatgriezeniski dzēsti. Šo darbību nevar atsaukt."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Neatgriezeniski dzēst"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Vienums atrodas atkritnē}zero{Vienumi atrodas atkritnē}one{Vienumi atrodas atkritnē}other{Vienumi atrodas atkritnē}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Lai piekļūtu šim vienumam, atjaunojiet to vai izvelciet to no atkritnes.}zero{Lai piekļūtu šiem vienumiem, atjaunojiet tos vai izvelciet tos no atkritnes.}one{Lai piekļūtu šiem vienumiem, atjaunojiet tos vai izvelciet tos no atkritnes.}other{Lai piekļūtu šiem vienumiem, atjaunojiet tos vai izvelciet tos no atkritnes.}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Atjaunot"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Šobrīd esat bezsaistē. Noteikti faili un funkcijas nav pieejamas. Lai iegūtu pilnu piekļuvi, izveidojiet savienojumu ar internetu."</string>
 </resources>

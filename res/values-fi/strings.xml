@@ -26,6 +26,9 @@
     <skip />
     <string name="summary_consent_title" msgid="649526095415341516"></string>
     <string name="summary_consent_message" msgid="5608129539202973666"></string>
+    <string name="summary_consent_ok_button" msgid="7813177426978382632">"Laita päälle"</string>
+    <string name="summary_consent_cancel_button" msgid="2971058893677958570">"Älä kysy uudelleen"</string>
+    <string name="summary_consent_remind_later_button" msgid="1499532238918418225">"Ei nyt"</string>
     <!-- no translation found for launcher_label (799410258349837668) -->
     <skip />
     <string name="title_open" msgid="3165686459158020921">"Avaa sijainnista"</string>
@@ -35,13 +38,14 @@
     <string name="menu_list" msgid="6714267452146410402">"Luettelonäkymä"</string>
     <string name="menu_search" msgid="1876699106790719849">"Haku"</string>
     <string name="menu_settings" msgid="6520844520117939047">"Tallennusasetukset"</string>
+    <string name="manage_device" msgid="329180710072251010">"Muuta laitteen asetuksia"</string>
     <string name="menu_open" msgid="9092138100049759315">"Avaa"</string>
     <string name="menu_open_with" msgid="5507647065467520229">"Avaa sovelluksessa"</string>
     <string name="menu_open_in_new_window" msgid="6686563636123311276">"Avaa uudessa ikkunassa"</string>
     <string name="menu_save" msgid="5195367497138965168">"Tallenna"</string>
     <string name="menu_share" msgid="4307140947108068356">"Jaa"</string>
     <string name="menu_delete" msgid="1022254131543256626">"Poista"</string>
-    <string name="menu_permanently_delete" msgid="1177349666644056627">"Poista pysyvästi"</string>
+    <string name="menu_permanently_delete" msgid="7144967435018939304">"Poista pysyvästi"</string>
     <string name="menu_move_to_trash" msgid="1809017212900920775">"Siirrä roskakoriin"</string>
     <string name="menu_restore_from_trash" msgid="6335501796145576127">"Palauta"</string>
     <string name="menu_select_all" msgid="7600576812185570403">"Valitse kaikki"</string>
@@ -60,8 +64,8 @@
     <string name="menu_inspect" msgid="7279855349299446224">"Näytä tiedot"</string>
     <string name="menu_show_hidden_files" msgid="5140676344684492769">"Näytä piilotetut tiedostot"</string>
     <string name="menu_hide_hidden_files" msgid="5654495713350153702">"Älä näytä piilotettuja"</string>
-    <string name="option_show_summary_column" msgid="2877633662563512552">"Näytä yhteenvetosarake"</string>
-    <string name="option_hide_summary_column" msgid="2195115533636850442">"Älä näytä yhteenvetosaraketta"</string>
+    <string name="option_show_summary_column" msgid="1008012395393952119">"Näytä kuvaussarake"</string>
+    <string name="option_hide_summary_column" msgid="8091410079217079948">"Älä näytä kuvaussaraketta"</string>
     <string name="menu_view_in_owner" msgid="7228948660557554770">"Avaa sovelluksella <xliff:g id="SOURCE">%1$s</xliff:g>"</string>
     <string name="menu_new_window" msgid="2947837751796109126">"Uusi ikkuna"</string>
     <string name="menu_cut_to_clipboard" msgid="2878752142015026229">"Leikkaa"</string>
@@ -84,7 +88,7 @@
     <string name="button_open_trash" msgid="8152584341121216006">"Avaa roskakori"</string>
     <string name="not_sorted" msgid="7813496644889115530">"Ei lajittelua"</string>
     <string name="sort_dimension_name" msgid="6325591541414177579">"Nimi"</string>
-    <string name="sort_dimension_summary" msgid="7724534446881397860">"Yhteenveto"</string>
+    <string name="sort_dimension_summary" msgid="8050531309626240067">"Kuvaus"</string>
     <string name="sort_dimension_file_type" msgid="5779709622922085381">"Tyyppi"</string>
     <string name="sort_dimension_size" msgid="2190547351159472884">"Koko"</string>
     <string name="sort_dimension_date" msgid="4231005651895254033">"Muokattu"</string>
@@ -231,10 +235,8 @@
       <item quantity="one">Tiedosto <xliff:g id="LIST_0">%1$s</xliff:g> muunnettiin toiseen muotoon</item>
     </plurals>
     <string name="copy_converted_warning_title" msgid="312091919227984842">"{count,plural, =1{Tämä tiedosto on muunnettu toiseen muotoon:}other{Nämä tiedostot on muunnettu toiseen muotoon:}}"</string>
-    <plurals name="clipboard_files_clipped" formatted="false" msgid="4847061634862926902">
-      <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohdetta kopioitu leikepöydälle.</item>
-      <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohde kopioitu leikepöydälle.</item>
-    </plurals>
+    <!-- no translation found for clipboard_files_added (168194813269188197) -->
+    <skip />
     <string name="read_only_label" msgid="894442752344379606">"Vain luku"</string>
     <string name="read_only_explanation" msgid="213951358525192590">"Voit nähdä nämä tiedostot, mutta joitakin toimintoja ei tueta"</string>
     <string name="cannot_extract_in_read_only_folder" msgid="8234900543730064252">"Arkisto on vain luku ‑tilassa, eikä sitä voi purkaa täällä."</string>
@@ -299,20 +301,9 @@
       <item quantity="other"><xliff:g id="COUNT_1">%1$d</xliff:g> kohdetta</item>
       <item quantity="one"><xliff:g id="COUNT_0">%1$d</xliff:g> kohde</item>
     </plurals>
-    <string name="delete_filename_confirmation_message" msgid="8338069763240613258">"Poistetaanko <xliff:g id="NAME">%1$s</xliff:g>?"</string>
-    <string name="delete_foldername_confirmation_message" msgid="9084085260877704140">"Poistetaanko kansio <xliff:g id="NAME">%1$s</xliff:g> ja sen sisältö?"</string>
-    <plurals name="delete_files_confirmation_message" formatted="false" msgid="4866664063250034142">
-      <item quantity="other">Poistetaanko <xliff:g id="COUNT_1">%1$d</xliff:g> tiedostoa?</item>
-      <item quantity="one">Poistetaanko <xliff:g id="COUNT_0">%1$d</xliff:g> tiedosto?</item>
-    </plurals>
-    <plurals name="delete_folders_confirmation_message" formatted="false" msgid="1028946402799686388">
-      <item quantity="other">Poistetaanko <xliff:g id="COUNT_1">%1$d</xliff:g> kansiota ja niiden sisältö?</item>
-      <item quantity="one">Poistetaanko <xliff:g id="COUNT_0">%1$d</xliff:g> kansio ja sen sisältö?</item>
-    </plurals>
-    <plurals name="delete_items_confirmation_message" formatted="false" msgid="7285090426511028179">
-      <item quantity="other">Poistetaanko <xliff:g id="COUNT_1">%1$d</xliff:g> kohdetta?</item>
-      <item quantity="one">Poistetaanko <xliff:g id="COUNT_0">%1$d</xliff:g> kohde?</item>
-    </plurals>
+    <string name="delete_forever_dialog_title" msgid="799779565921010957">"Poistetaanko pysyvästi?"</string>
+    <string name="delete_forever_confirmation_message" msgid="514849549688443881">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" poistetaan pysyvästi. Tätä ei voi perua.}other{# kohdetta poistetaan pysyvästi. Tätä ei voi perua.}}"</string>
+    <string name="delete_forever_from_trash_confirmation_message" msgid="2152471525710826703">"{count,plural, =1{\"<xliff:g id="NAME">{name}</xliff:g>\" poistetaan pysyvästi. Tätä ei voi perua.}other{# roskakorissa olevaa kohdetta poistetaan pysyvästi. Tätä ei voi perua.}}"</string>
     <string name="images_shortcut_label" msgid="2545168016070493574">"Kuvahaku"</string>
     <string name="archive_loading_failed" msgid="7243436722828766996">"Arkistoa ei voi selata. Tiedosto on vioittunut tai sen muotoa ei tueta."</string>
     <string name="name_conflict" msgid="28407269328862986">"Samanniminen tiedosto on jo olemassa."</string>
@@ -396,14 +387,14 @@
     <string name="a11y_peek_image_preview" msgid="3917148390186060263">"Kuvan esikatselu: <xliff:g id="FILENAME">%s</xliff:g>"</string>
     <string name="a11y_peek_hide_info_button" msgid="918293386310947930">"Piilota tietopaneeli"</string>
     <string name="a11y_peek_show_info_button" msgid="9028075652389911413">"Näytä tietopaneeli"</string>
-    <string name="trash_page_empty_title" msgid="1277047027818824150">"Roskakori on tyhjä"</string>
-    <string name="empty_trash_banner_message" msgid="8201073314528791202">"Roskakorissa yli 30 päivää olleet kohteet poistetaan automaattisesti."</string>
-    <string name="empty_trash_banner_button" msgid="2299477085950182090">"Tyhjennä roskakori nyt"</string>
+    <string name="trash_page_empty_title" msgid="7738038596025884023">"Roskakori on tyhjä"</string>
+    <string name="empty_trash_banner_message" msgid="2993707579621525486">"Roskakorissa yli 30 päivää olleet kohteet poistetaan automaattisesti"</string>
+    <string name="empty_trash_banner_button" msgid="1519946484798771236">"Tyhjennä roskakori"</string>
     <string name="empty_trash_dialog_title" msgid="4514618908297336521">"Tyhjennetäänkö roskakori?"</string>
-    <string name="empty_trash_dialog_message" msgid="5459370127970240825">"Tätä toimintoa ei voi kumota, eikä tiedostoja voi enää palauttaa."</string>
-    <string name="empty_trash_dialog_action_button" msgid="1252219459020699916">"Tyhjennä roskakori"</string>
-    <string name="file_open_in_trash_dialog_title" msgid="593884948256127339">"Tiedosto on roskakorissa"</string>
-    <string name="file_open_in_trash_dialog_message" msgid="4367068916517352151">"Tiedosto on roskakorissa, eikä sitä voi avata. Palauta se roskakorista, jotta voit käyttää sitä."</string>
-    <string name="file_open_in_trash_dialog_restore_action_button" msgid="4265030988869676058">"Palauta tiedosto"</string>
+    <string name="empty_trash_dialog_message" msgid="520865296928962854">"Kaikki roskakorissa olevat kohteet poistuvat pysyvästi. Toimintoa ei voi kumota."</string>
+    <string name="empty_trash_dialog_action_button" msgid="4265315882979882955">"Poista pysyvästi"</string>
+    <string name="file_open_in_trash_dialog_title" msgid="2243034805337666376">"{count,plural, =1{Kohde on roskakorissa}other{Kohteet ovat roskakorissa}}"</string>
+    <string name="file_open_in_trash_dialog_message" msgid="907046525752260366">"{count,plural, =1{Jos haluat pääsyn tähän kohteeseen, palauta se tai vedä se pois roskakorista}other{Jos haluat pääsyn näihin kohteisiin, palauta ne tai vedä ne pois roskakorista}}"</string>
+    <string name="file_open_in_trash_dialog_restore_action_button" msgid="3361861500466913305">"Palauta"</string>
     <string name="you_are_offline_banner_message" msgid="4188603129472293852">"Olet tällä hetkellä offline-tilassa. Kaikki tiedostot ja toiminnot eivät ole käytettävissä. Muodosta internetyhteys, niin saat täydet pääsyoikeudet."</string>
 </resources>

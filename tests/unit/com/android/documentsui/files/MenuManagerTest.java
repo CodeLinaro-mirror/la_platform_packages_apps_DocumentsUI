@@ -31,6 +31,8 @@ import static com.android.documentsui.util.Material3Config.getRes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -192,6 +194,7 @@ public final class MenuManagerTest {
     private ResolveInfo resolveInfo = new ResolveInfo();
     private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
+    private TestActionHandler mActionHandler;
 
     private int mFilesCount;
 
@@ -313,7 +316,8 @@ public final class MenuManagerTest {
 
         activity.resources = testResources;
         activity.packageMgr = mPackageManager;
-        ((Injector) activity.injector).actions = new TestActionHandler();
+        mActionHandler = new TestActionHandler();
+        ((Injector) activity.injector).actions = mActionHandler;
 
         mApprovedDocHandlers = new ApprovedDocHandlers(
                 activity, UserId.DEFAULT_USER, activity.injector);
@@ -366,6 +370,16 @@ public final class MenuManagerTest {
     private boolean shouldShowCopyCutMenus() {
         return isDesktopUxPhase2FlagEnabled()
                 && !(activity.getResources().getBoolean(R.bool.show_copy_to_move_to_menus));
+    }
+
+    private TestMenuItem findItemByTitle(TestMenu menu, String title) {
+        for (int i = 0; i < menu.size(); i++) {
+            TestMenuItem item = menu.getItem(i);
+            if (String.valueOf(item.getTitle()).equals(title)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @Test
@@ -424,6 +438,18 @@ public final class MenuManagerTest {
 
         mActionModeSelect.assertDisabledAndInvisible();
         actionModeSort.assertDisabledAndInvisible();
+        actionModeSelectAll.assertDisabledAndInvisible();
+        mActionModeDeselectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    // Disable M3 flag for the test since the de/select menu options are disabled by default in M3.
+    @DisableFlags(Flags.FLAG_USE_MATERIAL3)
+    public void testActionMenu_hideSelectAndDeselectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
         actionModeSelectAll.assertDisabledAndInvisible();
         mActionModeDeselectAll.assertDisabledAndInvisible();
     }
@@ -795,8 +821,13 @@ public final class MenuManagerTest {
         actionModeOpenWith.assertEnabledAndVisible();
     }
 
+    /**
+     * Open-with is disabled on files with a single opening app (because ResolverActivity would auto
+     * launch that opening app).
+     */
     @Test
     @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_USE_NEW_OPEN_WITH})
     public void testActionMenu_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -806,6 +837,17 @@ public final class MenuManagerTest {
             actionModeOpen.assertEnabledAndVisible();
         }
         actionModeOpenWith.assertDisabledAndInvisible();
+    }
+
+    /** The new open-with doesn't automatically launch so we can use it for single opening apps. */
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.FLAG_USE_NEW_OPEN_WITH})
+    public void testActionMenu_OpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        actionModeOpenWith.assertEnabledAndVisible();
     }
 
     @Test
@@ -948,6 +990,19 @@ public final class MenuManagerTest {
         dirDetails.isInArchive = false;
         mgr.updateOptionMenu(testMenu);
         mOptionExtractAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_NoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertDisabledAndInvisible();
+    }
+
+    @Test
+    public void testOptionMenu_SelectAll_WithFilesInDirectory() {
+        mgr.updateOptionMenu(testMenu);
+        optionSelectAll.assertEnabledAndVisible();
     }
 
     @Test
@@ -1124,6 +1179,15 @@ public final class MenuManagerTest {
         dirSelectAll.assertEnabledAndVisible();
         dirPasteFromClipboard.assertDisabledAndInvisible();
         dirCreateDir.assertEnabledAndVisible();
+    }
+
+    @Test
+    public void testContextMenu_EmptyArea_SelectAndDeselectAllWithNoFilesInDirectory() {
+        mFilesCount = 0;
+        mgr.updateContextMenuForContainer(testMenu, selectionDetails);
+
+        dirSelectAll.assertDisabledAndInvisible();
+        mDirDeselectAll.assertDisabledAndInvisible();
     }
 
     @SuppressLint("VisibleForTests")
@@ -1334,8 +1398,13 @@ public final class MenuManagerTest {
         dirOpenWith.assertEnabledAndVisible();
     }
 
+    /**
+     * Open-with is disabled on files with a single opening app (because ResolverActivity would auto
+     * launch that opening app).
+     */
     @Test
     @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO})
+    @DisableFlags({Flags.FLAG_USE_NEW_OPEN_WITH})
     public void testContextMenu_OnFile_NoOpenWith_SingleOpeningAppDesktop() {
         selectionDetails.canOpen = true;
         selectionDetails.hasMultipleOpeningApps = false;
@@ -1343,6 +1412,18 @@ public final class MenuManagerTest {
         mgr.updateContextMenuForFiles(testMenu, selectionDetails);
 
         dirOpenWith.assertDisabledAndInvisible();
+    }
+
+    /** The new open-with doesn't automatically launch so we can use it for single opening apps. */
+    @Test
+    @EnableFlags({Flags.FLAG_DESKTOP_FILE_HANDLING_RO, Flags.FLAG_USE_NEW_OPEN_WITH})
+    public void testContextMenu_OnFile_OpenWith_SingleOpeningAppDesktop() {
+        selectionDetails.canOpen = true;
+        selectionDetails.hasMultipleOpeningApps = false;
+
+        mgr.updateContextMenuForFiles(testMenu, selectionDetails);
+
+        dirOpenWith.assertEnabledAndVisible();
     }
 
     @SuppressLint("VisibleForTests")
@@ -1823,15 +1904,9 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is enabled and visible.
-        boolean found = false;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                found = true;
-                item.assertEnabledAndVisible();
-            }
-        }
-        assertTrue("Approved document handler menu item not found.", found);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item not found.", item);
+        item.assertEnabledAndVisible();
     }
 
     @Test
@@ -1845,14 +1920,76 @@ public final class MenuManagerTest {
         mgr.updateContextMenu(testMenu, selectionDetails);
 
         // Check that the approved document handler menu item is not added.
-        boolean found = false;
-        for (int i = 0; i < testMenu.size(); i++) {
-            TestMenuItem item = testMenu.getItem(i);
-            if (String.valueOf(item.getTitle()).equals("Test App")) {
-                found = true;
-            }
-        }
-        assertFalse("Approved document handler menu item should not be added.", found);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should not be added.", item);
     }
 
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_useApprovedDocumentHandlerEnabled() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is enabled and visible.
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item not found.", item);
+        item.assertEnabledAndVisible();
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_removesApprovedDocumentHandler_whenNoFileSelected() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item should be added.", item);
+
+        mActionHandler.returnNullApprovedHandlerIntent = true;
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is removed.
+        item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should be removed.", item);
+    }
+
+    @Test
+    @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testContextMenu_removesApprovedDocumentHandler_whenNoFileSelected() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNotNull("Approved document handler menu item should be added.", item);
+
+        mActionHandler.returnNullApprovedHandlerIntent = true;
+        mgr.updateContextMenu(testMenu, selectionDetails);
+        item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should be removed.", item);
+    }
+
+    @Test
+    @DisableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    public void testActionMenu_useApprovedDocumentHandlerDisabled() {
+        doReturn("Test App").when(activityInfo).loadLabel(any());
+        testResources.stringArrays.put(
+                R.array.approved_document_handlers, new String[] {"com.test.package"});
+        mPackageManager.queryIntentActivitiesResults.put("text/plain", Arrays.asList(resolveInfo));
+
+        mgr.updateActionMenu(testMenu, selectionDetails);
+
+        // Check that the approved document handler menu item is not added.
+        TestMenuItem item = findItemByTitle(testMenu, "Test App");
+        assertNull("Approved document handler menu item should not be added.", item);
+    }
 }

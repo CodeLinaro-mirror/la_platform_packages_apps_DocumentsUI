@@ -43,7 +43,6 @@ const val TestAuthority = "com.example.test"
 const val TestUserId = 0
 
 @SmallTest
-@EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
 @RunWith(AndroidJUnit4::class)
 class SelectionMetadataTest {
     companion object {
@@ -79,6 +78,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
+    @DisableFlags(Flags.FLAG_USE_NEW_OPEN_WITH)
     fun testHasMultipleOpeningApps_NoSelection() {
         val sm = createSelectionMetadata()
 
@@ -86,6 +87,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
+    @DisableFlags(Flags.FLAG_USE_NEW_OPEN_WITH)
     fun testHasMultipleOpeningApps_OneSelection_NoOpeningApps() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged("noOpeningApp.pdf", true)
@@ -94,6 +97,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
+    @DisableFlags(Flags.FLAG_USE_NEW_OPEN_WITH)
     fun testHasMultipleOpeningApps_OneSelection_OneOpeningApps() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -102,6 +107,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
+    @DisableFlags(Flags.FLAG_USE_NEW_OPEN_WITH)
     fun testHasMultipleOpeningApps_OneSelection_TwoOpeningApps() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)
@@ -112,6 +119,8 @@ class SelectionMetadataTest {
     }
 
     @Test
+    @EnableFlags(Flags.FLAG_DESKTOP_FILE_HANDLING_RO)
+    @DisableFlags(Flags.FLAG_USE_NEW_OPEN_WITH)
     fun testHasMultipleOpeningApps_TwoSelection() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("twoOpeningApp.jpg"), true)

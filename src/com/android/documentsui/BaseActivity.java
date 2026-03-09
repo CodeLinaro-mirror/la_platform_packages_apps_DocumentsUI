@@ -51,7 +51,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Checkable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
@@ -61,6 +63,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
+import androidx.core.view.AccessibilityDelegateCompat;
 import androidx.core.view.MenuCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -111,10 +114,13 @@ import com.google.android.material.color.DynamicColors;
 
 import kotlin.Unit;
 
+import org.jspecify.annotations.NonNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -159,6 +165,9 @@ public abstract class BaseActivity
     private final DocumentStack mInitialStack = new DocumentStack();
     private UserId mLastSelectedUser = null;
     private Locale mCurrentLocale;
+
+    // Supplies the inline sync tick icon visibility duration.
+    private Supplier<Integer> mTestTickDurationSupplier = null;
 
     protected void setInitialStack(DocumentStack stack) {
         if (mInitialStack.isInitialized()) {
@@ -205,6 +214,17 @@ public abstract class BaseActivity
     @VisibleForTesting
     public void setConfigStore(ConfigStore configStore) {
         mConfigStore = configStore;
+    }
+
+    /** Used by tests to set the inline sync tick icon visibility duration. */
+    @VisibleForTesting
+    public void setTickDurationSupplierForTest(Supplier<Integer> testTickVisibleDurationSupplier) {
+        mTestTickDurationSupplier = testTickVisibleDurationSupplier;
+    }
+
+    /** Provides the inline sync tick icon visibility duration when set in tests. */
+    public Supplier<Integer> getTickDurationSupplierForTest() {
+        return mTestTickDurationSupplier;
     }
 
     /**
@@ -265,6 +285,8 @@ public abstract class BaseActivity
         setContentView(mLayoutId);
 
         setContainer();
+
+        handleA11yInitialFocusInDrawerLayout();
 
         initConfigStore();
 
@@ -843,6 +865,58 @@ public abstract class BaseActivity
         getWindow().setNavigationBarContrastEnforced(true);
     }
 
+    /**
+     * The default initial a11y focus (e.g. Talkback) is not correct due to the XML structure of
+     * CollapsingToolbarLayout in the drawer layout, a special handling is needed to make sure the
+     * initial a11y focus goes to the burger menu in the toolbar.
+     */
+    private void handleA11yInitialFocusInDrawerLayout() {
+        if (!isUseMaterial3FlagEnabled()) {
+            return;
+        }
+        // Early return if not in the drawer layout (collapsing_content only exists in drawer
+        // layout).
+        final View collaspingContentView = findViewById(getRes(R.id.collapsing_content));
+        if (collaspingContentView == null) {
+            return;
+        }
+        // <CollapsingToolbarLayout> (in directory_app_bar_m3.xml) requires the collapsing content
+        // to be the first child and then the actual toolbar, this makes the content appears on the
+        // top of the a11y tree than the toolbar. In a result, Talkback will try to focus
+        // the content first, which is not what we want, because visually the toolbar appear on
+        // the top of the view. To fix it, we mark the collapsing content view as not important for
+        // a11y first so that Talkback will not try to focus it, and restore it later.
+        collaspingContentView.setImportantForAccessibility(
+                View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        final View toolbarView = findViewById(getRes(R.id.toolbar));
+        // Set a custom AccessibilityDelegate for the toolbar so we can intercept its a11y events.
+        // When Talkback tries to focus any of its descents, onRequestSendAccessibilityEvent() is
+        // triggered, so we can restore the collasping content's importantForAccessibility property
+        // if the view to be focused is the burger menu.
+        ViewCompat.setAccessibilityDelegate(
+                toolbarView,
+                new AccessibilityDelegateCompat() {
+                    @Override
+                    public boolean onRequestSendAccessibilityEvent(
+                            @NonNull ViewGroup host,
+                            @NonNull View child,
+                            @NonNull AccessibilityEvent event) {
+                        final boolean isBurgerMenu = child instanceof ImageButton;
+                        final boolean isFocusEvent =
+                                event.getEventType()
+                                        == AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED;
+                        if (collaspingContentView.getImportantForAccessibility()
+                                        == View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                                && isBurgerMenu
+                                && isFocusEvent) {
+                            collaspingContentView.setImportantForAccessibility(
+                                    View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
+                        }
+                        return super.onRequestSendAccessibilityEvent(host, child, event);
+                    }
+                });
+    }
+
     @Override
     public void setRootsDrawerOpen(boolean open) {
         mNavigator.revealRootsDrawer(open);
@@ -865,6 +939,15 @@ public abstract class BaseActivity
             // triggers folder loading, which must know the correct stack content.
             if (!skipRootRefresh) {
                 mState.stack.changeRoot(root);
+            }
+            // Always hide the V2 of the breadcrumb when changing roots, unless we are going into
+            // the Recents view.
+            DirectoryFragment dir = getDirectoryFragment();
+            if (dir != null) {
+                BreadcrumbController controller = mInjector.getBreadcrumbController();
+                if (controller != null) {
+                    dir.setSearchResultBreadcrumbHidden(controller);
+                }
             }
         }
 
@@ -951,7 +1034,7 @@ public abstract class BaseActivity
         updateHeaderTitle();
     }
 
-    private void updateColumnHeaders(@Nullable RootInfo root) {
+    protected void updateColumnHeaders(@Nullable RootInfo root) {
         boolean showSummary =
                 displaySummaryForRoot(
                         mInjector.getSummaryProviderManager(), root, mState.stack.peek());

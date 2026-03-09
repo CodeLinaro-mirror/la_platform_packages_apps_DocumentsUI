@@ -18,9 +18,10 @@ package com.android.documentsui.files;
 
 import static com.android.documentsui.util.FlagUtils.isDesktopFileHandlingFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
-import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
-import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isUseApprovedDocumentHandlerEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
+import static com.android.documentsui.util.FlagUtils.isUseNewOpenWithEnabled;
+import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
 import android.content.Context;
@@ -177,7 +178,9 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
         // When desktop file handling is enabled, "open with" opens ResolverActivity.
         // Currently ResolverActivity automatically opens the app when it is the only option for the
         // user. This breaks the expected behaviour for "open with" so we hide "open with".
-        if (isDesktopFileHandlingFlagEnabled()) {
+        // With the new open-with this issue is resolved, so we only disable open-with when desktop
+        // file handling is enabled but new open-with is disabled.
+        if (isDesktopFileHandlingFlagEnabled() && !isUseNewOpenWithEnabled()) {
             enabled = enabled && selectionDetails.hasMultipleOpeningApps();
         }
 
@@ -278,18 +281,23 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
 
     @Override
     protected void updateSelectAll(MenuItem selectAll) {
-        Menus.setEnabledAndVisible(selectAll, true);
+        // Only show the "Select all" option if there are files to be selected in the directory.
+        Menus.setEnabledAndVisible(selectAll, mFilesCountSupplier.getAsInt() > 0);
     }
 
     @Override
     protected void updateSelectAll(MenuItem selectAll, SelectionDetails selectionDetails) {
-        final boolean visible = selectionDetails.size() < mFilesCountSupplier.getAsInt();
+        final boolean visible =
+                mFilesCountSupplier.getAsInt() > 0
+                        && selectionDetails.size() < mFilesCountSupplier.getAsInt();
         Menus.setEnabledAndVisible(selectAll, visible);
     }
 
     @Override
     protected void updateDeselectAll(MenuItem deselectAll, SelectionDetails selectionDetails) {
-        final boolean visible = selectionDetails.size() == mFilesCountSupplier.getAsInt();
+        final boolean visible =
+                mFilesCountSupplier.getAsInt() > 0
+                        && selectionDetails.size() == mFilesCountSupplier.getAsInt();
         Menus.setEnabledAndVisible(deselectAll, visible);
     }
 
