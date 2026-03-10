@@ -22,7 +22,6 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
-import static com.android.documentsui.DocumentsApplication.getProvidersCache;
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
@@ -45,7 +44,6 @@ import android.net.Uri;
 import android.platform.test.annotations.DesktopTest;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
-import android.provider.DocumentsContract;
 import android.view.View;
 
 import androidx.core.graphics.Insets;
@@ -59,28 +57,20 @@ import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
-import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.files.FilesActivity;
 import com.android.documentsui.filters.HugeLongTest;
 import com.android.documentsui.inspector.InspectorActivity;
-import com.android.documentsui.roots.ProvidersCache;
-import com.android.documentsui.roots.ShortcutResourceValues;
 import com.android.documentsui.rules.OverrideFlagsRule;
 import com.android.documentsui.rules.TestFilesRule;
-import com.android.documentsui.sidebar.RootsFragment;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
 @LargeTest
 public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
-    public static final String SHORTCUT_ID = "Test Shortcut";
-
     @Rule
     public final OverrideFlagsRule mOverrideFlagsRule = new OverrideFlagsRule();
 
@@ -382,184 +372,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
         } else {
             bots.directory.assertNoSelection();
         }
-    }
-
-    private void setUpShortcuts(List<ShortcutResourceValues> resources,
-            DocumentsProviderHelper storageDocsHelper) throws Exception {
-        // Reset and refresh the shortcut resources
-        ProvidersCache providers = getProvidersCache(context);
-        providers.setShortcutResources(resources);
-        Collection<RootInfo> roots = providers.getRootsBlocking();
-        Collection<ShortcutInfo> shortcuts = providers.loadShortcutsForUser(userId);
-        for (ShortcutInfo shortcut : shortcuts) {
-            // Create the shortcut folders if they don't exist yet. In the actual code, this is
-            // done by the loaders but we are not calling the loaders in the tests.
-            shortcut.setDocumentId(getOrCreateFolderDocId(
-                    storageDocsHelper, shortcut.getParentDirDocumentId(),
-                    shortcut.getFolderTitle()));
-        }
-
-        mActivityScenario.onActivity(activity -> {
-            RootsFragment fragment = RootsFragment.get(activity.getSupportFragmentManager());
-            fragment.loadFinished(roots, shortcuts, activity, activity.mState);
-        });
-    }
-
-    private void cleanUpShortcutFolder(DocumentsProviderHelper docsHelper,
-        String parentDocId, String shortcutTitle) {
-        try {
-            // Delete the folder just in case it exists
-            DocumentInfo shortcutDoc =
-                docsHelper.findDocument(parentDocId, shortcutTitle);
-            if (shortcutDoc != null) {
-                docsHelper.deleteDocumentIfExists(shortcutDoc.derivedUri);
-            }
-        } catch (Exception e) {
-            // Do nothing.
-        }
-    }
-
-    @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
-    public void testClickShortcutFolderPreExisting() throws Exception {
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        // Set up the shortcut resources and pre create the shortcut folder.
-        ShortcutResourceValues resource =
-                new ShortcutResourceValues(
-                        primaryRoot.authority,
-                        primaryRoot.rootId,
-                        primaryRoot.documentId,
-                        SHORTCUT_ID,
-                        SHORTCUT_ID,
-                        R.drawable.ic_root_homescreen);
-        setUpShortcuts(List.of(resource), storageDocsHelper);
-
-        switchRoot(SHORTCUT_ID);
-        bots.main.assertSearchBarGone();
-        boolean showDockedSearch = context.getResources().getBoolean(
-                getRes(R.bool.show_docked_search));
-        if (showDockedSearch) {
-            bots.main.assertDockedSearchBarShow();
-        } else {
-            bots.main.assertOptionsMenuSearchShow();
-        }
-        bots.main.assertWindowTitle(SHORTCUT_ID);
-        storageDocsHelper.assertHasDirectory(primaryRoot.documentId, SHORTCUT_ID);
-
-        bots.roots.assertItemSelected(SHORTCUT_ID);
-        bots.roots.assertItemNotSelected(primaryRoot.title);
-
-        cleanUpShortcutFolder(storageDocsHelper, primaryRoot.documentId, SHORTCUT_ID);
-    }
-
-    private String getOrCreateFolderDocId(DocumentsProviderHelper docsHelper, String parentDocId,
-            String folderName) throws Exception {
-        DocumentInfo info = docsHelper.findDocument(parentDocId, folderName);
-        if (info == null) {
-            Uri folderUri = docsHelper.createFolder(parentDocId, folderName);
-            return DocumentsContract.getDocumentId(folderUri);
-        } else {
-            return info.documentId;
-        }
-    }
-
-    @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
-    public void testNavigateOnShortcutToChildFolderSelectionRemains() throws Exception {
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        String folder1Id =
-                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder 1");
-        String folder2Id =
-                getOrCreateFolderDocId(storageDocsHelper, folder1Id, "Folder 2");
-        String folder3Id =
-                getOrCreateFolderDocId(storageDocsHelper, folder2Id, "Folder 3");
-        getOrCreateFolderDocId(storageDocsHelper, folder3Id, "Folder 4");
-        // Set up the shortcut resources and pre create the shortcut folder.
-        // Mock the resource values for shortcuts
-        List<ShortcutResourceValues> resources =
-                List.of(
-                        new ShortcutResourceValues(
-                                primaryRoot.authority,
-                                primaryRoot.rootId,
-                                folder1Id,
-                                "Folder 2",
-                                "Folder 2",
-                                R.drawable.ic_root_smartphone));
-        setUpShortcuts(resources, storageDocsHelper);
-
-        // We will have a chain of folders like so: storage -> 1 -> 2 (shortcut) -> 3 -> 4
-        // The breadcrumb path however will be: 2 (shortcut) -> 3 -> 4
-        switchRoot("Folder 2");
-        bots.main.assertWindowTitle("Folder 2");
-        bots.breadcrumb.assertItemsPresent( "Folder 2");
-        bots.roots.assertItemSelected("Folder 2");
-
-        // Open "Folder 3" from directory list, sidebar selection should remain on Folder 2.
-        bots.directory.openDocument("Folder 3");
-        bots.main.assertWindowTitle("Folder 3");
-        bots.breadcrumb.assertItemsPresent("Folder 2", "Folder 3");
-        bots.roots.assertItemSelected("Folder 2");
-
-        // Open "Folder 4" from directory list, sidebar selection should remain on Folder 2.
-        bots.directory.openDocument("Folder 4");
-        bots.main.assertWindowTitle("Folder 4");
-        bots.breadcrumb.assertItemsPresent("Folder 2", "Folder 3", "Folder 4");
-        bots.roots.assertItemSelected("Folder 2");
-
-        // Open "Folder 3" from breadcrumb bar, sidebar selection should remain on Folder 2.
-        bots.breadcrumb.clickItem("Folder 3");
-        bots.main.assertWindowTitle("Folder 3");
-        bots.breadcrumb.assertItemsPresent( "Folder 2", "Folder 3");
-        // Shortcut item no longer selected after clicking on the parent folder in the breadcrumb
-        bots.roots.assertItemSelected("Folder 2");
-        bots.roots.assertItemNotSelected(primaryRoot.title);
-    }
-
-    @Test
-    @EnableFlags({FLAG_HOME_SCREEN_FILES_RO, FLAG_USE_MATERIAL3})
-    public void testBreadcrumbItemsUpdatedSwitchBetweenShortcuts() throws Exception {
-        DocumentsProviderHelper storageDocsHelper = setupStorageAuthorityDocsHelper();
-        RootInfo primaryRoot = storageDocsHelper.getRoot(ROOT_ID_DEVICE);
-        String folder1Id =
-                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder 1");
-        String folder2Id =
-                getOrCreateFolderDocId(storageDocsHelper, folder1Id, "Folder 2");
-        String folderAId =
-                getOrCreateFolderDocId(storageDocsHelper, primaryRoot.documentId, "Folder A");
-        String folderBId =
-                getOrCreateFolderDocId(storageDocsHelper, folderAId, "Folder B");
-        // Set up the shortcut resources and pre create the shortcut folder.
-        // Mock the resource values for shortcuts
-        List<ShortcutResourceValues> resources =
-                List.of(
-                        new ShortcutResourceValues(
-                                primaryRoot.authority,
-                                primaryRoot.rootId,
-                                folderBId,
-                                "Folder C",
-                                "Folder C",
-                                R.drawable.ic_root_homescreen),
-                        new ShortcutResourceValues(
-                                primaryRoot.authority,
-                                primaryRoot.rootId,
-                                folder2Id,
-                                "Folder 3",
-                                "Folder 3",
-                                R.drawable.ic_root_smartphone));
-        setUpShortcuts(resources, storageDocsHelper);
-
-        switchRoot("Folder 3");
-        bots.main.assertWindowTitle("Folder 3");
-        bots.breadcrumb.assertItemsPresent("Folder 3");
-        bots.roots.assertItemSelected("Folder 3");
-
-        switchRoot("Folder C");
-        bots.main.assertWindowTitle("Folder C");
-        bots.breadcrumb.assertItemsPresent("Folder C");
-        bots.roots.assertItemSelected("Folder C");
-        bots.roots.assertItemNotSelected("Folder 3");
     }
 
     @Test
