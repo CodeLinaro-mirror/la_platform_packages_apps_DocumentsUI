@@ -2090,8 +2090,7 @@ public class DirectoryFragment extends Fragment implements SwipeRefreshLayout.On
 
     protected SummariesViewModel createSummariesViewModel() {
         return new ViewModelProvider(
-                        this,
-                        new SummariesViewModel.Factory(getBaseActivity().getContentResolver()))
+                        this, new SummariesViewModel.Factory(getBaseActivity().getApplication()))
                 .get(SummariesViewModel.class);
     }
 
