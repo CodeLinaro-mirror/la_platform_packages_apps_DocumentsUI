@@ -32,12 +32,4 @@
         <attr name="state_error" format="boolean"/>
     </declare-styleable>
 
-    <declare-styleable name="DocumentItemView">
-        <!--  Whether the view is in touch mode, this attribute is used for the
-        resource files (XML) to know if the view is in touch mode or not, so we
-        can show the focused style (i.e. focus ring) only shows when it's in
-        focused state but not in touch mode. -->
-        <attr name="state_touch_mode" format="boolean"/>
-    </declare-styleable>
-
 </resources>

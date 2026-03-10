@@ -24,6 +24,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
+import android.provider.DocumentsContract
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -151,11 +152,6 @@ class ApprovedDocHandlers(
     companion object {
         private const val TAG = "ApprovedDocHandlers"
         public const val AS_BUTTON_METADATA_KEY = "android.approvedtarget.as_button"
-
-        // TODO(b/464388012): Reference actual intent category when it's available.
-        public const val APPROVED_HANDLER_CATEGORY =
-            "android.provider.category.APPROVED_DOCUMENT_HANDLER"
-
         // A unique ID used to group menu items created for approved document handlers.
         private val HANDLER_GROUP_ID = View.generateViewId()
 
@@ -317,7 +313,7 @@ class ApprovedDocHandlers(
                     }
                 }
             }
-        intent.addCategory(APPROVED_HANDLER_CATEGORY)
+        intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER)
         return intent
     }
 
