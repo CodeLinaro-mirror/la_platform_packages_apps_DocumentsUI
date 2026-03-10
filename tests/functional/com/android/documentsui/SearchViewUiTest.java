@@ -247,8 +247,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         device.waitForIdle(3000);
 
-        bots.directory.waitAndAssertPlaceholderMessageText(
-                String.format(context.getString(R.string.no_results), "TEST_ROOT_0"));
+        bots.directory.waitAndAssertNoResultsMessage("TEST_ROOT_0");
     }
 
     @Suppress
@@ -749,9 +748,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Assert there's no search result because the Android folder and its content are
             // hidden.
-            String noSearchResults = String.format(context.getString(R.string.no_results),
-                    deviceRootLabel);
-            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+            bots.directory.waitAndAssertNoResultsMessage(deviceRootLabel);
 
             // Now show hidden files, the test file should show. (Close the search first before
             // showing hidden files because the 3-dot menu is not visible on drawer/nav_rail layout
@@ -773,7 +770,7 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
             device.waitForIdle();
             bots.main.hideHiddenFiles();
             bots.search.doSearch(testFileName);
-            bots.directory.waitAndAssertPlaceholderMessageText(noSearchResults);
+            bots.directory.waitAndAssertNoResultsMessage(deviceRootLabel);
         } finally {
             // Delete the created test file if it exists.
             if (testFileUri != null) {

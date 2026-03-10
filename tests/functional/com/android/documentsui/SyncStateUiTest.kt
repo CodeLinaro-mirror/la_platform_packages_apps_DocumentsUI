@@ -162,9 +162,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
 
         // Search for a non-existent file and get empty results.
         bots.search.doSearch("Shouldn't match to anything")
-        bots.directory.waitAndAssertPlaceholderMessageText(
-            String.format(context!!.getString(R.string.no_results), TestCloudProvider.NAME)
-        )
+        bots.directory.waitAndAssertNoResultsMessage(TestCloudProvider.NAME)
 
         bots.main.assertOfflineBannerDoesNotExist()
 

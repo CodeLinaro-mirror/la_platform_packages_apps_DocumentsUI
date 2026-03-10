@@ -22,7 +22,10 @@
     <string name="sync_error_description_m3">Couldn’t sync</string>
     <string name="upload_description_m3">Available to sync</string>
     <string name="download_description_m3">Available to download</string>
-    <string name="uploading_description_m3">Uploading</string>
-    <string name="downloading_description_m3">Downloading</string>
+    <string name="uploading_description_m3">Uploading...</string>
+    <string name="downloading_description_m3">Downloading...</string>
     <string name="synced_description_m3">Synced</string>
+
+    <!-- Text shown when a file search returns no items [CHAR LIMIT=32] -->
+    <string name="no_results_m3">No matching results</string>
 </resources>
