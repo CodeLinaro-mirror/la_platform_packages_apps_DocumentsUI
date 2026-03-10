@@ -55,11 +55,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 public class StubProvider extends DocumentsProvider {
@@ -94,13 +94,13 @@ public class StubProvider extends DocumentsProvider {
             Document.COLUMN_LAST_MODIFIED, Document.COLUMN_FLAGS, Document.COLUMN_SIZE,
     };
 
-    private final Map<String, StubDocument> mStorage = new HashMap<>();
-    private final Map<String, RootInfo> mRoots = new HashMap<>();
+    private final Map<String, StubDocument> mStorage = new ConcurrentHashMap<>();
+    private final Map<String, RootInfo> mRoots = new ConcurrentHashMap<>();
     private final Object mWriteLock = new Object();
 
     private String mAuthority = DEFAULT_AUTHORITY;
     private SharedPreferences mPrefs;
-    private Set<String> mSimulateReadErrorIds = new HashSet<>();
+    private Set<String> mSimulateReadErrorIds = ConcurrentHashMap.newKeySet();
     private long mLoadingDuration = 0;
     private boolean mRootNotification = true;
 
@@ -164,11 +164,12 @@ public class StubProvider extends DocumentsProvider {
 
     @Override
     public Cursor queryRoots(String[] projection) throws FileNotFoundException {
-        final MatrixCursor result = new MatrixCursor(projection != null ? projection
-                : DEFAULT_ROOT_PROJECTION);
-        for (Map.Entry<String, RootInfo> entry : mRoots.entrySet()) {
-            final String id = entry.getKey();
-            final RootInfo info = entry.getValue();
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_ROOT_PROJECTION);
+        List<String> sortedIds = new ArrayList<>(mRoots.keySet());
+        Collections.sort(sortedIds);
+        for (String id : sortedIds) {
+            final RootInfo info = mRoots.get(id);
             final RowBuilder row = result.newRow();
             row.add(Root.COLUMN_ROOT_ID, id);
             row.add(Root.COLUMN_FLAGS, info.flags);
@@ -182,8 +183,11 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public Cursor queryDocument(String documentId, String[] projection)
             throws FileNotFoundException {
-        final MatrixCursor result = new MatrixCursor(projection != null ? projection
-                : DEFAULT_DOCUMENT_PROJECTION);
+        if (documentId == null) {
+            throw new FileNotFoundException();
+        }
+        final MatrixCursor result =
+                new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
         final StubDocument file = mStorage.get(documentId);
         if (file == null) {
             throw new FileNotFoundException();
@@ -194,6 +198,9 @@ public class StubProvider extends DocumentsProvider {
 
     @Override
     public boolean isChildDocument(String parentDocId, String docId) {
+        if (parentDocId == null || docId == null) {
+            return false;
+        }
         final StubDocument parentDocument = mStorage.get(parentDocId);
         final StubDocument childDocument = mStorage.get(docId);
 
@@ -218,6 +225,9 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public String createDocument(String parentId, String mimeType, String displayName)
             throws FileNotFoundException {
+        if (parentId == null) {
+            throw new FileNotFoundException();
+        }
         StubDocument parent = mStorage.get(parentId);
         File file = createFile(parent, mimeType, displayName);
 
@@ -235,6 +245,9 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public void deleteDocument(String documentId)
             throws FileNotFoundException {
+        if (documentId == null) {
+            throw new FileNotFoundException();
+        }
         final StubDocument document = mStorage.get(documentId);
         if (document == null)
             throw new FileNotFoundException();
@@ -255,6 +268,9 @@ public class StubProvider extends DocumentsProvider {
 
     @Override
     public String trashDocument(String documentId) throws FileNotFoundException {
+        if (documentId == null) {
+            throw new FileNotFoundException();
+        }
         final StubDocument document = mStorage.get(documentId);
         if (document == null) {
             throw new FileNotFoundException("Document not found: " + documentId);
@@ -324,6 +340,9 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public String restoreDocumentFromTrash(@NonNull String documentId,
             @Nullable String targetParentDocumentId) throws FileNotFoundException {
+        if (documentId == null) {
+            throw new FileNotFoundException();
+        }
         final StubDocument document = mStorage.get(documentId);
         if (document == null) {
             throw new FileNotFoundException("Document not found: " + documentId);
@@ -379,6 +398,9 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public Cursor queryChildDocuments(String parentDocumentId, String[] projection, String sortOrder)
             throws FileNotFoundException {
+        if (parentDocumentId == null) {
+            throw new FileNotFoundException();
+        }
         if (mLoadingDuration > 0) {
             final Uri notifyUri = DocumentsContract.buildDocumentUri(mAuthority, parentDocumentId);
             final ContentResolver resolver = getContext().getContentResolver();
@@ -431,7 +453,7 @@ public class StubProvider extends DocumentsProvider {
             throws FileNotFoundException {
         final MatrixCursor result =
                 new MatrixCursor(projection != null ? projection : DEFAULT_DOCUMENT_PROJECTION);
-        if (!mRoots.containsKey(rootId)) {
+        if (rootId == null || !mRoots.containsKey(rootId)) {
             return null;
         }
 
@@ -450,6 +472,9 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public Cursor querySearchDocuments(String rootId, String query, String[] projection)
             throws FileNotFoundException {
+        if (rootId == null) {
+            throw new FileNotFoundException();
+        }
 
         StubDocument parentDocument = mRoots.get(rootId).document;
         if (parentDocument == null || parentDocument.file.isFile()) {
@@ -473,9 +498,10 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public String renameDocument(String documentId, String displayName)
             throws FileNotFoundException {
-
+        if (documentId == null) {
+            throw new FileNotFoundException();
+        }
         StubDocument oldDoc = mStorage.get(documentId);
-
         File before = oldDoc.file;
         File after = new File(before.getParentFile(), displayName);
 
@@ -535,6 +561,9 @@ public class StubProvider extends DocumentsProvider {
     @Override
     public ParcelFileDescriptor openDocument(String docId, String mode, CancellationSignal signal)
             throws FileNotFoundException {
+        if (docId == null) {
+            throw new FileNotFoundException();
+        }
 
         final StubDocument document = mStorage.get(docId);
         if (document == null || !document.file.isFile()) {
@@ -582,6 +611,9 @@ public class StubProvider extends DocumentsProvider {
     public AssetFileDescriptor openTypedDocument(
             String docId, String mimeTypeFilter, Bundle opts, CancellationSignal signal)
             throws FileNotFoundException {
+        if (docId == null) {
+            throw new FileNotFoundException();
+        }
         final StubDocument document = mStorage.get(docId);
         if (document == null || !document.file.isFile() || document.streamTypes == null) {
             throw new FileNotFoundException();
@@ -782,6 +814,9 @@ public class StubProvider extends DocumentsProvider {
 
     public String createDocument(String parentId, String mimeType, String displayName, int flags,
             List<String> streamTypes) throws FileNotFoundException {
+        if (parentId == null) {
+            throw new FileNotFoundException();
+        }
 
         StubDocument parent = mStorage.get(parentId);
         File file = createFile(parent, mimeType, displayName);
@@ -930,6 +965,9 @@ public class StubProvider extends DocumentsProvider {
     }
 
     public void setSize(String rootId, long rootSize) {
+        if (rootId == null) {
+            return;
+        }
         RootInfo root = mRoots.get(rootId);
         if (root != null) {
             final String key = STORAGE_SIZE_KEY + "." + rootId;
@@ -953,7 +991,8 @@ public class StubProvider extends DocumentsProvider {
     public Uri createRegularFile(String rootId, String path, String mimeType, byte[] content)
             throws FileNotFoundException, IOException {
         final File file = createFile(rootId, path, mimeType, content);
-        final StubDocument parent = mStorage.get(getDocumentIdForFile(file.getParentFile()));
+        String parentId = getDocumentIdForFile(file.getParentFile());
+        final StubDocument parent = parentId != null ? mStorage.get(parentId) : null;
         if (parent == null) {
             throw new FileNotFoundException("Parent not found.");
         }
@@ -968,7 +1007,8 @@ public class StubProvider extends DocumentsProvider {
             throws FileNotFoundException, IOException {
 
         final File file = createFile(rootId, path, mimeType, content);
-        final StubDocument parent = mStorage.get(getDocumentIdForFile(file.getParentFile()));
+        String parentId = getDocumentIdForFile(file.getParentFile());
+        final StubDocument parent = parentId != null ? mStorage.get(parentId) : null;
         if (parent == null) {
             throw new FileNotFoundException("Parent not found.");
         }
@@ -980,6 +1020,9 @@ public class StubProvider extends DocumentsProvider {
 
     @VisibleForTesting
     public File getFile(String rootId, String path) throws FileNotFoundException {
+        if (rootId == null) {
+            throw new FileNotFoundException();
+        }
         StubDocument root = mRoots.get(rootId).document;
         if (root == null) {
             throw new FileNotFoundException("No roots with the ID " + rootId + " were found");
@@ -987,7 +1030,8 @@ public class StubProvider extends DocumentsProvider {
         // Convert the path string into a path that's relative to the root.
         File needle = new File(root.file, path.substring(1));
 
-        StubDocument found = mStorage.get(getDocumentIdForFile(needle));
+        String needleId = getDocumentIdForFile(needle);
+        StubDocument found = needleId != null ? mStorage.get(needleId) : null;
         if (found == null) {
             return null;
         }
