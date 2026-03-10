@@ -393,7 +393,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
         // Check that the text in the dropdown window.
-        bots.search.findMenuItem(R.string.search_location_everywhere).check(matches(isDisplayed()));
+        bots.menu
+                .findListMenuItem(context.getString(R.string.search_location_everywhere))
+                .check(matches(isDisplayed()));
         onView(withText("TEST_ROOT_0")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
         // Click the "Everywhere" entry to hide the popup. This is needed for the bots to be able
         // to open the new root. But we also test that user choices are remembered.
@@ -418,7 +420,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Click location trigger, and check that the root folder option is updated to Downloads.
         bots.search.clickDropdownTrigger(R.id.search_location_trigger);
         // Verify the dropdown menu to be updated.
-        bots.search.findMenuItem(R.string.search_location_everywhere).check(matches(isDisplayed()));
+        bots.menu
+                .findListMenuItem(context.getString(R.string.search_location_everywhere))
+                .check(matches(isDisplayed()));
         onView(withText("Paging Root")).inRoot(isPlatformPopup()).check(matches(isDisplayed()));
     }
 
