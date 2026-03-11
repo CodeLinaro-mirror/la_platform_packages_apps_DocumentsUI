@@ -28,6 +28,7 @@ import android.provider.Flags.FLAG_ENABLE_SYNC_STATE
 import androidx.annotation.StringRes
 import androidx.test.core.app.ActivityScenario
 import androidx.test.filters.SdkSuppress
+import com.android.documentsui.bots.rightClickDocument
 import com.android.documentsui.filters.HugeLongTest
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.picker.PickActivity
@@ -743,7 +744,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         )
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -756,7 +757,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         setIsOnline(false)
 
         // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
         // Check that the menu items are still visible and enabled offline.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -816,7 +817,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DOC_ID_0, 0)
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+        rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -831,7 +832,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Reopen the context menu.
-            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+            rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
             // Check that the menu items are still visible but those that require content required
             // are disabled offline.
@@ -895,7 +896,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.DIR_ID, 0)
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         val openContextMenuItems = intArrayOf(R.string.menu_open_in_new_window)
@@ -910,7 +911,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         setIsOnline(false)
 
         // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.DIR_DISPLAY_NAME, TIMEOUT)
 
         // Check that the menu items are still visible but those that require content required
         // are disabled offline. However, open menu items are an exception for folders and should
@@ -967,7 +968,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         cloudProviderDocsHelper?.setSyncState(TestCloudProvider.VIRTUAL_ID, 0)
 
         // Open the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME, TIMEOUT)
 
         // Check that the items that require content to be available are visible and enabled.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -980,7 +981,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         setIsOnline(false)
 
         // Reopen the context menu.
-        bots.directory.rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME)
+        rightClickDocument(TestCloudProvider.VIRTUAL_DISPLAY_NAME, TIMEOUT)
 
         // Check that the menu items are still visible and enabled offline.
         bots.menu.assertListMenuItemsVisibleAndEnabled(
@@ -1058,7 +1059,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Open the context menu.
-            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+            rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
             // Check that the items that require content are visible but are disabled offline.
             bots.menu.assertListMenuItemsVisibleAndDisabled(
@@ -1099,7 +1100,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Open the context menu.
-            bots.directory.rightClickDocument(TestCloudProvider.DISPLAY_NAME_0)
+            rightClickDocument(TestCloudProvider.DISPLAY_NAME_0, TIMEOUT)
 
             // Check that the items that require content are visible but are disabled offline.
             bots.menu.assertListMenuItemsVisibleAndDisabled(
@@ -1142,7 +1143,7 @@ class SyncStateUiTest : ActivityTestJunit4<BaseActivity>() {
         // Disabled documents cannot be selected in the picker.
         if (!isInPicker) {
             // Open the context menu.
-            bots.directory.rightClickDocument("recentFileInTest")
+            rightClickDocument("recentFileInTest", TIMEOUT)
 
             // Check that the items that require content are visible but are disabled offline.
             bots.menu.assertListMenuItemsVisibleAndDisabled(
