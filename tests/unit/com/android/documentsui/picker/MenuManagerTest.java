@@ -33,6 +33,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.database.MatrixCursor;
+import android.os.Build;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract.Document;
@@ -40,6 +41,7 @@ import android.provider.DocumentsContract.Root;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.SdkSuppress;
 import androidx.test.filters.SmallTest;
 
 import com.android.documentsui.DirectoryResult;
@@ -954,6 +956,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testContextMenu_notUseApprovedDocumentHandler() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         testResources.stringArrays.put(
@@ -975,6 +978,7 @@ public final class MenuManagerTest {
 
     @Test
     @EnableFlags({Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER})
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     public void testActionMenu_notUseApprovedDocumentHandler() {
         doReturn("Test App").when(activityInfo).loadLabel(any());
         testResources.stringArrays.put(
