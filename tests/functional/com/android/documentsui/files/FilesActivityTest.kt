@@ -26,8 +26,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.LargeTest
 import com.android.documentsui.ActivityTestJunit4
 import com.android.documentsui.R
+import com.android.documentsui.StubProvider
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.rules.OverrideFlagsRule
+import com.android.documentsui.rules.TestFilesRule
 import com.android.documentsui.util.Material3Config.Companion.getRes
 import org.junit.Rule
 import org.junit.Test
@@ -37,11 +39,16 @@ import org.junit.Test
 class FilesActivityTest : ActivityTestJunit4<FilesActivity>() {
 
     @get:Rule val overrideFlagsRule = OverrideFlagsRule()
+    @get:Rule
+    val testFilesRule =
+        TestFilesRule().createTestFiles { docsHelper ->
+            var root = docsHelper.getRoot(StubProvider.ROOT_0_ID)
+            docsHelper.createDocument(root, "text/plain", "rename_me.txt")
+        }
 
     @Test
     fun testShortcutForRename() {
         // Select a test file.
-        mDocsHelper!!.createDocument(rootDir0, "text/plain", "rename_me.txt")
         bots.directory.selectDocument("rename_me.txt", 1)
 
         // Press Ctrl+Enter.
