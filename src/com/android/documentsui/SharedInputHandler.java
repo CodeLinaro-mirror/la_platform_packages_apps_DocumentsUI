@@ -37,7 +37,7 @@ public class SharedInputHandler {
     private final FocusHandler mFocusManager;
     private final Procedure mSearchCanceler;
     private final Procedure mDirPopper;
-    private final Runnable mSearchExecutor;
+    private final Runnable mSearchKeyboardShortcutExecutor;
     private final Features mFeatures;
     private final SelectionTracker<String> mSelectionMgr;
     private final DrawerController mDrawer;
@@ -49,14 +49,14 @@ public class SharedInputHandler {
             Procedure dirPopper,
             Features features,
             DrawerController drawer,
-            Runnable searchExcutor) {
+            Runnable searchKeyboardShortcutExecutor) {
         mFocusManager = focusHandler;
         mSearchCanceler = searchCanceler;
         mSelectionMgr = selectionMgr;
         mDirPopper = dirPopper;
         mFeatures = features;
         mDrawer = drawer;
-        mSearchExecutor = searchExcutor;
+        mSearchKeyboardShortcutExecutor = searchKeyboardShortcutExecutor;
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -82,7 +82,7 @@ public class SharedInputHandler {
                 return onTab();
 
             case KeyEvent.KEYCODE_SEARCH:
-                mSearchExecutor.run();
+                mSearchKeyboardShortcutExecutor.run();
                 return true;
 
             default:

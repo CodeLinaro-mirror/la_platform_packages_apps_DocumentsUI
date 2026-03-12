@@ -73,4 +73,32 @@ class NavigationBot(device: UiDevice, context: Context, timeout: Long, @LayoutRe
         mDevice.waitForIdle()
         mBots.main.waitForWindowTitle(label)
     }
+
+    /**
+     * Programmatically opens and enters a new folder with the given label.
+     *
+     * @param label The label of the folder to open.
+     * @param scenario The active ActivityScenario required to call the activity methods.
+     * @throws AssertionError if the folder with the given label is not found in the current
+     *   directory.
+     */
+    fun openFolder(label: String, scenario: ActivityScenario<out BaseActivity>) {
+        scenario.onActivity { activity ->
+            val model = activity.injector.model
+            val folder =
+                model.modelIds
+                    .mapNotNull { model.getDocument(it) }
+                    .find { it.isDirectory && it.displayName == label }
+
+            if (folder != null) {
+                activity.injector.actions.openContainerDocument(folder)
+            } else {
+                throw AssertionError("Folder with label '$label' not found in current directory.")
+            }
+        }
+
+        // Ensure UI thread finishes updating prior to returning to avoid race conditions
+        mDevice.waitForIdle()
+        mBots.main.waitForWindowTitle(label)
+    }
 }

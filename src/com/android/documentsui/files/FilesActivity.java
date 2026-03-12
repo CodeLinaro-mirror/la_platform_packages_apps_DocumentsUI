@@ -281,7 +281,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         this::popDir,
                         mInjector.features,
                         mDrawer,
-                        mInjector.searchManager::onSearchBarClicked);
+                        this::onSearchKeyboardShortcut);
 
         RootsFragment.show(getSupportFragmentManager(), /* includeApps= */ false,
                 /* intent= */ null);

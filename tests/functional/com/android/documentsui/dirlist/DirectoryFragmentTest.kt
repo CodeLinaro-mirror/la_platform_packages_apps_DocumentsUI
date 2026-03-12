@@ -56,7 +56,6 @@ import com.android.documentsui.flags.Flags
 import com.android.documentsui.flags.Flags.FLAG_DESKTOP_FILE_HANDLING_RO
 import com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3
 import com.android.documentsui.flags.Flags.FLAG_USE_NEW_OPEN_WITH
-import com.android.documentsui.loaders.SummariesViewModel
 import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.roots.RootCursorWrapper
 import com.android.documentsui.rules.OverrideFlagsRule
