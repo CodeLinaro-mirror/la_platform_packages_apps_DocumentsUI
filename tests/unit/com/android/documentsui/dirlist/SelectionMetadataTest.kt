@@ -131,7 +131,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_noSelection() {
         val sm = createSelectionMetadata()
         assertEquals(true, sm.mimeTypes().isEmpty())
@@ -139,7 +138,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_selectOneFile() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -148,7 +146,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_selectMultipleFiles_differentMimeTypes() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -158,7 +155,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_selectMultipleFiles_sameMimeType() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -170,7 +166,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_deselectFile_withRemainingOfSameMimeType() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -184,7 +179,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_deselectLastFileOfMimeType() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -197,7 +191,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3, Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     fun testMimeTypes_deselectAll() {
         val sm = createSelectionMetadata()
         sm.onItemStateChanged(makeId("oneOpeningApp.txt"), true)
@@ -212,7 +205,6 @@ class SelectionMetadataTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_MATERIAL3)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @DisableFlags(Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
     fun testMimeTypes_flagDisabled() {
         val sm = createSelectionMetadata()
@@ -224,7 +216,6 @@ class SelectionMetadataTest {
 
     @Test
     @DisableFlags(Flags.FLAG_USE_MATERIAL3)
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.BAKLAVA, codeName = "B")
     @EnableFlags(Flags.FLAG_USE_APPROVED_DOCUMENT_HANDLER)
     fun testMimeTypes_notMaterial3() {
         val sm = createSelectionMetadata()

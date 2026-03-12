@@ -140,11 +140,7 @@ public class TestActionHandler extends AbstractActionHandler<TestActivity> {
 
         final Intent intent = new Intent();
         intent.setComponent(handler);
-        // TODO(b/490258918): After API 37 finalisation guard with the SDK version instead of the
-        // useApprovedDocumentHandler flag in DocsUI
-        if (isUseApprovedDocumentHandlerEnabled()) {
-            intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER);
-        }
+        intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER);
         return intent;
     }
 }
