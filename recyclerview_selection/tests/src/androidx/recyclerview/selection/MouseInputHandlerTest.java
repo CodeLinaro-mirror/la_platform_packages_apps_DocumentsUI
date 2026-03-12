@@ -26,6 +26,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 
 import androidx.recyclerview.selection.ItemDetailsLookup.ItemDetails;
 import androidx.recyclerview.selection.testing.SelectionProbe;
@@ -89,28 +90,51 @@ public final class MouseInputHandlerTest {
     }
 
     private boolean callTapHandlers(MotionEvent e, boolean isDoubleTap) {
+        // Follow the real event stream for single click and double click:
+        // * single click: onDown -> onSingleTapUp
+        // * double click: onDown -> onSingleTapUp -> onDoubleTap (first tap down)
+        //                 -> onDoubleTapEvent (second tap down) -> onDown
+        //                 -> onDoubleTapEvent (second tap up)
+
+        final int gapBetweenDownAndUpInMs = 50;
+        // By default, 2 clicks within 300ms are detected as double click.
+        final int gapBetweenTwoClicksInMs = ViewConfiguration.getDoubleTapTimeout() / 2;
+        // All events will follow the same setup as the passed in event (e.g. primary/secondary
+        // click, ctrl/shift pressed), only updating the event time and action type.
         MotionEvent downEvent = e;
-        MotionEvent secondDownEvent = e;
-        // Strictly speaking, it would be more realistic if the upEvent's getAction() was
-        // MotionEvent.ACTION_UP, in contrast to e.getAction(), which is MotionEvent.ACTION_DOWN.
-        // But the code under test doesn't care about the action. It's simpler to just re-use e.
-        MotionEvent upEvent = e;
+        MotionEvent upEvent =
+                TestEvents.builder()
+                        .copyFrom(e)
+                        .up()
+                        .time(e.getEventTime() + gapBetweenDownAndUpInMs)
+                        .build();
+        MotionEvent secondDownEvent =
+                TestEvents.builder()
+                        .copyFrom(e)
+                        .time(e.getEventTime() + gapBetweenTwoClicksInMs)
+                        .downTime(e.getEventTime() + gapBetweenTwoClicksInMs)
+                        .build();
+        MotionEvent secondUpEvent =
+                TestEvents.builder()
+                        .copyFrom(secondDownEvent)
+                        .up()
+                        .time(e.getEventTime() + gapBetweenDownAndUpInMs)
+                        .build();
 
         boolean handled = mInputDelegate.onDown(downEvent)
                 || mInputDelegate.onSingleTapUp(upEvent);
 
-        if (handled) {
-            // No-op.
-        } else if (isDoubleTap) {
+        if (isDoubleTap) {
             // As can be seen in the GestureDetector.onTouchEvent code, for the ACTION_DOWN case,
-            // onDoubleTap will be called first (with the first down event) and then onDown will be
+            // onDoubleTap will be called first (with the first down event) and then
+            // onDoubleTapEvent will be called (with the second down event), and then onDown will be
             // called (with the second down event), regardless of whether onDoubleTap returned true
             // or false. When the GestureDetector recognizes this as a double tap, it also won't
             // call onSingleTapEtc methods.
             handled |= mInputDelegate.onDoubleTap(downEvent);
+            handled |= mInputDelegate.onDoubleTapEvent(secondDownEvent);
             handled |= mInputDelegate.onDown(secondDownEvent);
-        } else {
-            handled |= mInputDelegate.onSingleTapConfirmed(downEvent);
+            handled |= mInputDelegate.onDoubleTapEvent(secondUpEvent);
         }
 
         return handled;
@@ -127,7 +151,7 @@ public final class MouseInputHandlerTest {
     @Test
     public void testConfirmedClick_StartsSelection() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mSelection.assertSelection(11);
     }
@@ -294,10 +318,10 @@ public final class MouseInputHandlerTest {
     @Test
     public void testClickOnSelectRegion_AddsToSelection() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(10).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mSelection.assertSelected(10, 11);
     }
@@ -305,14 +329,14 @@ public final class MouseInputHandlerTest {
     @Test
     public void testClickOnIconOfSelectedItem_RemovesFromSelection() {
         mDetailsLookup.initAt(8).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
         mSelection.assertSelected(8, 9, 10, 11);
 
         mDetailsLookup.initAt(9);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
         mSelection.assertSelected(8, 10, 11);
     }
 
@@ -353,10 +377,10 @@ public final class MouseInputHandlerTest {
     @Test
     public void testUnconfirmedShiftClick_ExtendsSelection() {
         mDetailsLookup.initAt(7).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
 
         mSelection.assertSelection(7, 8, 9, 10, 11);
     }
@@ -368,21 +392,21 @@ public final class MouseInputHandlerTest {
 
         // There should be no selected item at this point, just focus on "7".
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
         mSelection.assertSelection(7, 8, 9, 10, 11);
     }
 
     @Test
     public void testUnconfirmedShiftClick_RotatesAroundOrigin() {
         mDetailsLookup.initAt(7).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
         mSelection.assertSelection(7, 8, 9, 10, 11);
 
         mDetailsLookup.initAt(5);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
 
         mSelection.assertSelection(5, 6, 7);
         mSelection.assertNotSelected(8, 9, 10, 11);
@@ -391,20 +415,20 @@ public final class MouseInputHandlerTest {
     @Test
     public void testUnconfirmedShiftClick_Combination() {
         mDetailsLookup.initAt(7).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
         mSelection.assertSelection(7, 8, 9, 10, 11);
     }
 
     @Test
     public void testUnconfirmedShiftCtrlClick_ShiftTakesPriority() {
         mDetailsLookup.initAt(7).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(mEvent.primary().ctrl().shift().build());
+        singleTap(mEvent.primary().ctrl().shift().build());
 
         mSelection.assertSelection(7, 8, 9, 10, 11);
     }
@@ -429,7 +453,7 @@ public final class MouseInputHandlerTest {
     @Test
     public void testMiddleClick_DoesNothing() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(TERTIARY_CLICK);
+        singleTap(TERTIARY_CLICK);
 
         mSelection.assertNoSelection();
     }
@@ -437,10 +461,10 @@ public final class MouseInputHandlerTest {
     @Test
     public void testClickOff_ClearsSelection() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(RecyclerView.NO_POSITION);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mSelection.assertNoSelection();
     }
@@ -448,7 +472,7 @@ public final class MouseInputHandlerTest {
     @Test
     public void testClick_Focuses() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(false);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mFocusCallbacks.assertHasFocus(true);
         mFocusCallbacks.assertFocused("11");
@@ -457,26 +481,26 @@ public final class MouseInputHandlerTest {
     @Test
     public void testClickOff_ClearsFocus() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(false);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
         mFocusCallbacks.assertHasFocus(true);
 
         mDetailsLookup.initAt(RecyclerView.NO_POSITION);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
         mFocusCallbacks.assertHasFocus(false);
     }
 
     @Test
     public void testClickOffSelection_RemovesSelectionAndFocuses() {
         mDetailsLookup.initAt(1).setInItemSelectRegion(true);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mDetailsLookup.initAt(5);
-        mInputDelegate.onSingleTapConfirmed(SHIFT_CLICK);
+        singleTap(SHIFT_CLICK);
 
         mSelection.assertSelection(1, 2, 3, 4, 5);
 
         mDetailsLookup.initAt(11);
-        mInputDelegate.onSingleTapConfirmed(CLICK);
+        singleTap(CLICK);
 
         mFocusCallbacks.assertFocused("11");
         mSelection.assertNoSelection();
