@@ -181,6 +181,12 @@ final class MouseInputHandler<K> extends MotionInputHandler<K> {
 
         ItemDetails<K> item = mDetailsLookup.overItemWithSelectionKeyAsItem(e);
         if (item != null) {
+            // If the first tap of the double click deselected the item (e.g. for double-clicking
+            // on a selected file), re-select it here.
+            if (!mSelectionTracker.isSelected(item.getSelectionKey())) {
+                selectItem(item);
+            }
+
             mOnItemActivatedListener.onItemActivated(item, e);
         }
         // DO NOT RETURN TRUE YET. Returning true here makes the `GestureDetector.onTouchEvent`

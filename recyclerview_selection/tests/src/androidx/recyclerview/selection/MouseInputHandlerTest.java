@@ -438,16 +438,34 @@ public final class MouseInputHandlerTest {
 
     @Test
     public void testDoubleClick_Opens() {
-        // Double-click on an unselected file should open it.
+        // Double-click on an unselected file should open it and select it.
         TestItemDetails doc1 = mDetailsLookup.initAt(1);
         assertTrue(doubleTap(CLICK));
         mActivationCallbacks.assertActivated(doc1);
+        mSelection.assertSelection(1);
 
-        // Double-click on a selected file should also open it.
+        // Double-click on a selected file should also open it and keep it selected.
+        mSelectionMgr.clearSelection();
         mSelectionMgr.select("2");
         TestItemDetails doc2 = mDetailsLookup.initAt(2);
         assertTrue(doubleTap(CLICK));
         mActivationCallbacks.assertActivated(doc2);
+        mSelection.assertSelection(2);
+    }
+
+    @Test
+    public void testDoubleClick_Opens_TwoItems() {
+        // Double-click on an unselected file should open it and select it.
+        TestItemDetails doc1 = mDetailsLookup.initAt(1);
+        assertTrue(doubleTap(CLICK));
+        mActivationCallbacks.assertActivated(doc1);
+        mSelection.assertSelection(1);
+
+        // Double-click on another unselected file should open it and keep it selected.
+        TestItemDetails doc2 = mDetailsLookup.initAt(2);
+        assertTrue(doubleTap(CLICK));
+        mActivationCallbacks.assertActivated(doc2);
+        mSelection.assertSelection(2);
     }
 
     @Test
