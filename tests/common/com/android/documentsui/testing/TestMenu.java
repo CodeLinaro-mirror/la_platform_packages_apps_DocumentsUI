@@ -177,7 +177,7 @@ public abstract class TestMenu implements Menu {
 
     @Override
     public TestMenuItem add(int groupId, int itemId, int order, CharSequence title) {
-        TestMenuItem item = TestMenuItem.create(itemId);
+        TestMenuItem item = TestMenuItem.create(groupId, itemId);
         addMenuItem(itemId, item.setTitle(title));
         return item;
     }
