@@ -159,7 +159,6 @@ public abstract class DocumentHolder
         View progressView = itemView.findViewById(android.R.id.progress);
         View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
         View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
-        View downloadView = itemView.findViewById(getRes(R.id.download_icon));
         View tickView = itemView.findViewById(getRes(R.id.progress_tick_icon));
 
         if ((doc.hasUploadInProgress() || doc.hasDownloadInProgress()) && progressView != null) {
@@ -186,13 +185,6 @@ public abstract class DocumentHolder
             uploadView.setContentDescription(
                     mContext.getString(getRes(R.string.upload_description_m3)));
             uploadView.setTooltipText(mContext.getString(getRes(R.string.upload_description_m3)));
-        } else if (!doc.isContentAvailableLocally() && !doc.isDirectory() && downloadView != null) {
-            // Only show download icon for files. Folders don't have content.
-            downloadView.setVisibility(View.VISIBLE);
-            downloadView.setContentDescription(
-                    mContext.getString(getRes(R.string.download_description_m3)));
-            downloadView.setTooltipText(
-                    mContext.getString(getRes(R.string.download_description_m3)));
         } else if (justFinishedSync && tickView != null) {
             tickView.setVisibility(View.VISIBLE);
             tickView.setContentDescription(
@@ -210,7 +202,6 @@ public abstract class DocumentHolder
         View progressView = itemView.findViewById(android.R.id.progress);
         View syncErrorView = itemView.findViewById(getRes(R.id.sync_error_icon));
         View uploadView = itemView.findViewById(getRes(R.id.upload_icon));
-        View downloadView = itemView.findViewById(getRes(R.id.download_icon));
         View tickView = itemView.findViewById(getRes(R.id.progress_tick_icon));
 
         if (progressView != null) {
@@ -221,9 +212,6 @@ public abstract class DocumentHolder
         }
         if (uploadView != null) {
             uploadView.setVisibility(View.GONE);
-        }
-        if (downloadView != null) {
-            downloadView.setVisibility(View.GONE);
         }
         if (tickView != null) {
             tickView.setVisibility(View.GONE);
