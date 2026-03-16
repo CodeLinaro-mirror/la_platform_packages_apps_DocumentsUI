@@ -18,8 +18,6 @@ package com.android.documentsui.dirlist
 
 import android.content.ContentResolver
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
 import android.platform.test.annotations.EnableFlags
@@ -29,7 +27,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.android.documentsui.R
 import com.android.documentsui.TestSummaryProvider
 import com.android.documentsui.archives.ArchivesProvider
 import com.android.documentsui.base.DocumentInfo
@@ -49,7 +46,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
@@ -62,17 +58,8 @@ class SummaryProviderManagerTest {
 
     private lateinit var context: Context
     private lateinit var contentResolver: ContentResolver
-    private lateinit var mockResources: Resources
     private val TEST_SUMMARY_PROVIDER =
         "content://${TestSummaryProvider.AUTHORITY}/root/summary-root"
-
-    /** A custom ContextWrapper that allows us to override getResources() for testing. */
-    private class TestContextWrapper(base: Context, private val mockResources: Resources) :
-        ContextWrapper(base) {
-        override fun getResources(): Resources {
-            return mockResources
-        }
-    }
 
     /** Helper to run tests with a default timeout. */
     private fun runTestWithTimeout(testBody: suspend TestScope.() -> Unit) =
@@ -80,12 +67,8 @@ class SummaryProviderManagerTest {
 
     @Before
     fun setUp() {
-        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-        contentResolver = targetContext.contentResolver
-        mockResources = mock<Resources>()
-
-        // Use the ContextWrapper to provide the mock Resources.
-        context = TestContextWrapper(targetContext, mockResources)
+        context = InstrumentationRegistry.getInstrumentation().targetContext
+        contentResolver = context.contentResolver
 
         setSummaryConsent(false)
     }
@@ -113,7 +96,6 @@ class SummaryProviderManagerTest {
 
     @Test
     fun testStart_withNoProvider_isDisabled() = runTestWithTimeout {
-        `when`(mockResources.getString(R.string.local_summary_provider)).thenReturn("")
         val manager = SummaryProviderManager(context, backgroundScope, Uri.parse(""))
         manager.start()
         assertThat(manager.state.value).isEqualTo(SummaryProviderState.ProviderUnavailable)
@@ -122,8 +104,6 @@ class SummaryProviderManagerTest {
 
     @Test
     fun testStart_withProviderEmpty_isDisabled() = runTestWithTimeout {
-        `when`(mockResources.getString(R.string.local_summary_provider))
-            .thenReturn(TEST_SUMMARY_PROVIDER)
         setSummaryProviderEnabled(enabled = false)
         val manager =
             SummaryProviderManager(context, backgroundScope, Uri.parse(TEST_SUMMARY_PROVIDER))
@@ -140,8 +120,6 @@ class SummaryProviderManagerTest {
 
     @Test
     fun testStart_withProviderEnabled() = runTestWithTimeout {
-        `when`(mockResources.getString(R.string.local_summary_provider))
-            .thenReturn(TEST_SUMMARY_PROVIDER)
         setSummaryProviderEnabled(enabled = true)
         setSummaryConsent(enabled = true)
         val manager =
@@ -157,9 +135,6 @@ class SummaryProviderManagerTest {
 
     @Test
     fun testStateChanges_whenProviderUpdates() = runTestWithTimeout {
-        `when`(mockResources.getString(R.string.local_summary_provider))
-            .thenReturn(TEST_SUMMARY_PROVIDER)
-
         // Start with the provider being disabled.
         setSummaryProviderEnabled(enabled = false)
         setSummaryConsent(enabled = true)
