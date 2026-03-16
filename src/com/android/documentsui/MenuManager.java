@@ -388,8 +388,8 @@ public abstract class MenuManager {
         if (isTrashFlowEnabled()) {
             MenuItem moveToTrash = menu.findItem(getRes(R.id.dir_menu_move_to_trash));
             MenuItem restoreFromTrash = menu.findItem(getRes(R.id.dir_menu_restore_from_trash));
-            updateMoveToTrash(moveToTrash, selectionDetails);
-            updateRestoreFromTrash(restoreFromTrash, selectionDetails);
+            Menus.setEnabledAndVisible(moveToTrash, selectionDetails.canTrash());
+            Menus.setEnabledAndVisible(restoreFromTrash, selectionDetails.canRestore());
         }
 
         updateCopyAndCut(copy, cut, selectionDetails);

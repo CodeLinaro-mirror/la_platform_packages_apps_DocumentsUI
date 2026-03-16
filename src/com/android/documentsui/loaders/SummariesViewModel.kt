@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.documentsui.dirlist
+package com.android.documentsui.loaders
 
 import android.content.ContentResolver
 import android.database.ContentObserver
@@ -34,7 +34,6 @@ import androidx.lifecycle.viewModelScope
 import com.android.documentsui.ModelId
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.base.Providers
-import com.android.documentsui.loaders.QueryOptions
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -74,6 +74,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
 import com.android.documentsui.Injector.Injected;
+import com.android.documentsui.NavigationViewManager.Breadcrumb;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.DocumentStack;
 import com.android.documentsui.base.EventHandler;
@@ -330,26 +331,20 @@ public abstract class BaseActivity
         Toolbar toolbar = (Toolbar) findViewById(getRes(R.id.toolbar));
         setSupportActionBar(toolbar);
 
-        HorizontalBreadcrumb navBreadcrumb = findViewById(getRes(R.id.horizontal_breadcrumb));
-        assert (navBreadcrumb != null);
-        BreadcrumbView searchBreadcrumb =
-                isSearchV2Enabled() ? findViewById(getRes(R.id.breadcrumb_view_v2)) : null;
-        View breadcrumbDivider =
-                isUseMaterial3FlagEnabled()
-                        ? findViewById(getRes(R.id.breadcrumb_top_divider))
-                        : null;
+        Breadcrumb breadcrumb = findViewById(getRes(R.id.horizontal_breadcrumb));
+        assert (breadcrumb != null);
         View profileTabsContainer = findViewById(getRes(R.id.tabs_container));
         assert (profileTabsContainer != null);
 
-        BreadcrumbModel model =
-                isSearchV2Enabled() ? new ViewModelProvider(this).get(BreadcrumbModel.class) : null;
-        BreadcrumbController breadcrumbController =
-                new BreadcrumbController(
-                        this, model, navBreadcrumb, searchBreadcrumb, breadcrumbDivider);
+        mNavigator = getNavigationViewManager(breadcrumb, profileTabsContainer);
         if (isSearchV2Enabled()) {
-            mInjector.setBreadcrumbController(breadcrumbController);
+            View breadcrumbView2 = findViewById(getRes(R.id.breadcrumb_view_v2));
+            if (breadcrumbView2 != null) {
+                BreadcrumbModel model = new ViewModelProvider(this).get(BreadcrumbModel.class);
+                mInjector.setBreadcrumbController(
+                        new BreadcrumbController(this, model, (BreadcrumbView) breadcrumbView2));
+            }
         }
-        mNavigator = getNavigationViewManager(breadcrumbController, profileTabsContainer);
 
         AppBarLayout appBarLayout = findViewById(getRes(R.id.app_bar));
         if (appBarLayout != null) {
@@ -400,7 +395,7 @@ public abstract class BaseActivity
                         if (isSearchV2Enabled()) {
                             BreadcrumbController controller = mInjector.getBreadcrumbController();
                             if (controller != null) {
-                                controller.setSearchBreadcrumbVisible(false);
+                                controller.setVisible(false);
                             }
                         }
                         // Invalidating the options menu will affect both tab navigation and the
@@ -608,15 +603,15 @@ public abstract class BaseActivity
         mCurrentLocale = getResources().getConfiguration().getLocales().get(0);
     }
 
-    private NavigationViewManager getNavigationViewManager(
-            BreadcrumbController breadcrumbController, View profileTabsContainer) {
+    private NavigationViewManager getNavigationViewManager(Breadcrumb breadcrumb,
+            View profileTabsContainer) {
         if (mConfigStore.isPrivateSpaceInDocsUIEnabled()) {
             return new NavigationViewManager(
                     this,
                     mDrawer,
                     mState,
                     this,
-                    breadcrumbController,
+                    breadcrumb,
                     profileTabsContainer,
                     DocumentsApplication.getUserManagerState(this),
                     mConfigStore);
@@ -626,7 +621,7 @@ public abstract class BaseActivity
                 mDrawer,
                 mState,
                 this,
-                breadcrumbController,
+                breadcrumb,
                 profileTabsContainer,
                 DocumentsApplication.getUserIdManager(this),
                 mConfigStore);
@@ -1497,21 +1492,6 @@ public abstract class BaseActivity
     @Override
     public boolean isSearchExpanded() {
         return mSearchManager.isExpanded();
-    }
-
-    /**
-     * Called when the user hits the KeyEvent.KEYCODE_SEARCH key (or Alt-Space, which is an
-     * Android-wide equivalent).
-     */
-    public void onSearchKeyboardShortcut() {
-        if (isUseMaterial3FlagEnabled()) {
-            // The selection bar, visible whenever at least one file or folder is selected, hides
-            // the search bar (whether docked or regular). Since this keyboard shortcut should
-            // focus and/or expand the search bar's text-edit widget, we first clear the selection
-            // (which will hide the selection bar if it was showing).
-            mInjector.selectionMgr.clearSelection();
-        }
-        mInjector.searchManager.onSearchKeyboardShortcut();
     }
 
     @Override

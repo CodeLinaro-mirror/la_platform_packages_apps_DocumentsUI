@@ -36,7 +36,7 @@ import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
 import com.android.documentsui.base.SidebarEntryItemInfo;
 import com.android.documentsui.base.UserId;
-import com.android.documentsui.dirlist.SummariesViewModel;
+import com.android.documentsui.loaders.SummariesViewModel;
 import com.android.documentsui.services.JobProgress;
 
 import java.lang.annotation.Retention;

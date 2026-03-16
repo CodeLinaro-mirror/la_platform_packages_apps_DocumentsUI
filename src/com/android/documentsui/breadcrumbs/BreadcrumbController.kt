@@ -16,102 +16,49 @@
 package com.android.documentsui.breadcrumbs
 
 import android.util.Log
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
-import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.android.documentsui.NavigationViewManager.Breadcrumb
-import com.android.documentsui.NavigationViewManager.Environment
 import com.android.documentsui.base.SharedMinimal.DEBUG
-import com.android.documentsui.base.State
 import java.util.function.IntConsumer
 
 /**
- * Manage the 2 breadcrumb in DocumentsUI:
- * * navigation breadcrumb: the breadcrumb shows for normal root/folder navigation.
- * * search breadcrumb: the breadcrumb shows when a file is selected in Recent root or search
- *   result.
+ * Represents a breadcrumb view that shows a path to the currently selected element in the
+ * DocumentsUI.
  */
 class BreadcrumbController(
     lifeCycleOwner: LifecycleOwner,
-    private val model: BreadcrumbModel?,
-    // Breadcrumb for the navigation.
-    val navBreadcrumb: Breadcrumb,
-    // Breadcrumb for the search (only available when search_v2 flag is ON).
-    private val searchBreadcrumb: BreadcrumbView?,
-    // The divider shows on top of the breadcrumb, used by both breadcrumbs, only available in
-    // drawer layout with use_material3 flag ON.
-    private val topDivider: View?,
+    private val model: BreadcrumbModel,
+    private val view: BreadcrumbView,
 ) {
 
-    private var searchBreadcrumbClickConsumer: IntConsumer? = null
+    private var pathClickConsumer: IntConsumer? = null
 
     init {
-        if (model != null && searchBreadcrumb != null) {
-            model.pathData.observe(lifeCycleOwner, Observer { newPath -> onModelUpdated(newPath) })
-            searchBreadcrumb.setClickConsumer { index ->
-                searchBreadcrumbClickConsumer?.accept(index)
-            }
-        }
-    }
-
-    /** Setup navigation breadcrumb. */
-    fun setupNavBreadcrumb(env: Environment, state: State, listener: IntConsumer) {
-        navBreadcrumb.setup(env, state, listener)
+        model.pathData.observe(lifeCycleOwner, Observer { newPath -> onModelUpdated(newPath) })
+        view.setClickConsumer { index -> pathClickConsumer?.accept(index) }
     }
 
     private fun onModelUpdated(newValue: List<String>) {
         if (DEBUG) {
             Log.d(TAG, "Controller onModelUpdated event with $newValue")
         }
-        searchBreadcrumb?.setPath(newValue.toTypedArray())
+        view.setPath(newValue.toTypedArray())
     }
 
-    /** Registers the consumer of path item clicks for search breadcrumb. */
-    fun setSearchBreadcrumbClickConsumer(consumer: IntConsumer?) {
-        searchBreadcrumbClickConsumer = consumer
+    /** Registers the consumer of path item clicks. */
+    fun setClickConsumer(consumer: IntConsumer?) {
+        pathClickConsumer = consumer
     }
 
-    /** Sets whether the search breadcrumb should be visible or not. */
-    fun setSearchBreadcrumbVisible(visible: Boolean) {
+    /** Sets whether the breadcrumb should be visible or not. */
+    fun setVisible(visible: Boolean) {
         if (!visible) {
             // When hiding the breadcrumb view, clear its state. When showing it, we wish to start
             // with clean state, which is then updated to some selected path.
-            searchBreadcrumb?.setPath(arrayOf())
-            model?.setPath(arrayOf())
-            setSearchBreadcrumbClickConsumer(null)
+            view.setPath(arrayOf())
+            model.setPath(arrayOf())
         }
-        setViewVisibility(searchBreadcrumb, visible)
-        // Hide the other breadcrumb to make sure only one breadcrumb shows.
-        if (visible) {
-            setNavBreadcrumbVisible(false)
-        } else {
-            // We want to call `updateTopDividerVisibility` anyway, putting it in the "else" because
-            // the above `setNavBreadcrumbVisible` already calls `updateTopDividerVisibility`.
-            updateTopDividerVisibility()
-        }
-    }
-
-    /** Sets whether the navigation breadcrumb should be visible or not. */
-    fun setNavBreadcrumbVisible(visible: Boolean) {
-        navBreadcrumb.show(visible)
-        if (visible) {
-            navBreadcrumb.postUpdate()
-            // Hide the other breadcrumb to make sure only one breadcrumb shows.
-            setSearchBreadcrumbVisible(false)
-        } else {
-            // We want to call `updateTopDividerVisibility` anyway, putting it in the "else" because
-            // the above `setSearchBreadcrumbVisible` already calls `updateTopDividerVisibility`.
-            updateTopDividerVisibility()
-        }
-    }
-
-    /** We show top divider when either navigation breadcrumb or search breadcrumb is visible. */
-    private fun updateTopDividerVisibility() {
-        val showTopDivider = navBreadcrumb.isVisible || (searchBreadcrumb?.isVisible == true)
-        setViewVisibility(topDivider, showTopDivider)
+        view.setVisible(visible)
     }
 
     /**
@@ -120,13 +67,4 @@ class BreadcrumbController(
      * DocumentsUI: the directory path, and the path to the selected file.
      */
     fun getModel() = model
-}
-
-private fun setViewVisibility(view: View?, visible: Boolean) {
-    view?.visibility =
-        if (visible) {
-            VISIBLE
-        } else {
-            GONE
-        }
 }

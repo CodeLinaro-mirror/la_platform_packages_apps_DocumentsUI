@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.documentsui.dirlist
+package com.android.documentsui.loaders
 
 import android.app.Application
 import android.net.Uri

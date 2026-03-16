@@ -214,16 +214,19 @@ public class FileManagementUiTest extends ActivityTestJunit4<FilesActivity> {
             nameOfLastFile = nameOfLastFile.compareTo(name) < 0 ? name : nameOfLastFile;
         }
 
-        // Use keyboard shortcuts in place of manually clicking/tapping.
-        openFolder("test");
+        bots.directory.openDocument("test");
+        bots.sort.sortBy(
+                SortModel.SORT_DIMENSION_ID_TITLE, SortDimension.SORT_DIRECTION_ASCENDING);
         bots.directory.waitForDocument("0.txt");
         bots.keyboard.pressKey(
                 KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_LEFT_ON | KeyEvent.META_CTRL_ON);
         bots.keyboard.pressKey(
                 KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_LEFT_ON | KeyEvent.META_CTRL_ON);
 
-        switchRoot(ROOT_0_ID);
-        openFolder("target");
+        // Keep using the old openRoot. The copy action triggers a system popup and a DocsUI
+        // snackbar. The new openRoot is too fast and ends up clicking on the popup/snackbar.
+        bots.roots.openRoot(ROOT_0_ID);
+        bots.directory.openDocument("target");
         bots.directory.pasteFilesFromClipboard();
 
         // Switch to list mode to avoid files being partially in view

@@ -434,16 +434,12 @@ public class ActionHandler<T extends FragmentActivity & AbstractActionHandler.Co
     /** Creates the intent for the Approved Doc Handler. */
     @VisibleForTesting
     public @Nullable Intent createApprovedHandlerIntent(Selection<String> selection) {
-        // TODO(b/490258918): After API 37 finalisation guard with the SDK version instead of the
-        // useApprovedDocumentHandler flag in DocsUI
-        if (!isUseApprovedDocumentHandlerEnabled()) {
-            return null;
-        }
         Intent intent = createShareIntentBase(selection);
         if (intent == null) {
             return null;
         }
-        intent.addCategory(DocumentsContract.CATEGORY_APPROVED_DOCUMENT_HANDLER);
+        // TODO: b/464388012 - Reference actual intent category when it's available.
+        intent.addCategory("android.provider.category.APPROVED_DOCUMENT_HANDLER");
 
         return intent;
     }

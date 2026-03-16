@@ -87,25 +87,15 @@
                     app:dividerColor="?attr/colorSurfaceContainer"
                     app:dividerThickness="@dimen/main_container_section_gap" />
 
-                <!-- Make both breadcrumb views clickable to consume mouse events and prevent them
-                from passing through to the underlying RecyclerView (file row) in the drawer
-                layout. This is only needed for drawer layout because the drawer layout uses
-                CollapsingToolbarLayout which makes the breadcrumb overlays on top of the
-                RecyclerView. -->
                 <com.android.documentsui.HorizontalBreadcrumb
                     android:id="@+id/horizontal_breadcrumb"
-                    android:clickable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/colorSurfaceBright"
                     android:paddingHorizontal="@dimen/breadcrumb_padding_horizontal" />
 
-                <!-- We only want the path item to be focusable, the whole row should not be
-                focusable. -->
                 <com.android.documentsui.breadcrumbs.BreadcrumbView
                     android:id="@+id/breadcrumb_view_v2"
-                    android:focusable="false"
-                    android:clickable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/colorSurfaceBright"

@@ -548,22 +548,6 @@ public class SearchViewManager implements
         }
     }
 
-    /**
-     * Called when the user hits the KeyEvent.KEYCODE_SEARCH key (or Alt-Space, which is an
-     * Android-wide equivalent).
-     */
-    public void onSearchKeyboardShortcut() {
-        if (mDockedSearchEditText != null) {
-            mDockedSearchEditText.requestFocus();
-            return;
-        }
-
-        onSearchBarClicked();
-        if ((mSearchView != null) && isUseMaterial3FlagEnabled()) {
-            mSearchView.requestFocus();
-        }
-    }
-
     public void onSearchBarClicked() {
         if (mMenuItem == null) {
             return;

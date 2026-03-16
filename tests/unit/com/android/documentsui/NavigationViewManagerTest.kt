@@ -22,13 +22,11 @@ import android.view.View
 import android.view.Window
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.LifecycleOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.android.documentsui.base.State
 import com.android.documentsui.base.UserId
-import com.android.documentsui.breadcrumbs.BreadcrumbController
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.rules.OverrideFlagsRule
 import com.android.documentsui.util.Material3Config.Companion.getRes
@@ -48,100 +46,93 @@ import org.mockito.Mockito.`when`
 @SmallTest
 class NavigationViewManagerTest {
 
-    @get:Rule val overrideFlagsRule = OverrideFlagsRule()
+  @get:Rule val overrideFlagsRule = OverrideFlagsRule()
 
-    private lateinit var context: Context
-    private lateinit var activity: BaseActivity
-    private lateinit var drawer: DrawerController
-    private lateinit var toolbar: Toolbar
-    private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    private lateinit var userIdManager: UserIdManager
-    private lateinit var state: State
-    private lateinit var env: NavigationViewManager.Environment
-    private lateinit var breadcrumbController: BreadcrumbController
-    private lateinit var configStore: ConfigStore
-    private lateinit var navigationViewManager: NavigationViewManager
-    private lateinit var appBarLayout: AppBarLayout
-    private lateinit var collapsingContent: LinearLayout
-    private lateinit var tabLayoutContainer: View
+  private lateinit var context: Context
+  private lateinit var activity: BaseActivity
+  private lateinit var drawer: DrawerController
+  private lateinit var toolbar: Toolbar
+  private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
+  private lateinit var userIdManager: UserIdManager
+  private lateinit var state: State
+  private lateinit var env: NavigationViewManager.Environment
+  private lateinit var breadcrumb: NavigationViewManager.Breadcrumb
+  private lateinit var configStore: ConfigStore
+  private lateinit var navigationViewManager: NavigationViewManager
+  private lateinit var appBarLayout: AppBarLayout
+  private lateinit var collapsingContent: LinearLayout
+  private lateinit var tabLayoutContainer: View
 
-    @Before
-    fun setUp() {
-        context = InstrumentationRegistry.getInstrumentation().targetContext
-        drawer = mock(DrawerController::class.java)
-        state = State()
-        env = mock(NavigationViewManager.Environment::class.java)
-        breadcrumbController =
-            BreadcrumbController(
-                mock(LifecycleOwner::class.java),
-                null,
-                mock(NavigationViewManager.Breadcrumb::class.java),
-                null,
-                null,
-            )
-        configStore = mock(ConfigStore::class.java)
-        tabLayoutContainer = mock(View::class.java)
-        collapsingContent = LinearLayout(context)
+  @Before
+  fun setUp() {
+    context = InstrumentationRegistry.getInstrumentation().targetContext
+    drawer = mock(DrawerController::class.java)
+    state = State()
+    env = mock(NavigationViewManager.Environment::class.java)
+    breadcrumb = mock(NavigationViewManager.Breadcrumb::class.java)
+    configStore = mock(ConfigStore::class.java)
+    tabLayoutContainer = mock(View::class.java)
+    collapsingContent = LinearLayout(context)
 
-        toolbar = mock(Toolbar::class.java)
-        `when`(toolbar.resources).thenReturn(context.getResources())
+    toolbar = mock(Toolbar::class.java)
+    `when`(toolbar.resources).thenReturn(context.getResources())
 
-        activity = mock(BaseActivity::class.java)
-        `when`(activity.resources).thenReturn(context.getResources())
-        `when`(activity.getTheme()).thenReturn(context.getTheme())
-        collapsingToolbarLayout = mock(CollapsingToolbarLayout::class.java)
-        `when`(collapsingToolbarLayout.findViewById<View>(getRes(R.id.collapsing_content)))
-            .thenReturn(collapsingContent)
-        appBarLayout = mock(AppBarLayout::class.java)
-        `when`(activity.findViewById<Toolbar>(getRes(R.id.toolbar))).thenReturn(toolbar)
-        `when`(activity.findViewById<CollapsingToolbarLayout>(getRes(R.id.collapsing_toolbar)))
-            .thenReturn(collapsingToolbarLayout)
-        `when`(activity.findViewById<AppBarLayout>(getRes(R.id.app_bar))).thenReturn(appBarLayout)
-        `when`(activity.findViewById<View>(getRes(R.id.directory_header)))
-            .thenReturn(mock(View::class.java))
-        `when`(activity.findViewById<View>(getRes(R.id.searchbar_title)))
-            .thenReturn(mock(View::class.java))
+    activity = mock(BaseActivity::class.java)
+    `when`(activity.resources).thenReturn(context.getResources())
+    `when`(activity.getTheme()).thenReturn(context.getTheme())
+    collapsingToolbarLayout = mock(CollapsingToolbarLayout::class.java)
+    `when`(collapsingToolbarLayout.findViewById<View>(getRes(R.id.collapsing_content)))
+      .thenReturn(collapsingContent)
+    appBarLayout = mock(AppBarLayout::class.java)
+    `when`(activity.findViewById<Toolbar>(getRes(R.id.toolbar))).thenReturn(toolbar)
+    `when`(activity.findViewById<CollapsingToolbarLayout>(getRes(R.id.collapsing_toolbar)))
+      .thenReturn(collapsingToolbarLayout)
+    `when`(activity.findViewById<AppBarLayout>(getRes(R.id.app_bar))).thenReturn(appBarLayout)
+    `when`(activity.findViewById<View>(getRes(R.id.directory_header)))
+      .thenReturn(mock(View::class.java))
+    `when`(activity.findViewById<View>(getRes(R.id.searchbar_title)))
+      .thenReturn(mock(View::class.java))
 
-        val window = mock(Window::class.java)
-        `when`(window.decorView).thenReturn(mock(View::class.java))
-        `when`(activity.window).thenReturn(window)
+    val window = mock(Window::class.java)
+    `when`(window.decorView).thenReturn(mock(View::class.java))
+    `when`(activity.window).thenReturn(window)
 
-        userIdManager = mock(UserIdManager::class.java)
-        `when`(userIdManager.getUserIds()).thenReturn(listOf(UserId.DEFAULT_USER))
+    userIdManager = mock(UserIdManager::class.java)
+    `when`(userIdManager.getUserIds()).thenReturn(listOf(UserId.DEFAULT_USER))
 
-        `when`(tabLayoutContainer.findViewById<TabLayout>(getRes(R.id.tabs)))
-            .thenReturn(mock(TabLayout::class.java))
-        `when`(tabLayoutContainer.findViewById<View>(getRes(R.id.tab_separator)))
-            .thenReturn(mock(View::class.java))
-    }
+    `when`(tabLayoutContainer.findViewById<TabLayout>(getRes(R.id.tabs)))
+      .thenReturn(mock(TabLayout::class.java))
+    `when`(tabLayoutContainer.findViewById<View>(getRes(R.id.tab_separator)))
+      .thenReturn(mock(View::class.java))
+  }
 
-    @Test
-    @EnableFlags(Flags.FLAG_USE_MATERIAL3)
-    fun testCollapsedAppBar_expandsOnFocus() {
-        navigationViewManager =
-            NavigationViewManager(
-                activity,
-                drawer,
-                state,
-                env,
-                breadcrumbController,
-                tabLayoutContainer,
-                userIdManager,
-                configStore,
-            )
+  @Test
+  @EnableFlags(Flags.FLAG_USE_MATERIAL3)
+  fun testCollapsedAppBar_expandsOnFocus() {
+    navigationViewManager =
+      NavigationViewManager(
+        activity,
+        drawer,
+        state,
+        env,
+        breadcrumb,
+        tabLayoutContainer,
+        userIdManager,
+        configStore,
+      )
 
-        // Manually set the offset to a negative value to meet the condition to trigger expand.
-        navigationViewManager.onOffsetChanged(appBarLayout, -100)
+    // Manually set the offset to a negative value to meet the condition to trigger expand.
+    navigationViewManager.onOffsetChanged(appBarLayout, -100)
 
-        val childView = View(context)
-        collapsingContent.addView(childView)
-        navigationViewManager.onChildViewFocused(collapsingContent, childView)
-        // Assert appBarLayout should be expanded.
-        verify(appBarLayout).setExpanded(true, true)
+    val childView = View(context)
+    collapsingContent.addView(childView)
+    navigationViewManager.onChildViewFocused(collapsingContent, childView)
+    // Assert appBarLayout should be expanded.
+    verify(appBarLayout).setExpanded(true, true)
 
-        val nonChildView = View(context)
-        navigationViewManager.onChildViewFocused(collapsingContent, nonChildView)
-        // Assert no new call to appBarLayout.setExpanded.
-        verify(appBarLayout, times(1)).setExpanded(true, true)
-    }
+    val nonChildView = View(context)
+    navigationViewManager.onChildViewFocused(collapsingContent, nonChildView)
+    // Assert no new call to appBarLayout.setExpanded.
+    verify(appBarLayout, times(1)).setExpanded(true, true)
+  }
 }

@@ -56,7 +56,6 @@ import android.platform.test.annotations.EnableFlags;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.view.KeyEvent;
-import android.view.View;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -786,17 +785,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags(FLAG_USE_MATERIAL3)
-    public void testKeyboardShortcutFocusesDockedSearchBar() throws Exception {
-        Assume.assumeTrue(
-                "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
-
-        bots.search.assertInputFocused(false);
-        bots.keyboard.pressKey(KeyEvent.KEYCODE_SEARCH);
-        bots.search.assertInputFocused(true);
-    }
-
-    @Test
-    @EnableFlags(FLAG_USE_MATERIAL3)
     public void testTabNavigationWithDockedSearchBar() throws Exception {
         Assume.assumeTrue(
                 "Skipping test: docked search bar is not shown.", bots.search.showsDockedSearch());
@@ -1115,24 +1103,5 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.search
                 .findDropdownTrigger(R.id.search_file_type_trigger)
                 .check(matches(withText(R.string.chip_title_images)));
-    }
-
-    @Test
-    @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
-    public void testSelectionPreservedOnSearchResult() throws Exception {
-        bots.search.doSearch("file");
-
-        // Select one file from the search result.
-        bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-
-        // Relaunch the app, and expect the previously selected file is still selected.
-        mActivityScenario.recreate();
-        // Close the keyboard because it might appear after activity recreation.
-        closeSoftKeyboard();
-
-        bots.directory.assertSelection(1);
-        bots.breadcrumb.waitForBreadcrumbVisibility(R.id.breadcrumb_view_v2, View.VISIBLE);
-        onView(withId(R.id.breadcrumb_path_holder))
-                .check(bots.breadcrumb.pathEqualsTo(ROOT_0_ID, TestFilesRule.FILE_NAME_1));
     }
 }

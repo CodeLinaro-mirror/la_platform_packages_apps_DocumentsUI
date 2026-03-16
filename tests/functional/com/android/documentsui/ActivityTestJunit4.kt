@@ -260,19 +260,6 @@ abstract class ActivityTestJunit4<T : Activity?> {
         bots.navigation.switchRoot(label, scenario as ActivityScenario<out BaseActivity>)
     }
 
-    /**
-     * Programmatically opens and enters a new folder with the given label.
-     *
-     * @param label The label of the folder to open.
-     */
-    protected fun openFolder(label: String) {
-        val scenario =
-            checkNotNull(mActivityScenario) {
-                "mActivityScenario is null. Ensure launchActivity() has run."
-            }
-        bots.navigation.openFolder(label, scenario as ActivityScenario<out BaseActivity>)
-    }
-
     protected fun setNotificationAccess(enabled: Boolean) {
         mActivityScenario?.onActivity({ activity ->
             try {

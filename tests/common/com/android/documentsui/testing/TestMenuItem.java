@@ -20,7 +20,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Intent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -43,19 +42,12 @@ public abstract class TestMenuItem implements MenuItem {
     @StringRes int title;
     CharSequence titleCharSequence;
     Intent mIntent;
-    int groupId;
     int itemId;
-    int showAsAction;
 
     public static TestMenuItem create(int id) {
-        return create(Menu.NONE, id);
-    }
-
-    public static TestMenuItem create(int groupId, int id) {
         final TestMenuItem mockMenuItem = Mockito.mock(TestMenuItem.class,
                 Mockito.withSettings().defaultAnswer(Mockito.CALLS_REAL_METHODS));
 
-        mockMenuItem.groupId = groupId;
         mockMenuItem.itemId = id;
         // By default all menu items are enabled and visible.
         mockMenuItem.enabled = true;
@@ -130,11 +122,6 @@ public abstract class TestMenuItem implements MenuItem {
         return itemId;
     }
 
-    @Override
-    public int getGroupId() {
-        return groupId;
-    }
-
     public void assertEnabledAndVisible() {
         assertTrue(this.title + " should be enabled", this.enabled);
         assertTrue(this.title + " should be visible", this.visible);
@@ -153,14 +140,5 @@ public abstract class TestMenuItem implements MenuItem {
 
     public void assertTitle(@StringRes int title) {
         assertTrue(this.title == title);
-    }
-
-    @Override
-    public void setShowAsAction(int actionEnum) {
-        this.showAsAction = actionEnum;
-    }
-
-    public int getShowAsAction() {
-        return this.showAsAction;
     }
 }

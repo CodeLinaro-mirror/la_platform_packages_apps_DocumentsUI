@@ -29,6 +29,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +40,9 @@ import com.android.documentsui.dirlist.AccessibilityEventRouter;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-/** Horizontal breadcrumb, shows when normal root/folder navigation happens. */
+/**
+ * Horizontal breadcrumb
+ */
 public final class HorizontalBreadcrumb extends RecyclerView implements Breadcrumb {
 
     private static final int USER_NO_SCROLL_OFFSET_THRESHOLD = 5;
@@ -47,6 +50,10 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
     private LinearLayoutManager mLayoutManager;
     private BreadcrumbAdapter mAdapter;
     private IntConsumer mClickListener;
+    // Represents the top divider (border) of the breadcrumb on the compact size screen.
+    // It will be null on other screen sizes, or when the use_material3 flag is OFF.
+    private @Nullable View mTopDividerView;
+
     public HorizontalBreadcrumb(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
@@ -60,13 +67,16 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
     }
 
     @Override
-    public void setup(
-            Environment env, com.android.documentsui.base.State state, IntConsumer listener) {
+    public void setup(Environment env,
+            com.android.documentsui.base.State state,
+            IntConsumer listener,
+            @Nullable View topDivider) {
 
         mClickListener = listener;
         mLayoutManager = new HorizontalBreadcrumbLinearLayoutManager(
                 getContext(), LinearLayoutManager.HORIZONTAL, false);
         mAdapter = new BreadcrumbAdapter(state, env, this::onKey);
+        mTopDividerView = topDivider;
         // Since we are using GestureDetector to detect click events, a11y services don't know which
         // views are clickable because we aren't using View.OnClickListener. Thus, we need to use a
         // custom accessibility delegate to route click events correctly.
@@ -132,6 +142,9 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
             setVisibility(GONE);
             setAdapter(null);
         }
+        if (mTopDividerView != null) {
+            mTopDividerView.setVisibility(visibility ? VISIBLE : GONE);
+        }
         mAdapter.updateLastItemSize();
     }
 
@@ -160,11 +173,6 @@ public final class HorizontalBreadcrumb extends RecyclerView implements Breadcru
 
     @Override
     public void postUpdate() {
-    }
-
-    @Override
-    public boolean isVisible() {
-        return getVisibility() == VISIBLE;
     }
 
     private void onSingleTapUp(MotionEvent e) {
