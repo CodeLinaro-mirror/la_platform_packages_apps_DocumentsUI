@@ -469,6 +469,272 @@ public final class MouseInputHandlerTest {
     }
 
     @Test
+    public void testRapidClick_DifferentItems_SelectsSecondItem() {
+        // We can't use the helper doubleTap() because the 2 clicks have different items.
+        final long firstDownTime = 100;
+        final long firstUpTime = firstDownTime + 10;
+        // Second tap is within the default double tap timeout (300ms).
+        final long secondDownTime = 200;
+        final long secondUpTime = secondDownTime + 10;
+
+        // 1. First click on item 1 (on its selection hotspot to select it).
+        MotionEvent firstTapDown =
+                TestEvents.builder().mouse().primary().down().time(firstDownTime).build();
+        MotionEvent firstTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(firstUpTime)
+                        .downTime(firstDownTime)
+                        .build();
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+        mInputDelegate.onDown(firstTapDown);
+        mInputDelegate.onSingleTapUp(firstTapUp);
+
+        mSelection.assertSelection(1);
+
+        // 2. Second click on item 2 (rapid enough to trigger GestureDetector's double-tap flow).
+        MotionEvent secondTapDown =
+                TestEvents.builder().mouse().primary().down().time(secondDownTime).build();
+        MotionEvent secondTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(secondUpTime)
+                        .downTime(secondDownTime)
+                        .build();
+        // GestureDetector.onDoubleTap receives the FIRST click's down event.
+        // Therefore, the ItemDetailsLookup will resolve the coordinates to item 1.
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+        mInputDelegate.onDoubleTap(firstTapDown);
+
+        // For the subsequent events (the second click), the coordinates resolve to item 2.
+        mDetailsLookup
+                .initAt(2)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDoubleTapEvent(secondTapDown);
+
+        // GestureDetector.onDown receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDown(secondTapDown);
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_UP.
+        mInputDelegate.onDoubleTapEvent(secondTapUp);
+
+        // Should NOT activate since the two clicks were on different items.
+        mActivationCallbacks.assertActivated(null);
+
+        // Selection should now contain only item2, item1 is unselected.
+        mSelection.assertSelection(2);
+    }
+
+    @Test
+    public void testRapidClick_LeftAndRight_TriggerRightClick() {
+        // We can't use the helper doubleTap() because the 2 clicks have different buttons.
+        final long firstDownTime = 100;
+        final long firstUpTime = firstDownTime + 10;
+        // Second tap is within the default double tap timeout (300ms).
+        final long secondDownTime = 200;
+        final long secondUpTime = secondDownTime + 10;
+
+        // 1. First click on item 1 (on its selection hotspot to select it).
+        MotionEvent firstTapDown =
+                TestEvents.builder().mouse().primary().down().time(firstDownTime).build();
+        MotionEvent firstTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(firstUpTime)
+                        .downTime(firstDownTime)
+                        .build();
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+        mInputDelegate.onDown(firstTapDown);
+        mInputDelegate.onSingleTapUp(firstTapUp);
+
+        mSelection.assertSelection(1);
+
+        // 2. Second click on item 1 but with secondary button.
+        MotionEvent secondTapDown =
+                TestEvents.builder().mouse().secondary().down().time(secondDownTime).build();
+        MotionEvent secondTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .secondary()
+                        .up()
+                        .time(secondUpTime)
+                        .downTime(secondDownTime)
+                        .build();
+        // GestureDetector.onDoubleTap receives the FIRST click's down event.
+        // Therefore, the ItemDetailsLookup will resolve the coordinates to item 1.
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+        mInputDelegate.onDoubleTap(firstTapDown);
+
+        // For the subsequent events (the second click), the coordinates still resolve to item 1.
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDoubleTapEvent(secondTapDown);
+
+        // GestureDetector.onDown receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDown(secondTapDown);
+
+        // onDoubleTapEvent(ACTION_UP) won't be triggered because onDown() triggers the right click
+        // flow.
+
+        // Should NOT activate since the second click is a right click.
+        mActivationCallbacks.assertActivated(null);
+
+        // Item 1 should still be selected because it triggers the right click for it eventually.
+        mSelection.assertSelected(1);
+
+        // Check the last event is the secondary click handled in onDown().
+        mMouseCallbacks.assertLastEvent(secondTapDown);
+    }
+
+    @Test
+    public void testRapidClick_BlankAreaAndItem_SelectItem() {
+        // We can't use the helper doubleTap() because the 2 clicks have different items.
+        final long firstDownTime = 100;
+        final long firstUpTime = firstDownTime + 10;
+        // Second tap is within the default double tap timeout (300ms).
+        final long secondDownTime = 200;
+        final long secondUpTime = secondDownTime + 10;
+
+        // 1. First click on blank area (no item).
+        MotionEvent firstTapDown =
+                TestEvents.builder().mouse().primary().down().time(firstDownTime).build();
+        MotionEvent firstTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(firstUpTime)
+                        .downTime(firstDownTime)
+                        .build();
+        mDetailsLookup.reset();
+        mInputDelegate.onDown(firstTapDown);
+        mInputDelegate.onSingleTapUp(firstTapUp);
+
+        mSelection.assertNoSelection();
+
+        // 2. Second click on item 1.
+        MotionEvent secondTapDown =
+                TestEvents.builder().mouse().primary().down().time(secondDownTime).build();
+        MotionEvent secondTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(secondUpTime)
+                        .downTime(secondDownTime)
+                        .build();
+        // GestureDetector.onDoubleTap receives the FIRST click's down event.
+        // Therefore, the ItemDetailsLookup will resolve no item.
+        mDetailsLookup.reset();
+        mInputDelegate.onDoubleTap(firstTapDown);
+
+        // For the subsequent events (the second click), the coordinates resolve to item 1.
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDoubleTapEvent(secondTapDown);
+
+        // GestureDetector.onDown receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDown(secondTapDown);
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_UP.
+        mInputDelegate.onDoubleTapEvent(secondTapUp);
+
+        // Should NOT activate since the second click has no item.
+        mActivationCallbacks.assertActivated(null);
+
+        // Selection should now contain item 1.
+        mSelection.assertSelected(1);
+    }
+
+    @Test
+    public void testRapidClick_ItemAndBlankArea_DeselectItem() {
+        // We can't use the helper doubleTap() because the 2 clicks have different items.
+        final long firstDownTime = 100;
+        final long firstUpTime = firstDownTime + 10;
+        // Second tap is within the default double tap timeout (300ms).
+        final long secondDownTime = 200;
+        final long secondUpTime = secondDownTime + 10;
+
+        // 1. First click on item 1 (on its selection hotspot to select it).
+        MotionEvent firstTapDown =
+                TestEvents.builder().mouse().primary().down().time(firstDownTime).build();
+        MotionEvent firstTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(firstUpTime)
+                        .downTime(firstDownTime)
+                        .build();
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+        mInputDelegate.onDown(firstTapDown);
+        mInputDelegate.onSingleTapUp(firstTapUp);
+
+        mSelection.assertSelection(1);
+
+        // 2. Second click on blank area (e.g. no item).
+        MotionEvent secondTapDown =
+                TestEvents.builder().mouse().primary().down().time(secondDownTime).build();
+        MotionEvent secondTapUp =
+                TestEvents.builder()
+                        .mouse()
+                        .primary()
+                        .up()
+                        .time(secondUpTime)
+                        .downTime(secondDownTime)
+                        .build();
+        // GestureDetector.onDoubleTap receives the FIRST click's down event.
+        // Therefore, the ItemDetailsLookup will resolve the coordinates to item 1.
+        mDetailsLookup
+                .initAt(1)
+                .setClassifySelectionHotspot(ItemDetails.SELECTION_HOTSPOT_INSIDE_TOGGLE_SOLO);
+        mInputDelegate.onDoubleTap(firstTapDown);
+
+        // For the subsequent events (the second click), the coordinates resolve to null item.
+        mDetailsLookup.reset();
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDoubleTapEvent(secondTapDown);
+
+        // GestureDetector.onDown receives the SECOND click's ACTION_DOWN.
+        mInputDelegate.onDown(secondTapDown);
+
+        // GestureDetector.onDoubleTapEvent receives the SECOND click's ACTION_UP.
+        mInputDelegate.onDoubleTapEvent(secondTapUp);
+
+        // Should NOT activate since the second click has no item.
+        mActivationCallbacks.assertActivated(null);
+
+        // Selection should now contain nothing, the second click on the blank area should deselect
+        // item 1.
+        mSelection.assertNoSelection();
+    }
+
+    @Test
     public void testMiddleClick_DoesNothing() {
         mDetailsLookup.initAt(11).setInItemSelectRegion(true);
         singleTap(TERTIARY_CLICK);
