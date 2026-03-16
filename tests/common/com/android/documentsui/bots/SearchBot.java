@@ -93,8 +93,7 @@ public class SearchBot extends Bots.BaseBot {
 
     public void expand() throws UiObjectNotFoundException {
         if (!showsDockedSearch()) {
-            UiObject searchView = findObject(mTargetPackage + ":id/option_menu_search");
-            searchView.click();
+            onView(SEARCH_WIDGET).perform(clickAndRetryOnLongPress());
         } else {
             findDockedSearchInput().click();
         }
