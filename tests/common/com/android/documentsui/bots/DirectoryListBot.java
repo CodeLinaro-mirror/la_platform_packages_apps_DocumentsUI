@@ -300,7 +300,6 @@ public class DirectoryListBot extends Bots.BaseBot {
                 android.R.id.progress,
                 R.id.sync_error_icon,
                 R.id.upload_icon,
-                R.id.download_icon,
                 R.id.progress_tick_icon);
     }
 

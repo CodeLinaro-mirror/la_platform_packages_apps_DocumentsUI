@@ -375,30 +375,6 @@ class SearchLoaderTest {
         val contentLock = ContentLock()
         val contentObserver = LockingContentObserver(contentLock) {}
 
-        private class TestListener(private val count: Int) :
-            Loader.OnLoadCompleteListener<DirectoryResult> {
-            var result: DirectoryResult? = null
-            var loadCount = 0
-            private var latch = CountDownLatch(count)
-
-            override fun onLoadComplete(loader: Loader<DirectoryResult?>, data: DirectoryResult?) {
-                result = data
-                loadCount++
-                latch.countDown()
-            }
-
-            fun await(timeout: Long = 5, unit: TimeUnit = TimeUnit.SECONDS) {
-                if (!latch.await(timeout, unit)) {
-                    throw InterruptedException("Test listener latch timed out.")
-                }
-            }
-
-            fun reset() {
-                latch = CountDownLatch(count)
-                result = null
-            }
-        }
-
         @Before
         fun setUpTest() {
             executor = Executors.newSingleThreadExecutor()
@@ -427,12 +403,14 @@ class SearchLoaderTest {
             sortModel: SortModel,
             queryDelayMs: Long = 100L,
             firstPassWaitMs: Long = 200L,
+            closeLatch: CountDownLatch? = null,
             initialFile: String = "file-01.txt",
         ): SearchLoader {
             val downloads = environment.mockProviders[TestProvidersAccess.DOWNLOADS.authority]!!
             downloads.apply {
                 setNextChildDocumentsReturns(environment.model.createFile(initialFile))
                 setQueryDelay(queryDelayMs)
+                setCloseLatch(closeLatch)
             }
             return SearchLoader(
                 activity,
@@ -735,7 +713,7 @@ class SearchLoaderTest {
                 }
 
             val loader = createLoader(mockSortModel)
-            val listener = TestListener(1)
+            val listener = TestLoadCompletedListener(1)
             loader.registerListener(1, listener)
 
             // First load.
@@ -781,7 +759,7 @@ class SearchLoaderTest {
                     queryDelayMs = resultsDelayMs,
                     firstPassWaitMs = 2 * resultsDelayMs,
                 )
-            val listener = TestListener(1)
+            val listener = TestLoadCompletedListener(1)
             loader.registerListener(1, listener)
 
             // Start loading and ensure a result is delivered.
@@ -825,7 +803,7 @@ class SearchLoaderTest {
                     firstPassWaitMs = firstPassWaitMs,
                 )
             // Expect only one task to deliver results. AsyncTaskLoader cancels the other task.
-            val listener = TestListener(1)
+            val listener = TestLoadCompletedListener(1)
             loader.registerListener(1, listener)
 
             loader.startLoading()
@@ -994,6 +972,41 @@ class SearchLoaderTest {
             expect.that(result.cursor.count).isEqualTo(3)
             // No cloud files present.
             expect.that(result.hasLimitedFunctionalityWhenOffline).isTrue()
+        }
+
+        @Test
+        @EnableFlags(FLAG_USE_MATERIAL3, FLAG_USE_SEARCH_V2_READ_ONLY)
+        fun testLockedCursorLockDoesNotStopLoaderReset() {
+            val closeLatch = CountDownLatch(1)
+            val loader =
+                createLoader(
+                    environment.state.sortModel,
+                    queryDelayMs = 0L,
+                    firstPassWaitMs = 100L,
+                    closeLatch = closeLatch,
+                )
+            val listener = TestLoadCompletedListener(1)
+            loader.registerListener(1, listener)
+
+            // Start loading and ensure a result is delivered.
+            loader.startLoading()
+            listener.await()
+
+            expect.that(listener.loadCount).isEqualTo(1)
+            expect.that(listener.result).isNotNull()
+            expect
+                .that(listener.result!!.fileNames.toTypedArray())
+                .isEqualTo(arrayOf("file-01.txt"))
+
+            // Reset the loader. This is called on the main test thread just like reset is called on
+            // the main UI thread. It must be quick even if the loader closes slowly.
+            val totalLoadTime = measureTime { loader.reset() }
+
+            // We expect this operation to take around 10 or fewer milliseconds. For example, on
+            // Intel i3 12th Gen, the operation takes less than 0.2ms. However, we give it full 5s,
+            // similar to the timeout used by bots.
+            expect.that(totalLoadTime).isLessThan(5000.milliseconds)
+            closeLatch.countDown()
         }
     }
 }
