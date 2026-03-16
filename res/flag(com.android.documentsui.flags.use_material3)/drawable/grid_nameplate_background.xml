@@ -15,7 +15,6 @@
 -->
 
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:color="@color/grid_item_ripple_color">
 
     <!-- The mask below only works for the ripple itself, doesn't work for other <item>s, we
@@ -29,8 +28,7 @@
                 android:state_focused="true"
                 android:state_hovered="true"
                 android:state_selected="true"
-                android:state_window_focused="true"
-                app:state_touch_mode="false">
+                android:state_window_focused="true">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -65,8 +63,7 @@
             <item
                 android:state_selected="true"
                 android:state_focused="true"
-                android:state_window_focused="true"
-                app:state_touch_mode="false">
+                android:state_window_focused="true">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -135,8 +132,7 @@
             <item
                 android:state_focused="true"
                 android:state_hovered="true"
-                android:state_window_focused="true"
-                app:state_touch_mode="false">
+                android:state_window_focused="true">
                 <layer-list>
                     <item
                         android:bottom="@dimen/focus_ring_gap"
@@ -158,10 +154,7 @@
                     </item>
                 </layer-list>
             </item>
-            <item
-                android:state_focused="true"
-                android:state_window_focused="true"
-                app:state_touch_mode="false">
+            <item android:state_focused="true" android:state_window_focused="true">
                 <shape>
                     <corners android:radius="@dimen/grid_item_nameplate_radius" />
                     <stroke
