@@ -51,6 +51,8 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.test.InstrumentationRegistry;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.NoMatchingRootException;
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -68,6 +70,7 @@ import com.android.documentsui.actions.WaitUntilExistsInRecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 
+import junit.framework.AssertionFailedError;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
@@ -317,18 +320,34 @@ public class UiBot extends Bots.BaseBot {
                 ViewMatchers.isDescendantOfA(actionBar));
     }
 
-    public void clickActionbarOverflowItem(String label) {
-        onView(getActionbarOverflow()).perform(clickAndRetryOnLongPress());
-        mDevice.waitForIdle();
+    private void clickOverflowItem(Matcher<View> toolbarOrSelectionBarMatcher, String label) {
+        final int MAX_ATTEMPTS = 5;
+        for (int i = 1; i <= MAX_ATTEMPTS; i++) {
+            onView(toolbarOrSelectionBarMatcher).perform(clickAndRetryOnLongPress());
+            try {
+                // Wait for the menu popup window to appear.
+                onView(withClassName(endsWith("MenuDropDownListView")))
+                        .inRoot(isPlatformPopup())
+                        .check(matches(isDisplayed()));
+                // Exit loop if the above succeeds: the popup is displayed.
+                break;
+            } catch (NoMatchingViewException | NoMatchingRootException | AssertionFailedError e) {
+                if (i == MAX_ATTEMPTS) {
+                    throw new AssertionError(
+                            "Failed to find menup popup after " + i + " attempts", e);
+                }
+            }
+        }
         // Click the item by label, since Espresso doesn't support lookup by id on overflow.
-        onView(withText(label)).perform(click());
+        onView(withText(label)).inRoot(isPlatformPopup()).perform(click());
+    }
+
+    public void clickActionbarOverflowItem(String label) {
+        clickOverflowItem(getActionbarOverflow(), label);
     }
 
     public void clickToolbarOverflowItem(String label) {
-        onView(TOOLBAR_OVERFLOW).perform(clickAndRetryOnLongPress());
-        mDevice.waitForIdle();
-        // Click the item by label, since Espresso doesn't support lookup by id on overflow.
-        onView(withText(label)).inRoot(isPlatformPopup()).perform(click());
+        clickOverflowItem(TOOLBAR_OVERFLOW, label);
     }
 
     public boolean waitForActionModeBarToAppear() {
