@@ -63,6 +63,9 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.filters.Suppress;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.lifecycle.ActivityLifecycleCallback;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -86,6 +89,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @LargeTest
 public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
@@ -912,7 +917,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument(TestFilesRule.FILE_NAME_NO_RENAME);
 
         // Start a regular search.
-        bots.search.expand();
         bots.search.doSearch("file");
         // Wait for search to complete ("Dir1" should disappear).
         bots.directory.findDocument(TestFilesRule.DIR_NAME_1).waitUntilGone(mTimeout);
@@ -935,16 +939,36 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
     /** Change the dark/light theme and wait for the device to settle. */
     private void changeNightMode(String mode) {
-        try (ParcelFileDescriptor ignored =
-                InstrumentationRegistry.getInstrumentation()
-                        .getUiAutomation()
-                        .executeShellCommand("cmd uimode night " + mode)) {
-            // Use try-with-resources to auto-close the ParcelFileDescriptor and prevent a file
-            // descriptor leak. The command output is ignored.
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        CountDownLatch latch = new CountDownLatch(1);
+        ActivityLifecycleCallback callback =
+                (activity, stage) -> {
+                    if (activity instanceof FilesActivity && stage == Stage.RESUMED) {
+                        latch.countDown();
+                    }
+                };
+        ActivityLifecycleMonitorRegistry.getInstance().addLifecycleCallback(callback);
+
+        try {
+            try (ParcelFileDescriptor ignored =
+                    InstrumentationRegistry.getInstrumentation()
+                            .getUiAutomation()
+                            .executeShellCommand("cmd uimode night " + mode)) {
+                // Use try-with-resources to auto-close the ParcelFileDescriptor and prevent a file
+                // descriptor leak. The command output is ignored.
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            try {
+                latch.await(mTimeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            ActivityLifecycleMonitorRegistry.getInstance().removeLifecycleCallback(callback);
         }
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+
+        device.waitForIdle();
     }
 
     @Test
