@@ -22,6 +22,35 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import com.android.documentsui.roots.ProvidersAccess
+import com.android.documentsui.util.FlagUtils.Companion.isSearchV2Enabled
+
+/**
+ * For MediaDocumentsProvider URIs converts them to an external storage URI. For all other URIs this
+ * function returns the original, unmodified URI. For SearchV2 code only.
+ */
+fun tryGetExternalStorageUri(context: Context, uri: Uri): Uri {
+    if (!isSearchV2Enabled()) {
+        return uri
+    }
+    if (Providers.AUTHORITY_MEDIA != uri.authority) {
+        return uri
+    }
+    try {
+        // Converts Media URI to standard MediaStore URI. If successful, this results in
+        // the canonical URI for the item within the MediaStore database itself.
+        val mediaUri = MediaStore.getMediaUri(context, uri) ?: return uri
+        // Takes the MediaStore URI and converts it back into a document URI. However, this
+        // step creates a URI for the ExternalStorageProvider, from which we can extract a
+        // true path in the devices internal storage.
+        return MediaStore.getDocumentUri(context, mediaUri) ?: uri
+    } catch (_: Exception) {
+        // This branch catches either IllegalArgumentException or SecurityException, or any
+        // type of exception thrown by the underlying database. The first type of exception
+        // happens if a malformed URI is passed to this method. The second type, while it should
+        // not occur, it is thrown if the app does not have permissions to access the URI.
+        return uri
+    }
+}
 
 /**
  * Encapsulates functionality needed to extract full path of a DocumentInfo. Typical use would be to
@@ -45,12 +74,7 @@ open class PathExtractor(
      */
     fun getDocumentStack(docInfo: DocumentInfo): DocumentStack {
         // MediaDocumentsProvider URIs need special treatment to obtain real path.
-        val uri =
-            if (docInfo.authority == Providers.AUTHORITY_MEDIA) {
-                getExternalStorageUri(docInfo.derivedUri)
-            } else {
-                docInfo.derivedUri
-            }
+        val uri = tryGetExternalStorageUri(context, docInfo.derivedUri)
         val authority = uri.authority ?: docInfo.authority
         val userId = docInfo.userId
         try {
@@ -67,25 +91,6 @@ open class PathExtractor(
         } catch (e: UnsupportedOperationException) {
             Log.w(TAG, "$uri does not support path extraction: $e")
             return approximateDocumentStack(getRootInfo(authority, userId), docInfo)
-        }
-    }
-
-    /** For MediaDocumentsProvider URIs converts them to an external storage URI. */
-    private fun getExternalStorageUri(uri: Uri): Uri {
-        try {
-            // Converts Media URI to standard MediaStore URI. If successful, this results in
-            // the canonical URI for the item within the MediaStore database itself.
-            val mediaUri = MediaStore.getMediaUri(context, uri) ?: return uri
-            // Takes the MediaStore URI and converts it back into a document URI. However, this
-            // step creates a URI for the ExternalStorageProvider, from which we can extract a
-            // true path in the devices internal storage.
-            return MediaStore.getDocumentUri(context, mediaUri) ?: uri
-        } catch (_: Exception) {
-            // This branch catches either IllegalArgumentException or SecurityException, or any
-            // type of exception thrown by the underlying database. The first type of exception
-            // happens if a malformed URI is passed to this method. The second type, while it should
-            // not occur, it is thrown if the app does not have permissions to access the URI.
-            return uri
         }
     }
 
