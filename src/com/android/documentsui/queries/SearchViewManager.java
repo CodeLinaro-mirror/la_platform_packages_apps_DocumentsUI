@@ -271,6 +271,12 @@ public class SearchViewManager implements
         mMenu = menu;
         mMenuItem = mMenu.findItem(getRes(R.id.option_menu_search));
         mSearchView = (SearchView) mMenuItem.getActionView();
+        if (!isUseMaterial3FlagEnabled() && mSearchView != null) {
+            View searchPlate = mSearchView.findViewById(androidx.appcompat.R.id.search_plate);
+            if (searchPlate != null) {
+                searchPlate.setBackgroundResource(R.drawable.legacy_search_bg);
+            }
+        }
 
         mSearchView.setOnQueryTextListener(this);
         mSearchView.setOnCloseListener(this);
