@@ -181,8 +181,11 @@ final class MouseInputHandler<K> extends MotionInputHandler<K> {
      */
     @Override
     public boolean onDoubleTap(@NonNull MotionEvent e) {
-        // We ensure the first tap is a valid primary click without the Alt key.
-        if (MotionEvents.isAltKeyPressed(e) || !MotionEvents.isPrimaryMouseButtonPressed(e, true)) {
+        // We ensure the first tap is a valid primary click without the Alt, Ctrl, or Shift key.
+        if (MotionEvents.isAltKeyPressed(e)
+                || MotionEvents.isCtrlKeyPressed(e)
+                || MotionEvents.isShiftKeyPressed(e)
+                || !MotionEvents.isPrimaryMouseButtonPressed(e, true)) {
             mFirstTapItem = null;
             return false;
         }

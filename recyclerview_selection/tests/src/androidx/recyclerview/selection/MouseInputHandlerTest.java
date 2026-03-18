@@ -18,6 +18,7 @@ package androidx.recyclerview.selection;
 
 import static androidx.recyclerview.selection.testing.TestEvents.Mouse.ALT_CLICK;
 import static androidx.recyclerview.selection.testing.TestEvents.Mouse.CLICK;
+import static androidx.recyclerview.selection.testing.TestEvents.Mouse.CTRL_CLICK;
 import static androidx.recyclerview.selection.testing.TestEvents.Mouse.SECONDARY_CLICK;
 import static androidx.recyclerview.selection.testing.TestEvents.Mouse.SHIFT_CLICK;
 import static androidx.recyclerview.selection.testing.TestEvents.Mouse.TERTIARY_CLICK;
@@ -732,6 +733,87 @@ public final class MouseInputHandlerTest {
         // Selection should now contain nothing, the second click on the blank area should deselect
         // item 1.
         mSelection.assertNoSelection();
+    }
+
+    @Test
+    public void testDoubleClick_Ctrl_TogglesSelection_StartWithUnselectedItem() {
+        // Double click item 2 with Ctrl.
+        mDetailsLookup.initAt(2).setInItemSelectRegion(true);
+        doubleTap(CTRL_CLICK);
+
+        // Should NOT activate and select 2 because first tap select it and second tap deselect it.
+        mActivationCallbacks.assertActivated(null);
+        mSelection.assertNoSelection();
+    }
+
+    @Test
+    public void testDoubleClick_Ctrl_TogglesSelection_StartWithSelectedItem() {
+        // Select item 2 first.
+        mSelectionMgr.select("2");
+
+        // Double click item 2 with Ctrl.
+        mDetailsLookup.initAt(2).setInItemSelectRegion(true);
+        doubleTap(CTRL_CLICK);
+
+        // Should NOT activate but will select 2 because first tap deselect it and second tap
+        // select it.
+        mActivationCallbacks.assertActivated(null);
+        mSelection.assertSelection(2);
+    }
+
+    @Test
+    public void testDoubleClick_Ctrl_TogglesSelection_withAnotherSelectedItem() {
+        // Select item 5 first.
+        mSelectionMgr.select("5");
+
+        // Double click item 2 with Ctrl.
+        mDetailsLookup.initAt(2).setInItemSelectRegion(true);
+        doubleTap(CTRL_CLICK);
+
+        // Should NOT activate and select 2 because first tap select it and second tap deselect it.
+        mActivationCallbacks.assertActivated(null);
+        mSelection.assertSelection(5);
+    }
+
+    @Test
+    public void testDoubleClick_Shift_ExtendRange_StartWithUnselectedItem() {
+        // Double click item 2 with Shift.
+        mDetailsLookup.initAt(2).setInItemSelectRegion(true);
+        doubleTap(SHIFT_CLICK);
+
+        // Should NOT activate but will select 2 because Shift+Click doesn't deselect files.
+        mActivationCallbacks.assertActivated(null);
+        mSelection.assertSelection(2);
+    }
+
+    @Test
+    public void testDoubleClick_Shift_ExtendRange_StartWithSelectedItem() {
+        // Select item 2 first.
+        mSelectionMgr.select("2");
+
+        // Double click item 2 with Shift.
+        mDetailsLookup.initAt(2).setInItemSelectRegion(true);
+        doubleTap(SHIFT_CLICK);
+
+        // Should NOT activate but will select 2 because Shift+Click doesn't deselect files.
+        mActivationCallbacks.assertActivated(null);
+        mSelection.assertSelection(2);
+    }
+
+    @Test
+    public void testDoubleClick_Shift_ExtendRange_withAnotherSelectedItem() {
+        // Select item 5 first.
+        mDetailsLookup.initAt(5).setInItemSelectRegion(true);
+        singleTap(CLICK);
+        mSelection.assertSelection(5);
+
+        // Double click item 2 with Shift.
+        mDetailsLookup.initAt(2);
+        doubleTap(SHIFT_CLICK);
+
+        // Should NOT activate but will select 2-5 because Shift+Click select files in range.
+        mActivationCallbacks.assertActivated(null);
+        mSelection.assertRangeSelected(2, 5);
     }
 
     @Test
