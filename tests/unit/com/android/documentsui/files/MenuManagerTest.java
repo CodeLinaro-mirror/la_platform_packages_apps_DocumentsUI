@@ -29,6 +29,8 @@ import static com.android.documentsui.util.FlagUtils.isZipNgFlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 import static kotlinx.coroutines.test.TestCoroutineDispatchersKt.StandardTestDispatcher;
 
+import static android.os.Process.myUid;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -49,9 +51,12 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.LauncherApps;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Process;
 import android.platform.test.annotations.DisableFlags;
 import android.platform.test.annotations.EnableFlags;
 import android.platform.test.annotations.RequiresFlagsEnabled;
@@ -2246,18 +2251,18 @@ public final class MenuManagerTest {
         TestMenuItem item = findItemByTitle(testMenu, "Test App");
         assertNotNull("Item should be present after initial load", item);
         item.assertEnabledAndVisible();
+
+        ArgumentCaptor<LauncherApps.Callback> callbackCaptor =
+                ArgumentCaptor.forClass(LauncherApps.Callback.class);
+        verify(activity.launcherApps)
+                .registerCallback(callbackCaptor.capture(), any());
+        LauncherApps.Callback callback = callbackCaptor.getValue();
+
         // Reset interactions on the mock item after initial setup
         reset(item);
 
-        ArgumentCaptor<BroadcastReceiver> receiverCaptor =
-                ArgumentCaptor.forClass(BroadcastReceiver.class);
-        verify(activity).registerReceiver(receiverCaptor.capture(), any(IntentFilter.class));
-        BroadcastReceiver receiver = receiverCaptor.getValue();
-
-        // Mark as outdated via broadcast.
-        Intent intent = new Intent(Intent.ACTION_PACKAGE_CHANGED);
-        intent.setData(Uri.parse("package:com.test.package"));
-        receiver.onReceive(activity, intent);
+        // Mark as outdated via callback.
+        callback.onPackageChanged("com.test.package", Process.myUserHandle());
 
         // Let the entire sequence of updates complete.
         testScheduler.advanceUntilIdle();

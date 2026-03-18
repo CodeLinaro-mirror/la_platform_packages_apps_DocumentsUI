@@ -16,25 +16,27 @@
 
 package com.android.documentsui.approveddochandlers
 
-import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
+import android.os.Process
+import android.os.UserHandle
 import android.provider.DocumentsContract
 import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.ActionHandler
 import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
 import com.android.documentsui.R
+import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.InstantTaskExecutorRule
 import com.android.documentsui.rules.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
@@ -48,8 +50,12 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
+import org.mockito.Mockito.atLeastOnce
 import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -65,8 +71,10 @@ class ApprovedDocHandlersTest {
     @Mock private lateinit var resources: Resources
     @Mock private lateinit var selectionDetails: MenuManager.SelectionDetails
     @Mock private lateinit var icon: Drawable
-    @Mock private lateinit var injector: Injector<*>
+    @Mock private lateinit var mockActionHandler: ActionHandler
+    @Mock private lateinit var launcherApps: LauncherApps
 
+    private lateinit var injector: Injector<ActionHandler>
     private lateinit var approvedDocHandlers: ApprovedDocHandlers
     private val testPackage = "com.test.package"
     private val testClass = "com.test.package.TestClass"
@@ -87,12 +95,20 @@ class ApprovedDocHandlersTest {
 
     @Before
     fun setUp() {
+        `when`(applicationContext.getSystemServiceName(LauncherApps::class.java))
+            .thenReturn(Context.LAUNCHER_APPS_SERVICE)
+        `when`(applicationContext.getSystemService(Context.LAUNCHER_APPS_SERVICE))
+            .thenReturn(launcherApps)
         `when`(applicationContext.packageManager).thenReturn(packageManager)
         `when`(applicationContext.resources).thenReturn(resources)
         `when`(resources.getStringArray(R.array.approved_document_handlers))
             .thenReturn(arrayOf(testPackage))
         doReturn(icon).`when`(activityInfo).loadIcon(packageManager)
         doReturn("Test App").`when`(activityInfo).loadLabel(packageManager)
+
+        injector = Injector<ActionHandler>(null, null, null, null, null, null, null, null)
+        injector.actions = mockActionHandler
+
         approvedDocHandlers = ApprovedDocHandlers(applicationContext, injector, testDispatcher)
         resolveInfo.activityInfo = activityInfo
         `when`(selectionDetails.size()).thenReturn(1)
@@ -106,6 +122,38 @@ class ApprovedDocHandlersTest {
         testScheduler.advanceUntilIdle()
         // Call twice to get the result from the cache.
         return approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+    }
+
+    private fun setupPackageManagerForUser(
+        userHandle: UserHandle,
+        className: String = "com.test.package.OtherClass",
+        label: String = "Other Test App",
+    ): Pair<PackageManager, ComponentName> {
+        val otherContext = mock(Context::class.java)
+        val otherPackageManager = mock(PackageManager::class.java)
+        `when`(applicationContext.createPackageContextAsUser(eq("android"), eq(0), eq(userHandle)))
+            .thenReturn(otherContext)
+        `when`(otherContext.packageManager).thenReturn(otherPackageManager)
+
+        val otherActivityInfo =
+            spy(ActivityInfo()).apply {
+                packageName = testPackage
+                name = className
+            }
+        val otherResolveInfo = ResolveInfo().apply { activityInfo = otherActivityInfo }
+
+        doReturn(label).`when`(otherActivityInfo).loadLabel(otherPackageManager)
+        doReturn(icon).`when`(otherActivityInfo).loadIcon(otherPackageManager)
+        `when`(otherPackageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(otherResolveInfo))
+
+        return Pair(otherPackageManager, ComponentName(testPackage, className))
+    }
+
+    private fun captureLauncherAppsCallback(): LauncherApps.Callback {
+        val callbackCaptor = ArgumentCaptor.forClass(LauncherApps.Callback::class.java)
+        verify(launcherApps, atLeastOnce()).registerCallback(callbackCaptor.capture(), any())
+        return callbackCaptor.value
     }
 
     @Test
@@ -331,16 +379,11 @@ class ApprovedDocHandlersTest {
         getApprovedDocHandlers(selectionDetails)
         verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
 
-        // Capture receiver
-        val receiverCaptor = ArgumentCaptor.forClass(BroadcastReceiver::class.java)
-        verify(applicationContext)
-            .registerReceiver(receiverCaptor.capture(), any(IntentFilter::class.java))
-        val receiver = receiverCaptor.value
+        // Capture callback
+        val callback = captureLauncherAppsCallback()
 
         // Trigger package change
-        val intent =
-            Intent(Intent.ACTION_PACKAGE_CHANGED).apply { data = Uri.parse("package:$testPackage") }
-        receiver.onReceive(applicationContext, intent)
+        callback.onPackageChanged(testPackage, Process.myUserHandle())
         testScheduler.advanceUntilIdle() // Process flow emission
 
         // Call again
@@ -359,16 +402,11 @@ class ApprovedDocHandlersTest {
         getApprovedDocHandlers(selectionDetails)
         verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
 
-        // Capture receiver
-        val receiverCaptor = ArgumentCaptor.forClass(BroadcastReceiver::class.java)
-        verify(applicationContext)
-            .registerReceiver(receiverCaptor.capture(), any(IntentFilter::class.java))
-        val receiver = receiverCaptor.value
+        // Capture callback
+        val callback = captureLauncherAppsCallback()
 
         // Trigger package removed
-        val intent =
-            Intent(Intent.ACTION_PACKAGE_REMOVED).apply { data = Uri.parse("package:$testPackage") }
-        receiver.onReceive(applicationContext, intent)
+        callback.onPackageRemoved(testPackage, Process.myUserHandle())
         testScheduler.advanceUntilIdle()
 
         // Call again
@@ -391,20 +429,15 @@ class ApprovedDocHandlersTest {
         assertThat(handlers).isEmpty()
         verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
 
-        // Capture receiver
-        val receiverCaptor = ArgumentCaptor.forClass(BroadcastReceiver::class.java)
-        verify(applicationContext)
-            .registerReceiver(receiverCaptor.capture(), any(IntentFilter::class.java))
-        val receiver = receiverCaptor.value
+        // Capture callback
+        val callback = captureLauncherAppsCallback()
 
         // Now the package is found
         `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
             .thenReturn(listOf(resolveInfo))
 
         // Trigger package added
-        val intent =
-            Intent(Intent.ACTION_PACKAGE_ADDED).apply { data = Uri.parse("package:$testPackage") }
-        receiver.onReceive(applicationContext, intent)
+        callback.onPackageAdded(testPackage, Process.myUserHandle())
         testScheduler.advanceUntilIdle()
 
         // Call again
@@ -427,18 +460,11 @@ class ApprovedDocHandlersTest {
         getApprovedDocHandlers(selectionDetails)
         verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
 
-        // Capture receiver
-        val receiverCaptor = ArgumentCaptor.forClass(BroadcastReceiver::class.java)
-        verify(applicationContext)
-            .registerReceiver(receiverCaptor.capture(), any(IntentFilter::class.java))
-        val receiver = receiverCaptor.value
+        // Capture callback
+        val callback = captureLauncherAppsCallback()
 
         // Trigger package replaced
-        val intent =
-            Intent(Intent.ACTION_PACKAGE_REPLACED).apply {
-                data = Uri.parse("package:$testPackage")
-            }
-        receiver.onReceive(applicationContext, intent)
+        callback.onPackageChanged(testPackage, Process.myUserHandle())
         testScheduler.advanceUntilIdle()
 
         // Call again
@@ -446,6 +472,129 @@ class ApprovedDocHandlersTest {
 
         // Verify PM queried again
         verify(packageManager, times(2)).queryIntentActivities(any(Intent::class.java), anyInt())
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_multiUserSwitch_queriesCorrectPackageManager() = runTest {
+        val otherUserHandle = UserHandle.of(100)
+        `when`(mockActionHandler.selectedUser).thenReturn(UserId.of(otherUserHandle))
+
+        val (otherPackageManager, otherComponent) = setupPackageManagerForUser(otherUserHandle)
+
+        val handlers = getApprovedDocHandlers(selectionDetails)
+
+        assertThat(handlers).hasSize(1)
+        assertThat(handlers[0].componentName).isEqualTo(otherComponent)
+
+        verify(otherPackageManager).queryIntentActivities(any(Intent::class.java), anyInt())
+        verify(packageManager, never()).queryIntentActivities(any(Intent::class.java), anyInt())
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_multiUserSwitch_cachesIsolatedPerUser() = runTest {
+        val otherUserHandle = UserHandle.of(100)
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        val (otherPackageManager, otherComponent) = setupPackageManagerForUser(otherUserHandle)
+
+        // Query for current user
+        `when`(mockActionHandler.selectedUser).thenReturn(UserId.CURRENT_USER)
+        val handlersUser0 = getApprovedDocHandlers(selectionDetails)
+        assertThat(handlersUser0).hasSize(1)
+        assertThat(handlersUser0[0].componentName).isEqualTo(testComponent)
+
+        verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
+        verify(otherPackageManager, never())
+            .queryIntentActivities(any(Intent::class.java), anyInt())
+
+        // Switch to other user and query
+        `when`(mockActionHandler.selectedUser).thenReturn(UserId.of(otherUserHandle))
+        val handlersUser100 = getApprovedDocHandlers(selectionDetails)
+        assertThat(handlersUser100).hasSize(1)
+        assertThat(handlersUser100[0].componentName).isEqualTo(otherComponent)
+
+        verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
+        verify(otherPackageManager, times(1))
+            .queryIntentActivities(any(Intent::class.java), anyInt())
+
+        // Switch back to current user and query
+        `when`(mockActionHandler.selectedUser).thenReturn(UserId.CURRENT_USER)
+        val handlersUser0Again = getApprovedDocHandlers(selectionDetails)
+        assertThat(handlersUser0Again).hasSize(1)
+        assertThat(handlersUser0Again[0].componentName).isEqualTo(testComponent)
+
+        // No additional queries should be made as they should be fetched from their respective
+        // isolated caches
+        verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
+        verify(otherPackageManager, times(1))
+            .queryIntentActivities(any(Intent::class.java), anyInt())
+    }
+
+    @Test
+    fun testGetApprovedDocHandlers_profileSpecificBroadcast_onlyInvalidatesSpecificUserCache() =
+        runTest {
+            val otherUserHandle = UserHandle.of(100)
+            `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+                .thenReturn(listOf(resolveInfo))
+
+            val (otherPackageManager, otherComponent) = setupPackageManagerForUser(otherUserHandle)
+
+            // Query for current user to populate cache
+            `when`(mockActionHandler.selectedUser).thenReturn(UserId.CURRENT_USER)
+            getApprovedDocHandlers(selectionDetails)
+
+            // Query for other user to populate cache
+            `when`(mockActionHandler.selectedUser).thenReturn(UserId.of(otherUserHandle))
+            getApprovedDocHandlers(selectionDetails)
+
+            val callback = captureLauncherAppsCallback()
+
+            // Trigger package added broadcast for the OTHER user
+            callback.onPackageAdded(testPackage, otherUserHandle)
+            testScheduler.advanceUntilIdle()
+
+            // Query again for other user
+            `when`(mockActionHandler.selectedUser).thenReturn(UserId.of(otherUserHandle))
+            val handlersUser100 = getApprovedDocHandlers(selectionDetails)
+            assertThat(handlersUser100).hasSize(1)
+            assertThat(handlersUser100[0].componentName).isEqualTo(otherComponent)
+
+            // Verify otherPackageManager queried again (total 2 times)
+            verify(otherPackageManager, times(2))
+                .queryIntentActivities(any(Intent::class.java), anyInt())
+
+            // Switch back to current user and query
+            `when`(mockActionHandler.selectedUser).thenReturn(UserId.CURRENT_USER)
+            val handlersUser0 = getApprovedDocHandlers(selectionDetails)
+            assertThat(handlersUser0).hasSize(1)
+            assertThat(handlersUser0[0].componentName).isEqualTo(testComponent)
+
+            // Verify packageManager NOT queried again (still 1 time)
+            verify(packageManager, times(1))
+                .queryIntentActivities(any(Intent::class.java), anyInt())
+        }
+
+    @Test
+    fun testPackageEventForUnloadedUser_isGracefullyIgnored() = runTest {
+        val unloadedUserHandle = UserHandle.of(999)
+
+        `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
+            .thenReturn(listOf(resolveInfo))
+
+        // First call to start monitoring and populate cache
+        getApprovedDocHandlers(selectionDetails)
+
+        // Capture callback
+        val callback = captureLauncherAppsCallback()
+
+        // Trigger an event for a user that hasn't been loaded into the cache yet
+        callback.onPackageAdded(testPackage, unloadedUserHandle)
+        testScheduler.advanceUntilIdle()
+
+        val handlers = getApprovedDocHandlers(selectionDetails)
+        assertThat(handlers).hasSize(1)
+        assertThat(handlers[0].componentName).isEqualTo(testComponent)
     }
 
     @Test
