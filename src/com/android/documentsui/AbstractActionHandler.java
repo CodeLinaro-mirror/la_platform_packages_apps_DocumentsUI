@@ -260,6 +260,11 @@ public abstract class AbstractActionHandler<T extends FragmentActivity & CommonA
     }
 
     @Override
+    public UserId getSelectedUser() {
+        return mActivity.getSelectedUser();
+    }
+
+    @Override
     public void startAuthentication(PendingIntent intent) {
         try {
             mActivity.startIntentSenderForResult(intent.getIntentSender(), CODE_AUTHENTICATION,
