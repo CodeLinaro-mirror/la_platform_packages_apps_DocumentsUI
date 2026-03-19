@@ -17,6 +17,7 @@
 package com.android.documentsui.base;
 
 import static com.android.documentsui.base.SharedMinimal.DEBUG;
+import static com.android.documentsui.util.FlagUtils.isHomeScreenFilesFlagEnabled;
 import static com.android.documentsui.util.FlagUtils.isTrashFlowEnabled;
 
 import android.content.Context;
@@ -214,6 +215,16 @@ public class DocumentStack implements Durable, Parcelable {
 
     public String getTitle() {
         if (mList.size() == 1 && mRoot != null) {
+            if (isHomeScreenFilesFlagEnabled()
+                    && mRoot.documentId != null
+                    && mRoot.authority != null
+                    && !mRoot.getDocumentUri().equals(peek().derivedUri)) {
+                // If the document stack was created as a result of drag and drop to a shortcut or
+                // by clicking on a shortcut on the sidebar, then we want the title of the shortcut
+                // folder. In this case, the peek item on the list will be the shortcut folder and
+                // not the root folder.
+                return peek().displayName;
+            }
             return mRoot.title;
         } else if (mList.size() > 1) {
             return peek().displayName;
