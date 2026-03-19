@@ -29,7 +29,6 @@ import android.os.Bundle
 import android.os.Process
 import android.os.UserHandle
 import android.provider.DocumentsContract
-import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.documentsui.ActionHandler
@@ -40,8 +39,10 @@ import com.android.documentsui.base.UserId
 import com.android.documentsui.rules.InstantTaskExecutorRule
 import com.android.documentsui.rules.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -115,13 +116,19 @@ class ApprovedDocHandlersTest {
         `when`(selectionDetails.mimeTypes()).thenReturn(setOf("image/png"))
     }
 
-    private fun getApprovedDocHandlers(
+    private fun TestScope.getApprovedDocHandlers(
         selectionDetails: MenuManager.SelectionDetails
     ): List<ApprovedDocHandler> {
-        approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+        var handlers: List<ApprovedDocHandler> = emptyList()
+        val job =
+            this.launch(testDispatcher) {
+                approvedDocHandlers.getApprovedDocHandlersFlow(selectionDetails).collect {
+                    handlers = it
+                }
+            }
         testScheduler.advanceUntilIdle()
-        // Call twice to get the result from the cache.
-        return approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
+        job.cancel()
+        return handlers
     }
 
     private fun setupPackageManagerForUser(
@@ -361,12 +368,10 @@ class ApprovedDocHandlersTest {
         `when`(packageManager.queryIntentActivities(any(Intent::class.java), anyInt()))
             .thenReturn(listOf(resolveInfo))
 
-        approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
-        testScheduler.advanceUntilIdle()
+        getApprovedDocHandlers(selectionDetails)
         verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
 
-        approvedDocHandlers.getApprovedDocHandlers(selectionDetails)
-        testScheduler.advanceUntilIdle()
+        getApprovedDocHandlers(selectionDetails)
         verify(packageManager, times(1)).queryIntentActivities(any(Intent::class.java), anyInt())
     }
 
@@ -603,15 +608,14 @@ class ApprovedDocHandlersTest {
             .thenReturn(listOf(resolveInfo))
 
         var emitted = false
-        val observer = Observer<Unit> { emitted = true }
-
-        approvedDocHandlers.updateEvents.observeForever(observer)
+        val job =
+            launch(testDispatcher) { approvedDocHandlers.updateEvents.collect { emitted = true } }
 
         // Trigger update
         getApprovedDocHandlers(selectionDetails)
 
         assertThat(emitted).isTrue()
 
-        approvedDocHandlers.updateEvents.removeObserver(observer)
+        job.cancel()
     }
 }

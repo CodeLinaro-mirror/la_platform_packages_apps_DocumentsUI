@@ -78,6 +78,7 @@ import com.android.documentsui.Injector;
 import com.android.documentsui.R;
 import com.android.documentsui.SelectionHelpers;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
+import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.RootInfo;
 import com.android.documentsui.base.ShortcutInfo;
@@ -219,6 +220,7 @@ public final class MenuManagerTest {
     private ResolveInfo resolveInfo = new ResolveInfo();
     private TestResources testResources;
     private ApprovedDocHandlers mApprovedDocHandlers;
+    private ApprovedDocMenuController mApprovedDocMenuController;
     private TestActionHandler mActionHandler;
     private TestLifecycleOwner mLifecycleOwner;
 
@@ -366,6 +368,9 @@ public final class MenuManagerTest {
         mApprovedDocHandlers =
                 new ApprovedDocHandlers(
                         activity.getApplicationContext(), activity.injector, testDispatcher);
+        mApprovedDocMenuController = new ApprovedDocMenuController(
+                CoroutineScopeKt.CoroutineScope(testDispatcher),
+                mApprovedDocHandlers, activity.injector, testDispatcher);
 
         mSummaryProviderManager =
                 spy(
@@ -389,20 +394,9 @@ public final class MenuManagerTest {
                         this::getUriFromModelId,
                         this::getFilesCount,
                         activity.injector,
-                        mApprovedDocHandlers);
+                        mApprovedDocMenuController);
 
-        mApprovedDocHandlers
-                .getUpdateEvents()
-                .observe(
-                        mLifecycleOwner,
-                        unit -> {
-                            if (mgr != null) {
-                                mgr.updateContextMenu();
-                                if (selectionDetails.size() > 0) {
-                                    mgr.updateActionMenu(testMenu, selectionDetails);
-                                }
-                            }
-                        });
+        activity.injector.menuManager = mgr;
 
         testRootInfo = new RootInfo();
         testDocInfo = new DocumentInfo();
@@ -834,7 +828,7 @@ public final class MenuManagerTest {
                         this::getUriFromModelId,
                         this::getFilesCount,
                         activity.injector,
-                        mApprovedDocHandlers);
+                        mApprovedDocMenuController);
 
         selectionDetails.canViewInOwner = true;
         mgr.updateActionMenu(testMenu, selectionDetails);
@@ -2155,7 +2149,7 @@ public final class MenuManagerTest {
         int foundCount = countAllMenuItems(testMenu, "App ");
         assertEquals(
                 "Should limit the number of approved document handlers as menu items",
-                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS,
                 foundCount);
     }
 
@@ -2179,12 +2173,12 @@ public final class MenuManagerTest {
         assertEquals(
                 "Should limit the total number of approved document handlers in the menu including"
                     + " buttons",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
-                foundCount);
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS +
+                    ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS, foundCount);
 
         assertEquals(
                 "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS,
                 buttonCount);
     }
 
@@ -2205,7 +2199,7 @@ public final class MenuManagerTest {
         int foundCount = countAllMenuItems(testMenu, "App ");
         assertEquals(
                 "Should limit the number of approved document handlers as menu items",
-                ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
+                ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS,
                 foundCount);
     }
 
@@ -2229,12 +2223,12 @@ public final class MenuManagerTest {
         assertEquals(
                 "Should limit the total number of approved document handlers in the menu including"
                         + " buttons",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS + ApprovedDocHandlers.NUMBER_OF_MENU_ITEMS,
-                foundCount);
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS +
+                    ApprovedDocMenuController.NUMBER_OF_MENU_ITEMS, foundCount);
 
         assertEquals(
                 "Should limit the number of action buttons to NUMBER_OF_BUTTONS",
-                ApprovedDocHandlers.NUMBER_OF_BUTTONS,
+                ApprovedDocMenuController.NUMBER_OF_BUTTONS,
                 buttonCount);
     }
 
