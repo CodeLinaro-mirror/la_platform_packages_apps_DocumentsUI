@@ -22,12 +22,8 @@ import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.Context;
 import android.net.Uri;
-import android.view.MotionEvent;
 
 import androidx.test.filters.LargeTest;
-import androidx.test.uiautomator.Configurator;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.android.documentsui.files.FilesActivity;
 
@@ -62,15 +58,7 @@ public class IntegratedDownloadsUiTest extends ActivityTestJunit4<FilesActivity>
         dm.enqueue(new Request(Uri.parse("http://www.google.com/hamfancy")));
 
         switchRoot("Downloads");
-        UiObject doc = bots.directory.findDocumentUiObject("Unsuccessful");
-        if (!doc.waitForExists(TIMEOUT)) {
-            throw new UiObjectNotFoundException("Unsuccessful document not found after timeout");
-        }
-
-        int toolType = Configurator.getInstance().getToolType();
-        Configurator.getInstance().setToolType(MotionEvent.TOOL_TYPE_FINGER);
-        doc.click();
-        Configurator.getInstance().setToolType(toolType);
+        bots.directory.openDocument("Unsuccessful");
 
         assertTrue(bots.main.findDownloadRetryDialog().exists());
 
