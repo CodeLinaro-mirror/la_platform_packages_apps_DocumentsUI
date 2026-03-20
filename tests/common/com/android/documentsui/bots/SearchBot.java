@@ -23,7 +23,6 @@ import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.doesNotHaveFocus;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isClickable;
@@ -289,23 +288,14 @@ public class SearchBot extends Bots.BaseBot {
     }
 
     /**
-     * Finds the menu item with text with the given ID. This method waits until the tem becomes
-     * visible, and scrolls to it so that it is fully displayed.
-     * @param menuId The ID of the text shown in the menu item.
-     * @return The view interaction associated with this menu item.
-     */
-    public ViewInteraction findMenuItem(@StringRes int menuId) {
-        return onView(withText(menuId)).inRoot(isPlatformPopup()).perform(
-                new WaitUntilVisible(mTimeout)).perform(scrollTo());
-    }
-
-    /**
-     * Clicks the menu item with text with the given ID. This method uses #findMenuItem to make sure
-     * that the menu item is visible and displayed.
+     * Clicks the menu item with text with the given ID. This method uses #findListMenuItem to make
+     * sure that the menu item is visible and displayed.
+     *
      * @param menuId The ID of the text shown in the menu item.
      */
     public void clickMenuItem(@StringRes int menuId) {
-        findMenuItem(menuId).perform(new RelaxedClickAction());
+        String menuLabel = mContext.getString(menuId);
+        mBots.menu.findListMenuItem(menuLabel).perform(new RelaxedClickAction());
     }
 
     /**

@@ -92,6 +92,9 @@ public class TestDocumentsProvider extends DocumentsProvider {
     /** The last query args passed to {@link #queryChildDocuments()}. */
     private @Nullable Bundle mLastQueryArgs = null;
 
+    /** Latch used to block cursor close operations. */
+    private CountDownLatch mCloseLatch = null;
+
     /** Sets the summaries that should be emulated. */
     public void setDocumentSummaries(Map<String, String> summaries) {
         mNextSummaries.clear();
@@ -151,7 +154,8 @@ public class TestDocumentsProvider extends DocumentsProvider {
         if (projection == null) {
             projection = new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY};
         }
-        final MatrixCursor result = new MatrixCursor(projection);
+        final TestCursor result = new TestCursor(projection);
+        result.setCloseLatch(mCloseLatch);
 
         // This provider might be used to check for the existence of a doc.
         // If it doesn't exist in the test model, we should return an empty cursor.
@@ -182,9 +186,10 @@ public class TestDocumentsProvider extends DocumentsProvider {
 
         // If the summaries has been set, use it.
         if (!mNextSummaries.isEmpty()) {
-            final MatrixCursor result =
-                    new MatrixCursor(
+            final TestCursor result =
+                    new TestCursor(
                             new String[] {Document.COLUMN_DOCUMENT_ID, Document.COLUMN_SUMMARY});
+            result.setCloseLatch(mCloseLatch);
             for (String documentId : mNextSummaries.keySet()) {
                 final MatrixCursor.RowBuilder row = result.newRow();
                 row.add(Document.COLUMN_DOCUMENT_ID, documentId);
@@ -310,6 +315,7 @@ public class TestDocumentsProvider extends DocumentsProvider {
             }
         }
         Log.d(TAG, "Delivering " + cursor.getCount() + " results");
+        cursor.setCloseLatch(mCloseLatch);
         return cursor;
     }
 
@@ -321,6 +327,8 @@ public class TestDocumentsProvider extends DocumentsProvider {
             return null;
         }
 
+        // Note that createDocumentsCursor sets the mCloseLatch on the cursor, thus we do not need
+        // to set it again.
         return filterCursorByString(createDocumentsCursor(mNextChildDocuments), query);
     }
 
@@ -428,6 +436,14 @@ public class TestDocumentsProvider extends DocumentsProvider {
         mNextTrashDocuments = docs;
     }
 
+    /**
+     * Sets a latch to be used for close operation of returned cursors. To have an effect this
+     * method must be called before any document or search queries are received by this provider.
+     */
+    public void setCloseLatch(CountDownLatch latch) {
+        mCloseLatch = latch;
+    }
+
     private Cursor createDocumentsCursor(DocumentInfo... docs) {
         if (docs == null) return null;
         TestCursor cursor = new TestCursor(DOCUMENTS_PROJECTION);
@@ -445,14 +461,17 @@ public class TestDocumentsProvider extends DocumentsProvider {
                     .add(Document.COLUMN_ICON, doc.icon);
         }
 
+        cursor.setCloseLatch(mCloseLatch);
+
         return cursor;
     }
 
-    private static Cursor filterCursorByString(@NonNull Cursor cursor, String query) {
+    private Cursor filterCursorByString(@NonNull Cursor cursor, String query) {
         final int count = cursor.getCount();
         final String[] columnNames = cursor.getColumnNames();
 
-        final MatrixCursor resultCursor = new MatrixCursor(columnNames, count);
+        final TestCursor resultCursor = new TestCursor(columnNames);
+        resultCursor.setCloseLatch(mCloseLatch);
         cursor.moveToPosition(-1);
         for (int i = 0; i < count; i++) {
             cursor.moveToNext();

@@ -132,7 +132,7 @@
     <string name="cross_profile_action_not_allowed_message" msgid="7331275433061690947">"Για να μάθετε περισσότερα, επικοινωνήστε με τον διαχειριστή IT."</string>
     <string name="root_recent" msgid="1080156975424341623">"Πρόσφατα"</string>
     <string name="root_trash" msgid="1869929519939073178">"Κάδος"</string>
-    <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> ελεύθερα"</string>
+    <string name="root_available_bytes" msgid="8269870862691408864">"<xliff:g id="SIZE">%1$s</xliff:g> ελεύθερος"</string>
     <string name="root_type_service" msgid="6521366147466512289">"Υπηρεσίες αποθήκευσης"</string>
     <string name="root_type_shortcut" msgid="6059343175525442279">"Συντομεύσεις"</string>
     <string name="root_type_device" msgid="1713604128005476585">"Συσκευές"</string>

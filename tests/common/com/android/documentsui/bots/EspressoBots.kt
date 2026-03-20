@@ -19,12 +19,16 @@ package com.android.documentsui.bots
 import android.content.Context
 import android.view.View
 import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.android.documentsui.R
@@ -70,6 +74,25 @@ fun findDocument(label: String?, timeout: Long): ViewInteraction {
     return onView(documentMatcher(label))
         .perform(WaitUntilVisible(timeout))
         .perform(ViewActions.scrollCompletelyTo())
+}
+
+/** Perform the specified action on the item with the specified label in the directory list. */
+fun actionOnDocumentItem(label: String?, action: ViewAction) {
+    val dirListMatcher = Matchers.allOf(withId(R.id.dir_list), isDisplayed())
+
+    onView(dirListMatcher)
+        .perform(
+            RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
+                documentMatcher(label),
+                action,
+            )
+        )
+}
+
+/** Find the document with the given label and right click on it. */
+fun rightClickDocument(label: String?, timeout: Long) {
+    waitForDocument(label, timeout)
+    actionOnDocumentItem(label, rightClick())
 }
 
 /** Open the root with the given label, right click on it, and click the given menu option. */

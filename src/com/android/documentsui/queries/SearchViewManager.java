@@ -460,12 +460,22 @@ public class SearchViewManager implements
     /**
      * "Closes" docked search. Since the docked search cannot be hidden, all this method does is to
      * set the text to empty string and transfers focus.
+     *
+     * @return Whether or not any changes were made to the UI.
      */
-    private void closeDockedSearch() {
+    private boolean closeDockedSearch() {
+        boolean changed = false;
         if (isSearchV2Enabled() && mDockedSearchEditText != null) {
-            mDockedSearchEditText.setText("");
-            mDockedSearchEditText.clearFocus();
+            if (!TextUtils.isEmpty(mDockedSearchEditText.getText())) {
+                mDockedSearchEditText.setText("");
+                changed = true;
+            }
+            if (mDockedSearchEditText.hasFocus()) {
+                mDockedSearchEditText.clearFocus();
+                changed = true;
+            }
         }
+        return changed;
     }
 
     /**
@@ -474,10 +484,11 @@ public class SearchViewManager implements
      * @return True if it cancels search. False if it does not operate search currently.
      */
     public boolean cancelSearch() {
+        boolean handled = false;
         if (isSearchV2Enabled()) {
             // Show the chips again, once the search has been canceled.
             useSearchOptions(SearchOptionsControls.CHIPS);
-            closeDockedSearch();
+            handled = closeDockedSearch();
         }
 
         if ((isExpanded() || isSearching())) {
@@ -490,9 +501,9 @@ public class SearchViewManager implements
                 mSearchView.setIconified(true);
             }
 
-            return true;
+            handled = true;
         }
-        return false;
+        return handled;
     }
 
     private int getPixelForDp(int dp) {
