@@ -53,12 +53,12 @@ open class PathExtractor(
             }
         val authority = uri.authority ?: docInfo.authority
         val userId = docInfo.userId
-        val rootInfo = getRootInfo(authority, userId)
         try {
             val path = getDocumentPath(uri)
             if (path === null || path.path === null || path.path.isEmpty()) {
                 throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}")
             }
+            val rootInfo = providerAccess.getRootOneshot(userId, authority, path.rootId)
             val docInfoArray =
                 Array(path.path.size) { getDocumentInfo(authority, userId, path.path[it]) }
             return DocumentStack(rootInfo, *docInfoArray)
@@ -66,7 +66,7 @@ open class PathExtractor(
             throw NoSuchElementException("Failed to resolve path for ${docInfo.documentId}: $e")
         } catch (e: UnsupportedOperationException) {
             Log.w(TAG, "$uri does not support path extraction: $e")
-            return approximateDocumentStack(rootInfo, docInfo)
+            return approximateDocumentStack(getRootInfo(authority, userId), docInfo)
         }
     }
 
