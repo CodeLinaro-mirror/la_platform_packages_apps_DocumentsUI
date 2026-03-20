@@ -56,7 +56,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("archive.zip");
         bots.directory.openDocument("archive.zip");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir1");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -98,7 +99,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.waitForDocument("file1.txt");
         bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.horizontal_breadcrumb, View.VISIBLE);
         bots.breadcrumb.assertBreadcrumbHasVisibility(R.id.breadcrumb_view_v2, View.GONE);
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir1");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -121,7 +123,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Browse");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir1");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }
@@ -134,7 +137,8 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
         bots.directory.rightClickDocument("archive.zip");
         bots.menu.clickMenuItem("Open");
         bots.directory.waitForDocument("file1.txt");
-        bots.directory.assertDocumentsVisible("dir1", "dir2", "file1.txt");
+        bots.directory.waitForDocument("dir1");
+        bots.directory.waitForDocument("dir2");
         bots.directory.openDocument("dir1");
         bots.directory.waitForDocument("cherries.txt");
     }

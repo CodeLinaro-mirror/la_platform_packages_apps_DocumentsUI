@@ -141,7 +141,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
     fun testMoveDocumentBlocked() {
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
         switchRoot(primaryRoot!!.title)
-        bots.directory.findDocument(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
         device!!.waitForIdle()
 
         bots.directory.selectDocument(SHORTCUT_ID, 1)
@@ -195,7 +195,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
         switchRoot(primaryRoot!!.title)
 
-        bots.directory.findDocument(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
         device!!.waitForIdle()
 
         bots.directory.rightClickDocument(SHORTCUT_ID)
@@ -209,7 +209,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
-        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
     }
 
     @Test
@@ -219,7 +219,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
         switchRoot(primaryRoot!!.title)
 
-        bots.directory.findDocument(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
         device!!.waitForIdle()
 
         bots.directory.selectDocument(SHORTCUT_ID, 1)
@@ -234,7 +234,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
-        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
     }
 
     @Test
@@ -243,7 +243,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
         val primaryRoot = storageDocsHelper?.getRoot(ROOT_ID_DEVICE)
         switchRoot(primaryRoot!!.title)
 
-        bots.directory.findDocument(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
         device!!.waitForIdle()
 
         bots.directory.selectDocument(SHORTCUT_ID, 1)
@@ -258,7 +258,7 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 context!!.resources.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
-        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
     }
 
     @Test
@@ -279,6 +279,6 @@ class BlockFileOperationsForShortcutsUiTest : ActivityTestJunit4<FilesActivity>(
                 context!!.getString(R.string.toast_op_not_allowed_for_shortcuts)
             )
         )
-        bots.directory.assertDocumentsVisible(SHORTCUT_ID)
+        bots.directory.waitForDocument(SHORTCUT_ID)
     }
 }
