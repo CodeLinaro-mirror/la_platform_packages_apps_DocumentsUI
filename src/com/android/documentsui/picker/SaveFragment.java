@@ -119,9 +119,16 @@ public class SaveFragment extends Fragment {
                         }
 
                         // Returning false in this method will bubble the event up to
-                        // {@link BaseActivity#onKeyDown}. In order to prevent backspace popping
-                        // documents once the textView is empty, we are going to trap it here.
+                        // {@link SharedInputHandler#onKeyDown}. In order to prevent backspace
+                        // navigating up once the textView is empty, we are going to trap it here.
+                        //
+                        // "The textView is empty" turns out to be an insufficient check. Backspace
+                        // will also navigate to the parent directory if the textView is non-empty
+                        // but the caret is at the start. The fix (in SharedInputHandler.onDelete,
+                        // making this check obsolete) is gated by isUseMaterial3FlagEnabled so
+                        // that we can roll out under a flag.
                         if (keyCode == KeyEvent.KEYCODE_DEL
+                                && !isUseMaterial3FlagEnabled()
                                 && TextUtils.isEmpty(mDisplayName.getText())) {
                             return true;
                         }
