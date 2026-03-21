@@ -436,16 +436,19 @@ class SearchLoader(
 
     /** Overrides the method called when forced load takes place to force full cursor reload. */
     override fun resetInternal() {
-        debugLog("resetInternal")
+        debugLog("resetting internal data structures")
         observer.setPaused(true)
-        for (data in queryResults) {
-            val cursor = data?.cursor
-            if (cursor != null) {
-                cursor.unregisterContentObserver(observer)
-                cursor.close()
+        val previousQueryResults = queryResults.copyOf()
+        queryResults.fill(null)
+        executor.execute {
+            for (data in previousQueryResults) {
+                val cursor = data?.cursor
+                if (cursor != null) {
+                    cursor.unregisterContentObserver(observer)
+                    cursor.close()
+                }
             }
         }
-        queryResults.fill(null)
         searchTaskList.clear()
         firstPassDone.set(false)
         countDownLatch = CountDownLatch(rootInfoList.size)

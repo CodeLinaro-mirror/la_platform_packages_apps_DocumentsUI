@@ -180,10 +180,12 @@ abstract class BaseFileLoader(
 
     /** Quietly closes the result cursor, if results are still available. */
     fun closeResult(result: DirectoryResult?) {
-        try {
-            result?.close()
-        } catch (e: Exception) {
-            debugLog("Failed to close result", e)
+        executor.execute {
+            try {
+                result?.close()
+            } catch (e: Exception) {
+                debugLog("Failed to close result", e)
+            }
         }
     }
 
