@@ -37,48 +37,57 @@
         android:layout_height="match_parent">
 
         <!-- Main container -->
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <LinearLayout
             android:id="@+id/main_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="?attr/colorSurfaceBright">
 
-            <!-- Main list area (file list/grid or search results), full height -->
-            <FrameLayout
+            <!-- Container for app bar and list area -->
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/scrolling_behavior_m3">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
+                <!-- Main list area (file list/grid or search results) -->
                 <FrameLayout
-                    android:id="@+id/container_directory"
-                    android:clipToPadding="false"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    app:layout_behavior="@string/scrolling_behavior_m3">
 
-                <FrameLayout
-                    android:id="@+id/container_search_fragment"
-                    android:clipToPadding="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    <FrameLayout
+                        android:id="@+id/container_directory"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
-                <!-- Drawer edge is a placeholder view used to capture hovering
-                     event on view edge to open the drawer. (b/28345294) -->
-                <View
-                    android:id="@+id/drawer_edge"
-                    android:background="@android:color/transparent"
-                    android:layout_width="@dimen/drawer_edge_width_m3"
-                    android:layout_height="match_parent"/>
-            </FrameLayout>
+                    <FrameLayout
+                        android:id="@+id/container_search_fragment"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
-            <!-- Footer of right hand side: Breadcrumbs and Picker footer. -->
+                    <!-- Drawer edge is a placeholder view used to capture hovering
+                         event on view edge to open the drawer. (b/28345294) -->
+                    <View
+                        android:id="@+id/drawer_edge"
+                        android:background="@android:color/transparent"
+                        android:layout_width="@dimen/drawer_edge_width_m3"
+                        android:layout_height="match_parent"/>
+                </FrameLayout>
+
+                <!-- Top section: toolbar, search chips, profile tab -->
+                <include layout="@layout/directory_app_bar_m3"/>
+
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+            <!-- Footer: Breadcrumbs and Picker footer. -->
             <LinearLayout
                 android:id="@+id/bottom_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="bottom">
+                android:orientation="vertical">
 
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/breadcrumb_top_divider"
@@ -87,14 +96,8 @@
                     app:dividerColor="?attr/colorSurfaceContainer"
                     app:dividerThickness="@dimen/main_container_section_gap" />
 
-                <!-- Make both breadcrumb views clickable to consume mouse events and prevent them
-                from passing through to the underlying RecyclerView (file row) in the drawer
-                layout. This is only needed for drawer layout because the drawer layout uses
-                CollapsingToolbarLayout which makes the breadcrumb overlays on top of the
-                RecyclerView. -->
                 <com.android.documentsui.HorizontalBreadcrumb
                     android:id="@+id/horizontal_breadcrumb"
-                    android:clickable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/colorSurfaceBright"
@@ -105,7 +108,6 @@
                 <com.android.documentsui.breadcrumbs.BreadcrumbView
                     android:id="@+id/breadcrumb_view_v2"
                     android:focusable="false"
-                    android:clickable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/colorSurfaceBright"
@@ -119,10 +121,7 @@
 
             </LinearLayout>
 
-            <!-- Top section: toolbar, search chips, profile tab -->
-            <include layout="@layout/directory_app_bar_m3"/>
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </LinearLayout>
 
         <!-- Drawer section -->
         <LinearLayout
