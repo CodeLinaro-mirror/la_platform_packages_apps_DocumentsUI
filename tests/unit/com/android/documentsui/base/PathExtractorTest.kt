@@ -93,28 +93,29 @@ class PathExtractorTest {
         val docInfo =
             DocumentInfo().apply {
                 userId = UserId.DEFAULT_USER
-                authority = "download.id"
+                authority = Providers.AUTHORITY_STORAGE
                 documentId = "file.txt.id"
                 displayName = "file.txt"
                 mimeType = "text/plain"
                 deriveFields()
             }
         val pathIds = listOf("foo.id", docInfo.documentId)
-        val rootId = "download-root.id"
+        val rootId = Providers.ROOT_ID_DEVICE
 
         // When fetching DocumentsContract.Path.
         pathExtractor.documentPath = DocumentsContract.Path(rootId, pathIds)
         // Map from path ID to cursor with the display name.
         pathExtractor.displayNameCursorMap =
             mapOf(
-                "content://download.id/root" to createDisplayNameCursor("Downloads"),
-                "content://download.id/document/foo.id" to createDisplayNameCursor("Foo"),
-                "content://download.id/document/file.txt.id" to createDisplayNameCursor("file.txt"),
+                "content://${Providers.AUTHORITY_STORAGE}/document/foo.id" to
+                    createDisplayNameCursor("Foo"),
+                "content://${Providers.AUTHORITY_STORAGE}/document/file.txt.id" to
+                    createDisplayNameCursor("file.txt"),
             )
 
         // The actual test.
         val stack = pathExtractor.getDocumentStack(docInfo)
-        Assert.assertEquals("Downloads/Foo/file.txt", toPath(stack))
+        Assert.assertEquals("Device/Foo/file.txt", toPath(stack))
     }
 
     // TODO(b/444316005): Special case, where Recent view uses Media document provider. Remove.
