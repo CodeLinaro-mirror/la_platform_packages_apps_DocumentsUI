@@ -70,7 +70,6 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwnerKt;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.android.documentsui.AbstractActionHandler.CommonAddons;
@@ -274,41 +273,6 @@ public abstract class BaseActivity
         }
         mInjector.setSummaryProviderManager(
                 new SummaryProviderManager(this, LifecycleOwnerKt.getLifecycleScope(this), uri));
-        observeSummaryProviderManagerState();
-    }
-
-    /**
-     * Registers an observer on the state of SummaryProviderManager.
-     *
-     * <p>When the summary provider is enabled/disabled we refresh the file list to make sure the
-     * description column is shown/hidden. OnLoadFinished in AbstractActionHandler kicks off an
-     * update in SummariesViewModel and a full redraw of RecyclerView which has the description
-     * column. notifyDirectoryLoaded here updates the column headers accordingly as well.
-     *
-     * <p>The observer is registered in onCreate and should be re-registered when a new
-     * SummaryProviderManager is created.
-     */
-    private void observeSummaryProviderManagerState() {
-        if (isUseFileSummaryEnabled()) {
-            mInjector
-                    .getSummaryProviderManager()
-                    .isEnabledLiveData()
-                    .observe(
-                            this,
-                            new Observer<Boolean>() {
-                                @Override
-                                public void onChanged(Boolean isEnabled) {
-                                    // Only trigger a refresh after a root is pushed on the stack.
-                                    // Doing a refresh before then is not necessary (because the
-                                    // list hasn't rendered yet so next render will correctly
-                                    // reflect isEnabled) and doing so causes race conditions
-                                    // around initialization.
-                                    if (mState.stack.isInitialized()) {
-                                        mInjector.actions.loadDocumentsForCurrentStack();
-                                    }
-                                }
-                            });
-        }
     }
 
     @CallSuper
@@ -640,7 +604,6 @@ public abstract class BaseActivity
         updateRecentsSetting();
 
         mCurrentLocale = getResources().getConfiguration().getLocales().get(0);
-        observeSummaryProviderManagerState();
     }
 
     private NavigationViewManager getNavigationViewManager(
