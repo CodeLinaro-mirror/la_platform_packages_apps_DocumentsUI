@@ -16,7 +16,6 @@
 package com.android.documentsui.base
 
 import android.content.AttributionSource
-import android.content.ContentResolver
 import android.content.Context
 import android.content.IContentProvider
 import android.database.Cursor
@@ -30,6 +29,7 @@ import androidx.core.net.toUri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.TestContentResolver
 import com.android.documentsui.flags.Flags
 import com.android.documentsui.roots.ProvidersAccess
 import com.android.documentsui.rules.OverrideFlagsRule
@@ -37,16 +37,15 @@ import com.android.documentsui.testing.TestProvidersAccess
 import junit.framework.AssertionFailedError
 import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
 import org.mockito.kotlin.whenever
 
 private val columnNames =
@@ -97,12 +96,10 @@ class PathExtractorTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private lateinit var pathExtractor: TestablePathExtractor
-    private lateinit var mockContext: Context
 
     @Before
     fun setUp() {
         pathExtractor = TestablePathExtractor(context, TestProvidersAccess())
-        mockContext = mock<Context>()
     }
 
     @Test
@@ -170,17 +167,14 @@ class PathExtractorTest {
 
     @Test
     @EnableFlags(Flags.FLAG_USE_SEARCH_V2_READ_ONLY, Flags.FLAG_USE_MATERIAL3)
-    @Ignore("Does not work due private code inside MediaStore; TODO: fix and enable")
     fun testTryGetExternalStorageUriForMediaUriAndSearchV2Enabled() {
-        val externalStorageUri = "content://com.android.externalstorage.documents/file%3A6".toUri()
-        val resolver = mock<ContentResolver>()
-        whenever(mockContext.contentResolver) doReturn (resolver)
-        whenever(resolver.persistedUriPermissions) doReturn (listOf())
-        // ContentResolver.acquireContentProviderClient is final, so we need to return a provider
-        // which is an IContentProvider which is requested when acquiring content provider client.
         val client = mock<IContentProvider>()
-        whenever(resolver.acquireProvider("media")) doReturn (client)
+        val resolver = TestContentResolver(client, context)
+        val spyContext = spy(context)
+        whenever(spyContext.contentResolver) doReturn (resolver)
+
         // The first call to the client is to resolve media URI.
+        val mediaUri = "content://com.android.providers.media.documents/document/file%3A6".toUri()
         whenever(
             client.call(
                 any<AttributionSource>(),
@@ -189,13 +183,10 @@ class PathExtractorTest {
                 isNull(),
                 any<Bundle>(),
             )
-        ) doAnswer
-            { invocation ->
-                val bundle = invocation.getArgument<Bundle>(3)
-                bundle.putParcelable("uri", "content://media/external/file/6".toUri())
-                bundle
-            }
+        ) doReturn
+            (Bundle().apply { putParcelable("uri", "content://media/external/file/6".toUri()) })
         // The second call to the client is to resolve document URI.
+        val externalStorageUri = "content://com.android.externalstorage.documents/file%3A6".toUri()
         whenever(
             client.call(
                 any<AttributionSource>(),
@@ -204,14 +195,9 @@ class PathExtractorTest {
                 isNull(),
                 any<Bundle>(),
             )
-        ) doAnswer
-            { invocation ->
-                val bundle = invocation.getArgument<Bundle>(3)
-                bundle.putParcelable("uri", externalStorageUri)
-                bundle
-            }
-        val mediaUri = "content://com.android.providers.media.documents/document/file%3A6".toUri()
-        Assert.assertEquals(externalStorageUri, tryGetExternalStorageUri(mockContext, mediaUri))
+        ) doReturn (Bundle().apply { putParcelable("uri", externalStorageUri) })
+
+        Assert.assertEquals(externalStorageUri, tryGetExternalStorageUri(spyContext, mediaUri))
     }
 
     @Test
