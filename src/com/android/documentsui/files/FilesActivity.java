@@ -43,6 +43,7 @@ import android.view.View;
 import androidx.annotation.CallSuper;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwnerKt;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.selection.Selection;
@@ -70,6 +71,7 @@ import com.android.documentsui.ShortcutsUpdater;
 import com.android.documentsui.StubProfileTabsAddons;
 import com.android.documentsui.UserManagerProvider;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
+import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.RootInfo;
@@ -151,6 +153,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
         mInjector.selectionMgr = DocsSelectionHelper.create();
 
         ApprovedDocHandlers approvedDocHandlers = null;
+        ApprovedDocMenuController approvedDocMenuController = null;
         if (isUseApprovedDocumentHandlerEnabled()) {
             approvedDocHandlers =
                     new ViewModelProvider(
@@ -167,16 +170,11 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                             })
                     .get(ApprovedDocHandlers.class);
 
-            approvedDocHandlers.getUpdateEvents().observe(
-                    this,
-                    unit -> {
-                        if (mInjector.selectionBarController != null) {
-                            mInjector.selectionBarController.invalidate();
-                        }
-                        if (mInjector.menuManager != null) {
-                            mInjector.menuManager.updateContextMenu();
-                        }
-                    });
+            approvedDocMenuController = new ApprovedDocMenuController(
+                    LifecycleOwnerKt.getLifecycleScope(this),
+                    approvedDocHandlers,
+                    mInjector,
+                    Dispatchers.getMain().getImmediate());
         }
 
         mInjector.focusManager =
@@ -204,7 +202,7 @@ public class FilesActivity extends BaseActivity implements AbstractActionHandler
                         mInjector.getModel()::getItemUri,
                         mInjector.getModel()::getItemCount,
                         mInjector,
-                        approvedDocHandlers);
+                        approvedDocMenuController);
         mInjector.menuManager = menuManager;
 
         if (isUseMaterial3FlagEnabled()) {

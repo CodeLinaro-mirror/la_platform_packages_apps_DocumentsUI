@@ -26,12 +26,7 @@ import android.graphics.drawable.Drawable
 import android.os.UserHandle
 import android.provider.DocumentsContract
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.android.documentsui.Injector
 import com.android.documentsui.MenuManager
@@ -48,8 +43,11 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -109,12 +107,7 @@ class ApprovedDocHandlers(
         MutableStateFlow<Map<UserId, Map<String, Map<ComponentName, HandlerStatus>>>>(emptyMap())
 
     private val _updateEvents = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-
-    /**
-     * A LiveData to emit update events. This is used to notify the UI to invalidate menus when the
-     * cache is updated.
-     */
-    val updateEvents: LiveData<Unit> = _updateEvents.asLiveData()
+    val updateEvents: SharedFlow<Unit> = _updateEvents
 
     /** A set of package names that are approved document handlers, loaded from resources. */
     private val approvedPackages: Set<String> = getPackageNames().toSet()
@@ -142,13 +135,6 @@ class ApprovedDocHandlers(
     companion object {
         private const val TAG = "ApprovedDocHandlers"
         public const val AS_BUTTON_METADATA_KEY = "android.approvedtarget.as_button"
-        // A unique ID used to group menu items created for approved document handlers.
-        private val HANDLER_GROUP_ID = View.generateViewId()
-
-        // The maximum number of buttons to show in the action bar as agreed in the design.
-        public const val NUMBER_OF_BUTTONS = 1
-        // The maximum number of menu items to show in the menu as agreed in the design.
-        public const val NUMBER_OF_MENU_ITEMS = 2
     }
 
     /**
@@ -213,16 +199,15 @@ class ApprovedDocHandlers(
     ) {
         cache.update { currentCache ->
             val userCache = currentCache[userId] ?: return@update currentCache
-            val updatedUserCache =
-                userCache.mapValues { (_, handlers) ->
-                    handlers.mapValues { (component, status) ->
-                        if (component.packageName == packageName) {
-                            updateStatus(status)
-                        } else {
-                            status
-                        }
+            val updatedUserCache = userCache.mapValues { (_, handlers) ->
+                handlers.mapValues { (component, status) ->
+                    if (component.packageName == packageName) {
+                        updateStatus(status)
+                    } else {
+                        status
                     }
                 }
+            }
             currentCache + (userId to updatedUserCache)
         }
     }
@@ -346,17 +331,17 @@ class ApprovedDocHandlers(
     }
 
     /**
-     * Retrieves a list of approved document handlers that can handle the given selection, and
+     * Retrieves a Flow of approved document handlers that can handle the given selection, and
      * updates the cache with the results.
      *
      * @param selectionDetails The details about the current selection of documents.
-     * @return A list of [ApprovedDocHandler]s that can handle the selection.
+     * @return A Flow emitting a list of [ApprovedDocHandler]s that can handle the selection.
      */
-    fun getApprovedDocHandlers(
+    fun getApprovedDocHandlersFlow(
         selectionDetails: MenuManager.SelectionDetails
-    ): List<ApprovedDocHandler> {
+    ): Flow<List<ApprovedDocHandler>> {
         if (approvedPackages.isEmpty()) {
-            return emptyList()
+            return flowOf(emptyList())
         }
 
         val user = injector.actions?.selectedUser ?: UserId.CURRENT_USER
@@ -367,25 +352,33 @@ class ApprovedDocHandlers(
         val key = "${intent.action}:${intent.type}"
         val loadingKey = "$user:$key"
 
-        val handlersMap = cache.value[user]?.get(key)
-        if (handlersMap != null && handlersMap.values.none { it.isOutdated }) {
-            return handlersMap.values.mapNotNull { if (it.isSupported) it.handler else null }
-        }
-
-        // If it's outdated or not in the cache, query the package manager.
-        // If it's already loading, don't query again, just wait for the cache to update.
-        if (loadingKeys.add(loadingKey)) {
-            viewModelScope.launch(ioDispatcher) {
-                try {
-                    val approvedHandlers = queryApprovedHandlers(intent, pm)
-                    applyCacheUpdate(CacheUpdateOp.Add(user, key, approvedHandlers))
-                } finally {
-                    loadingKeys.remove(loadingKey)
+        return flow {
+            cache.collect { currentCache ->
+                val handlersMap = currentCache[user]?.get(key)
+                if (handlersMap != null && handlersMap.values.none { it.isOutdated }) {
+                    emit(handlersMap.values.mapNotNull { if (it.isSupported) it.handler else null })
+                    return@collect
                 }
+
+                // If it's outdated or not in the cache, query the package manager.
+                // If it's already loading, don't query again, just wait for the cache to update.
+                if (loadingKeys.add(loadingKey)) {
+                    viewModelScope.launch(ioDispatcher) {
+                        try {
+                            val approvedHandlers = queryApprovedHandlers(intent, pm)
+                            applyCacheUpdate(CacheUpdateOp.Add(user, key, approvedHandlers))
+                        } finally {
+                            loadingKeys.remove(loadingKey)
+                        }
+                    }
+                }
+
+                emit(
+                    handlersMap?.values?.mapNotNull { if (it.isSupported) it.handler else null }
+                        ?: emptyList()
+                )
             }
         }
-        return handlersMap?.values?.mapNotNull { if (it.isSupported) it.handler else null }
-            ?: emptyList()
     }
 
     /**
@@ -419,105 +412,6 @@ class ApprovedDocHandlers(
                     add(ApprovedDocHandler(componentName, label, isButton, icon, true))
                 }
             }
-        }
-    }
-
-    /**
-     * Updates the provided menu with actions from approved document handlers. This method
-     * dynamically adds or removes menu items based on the available approved document handlers and
-     * the current selection.
-     *
-     * @param menu The menu to be updated.
-     * @param selectionDetails Details about the current selection of documents.
-     */
-    fun updateApprovedDocHandlerMenus(menu: Menu, selectionDetails: MenuManager.SelectionDetails) {
-        val approvedDocHandlersMap = getApprovedDocHandlers(selectionDetails)
-
-        // The handlers set to be buttons with an icon will attempt to be populated as action
-        // buttons first, if more button handlers exist than available button slots or if the button
-        // handlers do not have an icon, then the remaining button handlers will fall back to be
-        // populated as menu items, however still be prioritized over the rest of the handlers.
-        val (potentialButtons, others) =
-            approvedDocHandlersMap.partition { it.isButton && it.icon != null }
-        val (prioritizedHandlers, regularHandlers) = others.partition { it.isButton }
-        val actionButtonHandlers = potentialButtons.take(NUMBER_OF_BUTTONS)
-        // Priority of menu items:
-        // 1. Action buttons that don't fit in the button slots.
-        // 2. Handlers registered as buttons but don't have an icon.
-        // 3. Handlers registered as menu items.
-        val menuHandlers =
-            (potentialButtons.drop(NUMBER_OF_BUTTONS) + prioritizedHandlers + regularHandlers).take(
-                NUMBER_OF_MENU_ITEMS
-            )
-
-        // The handlers to be shown in the menu.
-        val targetHandlersMap =
-            (actionButtonHandlers + menuHandlers).associateBy { it.componentName }
-        // The handlers to be removed from the menu.
-        val toRemove = mutableListOf<Int>()
-        // The handlers that are already in the menu.
-        val foundComponents = mutableSetOf<ComponentName>()
-
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            if (item.groupId != HANDLER_GROUP_ID) {
-                continue
-            }
-            val component = item.intent?.component
-            val handler = targetHandlersMap[component]
-
-            if (component == null || handler == null) {
-                toRemove.add(item.itemId)
-                continue
-            }
-
-            val newIntent = injector.actions.createApprovedHandlerIntent(component)
-            if (newIntent != null) {
-                item.intent = newIntent
-                item.isEnabled = handler.isEnabled
-                // Update the label in case it has changed due to package changes.
-                item.title = handler.label
-
-                // If the handler is an action button handler, set the icon and show as action
-                // if room. Otherwise make sure it's shown as a menu item.
-                val isActionButton = handler in actionButtonHandlers
-                item.icon = if (isActionButton) handler.icon else null
-                item.setShowAsAction(
-                    if (isActionButton) MenuItem.SHOW_AS_ACTION_IF_ROOM
-                    else MenuItem.SHOW_AS_ACTION_NEVER
-                )
-                foundComponents.add(component)
-            } else {
-                // If the intent is null, the handler is not valid.
-                // This can happen when selection is cleared before the menu is updated.
-                toRemove.add(item.itemId)
-            }
-        }
-
-        toRemove.forEach { menu.removeItem(it) }
-
-        // Add new handlers.
-        for (handlerComponent in targetHandlersMap.keys) {
-            if (handlerComponent in foundComponents) {
-                continue
-            }
-            val intent = injector.actions.createApprovedHandlerIntent(handlerComponent)
-            if (intent == null) {
-                // If the intent is null, the handler is not valid.
-                // This can happen when selection is cleared before the menu is updated.
-                continue
-            }
-            val handler = targetHandlersMap[handlerComponent]!!
-            val item = menu.add(HANDLER_GROUP_ID, View.generateViewId(), Menu.NONE, handler.label)
-            item.intent = intent
-            item.isEnabled = handler.isEnabled
-
-            val isActionButton = handler in actionButtonHandlers
-            item.icon = if (isActionButton) handler.icon else null
-            item.setShowAsAction(
-                if (isActionButton) MenuItem.SHOW_AS_ACTION_IF_ROOM
-                else MenuItem.SHOW_AS_ACTION_NEVER
-            )
         }
     }
 }

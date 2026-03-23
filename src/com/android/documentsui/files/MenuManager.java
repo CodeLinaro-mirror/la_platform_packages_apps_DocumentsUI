@@ -41,6 +41,7 @@ import com.android.documentsui.Injector;
 import com.android.documentsui.JobPanelController;
 import com.android.documentsui.R;
 import com.android.documentsui.approveddochandlers.ApprovedDocHandlers;
+import com.android.documentsui.approveddochandlers.ApprovedDocMenuController;
 import com.android.documentsui.base.DocumentInfo;
 import com.android.documentsui.base.Features;
 import com.android.documentsui.base.Lookup;
@@ -62,7 +63,6 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     private final Lookup<String, Uri> mUriLookup;
     private final LookupApplicationName mAppNameLookup;
     @Nullable private JobPanelController mJobPanelController;
-
     public MenuManager(
             Features features,
             SearchViewManager searchManager,
@@ -74,7 +74,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
             Lookup<String, Uri> uriLookup,
             IntSupplier filesCountSupplier,
             Injector<?> injector,
-            @Nullable ApprovedDocHandlers approvedDocHandlers) {
+            @Nullable ApprovedDocMenuController approvedDocMenuController) {
 
         super(
                 searchManager,
@@ -84,7 +84,7 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
                 context,
                 features,
                 injector,
-                approvedDocHandlers);
+                approvedDocMenuController);
 
         mSelectionManager = selectionManager;
         mAppNameLookup = appNameLookup;
@@ -99,8 +99,8 @@ public final class MenuManager extends com.android.documentsui.MenuManager {
     @Override
     public void updateContextMenu(Menu menu, SelectionDetails selectionDetails) {
         super.updateContextMenu(menu, selectionDetails);
-        if (isUseApprovedDocumentHandlerEnabled() && mApprovedDocHandlers != null) {
-            mApprovedDocHandlers.updateApprovedDocHandlerMenus(menu, selectionDetails);
+        if (isUseApprovedDocumentHandlerEnabled()) {
+            updateApprovedDocHandlers(menu, selectionDetails);
         }
     }
 
