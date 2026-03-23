@@ -21,7 +21,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
+import com.android.documentsui.R;
 import com.android.documentsui.base.DocumentInfo;
 
 import java.io.File;
@@ -73,6 +75,29 @@ public class FileUtils {
         intent.addCategory(Intent.CATEGORY_DEFAULT);
         List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
         return resolveInfos.size();
+    }
+
+    /**
+     * Sanitizes the name of a folder, trimming any trailing spaces from the string or throws an
+     * InvalidNameError which carries the desired validation message string and resource id.
+     */
+    public static String sanitizeName(String name) throws InvalidNameError {
+        name = name.replaceAll("\\s+$", "");
+        if (name.isEmpty()) {
+            throw new InvalidNameError(
+                    "Invalid name error: '" + name + "'", R.string.add_folder_name_error);
+        }
+
+        return name;
+    }
+
+    public static class InvalidNameError extends Error {
+        @StringRes public int mResource;
+
+        public InvalidNameError(String message, int resource) {
+            super(message);
+            mResource = resource;
+        }
     }
 
     private FileUtils() {

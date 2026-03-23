@@ -19,9 +19,11 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.android.documentsui.R
 import com.android.documentsui.base.DocumentInfo
 import com.android.documentsui.testing.TestPackageManager
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,7 +39,7 @@ class FileUtilsTest {
     fun setUp() {
         testPackageManager.queryIntentActivitiesResults.put(
             "image/png",
-            listOf(ResolveInfo(), ResolveInfo())
+            listOf(ResolveInfo(), ResolveInfo()),
         )
     }
 
@@ -48,5 +50,44 @@ class FileUtilsTest {
         `when`(doc.documentUri).thenReturn(Uri.parse("content://com.example.test/test.png"))
 
         assertEquals(FileUtils.countOpeningApps(doc, testPackageManager), 2)
+    }
+
+    @Test
+    fun testSanitizeNameCreateDirectory() {
+        val name = "File.txt"
+        // Expect the name to remain the same.
+        assertEquals(FileUtils.sanitizeName(name), name)
+    }
+
+    @Test
+    fun testSanitizeNameCreateDirectoryStripTrailingSpaces() {
+        val name = "   File.txt   "
+        // Expect only the trailing spaces to be trimmed.
+        assertEquals(FileUtils.sanitizeName(name), "   File.txt")
+    }
+
+    @Test
+    fun testSanitizeNameCreateDirectoryEmptyName() {
+        val expectedError: FileUtils.InvalidNameError =
+            FileUtils.InvalidNameError("Invalid name error: ''", R.string.add_folder_name_error)
+        val exception =
+            assertThrows(FileUtils.InvalidNameError::class.java) { FileUtils.sanitizeName("") }
+
+        // Assert exception properties
+        assertEquals(expectedError.message, exception.message)
+        assertEquals(expectedError.mResource, exception.mResource)
+    }
+
+    @Test
+    fun testSanitizeNameCreateDirectoryStrippedToEmptyName() {
+        val name = "   "
+        val expectedError: FileUtils.InvalidNameError =
+            FileUtils.InvalidNameError("Invalid name error: ''", R.string.add_folder_name_error)
+        val exception =
+            assertThrows(FileUtils.InvalidNameError::class.java) { FileUtils.sanitizeName(name) }
+
+        // Assert exception properties
+        assertEquals(expectedError.message, exception.message)
+        assertEquals(expectedError.mResource, exception.mResource)
     }
 }
