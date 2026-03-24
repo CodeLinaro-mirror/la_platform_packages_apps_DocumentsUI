@@ -26,6 +26,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import static com.android.documentsui.bots.EspressoBotsKt.actionOnDocumentItem;
 import static com.android.documentsui.util.FlagUtils.isUseMaterial3FlagEnabled;
 import static com.android.documentsui.util.Material3Config.getRes;
 
@@ -68,6 +69,7 @@ import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import com.android.documentsui.R;
+import com.android.documentsui.actions.RightClickActionKt;
 import com.android.documentsui.actions.WaitUntilGone;
 import com.android.documentsui.actions.WaitUntilVisible;
 
@@ -706,13 +708,13 @@ public class DirectoryListBot extends Bots.BaseBot {
         }
     }
 
-    public void rightClickDocument(String label) throws UiObjectNotFoundException {
-        Rect startCoord = findDocument(label, true).getBounds();
-        rightClickDocument(new Point(startCoord.centerX(), startCoord.centerY()));
+    /** Right-clicks on the document with the given label. */
+    public void rightClickDocument(String label) {
+        actionOnDocumentItem(label, RightClickActionKt.rightClick(), mTimeout);
     }
 
-    public void rightClickDocument(Point point) throws UiObjectNotFoundException {
-        // TODO: Use Espresso instead of doing the events mock ourselves
+    /** Sends a right click at the given point. */
+    public void rightClick(Point point) {
         MotionEvent motionDown =
                 getTestRightClickMotionEvent(MotionEvent.ACTION_DOWN, point.x, point.y);
         mAutomation.injectInputEvent(motionDown, true);

@@ -164,7 +164,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             FLAG_USE_SEARCH_V2_READ_ONLY})
     public void testRecentFilesShowRenameOptions() throws Exception {
         bots.roots.openRoot("Recent");
-        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_2, true).exists());
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_2);
 
         final Map<String, Boolean> menuItems = new HashMap<>();
@@ -182,8 +181,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @DisableFlags({FLAG_USE_ALLFILES_ROOT_FOR_RECENTS})
     public void testRecentFilesDoNotShowRenameOptions() throws Exception {
         bots.roots.openRoot("Recent");
-
-        assertTrue(bots.directory.findDocument(TestFilesRule.FILE_NAME_2, true).exists());
         bots.directory.rightClickDocument(TestFilesRule.FILE_NAME_2);
 
         final Map<String, Boolean> menuItems = new HashMap<>();
