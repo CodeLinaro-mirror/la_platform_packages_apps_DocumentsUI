@@ -21,15 +21,18 @@ import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static com.android.documentsui.StubProvider.ROOT_0_ID;
 import static com.android.documentsui.StubProvider.ROOT_1_ID;
+import static com.android.documentsui.actions.MouseClickActionKt.mouseClick;
 import static com.android.documentsui.base.Providers.ROOT_ID_DEVICE;
 import static com.android.documentsui.flags.Flags.FLAG_HOME_SCREEN_FILES_RO;
 import static com.android.documentsui.flags.Flags.FLAG_SINGLE_CLICK_TO_SELECT;
 import static com.android.documentsui.flags.Flags.FLAG_USE_MATERIAL3;
 import static com.android.documentsui.util.Material3Config.getRes;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -47,9 +50,9 @@ import android.view.View;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.By;
-import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 import androidx.test.uiautomator.Until;
 
@@ -133,7 +136,6 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
             bots.directory.openDocument(parentDirName);
         }
 
-        bots.directory.waitForDocument(fileName);
         bots.directory.selectDocument(fileName, 1);
 
         bots.main.clickDelete();
@@ -347,21 +349,21 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
 
     @Test
     @EnableFlags(FLAG_SINGLE_CLICK_TO_SELECT)
-    public void testSingleClickToSelect_enabled() throws Exception {
+    public void testSingleClickToSelect_enabled() {
         doTestSingleClickToSelect(true);
     }
 
     @Test
     @DisableFlags(FLAG_SINGLE_CLICK_TO_SELECT)
-    public void testSingleClickToSelect_disabled() throws Exception {
+    public void testSingleClickToSelect_disabled() {
         doTestSingleClickToSelect(false);
     }
 
-    private void doTestSingleClickToSelect(boolean flagEnabled) throws Exception {
+    private void doTestSingleClickToSelect(boolean flagEnabled) {
         final String label = TestFilesRule.DIR_NAME_1;
-        UiObject2 ancestorObject = bots.directory.findItemAndSelectionHotspot(label)[0];
-        UiObject2 labelObject = ancestorObject.findObject(By.text(label));
-        labelObject.click();
+        var labelMatcher =
+                allOf(withText(label), ViewMatchers.isDescendantOfA(withId(R.id.item_root)));
+        onView(labelMatcher).perform(mouseClick());
 
         if (flagEnabled) {
             bots.directory.assertSelection(1);
@@ -396,9 +398,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
     public void testOnConfigurationChanged_LocaleResetsSelection() throws Exception {
         final String[] frenchDownloads = new String[1];
-        device.waitForIdle();
         bots.directory.selectDocument("file0.log", 1);
-        bots.directory.assertSelection(1);
 
         mActivityScenario.onActivity(
                 activity -> {
@@ -423,9 +423,7 @@ public class FilesActivityUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_HOME_SCREEN_FILES_RO})
     public void testConfigurationChange_ResizeAppPreservesSelection() throws Exception {
         final String[] downloads = new String[1];
-        device.waitForIdle();
         bots.directory.selectDocument("file0.log", 1);
-        bots.directory.assertSelection(1);
 
         // This simulates a minor config change where the activity is not recreated,
         // and only onConfigurationChanged is called.

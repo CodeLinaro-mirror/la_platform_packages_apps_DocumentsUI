@@ -104,7 +104,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void extractArchiveViaActionMenu() throws Exception {
         createArchiveInRootDir0();
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Extract");
         assertExtractedArchive();
@@ -114,7 +113,6 @@ public class ArchiveUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_MATERIAL3, FLAG_ZIP_NG_RO})
     public void browseArchiveViaActionMenu() throws Exception {
         switchRoot("ResourcesProvider");
-        bots.directory.waitForDocument("archive.zip");
         bots.directory.selectDocument("archive.zip", 1);
         bots.main.clickActionItem("Browse");
         bots.directory.waitForDocument("file1.txt");

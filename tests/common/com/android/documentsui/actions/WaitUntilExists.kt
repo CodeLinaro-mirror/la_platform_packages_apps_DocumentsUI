@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.documentsui.actions
 
 import android.view.View
@@ -20,38 +21,44 @@ import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.util.HumanReadables
+import androidx.test.espresso.util.TreeIterables
 import java.util.concurrent.TimeoutException
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 
 /**
- * An action that waits until a view becomes hidden, but still exists. If the view already hidden
- * then this returns straight away. Typical use:
+ * An action that waits until a view matching the given matcher exists in the hierarchy starting at
+ * the given ancestor. Typical use:
  * <pre>
- *  onView(withId(R.id.my_view_id)).perform(WaitUntilGone(500L))
+ *  onView(withId(R.id.ancestor_id)).perform(new WaitUntilExists(<view_matcher>, timeout));
  * </pre>
  */
-class WaitUntilGone(private val timeoutMs: Long = 500L) : ViewAction {
+class WaitUntilExists(private val matcher: Matcher<View>, private val timeoutMs: Long = 500L) :
+    ViewAction {
     override fun getConstraints(): Matcher<View> {
         return CoreMatchers.any(View::class.java)
     }
 
     override fun getDescription(): String {
-        return "wait up to ${timeoutMs}ms for the view to be hidden"
+        return "wait up to ${timeoutMs}ms for the view matching $matcher to exist"
     }
 
     override fun perform(uiController: UiController, view: View) {
         val endTime = System.currentTimeMillis() + timeoutMs
         do {
-            if (view.visibility == View.GONE) {
-                return
+            for (child in TreeIterables.breadthFirstViewTraversal(view)) {
+                if (matcher.matches(child)) {
+                    return
+                }
             }
             uiController.loopMainThreadForAtLeast(50L)
         } while (System.currentTimeMillis() < endTime)
 
         throw PerformException.Builder()
             .withActionDescription(description)
-            .withCause(TimeoutException("Waited ${timeoutMs}ms for $view to be hidden"))
+            .withCause(
+                TimeoutException("Waited ${timeoutMs}ms for view matching $matcher to exist")
+            )
             .withViewDescription(HumanReadables.describe(view))
             .build()
     }

@@ -238,7 +238,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
         // Check: the random test file is visible in Recents.
         switchRoot("Recent");
-        bots.directory.waitForDocument(testFileName);
 
         // Check: the file can be successfully deleted.
         bots.directory.selectDocument(testFileName, 1);
@@ -328,7 +327,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
 
             // Move to the Recent view and wait for things to quiet down.
             switchRoot("Recent");
-            device.waitForIdle();
 
             // Select the newly created file and check the expected path.
             bots.directory.selectDocument(newFileName, 1);
@@ -386,7 +384,6 @@ public class RecentsViewUiTest extends ActivityTestJunit4<FilesActivity> {
             switchRoot("Recent");
 
             bots.directory.selectFirstDocument();
-            bots.directory.assertSelection(1);
 
             // Until MediaStore code is propagated to every test device we can either have
             // the old style path Downloads > fileName, in which case the test ends.

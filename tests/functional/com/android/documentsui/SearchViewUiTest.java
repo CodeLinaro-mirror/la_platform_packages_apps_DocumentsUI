@@ -574,7 +574,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
         // Click the search icon and wait until the only result is the file that was searched for.
         bots.search.doSearch(TestFilesRule.FILE_NAME_1);
         directoryList.wait(hasOneChild(), mTimeout);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
 
         // Select the document. This implicitly verifies that the bar at the top shows the text "1
         // selected" which, in all conditions, occludes the search input box.
@@ -693,11 +692,9 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultSingleSelection() throws Exception {
         bots.search.doSearch("file");
-        device.waitForIdle();
 
         // Click file1.log; check that one element is selected.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
-        bots.directory.assertSelection(1);
 
         // Verify that the breadcrumb path shows the correct information.
         onView(withId(R.id.breadcrumb_path_holder))
@@ -709,7 +706,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testDirectoryChangedOnSearchBreadcrumbClick() throws Exception {
         bots.search.doSearch("file");
         bots.directory.waitUntilDocumentDoesNotExist(TestFilesRule.DIR_NAME_1);
-        bots.directory.waitForDocument(TestFilesRule.FILE_NAME_1);
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);
         // Click the first item of the path, which should take us to the directory listing.
         onView(allOf(withText("TEST_ROOT_0"), isDescendantOfA(withId(R.id.breadcrumb_path_holder))))
@@ -722,7 +718,6 @@ public class SearchViewUiTest extends ActivityTestJunit4<FilesActivity> {
     @EnableFlags({FLAG_USE_SEARCH_V2_READ_ONLY, FLAG_USE_MATERIAL3})
     public void testPathOfSearchResultMultipleSelection() throws Exception {
         bots.search.doSearch("file");
-        device.waitForIdle();
 
         // Click file1.log and NO_RENAMEfile.txt which should stop breadcrumb path.
         bots.directory.selectDocument(TestFilesRule.FILE_NAME_1, 1);

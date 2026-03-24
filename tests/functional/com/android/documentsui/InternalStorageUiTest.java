@@ -80,8 +80,6 @@ public class InternalStorageUiTest extends ActivityTestJunit4<FilesActivity> {
     public void testRenameFile() throws Exception {
         createTestFiles();
 
-        bots.directory.waitForDocument(fileName);
-
         bots.directory.selectDocument(fileName, 1);
         device.waitForIdle();
 
